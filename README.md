@@ -77,4 +77,3 @@ src/
 HerbAlly is for educational purposes only. It is not intended to diagnose, treat, cure, or prevent any disease. Always consult a qualified healthcare provider before using herbal supplements, especially if you are pregnant, nursing, taking medications, or have a medical condition.
 
 This application complies with FDA guidelines regarding dietary supplement information.
-

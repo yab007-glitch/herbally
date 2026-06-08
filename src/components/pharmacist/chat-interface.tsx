@@ -140,7 +140,9 @@ export function ChatInterface({
 
   // ─── Per-message actions state ─────────────────────────────────────
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [lastFailedMessage, setLastFailedMessage] = useState<string | null>(null);
+  const [lastFailedMessage, setLastFailedMessage] = useState<string | null>(
+    null
+  );
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 2;
 
@@ -331,10 +333,9 @@ export function ChatInterface({
             role: m.role,
             content: m.content,
           })),
-          herbContext:
-            systemContext
-              ? `${herbContext ?? ""}\n\n${systemContext}`.trim() || undefined
-              : (herbContext ?? undefined),
+          herbContext: systemContext
+            ? `${herbContext ?? ""}\n\n${systemContext}`.trim() || undefined
+            : (herbContext ?? undefined),
           locale,
         }),
         signal: controller.signal,
@@ -394,7 +395,9 @@ export function ChatInterface({
           ...prev,
           {
             role: "assistant",
-            content: t("pharmacist.retrying") || `Retrying (${nextRetry}/${MAX_RETRIES})...`,
+            content:
+              t("pharmacist.retrying") ||
+              `Retrying (${nextRetry}/${MAX_RETRIES})...`,
             id: makeId(),
             timestamp: new Date().toISOString(),
           },

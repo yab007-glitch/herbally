@@ -34,7 +34,10 @@ export function LanguageSelector() {
           <div className="px-2 py-1.5 text-xs text-muted-foreground border-b">
             <span>{t("common.suggested")}</span>
             <button
-              onClick={() => { trackEvent("language_changed", { locale: detectedLocale }); setLocale(detectedLocale); }}
+              onClick={() => {
+                trackEvent("language_changed", { locale: detectedLocale });
+                setLocale(detectedLocale);
+              }}
               className="text-primary hover:underline font-medium"
             >
               {LANGUAGES.find((l) => l.code === detectedLocale)?.nativeName}
@@ -46,7 +49,10 @@ export function LanguageSelector() {
         {LANGUAGES.map((lang) => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => { trackEvent("language_changed", { locale: lang.code }); setLocale(lang.code); }}
+            onClick={() => {
+              trackEvent("language_changed", { locale: lang.code });
+              setLocale(lang.code);
+            }}
             className={lang.code === locale ? "bg-muted/50 font-medium" : ""}
           >
             <span className="mr-2 text-base" aria-hidden="true">

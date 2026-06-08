@@ -107,16 +107,17 @@ export default async function RootLayout({
   const messages = locale === "fr" ? frDict : enDict;
 
   return (
-    <html lang={locale} className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html
+      lang={locale}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
       <head>
         <OrganizationSchema />
       </head>
       <body className="bg-background text-foreground">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <SkipToContent />
-          <TooltipProvider>
-            {children}
-          </TooltipProvider>
+          <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
         </NextIntlClientProvider>
         <SWRegistration />

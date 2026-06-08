@@ -57,12 +57,9 @@ export function SmartSearch({ defaultValue = "", category }: SmartSearchProps) {
     }
   }, [debouncedQuery, defaultValue, buildSearchUrl, router]);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setQuery(e.target.value);
-    },
-    []
-  );
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

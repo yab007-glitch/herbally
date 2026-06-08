@@ -179,7 +179,7 @@ export default async function HerbDetailPage({ params }: Props) {
 
   // Translation helper
   const t = await getTranslations();
-if (!result.success || !result.data) {
+  if (!result.success || !result.data) {
     notFound();
   }
 
@@ -761,10 +761,7 @@ if (!result.success || !result.data) {
           <Calculator className="size-4" />
           {t("herbDetail.calculateDose")}
         </Button>
-        <Button
-          variant="outline"
-          render={<Link href={`/?herb=${slug}`} />}
-        >
+        <Button variant="outline" render={<Link href={`/?herb=${slug}`} />}>
           <AlertTriangle className="size-4" />
           {t("herbDetail.checkInteractions")}
         </Button>

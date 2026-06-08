@@ -14,7 +14,11 @@ interface ChatSuggestionsProps {
   stats: { value: string; label: string }[];
 }
 
-export function ChatSuggestions({ suggestions, onSelect, stats }: ChatSuggestionsProps) {
+export function ChatSuggestions({
+  suggestions,
+  onSelect,
+  stats,
+}: ChatSuggestionsProps) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-4 py-8">
       <div className="mx-auto max-w-3xl text-center">
@@ -30,7 +34,8 @@ export function ChatSuggestions({ suggestions, onSelect, stats }: ChatSuggestion
           Ask Our Virtual Herbalist
         </h1>
         <p className="mx-auto mb-8 max-w-lg text-muted-foreground">
-          Get evidence-based answers about medicinal herbs, drug interactions, and dosages.
+          Get evidence-based answers about medicinal herbs, drug interactions,
+          and dosages.
         </p>
 
         <div className="grid gap-3 sm:grid-cols-2">
@@ -43,7 +48,9 @@ export function ChatSuggestions({ suggestions, onSelect, stats }: ChatSuggestion
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-background/80 shadow-sm">
                 <s.icon className="size-5 text-foreground" />
               </div>
-              <span className="text-sm font-medium text-foreground">{s.text}</span>
+              <span className="text-sm font-medium text-foreground">
+                {s.text}
+              </span>
             </button>
           ))}
         </div>
@@ -51,7 +58,9 @@ export function ChatSuggestions({ suggestions, onSelect, stats }: ChatSuggestion
         <div className="mt-10 flex justify-center gap-8">
           {stats.map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-2xl font-bold text-foreground">
+                {stat.value}
+              </div>
               <div className="text-xs text-muted-foreground">{stat.label}</div>
             </div>
           ))}

@@ -71,7 +71,10 @@ export function DonationButtons() {
             <Card
               key={tier.amount}
               className="group relative cursor-pointer overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg"
-              onClick={() => { trackEvent("donation_clicked", { amount: tier.amount }); handleDonate(tier.amount); }}
+              onClick={() => {
+                trackEvent("donation_clicked", { amount: tier.amount });
+                handleDonate(tier.amount);
+              }}
             >
               <div
                 className={`absolute inset-0 bg-gradient-to-br ${tier.color} opacity-0 transition-opacity group-hover:opacity-10`}
@@ -127,7 +130,10 @@ export function DonationButtons() {
             <Button
               size="lg"
               className="gap-2 bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 shadow-lg shadow-pink-500/20"
-              onClick={() => { trackEvent("donation_clicked", { amount: customAmount }); handleDonate(customAmount); }}
+              onClick={() => {
+                trackEvent("donation_clicked", { amount: customAmount });
+                handleDonate(customAmount);
+              }}
               disabled={loading === customAmount}
             >
               {loading === customAmount ? (

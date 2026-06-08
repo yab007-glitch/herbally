@@ -21,9 +21,12 @@ export default function MarketingError({
       <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-destructive/10">
         <AlertCircle className="size-10 text-destructive" />
       </div>
-      <h1 className="mb-2 text-2xl font-bold text-foreground">Something went wrong</h1>
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
+        Something went wrong
+      </h1>
       <p className="mb-6 max-w-md text-muted-foreground">
-        We encountered an unexpected error. Don&apos;t worry — your data is safe.
+        We encountered an unexpected error. Don&apos;t worry — your data is
+        safe.
       </p>
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button onClick={reset} className="gap-2">

@@ -54,9 +54,7 @@ test.describe("Homepage (Chat-First)", () => {
     await expect(page.locator("text=/calculator")).toBeVisible();
   });
 
-  test("should transition to active chat on message send", async ({
-    page,
-  }) => {
+  test("should transition to active chat on message send", async ({ page }) => {
     await page.goto("/");
 
     const input = page.locator('textarea[aria-label="Chat message input"]');
@@ -191,9 +189,9 @@ test.describe("Homepage (Chat-First)", () => {
     await clearBtn.click();
 
     // Should go back to empty state with suggestions
-    await expect(
-      page.locator("text=What herbs help with sleep?")
-    ).toBeVisible({ timeout: 5000 });
+    await expect(page.locator("text=What herbs help with sleep?")).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   test("should have no critical accessibility violations", async ({ page }) => {
@@ -209,5 +207,4 @@ test.describe("Homepage (Chat-First)", () => {
 
     expect(criticalViolations).toHaveLength(0);
   });
-
 });

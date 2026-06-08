@@ -10,25 +10,25 @@
 
 We commit to maintaining these performance standards for all users:
 
-| Metric | Target | Threshold | Measurement |
-|--------|--------|-----------|-------------|
-| **LCP** (Largest Contentful Paint) | < 2.5s | > 4.0s | p75 of all page loads |
-| **INP** (Interaction to Next Paint) | < 200ms | > 500ms | p75 of all interactions |
-| **CLS** (Cumulative Layout Shift) | < 0.1 | > 0.25 | p75 of all page loads |
-| **FCP** (First Contentful Paint) | < 1.8s | > 3.0s | p75 of all page loads |
-| **TTFB** (Time to First Byte) | < 800ms | > 1.8s | p75 of all requests |
+| Metric                              | Target  | Threshold | Measurement             |
+| ----------------------------------- | ------- | --------- | ----------------------- |
+| **LCP** (Largest Contentful Paint)  | < 2.5s  | > 4.0s    | p75 of all page loads   |
+| **INP** (Interaction to Next Paint) | < 200ms | > 500ms   | p75 of all interactions |
+| **CLS** (Cumulative Layout Shift)   | < 0.1   | > 0.25    | p75 of all page loads   |
+| **FCP** (First Contentful Paint)    | < 1.8s  | > 3.0s    | p75 of all page loads   |
+| **TTFB** (Time to First Byte)       | < 800ms | > 1.8s    | p75 of all requests     |
 
 ---
 
 ## Bundle Size Budget
 
-| Resource Type | Budget | Current | Status |
-|---------------|--------|---------|--------|
-| **JavaScript (total)** | < 500 KB | TBD | ⚠️ Monitor |
-| **JavaScript (initial)** | < 200 KB | TBD | ⚠️ Monitor |
-| **CSS (total)** | < 100 KB | TBD | ⚠️ Monitor |
-| **Images (per page)** | < 500 KB | TBD | ⚠️ Monitor |
-| **Fonts (total)** | < 200 KB | TBD | ⚠️ Monitor |
+| Resource Type            | Budget   | Current | Status     |
+| ------------------------ | -------- | ------- | ---------- |
+| **JavaScript (total)**   | < 500 KB | TBD     | ⚠️ Monitor |
+| **JavaScript (initial)** | < 200 KB | TBD     | ⚠️ Monitor |
+| **CSS (total)**          | < 100 KB | TBD     | ⚠️ Monitor |
+| **Images (per page)**    | < 500 KB | TBD     | ⚠️ Monitor |
+| **Fonts (total)**        | < 200 KB | TBD     | ⚠️ Monitor |
 
 ### Action Triggers
 
@@ -156,12 +156,14 @@ curl https://herbally.app/api/health
 ### High LCP
 
 **Causes:**
+
 - Slow server response
 - Render-blocking resources
 - Slow image load
 - Large JavaScript bundle
 
 **Solutions:**
+
 - ✅ Enable ISR (revalidate: 3600)
 - ✅ Preload critical resources
 - ✅ Use next/image with AVIF
@@ -170,12 +172,14 @@ curl https://herbally.app/api/health
 ### High INP
 
 **Causes:**
+
 - Long tasks (> 50ms)
 - Excessive DOM size
 - Complex CSS selectors
 - Synchronous operations
 
 **Solutions:**
+
 - ✅ Debounce user input (300ms)
 - ✅ Use React.memo for expensive renders
 - ✅ Virtualize long lists
@@ -184,12 +188,14 @@ curl https://herbally.app/api/health
 ### High CLS
 
 **Causes:**
+
 - Images without dimensions
 - Dynamic content injection
 - Late-loading fonts
 - Ads/embeds without space
 
 **Solutions:**
+
 - ✅ Always specify width/height
 - ✅ Reserve space for dynamic content
 - ✅ Use next/font with swap
@@ -223,16 +229,19 @@ curl https://herbally.app/api/health
 ## Success Criteria
 
 ### Phase 1 (Week 1) ✅
+
 - [x] Performance budget documented
 - [x] Bundle analyzer configured
 - [x] Web Vitals tracking active
 
 ### Phase 2 (Week 2)
+
 - [ ] Lighthouse CI integrated
 - [ ] Performance regression tests
 - [ ] 90+ Lighthouse scores
 
 ### Phase 3 (Week 3)
+
 - [ ] All Core Web Vitals in green
 - [ ] Bundle size under budget
 - [ ] < 3s load time on 3G
@@ -248,4 +257,4 @@ curl https://herbally.app/api/health
 
 ---
 
-*This is a living document. Update budgets as we learn and improve.*
+_This is a living document. Update budgets as we learn and improve._

@@ -48,7 +48,7 @@ But here's the thing: turmeric also has **mild anticoagulant effects**. If you'r
 
 This doesn't mean you can't take turmeric. It means you should know the facts before you do.
 
-That's exactly why we built HerbAlly's interaction checker: so you can see, for *your* medications, which herbs have known interactions — and how serious they are.
+That's exactly why we built HerbAlly's interaction checker: so you can see, for _your_ medications, which herbs have known interactions — and how serious they are.
 
 🧠 Knowledge is the best supplement you can take.
 
@@ -120,6 +120,7 @@ Your turn 👇
 We believe access to health information is a fundamental right — not a privilege for those who can afford subscriptions.
 
 That means:
+
 - No ads
 - No premium tiers
 - No "freemium" model
@@ -161,6 +162,7 @@ Herbs are powerful. But not all information about them is equal. We help you tel
 Ashwagandha (Withania somnifera) is an adaptogen with Level B evidence for reducing stress and anxiety. Clinical trials show it can lower cortisol levels by 14–28%.
 
 What to watch for:
+
 - 🕐 It takes 2–4 weeks of consistent use for full effect
 - 🩺 Can interact with thyroid medications, sedatives, and immunosuppressants
 - 🤰 Not recommended during pregnancy
@@ -193,12 +195,12 @@ All free. No account needed.
 
 ## Posting Schedule Suggestion
 
-| Week | Monday | Wednesday | Friday |
-|------|--------|-----------|--------|
-| 1 | Post 1 (What We Do) | Post 3 (Turmeric) | Post 6 (Community Q) |
-| 2 | Post 2 (ChatGPT angle) | Post 5 (Dosage Calc) | Post 9 (Ashwagandha) |
-| 3 | Post 4 (St. John's Wort) | Post 8 (Evidence System) | Post 7 (Free Forever) |
-| 4 | Post 10 (CTA) | Educational deep-dive (new) | Community engagement |
+| Week | Monday                   | Wednesday                   | Friday                |
+| ---- | ------------------------ | --------------------------- | --------------------- |
+| 1    | Post 1 (What We Do)      | Post 3 (Turmeric)           | Post 6 (Community Q)  |
+| 2    | Post 2 (ChatGPT angle)   | Post 5 (Dosage Calc)        | Post 9 (Ashwagandha)  |
+| 3    | Post 4 (St. John's Wort) | Post 8 (Evidence System)    | Post 7 (Free Forever) |
+| 4    | Post 10 (CTA)            | Educational deep-dive (new) | Community engagement  |
 
 **Tip:** Boost posts 1, 2, and 10 with a small ad budget to reach a wider audience for launch.
 
@@ -217,4 +219,4 @@ For each post, pair with one of these:
 
 ---
 
-**Brand Voice:** Informed but approachable. We're the knowledgeable friend who reads the research — not the condescending expert. Use 🌿 emoji as a signature sign-off. Never fearmonger about herbs; emphasize *knowledge* as empowerment.
+**Brand Voice:** Informed but approachable. We're the knowledgeable friend who reads the research — not the condescending expert. Use 🌿 emoji as a signature sign-off. Never fearmonger about herbs; emphasize _knowledge_ as empowerment.

@@ -102,7 +102,7 @@ export function HerbCard({ herb, className }: HerbCardProps) {
   return (
     <Link
       href={`/herbs/${herb.slug}`}
-        onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
+      onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
       className="group"
       aria-label={`${herb.name}. ${t(safetyLabelKey)}`}
     >
