@@ -83,7 +83,6 @@ export async function POST(request: NextRequest) {
         const email = session.customer_details?.email || null;
         const paymentIntentId = session.payment_intent as string | null;
 
-
         // Store in memory for now (replace with database)
         donationLog.push({
           id: donationId,

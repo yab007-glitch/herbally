@@ -27,7 +27,7 @@ export default async function HomePage({
   const localeCookie = cookieStore.get("herbally-locale");
   const locale: Locale = (localeCookie?.value as Locale) || "en";
   const t = await getTranslations();
-let herbContext: string | null = null;
+  let herbContext: string | null = null;
   let autoQuery: string | null = null;
   let herbName: string | null = null;
 

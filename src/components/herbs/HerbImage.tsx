@@ -36,7 +36,12 @@ function getInitials(name: string): string {
     .join("");
 }
 
-export function HerbImage({ name, imageUrl, className, priority }: HerbImageProps) {
+export function HerbImage({
+  name,
+  imageUrl,
+  className,
+  priority,
+}: HerbImageProps) {
   const gradient = getHerbGradient(name);
   const initials = getInitials(name);
 

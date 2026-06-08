@@ -21,7 +21,9 @@ export default function CompareError({
       <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-destructive/10">
         <ArrowLeftRight className="size-10 text-destructive" />
       </div>
-      <h1 className="mb-2 text-2xl font-bold text-foreground">Comparison error</h1>
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
+        Comparison error
+      </h1>
       <p className="mb-6 max-w-md text-muted-foreground">
         We couldn&apos;t load the herb comparison. Please try again.
       </p>

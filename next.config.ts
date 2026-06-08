@@ -6,7 +6,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const bundleAnalyzer = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
+  enabled: process.env.ANALYZE === "true",
 });
 
 const nextConfig: NextConfig = {
@@ -29,13 +29,10 @@ const nextConfig: NextConfig = {
 };
 
 export default bundleAnalyzer(
-  withSentryConfig(
-    withNextIntl(nextConfig),
-    {
-      org: process.env.SENTRY_ORG || "",
-      project: process.env.SENTRY_PROJECT || "",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      silent: !process.env.SENTRY_DSN,
-    }
-  )
+  withSentryConfig(withNextIntl(nextConfig), {
+    org: process.env.SENTRY_ORG || "",
+    project: process.env.SENTRY_PROJECT || "",
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    silent: !process.env.SENTRY_DSN,
+  })
 );

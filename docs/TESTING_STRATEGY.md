@@ -34,18 +34,20 @@
 **Purpose:** Test pure functions, calculations, utilities
 
 **Current Coverage:**
+
 - ✅ `dosage-calculations.test.ts` (19 tests)
 - ✅ `rate-limit.test.ts` (3 tests)
 
 **Examples:**
+
 ```typescript
 // dosage-calculations.test.ts
-test('calculates adult dose based on weight', () => {
-  expect(calculateDose(70, 'adult')).toBe(expected);
+test("calculates adult dose based on weight", () => {
+  expect(calculateDose(70, "adult")).toBe(expected);
 });
 
 // rate-limit.test.ts
-test('allows requests under limit', () => {
+test("allows requests under limit", () => {
   expect(rateLimiter.check()).toBe(true);
 });
 ```
@@ -57,6 +59,7 @@ test('allows requests under limit', () => {
 **Purpose:** Test component rendering, props, events
 
 **Current Coverage:**
+
 - ✅ `button.test.tsx` (9 tests)
 - ✅ `badge.test.tsx` (6 tests)
 - ✅ `input.test.tsx` (12 tests)
@@ -64,6 +67,7 @@ test('allows requests under limit', () => {
 - ✅ `skeleton.test.tsx` (7 tests)
 
 **Examples:**
+
 ```typescript
 // button.test.tsx
 test('renders children correctly', () => {
@@ -86,23 +90,25 @@ test('handles click events', () => {
 **Purpose:** Test complete user flows across browsers
 
 **Current Coverage:**
+
 - ✅ `homepage.spec.ts` (10 tests)
 - ✅ `herbs.spec.ts` (10 tests)
 - ✅ `calculator.spec.ts` (8 tests)
 
 **Examples:**
+
 ```typescript
 // homepage.spec.ts
-test('should load homepage successfully', async ({ page }) => {
-  await page.goto('/');
+test("should load homepage successfully", async ({ page }) => {
+  await page.goto("/");
   await expect(page).toHaveTitle(/HerbAlly/);
 });
 
 // herbs.spec.ts
-test('should search for herbs', async ({ page }) => {
-  await page.goto('/herbs');
+test("should search for herbs", async ({ page }) => {
+  await page.goto("/herbs");
   const searchInput = page.locator('input[type="text"]');
-  await searchInput.fill('ginger');
+  await searchInput.fill("ginger");
   await page.waitForTimeout(1000);
   const results = page.locator('[data-testid="herb-card"]');
   await expect(results.first()).toBeVisible();
@@ -113,14 +119,14 @@ test('should search for herbs', async ({ page }) => {
 
 ## Coverage Targets
 
-| Component Type | Current | Target | Priority |
-|----------------|---------|--------|----------|
-| **Utilities** | ~80% | 90%+ | High ✅ |
-| **UI Components** | ~40% | 80%+ | High |
-| **Feature Components** | ~20% | 70%+ | Medium |
-| **Pages** | ~10% | 50%+ | Medium |
-| **API Routes** | ~0% | 80%+ | High |
-| **E2E Flows** | ~30% | 80%+ | High |
+| Component Type         | Current | Target | Priority |
+| ---------------------- | ------- | ------ | -------- |
+| **Utilities**          | ~80%    | 90%+   | High ✅  |
+| **UI Components**      | ~40%    | 80%+   | High     |
+| **Feature Components** | ~20%    | 70%+   | Medium   |
+| **Pages**              | ~10%    | 50%+   | Medium   |
+| **API Routes**         | ~0%     | 80%+   | High     |
+| **E2E Flows**          | ~30%    | 80%+   | High     |
 
 **Overall Goal:** 70%+ by end of Phase 2
 
@@ -131,6 +137,7 @@ test('should search for herbs', async ({ page }) => {
 ### Priority Components to Test
 
 #### Critical Path (Test First)
+
 - [ ] `smart-search.tsx` - Main search functionality
 - [ ] `chat-interface.tsx` - AI chat component
 - [ ] `dose-calculator-form.tsx` - Dosage calculations
@@ -138,6 +145,7 @@ test('should search for herbs', async ({ page }) => {
 - [ ] `language-selector.tsx` - i18n switching
 
 #### High Priority
+
 - [ ] `herb-card.tsx` - Main herb display
 - [ ] `herb-image.tsx` - Image loading/optimization
 - [ ] `theme-toggle.tsx` - Theme switching
@@ -145,6 +153,7 @@ test('should search for herbs', async ({ page }) => {
 - [ ] `mobile-tab-bar.tsx` - Mobile navigation
 
 #### Medium Priority
+
 - [ ] `recent-searches.tsx` - Search history
 - [ ] `evidence-grade.tsx` - Evidence display
 - [ ] `safety-alert.tsx` - Safety warnings
@@ -152,6 +161,7 @@ test('should search for herbs', async ({ page }) => {
 - [ ] `footer components` - Various footers
 
 ### Priority API Routes to Test
+
 - [ ] `/api/chat` - AI chat endpoint
 - [ ] `/api/herbs/search` - Herb search
 - [ ] `/api/interpret-search` - Interaction checking
@@ -159,6 +169,7 @@ test('should search for herbs', async ({ page }) => {
 - [ ] `/api/webhooks/stripe` - Webhook handling
 
 ### Priority E2E Flows
+
 - [ ] User searches for herb → views details → checks interactions
 - [ ] User calculates dosage → saves result
 - [ ] User chats with AI herbalist
@@ -171,6 +182,7 @@ test('should search for herbs', async ({ page }) => {
 ## Testing Best Practices
 
 ### Unit Tests
+
 1. **Test pure functions** - No side effects
 2. **Test edge cases** - Empty, null, undefined, extremes
 3. **Test error handling** - Invalid inputs
@@ -178,6 +190,7 @@ test('should search for herbs', async ({ page }) => {
 5. **Keep tests independent** - No shared state
 
 ### Component Tests
+
 1. **Test user interactions** - Clicks, typing, submissions
 2. **Test props** - Different prop combinations
 3. **Test accessibility** - ARIA attributes, keyboard navigation
@@ -185,6 +198,7 @@ test('should search for herbs', async ({ page }) => {
 5. **Use user-event** - More realistic than fireEvent
 
 ### E2E Tests
+
 1. **Test critical paths** - Main user journeys
 2. **Test across browsers** - Chrome, Firefox, Safari
 3. **Test mobile** - Different viewports
@@ -196,6 +210,7 @@ test('should search for herbs', async ({ page }) => {
 ## Running Tests
 
 ### Local Development
+
 ```bash
 # All tests
 npm run test:run
@@ -217,10 +232,11 @@ npm run test:e2e:headed
 ```
 
 ### CI/CD
+
 ```yaml
 # GitHub Actions (ci.yml)
-- run: npm run test:run      # Unit + Component
-- run: npm run test:e2e      # E2E tests
+- run: npm run test:run # Unit + Component
+- run: npm run test:e2e # E2E tests
 ```
 
 ---
@@ -228,17 +244,20 @@ npm run test:e2e:headed
 ## Coverage Reporting
 
 ### Generate Report
+
 ```bash
 npm run test:coverage
 ```
 
 ### View Report
+
 ```bash
 # Open in browser
 open coverage/index.html
 ```
 
 ### Coverage Thresholds (TODO: Enforce in CI)
+
 ```typescript
 // vitest.config.ts
 coverage: {
@@ -256,14 +275,16 @@ coverage: {
 ## Mocking Strategy
 
 ### API Calls
+
 ```typescript
 // Mock fetch
-vi.mock('@/lib/api', () => ({
-  fetchHerbs: vi.fn().mockResolvedValue({ data: [] })
+vi.mock("@/lib/api", () => ({
+  fetchHerbs: vi.fn().mockResolvedValue({ data: [] }),
 }));
 ```
 
 ### Context
+
 ```typescript
 // Mock i18n context
 const renderWithContext = (component) => {
@@ -276,16 +297,17 @@ const renderWithContext = (component) => {
 ```
 
 ### External Services
+
 ```typescript
 // Mock Supabase
-vi.mock('@/lib/supabase/anonymous', () => ({
+vi.mock("@/lib/supabase/anonymous", () => ({
   getAnonClient: vi.fn().mockReturnValue({
     from: vi.fn().mockReturnThis(),
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockResolvedValue({ data: [] })
-  })
+    limit: vi.fn().mockResolvedValue({ data: [] }),
+  }),
 }));
 ```
 
@@ -294,12 +316,14 @@ vi.mock('@/lib/supabase/anonymous', () => ({
 ## Continuous Improvement
 
 ### Weekly Goals
+
 - Add 10+ new tests per week
 - Increase coverage by 5% per week
 - Fix flaky tests immediately
 - Review test quality in PRs
 
 ### Monthly Goals
+
 - Reach 70%+ coverage
 - Test all critical paths
 - Automate coverage reporting
@@ -316,4 +340,4 @@ vi.mock('@/lib/supabase/anonymous', () => ({
 
 ---
 
-*Living document - update as we learn and grow*
+_Living document - update as we learn and grow_

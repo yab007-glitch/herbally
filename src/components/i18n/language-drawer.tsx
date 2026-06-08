@@ -19,7 +19,11 @@ interface LanguageDrawerProps {
   hideTrigger?: boolean;
 }
 
-export function LanguageDrawer({ open, onOpenChange, hideTrigger }: LanguageDrawerProps) {
+export function LanguageDrawer({
+  open,
+  onOpenChange,
+  hideTrigger,
+}: LanguageDrawerProps) {
   const t = useTranslations();
   const locale = useLocale();
   const setLocale = useSetLocale();

@@ -1,29 +1,29 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
-describe('Dialog Components', () => {
-  it('renders Dialog with trigger', () => {
+describe("Dialog Components", () => {
+  it("renders Dialog with trigger", () => {
     render(
       <Dialog>
         <DialogTrigger data-testid="trigger">Open Dialog</DialogTrigger>
       </Dialog>
     );
-    expect(screen.getByTestId('trigger')).toBeInTheDocument();
-    expect(screen.getByText('Open Dialog')).toBeInTheDocument();
+    expect(screen.getByTestId("trigger")).toBeInTheDocument();
+    expect(screen.getByText("Open Dialog")).toBeInTheDocument();
   });
 
-  it('renders DialogTrigger as button', () => {
+  it("renders DialogTrigger as button", () => {
     render(
       <Dialog>
         <DialogTrigger data-testid="trigger-btn">Open</DialogTrigger>
       </Dialog>
     );
-    const trigger = screen.getByTestId('trigger-btn');
-    expect(trigger.tagName).toBe('BUTTON');
+    const trigger = screen.getByTestId("trigger-btn");
+    expect(trigger.tagName).toBe("BUTTON");
   });
 
-  it('applies custom className to DialogTrigger', () => {
+  it("applies custom className to DialogTrigger", () => {
     render(
       <Dialog>
         <DialogTrigger className="custom-trigger" data-testid="styled-trigger">
@@ -31,10 +31,10 @@ describe('Dialog Components', () => {
         </DialogTrigger>
       </Dialog>
     );
-    expect(screen.getByTestId('styled-trigger')).toHaveClass('custom-trigger');
+    expect(screen.getByTestId("styled-trigger")).toHaveClass("custom-trigger");
   });
 
-  it('forwards HTML attributes to DialogTrigger', () => {
+  it("forwards HTML attributes to DialogTrigger", () => {
     render(
       <Dialog>
         <DialogTrigger data-testid="attr-trigger" disabled>
@@ -42,10 +42,10 @@ describe('Dialog Components', () => {
         </DialogTrigger>
       </Dialog>
     );
-    expect(screen.getByTestId('attr-trigger')).toBeDisabled();
+    expect(screen.getByTestId("attr-trigger")).toBeDisabled();
   });
 
-  it('supports data attributes on DialogTrigger', () => {
+  it("supports data attributes on DialogTrigger", () => {
     render(
       <Dialog>
         <DialogTrigger data-testid="data-trigger" data-state="open">
@@ -53,10 +53,13 @@ describe('Dialog Components', () => {
         </DialogTrigger>
       </Dialog>
     );
-    expect(screen.getByTestId('data-trigger')).toHaveAttribute('data-state', 'open');
+    expect(screen.getByTestId("data-trigger")).toHaveAttribute(
+      "data-state",
+      "open"
+    );
   });
 
-  it('renders multiple dialog triggers', () => {
+  it("renders multiple dialog triggers", () => {
     render(
       <>
         <Dialog>
@@ -67,7 +70,7 @@ describe('Dialog Components', () => {
         </Dialog>
       </>
     );
-    expect(screen.getByTestId('trigger-1')).toBeInTheDocument();
-    expect(screen.getByTestId('trigger-2')).toBeInTheDocument();
+    expect(screen.getByTestId("trigger-1")).toBeInTheDocument();
+    expect(screen.getByTestId("trigger-2")).toBeInTheDocument();
   });
 });

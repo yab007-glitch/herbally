@@ -25,9 +25,7 @@ export default function NotFound() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Go Home
         </Button>
-        <Button render={<Link href="/herbs" />}>
-          Browse Herbs
-        </Button>
+        <Button render={<Link href="/herbs" />}>Browse Herbs</Button>
       </div>
     </div>
   );

@@ -4,7 +4,11 @@ export const metadata = {
   title: "Edit Herb",
 };
 
-export default async function EditHerbPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EditHerbPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   return (
     <div className="max-w-2xl">

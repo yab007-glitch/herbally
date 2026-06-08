@@ -45,7 +45,6 @@ export async function POST(req: NextRequest) {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://herbally.app";
 
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [

@@ -1,0 +1,9 @@
+name: Test Push
+on:
+  push:
+    branches: [fix/test-workflow]
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hello from push

@@ -29,33 +29,34 @@ git push origin main  # Triggers Vercel deployment
 
 ### Required (Production)
 
-| Variable | Description | Source |
-|----------|-------------|--------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Supabase Dashboard |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key | Supabase Dashboard |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | Supabase Dashboard |
-| `OPENROUTER_API_KEY` | AI provider API key | OpenRouter |
-| `STRIPE_SECRET_KEY` | Stripe secret key | Stripe Dashboard |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | Stripe CLI / Dashboard |
-| `SENTRY_ORG` | Sentry organization | Sentry Dashboard |
-| `SENTRY_PROJECT` | Sentry project | Sentry Dashboard |
-| `SENTRY_AUTH_TOKEN` | Sentry auth token | Sentry Dashboard |
+| Variable                        | Description               | Source                 |
+| ------------------------------- | ------------------------- | ---------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL      | Supabase Dashboard     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key  | Supabase Dashboard     |
+| `SUPABASE_SERVICE_ROLE_KEY`     | Supabase service role key | Supabase Dashboard     |
+| `OPENROUTER_API_KEY`            | AI provider API key       | OpenRouter             |
+| `STRIPE_SECRET_KEY`             | Stripe secret key         | Stripe Dashboard       |
+| `STRIPE_WEBHOOK_SECRET`         | Stripe webhook secret     | Stripe CLI / Dashboard |
+| `SENTRY_ORG`                    | Sentry organization       | Sentry Dashboard       |
+| `SENTRY_PROJECT`                | Sentry project            | Sentry Dashboard       |
+| `SENTRY_AUTH_TOKEN`             | Sentry auth token         | Sentry Dashboard       |
 
 ### Optional
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_APP_URL` | App URL for meta tags | `https://herbally.app` |
-| `OPENROUTER_BASE_URL` | Custom OpenRouter endpoint | `https://openrouter.ai/api/v1` |
-| `OPENROUTER_MODEL` | AI model to use | `openrouter/free` |
-| `RATE_LIMIT_BACKEND` | `memory` or `upstash` | `memory` |
-| `UPSTASH_REDIS_REST_URL` | Redis URL for rate limiting | - |
-| `UPSTASH_REDIS_REST_TOKEN` | Redis token | - |
-| `OPENFDA_BASE_URL` | Custom FDA API endpoint | `https://api.fda.gov` |
+| Variable                   | Description                 | Default                        |
+| -------------------------- | --------------------------- | ------------------------------ |
+| `NEXT_PUBLIC_APP_URL`      | App URL for meta tags       | `https://herbally.app`         |
+| `OPENROUTER_BASE_URL`      | Custom OpenRouter endpoint  | `https://openrouter.ai/api/v1` |
+| `OPENROUTER_MODEL`         | AI model to use             | `openrouter/free`              |
+| `RATE_LIMIT_BACKEND`       | `memory` or `upstash`       | `memory`                       |
+| `UPSTASH_REDIS_REST_URL`   | Redis URL for rate limiting | -                              |
+| `UPSTASH_REDIS_REST_TOKEN` | Redis token                 | -                              |
+| `OPENFDA_BASE_URL`         | Custom FDA API endpoint     | `https://api.fda.gov`          |
 
 ### Setup Instructions
 
 1. **Supabase**
+
    ```bash
    # Create project at https://supabase.com
    # Run migrations from supabase/migrations/
@@ -63,6 +64,7 @@ git push origin main  # Triggers Vercel deployment
    ```
 
 2. **OpenRouter**
+
    ```bash
    # Create account at https://openrouter.ai
    # Generate API key from dashboard
@@ -70,6 +72,7 @@ git push origin main  # Triggers Vercel deployment
    ```
 
 3. **Stripe**
+
    ```bash
    # Create account at https://stripe.com
    # Get secret key from Developers > API keys
@@ -102,6 +105,7 @@ git push origin main  # Triggers Vercel deployment
 ### Deployment (Vercel)
 
 1. **Push to main**
+
    ```bash
    git checkout main
    git pull origin main
@@ -136,24 +140,27 @@ git push origin main  # Triggers Vercel deployment
 ### If Production Has Issues
 
 1. **Identify the problem**
+
    ```bash
    # Check recent commits
    git log --oneline -10
-   
+
    # Check Vercel deployments
    vercel ls
    ```
 
 2. **Rollback to previous deployment**
+
    ```bash
    # Find previous deployment ID
    vercel ls --all
-   
+
    # Rollback
    vercel rollback <deployment-id>
    ```
 
 3. **Or revert commit**
+
    ```bash
    git revert HEAD
    git push origin main
@@ -188,13 +195,13 @@ curl https://herbally.app/api/health
 
 ### Key Metrics
 
-| Metric | Target | Alert Threshold |
-|--------|--------|-----------------|
-| LCP | < 2.5s | > 4.0s |
-| INP | < 200ms | > 500ms |
-| CLS | < 0.1 | > 0.25 |
-| Error Rate | < 1% | > 5% |
-| API Latency (p95) | < 500ms | > 2000ms |
+| Metric            | Target  | Alert Threshold |
+| ----------------- | ------- | --------------- |
+| LCP               | < 2.5s  | > 4.0s          |
+| INP               | < 200ms | > 500ms         |
+| CLS               | < 0.1   | > 0.25          |
+| Error Rate        | < 1%    | > 5%            |
+| API Latency (p95) | < 500ms | > 2000ms        |
 
 ### Dashboards
 
@@ -223,11 +230,11 @@ curl https://herbally.app/api/health
 
 ### Emergency Contacts
 
-| Role | Contact |
-|------|---------|
+| Role      | Contact        |
+| --------- | -------------- |
 | Tech Lead | [Your contact] |
-| DevOps | [Contact] |
-| On-Call | [Contact] |
+| DevOps    | [Contact]      |
+| On-Call   | [Contact]      |
 
 ---
 
@@ -253,12 +260,12 @@ npm run analyze
 
 ### Caching Strategy
 
-| Resource | Cache Duration |
-|----------|---------------|
-| Static assets | 1 year |
-| Images | 30 days |
-| API responses | 1 hour (ISR) |
-| Herb pages | 1 hour (ISR) |
+| Resource      | Cache Duration |
+| ------------- | -------------- |
+| Static assets | 1 year         |
+| Images        | 30 days        |
+| API responses | 1 hour (ISR)   |
+| Herb pages    | 1 hour (ISR)   |
 
 ---
 
@@ -293,22 +300,26 @@ npm run analyze
 ### Common Issues
 
 **Build fails with "Module not found"**
+
 ```bash
 npm install
 npm run build
 ```
 
 **Environment variables not working**
+
 - Check Vercel dashboard > Project Settings > Environment Variables
 - Redeploy after adding new variables
 - Prefix with `NEXT_PUBLIC_` for client-side access
 
 **Slow database queries**
+
 - Check Supabase dashboard for slow queries
 - Verify indexes exist on filtered columns
 - Consider adding Redis caching
 
 **AI responses slow or failing**
+
 - Check OpenRouter status
 - Verify API key is valid
 - Consider fallback model configuration
@@ -326,4 +337,4 @@ npm run build
 
 ---
 
-*This runbook is a living document. Update after every incident or major change.*
+_This runbook is a living document. Update after every incident or major change._

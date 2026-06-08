@@ -30,6 +30,7 @@ Most endpoints are public. Authenticated endpoints require a valid Supabase sess
 Check system health and service status.
 
 **Response:**
+
 ```json
 {
   "status": "ok",
@@ -45,6 +46,7 @@ Check system health and service status.
 ```
 
 **Status Codes:**
+
 - `200` - All systems operational
 - `503` - One or more services degraded
 
@@ -65,11 +67,13 @@ Search for herbs by name, common names, or traditional uses.
 | `offset` | number | No | Pagination offset |
 
 **Example:**
+
 ```bash
 curl "https://herbally.app/api/herbs/search?q=ginger&limit=10"
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -98,6 +102,7 @@ curl "https://herbally.app/api/herbs/search?q=ginger&limit=10"
 Get a random herb (for "surprise me" feature).
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -121,6 +126,7 @@ Interact with the AI-powered virtual herbalist.
 **Authentication:** Required (Supabase session)
 
 **Request Body:**
+
 ```json
 {
   "message": "Can I take ginger with blood thinners?",
@@ -135,6 +141,7 @@ Interact with the AI-powered virtual herbalist.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -153,6 +160,7 @@ Interact with the AI-powered virtual herbalist.
 ```
 
 **Status Codes:**
+
 - `200` - Success
 - `401` - Unauthorized
 - `429` - Rate limit exceeded
@@ -169,6 +177,7 @@ Analyze potential herb-drug interactions.
 **Authentication:** Required
 
 **Request Body:**
+
 ```json
 {
   "herbs": ["ginger", "turmeric"],
@@ -178,6 +187,7 @@ Analyze potential herb-drug interactions.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -232,6 +242,7 @@ Proxy to OpenFDA API for adverse events.
 Submit Web Vitals metrics.
 
 **Request Body:**
+
 ```json
 {
   "vitals": [
@@ -257,6 +268,7 @@ Submit Web Vitals metrics.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true
@@ -274,6 +286,7 @@ Create a Stripe checkout session for donations.
 **Authentication:** Optional
 
 **Request Body:**
+
 ```json
 {
   "amount": 1000,
@@ -287,6 +300,7 @@ Create a Stripe checkout session for donations.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -302,6 +316,7 @@ Create a Stripe checkout session for donations.
 Handle Stripe webhook events.
 
 **Events Handled:**
+
 - `checkout.session.completed` - Record donation
 - `checkout.session.expired` - Log expired session
 - `payment_intent.payment_failed` - Log failed payment
@@ -327,15 +342,15 @@ Handle Stripe webhook events.
 
 ### Common Error Codes
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| `BAD_REQUEST` | 400 | Invalid request parameters |
-| `UNAUTHORIZED` | 401 | Authentication required |
-| `FORBIDDEN` | 403 | Insufficient permissions |
-| `NOT_FOUND` | 404 | Resource not found |
-| `RATE_LIMITED` | 429 | Too many requests |
-| `INTERNAL_ERROR` | 500 | Server error |
-| `SERVICE_UNAVAILABLE` | 503 | External service down |
+| Code                  | HTTP Status | Description                |
+| --------------------- | ----------- | -------------------------- |
+| `BAD_REQUEST`         | 400         | Invalid request parameters |
+| `UNAUTHORIZED`        | 401         | Authentication required    |
+| `FORBIDDEN`           | 403         | Insufficient permissions   |
+| `NOT_FOUND`           | 404         | Resource not found         |
+| `RATE_LIMITED`        | 429         | Too many requests          |
+| `INTERNAL_ERROR`      | 500         | Server error               |
+| `SERVICE_UNAVAILABLE` | 503         | External service down      |
 
 ---
 
@@ -343,11 +358,11 @@ Handle Stripe webhook events.
 
 ### Limits
 
-| Tier | Requests/Minute | Requests/Day |
-|------|-----------------|--------------|
-| Anonymous | 100 | 1,000 |
-| Authenticated | 500 | 10,000 |
-| Premium | 2,000 | 50,000 |
+| Tier          | Requests/Minute | Requests/Day |
+| ------------- | --------------- | ------------ |
+| Anonymous     | 100             | 1,000        |
+| Authenticated | 500             | 10,000       |
+| Premium       | 2,000           | 50,000       |
 
 ### Headers
 
@@ -380,7 +395,7 @@ X-RateLimit-Reset: 1620000000
 
 ```typescript
 // Example usage
-const response = await fetch('/api/herbs/search?q=ginger');
+const response = await fetch("/api/herbs/search?q=ginger");
 const data = await response.json();
 ```
 
@@ -405,6 +420,7 @@ curl -X POST "https://herbally.app/api/chat" \
 ## Changelog
 
 ### v1.0.0 (May 11, 2026)
+
 - Initial API documentation
 - Health check endpoint
 - Herb search and random endpoints
@@ -424,4 +440,4 @@ curl -X POST "https://herbally.app/api/chat" \
 
 ---
 
-*API subject to change. Version in URL path for breaking changes (e.g., `/api/v2/...`).*
+_API subject to change. Version in URL path for breaking changes (e.g., `/api/v2/...`)._

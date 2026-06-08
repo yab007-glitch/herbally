@@ -16,32 +16,32 @@ HerbAlly is a **production-ready SaaS platform** with 2,700+ medicinal herbs, AI
 
 ### 📊 Quality Metrics
 
-| Metric | Status | Target | Progress |
-|--------|--------|--------|----------|
-| ESLint Errors | ✅ 0 | 0 | 100% |
-| TypeScript Errors | ✅ 0 | 0 | 100% |
-| Test Coverage | ⚠️ ~40% | 70%+ | 57% |
-| E2E Tests | ✅ 28 | 50+ | 56% |
-| Component Tests | ✅ 21 | 100+ | 21% |
-| **Total Tests** | ✅ **49** | **150+** | **33%** |
+| Metric            | Status    | Target   | Progress |
+| ----------------- | --------- | -------- | -------- |
+| ESLint Errors     | ✅ 0      | 0        | 100%     |
+| TypeScript Errors | ✅ 0      | 0        | 100%     |
+| Test Coverage     | ⚠️ ~40%   | 70%+     | 57%      |
+| E2E Tests         | ✅ 28     | 50+      | 56%      |
+| Component Tests   | ✅ 21     | 100+     | 21%      |
+| **Total Tests**   | ✅ **49** | **150+** | **33%**  |
 
 ### 🚀 Performance Metrics
 
-| Metric | Status | Target | Progress |
-|--------|--------|--------|----------|
-| LCP | ⏳ TBD | < 2.5s | Measuring |
-| INP | ⏳ TBD | < 200ms | Measuring |
-| CLS | ⏳ TBD | < 0.1 | Measuring |
+| Metric      | Status | Target  | Progress  |
+| ----------- | ------ | ------- | --------- |
+| LCP         | ⏳ TBD | < 2.5s  | Measuring |
+| INP         | ⏳ TBD | < 200ms | Measuring |
+| CLS         | ⏳ TBD | < 0.1   | Measuring |
 | Bundle Size | ⏳ TBD | < 500KB | Analyzing |
 
 ### 🔒 Security Metrics
 
-| Metric | Status | Target | Progress |
-|--------|--------|--------|----------|
-| Vulnerabilities | ⚠️ 2 moderate | 0 | 0% |
-| Security Headers | ✅ All | All | 100% |
-| Secrets Management | ✅ Good | Good | 100% |
-| Dependency Updates | ✅ Current | Current | 100% |
+| Metric             | Status        | Target  | Progress |
+| ------------------ | ------------- | ------- | -------- |
+| Vulnerabilities    | ⚠️ 2 moderate | 0       | 0%       |
+| Security Headers   | ✅ All        | All     | 100%     |
+| Secrets Management | ✅ Good       | Good    | 100%     |
+| Dependency Updates | ✅ Current    | Current | 100%     |
 
 ---
 
@@ -113,6 +113,7 @@ HerbAlly is a **production-ready SaaS platform** with 2,700+ medicinal herbs, AI
 ## Roadmap
 
 ### Phase 1: Foundation ✅ (Week 1 - COMPLETE)
+
 - [x] Fix all linting errors
 - [x] Add E2E testing
 - [x] Add component testing
@@ -121,6 +122,7 @@ HerbAlly is a **production-ready SaaS platform** with 2,700+ medicinal herbs, AI
 - [x] Configure Dependabot
 
 ### Phase 2: Reliability 🎯 (Week 2 - IN PROGRESS)
+
 - [ ] Structured logging
 - [ ] Circuit breaker for AI
 - [ ] Fallback AI provider
@@ -129,6 +131,7 @@ HerbAlly is a **production-ready SaaS platform** with 2,700+ medicinal herbs, AI
 - [ ] Alert configuration
 
 ### Phase 3: Performance (Week 3)
+
 - [ ] Core Web Vitals optimization
 - [ ] Bundle size reduction
 - [ ] Image optimization
@@ -136,6 +139,7 @@ HerbAlly is a **production-ready SaaS platform** with 2,700+ medicinal herbs, AI
 - [ ] CDN caching strategy
 
 ### Phase 4: Growth (Week 4)
+
 - [ ] Premium features infrastructure
 - [ ] Subscription tiers
 - [ ] Email marketing integration
@@ -147,15 +151,18 @@ HerbAlly is a **production-ready SaaS platform** with 2,700+ medicinal herbs, AI
 ## Known Issues
 
 ### 🔴 Critical
+
 None
 
 ### 🟡 Medium
+
 1. **PostCSS Vulnerability** (2 moderate)
    - Transitive dependency via Next.js
    - Risk: Low (build-time only)
    - Action: Monitor Next.js releases
 
 ### 🟢 Low
+
 1. **Test Coverage Gaps**
    - Component coverage: ~40%
    - Target: 70%+
@@ -167,32 +174,34 @@ None
 
 ### Services
 
-| Service | Status | Uptime | Last Incident |
-|---------|--------|--------|---------------|
-| Vercel | ✅ Operational | 100% | None |
-| Supabase | ✅ Operational | 100% | None |
-| OpenRouter | ✅ Operational | 100% | None |
-| Stripe | ✅ Operational | 100% | None |
-| Sentry | ✅ Operational | 100% | None |
+| Service    | Status         | Uptime | Last Incident |
+| ---------- | -------------- | ------ | ------------- |
+| Vercel     | ✅ Operational | 100%   | None          |
+| Supabase   | ✅ Operational | 100%   | None          |
+| OpenRouter | ✅ Operational | 100%   | None          |
+| Stripe     | ✅ Operational | 100%   | None          |
+| Sentry     | ✅ Operational | 100%   | None          |
 
 ### Recent Deployments
 
-| Date | Version | Status | Changes |
-|------|---------|--------|---------|
-| May 11 | Latest | ✅ Success | Component tests, docs |
+| Date   | Version  | Status     | Changes                    |
+| ------ | -------- | ---------- | -------------------------- |
+| May 11 | Latest   | ✅ Success | Component tests, docs      |
 | May 11 | Previous | ✅ Success | E2E tests, bundle analyzer |
-| May 11 | Initial | ✅ Success | ESLint fixes, formatting |
+| May 11 | Initial  | ✅ Success | ESLint fixes, formatting   |
 
 ---
 
 ## Team & Ownership
 
 ### Technical Owner
+
 - **AI Tech Lead** (Active)
 - Commitment: Full ownership
 - Focus: Excellence, reliability, growth
 
 ### Contact
+
 - **GitHub:** @yab007-glitch
 - **Email:** support@herbally.app
 - **Status:** https://status.herbally.app (TODO)
@@ -202,6 +211,7 @@ None
 ## How to Help
 
 ### Contributors Welcome
+
 1. **Write Tests** - Component, E2E, integration
 2. **Improve Docs** - API, guides, examples
 3. **Performance** - Optimization ideas
@@ -209,6 +219,7 @@ None
 5. **Features** - Premium functionality
 
 ### Getting Started
+
 ```bash
 # Clone the repo
 git clone https://github.com/yab007-glitch/herbally.git
@@ -229,6 +240,7 @@ npm run dev
 ## Success Metrics
 
 ### Q2 2026 Goals
+
 - [ ] 70%+ test coverage
 - [ ] 90+ Lighthouse scores
 - [ ] < 2.5s LCP
@@ -237,6 +249,7 @@ npm run dev
 - [ ] Premium features launched
 
 ### Long-term Vision
+
 - **100,000+ monthly users**
 - **Industry-leading performance**
 - **Comprehensive herb database**
@@ -246,5 +259,5 @@ npm run dev
 
 ---
 
-*Last reviewed: May 11, 2026*  
-*Next review: May 18, 2026*
+_Last reviewed: May 11, 2026_  
+_Next review: May 18, 2026_

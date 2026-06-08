@@ -371,7 +371,7 @@ export default async function SymptomDetailPage({ params }: Props) {
   const localeCookie = cookieStore.get("herbally-locale");
   const locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
   const t = await getTranslations();
-if (!meta) {
+  if (!meta) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 text-center">
         <h2 className="text-2xl font-semibold">{t("herbDetail.notFound")}</h2>

@@ -21,7 +21,9 @@ export default function CalculatorError({
       <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-destructive/10">
         <Calculator className="size-10 text-destructive" />
       </div>
-      <h1 className="mb-2 text-2xl font-bold text-foreground">Calculator error</h1>
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
+        Calculator error
+      </h1>
       <p className="mb-6 max-w-md text-muted-foreground">
         Something went wrong with the dosage calculator. Please try again.
       </p>

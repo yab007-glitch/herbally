@@ -14,7 +14,11 @@ interface I18nProviderProps {
  * Kept as a local component to maintain the existing import path
  * and allow future customizations (e.g., additional context values).
  */
-export function I18nProvider({ children, messages, locale }: I18nProviderProps) {
+export function I18nProvider({
+  children,
+  messages,
+  locale,
+}: I18nProviderProps) {
   return (
     <NextIntlClientProvider messages={messages} locale={locale}>
       {children}

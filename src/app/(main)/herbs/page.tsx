@@ -70,7 +70,7 @@ export default async function HerbsPage({
   const page = parseInt(params.page || "1", 10);
   const locale = await getLocale();
   const t = await getTranslations();
-const [herbsResult, categoriesResult] = await Promise.all([
+  const [herbsResult, categoriesResult] = await Promise.all([
     getHerbs({ query, category, page }),
     getHerbCategories(),
   ]);

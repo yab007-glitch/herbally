@@ -47,8 +47,7 @@ async function tryOpenRouter(
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer":
-        process.env.NEXT_PUBLIC_APP_URL || "https://herbally.app",
+      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://herbally.app",
       "X-Title": "HerbAlly",
     },
     body: JSON.stringify({
@@ -136,7 +135,10 @@ export async function POST(request: NextRequest) {
   ];
 
   // Try primary model first, then fallbacks
-  const modelsToTry = [primaryModel, ...FALLBACK_MODELS.filter(m => m !== primaryModel)];
+  const modelsToTry = [
+    primaryModel,
+    ...FALLBACK_MODELS.filter((m) => m !== primaryModel),
+  ];
   let response: Response | null = null;
   let lastError: { status: number; text: string } | null = null;
 
@@ -144,7 +146,10 @@ export async function POST(request: NextRequest) {
     try {
       response = await tryOpenRouter(baseUrl, apiKey, model, chatMessages);
     } catch (fetchError) {
-      console.error(`Fetch to OpenRouter failed for model ${model}:`, fetchError);
+      console.error(
+        `Fetch to OpenRouter failed for model ${model}:`,
+        fetchError
+      );
       continue;
     }
 
@@ -158,7 +163,11 @@ export async function POST(request: NextRequest) {
     const status = response.status;
     const errorText = await response.text().catch(() => "Unknown error");
     lastError = { status, text: errorText };
-    console.error(`OpenRouter API error for model ${model}:`, status, errorText.substring(0, 200));
+    console.error(
+      `OpenRouter API error for model ${model}:`,
+      status,
+      errorText.substring(0, 200)
+    );
 
     if (status === 401 || status === 429) {
       // Auth or rate limit — don't retry with other models, same key
@@ -185,7 +194,8 @@ export async function POST(request: NextRequest) {
     } else if (status === 429) {
       userMessage = "AI service is busy. Please try again in a moment.";
     } else if (status >= 500) {
-      userMessage = "AI service is temporarily overloaded. Please try again in a moment.";
+      userMessage =
+        "AI service is temporarily overloaded. Please try again in a moment.";
     }
     return NextResponse.json(
       { error: userMessage },

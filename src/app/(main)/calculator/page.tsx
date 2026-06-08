@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
-const DoseCalculatorForm = dynamic(() => import("@/components/calculator/dose-calculator-form").then((mod) => mod.DoseCalculatorForm));
+const DoseCalculatorForm = dynamic(() =>
+  import("@/components/calculator/dose-calculator-form").then(
+    (mod) => mod.DoseCalculatorForm
+  )
+);
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { type Locale } from "@/lib/i18n/config";
