@@ -69,7 +69,11 @@ type ProvenanceUpdate = {
 
 function buildUpdate(): ProvenanceUpdate {
   const method = (getArg("method") as Method | null) ?? "manual";
-  if (!["manual", "ai_summarized", "primary_source", "unverified"].includes(method)) {
+  if (
+    !["manual", "ai_summarized", "primary_source", "unverified"].includes(
+      method
+    )
+  ) {
     throw new Error(`Invalid --method "${method}"`);
   }
   return {
@@ -94,12 +98,18 @@ async function mergeProvenance(
     .single();
 
   if (fetchErr || !data) {
-    throw new Error(`Herb not found: ${slug} (${fetchErr?.message ?? "no row"})`);
+    throw new Error(
+      `Herb not found: ${slug} (${fetchErr?.message ?? "no row"})`
+    );
   }
 
   const existing = (data.provenance as Record<string, unknown> | null) ?? {};
-  const existingSources = Array.isArray(existing.sources) ? (existing.sources as string[]) : [];
-  const mergedSources = Array.from(new Set([...existingSources, ...update.sources]));
+  const existingSources = Array.isArray(existing.sources)
+    ? (existing.sources as string[])
+    : [];
+  const mergedSources = Array.from(
+    new Set([...existingSources, ...update.sources])
+  );
 
   const next = {
     ...existing,
@@ -120,10 +130,15 @@ async function mergeProvenance(
     throw new Error(`Update failed: ${updateErr.message}`);
   }
   // eslint-disable-next-line no-console
-  console.log(`✓ ${slug} → ${update.verification_method} (${mergedSources.length} sources)`);
+  console.log(
+    `✓ ${slug} → ${update.verification_method} (${mergedSources.length} sources)`
+  );
 }
 
-async function clearProvenance(supabase: ReturnType<typeof getSupabase>, slug: string) {
+async function clearProvenance(
+  supabase: ReturnType<typeof getSupabase>,
+  slug: string
+) {
   const { data, error: fetchErr } = await supabase
     .from("herbs")
     .select("id")
@@ -152,7 +167,9 @@ async function main() {
 
   const slug = process.argv[2];
   if (!slug || slug.startsWith("--")) {
-    throw new Error("Pass a slug as the first positional argument, or use --csv <file>");
+    throw new Error(
+      "Pass a slug as the first positional argument, or use --csv <file>"
+    );
   }
   const supabase = getSupabase();
   if (hasFlag("clear")) {

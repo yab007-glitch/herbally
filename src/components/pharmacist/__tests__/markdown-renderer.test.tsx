@@ -9,20 +9,20 @@ vi.mock("next-intl", () => ({
 
 describe("ChatMarkdown", () => {
   it("renders plain markdown without errors", () => {
-    const { container } = render(<ChatMarkdown>{"Hello **world**."}</ChatMarkdown>);
+    const { container } = render(
+      <ChatMarkdown>{"Hello **world**."}</ChatMarkdown>
+    );
     expect(container.textContent).toContain("Hello");
     expect(container.textContent).toContain("world");
   });
 
   it("renders PMID:NNN as a real PubMed link", () => {
-    render(
-      <ChatMarkdown>
-        {"See PMID:32747204 for details."}
-      </ChatMarkdown>
-    );
+    render(<ChatMarkdown>{"See PMID:32747204 for details."}</ChatMarkdown>);
     const link = screen.getByRole("link", { name: /PMID:32747204/ });
     expect(link).toBeInTheDocument();
-    expect(link.getAttribute("href")).toBe("https://pubmed.ncbi.nlm.nih.gov/32747204/");
+    expect(link.getAttribute("href")).toBe(
+      "https://pubmed.ncbi.nlm.nih.gov/32747204/"
+    );
     expect(link.getAttribute("target")).toBe("_blank");
     expect(link.getAttribute("rel")).toContain("noopener");
   });
@@ -38,8 +38,9 @@ describe("ChatMarkdown", () => {
 
   it("renders the interaction line as a styled card", () => {
     const { container } = render(
-      <ChatMarkdown>{"**St. John's Wort** + **Warfarin** → **Severe**"}
-    </ChatMarkdown>
+      <ChatMarkdown>
+        {"**St. John's Wort** + **Warfarin** → **Severe**"}
+      </ChatMarkdown>
     );
     // The interaction card should contain the herb, drug, and severity word.
     expect(container.textContent).toContain("St. John's Wort");
@@ -48,7 +49,9 @@ describe("ChatMarkdown", () => {
   });
 
   it("does not break on plain text without enrichments", () => {
-    const { container } = render(<ChatMarkdown>{"Just a regular sentence."}</ChatMarkdown>);
+    const { container } = render(
+      <ChatMarkdown>{"Just a regular sentence."}</ChatMarkdown>
+    );
     expect(container.textContent).toBe("Just a regular sentence.");
   });
 
@@ -60,7 +63,9 @@ describe("ChatMarkdown", () => {
     const codeEl = container.querySelector("code");
     expect(codeEl).toBeTruthy();
     expect(codeEl?.textContent).toContain("PMID:12345");
-    const links = container.querySelectorAll('a[href*="pubmed.ncbi.nlm.nih.gov"]');
+    const links = container.querySelectorAll(
+      'a[href*="pubmed.ncbi.nlm.nih.gov"]'
+    );
     expect(links).toHaveLength(0);
   });
 });

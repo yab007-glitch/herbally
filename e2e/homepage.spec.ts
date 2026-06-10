@@ -40,18 +40,10 @@ test.describe("Marketing landing page (/)", () => {
     page,
   }) => {
     await page.goto("/");
-    await expect(
-      page.getByText(/Medicinal Herbs/i).first()
-    ).toBeVisible();
-    await expect(
-      page.getByText(/Dosage Calculator/i).first()
-    ).toBeVisible();
-    await expect(
-      page.getByText(/Interaction Checker/i).first()
-    ).toBeVisible();
-    await expect(
-      page.getByText(/Virtual Herbalist/i).first()
-    ).toBeVisible();
+    await expect(page.getByText(/Medicinal Herbs/i).first()).toBeVisible();
+    await expect(page.getByText(/Dosage Calculator/i).first()).toBeVisible();
+    await expect(page.getByText(/Interaction Checker/i).first()).toBeVisible();
+    await expect(page.getByText(/Virtual Herbalist/i).first()).toBeVisible();
   });
 
   test("has valid meta tags for SEO", async ({ page }) => {

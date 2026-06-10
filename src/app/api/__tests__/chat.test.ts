@@ -26,8 +26,15 @@ async function loadRoute() {
   return mod;
 }
 
-function makeRequest(body: unknown, headers: Record<string, string> = {}): NextRequest {
-  const init: { method: string; headers: Record<string, string>; body?: string } = {
+function makeRequest(
+  body: unknown,
+  headers: Record<string, string> = {}
+): NextRequest {
+  const init: {
+    method: string;
+    headers: Record<string, string>;
+    body?: string;
+  } = {
     method: "POST",
     headers: { "content-type": "application/json", ...headers },
   };
@@ -40,7 +47,9 @@ function streamResponse(): Response {
   return new Response(
     new ReadableStream({
       start(controller) {
-        controller.enqueue(enc.encode("data: {\"choices\":[{\"delta\":{\"content\":\"hi\"}}]}\n\n"));
+        controller.enqueue(
+          enc.encode('data: {"choices":[{"delta":{"content":"hi"}}]}\n\n')
+        );
         controller.enqueue(enc.encode("data: [DONE]\n\n"));
         controller.close();
       },
@@ -57,7 +66,12 @@ beforeEach(() => {
   delete process.env.OPENROUTER_BASE_URL;
   fetchMock.mockReset();
   rateLimitMock.mockReset();
-  rateLimitMock.mockResolvedValue({ success: true, limit: 20, remaining: 19, reset: 0 });
+  rateLimitMock.mockResolvedValue({
+    success: true,
+    limit: 20,
+    remaining: 19,
+    reset: 0,
+  });
 });
 
 afterEach(() => {
@@ -69,7 +83,9 @@ describe("POST /api/chat — error paths", () => {
   it("returns 503 when OPENROUTER_API_KEY is missing", async () => {
     delete process.env.OPENROUTER_API_KEY;
     const { POST } = await loadRoute();
-    const res = await POST(makeRequest({ messages: [{ role: "user", content: "hi" }] }));
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
     expect(res.status).toBe(503);
     const json = await res.json();
     expect(json.error).toMatch(/not configured/i);
@@ -94,9 +110,16 @@ describe("POST /api/chat — error paths", () => {
   });
 
   it("returns 429 when rate limit is exceeded, with Retry-After header", async () => {
-    rateLimitMock.mockResolvedValueOnce({ success: false, limit: 20, remaining: 0, reset: 60 });
+    rateLimitMock.mockResolvedValueOnce({
+      success: false,
+      limit: 20,
+      remaining: 0,
+      reset: 60,
+    });
     const { POST } = await loadRoute();
-    const res = await POST(makeRequest({ messages: [{ role: "user", content: "hi" }] }));
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
     expect(res.status).toBe(429);
     expect(res.headers.get("Retry-After")).toBe("60");
   });
@@ -109,14 +132,20 @@ describe("POST /api/chat — model fallback chain", () => {
       .mockResolvedValueOnce(streamResponse());
 
     const { POST } = await loadRoute();
-    const res = await POST(makeRequest({ messages: [{ role: "user", content: "hi" }] }));
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
     expect(res.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(2);
     // First call is to the configured primary.
-    const firstBody = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const firstBody = JSON.parse(
+      (fetchMock.mock.calls[0][1] as RequestInit).body as string
+    );
     expect(firstBody.model).toBe("openrouter/free");
     // Second call falls back to the first non-primary model in FALLBACK_MODELS.
-    const secondBody = JSON.parse((fetchMock.mock.calls[1][1] as RequestInit).body as string);
+    const secondBody = JSON.parse(
+      (fetchMock.mock.calls[1][1] as RequestInit).body as string
+    );
     expect(secondBody.model).not.toBe("openrouter/free");
   });
 
@@ -126,7 +155,9 @@ describe("POST /api/chat — model fallback chain", () => {
       .mockResolvedValueOnce(streamResponse());
 
     const { POST } = await loadRoute();
-    const res = await POST(makeRequest({ messages: [{ role: "user", content: "hi" }] }));
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
     expect(res.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
@@ -135,7 +166,9 @@ describe("POST /api/chat — model fallback chain", () => {
     fetchMock.mockResolvedValueOnce(new Response("bad key", { status: 401 }));
 
     const { POST } = await loadRoute();
-    const res = await POST(makeRequest({ messages: [{ role: "user", content: "hi" }] }));
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
     expect(res.status).toBe(500);
     const json = await res.json();
     expect(json.error).toMatch(/not configured/i);
@@ -143,10 +176,14 @@ describe("POST /api/chat — model fallback chain", () => {
   });
 
   it("does NOT fall back on 429 (same key, would just retry and hit limit again)", async () => {
-    fetchMock.mockResolvedValueOnce(new Response("rate limit", { status: 429 }));
+    fetchMock.mockResolvedValueOnce(
+      new Response("rate limit", { status: 429 })
+    );
 
     const { POST } = await loadRoute();
-    const res = await POST(makeRequest({ messages: [{ role: "user", content: "hi" }] }));
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
     expect(res.status).toBe(429);
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
@@ -180,7 +217,9 @@ describe("POST /api/chat — happy path", () => {
         rogue: "should not propagate",
       } as unknown as { messages: Array<{ role: string; content: string }> })
     );
-    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    const body = JSON.parse(
+      (fetchMock.mock.calls[0][1] as RequestInit).body as string
+    );
     // The route only forwards `model`, `messages`, `stream`, `max_tokens`, `temperature`.
     expect(body.model).toBe("openrouter/free");
     expect(body.messages).toHaveLength(2); // system + user

@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Leaf, Calculator, ShieldCheck, Sparkles } from "lucide-react";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { AnimatedCounter } from "@/components/shared/animated-counter";
 import { FloatingHerbs } from "@/components/shared/floating-herbs";
@@ -38,10 +43,7 @@ export default async function HomePage() {
             {t("hero.subtitle")}
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/herbs"
-              className={buttonVariants({ size: "lg" })}
-            >
+            <Link href="/herbs" className={buttonVariants({ size: "lg" })}>
               {t("hero.searchButton")}
             </Link>
             <Link
@@ -54,7 +56,10 @@ export default async function HomePage() {
           <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
             {(t.raw("hero.trustBadgesList") as string[]).map((badge) => (
               <li key={badge} className="flex items-center gap-1.5">
-                <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+                <ShieldCheck
+                  className="size-3.5 text-primary"
+                  aria-hidden="true"
+                />
                 {badge}
               </li>
             ))}
@@ -70,19 +75,25 @@ export default async function HomePage() {
               <div className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
                 <AnimatedCounter value="2,700+" />
               </div>
-              <div className="mt-2 text-sm text-muted-foreground">{t("stats.herbs")}</div>
+              <div className="mt-2 text-sm text-muted-foreground">
+                {t("stats.herbs")}
+              </div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
                 <AnimatedCounter value="500+" />
               </div>
-              <div className="mt-2 text-sm text-muted-foreground">{t("stats.interactions")}</div>
+              <div className="mt-2 text-sm text-muted-foreground">
+                {t("stats.interactions")}
+              </div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold tracking-tight text-foreground md:text-5xl">
                 <AnimatedCounter value="100%" />
               </div>
-              <div className="mt-2 text-sm text-muted-foreground">{t("stats.free")}</div>
+              <div className="mt-2 text-sm text-muted-foreground">
+                {t("stats.free")}
+              </div>
             </div>
           </div>
         </div>
@@ -101,13 +112,18 @@ export default async function HomePage() {
           {FEATURE_KEYS.map((key, i) => {
             const Icon = FEATURE_ICONS[i];
             return (
-              <Card key={key} className="border-border/60 bg-card/50 backdrop-blur">
+              <Card
+                key={key}
+                className="border-border/60 bg-card/50 backdrop-blur"
+              >
                 <CardHeader>
                   <div className="mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <Icon className="size-5" aria-hidden="true" />
                   </div>
                   <CardTitle>{t(`features.${key}.title`)}</CardTitle>
-                  <CardDescription>{t(`features.${key}.description`)}</CardDescription>
+                  <CardDescription>
+                    {t(`features.${key}.description`)}
+                  </CardDescription>
                 </CardHeader>
               </Card>
             );
@@ -124,10 +140,7 @@ export default async function HomePage() {
             {t("cta.subtitle")}
           </p>
           <div className="mt-8">
-            <Link
-              href="/herbs"
-              className={buttonVariants({ size: "lg" })}
-            >
+            <Link href="/herbs" className={buttonVariants({ size: "lg" })}>
               {t("cta.button")}
             </Link>
           </div>

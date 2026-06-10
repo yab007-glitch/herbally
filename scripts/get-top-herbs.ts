@@ -39,7 +39,11 @@ async function getTopHerbs() {
     const viewScore = Math.min(50, Math.log10(1 + (herb.view_count ?? 0)) * 10);
 
     const priorityScore =
-      evidenceScore * 15 + useCount + hasCitations * 10 + hasCompounds * 5 + viewScore;
+      evidenceScore * 15 +
+      useCount +
+      hasCitations * 10 +
+      hasCompounds * 5 +
+      viewScore;
 
     return {
       name: herb.name,

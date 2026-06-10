@@ -21,7 +21,9 @@ describe("evaluateAssistantContent", () => {
   });
 
   it("blocks 'this will cure cancer' phrasing", () => {
-    const v = evaluateAssistantContent("This will cure your cancer completely.");
+    const v = evaluateAssistantContent(
+      "This will cure your cancer completely."
+    );
     expect(v.verdict).toBe("block");
   });
 
@@ -42,13 +44,17 @@ describe("evaluateAssistantContent", () => {
   });
 
   it("warns on diagnostic language", () => {
-    const v = evaluateAssistantContent("I can diagnose your condition from these symptoms.");
+    const v = evaluateAssistantContent(
+      "I can diagnose your condition from these symptoms."
+    );
     expect(v.verdict).toBe("warn");
     expect(v.appended).toMatch(/educational/i);
   });
 
   it("warns on 'instead of your prescription'", () => {
-    const v = evaluateAssistantContent("Take this herb instead of your prescription.");
+    const v = evaluateAssistantContent(
+      "Take this herb instead of your prescription."
+    );
     expect(v.verdict).toBe("warn");
   });
 
@@ -78,7 +84,9 @@ describe("evaluateAssistantContent", () => {
 
   it("does not falsely match partial phrases like 'medication review'", () => {
     // 'medication review' is a benign clinical term; should not trip a block.
-    const v = evaluateAssistantContent("Schedule a medication review with your doctor.");
+    const v = evaluateAssistantContent(
+      "Schedule a medication review with your doctor."
+    );
     expect(v.verdict).toBe("ok");
   });
 });

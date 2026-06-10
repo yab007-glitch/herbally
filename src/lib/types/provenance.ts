@@ -50,5 +50,8 @@ export function parseProvenance(raw: unknown): Provenance {
  * Drives the "Verified" badge.
  */
 export function isVerified(p: Provenance): boolean {
-  return p.verification_method === "manual" || p.verification_method === "primary_source";
+  return (
+    p.verification_method === "manual" ||
+    p.verification_method === "primary_source"
+  );
 }

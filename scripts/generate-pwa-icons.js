@@ -30,7 +30,15 @@ async function rasterize(size, paddingRatio = 0) {
       background: { r: 22, g: 163, b: 74, alpha: 1 }, // matches theme_color
     },
   })
-    .composite([{ input: Buffer.from(svg), top: offset, left: offset, width: inner, height: inner }])
+    .composite([
+      {
+        input: Buffer.from(svg),
+        top: offset,
+        left: offset,
+        width: inner,
+        height: inner,
+      },
+    ])
     .png()
     .toBuffer();
 }
@@ -49,7 +57,9 @@ async function main() {
     const buf = await rasterize(size, padding);
     await fs.writeFile(out, buf);
     // eslint-disable-next-line no-console
-    console.log(`✓ ${file} (${size}×${size}${padding ? " maskable" : ""}, ${buf.length} bytes)`);
+    console.log(
+      `✓ ${file} (${size}×${size}${padding ? " maskable" : ""}, ${buf.length} bytes)`
+    );
   }
 }
 

@@ -377,10 +377,15 @@ export function ChatInterface({
       // Post-stream safety guard: scan the final assistant text for red-flag
       // medical-advice patterns. On a hard block we replace the content with a
       // localised refusal; on a soft warn we append a localised disclaimer.
-      const verdict = evaluateAssistantContent(accumulated, locale === "fr" ? "fr" : "en");
+      const verdict = evaluateAssistantContent(
+        accumulated,
+        locale === "fr" ? "fr" : "en"
+      );
       if (verdict.verdict !== "ok" && verdict.appended) {
         const finalContent =
-          verdict.verdict === "block" ? verdict.appended : `${accumulated}${verdict.appended}`;
+          verdict.verdict === "block"
+            ? verdict.appended
+            : `${accumulated}${verdict.appended}`;
         accumulated = finalContent;
         setMessages((prev) =>
           prev.map((msg, idx) =>

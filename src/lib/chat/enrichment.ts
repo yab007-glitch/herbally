@@ -1,5 +1,13 @@
 import type { Plugin } from "unified";
-import type { Root, Text, Strong, Paragraph, Link, PhrasingContent, RootContent } from "mdast";
+import type {
+  Root,
+  Text,
+  Strong,
+  Paragraph,
+  Link,
+  PhrasingContent,
+  RootContent,
+} from "mdast";
 import type { Parent } from "unist";
 import { visitParents, SKIP } from "unist-util-visit-parents";
 
@@ -46,7 +54,10 @@ function nodeData(node: { data?: DataBag }): DataBag {
 function getText(node: PhrasingContent | undefined): string {
   if (!node) return "";
   if (node.type === "text") return node.value;
-  if ("children" in node && Array.isArray((node as { children?: unknown[] }).children)) {
+  if (
+    "children" in node &&
+    Array.isArray((node as { children?: unknown[] }).children)
+  ) {
     return (node as { children: PhrasingContent[] }).children
       .map((c) => getText(c))
       .join("");
@@ -64,7 +75,7 @@ function paragraphMatchesInteractionLine(p: Paragraph): boolean {
 
 function markParagraphAsInteraction(p: Paragraph): void {
   const data = nodeData(p);
-  const props = (data.hProperties ?? (data.hProperties = {}));
+  const props = data.hProperties ?? (data.hProperties = {});
   props[INTERACTION_DATA_ATTR] = "true";
 }
 
@@ -89,7 +100,11 @@ function makePmidLink(pmid: string): Link {
     url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,
     title: `PubMed ID ${pmid}`,
     data: {
-      hProperties: { [PMID_DATA_ATTR]: pmid, target: "_blank", rel: "noopener noreferrer" },
+      hProperties: {
+        [PMID_DATA_ATTR]: pmid,
+        target: "_blank",
+        rel: "noopener noreferrer",
+      },
     },
     children: [{ type: "text", value: `PMID:${pmid}` }],
   };
@@ -156,7 +171,9 @@ export const remarkHerbAlly: Plugin<[], Root> = () => (tree) => {
   visitParents(tree, "text", (node: Text, ancestors) => {
     if (isInsideCode(ancestors)) return;
     if (!/PMID:\s?\d/.test(node.value)) return;
-    const parent = ancestors[ancestors.length - 1] as Parent & { children?: PhrasingContent[] };
+    const parent = ancestors[ancestors.length - 1] as Parent & {
+      children?: PhrasingContent[];
+    };
     if (!parent || !Array.isArray(parent.children)) return;
     const idx = parent.children.indexOf(node as unknown as PhrasingContent);
     if (idx < 0) return;

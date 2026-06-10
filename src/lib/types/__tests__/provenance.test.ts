@@ -20,7 +20,9 @@ describe("parseProvenance", () => {
   });
 
   it("returns UNVERIFIED for garbage (never throws)", () => {
-    expect(parseProvenance({ verification_method: "bogus" })).toEqual(UNVERIFIED);
+    expect(parseProvenance({ verification_method: "bogus" })).toEqual(
+      UNVERIFIED
+    );
     expect(parseProvenance("not-an-object")).toEqual(UNVERIFIED);
     expect(parseProvenance(42)).toEqual(UNVERIFIED);
   });
@@ -59,15 +61,21 @@ describe("parseProvenance", () => {
 
 describe("isVerified", () => {
   it("returns true for manual", () => {
-    expect(isVerified({ ...UNVERIFIED, verification_method: "manual" })).toBe(true);
+    expect(isVerified({ ...UNVERIFIED, verification_method: "manual" })).toBe(
+      true
+    );
   });
 
   it("returns true for primary_source", () => {
-    expect(isVerified({ ...UNVERIFIED, verification_method: "primary_source" })).toBe(true);
+    expect(
+      isVerified({ ...UNVERIFIED, verification_method: "primary_source" })
+    ).toBe(true);
   });
 
   it("returns false for ai_summarized", () => {
-    expect(isVerified({ ...UNVERIFIED, verification_method: "ai_summarized" })).toBe(false);
+    expect(
+      isVerified({ ...UNVERIFIED, verification_method: "ai_summarized" })
+    ).toBe(false);
   });
 
   it("returns false for unverified", () => {
@@ -77,12 +85,21 @@ describe("isVerified", () => {
 
 describe("ProvenanceSchema", () => {
   it("rejects unknown verification_method", () => {
-    expect(ProvenanceSchema.safeParse({ verification_method: "lol" }).success).toBe(false);
+    expect(
+      ProvenanceSchema.safeParse({ verification_method: "lol" }).success
+    ).toBe(false);
   });
 
   it("accepts the four known methods", () => {
-    for (const m of ["manual", "ai_summarized", "primary_source", "unverified"]) {
-      expect(ProvenanceSchema.safeParse({ verification_method: m }).success).toBe(true);
+    for (const m of [
+      "manual",
+      "ai_summarized",
+      "primary_source",
+      "unverified",
+    ]) {
+      expect(
+        ProvenanceSchema.safeParse({ verification_method: m }).success
+      ).toBe(true);
     }
   });
 });

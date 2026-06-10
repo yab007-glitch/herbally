@@ -138,6 +138,7 @@ supabase db push
 ```
 
 The migration:
+
 - adds `provenance jsonb NOT NULL DEFAULT '{}'::jsonb` to `herbs` and `herb_monographs`
 - adds a CHECK constraint allowing only the four known `verification_method` values
 - adds a GIN index for `provenance @> '{"verification_method":"manual"}'` queries

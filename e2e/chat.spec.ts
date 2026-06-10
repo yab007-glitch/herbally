@@ -8,7 +8,9 @@ import { test, expect } from "@playwright/test";
  */
 
 test.describe("AI Herbalist chat", () => {
-  test("renders the chat shell with the welcome empty state", async ({ page }) => {
+  test("renders the chat shell with the welcome empty state", async ({
+    page,
+  }) => {
     await page.goto("/herbalist");
     await expect(page).toHaveTitle(/HerbAlly/);
     // The chat input textarea is the canonical empty-state affordance.
@@ -73,9 +75,9 @@ test.describe("AI Herbalist chat", () => {
     await page.keyboard.press("Enter");
 
     // The English soft-warn text should be appended.
-    await expect(
-      page.getByText(/educational information only/i)
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/educational information only/i)).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test("replaces assistant content with a refusal on a hard block", async ({

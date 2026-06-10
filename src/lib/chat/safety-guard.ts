@@ -60,8 +60,10 @@ export function evaluateAssistantContent(
   content: string,
   locale: "en" | "fr" = "en"
 ): SafetyVerdict {
-  const hardBlocks = locale === "fr" ? [...HARD_BLOCKS_EN, ...HARD_BLOCKS_FR] : HARD_BLOCKS_EN;
-  const softWarns = locale === "fr" ? [...SOFT_WARNS_EN, ...SOFT_WARNS_FR] : SOFT_WARNS_EN;
+  const hardBlocks =
+    locale === "fr" ? [...HARD_BLOCKS_EN, ...HARD_BLOCKS_FR] : HARD_BLOCKS_EN;
+  const softWarns =
+    locale === "fr" ? [...SOFT_WARNS_EN, ...SOFT_WARNS_FR] : SOFT_WARNS_EN;
 
   for (const re of hardBlocks) {
     if (re.test(content)) {

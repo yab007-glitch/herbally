@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
-import type { Root, Paragraph, Text, Link, Strong, PhrasingContent } from "mdast";
+import type {
+  Root,
+  Paragraph,
+  Text,
+  Link,
+  Strong,
+  PhrasingContent,
+} from "mdast";
 import { enrichTree } from "../enrichment";
 
 /** Parse markdown to an mdast tree using the same remark-parse that ReactMarkdown uses internally. */
@@ -10,11 +17,18 @@ function parse(md: string): Root {
 }
 
 /** Walk a tree and find every node whose `data.hProperties` carries the given key. */
-function findByHProperty(tree: Root, key: string): Array<{ value: unknown; node: unknown }> {
+function findByHProperty(
+  tree: Root,
+  key: string
+): Array<{ value: unknown; node: unknown }> {
   const out: Array<{ value: unknown; node: unknown }> = [];
   const walk = (n: unknown) => {
     if (!n || typeof n !== "object") return;
-    const node = n as { type?: string; data?: { hProperties?: Record<string, unknown> }; children?: unknown[] };
+    const node = n as {
+      type?: string;
+      data?: { hProperties?: Record<string, unknown> };
+      children?: unknown[];
+    };
     const v = node.data?.hProperties?.[key];
     if (v !== undefined) out.push({ value: v, node });
     if (Array.isArray(node.children)) node.children.forEach(walk);
@@ -51,7 +65,9 @@ function collectParagraphs(tree: Root): Paragraph[] {
 
 describe("remarkHerbAlly — PMID linkification", () => {
   it("rewrites PMID:12345 to a PubMed link node", () => {
-    const tree = parse("Curcumin may reduce inflammation. See PMID:32747204 for details.");
+    const tree = parse(
+      "Curcumin may reduce inflammation. See PMID:32747204 for details."
+    );
     enrichTree(tree);
     const links = collectLinks(tree);
     expect(links).toHaveLength(1);
@@ -170,7 +186,8 @@ describe("remarkHerbAlly — interaction line detection", () => {
     (sev) => {
       const tree = parse(`**A** + **B** → **${sev}**`);
       enrichTree(tree);
-      const props = (collectParagraphs(tree)[0].data?.hProperties ?? {}) as Record<string, string>;
+      const props = (collectParagraphs(tree)[0].data?.hProperties ??
+        {}) as Record<string, string>;
       expect(props["data-interaction-severity"]).toBe(sev.toLowerCase());
     }
   );
@@ -190,7 +207,9 @@ describe("remarkHerbAlly — interaction line detection", () => {
 
 describe("remarkHerbAlly — identity transform on no-matches", () => {
   it("does not mutate a tree without any enriched patterns", () => {
-    const tree = parse("# Hello\n\nThis is a *regular* paragraph with **bold** and `code`.");
+    const tree = parse(
+      "# Hello\n\nThis is a *regular* paragraph with **bold** and `code`."
+    );
     const before = JSON.stringify(tree);
     enrichTree(tree);
     expect(JSON.stringify(tree)).toBe(before);

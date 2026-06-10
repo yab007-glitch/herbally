@@ -267,15 +267,15 @@ This is not just maintenance—this is **continuous improvement toward excellenc
 Following the review on 2026-06-09 (see `IMPROVEMENT_ROADMAP.md` for the
 detailed diff), the following landed in a single PR:
 
-| # | Change | Where | Status |
-|---|---|---|---|
-| 1 | Markdown enrichment (PMID, evidence, interaction cards) | `src/lib/chat/enrichment.ts`, `src/components/pharmacist/markdown-renderer.tsx` | ✓ |
-| 2 | Client-side safety guard (hard block + soft warn) | `src/lib/chat/safety-guard.ts` | ✓ |
-| 3 | Provenance jsonb column + script + UI badge | `supabase/migrations/00024_add_provenance.sql`, `src/components/herbs/provenance-badge.tsx`, `scripts/mark-herb-provenance.ts` | ✓ (migration not yet applied to prod) |
-| 4 | Marketing landing page replaces chat at `/` | `src/app/(marketing)/page.tsx`, `next.config.ts` redirects | ✓ |
-| 5 | OpenRouter free chain hardening (observability + escape hatch) | `src/app/api/chat/route.ts`, `.env.example` | ✓ |
-| 6 | PWA manifest fix (no more 404 on `/icon.png`) | `src/app/manifest.ts`, `public/sw.js` | ✓ (dedicated PNGs deferred to designer) |
-| 7 | Test coverage | `src/app/api/__tests__/chat.test.ts`, `e2e/chat.spec.ts`, `e2e/homepage.spec.ts` (rewritten) | ✓ |
+| #   | Change                                                         | Where                                                                                                                          | Status                                  |
+| --- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| 1   | Markdown enrichment (PMID, evidence, interaction cards)        | `src/lib/chat/enrichment.ts`, `src/components/pharmacist/markdown-renderer.tsx`                                                | ✓                                       |
+| 2   | Client-side safety guard (hard block + soft warn)              | `src/lib/chat/safety-guard.ts`                                                                                                 | ✓                                       |
+| 3   | Provenance jsonb column + script + UI badge                    | `supabase/migrations/00024_add_provenance.sql`, `src/components/herbs/provenance-badge.tsx`, `scripts/mark-herb-provenance.ts` | ✓ (migration not yet applied to prod)   |
+| 4   | Marketing landing page replaces chat at `/`                    | `src/app/(marketing)/page.tsx`, `next.config.ts` redirects                                                                     | ✓                                       |
+| 5   | OpenRouter free chain hardening (observability + escape hatch) | `src/app/api/chat/route.ts`, `.env.example`                                                                                    | ✓                                       |
+| 6   | PWA manifest fix (no more 404 on `/icon.png`)                  | `src/app/manifest.ts`, `public/sw.js`                                                                                          | ✓ (dedicated PNGs deferred to designer) |
+| 7   | Test coverage                                                  | `src/app/api/__tests__/chat.test.ts`, `e2e/chat.spec.ts`, `e2e/homepage.spec.ts` (rewritten)                                   | ✓                                       |
 
 **Test counts:** 211 unit + 4 new e2e. `npx tsc --noEmit` clean.
 

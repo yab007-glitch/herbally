@@ -1,10 +1,7 @@
 import { useTranslations } from "next-intl";
 import { CheckCircle2, Sparkles, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  type Provenance,
-  isVerified,
-} from "@/lib/types/provenance";
+import { type Provenance, isVerified } from "@/lib/types/provenance";
 
 /**
  * ProvenanceBadge — renders a small pill indicating how a herb/monograph
@@ -23,7 +20,10 @@ export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
     const when = provenance.last_verified_at
       ? new Date(provenance.last_verified_at).toLocaleDateString()
       : null;
-    const tooltip = [who ? `${t("reviewedBy")} ${who}` : null, when ? `${t("on")} ${when}` : null]
+    const tooltip = [
+      who ? `${t("reviewedBy")} ${who}` : null,
+      when ? `${t("on")} ${when}` : null,
+    ]
       .filter(Boolean)
       .join(" · ");
     return (
