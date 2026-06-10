@@ -3,32 +3,21 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   Send,
-  Bot,
-  User,
   AlertCircle,
-  Trash2,
-  Mic,
-  MicOff,
   Check,
-  Square,
-  RefreshCcw,
   Copy,
   RotateCcw,
+  Leaf,
+  ArrowDown,
 } from "lucide-react";
 import { ChatMarkdown } from "./markdown-renderer";
 import { ChatEmptyStateV2 } from "./chat-empty-state-v2";
 import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import {
-  createChatSession,
-  updateChatSession,
-  getChatSession,
-} from "@/lib/actions/chat-local";
+
 import {
   createGuestSession,
-  getGuestSession,
   addGuestMessage,
   deleteGuestSession,
 } from "@/lib/actions/chat-persist";
@@ -44,8 +33,6 @@ function makeId() {
 }
 
 // ─── Smart Command Parser ───────────────────────────────────────────
-// Detects /calculator, /compare <x> vs <y>, /herb <name> and injects
-// system context so the AI responds with structured, targeted answers.
 
 function parseCommand(text: string): {
   command: string | null;
@@ -59,7 +46,7 @@ function parseCommand(text: string): {
     return {
       command: "calculator",
       args: rest || null,
-      systemContext: `The user wants to calculate an herbal dosage.${rest ? ` Details: ${rest}` : " Guide them through the dosage calculation by asking about the herb name, patient age, weight, and adult dose. Explain which formula you would use (Clark's Rule, Young's Rule, BSA, or Fried's Rule) and why."}`,
+      systemContext: `The user wants to calculate an herbal dosage.${rest ? ` Details: ${rest}` : " Guide them through the dosage calculation by asking about the herb name, patient age, weight, and adult dose."}`,
     };
   }
 
@@ -68,7 +55,7 @@ function parseCommand(text: string): {
     return {
       command: "compare",
       args,
-      systemContext: `The user wants a structured side-by-side comparison between herbs: ${args}. Provide a comparison table covering: scientific names, active compounds, traditional uses, modern applications, typical dosage forms, contraindications, side effects, drug interactions, and pregnancy/nursing safety.`,
+      systemContext: `The user wants a comparison between herbs: ${args}. Provide a structured comparison.`,
     };
   }
 
@@ -77,11 +64,31 @@ function parseCommand(text: string): {
     return {
       command: "herb",
       args,
-      systemContext: `The user wants a comprehensive overview of the herb: ${args}. Provide: scientific name and family, key active compounds with mechanisms, traditional uses (by system), modern evidence-backed uses, typical adult dosage forms and amounts, contraindications, side effects, known drug interactions (with severity), and pregnancy/nursing safety.`,
+      systemContext: `The user wants a comprehensive overview of: ${args}. Provide: scientific name, active compounds, uses, dosage, contraindications, side effects, and drug interactions.`,
     };
   }
 
   return { command: null, args: null, systemContext: null };
+}
+
+// ─── Follow-up question generator ───────────────────────────────────
+
+function generateFollowUps(
+  lastAssistantMessage: string,
+  herbContext?: string | null
+): string[] {
+  const hasHerb =
+    herbContext && herbContext.length > 20;
+  const base = [
+    "What are the side effects?",
+    "What's the recommended dosage?",
+    "Is it safe during pregnancy?",
+  ];
+  if (hasHerb) {
+    base.push("Any drug interactions I should know about?");
+    base.push("What does the research say?");
+  }
+  return base.slice(0, 4);
 }
 
 // ─── Component ──────────────────────────────────────────────────────
@@ -98,728 +105,515 @@ export function ChatInterface({
   sessionId?: string | null;
 }) {
   const t = useTranslations();
-  const i18nLocale = useLocale();
-  const locale = localeProp || i18nLocale;
+  const locale = useLocale();
 
-  function createInitialMessage(): Message {
-    return {
-      role: "assistant",
-      content: t("pharmacist.initialMessage"),
-      id: makeId(),
-      timestamp: new Date().toISOString(),
-    };
-  }
-
-  const [messages, setMessages] = useState<Message[]>(() => [
-    createInitialMessage(),
-  ]);
+  // ── State ──
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [autoSent, setAutoSent] = useState(false);
-  const [currentSessionId, setCurrentSessionId] = useState<string | null>(
-    sessionId || null
+  const [streamingContent, setStreamingContent] = useState("");
+  const [sessionIdState, setSessionIdState] = useState<string | null>(
+    sessionId ?? null
   );
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
-  const [guestId, setLocalGuestId] = useState<string | null>(null);
-  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [hasSentMessage, setHasSentMessage] = useState(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // ─── Per-message actions state ─────────────────────────────────────
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [lastFailedMessage, setLastFailedMessage] = useState<string | null>(
-    null
-  );
-  const [retryCount, setRetryCount] = useState(0);
-  const MAX_RETRIES = 2;
-
-  // ─── Init guest ID ────────────────────────────────────────────────
-
-  useEffect(() => {
-    async function initGuestId() {
-      const id = await getGuestId();
-      setLocalGuestId(id);
-      await setGuestId(id);
+  const lastAssistantMessage = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "assistant") return messages[i];
     }
-    initGuestId();
-  }, []);
-
-  // ─── Load existing session ────────────────────────────────────────
-
-  useEffect(() => {
-    async function loadSession() {
-      if (!sessionId || !guestId) return;
-
-      const serverSession = await getGuestSession(sessionId, guestId);
-      if (serverSession && serverSession.messages.length > 0) {
-        const loaded = serverSession.messages
-          .filter((m) => m.role === "user" || m.role === "assistant")
-          .map((m) => ({
-            role: m.role as "user" | "assistant",
-            content: m.content,
-            id: m.id,
-            timestamp: m.createdAt,
-          }));
-        setMessages(loaded);
-        setCurrentSessionId(sessionId);
-        setShowSuggestions(false);
-        return;
-      }
-
-      const localSession = getChatSession(sessionId);
-      if (localSession?.messages?.length) {
-        setMessages(localSession.messages as ChatMessage[]);
-        setCurrentSessionId(sessionId);
-        setShowSuggestions(false);
-      }
-    }
-    if (guestId) loadSession();
-  }, [sessionId, guestId]);
-
-  // ─── Auto-scroll ──────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
+    return null;
   }, [messages]);
 
-  // ─── Auto-send deep-link queries ──────────────────────────────────
+  const showFollowUps =
+    !isLoading &&
+    lastAssistantMessage?.role === "assistant" &&
+    messages.length > 1;
+
+  const followUpQuestions = useMemo(() => {
+    if (!showFollowUps || !lastAssistantMessage) return [];
+    return generateFollowUps(lastAssistantMessage.content, herbContext);
+  }, [showFollowUps, lastAssistantMessage, herbContext]);
+
+  const isEmpty = messages.length === 0 && !isLoading;
+
+  // ── Scroll management ──
+  const scrollToBottom = useCallback((smooth = false) => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  }, []);
 
   useEffect(() => {
-    if (autoQuery && !autoSent) {
-      setAutoSent(true);
-      setShowSuggestions(false);
+    if (!showScrollButton) scrollToBottom();
+  }, [messages, streamingContent, showScrollButton, scrollToBottom]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handleScroll = () => {
+      const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+      setShowScrollButton(!atBottom);
+    };
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // ── Auto-send on mount ──
+  const autoSent = useRef(false);
+  useEffect(() => {
+    if (autoSent.current) return;
+    if (autoQuery && messages.length === 0 && !isLoading) {
+      autoSent.current = true;
       sendMessage(autoQuery);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoQuery, autoSent]);
+  }, [autoQuery]);
 
-  // ─── "Saved" indicator timeout ────────────────────────────────────
-
+  // ── Session persistence ──
   useEffect(() => {
-    if (justSaved) {
-      const timer = setTimeout(() => setJustSaved(false), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [justSaved]);
-
-  // ─── Persist messages ─────────────────────────────────────────────
-
-  const saveMessages = useCallback(
-    async (msgs: Message[]) => {
-      if (msgs.length <= 1 || !guestId) return;
-
+    if (messages.length <= 1) return;
+    const save = async () => {
+      setIsSaving(true);
       try {
-        setIsSaving(true);
-
-        if (!currentSessionId) {
-          const session = await createGuestSession(
-            guestId,
-            herbContext || undefined
-          );
+        const guestId = await getGuestId();
+        if (!guestId) {
+          const newId = makeId();
+          await setGuestId(newId);
+        }
+        const gid = (await getGuestId()) ?? "unknown";
+        if (!sessionIdState) {
+          const session = await createGuestSession(gid, messages[0]?.content.slice(0, 60) ?? "Chat");
           if (session) {
-            setCurrentSessionId(session.id);
-            for (const msg of msgs) {
-              if (msg.role === "user" || msg.role === "assistant") {
-                await addGuestMessage(
-                  session.id,
-                  msg.role,
-                  msg.content,
-                  guestId
-                );
-              }
+            const sid = session.id;
+            setSessionIdState(sid);
+            for (const msg of messages) {
+              await addGuestMessage(sid, msg.role as "user" | "assistant", msg.content, gid);
             }
-          } else {
-            const localSession = createChatSession(herbContext || undefined);
-            setCurrentSessionId(localSession.id);
-            updateChatSession(localSession.id, msgs);
           }
         } else {
-          const serverSession = await getGuestSession(
-            currentSessionId,
-            guestId
-          );
-          if (serverSession) {
-            const existingContent = new Set(
-              serverSession.messages.map((m) => m.content)
-            );
-            for (const msg of msgs) {
-              if (
-                !existingContent.has(msg.content) &&
-                (msg.role === "user" || msg.role === "assistant")
-              ) {
-                await addGuestMessage(
-                  currentSessionId,
-                  msg.role,
-                  msg.content,
-                  guestId
-                );
-              }
-            }
-          } else {
-            updateChatSession(currentSessionId, msgs);
-          }
+          const gid2 = (await getGuestId()) ?? "unknown";
+          await addGuestMessage(sessionIdState, messages[messages.length - 1].role as "user" | "assistant", messages[messages.length - 1].content, gid2);
         }
-
-        setJustSaved(true);
-      } catch (error) {
-        console.error("Failed to save chat:", error);
-        if (!currentSessionId) {
-          const localSession = createChatSession(herbContext || undefined);
-          setCurrentSessionId(localSession.id);
-          updateChatSession(localSession.id, msgs);
-        } else {
-          updateChatSession(currentSessionId, msgs);
-        }
+      } catch {
+        // Silent fail
       } finally {
         setIsSaving(false);
+        setJustSaved(true);
+        setTimeout(() => setJustSaved(false), 2000);
       }
-    },
-    [currentSessionId, herbContext, guestId]
-  );
+    };
+    const timer = setTimeout(save, 1500);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages.length]);
 
-  // ─── Send message ─────────────────────────────────────────────────
+  // ── Send message ──
+  async function sendMessage(text?: string) {
+    const content = (text ?? input).trim();
+    if (!content || isLoading) return;
 
-  async function sendMessage(text: string) {
-    if (!text.trim() || isLoading) return;
-
-    // Clear any previous error state
-    setLastFailedMessage(null);
-
-    // Parse smart commands before sending
-    const { systemContext } = parseCommand(text);
-
+    setHasSentMessage(true);
     const userMessage: Message = {
-      role: "user",
-      content: text.trim(),
       id: makeId(),
+      role: "user",
+      content,
       timestamp: new Date().toISOString(),
     };
 
-    const allMessages = [...messages, userMessage];
-    setMessages(allMessages);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    setShowSuggestions(false);
     setIsLoading(true);
+    setStreamingContent("");
+    setShowScrollButton(false);
 
-    // Reset retry count on new message attempt
-    setRetryCount(0);
+    // Parse commands
+    const command = parseCommand(content);
+    const overrideContext = command.systemContext;
 
-    // Create abort controller for stop-generation support
     const controller = new AbortController();
-    abortControllerRef.current = controller;
+    abortRef.current = controller;
 
     try {
-      trackEvent("chat_message_sent");
+      const msgs = [
+        ...messages.filter((m) => m.role !== ("system" as never)),
+        userMessage,
+      ];
+      const body: Record<string, unknown> = {
+        messages: msgs.map((m) => ({ role: m.role, content: m.content })),
+        locale: locale || localeProp,
+      };
+      if (overrideContext || herbContext) {
+        body.herbContext = overrideContext || herbContext;
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: allMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-          herbContext: systemContext
-            ? `${herbContext ?? ""}\n\n${systemContext}`.trim() || undefined
-            : (herbContext ?? undefined),
-          locale,
-        }),
+        body: JSON.stringify(body),
         signal: controller.signal,
       });
 
-      if (!response.ok || !response.body) {
-        throw new Error("Failed to get response");
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: "",
-        id: makeId(),
-        timestamp: new Date().toISOString(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      let accumulated = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        accumulated += chunk;
-        const current = accumulated;
-
-        setMessages((prev) =>
-          prev.map((msg, idx) =>
-            idx === prev.length - 1 ? { ...msg, content: current } : msg
-          )
-        );
-      }
-
-      // Post-stream safety guard: scan the final assistant text for red-flag
-      // medical-advice patterns. On a hard block we replace the content with a
-      // localised refusal; on a soft warn we append a localised disclaimer.
-      const verdict = evaluateAssistantContent(
-        accumulated,
-        locale === "fr" ? "fr" : "en"
-      );
-      if (verdict.verdict !== "ok" && verdict.appended) {
-        const finalContent =
-          verdict.verdict === "block"
-            ? verdict.appended
-            : `${accumulated}${verdict.appended}`;
-        accumulated = finalContent;
-        setMessages((prev) =>
-          prev.map((msg, idx) =>
-            idx === prev.length - 1 ? { ...msg, content: finalContent } : msg
-          )
-        );
-      }
-
-      setRetryCount(0);
-      saveMessages([
-        ...allMessages,
-        { ...assistantMessage, content: accumulated },
-      ]);
-    } catch (err: unknown) {
-      // Don't show error if user aborted intentionally
-      if (err instanceof DOMException && err.name === "AbortError") {
-        // Stopped by user — the partial message is already in state, keep it
-        return;
-      }
-
-      // Automatic retry with exponential backoff for transient errors
-      if (retryCount < MAX_RETRIES) {
-        const nextRetry = retryCount + 1;
-        setRetryCount(nextRetry);
-
-        // Show retrying indicator
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: "Unknown error" }));
         setMessages((prev) => [
           ...prev,
           {
-            role: "assistant",
-            content:
-              t("pharmacist.retrying") ||
-              `Retrying (${nextRetry}/${MAX_RETRIES})...`,
             id: makeId(),
+            role: "assistant",
+            content: err.error || t("pharmacist.error"),
             timestamp: new Date().toISOString(),
           },
         ]);
-
-        const delay = 1000 * (nextRetry + 1); // 2s, then 3s
-        setTimeout(() => {
-          // Remove the retrying indicator before retrying
-          setMessages((prev) => prev.slice(0, -1));
-          sendMessage(text);
-        }, delay);
         return;
       }
 
-      // Max retries exceeded — show final error
-      setRetryCount(0);
+      const reader = response.body?.getReader();
+      if (!reader) throw new Error("No stream");
 
-      // Store the failed message for manual retry
-      setLastFailedMessage(text.trim());
+      const decoder = new TextDecoder();
+      let fullContent = "";
 
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        fullContent += decoder.decode(value, { stream: true });
+        setStreamingContent(fullContent);
+        scrollToBottom();
+      }
+
+      // Run safety guard
+      const safety = evaluateAssistantContent(
+        fullContent,
+        locale === "fr" ? "fr" : "en"
+      );
+
+      let finalContent = fullContent;
+      if (safety.verdict === "block") {
+        finalContent = safety.appended ?? fullContent;
+      } else if (safety.verdict === "warn" && safety.appended) {
+        finalContent += safety.appended;
+      }
+
+      setStreamingContent("");
       setMessages((prev) => [
         ...prev,
         {
-          role: "assistant",
-          content: t("pharmacist.errorRetry") || t("pharmacist.error"),
           id: makeId(),
+          role: "assistant",
+          content: finalContent,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+
+      trackEvent("chat_message_sent", { hasHerbContext: !!herbContext });
+    } catch (err) {
+      if ((err as Error).name === "AbortError") return;
+      setStreamingContent("");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: makeId(),
+          role: "assistant",
+          content: t("pharmacist.error"),
           timestamp: new Date().toISOString(),
         },
       ]);
     } finally {
       setIsLoading(false);
-      abortControllerRef.current = null;
+      abortRef.current = null;
     }
   }
-
-  // ─── Stop generation ──────────────────────────────────────────────
 
   function stopGeneration() {
-    abortControllerRef.current?.abort();
+    abortRef.current?.abort();
+    if (streamingContent) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: makeId(),
+          role: "assistant",
+          content: streamingContent,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+      setStreamingContent("");
+    }
+    setIsLoading(false);
   }
 
-  // ─── Regenerate last response ─────────────────────────────────────
-
-  function regenerate() {
-    // Find the last user message
-    const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
-    if (!lastUserMsg) return;
-
-    // Remove the last assistant message(s) and resend
-    let lastUserIdx = -1;
-    for (let i = messages.length - 1; i >= 0; i--) {
-      if (messages[i].id === lastUserMsg.id) {
-        lastUserIdx = i;
-        break;
-      }
-    }
-
-    if (lastUserIdx >= 0) {
-      setMessages(messages.slice(0, lastUserIdx + 1));
-      // Send after a microtask so state settles
-      setTimeout(() => sendMessage(lastUserMsg.content), 0);
-    }
-  }
-
-  // ─── Retry after error ────────────────────────────────────────────
-
-  function retryFailed() {
-    if (!lastFailedMessage) return;
-    // Remove the error message (last assistant message)
+  const retryFailed = useCallback(() => {
     setMessages((prev) => prev.slice(0, -1));
-    setLastFailedMessage(null);
-    setTimeout(() => sendMessage(lastFailedMessage), 0);
-  }
+    sendMessage(messages[messages.length - 2]?.content ?? "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
 
-  // ─── Copy to clipboard ────────────────────────────────────────────
-
-  async function copyToClipboard(content: string, id: string) {
+  async function copyToClipboard(text: string, id: string) {
     try {
-      await navigator.clipboard.writeText(content);
+      await navigator.clipboard.writeText(text);
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     } catch {
-      // Fallback for older browsers / non-HTTPS
-      const textarea = document.createElement("textarea");
-      textarea.value = content;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
+      // Fallback
     }
   }
 
-  // ─── Handlers ─────────────────────────────────────────────────────
-
-  async function handleSubmit(e?: React.FormEvent) {
-    e?.preventDefault();
-    sendMessage(input);
+  function clearChat() {
+    if (sessionIdState) {
+      getGuestId().then(gid => {
+        if (gid) deleteGuestSession(sessionIdState, gid).catch(() => {});
+      });
+    }
+    setMessages([]);
+    setSessionIdState(null);
+    setStreamingContent("");
+    setHasSentMessage(false);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    sendMessage();
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSubmit();
+      sendMessage();
     }
   }
 
-  async function clearChat() {
-    setMessages([createInitialMessage()]);
-    if (currentSessionId && guestId) {
-      await deleteGuestSession(currentSessionId, guestId);
-    }
-    setCurrentSessionId(null);
-    setAutoSent(false);
-    setShowSuggestions(true);
-  }
-
-  // ─── Derived state ────────────────────────────────────────────────
-
-  const isEmpty = messages.length <= 1 && !isLoading && showSuggestions;
-  const lastMessage = messages[messages.length - 1];
-  const showFollowUps =
-    !isLoading && lastMessage?.role === "assistant" && messages.length > 1;
-
-  function getFollowUpQuestions(content: string): string[] {
-    const lower = content.toLowerCase();
-    const questions: string[] = [];
-
-    if (
-      lower.includes("dosage") ||
-      lower.includes("dose") ||
-      lower.includes("mg") ||
-      lower.includes("ml")
-    ) {
-      questions.push(t("pharmacist.followUp.childDosage"));
-    } else {
-      questions.push(t("pharmacist.followUp.recommendedDosage"));
-    }
-
-    if (lower.includes("interaction") || lower.includes("contraindic")) {
-      questions.push(t("pharmacist.followUp.saferAlternatives"));
-    } else {
-      questions.push(t("pharmacist.followUp.interactions"));
-    }
-
-    if (lower.includes("side effect") || lower.includes("adverse")) {
-      questions.push(t("pharmacist.followUp.sideEffects"));
-    } else {
-      questions.push(t("pharmacist.followUp.sideEffectsInfo"));
-    }
-
-    return questions;
-  }
-
-  const followUpQuestions = showFollowUps
-    ? getFollowUpQuestions(lastMessage.content)
-    : [];
-
-  const conversationTitle = useMemo(() => {
-    const firstUserMsg = messages.find((m) => m.role === "user");
-    if (!firstUserMsg) return null;
-    const text = firstUserMsg.content;
-    return text.length > 55 ? text.slice(0, 52) + "…" : text;
-  }, [messages]);
-
-  // ─── Voice input ──────────────────────────────────────────────────
-
-  const [isListening, setIsListening] = useState(false);
-  const recognitionRef = useRef<ReturnType<typeof createRecognition>>(null);
-
-  function createRecognition() {
-    if (typeof window === "undefined") return null;
-    const SpeechRecognition =
-      (window as unknown as Record<string, unknown>).SpeechRecognition ||
-      (window as unknown as Record<string, unknown>).webkitSpeechRecognition;
-    if (!SpeechRecognition) return null;
-    return new (SpeechRecognition as new () => {
-      continuous: boolean;
-      interimResults: boolean;
-      onresult: ((e: { results: { transcript: string }[][] }) => void) | null;
-      onerror: (() => void) | null;
-      onend: (() => void) | null;
-      start: () => void;
-      stop: () => void;
-    })();
-  }
-
-  function toggleVoice() {
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-      return;
-    }
-
-    const recognition = createRecognition();
-    if (!recognition) return;
-
-    recognition.continuous = false;
-    recognition.interimResults = false;
-    recognition.onresult = (e) => {
-      const transcript = e.results[0]?.[0]?.transcript;
-      if (transcript) {
-        setInput((prev) => prev + transcript);
-      }
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-    recognitionRef.current = recognition;
-    recognition.start();
-    setIsListening(true);
-  }
-
-  // Defer voice support detection to avoid hydration mismatch.
-  // Server always renders false; client sets true after mount.
-  const [hasVoiceSupport, setHasVoiceSupport] = useState(false);
+  // Adjust textarea height
   useEffect(() => {
-    setHasVoiceSupport(
-      "SpeechRecognition" in window || "webkitSpeechRecognition" in window
-    );
-  }, []);
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 120) + "px";
+  }, [input]);
 
-  // ─── Render ───────────────────────────────────────────────────────
+  // Focus input on mount
+  useEffect(() => {
+    if (isEmpty && inputRef.current && !autoQuery) {
+      inputRef.current.focus();
+    }
+  }, [isEmpty, autoQuery]);
 
+  // ── Render ──
   return (
-    <div className="flex h-full flex-col">
-      {/* ═══ Scrollable content area ═══ */}
-      {isEmpty ? (
-        <div ref={scrollRef} className="flex-1 overflow-y-auto min-h-0">
-          <ChatEmptyStateV2 onSendMessage={sendMessage} />
-        </div>
-      ) : (
-        /* ═══ ACTIVE CHAT STATE ═══ */
-        <>
-          {/* Slim conversation bar */}
-          <div className="flex items-center justify-between border-b px-4 py-2 shrink-0">
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Bot className="size-3.5" />
-              </div>
-              {conversationTitle && (
-                <span className="truncate text-sm font-medium text-foreground">
-                  {conversationTitle}
-                </span>
-              )}
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              type="button"
-              onClick={clearChat}
-              className="h-9 shrink-0 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-            >
-              <Trash2 className="size-3.5" />
-              <span className="hidden sm:inline">{t("pharmacist.clear")}</span>
-            </Button>
+    <div className="flex flex-col h-[calc(100dvh-12rem)] sm:h-[calc(100dvh-10rem)] rounded-2xl border border-border bg-card overflow-hidden">
+      {/* Messages area */}
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto scrollbar-hide"
+        role="log"
+        aria-label="Chat messages"
+      >
+        {isEmpty ? (
+          <div className="flex h-full items-center justify-center p-6">
+            <ChatEmptyStateV2 onSendMessage={sendMessage} />
           </div>
-
-          {/* Messages scroll area — flex-1 min-h-0 is critical for overflow */}
-          <div
-            ref={scrollRef}
-            className="flex-1 overflow-y-auto px-4 py-4 min-h-0"
-            role="log"
-            aria-label="Chat messages"
-          >
-            <div className="mx-auto max-w-3xl space-y-6">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={cn(
-                    "flex gap-3 animate-message-in",
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  )}
-                >
-                  {message.role === "assistant" && (
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <Bot className="size-4" />
+        ) : (
+          <div className="mx-auto max-w-2xl space-y-1 px-4 py-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={cn(
+                  "flex gap-2 animate-message-in",
+                  message.role === "user" ? "justify-end" : "justify-start"
+                )}
+              >
+                {message.role === "user" ? (
+                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-primary/10 px-4 py-2.5 text-sm leading-relaxed text-foreground">
+                    {message.content}
+                  </div>
+                ) : (
+                  <div className="flex gap-2 max-w-[85%]">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
+                      <Leaf className="size-3" />
                     </div>
-                  )}
-                  <div
-                    className={cn(
-                      "relative max-w-[80%] rounded-lg px-4 py-3 text-sm leading-relaxed",
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground"
-                    )}
-                  >
-                    {message.role === "assistant" ? (
-                      <>
-                        {message.content === t("pharmacist.error") ? (
+                    <div className="min-w-0">
+                      {message.content === t("pharmacist.error") ? (
+                        <div className="rounded-2xl rounded-bl-md bg-destructive/5 px-4 py-2.5 text-sm text-destructive">
                           <div className="flex flex-col gap-2">
-                            <p className="text-sm text-muted-foreground">
-                              {message.content}
-                            </p>
+                            <p>{message.content}</p>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={retryFailed}
-                              className="w-fit gap-1.5 text-xs"
+                              className="w-fit gap-1 text-xs"
                             >
                               <RotateCcw className="size-3" />
                               {t("pharmacist.retry")}
                             </Button>
                           </div>
-                        ) : (
-                          <>
-                            <div className="prose prose-sm max-w-none dark:prose-invert">
-                              <ChatMarkdown>{message.content}</ChatMarkdown>
-                            </div>
-                            {/* Action buttons: Copy + Regenerate */}
-                            <div className="mt-2 flex items-center gap-1 border-t pt-2 border-border/40">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() =>
-                                  copyToClipboard(message.content, message.id)
-                                }
-                                className="h-9 gap-1 text-xs text-muted-foreground hover:text-foreground"
-                                aria-label="Copy response"
-                              >
-                                {copiedId === message.id ? (
-                                  <>
-                                    <Check className="size-3 text-success" />
-                                    <span className="text-success">
-                                      {t("pharmacist.copied")}
-                                    </span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Copy className="size-3" />
-                                    <span>{t("pharmacist.copy")}</span>
-                                  </>
-                                )}
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={regenerate}
-                                className="h-9 gap-1 text-xs text-muted-foreground hover:text-foreground"
-                                aria-label="Regenerate response"
-                              >
-                                <RefreshCcw className="size-3" />
-                                <span className="hidden sm:inline">
-                                  {t("pharmacist.regenerate")}
-                                </span>
-                              </Button>
-                            </div>
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <p className="whitespace-pre-wrap">{message.content}</p>
-                    )}
-                  </div>
-                  {message.role === "user" && (
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-foreground/10 text-foreground">
-                      <User className="size-4" />
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {/* Typing indicator */}
-              {isLoading &&
-                messages[messages.length - 1]?.role !== "assistant" && (
-                  <div className="flex gap-3 animate-message-in">
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <Bot className="size-4 animate-pulse" />
-                    </div>
-                    <div className="rounded-lg bg-muted px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-muted-foreground">
-                          {t("pharmacist.thinking")}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <span className="size-2 rounded-full bg-primary/70 animate-typing-dot" />
-                          <span className="size-2 rounded-full bg-primary/70 animate-typing-dot [animation-delay:160ms]" />
-                          <span className="size-2 rounded-full bg-primary/70 animate-typing-dot [animation-delay:320ms]" />
-                        </span>
-                      </div>
+                        </div>
+                      ) : (
+                        <div className="group relative rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5 text-sm leading-relaxed text-foreground">
+                          <ChatMarkdown>{message.content}</ChatMarkdown>
+                          {/* Copy button — show on hover */}
+                          <button
+                            onClick={() => copyToClipboard(message.content, message.id)}
+                            className="absolute -bottom-1 right-0 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
+                            aria-label="Copy response"
+                          >
+                            {copiedId === message.id ? (
+                              <>
+                                <Check className="size-3 text-green-600" />
+                                Copied
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="size-3" />
+                                Copy
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
+              </div>
+            ))}
 
-              {/* Follow-up suggestion chips */}
-              {showFollowUps && (
-                <div className="flex flex-wrap gap-2 pt-1 animate-message-in">
-                  {followUpQuestions.map((q) => (
-                    <button
-                      key={q}
-                      type="button"
-                      onClick={() => sendMessage(q)}
-                      className="rounded-full border border-border/60 bg-background px-3 py-1 text-xs text-muted-foreground transition-all hover:border-primary/30 hover:text-primary"
-                    >
-                      {q}
-                    </button>
-                  ))}
+            {/* Streaming message */}
+            {isLoading && streamingContent && (
+              <div className="flex gap-2 animate-message-in">
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
+                  <Leaf className="size-3" />
                 </div>
-              )}
-            </div>
+                <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5 text-sm leading-relaxed text-foreground">
+                  <ChatMarkdown>{streamingContent}</ChatMarkdown>
+                  <span className="inline-block w-1.5 h-4 ml-0.5 bg-primary/60 animate-pulse rounded-sm align-middle" />
+                </div>
+              </div>
+            )}
+
+            {/* Loading dots (waiting for first token) */}
+            {isLoading && !streamingContent && (
+              <div className="flex gap-2 animate-message-in">
+                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
+                  <Leaf className="size-3" />
+                </div>
+                <div className="rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5">
+                  <div className="flex items-center gap-1">
+                    <span className="size-1.5 rounded-full bg-muted-foreground/40 animate-bounce" />
+                    <span className="size-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:0.15s]" />
+                    <span className="size-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:0.3s]" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Follow-up suggestions */}
+            {showFollowUps && followUpQuestions.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-2 animate-message-in">
+                {followUpQuestions.map((q) => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => sendMessage(q)}
+                    className="rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Spacer for scroll */}
+            <div className="h-2" />
           </div>
-        </>
+        )}
+      </div>
+
+      {/* Scroll to bottom button */}
+      {showScrollButton && (
+        <button
+          onClick={() => {
+            scrollToBottom(true);
+            setShowScrollButton(false);
+          }}
+          className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground shadow-md hover:text-foreground transition-all"
+        >
+          <ArrowDown className="size-3" />
+          New messages
+        </button>
       )}
 
-      {/* Donation prompt — show after 3+ messages exchanged */}
+      {/* Disclaimer — subtle */}
+      <div className="shrink-0 border-t border-border/50 px-4 py-1.5 text-center">
+        <p className="text-[10px] text-muted-foreground/60">
+          <AlertCircle className="inline size-2.5 -mt-0.5 mr-1" />
+          {t("pharmacist.disclaimer")}
+        </p>
+      </div>
+
+      {/* Input area */}
+      <div className="shrink-0 border-t border-border/50 px-4 py-3">
+        <form onSubmit={handleSubmit} className="flex items-end gap-2 mx-auto max-w-2xl">
+          <div className="relative flex-1">
+            <textarea
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={t("pharmacist.placeholder")}
+              className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-colors"
+              rows={1}
+              disabled={isLoading}
+              aria-label="Chat message input"
+            />
+          </div>
+          {isLoading ? (
+            <button
+              type="button"
+              onClick={stopGeneration}
+              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+              aria-label="Stop generating"
+            >
+              <div className="size-3 rounded-sm bg-destructive" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={!input.trim()}
+              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 transition-all"
+              aria-label="Send message"
+            >
+              <Send className="size-4" />
+            </button>
+          )}
+        </form>
+
+        {/* Footer row: clear + save status */}
+        {hasSentMessage && (
+          <div className="mt-2 flex items-center justify-between mx-auto max-w-2xl">
+            <button
+              onClick={clearChat}
+              className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+            >
+              Clear conversation
+            </button>
+            <span className="text-[10px] text-muted-foreground/60">
+              {isSaving ? "Saving..." : justSaved ? "✓ Saved" : ""}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Donation prompt */}
       {messages.length >= 3 && (
-        <div className="shrink-0 border-t border-primary/10 bg-primary/5 px-4 py-2 text-center">
-          <p className="text-xs text-muted-foreground">
+        <div className="shrink-0 border-t border-primary/10 bg-primary/5 px-4 py-1.5 text-center">
+          <p className="text-[10px] text-muted-foreground">
             {t("donate.promptAfterUse")}{" "}
             <a
               href="/donate"
@@ -830,92 +624,6 @@ export function ChatInterface({
           </p>
         </div>
       )}
-
-      {/* ═══ Disclaimer bar (always visible at bottom) ═══ */}
-      <div className="shrink-0 border-t bg-warning/5 px-4 py-2 dark:bg-warning/5">
-        <div className="flex items-center justify-between">
-          <p className="flex items-center gap-1.5 text-xs text-warning">
-            <AlertCircle className="size-3 shrink-0" />
-            {t("pharmacist.disclaimer")}
-          </p>
-          <div className="flex items-center gap-2">
-            {justSaved && (
-              <span className="flex items-center gap-1 text-xs text-success">
-                <Check className="size-3" />
-                {t("pharmacist.saved")}
-              </span>
-            )}
-            {isSaving && !justSaved && (
-              <span className="text-xs text-muted-foreground">
-                {t("pharmacist.saving")}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ═══ Bottom input (always visible) ═══ */}
-      <div className="shrink-0 border-t p-4">
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto flex max-w-3xl items-end gap-2"
-        >
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t("pharmacist.placeholder")}
-            className="min-h-[52px] max-h-32 resize-none focus-ring-animated rounded-xl"
-            rows={1}
-            disabled={isLoading}
-            aria-label="Chat message input"
-            autoFocus={isEmpty}
-          />
-          {hasVoiceSupport && (
-            <Button
-              type="button"
-              size="icon"
-              variant={isListening ? "destructive" : "outline"}
-              onClick={toggleVoice}
-              className="shrink-0 rounded-xl"
-              aria-label={
-                isListening
-                  ? t("pharmacist.voiceStop")
-                  : t("pharmacist.voiceStart")
-              }
-            >
-              {isListening ? (
-                <MicOff className="size-4" />
-              ) : (
-                <Mic className="size-4" />
-              )}
-            </Button>
-          )}
-          {isLoading ? (
-            <Button
-              type="button"
-              size="icon"
-              variant="destructive"
-              onClick={stopGeneration}
-              aria-label="Stop generating"
-              className="animate-pulse rounded-xl"
-            >
-              <Square className="size-4" />
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              size="icon"
-              disabled={!input.trim() || isLoading}
-              aria-label="Send message"
-              className="rounded-xl"
-            >
-              <Send className="size-4" />
-            </Button>
-          )}
-        </form>
-      </div>
     </div>
   );
 }
