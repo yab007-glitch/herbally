@@ -55,51 +55,19 @@
     "calc": "Calc"
   },
   "home": {
-    "hero": {
-      "badge": "Evidence-Based Herbal Medicine Platform",
-      "title": "Your Complete Guide to Medicinal Herbs",
-      "subtitle": "Explore 2,700+ herbs, calculate precise dosages, check drug interactions, and consult our AI herbalist — all in one place.",
-      "searchButton": "Explore Herbs",
-      "askHerbalistButton": "Ask AI Herbalist",
-      "trustBadgesList": [
-        "WHO Monographs",
-        "German Commission E",
-        "PubMed Research",
-        "FDA Compliant"
-      ]
-    },
-    "stats": {
-      "herbs": "Herbs Documented",
-      "interactions": "Drug Interactions",
-      "free": "Free to Use",
-      "heading": "Platform Statistics"
-    },
-    "features": {
-      "title": "Everything You Need for Herbal Wellness",
-      "subtitle": "Professional-grade tools built on scientific research and traditional knowledge.",
-      "herbs": {
-        "title": "2,700+ Medicinal Herbs",
-        "description": "The most comprehensive herbal database available. Detailed profiles with active compounds, traditional uses, and modern applications."
-      },
-      "calculator": {
-        "title": "Precision Dosage Calculator",
-        "description": "Calculate safe dosages using Clark's Rule, Young's Rule, BSA, and Fried's Rule. Get personalized recommendations based on age and weight."
-      },
-      "interactions": {
-        "title": "Drug Interaction Checker",
-        "description": "Cross-reference your medications with our database. Identify mild, moderate, severe, and contraindicated combinations."
-      },
-      "ai": {
-        "title": "AI Virtual Herbalist",
-        "description": "Ask questions about herbs, dosages, and safety. Powered by evidence-based sources including WHO monographs and PubMed research."
-      }
-    },
-    "cta": {
-      "title": "Start Your Herbal Journey Today",
-      "subtitle": "Browse our comprehensive database for free. No account required.",
-      "button": "Browse Herbs"
-    },
-    "trustBadges": "Powered by"
+    "heroTitle": "Your guide to medicinal herbs",
+    "heroSubtitle": "Explore 2,700+ herbs, check interactions, and ask the AI herbalist — free, no account needed.",
+    "heroButton": "Browse herbs",
+    "heroSecondary": "Ask AI herbalist",
+    "featuresTitle": "What you can do",
+    "featureHerbsTitle": "Herb database",
+    "featureHerbsDescription": "Search 2,700+ medicinal herbs with detailed profiles, uses, and safety information.",
+    "featureCalculatorTitle": "Dosage calculator",
+    "featureCalculatorDescription": "Get age and weight-based dosage recommendations using evidence-based formulas.",
+    "featureInteractionsTitle": "Interaction checker",
+    "featureInteractionsDescription": "Check for herb-drug interactions before combining supplements with medications.",
+    "featureAiTitle": "Virtual herbalist",
+    "featureAiDescription": "Ask questions about herbs, remedies, and safety. Evidence-based answers with citations."
   },
   "herbs": {
     "title": "Medicinal Herbs Database",
@@ -1136,7 +1104,7 @@
   },
   "herbalistPage": {
     "title": "Virtual Herbalist",
-    "subtitle": "Ask our AI-powered herbalist about herb safety, drug interactions, and usage guidance. Get evidence-based information from trusted sources.",
+    "subtitle": "Ask about herbs, interactions, dosage, and safety.",
     "safetyTitle": "Important: AI-Generated Information Limitations",
     "safetyNotMedical": "This AI provides educational information only, not medical advice.",
     "safetyDisclaimer": "Responses are generated from herb databases and may not reflect the most current research or your specific health situation.",
@@ -1154,7 +1122,9 @@
     "description": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
     "aboutProvider": "Powered by OpenRouter AI (free model)",
     "medsAutoQuery": "I'm taking: {meds}. Check for any known interactions between these medications and common herbal supplements. Flag any dangerous combinations.",
-    "herbAutoQuery": "What are the key drug interactions and safety concerns for {name} ({scientific})? List the most important interactions, severity, and who should avoid it."
+    "herbAutoQuery": "What are the key drug interactions and safety concerns for {name} ({scientific})? List the most important interactions, severity, and who should avoid it.",
+    "emptyStateTitle": "Ask me anything about herbs",
+    "browseHerbs": "Browse herb catalog"
   },
   "donateButtons": {
     "coffee": "Coffee",

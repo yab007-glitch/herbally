@@ -55,51 +55,19 @@
     "calc": "Calc"
   },
   "home": {
-    "hero": {
-      "badge": "Plateforme de Phytothérapie Basée sur les Preuves",
-      "title": "Votre Guide Complet des Herbes Médicinales",
-      "subtitle": "Explorez plus de 2 700 herbes, calculez les posologies précis, vérifiez les interactions médicamenteuses et consultez notre herboriste IA — tout en un seul endroit.",
-      "searchButton": "Explorer les Herbes",
-      "askHerbalistButton": "Demander à l'Herboriste IA",
-      "trustBadgesList": [
-        "Monographies de l'OMS",
-        "Commission E allemande",
-        "Recherche PubMed",
-        "Conforme FDA"
-      ]
-    },
-    "stats": {
-      "herbs": "Herbes Documentées",
-      "interactions": "Interactions",
-      "free": "Gratuit",
-      "heading": "Statistiques de la plateforme"
-    },
-    "features": {
-      "title": "Tout ce dont Vous Avez Besoin pour le Bien-être par les plantes",
-      "subtitle": "Des outils professionnels basés sur la recherche scientifique et les connaissances traditionnelles.",
-      "herbs": {
-        "title": "2 700+ Herbes Médicinales",
-        "description": "La base de données sur les herbes la plus complète disponible. Profils détaillés avec les composés actifs, les utilisations traditionnelles et les applications modernes."
-      },
-      "calculator": {
-        "title": "Calculateur de Posologie de Précision",
-        "description": "Calculez les posologies sûrs en utilisant la règle de Clark, la règle de Young, la BSA et la règle de Fried. Obtenez des recommandations personnalisées basées sur l'âge et le poids."
-      },
-      "interactions": {
-        "title": "Vérificateur d'Interactions Médicamenteuses",
-        "description": "Faites une référence croisée de vos médicaments avec notre base de données. Identifiez les combinaisons légères, modérées, graves et contre-indiquées."
-      },
-      "ai": {
-        "title": "Herboriste IA Virtuel",
-        "description": "Posez des questions sur les herbes, les posologies et la sécurité. Propulsé par des sources basées sur des preuves, y compris les monographies de l'OMS et la recherche PubMed."
-      }
-    },
-    "cta": {
-      "title": "Commencez Votre Voyage dans la Phytothérapie Aujourd'hui",
-      "subtitle": "Parcourez notre base de données complète gratuitement. Aucun compte requis.",
-      "button": "Parcourir les Herbes"
-    },
-    "trustBadges": "Propulsé par"
+    "heroTitle": "Votre guide des plantes médicinales",
+    "heroSubtitle": "Explorez plus de 2 700 plantes, vérifiez les interactions et posez vos questions — gratuit, sans compte.",
+    "heroButton": "Explorer les plantes",
+    "heroSecondary": "Demander à l'herboriste IA",
+    "featuresTitle": "Ce que vous pouvez faire",
+    "featureHerbsTitle": "Base de données",
+    "featureHerbsDescription": "Recherchez parmi 2 700+ plantes médicinales avec profils détaillés et informations de sécurité.",
+    "featureCalculatorTitle": "Calculateur de dosage",
+    "featureCalculatorDescription": "Obtenez des recommandations de dosage basées sur l'âge et le poids.",
+    "featureInteractionsTitle": "Vérificateur d'interactions",
+    "featureInteractionsDescription": "Vérifiez les interactions plante-médicament avant de combiner des suppléments.",
+    "featureAiTitle": "Herboriste virtuel",
+    "featureAiDescription": "Posez des questions sur les plantes et la sécurité. Réponses basées sur des preuves avec citations."
   },
   "herbs": {
     "title": "Base de Données d'Herbes Médicinales",
@@ -1136,7 +1104,7 @@
   },
   "herbalistPage": {
     "title": "Herboriste Virtuel",
-    "subtitle": "Posez des questions à notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et les conseils d'utilisation. Obtenez des informations fondées sur des preuves de sources fiables.",
+    "subtitle": "Posez des questions sur les plantes, les interactions et la sécurité.",
     "safetyTitle": "Important : Limitations des informations générées par l'IA",
     "safetyNotMedical": "Cette IA fournit des informations éducatives uniquement, et non des conseils médicaux.",
     "safetyDisclaimer": "Les réponses sont générées à partir de bases de données sur les plantes et peuvent ne pas refléter les recherches les plus récentes ou votre situation de santé spécifique.",
@@ -1154,7 +1122,9 @@
     "description": "Posez des questions à notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et la posologie. Réponses fondées sur des preuves de l'OMS, du NCCIH et de PubMed. Gratuit, aucun compte requis.",
     "aboutProvider": "Propulsé par OpenRouter IA (modèle gratuit)",
     "medsAutoQuery": "Je prends : {meds}. Vérifiez les interactions connues entre ces médicaments et les compléments phytothérapiques courants. Signalez les associations dangereuses.",
-    "herbAutoQuery": "Quelles sont les principales interactions médicamenteuses et précautions de sécurité pour {name} ({scientific}) ? Listez les interactions les plus importantes, leur gravité et les personnes qui doivent l'éviter."
+    "herbAutoQuery": "Quelles sont les principales interactions médicamenteuses et précautions de sécurité pour {name} ({scientific}) ? Listez les interactions les plus importantes, leur gravité et les personnes qui doivent l'éviter.",
+    "emptyStateTitle": "Posez-moi des questions sur les plantes",
+    "browseHerbs": "Parcourir le catalogue"
   },
   "donateButtons": {
     "coffee": "Café",

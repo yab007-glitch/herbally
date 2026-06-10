@@ -9,7 +9,6 @@ import {
   MessageCircle,
   Compass,
   Sprout,
-  Heart,
   Globe,
   Moon,
   Sun,
@@ -23,7 +22,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import { MissionModal } from "@/components/donations/mission-modal";
 import { LanguageSelector } from "@/components/i18n/language-selector";
 import { LanguageDrawer } from "@/components/i18n/language-drawer";
 import { useTranslations, useLocale } from "next-intl";
@@ -48,8 +46,7 @@ function applyMobileTheme(theme: Theme) {
   const root = document.documentElement;
   root.classList.remove("light", "dark");
   if (theme === "system") {
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
     root.classList.add(systemTheme);
@@ -60,7 +57,6 @@ function applyMobileTheme(theme: Theme) {
 
 export function UnifiedNavbar() {
   const [open, setOpen] = useState(false);
-  const [showMission, setShowMission] = useState(false);
   const [showLangDrawer, setShowLangDrawer] = useState(false);
   const t = useTranslations();
   const locale = useLocale();
@@ -80,42 +76,34 @@ export function UnifiedNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b/40 bg-background/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4 sm:px-6">
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 group"
-            aria-label="HerbAlly – Home"
-          >
-            <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-teal-600 text-white shadow-sm transition-transform group-hover:scale-105">
-              <Leaf className="size-4" />
+          <Link href="/" className="flex items-center gap-2" aria-label="HerbAlly home">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Leaf className="size-3.5" />
             </div>
-            <span className="text-base font-bold text-foreground">
+            <span className="text-sm font-semibold text-foreground">
               Herb<span className="gradient-text">Ally</span>
             </span>
           </Link>
 
-          {/* Desktop Nav — pill style */}
-          <nav className="hidden items-center gap-1 rounded-full border bg-muted/50 p-1 md:flex">
+          {/* Desktop links */}
+          <nav className="hidden items-center gap-6 md:flex">
             {navLinks.map((link) => {
-              const Icon = link.icon;
-              const isActive =
-                pathname === link.href ||
-                (link.href !== "/" && pathname.startsWith(link.href + "/"));
+              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium transition-all",
+                    "text-sm transition-colors",
                     isActive
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "font-medium text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <Icon className="size-3.5" />
                   {t(link.labelKey)}
                 </Link>
               );
@@ -123,53 +111,39 @@ export function UnifiedNavbar() {
           </nav>
 
           {/* Right side */}
-          <div className="hidden items-center gap-2 md:flex">
+          <div className="hidden items-center gap-3 md:flex">
             <LanguageSelector />
             <ThemeToggle />
-            <button
-              onClick={() => setShowMission(true)}
-              className="group relative flex items-center gap-1 rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 px-3 py-1 text-xs font-semibold text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:scale-105"
-              aria-label={t("nav.support")}
-            >
-              <Heart className="size-3 fill-white group-hover:animate-pulse" />
-              <span className="hidden lg:inline">{t("nav.support")}</span>
-            </button>
           </div>
 
-          {/* Mobile menu */}
+          {/* Mobile menu trigger */}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className="inline-flex items-center justify-center rounded-lg p-2 text-muted-foreground hover:bg-muted md:hidden">
+            <SheetTrigger className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted md:hidden">
               <Menu className="size-5" />
               <span className="sr-only">{t("common.menu")}</span>
             </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="w-80 border-l border-border/50"
-            >
+            <SheetContent side="right" className="w-72">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-teal-600 text-white">
-                    <Leaf className="size-4" />
+                  <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                    <Leaf className="size-3.5" />
                   </div>
                   HerbAlly
                 </SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-1 px-4 pt-6">
+              <nav className="flex flex-col gap-1 px-2 pt-6">
                 {navLinks.map((link) => {
                   const Icon = link.icon;
-                  const isActive =
-                    pathname === link.href ||
-                    (link.href !== "/" &&
-                      pathname.startsWith(link.href + "/"));
+                  const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors",
+                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
                         isActive
-                          ? "bg-primary/10 text-primary"
+                          ? "bg-accent text-accent-foreground font-medium"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
@@ -178,32 +152,27 @@ export function UnifiedNavbar() {
                     </Link>
                   );
                 })}
-                {/* Mobile utilities */}
+
                 <div className="mt-4 space-y-2 border-t pt-4">
                   <button
                     onClick={() => {
                       setOpen(false);
                       setShowLangDrawer(true);
                     }}
-                    className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
                   >
                     <Globe className="size-4" />
-                    <span className="flex-1 text-left">
-                      {t("common.language")}
-                    </span>
+                    <span className="flex-1 text-left">{t("common.language")}</span>
                     {currentLang && (
-                      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <span aria-hidden="true">{currentLang.flag}</span>
-                        <span className="uppercase">{currentLang.code}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {currentLang.flag} {currentLang.code.toUpperCase()}
                       </span>
                     )}
                   </button>
 
-                  <div className="flex items-center gap-2 px-4 py-2">
-                    <span className="text-sm text-muted-foreground">
-                      {t("common.theme")}
-                    </span>
-                    <div className="ml-auto flex items-center gap-1 rounded-lg border p-1">
+                  <div className="flex items-center gap-2 px-3 py-2">
+                    <span className="text-sm text-muted-foreground">{t("common.theme")}</span>
+                    <div className="ml-auto flex items-center gap-1 rounded-md border p-0.5">
                       {(["light", "dark", "system"] as Theme[]).map((th) => {
                         const Icon = getMobileThemeIcon(th);
                         return (
@@ -211,30 +180,19 @@ export function UnifiedNavbar() {
                             key={th}
                             onClick={() => handleMobileThemeChange(th)}
                             className={cn(
-                              "inline-flex size-9 items-center justify-center rounded-md transition-colors",
+                              "inline-flex size-8 items-center justify-center rounded-sm transition-colors",
                               mobileTheme === th
                                 ? "bg-primary text-primary-foreground"
                                 : "text-muted-foreground hover:bg-muted"
                             )}
                             aria-label={t(`common.${th}`)}
                           >
-                            <Icon className="size-4" />
+                            <Icon className="size-3.5" />
                           </button>
                         );
                       })}
                     </div>
                   </div>
-
-                  <button
-                    onClick={() => {
-                      setOpen(false);
-                      setShowMission(true);
-                    }}
-                    className="group flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-pink-500 via-rose-500 to-pink-600 px-4 py-3 text-sm font-semibold text-white shadow-lg"
-                  >
-                    <Heart className="size-4 fill-white" />
-                    {t("donate.title")}
-                  </button>
                 </div>
               </nav>
             </SheetContent>
@@ -242,12 +200,7 @@ export function UnifiedNavbar() {
         </div>
       </header>
 
-      <MissionModal open={showMission} onOpenChange={setShowMission} />
-      <LanguageDrawer
-        open={showLangDrawer}
-        onOpenChange={setShowLangDrawer}
-        hideTrigger
-      />
+      <LanguageDrawer open={showLangDrawer} onOpenChange={setShowLangDrawer} hideTrigger />
     </>
   );
 }

@@ -1,137 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { Leaf } from "lucide-react";
+import { Leaf, Heart } from "lucide-react";
 import { useTranslations } from "next-intl";
-
-function FacebookIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
-    >
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-    </svg>
-  );
-}
 
 export function MarketingFooter() {
   const t = useTranslations();
 
-  const footerLinks = {
-    product: [
-      { href: "/symptoms", label: t("nav.symptoms") },
-      { href: "/herbs", label: t("nav.herbs") },
-      { href: "/calculator", label: t("nav.calculator") },
-      { href: "/herbalist", label: t("nav.herbalist") },
-    ],
-    resources: [
-      { href: "/faq", label: t("footer.faq") },
-      { href: "/about", label: t("nav.about") },
-      { href: "/methodology", label: t("footer.methodology") },
-      { href: "/disclaimer", label: t("footer.disclaimer") },
-      { href: "/privacy", label: t("footer.privacy") },
-      { href: "/terms", label: t("footer.terms") },
-    ],
-  };
-
   return (
-    <footer className="border-t bg-muted/30">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <nav
-          aria-label="Footer navigation"
-          className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link
-              href="/"
-              className="flex items-center gap-2.5"
-              aria-label="HerbAlly home"
-            >
-              <div className="flex size-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-teal-600 text-white">
-                <Leaf className="size-5" />
-              </div>
-              <span className="text-lg font-bold text-foreground">
-                Herb<span className="gradient-text">Ally</span>
-              </span>
+    <footer className="border-t border-border/50">
+      <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+        <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2" aria-label="HerbAlly home">
+            <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Leaf className="size-3" />
+            </div>
+            <span className="text-sm font-semibold text-foreground">
+              Herb<span className="gradient-text">Ally</span>
+            </span>
+          </Link>
+
+          {/* Links */}
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
+            <Link href="/herbs" className="hover:text-foreground transition-colors">
+              {t("nav.herbs")}
             </Link>
-            <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-              {t("footer.madeWith")}
-            </p>
-          </div>
-
-          {/* Product Links */}
-          <div>
-            {/* MED-3: use <p> instead of <h3> */}
-            <p className="mb-3 text-sm font-semibold text-foreground">
-              {t("footer.product")}
-            </p>
-            <ul className="space-y-2">
-              {footerLinks.product.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources Links */}
-          <div>
-            {/* MED-3: use <p> instead of <h3> */}
-            <p className="mb-3 text-sm font-semibold text-foreground">
-              {t("footer.resources")}
-            </p>
-            <ul className="space-y-2">
-              {footerLinks.resources.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social Links */}
-          <div>
-            <p className="mb-3 text-sm font-semibold text-foreground">
-              {t("footer.followUs")}
-            </p>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="https://www.facebook.com/herballyapp/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <FacebookIcon className="size-4" />
-                  Facebook
-                </a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-
-        {/* Bottom — MED-2: copyright with year */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 sm:flex-row">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} HerbAlly. {t("footer.copyright")}
-          </p>
+            <Link href="/herbalist" className="hover:text-foreground transition-colors">
+              {t("nav.herbalist")}
+            </Link>
+            <Link href="/calculator" className="hover:text-foreground transition-colors">
+              {t("nav.calculator")}
+            </Link>
+            <Link href="/about" className="hover:text-foreground transition-colors">
+              {t("nav.about")}
+            </Link>
+            <Link href="/disclaimer" className="hover:text-foreground transition-colors">
+              {t("footer.disclaimer")}
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
+              {t("footer.privacy")}
+            </Link>
+            <Link href="/donate" className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors">
+              <Heart className="size-3" />
+              {t("donate.title")}
+            </Link>
+          </nav>
         </div>
+
+        <p className="mt-8 text-center text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} HerbAlly. {t("footer.copyright")}
+        </p>
       </div>
     </footer>
   );

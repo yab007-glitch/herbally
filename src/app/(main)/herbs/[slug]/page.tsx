@@ -7,7 +7,6 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HerbSchema } from "@/components/seo/herb-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
-import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
@@ -262,30 +261,6 @@ export default async function HerbDetailPage({ params }: Props) {
         drugInteractions={interactions.length}
       />
 
-      {/* Breadcrumbs */}
-      <nav aria-label="Breadcrumb">
-        <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <li>
-            <Link href="/" className="hover:text-foreground transition-colors">
-              {t("herbDetailContent.breadcrumbHome")}
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li>
-            <Link
-              href="/herbs"
-              className="hover:text-foreground transition-colors"
-            >
-              {t("herbDetailContent.breadcrumbHerbs")}
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li className="text-foreground font-medium" aria-current="page">
-            {herb.name}
-          </li>
-        </ol>
-      </nav>
-
       {/* Back Button */}
       <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>
         <ArrowLeft className="size-4" />
@@ -293,9 +268,9 @@ export default async function HerbDetailPage({ params }: Props) {
       </Button>
 
       {/* Medical Disclaimer */}
-      <SafetyAlert severity="info" title={t("fda.disclaimer").split(".")[0]}>
+      <p className="text-xs text-muted-foreground italic">
         {t("herbDetail.medicalDisclaimerText")}
-      </SafetyAlert>
+      </p>
 
       {/* New Hero */}
       <HerbHeroV2 herb={{ ...herb, evidence_level: evidenceLevel }} />
@@ -381,18 +356,7 @@ export default async function HerbDetailPage({ params }: Props) {
         </section>
       )}
 
-      {/* Report Issue */}
-      <div className="mt-8 rounded-2xl border border-dashed p-4 text-center">
-        <p className="text-sm text-muted-foreground">
-          {t("herbDetail.foundError", { name: herb.name })}
-        </p>
-        <a
-          href={`mailto:support@herbally.app?subject=Correction%20for%20${encodeURIComponent(herb.name)}%20(${encodeURIComponent(herb.scientific_name)})`}
-          className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-        >
-          {t("herbDetailContent.reportIssue")} →
-        </a>
-      </div>
+
     </div>
   );
 }
