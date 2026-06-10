@@ -9,8 +9,6 @@ import { OrganizationSchema } from "@/components/seo/organization-schema";
 import { SWRegistration } from "@/components/shared/service-worker-registration";
 import { SkipToContent } from "@/components/shared/skip-to-content";
 import { WebVitals } from "@/components/analytics/web-vitals";
-import enDict from "@/lib/i18n/dictionaries/en.json";
-import frDict from "@/lib/i18n/dictionaries/fr.json";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -96,6 +94,13 @@ export const metadata: Metadata = {
   },
 };
 
+async function loadMessages(locale: string) {
+  if (locale === "fr") {
+    return (await import("@/lib/i18n/dictionaries/fr.json")).default;
+  }
+  return (await import("@/lib/i18n/dictionaries/en.json")).default;
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -104,7 +109,7 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
   const locale = localeCookie?.value === "fr" ? "fr" : "en";
-  const messages = locale === "fr" ? frDict : enDict;
+  const messages = await loadMessages(locale);
 
   return (
     <html
