@@ -138,7 +138,11 @@ export function HomePageClient({ labels }: { labels: Labels }) {
                   <Icon className="size-5" aria-hidden="true" />
                 </div>
                 <CardTitle>
-                  {labels[`feature${key.charAt(0).toUpperCase() + key.slice(1)}Title` as keyof Labels]}
+                  {
+                    labels[
+                      `feature${key.charAt(0).toUpperCase() + key.slice(1)}Title` as keyof Labels
+                    ]
+                  }
                 </CardTitle>
                 <CardDescription>
                   {

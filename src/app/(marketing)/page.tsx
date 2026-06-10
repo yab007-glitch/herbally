@@ -3,8 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { HomePageClient } from "./home-page-client";
 
 export const metadata: Metadata = {
-  title:
-    "HerbAlly — Virtual Herbalist | Medicinal Herbs & Drug Interactions",
+  title: "HerbAlly — Virtual Herbalist | Medicinal Herbs & Drug Interactions",
   description:
     "Ask our AI herbalist about herb safety, drug interactions, and dosage. Explore 2,700+ medicinal herbs. Evidence-based answers from WHO, NCCIH, and PubMed. Free, no account required.",
   alternates: {

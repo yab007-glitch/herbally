@@ -1,8 +1,8 @@
 -- Add view_count to herbs table for popularity tracking and internal analytics
-ALTER TABLE public.herbs ADD COLUMN view_count INTEGER DEFAULT 0 NOT NULL;
+ALTER TABLE public.herbs ADD COLUMN IF NOT EXISTS view_count INTEGER DEFAULT 0 NOT NULL;
 
 -- Index for sorting herbs by popularity
-CREATE INDEX idx_herbs_view_count ON public.herbs (view_count DESC);
+CREATE INDEX IF NOT EXISTS idx_herbs_view_count ON public.herbs (view_count DESC);
 
 -- Allow anon users to increment view counts
 -- Used by the server-side view tracking on herb detail pages
