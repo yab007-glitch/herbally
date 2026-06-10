@@ -1,5 +1,3 @@
-"use client";
-
 interface HerbFAQSchemaProps {
   herbName: string;
   scientificName: string;

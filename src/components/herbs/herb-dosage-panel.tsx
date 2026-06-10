@@ -28,7 +28,7 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
       <Card className="overflow-hidden rounded-2xl border">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-info/10 text-info">
               <Pill className="size-5" />
             </div>
             {t("herbDetail.dosageInfo")}

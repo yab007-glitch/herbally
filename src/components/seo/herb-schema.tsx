@@ -1,5 +1,3 @@
-"use client";
-
 interface Herb {
   name: string;
   scientific_name: string;

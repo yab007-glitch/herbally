@@ -19,7 +19,7 @@ import {
   type GardenHerb,
 } from "@/lib/garden/local-garden";
 import { recordVisit, getExploredCount } from "@/lib/garden/streaks";
-import { HerbImage } from "@/components/herbs/herb-image";
+import { HerbImage } from "@/components/herbs/HerbImage";
 import { useTranslations } from "next-intl";
 
 export function GardenClient() {
@@ -87,7 +87,7 @@ export function GardenClient() {
 
         <div className="rounded-2xl border bg-card/50 p-5 transition-all hover:shadow-md">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-warning/10 text-warning">
               <Flame className="size-5" />
             </div>
             <div>
@@ -97,7 +97,7 @@ export function GardenClient() {
               <p className="text-sm text-muted-foreground">
                 {t("garden.dayStreak") || "Day Streak"}
                 {streak.current >= streak.longest && streak.current > 1 && (
-                  <span className="ml-1 text-xs text-orange-500">
+                  <span className="ml-1 text-xs text-warning">
                     {t("garden.best") || "Best!"}
                   </span>
                 )}
@@ -108,7 +108,7 @@ export function GardenClient() {
 
         <div className="rounded-2xl border bg-card/50 p-5 transition-all hover:shadow-md">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-info/10 text-info">
               <Search className="size-5" />
             </div>
             <div>
@@ -156,7 +156,7 @@ export function GardenClient() {
                 </Link>
                 <button
                   onClick={() => handleRemove(herb.slug)}
-                  className="absolute right-3 top-3 rounded-lg p-1.5 text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                  className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
                   aria-label={`Remove ${herb.name}`}
                 >
                   <Trash2 className="size-4" />
@@ -213,7 +213,7 @@ export function GardenClient() {
           href="/"
           className="group flex items-center gap-4 rounded-2xl border bg-card/50 p-5 transition-all hover:shadow-md hover:bg-card"
         >
-          <div className="flex size-10 items-center justify-center rounded-xl bg-rose-500/10 text-rose-500 transition-colors group-hover:bg-rose-500 group-hover:text-white">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive transition-colors group-hover:bg-destructive group-hover:text-destructive-foreground">
             <Heart className="size-5" />
           </div>
           <div>

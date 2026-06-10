@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { HerbImage } from "@/components/herbs/herb-image";
+import { HerbImage } from "@/components/herbs/HerbImage";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -83,7 +83,7 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
             <button
               onClick={handleSave}
               className={cn(
-                "absolute -right-2 -top-2 flex size-8 items-center justify-center rounded-full shadow-md transition-all hover:scale-110",
+                "absolute -right-2 -top-2 flex size-8 items-center justify-center rounded-full shadow-md transition-transform hover:scale-110",
                 saved
                   ? "bg-rose-500 text-white"
                   : "bg-background text-muted-foreground hover:text-rose-500"
@@ -131,15 +131,15 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
             <span className="inline-flex items-center gap-1.5 text-sm">
               {herb.pregnancy_safe ? (
                 <>
-                  <ShieldCheck className="size-4 text-green-500" />
-                  <span className="text-green-700 dark:text-green-400">
+                  <ShieldCheck className="size-4 text-success" />
+                  <span className="text-success">
                     {t("herbDetail.safePregnancy")}
                   </span>
                 </>
               ) : (
                 <>
-                  <ShieldX className="size-4 text-red-500" />
-                  <span className="text-red-600 dark:text-red-400">
+                  <ShieldX className="size-4 text-destructive" />
+                  <span className="text-destructive">
                     {t("herbDetail.notSafePregnancy")}
                   </span>
                 </>
@@ -148,15 +148,15 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
             <span className="inline-flex items-center gap-1.5 text-sm">
               {herb.nursing_safe ? (
                 <>
-                  <ShieldCheck className="size-4 text-green-500" />
-                  <span className="text-green-700 dark:text-green-400">
+                  <ShieldCheck className="size-4 text-success" />
+                  <span className="text-success">
                     {t("herbDetail.safeNursing")}
                   </span>
                 </>
               ) : (
                 <>
-                  <ShieldX className="size-4 text-red-500" />
-                  <span className="text-red-600 dark:text-red-400">
+                  <ShieldX className="size-4 text-destructive" />
+                  <span className="text-destructive">
                     {t("herbDetail.notSafeNursing")}
                   </span>
                 </>

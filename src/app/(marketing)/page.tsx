@@ -22,7 +22,7 @@ export default async function HomePage() {
   const _t = await getTranslations();
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-dvh flex-col overflow-hidden">
       <ChatInterface locale={locale} />
     </div>
   );

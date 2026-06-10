@@ -182,7 +182,10 @@ export function ChatInterface({
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
   }, [messages]);
 
@@ -635,21 +638,11 @@ export function ChatInterface({
 
   return (
     <div className="flex h-full flex-col">
-      {/* ═══ EMPTY STATE: enhanced discovery dashboard ═══ */}
+      {/* ═══ Scrollable content area ═══ */}
       {isEmpty ? (
-        <ChatEmptyStateV2
-          input={input}
-          setInput={setInput}
-          onSubmit={handleSubmit}
-          onKeyDown={handleKeyDown}
-          onSendMessage={sendMessage}
-          isLoading={isLoading}
-          textareaRef={textareaRef}
-          hasVoiceSupport={hasVoiceSupport}
-          isListening={isListening}
-          onToggleVoice={toggleVoice}
-          onStopGeneration={stopGeneration}
-        />
+        <div ref={scrollRef} className="flex-1 overflow-y-auto min-h-0">
+          <ChatEmptyStateV2 onSendMessage={sendMessage} />
+        </div>
       ) : (
         /* ═══ ACTIVE CHAT STATE ═══ */
         <>
@@ -670,7 +663,7 @@ export function ChatInterface({
               size="sm"
               type="button"
               onClick={clearChat}
-              className="h-8 shrink-0 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+              className="h-9 shrink-0 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
             >
               <Trash2 className="size-3.5" />
               <span className="hidden sm:inline">{t("pharmacist.clear")}</span>
@@ -736,13 +729,13 @@ export function ChatInterface({
                                 onClick={() =>
                                   copyToClipboard(message.content, message.id)
                                 }
-                                className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
+                                className="h-9 gap-1 text-xs text-muted-foreground hover:text-foreground"
                                 aria-label="Copy response"
                               >
                                 {copiedId === message.id ? (
                                   <>
-                                    <Check className="size-3 text-emerald-500" />
-                                    <span className="text-emerald-500">
+                                    <Check className="size-3 text-success" />
+                                    <span className="text-success">
                                       {t("pharmacist.copied")}
                                     </span>
                                   </>
@@ -757,7 +750,7 @@ export function ChatInterface({
                                 variant="ghost"
                                 size="sm"
                                 onClick={regenerate}
-                                className="h-7 gap-1 text-xs text-muted-foreground hover:text-foreground"
+                                className="h-9 gap-1 text-xs text-muted-foreground hover:text-foreground"
                                 aria-label="Regenerate response"
                               >
                                 <RefreshCcw className="size-3" />
@@ -824,15 +817,15 @@ export function ChatInterface({
       )}
 
       {/* ═══ Disclaimer bar (always visible at bottom) ═══ */}
-      <div className="shrink-0 border-t bg-amber-50/50 px-4 py-2 dark:bg-amber-950/10">
+      <div className="shrink-0 border-t bg-warning/5 px-4 py-2 dark:bg-warning/5">
         <div className="flex items-center justify-between">
-          <p className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400">
+          <p className="flex items-center gap-1.5 text-xs text-warning">
             <AlertCircle className="size-3 shrink-0" />
             {t("pharmacist.disclaimer")}
           </p>
           <div className="flex items-center gap-2">
             {justSaved && (
-              <span className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
+              <span className="flex items-center gap-1 text-xs text-success">
                 <Check className="size-3" />
                 {t("pharmacist.saved")}
               </span>
@@ -846,68 +839,68 @@ export function ChatInterface({
         </div>
       </div>
 
-      {/* ═══ Bottom input (only in active state) ═══ */}
-      {!isEmpty && (
-        <div className="shrink-0 border-t p-4">
-          <form
-            onSubmit={handleSubmit}
-            className="mx-auto flex max-w-3xl items-end gap-2"
-          >
-            <Textarea
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t("pharmacist.placeholder")}
-              className="min-h-[44px] max-h-32 resize-none focus-ring-animated"
-              rows={1}
-              disabled={isLoading}
-              aria-label="Chat message input"
-            />
-            {hasVoiceSupport && (
-              <Button
-                type="button"
-                size="icon"
-                variant={isListening ? "destructive" : "outline"}
-                onClick={toggleVoice}
-                className="shrink-0"
-                aria-label={
-                  isListening
-                    ? t("pharmacist.voiceStop")
-                    : t("pharmacist.voiceStart")
-                }
-              >
-                {isListening ? (
-                  <MicOff className="size-4" />
-                ) : (
-                  <Mic className="size-4" />
-                )}
-              </Button>
-            )}
-            {isLoading ? (
-              <Button
-                type="button"
-                size="icon"
-                variant="destructive"
-                onClick={stopGeneration}
-                aria-label="Stop generating"
-                className="animate-pulse"
-              >
-                <Square className="size-4" />
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                size="icon"
-                disabled={!input.trim() || isLoading}
-                aria-label="Send message"
-              >
-                <Send className="size-4" />
-              </Button>
-            )}
-          </form>
-        </div>
-      )}
+      {/* ═══ Bottom input (always visible) ═══ */}
+      <div className="shrink-0 border-t p-4">
+        <form
+          onSubmit={handleSubmit}
+          className="mx-auto flex max-w-3xl items-end gap-2"
+        >
+          <Textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder={t("pharmacist.placeholder")}
+            className="min-h-[52px] max-h-32 resize-none focus-ring-animated rounded-xl"
+            rows={1}
+            disabled={isLoading}
+            aria-label="Chat message input"
+            autoFocus={isEmpty}
+          />
+          {hasVoiceSupport && (
+            <Button
+              type="button"
+              size="icon"
+              variant={isListening ? "destructive" : "outline"}
+              onClick={toggleVoice}
+              className="shrink-0 rounded-xl"
+              aria-label={
+                isListening
+                  ? t("pharmacist.voiceStop")
+                  : t("pharmacist.voiceStart")
+              }
+            >
+              {isListening ? (
+                <MicOff className="size-4" />
+              ) : (
+                <Mic className="size-4" />
+              )}
+            </Button>
+          )}
+          {isLoading ? (
+            <Button
+              type="button"
+              size="icon"
+              variant="destructive"
+              onClick={stopGeneration}
+              aria-label="Stop generating"
+              className="animate-pulse rounded-xl"
+            >
+              <Square className="size-4" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon"
+              disabled={!input.trim() || isLoading}
+              aria-label="Send message"
+              className="rounded-xl"
+            >
+              <Send className="size-4" />
+            </Button>
+          )}
+        </form>
+      </div>
     </div>
   );
 }

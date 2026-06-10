@@ -14,24 +14,24 @@ interface SafetyAlertProps {
 const severityConfig = {
   critical: {
     icon: ShieldAlert,
-    bgColor: "bg-red-50 dark:bg-red-950/30",
-    borderColor: "border-red-200 dark:border-red-800",
-    textColor: "text-red-800 dark:text-red-200",
-    iconColor: "text-red-600 dark:text-red-400",
+    bgColor: "bg-destructive/10",
+    borderColor: "border-destructive/20",
+    textColor: "text-destructive",
+    iconColor: "text-destructive",
   },
   warning: {
     icon: AlertTriangle,
-    bgColor: "bg-amber-50 dark:bg-amber-950/30",
-    borderColor: "border-amber-200 dark:border-amber-800",
-    textColor: "text-amber-800 dark:text-amber-200",
-    iconColor: "text-amber-600 dark:text-amber-400",
+    bgColor: "bg-warning/10",
+    borderColor: "border-warning/20",
+    textColor: "text-warning",
+    iconColor: "text-warning",
   },
   info: {
     icon: Info,
-    bgColor: "bg-blue-50 dark:bg-blue-950/30",
-    borderColor: "border-blue-200 dark:border-blue-800",
-    textColor: "text-blue-800 dark:text-blue-200",
-    iconColor: "text-blue-600 dark:text-blue-400",
+    bgColor: "bg-info/10",
+    borderColor: "border-info/20",
+    textColor: "text-info",
+    iconColor: "text-info",
   },
 };
 
@@ -119,23 +119,23 @@ export function InteractionAlert({
         {severityCounts && (
           <div className="flex flex-wrap gap-2 text-xs">
             {(severityCounts.contraindicated || 0) > 0 && (
-              <span className="rounded bg-red-100 px-1.5 py-0.5 font-medium text-red-800 dark:bg-red-900/50 dark:text-red-200">
+              <span className="rounded bg-destructive/10 px-1.5 py-0.5 font-medium text-destructive">
                 {severityCounts.contraindicated}{" "}
                 {t("safety.severityContraindicated")}
               </span>
             )}
             {(severityCounts.severe || 0) > 0 && (
-              <span className="rounded bg-red-100 px-1.5 py-0.5 font-medium text-red-800 dark:bg-red-900/50 dark:text-red-200">
+              <span className="rounded bg-destructive/10 px-1.5 py-0.5 font-medium text-destructive">
                 {severityCounts.severe} {t("safety.severitySevere")}
               </span>
             )}
             {(severityCounts.moderate || 0) > 0 && (
-              <span className="rounded bg-amber-100 px-1.5 py-0.5 font-medium text-amber-800 dark:bg-amber-900/50 dark:text-amber-200">
+              <span className="rounded bg-warning/10 px-1.5 py-0.5 font-medium text-warning">
                 {severityCounts.moderate} {t("safety.severityModerate")}
               </span>
             )}
             {(severityCounts.mild || 0) > 0 && (
-              <span className="rounded bg-blue-100 px-1.5 py-0.5 font-medium text-blue-800 dark:bg-blue-900/50 dark:text-blue-200">
+              <span className="rounded bg-info/10 px-1.5 py-0.5 font-medium text-info">
                 {severityCounts.mild} {t("safety.severityMild")}
               </span>
             )}

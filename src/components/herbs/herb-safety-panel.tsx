@@ -64,11 +64,11 @@ export function HerbSafetyPanel({
       />
 
       {/* Safety Card */}
-      <Card className="overflow-hidden rounded-2xl border-amber-200 dark:border-amber-800"
+      <Card className="overflow-hidden rounded-2xl border-warning/20"
       >
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl text-amber-700 dark:text-amber-400">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600"
+          <CardTitle className="flex items-center gap-2 text-xl text-warning">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-warning/10 text-warning"
             >
               <AlertTriangle className="size-5" />
             </div>
@@ -82,9 +82,9 @@ export function HerbSafetyPanel({
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
               {herb.pregnancy_safe ? (
-                <ShieldCheck className="size-5 text-green-600" />
+                <ShieldCheck className="size-5 text-success" />
               ) : (
-                <ShieldX className="size-5 text-red-500" />
+                <ShieldX className="size-5 text-destructive" />
               )}
               <span className="text-sm">
                 {herb.pregnancy_safe
@@ -94,9 +94,9 @@ export function HerbSafetyPanel({
             </div>
             <div className="flex items-center gap-2">
               {herb.nursing_safe ? (
-                <ShieldCheck className="size-5 text-green-600" />
+                <ShieldCheck className="size-5 text-success" />
               ) : (
-                <ShieldX className="size-5 text-red-500" />
+                <ShieldX className="size-5 text-destructive" />
               )}
               <span className="text-sm">
                 {herb.nursing_safe
@@ -116,7 +116,7 @@ export function HerbSafetyPanel({
                     key={c}
                     className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-red-500" />
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-destructive" />
                     {c}
                   </li>
                 ))}
@@ -134,7 +134,7 @@ export function HerbSafetyPanel({
                     key={s}
                     className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-amber-500" />
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-warning" />
                     {s}
                   </li>
                 ))}

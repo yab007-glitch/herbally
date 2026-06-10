@@ -20,7 +20,7 @@ export function HerbSciencePanel({ herb, monograph }: HerbSciencePanelProps) {
       {herb.active_compounds && herb.active_compounds.length > 0 && (
         <section>
           <div className="mb-4 flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-science/10 text-science">
               <FlaskConical className="size-5" />
             </div>
             <h2 className="text-xl font-semibold text-foreground">

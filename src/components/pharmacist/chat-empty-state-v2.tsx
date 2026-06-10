@@ -9,35 +9,17 @@ import {
   Heart,
   Calculator,
   Flame,
-  Zap,
   Sun,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { getStreak } from "@/lib/garden/streaks";
 import { getExploredHerbs } from "@/lib/garden/streaks";
 import { getDailyHerb } from "@/lib/garden/daily-herb";
 
-type SuggestionCard = {
-  icon: typeof Sparkles;
-  text: string;
-  gradient: string;
-};
-
 interface ChatEmptyStateV2Props {
-  input: string;
-  setInput: (v: string) => void;
-  onSubmit: (e?: React.FormEvent) => void;
-  onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSendMessage: (text: string) => void;
-  isLoading: boolean;
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
-  hasVoiceSupport: boolean;
-  isListening: boolean;
-  onToggleVoice: () => void;
-  onStopGeneration: () => void;
 }
 
 const POPULAR_HERBS = [
@@ -49,19 +31,7 @@ const POPULAR_HERBS = [
   { slug: "ashwagandha", name: "Ashwagandha", benefit: "Stress relief" },
 ];
 
-export function ChatEmptyStateV2({
-  input,
-  setInput,
-  onSubmit,
-  onKeyDown,
-  onSendMessage,
-  isLoading,
-  textareaRef,
-  hasVoiceSupport,
-  isListening,
-  onToggleVoice,
-  onStopGeneration,
-}: ChatEmptyStateV2Props) {
+export function ChatEmptyStateV2({ onSendMessage }: ChatEmptyStateV2Props) {
   const t = useTranslations();
   const [streak, setStreak] = useState({ current: 0, longest: 0 });
   const [recentHerbs, setRecentHerbs] = useState<string[]>([]);
@@ -103,7 +73,7 @@ export function ChatEmptyStateV2({
     }
   }, []);
 
-  const suggestionCards: SuggestionCard[] = useMemo(
+  const suggestionCards = useMemo(
     () => [
       {
         icon: Moon,
@@ -147,10 +117,10 @@ export function ChatEmptyStateV2({
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-4 pb-6 overflow-y-auto">
+    <div className="flex flex-col items-center justify-center px-4 py-8 min-h-0">
       {/* Streak badge */}
       {streak.current > 1 && (
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-3 py-1 text-xs font-medium text-orange-700 dark:border-orange-900 dark:bg-orange-950/30 dark:text-orange-300">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-warning/20 bg-warning/10 px-3 py-1 text-xs font-medium text-warning">
           <Flame className="size-3.5" />
           {streak.current}-day streak!
         </div>
@@ -169,71 +139,6 @@ export function ChatEmptyStateV2({
       <p className="mt-2 max-w-md text-center text-sm text-muted-foreground">
         {t("homeAI.subtitle")}
       </p>
-
-      {/* Centered large input */}
-      <div className="mt-6 w-full max-w-xl">
-        <form onSubmit={onSubmit} className="flex items-end gap-2">
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onKeyDown}
-            placeholder={t("pharmacist.placeholder")}
-            className="min-h-[52px] max-h-40 resize-none pr-2 text-base shadow-lg focus-ring-animated rounded-xl"
-            rows={1}
-            disabled={isLoading}
-            aria-label="Chat message input"
-            autoFocus
-          />
-          {hasVoiceSupport && (
-            <Button
-              type="button"
-              size="icon"
-              variant={isListening ? "destructive" : "outline"}
-              onClick={onToggleVoice}
-              className="shrink-0 rounded-xl"
-              aria-label={
-                isListening
-                  ? t("pharmacist.voiceStop")
-                  : t("pharmacist.voiceStart")
-              }
-            >
-              {isListening ? (
-                <Zap className="size-4" />
-              ) : (
-                <Sparkles className="size-4" />
-              )}
-            </Button>
-          )}
-          {isLoading ? (
-            <Button
-              type="button"
-              size="icon"
-              variant="destructive"
-              onClick={onStopGeneration}
-              aria-label="Stop generating"
-              className="shadow-lg animate-pulse rounded-xl"
-            >
-              <Sun className="size-4" />
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              size="icon"
-              disabled={!input.trim() || isLoading}
-              aria-label="Send message"
-              className="shadow-lg rounded-xl"
-            >
-              <Sparkles className="size-4" />
-            </Button>
-          )}
-        </form>
-
-        {/* Command hints */}
-        <p className="mt-2 text-center text-xs text-muted-foreground/60">
-          {t("pharmacist.commandHint")}
-        </p>
-      </div>
 
       {/* Today's Herb */}
       {dailyHerb && (
@@ -278,12 +183,13 @@ export function ChatEmptyStateV2({
         {suggestionCards.map((card) => {
           const Icon = card.icon;
           return (
-            <button
+            <Button
               key={card.text}
               type="button"
+              variant="ghost"
               onClick={() => onSendMessage(card.text)}
               className={cn(
-                "flex items-center gap-3 rounded-xl border p-4 text-left text-sm font-medium transition-all",
+                "flex h-auto items-center gap-3 rounded-xl border p-4 text-left text-sm font-medium transition-all",
                 "bg-gradient-to-br",
                 card.gradient,
                 "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
@@ -294,7 +200,7 @@ export function ChatEmptyStateV2({
                 <Icon className="size-4 text-primary" />
               </div>
               <span className="line-clamp-2">{card.text}</span>
-            </button>
+            </Button>
           );
         })}
       </div>

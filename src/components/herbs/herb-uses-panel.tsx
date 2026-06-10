@@ -19,7 +19,7 @@ export function HerbUsesPanel({ herb }: HerbUsesPanelProps) {
         {herb.traditional_uses && herb.traditional_uses.length > 0 && (
           <section>
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-warning/10 text-warning">
                 <BookOpen className="size-5" />
               </div>
               <h2 className="text-xl font-semibold text-foreground">
@@ -33,7 +33,7 @@ export function HerbUsesPanel({ herb }: HerbUsesPanelProps) {
                   key={use}
                   className="flex items-start gap-3 text-muted-foreground"
                 >
-                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-amber-400" />
+                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-warning" />
                   {use}
                 </li>
               ))}
@@ -45,7 +45,7 @@ export function HerbUsesPanel({ herb }: HerbUsesPanelProps) {
         {herb.modern_uses && herb.modern_uses.length > 0 && (
           <section>
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex size-9 items-center justify-center rounded-xl bg-green-500/10 text-green-600">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-success/10 text-success">
                 <Stethoscope className="size-5" />
               </div>
               <h2 className="text-xl font-semibold text-foreground">
@@ -59,7 +59,7 @@ export function HerbUsesPanel({ herb }: HerbUsesPanelProps) {
                   key={use}
                   className="flex items-start gap-3 text-muted-foreground"
                 >
-                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-green-400" />
+                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-success" />
                   {use}
                 </li>
               ))}

@@ -12,7 +12,7 @@ const bundleAnalyzer = withBundleAnalyzer({
 const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
-    optimizePackageImports: ["lucide-react", "react-markdown", "date-fns"],
+    optimizePackageImports: ["lucide-react", "react-markdown"],
   },
   images: {
     formats: ["image/avif", "image/webp"],

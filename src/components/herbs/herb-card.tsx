@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HerbImage } from "@/components/herbs/herb-image";
+import { HerbImage } from "@/components/herbs/HerbImage";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -56,9 +56,9 @@ const IconComponents = {
 } as const;
 
 const safetyColorMap = {
-  safe: "bg-green-500",
-  caution: "bg-amber-500",
-  unsafe: "bg-red-500",
+  safe: "bg-success",
+  caution: "bg-warning",
+  unsafe: "bg-destructive",
 } as const;
 
 function getSafetyLevel(
@@ -117,39 +117,53 @@ export function HerbCard({ herb, className }: HerbCardProps) {
   };
 
   return (
-    <Link
-      href={`/herbs/${herb.slug}`}
-      onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
-      className="group"
-      aria-label={`${herb.name}`}
+    <Card
+      className={cn(
+        "group relative h-full overflow-hidden transition-shadow transition-transform duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 rounded-2xl",
+        className
+      )}
     >
-      <Card
+      {/* Top gradient accent */}
+      <div
         className={cn(
-          "relative h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 rounded-2xl",
-          className
+          "absolute inset-x-0 top-0 h-1 opacity-80 transition-opacity group-hover:opacity-100",
+          safetyLevel === "safe" && "bg-gradient-to-r from-success to-primary",
+          safetyLevel === "caution" && "bg-gradient-to-r from-warning to-chart-4",
+          safetyLevel === "unsafe" && "bg-gradient-to-r from-destructive to-chart-5"
         )}
+      />
+
+      {/* Save button — outside Link to avoid nested interactive elements */}
+      <button
+        onClick={handleSave}
+        className={cn(
+          "absolute right-3 top-3 z-10 flex size-10 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm shadow-sm transition-transform hover:scale-110 hover:shadow-md",
+          saved
+            ? "text-rose-500"
+            : "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-rose-500"
+        )}
+        aria-label={saved ? t("garden.remove") : t("garden.saved")}
       >
-        {/* Top gradient accent */}
-        <div
-          className={cn(
-            "absolute inset-x-0 top-0 h-1 opacity-80 transition-opacity group-hover:opacity-100",
-            safetyLevel === "safe" && "bg-gradient-to-r from-green-500 to-emerald-500",
-            safetyLevel === "caution" && "bg-gradient-to-r from-amber-500 to-yellow-500",
-            safetyLevel === "unsafe" && "bg-gradient-to-r from-red-500 to-orange-500"
-          )}
-        />
+        <Heart className={cn("size-5", saved && "fill-current")} />
+      </button>
 
-        {/* Hover gradient */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {/* Hover gradient */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
+      <Link
+        href={`/herbs/${herb.slug}`}
+        onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
+        className="block"
+        aria-label={`${herb.name}`}
+      >
         <CardContent className="relative p-5">
           <div className="flex items-start gap-4">
             <HerbImage
               name={herb.name}
               imageUrl={herb.image_url}
-              className="size-14 shrink-0 rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-105"
+              className="size-14 shrink-0 rounded-xl shadow-sm transition-shadow transition-transform duration-300 group-hover:shadow-md group-hover:scale-105"
             />
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 pr-8">
               <div className="mb-2 flex items-center gap-2">
                 {herb.herb_categories?.name ? (
                   <Badge
@@ -185,7 +199,7 @@ export function HerbCard({ herb, className }: HerbCardProps) {
             </div>
           )}
 
-          {/* Bottom row: safety dot + save + arrow */}
+          {/* Bottom row: safety dot + arrow */}
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
@@ -210,24 +224,10 @@ export function HerbCard({ herb, className }: HerbCardProps) {
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleSave}
-                className={cn(
-                  "rounded-full p-1.5 transition-all hover:scale-110",
-                  saved
-                    ? "text-rose-500"
-                    : "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-rose-500"
-                )}
-                aria-label={saved ? t("garden.remove") : t("garden.saved")}
-              >
-                <Heart className={cn("size-4", saved && "fill-current")} />
-              </button>
-              <ArrowRight className="size-4 text-muted-foreground/50 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
-            </div>
+            <ArrowRight className="size-4 text-muted-foreground/50 transition-transform transition-colors duration-300 group-hover:translate-x-1 group-hover:text-primary" />
           </div>
         </CardContent>
-      </Card>
-    </Link>
+      </Link>
+    </Card>
   );
 }

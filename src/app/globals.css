@@ -39,6 +39,15 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-science: var(--science);
+  --color-science-foreground: var(--science-foreground);
+  --color-placeholder: var(--placeholder);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -81,6 +90,15 @@
   --sidebar-accent-foreground: oklch(0.25 0.1 145);
   --sidebar-border: oklch(0.92 0.01 150);
   --sidebar-ring: oklch(0.55 0.2 145);
+  --success: oklch(0.6 0.18 145);
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.7 0.15 80);
+  --warning-foreground: oklch(0.15 0.02 80);
+  --info: oklch(0.55 0.12 200);
+  --info-foreground: oklch(0.985 0 0);
+  --science: oklch(0.55 0.18 300);
+  --science-foreground: oklch(0.985 0 0);
+  --placeholder: oklch(0.42 0.02 150);
 }
 
 .dark {
@@ -115,6 +133,15 @@
   --sidebar-accent-foreground: oklch(0.96 0.005 150);
   --sidebar-border: oklch(0.25 0.01 150);
   --sidebar-ring: oklch(0.7 0.18 145);
+  --success: oklch(0.65 0.15 145);
+  --success-foreground: oklch(0.12 0.01 150);
+  --warning: oklch(0.75 0.12 80);
+  --warning-foreground: oklch(0.96 0.01 80);
+  --info: oklch(0.6 0.1 200);
+  --info-foreground: oklch(0.12 0.01 150);
+  --science: oklch(0.6 0.15 300);
+  --science-foreground: oklch(0.12 0.01 150);
+  --placeholder: oklch(0.65 0.02 150);
 }
 
 @layer base {
@@ -140,63 +167,6 @@
   }
 }
 
-/* Custom animations */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulse-glow {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 4s ease-in-out infinite;
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s ease infinite;
-}
-
-/* Glass effect */
-.glass {
-  background: oklch(1 0 0 / 70%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.dark .glass {
-  background: oklch(0.16 0.01 150 / 70%);
-}
-
 /* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, oklch(0.55 0.2 145), oklch(0.6 0.15 165));
@@ -214,83 +184,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-/* Hero gradient background */
-.hero-gradient {
-  background:
-    radial-gradient(
-      ellipse 80% 50% at 50% -20%,
-      oklch(0.55 0.15 145 / 30%),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 60% 40% at 80% 60%,
-      oklch(0.6 0.12 165 / 20%),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 50% 30% at 20% 80%,
-      oklch(0.5 0.1 120 / 15%),
-      transparent
-    );
-}
-
-.dark .hero-gradient {
-  background:
-    radial-gradient(
-      ellipse 80% 50% at 50% -20%,
-      oklch(0.7 0.15 145 / 25%),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 60% 40% at 80% 60%,
-      oklch(0.6 0.12 165 / 15%),
-      transparent
-    ),
-    radial-gradient(
-      ellipse 50% 30% at 20% 80%,
-      oklch(0.5 0.1 120 / 10%),
-      transparent
-    );
-}
-
-/* Subtle dot pattern */
-.dot-pattern {
-  background-image: radial-gradient(
-    oklch(0.5 0.05 150 / 20%) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
-}
-
-.dark .dot-pattern {
-  background-image: radial-gradient(
-    oklch(0.4 0.05 150 / 30%) 1px,
-    transparent 1px
-  );
-}
-
-/* Feature card hover */
-.feature-card {
-  @apply relative overflow-hidden transition-all duration-300;
-}
-
-.feature-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, oklch(0.55 0.15 145 / 5%), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.feature-card:hover::before {
-  opacity: 1;
-}
-
-.feature-card:hover {
-  @apply shadow-lg -translate-y-1;
 }
 
 /* Shimmer animation for skeletons */
@@ -323,28 +216,6 @@
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
-}
-
-/* Ripple effect */
-.ripple-container {
-  position: relative;
-  overflow: hidden;
-}
-
-@keyframes ripple {
-  to {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
-
-.ripple-effect {
-  position: absolute;
-  border-radius: 50%;
-  background: oklch(0.5 0.1 150 / 20%);
-  transform: scale(0);
-  animation: ripple 0.6s linear;
-  pointer-events: none;
 }
 
 /* Floating herbs animation */
@@ -417,15 +288,6 @@
 
 .animate-count-up {
   animation: count-up 0.6s ease-out forwards;
-}
-
-/* Card press effect */
-.card-press {
-  @apply transition-transform duration-150;
-}
-
-.card-press:active {
-  @apply scale-[0.98];
 }
 
 /* Typing indicator dots */
@@ -556,31 +418,6 @@ html.theme-transitioning *::after {
   }
 }
 
-/* Heart burst animation */
-@keyframes heart-burst {
-  0% {
-    transform: scale(1);
-  }
-  30% {
-    transform: scale(1.3);
-  }
-  60% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.animate-heart-burst {
-  animation: heart-burst 0.4s ease-out;
-}
-
-/* Organic blob shape for hero images */
-.organic-blob {
-  border-radius: 40% 60% 55% 45% / 55% 45% 60% 40%;
-}
-
 /* Scrollbar hide utility */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -592,9 +429,6 @@ html.theme-transitioning *::after {
 
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .animate-float,
-  .animate-pulse-glow,
-  .animate-gradient,
   .animate-shimmer,
   .animate-float-leaf-1,
   .animate-float-leaf-2,
@@ -604,12 +438,7 @@ html.theme-transitioning *::after {
   .animate-message-in,
   .animate-pulse-attention,
   .animate-grow-bar,
-  .animate-sparkline-grow,
-  .animate-heart-burst {
-    animation: none !important;
-  }
-
-  .ripple {
+  .animate-sparkline {
     animation: none !important;
   }
 }

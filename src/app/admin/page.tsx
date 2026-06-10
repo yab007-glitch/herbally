@@ -186,18 +186,6 @@ export default async function AdminOverviewPage() {
         })}
       </div>
 
-      {/* Recent Activity Placeholder */}
-      <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <Activity className="size-10 text-muted-foreground/50" />
-          <p className="mt-4 font-medium text-foreground">
-            Activity Logging Coming Soon
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Detailed analytics and activity logs will appear here
-          </p>
-        </CardContent>
-      </Card>
     </div>
   );
 }
