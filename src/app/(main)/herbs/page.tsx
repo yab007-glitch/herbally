@@ -6,6 +6,7 @@ import { HerbCard } from "@/components/herbs/herb-card";
 import { SmartSearch } from "@/components/herbs/smart-search";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
+import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { type Locale } from "@/lib/i18n/config";
 import { cookies } from "next/headers";
@@ -91,6 +92,9 @@ export default async function HerbsPage({
       <div className="mb-6">
         <SmartSearch defaultValue={query} category={category} />
       </div>
+
+      {/* Recently viewed */}
+      {!query && !category && <RecentlyViewed />}
 
       {/* Daily Herb */}
       {!query && !category && (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
@@ -27,35 +28,62 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
   const t = useTranslations();
   const [active, setActive] = useState<TabKey>("overview");
 
-  const activeTab = tabs.find((tab) => tab.key === active);
-
+  // Desktop: tab bar
   return (
-    <div className="space-y-6">
-      {/* Tab bar */}
-      <div className="sticky top-14 z-30 -mx-4 bg-background/90 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-        <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
-          {tabConfig.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActive(tab.key)}
-              className={cn(
-                "relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all",
-                active === tab.key
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              {t(tab.labelKey)}
-              {active === tab.key && (
-                <span className="absolute inset-x-2 -bottom-1 h-0.5 rounded-full bg-primary opacity-0 sm:hidden" />
-              )}
-            </button>
-          ))}
+    <div>
+      {/* Desktop tab bar */}
+      <div className="hidden sm:block">
+        <div className="sticky top-12 z-30 -mx-4 bg-background/90 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
+            {tabConfig.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActive(tab.key)}
+                className={cn(
+                  "relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all",
+                  active === tab.key
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                {t(tab.labelKey)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-6 animate-message-in">
+          {tabs.find((tab) => tab.key === active)?.content}
         </div>
       </div>
 
-      {/* Tab content with fade transition */}
-      <div className="animate-message-in">{activeTab?.content}</div>
+      {/* Mobile: accordion */}
+      <div className="space-y-2 sm:hidden">
+        {tabConfig.map((tab) => {
+          const tabItem = tabs.find((t) => t.key === tab.key);
+          const isOpen = active === tab.key;
+          return (
+            <div key={tab.key} className="rounded-xl border border-border">
+              <button
+                onClick={() => setActive(isOpen ? ("" as TabKey) : tab.key)}
+                className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-foreground"
+              >
+                {t(tab.labelKey)}
+                <ChevronDown
+                  className={cn(
+                    "size-4 text-muted-foreground transition-transform",
+                    isOpen && "rotate-180"
+                  )}
+                />
+              </button>
+              {isOpen && (
+                <div className="border-t border-border px-4 pb-4 pt-3 animate-message-in">
+                  {tabItem?.content}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

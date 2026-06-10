@@ -55,10 +55,18 @@
     "calc": "Calc"
   },
   "home": {
-    "heroTitle": "Your guide to medicinal herbs",
-    "heroSubtitle": "Explore 2,700+ herbs, check interactions, and ask the AI herbalist — free, no account needed.",
-    "heroButton": "Browse herbs",
-    "heroSecondary": "Ask AI herbalist",
+    "heroTitle": "Check herb-drug interactions",
+    "heroSubtitle": "Type any herb and medication to see if they're safe together. Evidence-based answers in seconds.",
+    "heroButton": "Browse all herbs",
+    "herbPlaceholder": "Herb name (e.g. Turmeric, St. John's Wort)",
+    "medPlaceholder": "Medication (e.g. warfarin, sertraline)",
+    "checkButton": "Check interaction",
+    "suggestionsTitle": "Common checks",
+    "suggestion1": "St. John's Wort + antidepressants",
+    "suggestion2": "Turmeric + blood thinners",
+    "suggestion3": "Ginkgo + aspirin",
+    "suggestion4": "Echinacea + immunosuppressants",
+    "trustLine": "Evidence-based · Free · No account required",
     "featuresTitle": "What you can do",
     "featureHerbsTitle": "Herb database",
     "featureHerbsDescription": "Search 2,700+ medicinal herbs with detailed profiles, uses, and safety information.",
@@ -278,7 +286,9 @@
     "canceled": {
       "title": "Donation canceled",
       "message": "No worries! Feel free to try again whenever you're ready."
-    }
+    },
+    "promptAfterUse": "HerbAlly is free and always will be. If it helped you,",
+    "promptLink": "consider supporting us →"
   },
   "garden": {
     "title": "My Garden",

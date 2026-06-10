@@ -55,19 +55,27 @@
     "calc": "Calc"
   },
   "home": {
-    "heroTitle": "Votre guide des plantes médicinales",
-    "heroSubtitle": "Explorez plus de 2 700 plantes, vérifiez les interactions et posez vos questions — gratuit, sans compte.",
+    "heroTitle": "Vérifiez les interactions plante-médicament",
+    "heroSubtitle": "Tapez une plante et un médicament pour savoir s'ils sont compatibles. Réponses basées sur des preuves.",
     "heroButton": "Explorer les plantes",
-    "heroSecondary": "Demander à l'herboriste IA",
+    "herbPlaceholder": "Nom de la plante (ex. Curcuma, Millepertuis)",
+    "medPlaceholder": "Médicament (ex. warfarine, sertraline)",
+    "checkButton": "Vérifier l'interaction",
+    "suggestionsTitle": "Vérifications courantes",
+    "suggestion1": "Millepertuis + antidépresseurs",
+    "suggestion2": "Curcuma + anticoagulants",
+    "suggestion3": "Ginkgo + aspirine",
+    "suggestion4": "Échinacée + immunosuppresseurs",
+    "trustLine": "Basé sur des preuves · Gratuit · Sans compte",
     "featuresTitle": "Ce que vous pouvez faire",
     "featureHerbsTitle": "Base de données",
-    "featureHerbsDescription": "Recherchez parmi 2 700+ plantes médicinales avec profils détaillés et informations de sécurité.",
+    "featureHerbsDescription": "Recherchez parmi 2 700+ plantes médicinales avec profils détaillés.",
     "featureCalculatorTitle": "Calculateur de dosage",
-    "featureCalculatorDescription": "Obtenez des recommandations de dosage basées sur l'âge et le poids.",
+    "featureCalculatorDescription": "Recommandations de dosage basées sur l'âge et le poids.",
     "featureInteractionsTitle": "Vérificateur d'interactions",
-    "featureInteractionsDescription": "Vérifiez les interactions plante-médicament avant de combiner des suppléments.",
+    "featureInteractionsDescription": "Vérifiez les interactions avant de combiner suppléments et médicaments.",
     "featureAiTitle": "Herboriste virtuel",
-    "featureAiDescription": "Posez des questions sur les plantes et la sécurité. Réponses basées sur des preuves avec citations."
+    "featureAiDescription": "Posez des questions. Réponses basées sur des preuves avec citations."
   },
   "herbs": {
     "title": "Base de Données d'Herbes Médicinales",
@@ -278,7 +286,9 @@
     "canceled": {
       "title": "Don annulé",
       "message": "Pas de problème ! N'hésitez pas à réessayer quand vous voulez."
-    }
+    },
+    "promptAfterUse": "HerbAlly est gratuit et le restera. Si cela vous a aidé,",
+    "promptLink": "soutenez-nous →"
   },
   "garden": {
     "title": "Mon Jardin",
@@ -1104,7 +1114,7 @@
   },
   "herbalistPage": {
     "title": "Herboriste Virtuel",
-    "subtitle": "Posez des questions sur les plantes, les interactions et la sécurité.",
+    "subtitle": "Posez des questions sur les plantes et la sécurité.",
     "safetyTitle": "Important : Limitations des informations générées par l'IA",
     "safetyNotMedical": "Cette IA fournit des informations éducatives uniquement, et non des conseils médicaux.",
     "safetyDisclaimer": "Les réponses sont générées à partir de bases de données sur les plantes et peuvent ne pas refléter les recherches les plus récentes ou votre situation de santé spécifique.",

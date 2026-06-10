@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   ShieldX,
   Check,
+  BadgeCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -37,9 +38,10 @@ interface HerbHeroV2Props {
     evidence_level?: string | null;
     traditional_uses?: string[] | null;
   };
+  isVerified?: boolean;
 }
 
-export function HerbHeroV2({ herb }: HerbHeroV2Props) {
+export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
   const t = useTranslations();
   const [saved, setSaved] = useState(() => isInGarden(herb.slug));
 
@@ -66,19 +68,14 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
   const firstBenefit = herb.traditional_uses?.[0];
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border bg-card">
-      {/* Organic shape background accent */}
-      <div className="absolute -right-20 -top-20 size-64 rounded-full bg-primary/5 blur-3xl" />
-      <div className="absolute -left-10 -bottom-10 size-48 rounded-full bg-teal-500/5 blur-2xl" />
-
-      <div className="relative flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:gap-8 sm:p-8">
-        {/* Herb Image */}
+    <div className="relative overflow-hidden rounded-2xl border bg-card">
+      <div className="relative flex flex-col gap-5 p-5 sm:flex-row sm:items-start sm:gap-6 sm:p-6">
         <div className="shrink-0 mx-auto sm:mx-0">
           <div className="relative">
             <HerbImage
               name={herb.name}
               imageUrl={herb.image_url}
-              className="size-28 rounded-2xl shadow-lg sm:size-32 object-cover"
+              className="size-24 rounded-xl shadow-sm sm:size-28 object-cover"
             />
             <button
               onClick={handleSave}
@@ -95,7 +92,6 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
           </div>
         </div>
 
-        {/* Info */}
         <div className="flex-1 text-center sm:text-left">
           <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             {herb.herb_categories?.name && (
@@ -110,68 +106,64 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
                   : "C"
               }
             />
+            {isVerified && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                <BadgeCheck className="size-3" />
+                Verified
+              </span>
+            )}
           </div>
 
-          <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             {herb.name}
           </h1>
-          <p className="mt-1 text-lg italic text-muted-foreground">
+          <p className="mt-1 text-sm italic text-muted-foreground">
             {herb.scientific_name}
           </p>
 
           {firstBenefit && (
-            <div className="mt-3 inline-flex items-center rounded-full bg-primary/5 px-3 py-1 text-sm text-primary">
-              <Check className="mr-1.5 size-3.5" />
+            <div className="mt-2 inline-flex items-center rounded-full bg-primary/5 px-3 py-1 text-xs text-primary">
+              <Check className="mr-1 size-3" />
               {firstBenefit}
             </div>
           )}
 
-          {/* Safety mini-badges */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-            <span className="inline-flex items-center gap-1.5 text-sm">
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+            <span className="inline-flex items-center gap-1 text-xs">
               {herb.pregnancy_safe ? (
                 <>
-                  <ShieldCheck className="size-4 text-success" />
-                  <span className="text-success">
-                    {t("herbDetail.safePregnancy")}
-                  </span>
+                  <ShieldCheck className="size-3.5 text-green-600" />
+                  <span className="text-green-600">{t("herbDetail.safePregnancy")}</span>
                 </>
               ) : (
                 <>
-                  <ShieldX className="size-4 text-destructive" />
-                  <span className="text-destructive">
-                    {t("herbDetail.notSafePregnancy")}
-                  </span>
+                  <ShieldX className="size-3.5 text-destructive" />
+                  <span className="text-destructive">{t("herbDetail.notSafePregnancy")}</span>
                 </>
               )}
             </span>
-            <span className="inline-flex items-center gap-1.5 text-sm">
+            <span className="inline-flex items-center gap-1 text-xs">
               {herb.nursing_safe ? (
                 <>
-                  <ShieldCheck className="size-4 text-success" />
-                  <span className="text-success">
-                    {t("herbDetail.safeNursing")}
-                  </span>
+                  <ShieldCheck className="size-3.5 text-green-600" />
+                  <span className="text-green-600">{t("herbDetail.safeNursing")}</span>
                 </>
               ) : (
                 <>
-                  <ShieldX className="size-4 text-destructive" />
-                  <span className="text-destructive">
-                    {t("herbDetail.notSafeNursing")}
-                  </span>
+                  <ShieldX className="size-3.5 text-destructive" />
+                  <span className="text-destructive">{t("herbDetail.notSafeNursing")}</span>
                 </>
               )}
             </span>
           </div>
 
-          {/* Quick Actions */}
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
             <Button
               size="sm"
               render={<Link href={`/herbalist?herb=${herb.slug}`} />}
               className="rounded-full"
             >
-              <MessageCircle className="mr-1.5 size-3.5" />
+              <MessageCircle className="mr-1 size-3" />
               {t("herbDetail.askHerbalist")}
             </Button>
             <Button
@@ -180,7 +172,7 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
               render={<Link href={`/calculator?herb=${herb.slug}`} />}
               className="rounded-full"
             >
-              <Calculator className="mr-1.5 size-3.5" />
+              <Calculator className="mr-1 size-3" />
               {t("herbDetail.calculateDose")}
             </Button>
           </div>

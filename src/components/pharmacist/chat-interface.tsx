@@ -816,6 +816,21 @@ export function ChatInterface({
         </>
       )}
 
+      {/* Donation prompt — show after 3+ messages exchanged */}
+      {messages.length >= 3 && (
+        <div className="shrink-0 border-t border-primary/10 bg-primary/5 px-4 py-2 text-center">
+          <p className="text-xs text-muted-foreground">
+            {t("donate.promptAfterUse")}{" "}
+            <a
+              href="/donate"
+              className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+            >
+              {t("donate.promptLink")}
+            </a>
+          </p>
+        </div>
+      )}
+
       {/* ═══ Disclaimer bar (always visible at bottom) ═══ */}
       <div className="shrink-0 border-t bg-warning/5 px-4 py-2 dark:bg-warning/5">
         <div className="flex items-center justify-between">

@@ -23,6 +23,7 @@ import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
 import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
+import { parseProvenance, isVerified } from "@/lib/types/provenance";
 
 export async function generateStaticParams() {
   try {
