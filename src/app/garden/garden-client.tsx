@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import {
   getGarden,
   removeFromGarden,
+  mergeServerGarden,
   type GardenHerb,
 } from "@/lib/garden/local-garden";
 import { recordVisit, getExploredCount } from "@/lib/garden/streaks";
@@ -33,6 +34,18 @@ export function GardenClient() {
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
+
+  // Merge server-side garden into localStorage on mount
+  useEffect(() => {
+    if (!mounted) return;
+    mergeServerGarden().then((merged) => {
+      if (merged.length !== garden.length) {
+        setGarden(merged);
+      }
+    });
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted]);
 
   const handleRemove = useCallback((slug: string) => {
     const updated = removeFromGarden(slug);

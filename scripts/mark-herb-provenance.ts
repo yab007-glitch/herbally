@@ -1,10 +1,10 @@
 #!/usr/bin/env tsx
 /**
- * mark-herb-provenance — one-shot CLI to record/refresh the provenance
- * record on a herb row. Idempotent: running twice updates `last_verified_at`
- * and merges sources without duplicating them.
+ * mark-herb-provenance — CLI to record/refresh the provenance record on herb
+ * rows. Supports per-slug mode (--method, --sources, …) and CSV bulk mode
+ * (--csv <file.csv>). Idempotent: merges sources, bumps last_verified_at.
  *
- * Usage:
+ * Per-slug usage:
  *   npx tsx scripts/mark-herb-provenance.ts <slug>
  *     --method manual
  *     --sources "WHO,NCCIH"
@@ -12,18 +12,31 @@
  *     --verified-by "Dr. Smith"
  *     --notes "Cross-checked WHO monograph 2024 edition p.12"
  *
+ * CSV bulk mode:
  *   npx tsx scripts/mark-herb-provenance.ts --csv reviewed.csv
+ *
+ *   # dry-run first (no writes)
+ *   npx tsx scripts/mark-herb-provenance.ts --csv reviewed.csv --dry-run
  *
  *   # clear provenance (back to unverified)
  *   npx tsx scripts/mark-herb-provenance.ts <slug> --clear
  *
- * CSV columns: slug,verification_method,sources,primary_url,verified_by,notes
+ * CSV columns (header row required):
+ *   slug,verification_method,sources,primary_url,verified_by,notes
+ *
+ *   Example CSV:
+ *     slug,verification_method,sources,primary_url,verified_by,notes
+ *     ginger,manual,"WHO,NCCIH",https://...,Dr. Smith,"Monograph p.12"
+ *     turmeric,primary_source,EMA,https://...,Dr. Jones,
+ *     echinacea,manual,NCCIH,https://...,,
  */
 import { config } from "dotenv";
 config({ path: ".env.local" });
 config({ path: ".env" });
 
 import { createClient } from "@supabase/supabase-js";
+import * as fs from "fs";
+import * as path from "path";
 
 type Method = "manual" | "ai_summarized" | "primary_source" | "unverified";
 
@@ -79,9 +92,9 @@ function buildUpdate(): ProvenanceUpdate {
   return {
     verification_method: method,
     sources: parseSources(getArg("sources")),
-    primary_url: getArg("primary-url"),
+    primary_url: getArg("primary-url") || null,
     last_verified_at: new Date().toISOString(),
-    verified_by: getArg("verified-by"),
+    verified_by: getArg("verified-by") || null,
     notes: getArg("notes") ?? undefined,
   };
 }
@@ -154,15 +167,196 @@ async function clearProvenance(
   console.log(`✓ ${slug} cleared`);
 }
 
+// -------------------------------------------------------------------
+// CSV bulk mode
+// -------------------------------------------------------------------
+
+interface CsvRow {
+  slug: string;
+  verification_method: Method;
+  sources: string;
+  primary_url: string;
+  verified_by: string;
+  notes: string;
+}
+
+/**
+ * Parse a CSV file at the given path into an array of CsvRow objects.
+ * Handles quoted fields, header row, and trims whitespace.
+ */
+function parseCsv(filePath: string): CsvRow[] {
+  const fullPath = path.resolve(filePath);
+  if (!fs.existsSync(fullPath)) {
+    throw new Error(`CSV file not found: ${fullPath}`);
+  }
+
+  const raw = fs.readFileSync(fullPath, "utf-8");
+  const lines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0);
+
+  if (lines.length < 2) {
+    throw new Error("CSV must have a header row and at least one data row");
+  }
+
+  const headerLine = lines[0];
+  if (!headerLine) throw new Error("Empty header row");
+  const headers = parseCsvLine(headerLine);
+  const expectedHeaders = [
+    "slug",
+    "verification_method",
+    "sources",
+    "primary_url",
+    "verified_by",
+    "notes",
+  ];
+
+  for (const h of expectedHeaders) {
+    if (!headers.includes(h)) {
+      throw new Error(
+        `CSV missing expected column "${h}". Found: ${headers.join(", ")}`
+      );
+    }
+  }
+
+  const rows: CsvRow[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line) continue;
+    const values = parseCsvLine(line);
+    const row: Record<string, string> = {};
+    headers.forEach((h, idx) => {
+      row[h] = (values[idx] ?? "").trim();
+    });
+
+    const method = row["verification_method"] as Method;
+    if (
+      !["manual", "ai_summarized", "primary_source", "unverified"].includes(
+        method
+      )
+    ) {
+      console.warn(
+        `Row ${i + 1}: invalid verification_method "${method}" for "${row["slug"]}", skipping`
+      );
+      continue;
+    }
+
+    rows.push({
+      slug: row["slug"],
+      verification_method: method,
+      sources: row["sources"] ?? "",
+      primary_url: row["primary_url"] ?? "",
+      verified_by: row["verified_by"] ?? "",
+      notes: row["notes"] ?? "",
+    });
+  }
+
+  return rows;
+}
+
+/**
+ * Parse a single CSV line, respecting quoted fields (e.g. "WHO, NCCIH").
+ * Handles double-quote escaping within quoted fields.
+ */
+function parseCsvLine(line: string): string[] {
+  const fields: string[] = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+
+    if (inQuotes) {
+      if (ch === '"') {
+        // Check for escaped quote ("")
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ",") {
+        fields.push(current);
+        current = "";
+      } else {
+        current += ch;
+      }
+    }
+  }
+  fields.push(current);
+  return fields;
+}
+
+async function runCsv(
+  csvPath: string,
+  dryRun: boolean
+): Promise<{ total: number; succeeded: number; failed: number }> {
+  const rows = parseCsv(csvPath);
+  const supabase = dryRun
+    ? (null as unknown as ReturnType<typeof getSupabase>)
+    : getSupabase();
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `${dryRun ? "[DRY RUN] " : ""}Processing ${rows.length} rows from ${csvPath}...`
+  );
+
+  let succeeded = 0;
+  let failed = 0;
+
+  for (const row of rows) {
+    const update: ProvenanceUpdate = {
+      verification_method: row.verification_method,
+      sources: parseSources(row.sources || null),
+      primary_url: row.primary_url || null,
+      last_verified_at: new Date().toISOString(),
+      verified_by: row.verified_by || null,
+      notes: row.notes || undefined,
+    };
+
+    try {
+      if (dryRun) {
+        // eslint-disable-next-line no-console
+        console.log(
+          `  [DRY] ${row.slug} → ${update.verification_method} (${update.sources.length} sources)`
+        );
+        succeeded++;
+      } else {
+        await mergeProvenance(supabase, row.slug, update);
+        succeeded++;
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`  ✗ ${row.slug}: ${msg}`);
+      failed++;
+    }
+  }
+
+  return { total: rows.length, succeeded, failed };
+}
+
+// -------------------------------------------------------------------
+// Main
+// -------------------------------------------------------------------
+
 async function main() {
   if (hasFlag("csv")) {
-    // CSV bulk mode is optional and requires `csv-parse` as a devDependency.
-    // To enable: `pnpm add -D csv-parse` and uncomment the block below.
-    // The slug-based mode above covers the common case (one-off review of a
-    // single herb after looking up a primary source).
-    throw new Error(
-      "CSV mode is not enabled. Run per-slug, or install csv-parse and re-enable."
+    const csvPath = getArg("csv");
+    if (!csvPath) {
+      throw new Error("--csv requires a file path: --csv reviewed.csv");
+    }
+    const dryRun = hasFlag("dry-run");
+    const { total, succeeded, failed } = await runCsv(csvPath, dryRun);
+    // eslint-disable-next-line no-console
+    console.log(
+      `\n${dryRun ? "[DRY RUN] " : ""}Done. ${succeeded}/${total} succeeded${failed > 0 ? `, ${failed} failed` : ""}.`
     );
+    if (failed > 0 && !dryRun) process.exit(1);
+    return;
   }
 
   const slug = process.argv[2];

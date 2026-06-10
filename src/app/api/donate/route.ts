@@ -24,7 +24,6 @@ function getStripe(): Stripe | null {
 export async function POST(req: NextRequest) {
   const stripe = getStripe();
 
-  // Check if Stripe is configured
   if (!stripe) {
     return NextResponse.json(
       {
@@ -35,17 +34,19 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { amount } = await req.json();
+    const body = await req.json();
+    const { amount, idempotencyKey } = body;
 
-    // Validate amount (min $1, max $1000)
+    // Validate amount (min $1, max $10000)
     const donationAmount = Math.max(
       100,
-      Math.min(100000, Number(amount) || 1000)
-    ); // in cents
+      Math.min(1_000_000, Number(amount) || 1000)
+    );
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://herbally.app";
 
-    const session = await stripe.checkout.sessions.create({
+    // Use idempotency key to prevent duplicate charge attempts on retry
+    const createParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ["card"],
       line_items: [
         {
@@ -55,8 +56,6 @@ export async function POST(req: NextRequest) {
               name: "Support HerbAlly",
               description:
                 "Help keep herbal medicine information free for everyone",
-              // Remove images field - Stripe requires publicly accessible URLs
-              // If you want an image, upload to public/ and use appUrl + "/leaf-icon.png"
             },
             unit_amount: donationAmount,
           },
@@ -64,12 +63,21 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: "payment",
-      success_url: `${appUrl}/donate?success=true`,
+      success_url: `${appUrl}/donate?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/donate?canceled=true`,
       metadata: {
         type: "donation",
       },
-    });
+    };
+
+    const idempotencyKeyProvided =
+      typeof idempotencyKey === "string" && idempotencyKey.length > 0;
+
+    const session = idempotencyKeyProvided
+      ? await stripe.checkout.sessions.create(createParams, {
+          idempotencyKey,
+        })
+      : await stripe.checkout.sessions.create(createParams);
 
     return NextResponse.json({ url: session.url });
   } catch (error) {

@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+/**
+ * NOTE: The `donations` table is defined in migration 00026_create_donations.sql.
+ * Until applied, regenerate types:
+ *   supabase gen types typescript --linked > src/lib/types/database.ts
+ */
 
 let stripeInstance: Stripe | null = null;
 
@@ -18,15 +25,73 @@ function getStripe(): Stripe | null {
   }
 }
 
-// This is a placeholder for donation tracking
-// In production, you would store this in a database
-const donationLog: Array<{
-  id: string;
-  amount: number;
-  email: string | null;
-  status: string;
-  createdAt: Date;
-}> = [];
+function db() {
+  const supabase = createAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return { from: (table: string) => (supabase.from as any)(table) };
+}
+
+async function upsertDonation(session: Stripe.Checkout.Session) {
+  const amountCents = session.amount_total ?? 0;
+  const amountDisplay = `$${(amountCents / 100).toFixed(2)}`;
+  const email = session.customer_details?.email ?? null;
+  const name = session.customer_details?.name ?? null;
+  const paymentIntentId = (session.payment_intent as string) ?? null;
+
+  const status =
+    session.payment_status === "paid"
+      ? "completed"
+      : session.payment_status === "unpaid"
+        ? "pending"
+        : "expired";
+
+  const { error } = await db().from("donations").upsert(
+    {
+      stripe_session_id: session.id,
+      stripe_payment_intent_id: paymentIntentId,
+      amount_cents: amountCents,
+      amount_display: amountDisplay,
+      currency: session.currency ?? "usd",
+      customer_email: email,
+      customer_name: name,
+      status,
+      metadata: session.metadata ?? {},
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "stripe_session_id" }
+  );
+
+  if (error) {
+    console.error("Failed to upsert donation:", error);
+  }
+
+  return { amountCents, email, status };
+}
+
+async function markDonationFailed(paymentIntent: Stripe.PaymentIntent) {
+  const { error } = await db()
+    .from("donations")
+    .update({ status: "failed", updated_at: new Date().toISOString() })
+    .eq("stripe_payment_intent_id", paymentIntent.id);
+
+  if (error) {
+    console.error("Failed to mark donation as failed:", error);
+  }
+}
+
+async function markDonationRefunded(charge: Stripe.Charge) {
+  const piId = charge.payment_intent as string;
+  if (!piId) return;
+
+  const { error } = await db()
+    .from("donations")
+    .update({ status: "refunded", updated_at: new Date().toISOString() })
+    .eq("stripe_payment_intent_id", piId);
+
+  if (error) {
+    console.error("Failed to mark donation as refunded:", error);
+  }
+}
 
 export async function POST(request: NextRequest) {
   const stripeClient = getStripe();
@@ -76,41 +141,39 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
+        const { amountCents, email, status } = await upsertDonation(session);
+        console.log(
+          `Donation completed: ${email ?? "anonymous"} $${(amountCents / 100).toFixed(2)} (${status})`
+        );
+        break;
+      }
 
-        // Extract donation details
-        const donationId = session.id;
-        const amount = session.amount_total || 0;
-        const email = session.customer_details?.email || null;
-        const paymentIntentId = session.payment_intent as string | null;
-
-        // Store in memory for now (replace with database)
-        donationLog.push({
-          id: donationId,
-          amount: amount / 100,
-          email,
-          status: "completed",
-          createdAt: new Date(),
-        });
-
-        // In production, you would:
-        // 1. Insert into donations table
-        // 2. Send thank you email
-        // 3. Update analytics
-
+      case "checkout.session.async_payment_succeeded": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        await upsertDonation(session);
         break;
       }
 
       case "checkout.session.expired": {
         const session = event.data.object as Stripe.Checkout.Session;
+        await upsertDonation(session);
         break;
       }
 
       case "payment_intent.payment_failed": {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        await markDonationFailed(paymentIntent);
+        break;
+      }
+
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        await markDonationRefunded(charge);
         break;
       }
 
       default:
+        break;
     }
 
     return NextResponse.json({ received: true });
@@ -122,6 +185,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// GET endpoint removed — donation data must not be exposed publicly.
-// In production, store donations in Supabase and query via authenticated admin routes.

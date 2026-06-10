@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "@playwright/test";
 
 test.describe("Dosage Calculator", () => {
@@ -11,13 +12,11 @@ test.describe("Dosage Calculator", () => {
   test("should display calculator form", async ({ page }) => {
     await page.goto("/calculator");
 
-    // Check for form elements
     const herbSelect = page.locator(
       'select, input[placeholder*="herb" i], [role="combobox"]'
     );
     await expect(herbSelect.first()).toBeVisible();
 
-    // Age or weight inputs
     const ageInput = page.locator(
       'input[type="number"], input[placeholder*="age" i]'
     );
@@ -27,13 +26,11 @@ test.describe("Dosage Calculator", () => {
   test("should calculate dosage based on weight", async ({ page }) => {
     await page.goto("/calculator");
 
-    // Select an herb
     const herbSelect = page.locator("select").first();
     if ((await herbSelect.count()) > 0) {
       await herbSelect.selectOption({ index: 1 });
     }
 
-    // Enter weight
     const weightInput = page
       .locator('input[type="number"][placeholder*="weight" i]')
       .first();
@@ -41,7 +38,6 @@ test.describe("Dosage Calculator", () => {
       await weightInput.fill("70");
     }
 
-    // Submit or wait for calculation
     const submitButton = page
       .locator('button[type="submit"], button:has-text("Calculate")')
       .first();
@@ -49,10 +45,8 @@ test.describe("Dosage Calculator", () => {
       await submitButton.click();
     }
 
-    // Should show results
     await page.waitForTimeout(1000);
 
-    // Look for dosage result
     const hasResult =
       (await page
         .locator("text=mg, text=ml, text=dose, text= dosage")
@@ -63,15 +57,11 @@ test.describe("Dosage Calculator", () => {
   test("should validate required fields", async ({ page }) => {
     await page.goto("/calculator");
 
-    // Try to submit without filling required fields
     const submitButton = page.locator('button[type="submit"]').first();
     if ((await submitButton.count()) > 0) {
       await submitButton.click();
-
-      // Wait for validation
       await page.waitForTimeout(500);
 
-      // Should show validation errors or not submit
       const hasValidationError =
         (await page
           .locator('[role="alert"], .error, [class*="error"], text=required')
@@ -85,7 +75,6 @@ test.describe("Dosage Calculator", () => {
   test("should handle different age groups", async ({ page }) => {
     await page.goto("/calculator");
 
-    // Look for age selection
     const ageInput = page
       .locator(
         'input[type="number"][placeholder*="age" i], select[aria-label*="age" i]'
@@ -93,10 +82,8 @@ test.describe("Dosage Calculator", () => {
       .first();
 
     if ((await ageInput.count()) > 0) {
-      // Test with child age
       await ageInput.fill("5");
 
-      // Enter weight
       const weightInput = page
         .locator('input[type="number"][placeholder*="weight" i]')
         .first();
@@ -104,7 +91,6 @@ test.describe("Dosage Calculator", () => {
         await weightInput.fill("20");
       }
 
-      // Calculate
       const submitButton = page
         .locator('button[type="submit"], button:has-text("Calculate")')
         .first();
@@ -114,7 +100,6 @@ test.describe("Dosage Calculator", () => {
 
       await page.waitForTimeout(1000);
 
-      // Should show dosage (likely lower for child)
       const hasResult =
         (await page.locator("text=mg, text=ml, text=dose").count()) > 0;
       expect(hasResult).toBeTruthy();
@@ -124,7 +109,6 @@ test.describe("Dosage Calculator", () => {
   test("should show disclaimers", async ({ page }) => {
     await page.goto("/calculator");
 
-    // Should have medical disclaimer
     const hasDisclaimer =
       (await page
         .locator(
@@ -137,7 +121,6 @@ test.describe("Dosage Calculator", () => {
   test("should be accessible", async ({ page }) => {
     await page.goto("/calculator");
 
-    // Form should have proper labels
     const inputs = page.locator("input, select, textarea");
     const count = await inputs.count();
 
@@ -148,10 +131,21 @@ test.describe("Dosage Calculator", () => {
         (await input.getAttribute("aria-label")) !== null ||
         (await input.getAttribute("id")) !== null;
 
-      // Not failing on this, just checking
       if (!hasLabel) {
         console.log(`Input ${i} may be missing label`);
       }
     }
+  });
+
+  test("passes basic a11y checks (no critical violations)", async ({
+    page,
+  }) => {
+    await page.goto("/calculator");
+    await page.waitForTimeout(1000);
+
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .disableRules(["color-contrast"])
+      .analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 });

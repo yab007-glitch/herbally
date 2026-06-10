@@ -1,3 +1,4 @@
+import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "@playwright/test";
 
 /**
@@ -13,7 +14,6 @@ test.describe("AI Herbalist chat", () => {
   }) => {
     await page.goto("/herbalist");
     await expect(page).toHaveTitle(/HerbAlly/);
-    // The chat input textarea is the canonical empty-state affordance.
     await expect(
       page.locator('textarea[aria-label="Chat message input"]')
     ).toBeVisible();
@@ -22,8 +22,6 @@ test.describe("AI Herbalist chat", () => {
   test("renders PMID:NNN as a real PubMed link in the assistant reply", async ({
     page,
   }) => {
-    // Mock /api/chat to return a single SSE event with markdown content
-    // containing both a PMID reference and a Strong evidence pill.
     await page.route("**/api/chat", async (route) => {
       const sseBody = [
         'data: {"choices":[{"delta":{"content":"See "}}]}',
@@ -45,7 +43,6 @@ test.describe("AI Herbalist chat", () => {
     await input.fill("Tell me about turmeric evidence");
     await page.keyboard.press("Enter");
 
-    // Wait for the PubMed link to appear.
     const pubmedLink = page.locator(
       'a[href*="pubmed.ncbi.nlm.nih.gov/32747204"]'
     );
@@ -74,7 +71,6 @@ test.describe("AI Herbalist chat", () => {
     await input.fill("What is this rash?");
     await page.keyboard.press("Enter");
 
-    // The English soft-warn text should be appended.
     await expect(page.getByText(/educational information only/i)).toBeVisible({
       timeout: 10000,
     });
@@ -101,9 +97,20 @@ test.describe("AI Herbalist chat", () => {
     await input.fill("Can I stop my insulin?");
     await page.keyboard.press("Enter");
 
-    // The block message replaces the assistant text.
     await expect(
       page.getByText(/consult a qualified healthcare provider/i)
     ).toBeVisible({ timeout: 10000 });
+  });
+
+  test("passes basic a11y checks (no critical violations)", async ({
+    page,
+  }) => {
+    await page.goto("/herbalist");
+    await page.waitForSelector('textarea[aria-label="Chat message input"]');
+
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .disableRules(["color-contrast"])
+      .analyze();
+    expect(accessibilityScanResults.violations).toEqual([]);
   });
 });
