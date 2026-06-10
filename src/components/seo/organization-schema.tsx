@@ -13,7 +13,7 @@ export function OrganizationSchema() {
       url: "https://herbally.app",
       logo: {
         "@type": "ImageObject",
-        url: "https://herbally.app/icon.png",
+        url: "https://herbally.app/icon.svg",
         width: 512,
         height: 512,
       },

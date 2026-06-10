@@ -75,14 +75,6 @@ export const metadata: Metadata = {
     description:
       "Explore 2,700+ medicinal herbs, calculate dosages, and check drug interactions.",
     url: process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "HerbAlly - Medicinal Herbs Database",
-      },
-    ],
     locale: "en_US",
   },
   twitter: {
@@ -90,7 +82,6 @@ export const metadata: Metadata = {
     title: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
     description:
       "Explore 2,700+ medicinal herbs, calculate dosages, and check drug interactions.",
-    images: ["/og-image.png"],
   },
 };
 
