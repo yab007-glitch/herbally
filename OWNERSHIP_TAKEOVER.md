@@ -262,5 +262,42 @@ This is not just maintenance—this is **continuous improvement toward excellenc
 
 ---
 
-_Last Updated: May 11, 2026_  
-_Next Review: May 18, 2026_
+## 2026-06-09 Update — Seven-Change Hardening Pass
+
+Following the review on 2026-06-09 (see `IMPROVEMENT_ROADMAP.md` for the
+detailed diff), the following landed in a single PR:
+
+| # | Change | Where | Status |
+|---|---|---|---|
+| 1 | Markdown enrichment (PMID, evidence, interaction cards) | `src/lib/chat/enrichment.ts`, `src/components/pharmacist/markdown-renderer.tsx` | ✓ |
+| 2 | Client-side safety guard (hard block + soft warn) | `src/lib/chat/safety-guard.ts` | ✓ |
+| 3 | Provenance jsonb column + script + UI badge | `supabase/migrations/00024_add_provenance.sql`, `src/components/herbs/provenance-badge.tsx`, `scripts/mark-herb-provenance.ts` | ✓ (migration not yet applied to prod) |
+| 4 | Marketing landing page replaces chat at `/` | `src/app/(marketing)/page.tsx`, `next.config.ts` redirects | ✓ |
+| 5 | OpenRouter free chain hardening (observability + escape hatch) | `src/app/api/chat/route.ts`, `.env.example` | ✓ |
+| 6 | PWA manifest fix (no more 404 on `/icon.png`) | `src/app/manifest.ts`, `public/sw.js` | ✓ (dedicated PNGs deferred to designer) |
+| 7 | Test coverage | `src/app/api/__tests__/chat.test.ts`, `e2e/chat.spec.ts`, `e2e/homepage.spec.ts` (rewritten) | ✓ |
+
+**Test counts:** 211 unit + 4 new e2e. `npx tsc --noEmit` clean.
+
+**Decisions of note:**
+
+- Kept `openrouter/free` as the default primary model (cost-sensitive).
+  Operators wanting stability can set `OPENROUTER_MODEL=openai/gpt-4o-mini`.
+- Soft default for provenance: existing 2,700+ herbs are `unverified`; the
+  badge only renders for entries reviewed by a human. `mark-herb-provenance`
+  is the per-slug reviewer tool.
+- One big PR was used (not split) for easier review and single revert.
+
+**Action items for Yasser:**
+
+1. Apply `00024_add_provenance.sql` to the production Supabase project
+   when ready to start backfilling.
+2. Provide dedicated 192/512/maskable PNGs to fully satisfy the PWA
+   installability audit.
+3. Decide on the long-term primary model (free vs paid) once we have
+   DAU / hallucination-rate data.
+
+---
+
+_Last Updated: May 11, 2026 (initial pass), 2026-06-09 (seven-change hardening)_  
+_Next Review: June 23, 2026_

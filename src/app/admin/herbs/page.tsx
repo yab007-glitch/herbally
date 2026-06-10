@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Search } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getTranslations } from "next-intl/server";
 
 export const metadata = {
   title: "Manage Herbs",

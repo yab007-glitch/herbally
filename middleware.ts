@@ -1,25 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const publicRoutes = [
-  "/",
-  "/about",
-  "/disclaimer",
-  "/privacy",
-  "/terms",
-  "/herbs",
-  "/symptoms",
-  "/faq",
-  "/compare",
-  "/methodology",
-  "/calculator",
-  "/herbalist",
-  "/donate",
-  "/robots.txt",
-  "/sitemap.xml",
-  "/manifest.webmanifest",
-];
-
 const adminRoutes = ["/admin"];
 
 const securityHeaders = {

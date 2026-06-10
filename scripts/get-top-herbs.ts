@@ -9,7 +9,7 @@ async function getTopHerbs() {
   const { data: herbs, error } = await supabase
     .from("herbs")
     .select(
-      "id, name, slug, scientific_name, evidence_level, modern_uses, traditional_uses, active_compounds, description, citations"
+      "id, name, slug, scientific_name, evidence_level, modern_uses, traditional_uses, active_compounds, description, citations, view_count"
     )
     .eq("is_published", true)
     .order("name", { ascending: true });
@@ -34,16 +34,19 @@ async function getTopHerbs() {
       (herb.modern_uses?.length || 0) + (herb.traditional_uses?.length || 0);
     const hasCitations = herb.citations?.length > 0 ? 1 : 0;
     const hasCompounds = herb.active_compounds?.length > 0 ? 1 : 0;
+    // Log-scaled so a single bot can't blow up the score, but popular herbs
+    // do surface above the long tail.
+    const viewScore = Math.min(50, Math.log10(1 + (herb.view_count ?? 0)) * 10);
 
     const priorityScore =
-      evidenceScore * 15 + useCount + hasCitations * 10 + hasCompounds * 5;
+      evidenceScore * 15 + useCount + hasCitations * 10 + hasCompounds * 5 + viewScore;
 
     return {
       name: herb.name,
       slug: herb.slug,
       scientific_name: herb.scientific_name,
       evidence_level: herb.evidence_level,
-      priority_score: priorityScore,
+      priority_score: Math.round(priorityScore * 10) / 10,
     };
   });
 

@@ -70,7 +70,7 @@ const categorySubKey: Record<string, string> = {
 export default async function FAQPage() {
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
-  const locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
+  const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
   const t = await getTranslations();
 
   const faqCategories = categoryKeys.map((catKey) => ({

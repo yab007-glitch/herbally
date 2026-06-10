@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default async function TermsPage() {
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
-  const locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
+  const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
   const t = await getTranslations();
 
   return (

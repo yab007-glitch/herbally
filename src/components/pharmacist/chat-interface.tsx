@@ -20,7 +20,8 @@ import {
   Copy,
   RotateCcw,
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { ChatMarkdown } from "./markdown-renderer";
+import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -369,6 +370,21 @@ export function ChatInterface({
         setMessages((prev) =>
           prev.map((msg, idx) =>
             idx === prev.length - 1 ? { ...msg, content: current } : msg
+          )
+        );
+      }
+
+      // Post-stream safety guard: scan the final assistant text for red-flag
+      // medical-advice patterns. On a hard block we replace the content with a
+      // localised refusal; on a soft warn we append a localised disclaimer.
+      const verdict = evaluateAssistantContent(accumulated, locale === "fr" ? "fr" : "en");
+      if (verdict.verdict !== "ok" && verdict.appended) {
+        const finalContent =
+          verdict.verdict === "block" ? verdict.appended : `${accumulated}${verdict.appended}`;
+        accumulated = finalContent;
+        setMessages((prev) =>
+          prev.map((msg, idx) =>
+            idx === prev.length - 1 ? { ...msg, content: finalContent } : msg
           )
         );
       }
@@ -858,7 +874,7 @@ export function ChatInterface({
                         ) : (
                           <>
                             <div className="prose prose-sm max-w-none dark:prose-invert">
-                              <ReactMarkdown>{message.content}</ReactMarkdown>
+                              <ChatMarkdown>{message.content}</ChatMarkdown>
                             </div>
                             {/* Action buttons: Copy + Regenerate */}
                             <div className="mt-2 flex items-center gap-1 border-t pt-2 border-border/40">

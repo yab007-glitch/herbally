@@ -155,6 +155,13 @@ export async function POST(request: NextRequest) {
 
     if (response.ok) {
       if (model !== primaryModel) {
+        // Observability: surface every primary-model failure so we notice when
+        // the free pool degrades. Wire to Sentry via console.error which the
+        // @sentry/nextjs integration captures.
+        console.warn("[chat] primary model failed, using fallback", {
+          primaryModel,
+          fallbackModel: model,
+        });
       }
       break;
     }

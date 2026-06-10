@@ -251,7 +251,19 @@
     "copy": "Copier",
     "regenerate": "Régénérer",
     "retrying": "Nouvelle tentative...",
-    "errorRetry": "La connexion a échoué après 2 tentatives. Veuillez vérifier votre connexion Internet et réessayer."
+    "errorRetry": "La connexion a échoué après 2 tentatives. Veuillez vérifier votre connexion Internet et réessayer.",
+    "safetyWarning": "\n\n⚠️ Cette réponse n'est pas un avis médical. Vérifiez avec un professionnel de santé.",
+    "safetyBlocked": "Je ne peux pas répondre à cela. Consultez votre médecin ou un professionnel de santé qualifié."
+  },
+  "provenance": {
+    "verified": "Vérifié",
+    "aiSummarized": "Résumée par IA",
+    "primarySource": "Source primaire",
+    "reviewedBy": "Revu par",
+    "on": "le",
+    "verifiedTooltip": "Cette fiche a été revue par un humain à partir d'une source primaire.",
+    "aiSummarizedTooltip": "Résumée par IA. Consultez les sources pour les références originales.",
+    "primarySourceTooltip": "Cite une source primaire. Pas encore de revue manuelle."
   },
   "donate": {
     "title": "Soutenir HerbAlly",

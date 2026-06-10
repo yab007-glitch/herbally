@@ -61,7 +61,7 @@ export default async function ComparePage({ params }: Props) {
   const { slug1, slug2 } = await params;
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
-  const locale: Locale = (localeCookie?.value as Locale) || "en";
+  const _locale: Locale = (localeCookie?.value as Locale) || "en";
   const t = await getTranslations();
   const [resultA, resultB] = await Promise.all([
     getHerbBySlug(slug1),

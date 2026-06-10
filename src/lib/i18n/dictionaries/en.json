@@ -251,7 +251,19 @@
     "copy": "Copy",
     "regenerate": "Regenerate",
     "retrying": "Retrying...",
-    "errorRetry": "Connection failed after 2 retries. Please check your internet connection and try again."
+    "errorRetry": "Connection failed after 2 retries. Please check your internet connection and try again.",
+    "safetyWarning": "\n\n⚠️ This is educational information only. Verify with a healthcare provider before acting on it.",
+    "safetyBlocked": "I can't responsibly answer that. Please consult a qualified healthcare provider."
+  },
+  "provenance": {
+    "verified": "Verified",
+    "aiSummarized": "AI-summarized",
+    "primarySource": "Source-backed",
+    "reviewedBy": "Reviewed by",
+    "on": "on",
+    "verifiedTooltip": "This entry was reviewed by a human against a primary source.",
+    "aiSummarizedTooltip": "Summarized by AI. See the citations block for the underlying sources.",
+    "primarySourceTooltip": "Cites a primary source. Not yet manually reviewed."
   },
   "donate": {
     "title": "Support HerbAlly",

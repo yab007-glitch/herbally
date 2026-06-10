@@ -7,14 +7,14 @@ A medical herbs SaaS application featuring a searchable database of 2,700+ medic
 - **Framework**: Next.js 16 (App Router) + React 19
 - **Database**: Supabase (PostgreSQL + Auth)
 - **Styling**: Tailwind CSS 4 + shadcn/ui (base-nova)
-- **AI**: Ollama Cloud API (glm5:cloud) for virtual herbalist chat
+- **AI**: OpenRouter API (free pool by default, paid model via `OPENROUTER_MODEL` env var) for virtual herbalist chat. See `src/app/api/chat/route.ts` for the fallback chain.
 - **APIs**: RxNorm (drug lookup), OpenFDA (adverse events)
 
 ## Prerequisites
 
 - Node.js 20+
 - Supabase project
-- Ollama Cloud API key (or OpenRouter as alternative)
+- OpenRouter API key (`OPENROUTER_API_KEY`)
 
 ## Setup
 
@@ -56,20 +56,113 @@ src/
     (marketing)/    # Landing page, about, legal pages
     admin/          # Admin panel (herbs CRUD, interactions, users)
     api/            # API routes (chat, rxnorm, openfda, health)
+    manifest.ts     # PWA manifest
   components/
     ui/             # shadcn/ui components
-    herbs/          # Herb-specific components
+    herbs/          # Herb-specific components (incl. ProvenanceBadge, evidence-grade)
     calculator/     # Dosage calculator components
-    pharmacist/     # AI chat components
+    pharmacist/     # AI chat components (incl. ChatMarkdown with PMID/evidence enrichment)
     layout/         # Navigation, footer
     shared/         # Loading skeletons, common UI
   lib/
     actions/        # Server actions (ActionResponse<T> pattern)
     ai/             # OpenRouter client, system prompt
+    chat/           # Markdown enrichment (remarkHerbAlly) and safety guard
     supabase/       # Database client factories
-    types/          # TypeScript types, database schema
+    types/          # TypeScript types, database schema (incl. provenance.ts)
     utils/          # Dosage calculations, RxNorm client
     validations/    # Zod v4 schemas
+```
+
+## Routes
+
+- `/` — Marketing landing page (hero, stats, feature grid, CTA).
+- `/herbs` — Browseable catalog of 2,700+ herbs.
+- `/herbs/[slug]` — Herb detail page with provenance badge.
+- `/herbalist` — Full-screen AI chat with PMID-linkified markdown and safety guard.
+- `/calculator` — Pediatric/adult dosage calculator.
+- `/symptoms`, `/compare` — Adjacent tools.
+- `/admin` — Herb / interaction / user CRUD.
+- `/?herb=<slug>` and `/?medications=<list>` are 308-redirected to `/herbalist` for backward compatibility.
+
+## AI safety
+
+The chat route streams OpenRouter responses. After the stream completes, a
+client-side safety guard (`src/lib/chat/safety-guard.ts`) scans the final
+text for red-flag phrases (e.g. "stop taking your insulin") and either
+appends a localised disclaimer (soft warn) or replaces the response with
+a refusal (hard block) before the message is persisted.
+
+## Herb provenance
+
+`herbs.provenance` and `herb_monographs.provenance` are jsonb columns
+introduced in migration `00024_add_provenance.sql`. The shape:
+
+```jsonc
+{
+  "verification_method": "manual" | "ai_summarized" | "primary_source" | "unverified",
+  "sources": ["WHO", "NCCIH"],
+  "primary_url": "https://...",
+  "last_verified_at": "2026-06-09T12:00:00.000Z",
+  "verified_by": "Dr. Smith",
+  "notes": "optional reviewer note"
+}
+```
+
+Default is `{}` (interpreted as `unverified`); the badge only renders
+for entries reviewed by a human. To mark a herb:
+
+```bash
+npx tsx scripts/mark-herb-provenance.ts ginger \
+  --method manual \
+  --sources "WHO,NCCIH" \
+  --primary-url https://nccih.nih.gov/health/ginger \
+  --verified-by "Dr. Smith" \
+  --notes "Cross-checked WHO monograph 2024"
+```
+
+## Deployment
+
+### Provenance migration (one-time)
+
+Apply the migration to your Supabase project before any reviewer starts
+backfilling provenance. It's idempotent — safe to re-run.
+
+```bash
+# Option 1: Supabase CLI
+supabase db push
+
+# Option 2: paste the contents of
+#   supabase/migrations/00024_add_provenance.sql
+# into the Supabase SQL editor.
+```
+
+The migration:
+- adds `provenance jsonb NOT NULL DEFAULT '{}'::jsonb` to `herbs` and `herb_monographs`
+- adds a CHECK constraint allowing only the four known `verification_method` values
+- adds a GIN index for `provenance @> '{"verification_method":"manual"}'` queries
+- backfills existing AI-generated monographs with `verification_method = 'ai_summarized'`
+
+The 2,700+ existing herbs land in the soft-default `unverified` state
+(no badge rendered) — backfill with `npx tsx scripts/mark-herb-provenance.ts <slug> ...` as you review each.
+
+### Verifying deep-link redirects
+
+The 308 redirect in `next.config.ts` is load-bearing — `src/app/(main)/herbs/[slug]/page.tsx:764` links to `/?herb=${slug}` for the "Check Interactions" CTA. After deploy:
+
+```bash
+curl -I https://herbally.app/?herb=ginger
+# Expected: HTTP/2 308, location: /herbalist
+```
+
+### Smoke test the chat
+
+```bash
+# Confirm /api/chat handles the common error paths.
+curl -X POST http://localhost:3000/api/chat \
+  -H 'content-type: application/json' \
+  -d '{"messages":[{"role":"user","content":"hi"}]}'
+# Expected: streamed text/event-stream, 200 OK
 ```
 
 ## Disclaimer

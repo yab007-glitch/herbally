@@ -62,7 +62,7 @@ export default async function DonatePage({
   const params = await searchParams;
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
-  const locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
+  const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
   const t = await getTranslations();
 
   const costs = costKeys.map((key) => ({
@@ -106,7 +106,7 @@ export default async function DonatePage({
               <h2 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
                 {t("donateContent.canceled")}
               </h2>
-              <p className="text-sm text-amber-700 dark:text-amber-300">
+              <p className="text-sm text-amber-700 dark:text-emerald-300">
                 {t("donateContent.canceledDesc")}
               </p>
             </div>

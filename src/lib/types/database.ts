@@ -284,6 +284,7 @@ export type Database = {
           last_reviewed_at: string | null;
           mechanism: string;
           pregnancy_category: string;
+          provenance: Json;
           reviewed_by: string | null;
           reviewer_credentials: string | null;
           safety_notes: Json;
@@ -304,6 +305,7 @@ export type Database = {
           last_reviewed_at?: string | null;
           mechanism: string;
           pregnancy_category: string;
+          provenance?: Json;
           reviewed_by?: string | null;
           reviewer_credentials?: string | null;
           safety_notes?: Json;
@@ -324,6 +326,7 @@ export type Database = {
           last_reviewed_at?: string | null;
           mechanism?: string;
           pregnancy_category?: string;
+          provenance?: Json;
           reviewed_by?: string | null;
           reviewer_credentials?: string | null;
           safety_notes?: Json;
@@ -364,6 +367,7 @@ export type Database = {
           nursing_safe: boolean | null;
           pregnancy_safe: boolean | null;
           preparation_notes: string | null;
+          provenance: Json;
           pubchem_cid: string | null;
           reviewed_by: string | null;
           reviewer_credentials: string | null;
@@ -396,6 +400,7 @@ export type Database = {
           nursing_safe?: boolean | null;
           pregnancy_safe?: boolean | null;
           preparation_notes?: string | null;
+          provenance?: Json;
           pubchem_cid?: string | null;
           reviewed_by?: string | null;
           reviewer_credentials?: string | null;
@@ -428,6 +433,7 @@ export type Database = {
           nursing_safe?: boolean | null;
           pregnancy_safe?: boolean | null;
           preparation_notes?: string | null;
+          provenance?: Json;
           pubchem_cid?: string | null;
           reviewed_by?: string | null;
           reviewer_credentials?: string | null;

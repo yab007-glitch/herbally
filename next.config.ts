@@ -26,6 +26,25 @@ const nextConfig: NextConfig = {
   },
   compress: true,
   trailingSlash: false,
+  // Preserve deep links from the old home-page chat IA. `/?herb=ginger` and
+  // `/?medications=warfarin` style URLs must continue to reach the chat.
+  // Bare `/` falls through to the new marketing landing page.
+  async redirects() {
+    return [
+      {
+        source: "/",
+        has: [{ type: "query", key: "herb" }],
+        destination: "/herbalist",
+        permanent: true,
+      },
+      {
+        source: "/",
+        has: [{ type: "query", key: "medications" }],
+        destination: "/herbalist",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default bundleAnalyzer(

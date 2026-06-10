@@ -36,6 +36,8 @@ import { CopyLinkButton } from "@/components/herbs/copy-link-button";
 import { HerbSchema } from "@/components/seo/herb-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
+import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
+import { parseProvenance } from "@/lib/types/provenance";
 import {
   SafetyAlert,
   InteractionAlert,
@@ -396,6 +398,7 @@ export default async function HerbDetailPage({ params }: Props) {
           </h1>
           <Badge variant="secondary">{category}</Badge>
           <EvidenceGrade level={evidenceLevel} />
+          <ProvenanceBadge provenance={parseProvenance(herb.provenance)} />
           <CopyLinkButton />
         </div>
         <p className="mt-1 text-lg italic text-muted-foreground">

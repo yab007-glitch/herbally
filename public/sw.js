@@ -1,4 +1,4 @@
-const CACHE_NAME = "herbally-v2";
+const CACHE_NAME = "herbally-v3";
 const STATIC_URLS = [
   "/",
   "/herbs",

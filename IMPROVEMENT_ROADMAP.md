@@ -143,4 +143,53 @@
 
 ---
 
+## 2026-06-09 Update — Seven-Change Hardening Pass
+
+Landed a single review-and-fix pass on the chat surface, provenance, and
+landing page IA. All changes are in `main`; no migrations were applied
+locally to the production Supabase project yet (`00024_add_provenance.sql`
+is ready to ship when Yasser wants to start backfilling).
+
+Shipped:
+
+1. **Markdown enrichment** — `src/lib/chat/enrichment.ts` is a pure
+   `remark` plugin that linkifies `PMID:12345`, tags `**Strong evidence**`/
+   `**Moderate evidence**`/etc. as evidence pills, and detects the
+   `**Herb** + **Drug** → **Severity**` interaction-line pattern. Rendered
+   by `src/components/pharmacist/markdown-renderer.tsx`. 24 + 6 unit tests.
+2. **Safety guard** — `src/lib/chat/safety-guard.ts` scans the final
+   streamed assistant text for hard blocks ("stop taking your insulin")
+   and soft warns ("I can diagnose your rash"). Locale-aware EN/FR.
+   10 unit tests.
+3. **Provenance column** — `supabase/migrations/00024_add_provenance.sql`
+   adds `provenance jsonb NOT NULL DEFAULT '{}'::jsonb` on `herbs` and
+   `herb_monographs`, with a CHECK constraint and a GIN index. Backfill
+   script `scripts/mark-herb-provenance.ts` is idempotent and CSV-ready.
+4. **Marketing landing page** — `src/app/(marketing)/page.tsx` replaces
+   the chat-at-`/` IA. Deep links (`/?herb=...`, `/?medications=...`)
+   308-redirect to `/herbalist` via `next.config.ts`. The chat is now
+   at `/herbalist` exclusively. Old `(main)/page.tsx` deleted.
+5. **OpenRouter free chain hardening** — dead `if (model !== primaryModel)`
+   block in `route.ts` replaced with a `console.warn` observability log
+   (Sentry-pickable). `.env.example` documents the override to a stable
+   paid model.
+6. **PWA manifest** — `src/app/manifest.ts` no longer references a missing
+   `/icon.png`; falls back to `icon.svg` and `apple-icon.png` with a TODO
+   for dedicated 192/512/maskable PNGs. Service-worker cache name bumped
+   from `herbally-v2` → `herbally-v3`.
+7. **Test coverage** — `src/app/api/__tests__/chat.test.ts` (10 unit
+   tests), `e2e/chat.spec.ts` (4 Playwright tests, mock OpenRouter), and
+   `e2e/homepage.spec.ts` rewritten for the new marketing contract.
+
+**Test totals after this pass:** 211 unit + 4 new e2e + the existing
+homepage/calculator/herbs suites. `npx tsc --noEmit` clean.
+
+**Not shipped (deferred):**
+
+- Dedicated 192/512/maskable PNG icons. Designer task.
+- CSV bulk mode in `mark-herb-provenance.ts` (per-slug mode works).
+- Per-reviewer claim/lock so two reviewers can't both write to a row.
+
+---
+
 _This is a living document. Update as we learn and ship._
