@@ -40,7 +40,19 @@
     "about": "À propos",
     "support": "Soutenir",
     "donate": "Faire un don",
-    "dashboard": "Tableau de bord"
+    "dashboard": "Tableau de bord",
+    "chat": "Chat",
+    "explore": "Explorer",
+    "garden": "Mon Jardin"
+  },
+  "mobileTabs": {
+    "chat": "Chat",
+    "explore": "Explorer",
+    "garden": "Jardin",
+    "symptoms": "Symptômes",
+    "herbs": "Herbes",
+    "search": "Rechercher",
+    "calc": "Calc"
   },
   "home": {
     "hero": {
@@ -299,6 +311,33 @@
       "title": "Don annulé",
       "message": "Pas de problème ! N'hésitez pas à réessayer quand vous voulez."
     }
+  },
+  "garden": {
+    "title": "Mon Jardin",
+    "subtitle": "Votre collection personnelle d'herbes et de découvertes.",
+    "savedHerbs": "Herbes Sauvegardées",
+    "dayStreak": "Série de Jours",
+    "best": "Record!",
+    "explored": "Herbes Explorées",
+    "yourCollection": "Votre Collection",
+    "emptyTitle": "Votre jardin est vide",
+    "emptyDesc": "Sauvegardez les herbes que vous découvrez pour construire votre collection personnelle. Appuyez sur l'icône cœur sur n'importe quelle carte d'herbe.",
+    "exploreHerbs": "Explorer les Herbes",
+    "askHerbalist": "Demander à l'Herboriste",
+    "browseHerbs": "Parcourir les Herbes",
+    "browseHerbsDesc": "Découvrez de nouvelles herbes dans notre base de données",
+    "talkToHerbalist": "Parler à l'Herboriste",
+    "talkToHerbalistDesc": "Posez des questions et obtenez des conseils personnalisés",
+    "remove": "Retirer",
+    "saved": "Ajouté à votre jardin",
+    "alreadySaved": "Déjà dans votre jardin"
+  },
+  "herbTabs": {
+    "overview": "Aperçu",
+    "uses": "Usages",
+    "science": "Science",
+    "dosage": "Posologie",
+    "safety": "Sécurité"
   },
   "about": {
     "title": "À propos de HerbAlly",

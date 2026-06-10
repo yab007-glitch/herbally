@@ -6,6 +6,7 @@ import { HerbCard } from "@/components/herbs/herb-card";
 import { SmartSearch } from "@/components/herbs/smart-search";
 import { SurpriseMeButton } from "@/components/herbs/surprise-me-button";
 import { EmptyState } from "@/components/shared/empty-state";
+import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { Flame, Stethoscope } from "lucide-react";
 import Script from "next/script";
@@ -101,6 +102,9 @@ export default async function HerbsPage({
 
       {/* Smart Search */}
       <SmartSearch defaultValue={query} category={category} />
+
+      {/* Daily Herb Banner */}
+      {!query && !category && <DailyHerbBanner />}
 
       {/* Symptom-First Discovery */}
       {!query && !category && (

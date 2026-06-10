@@ -1,45 +1,29 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { ChatInterface } from "@/components/pharmacist/chat-interface";
 import { getTranslations } from "next-intl/server";
-import { HomePageClient } from "./home-page-client";
+import { type Locale } from "@/lib/i18n/config";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "HerbAlly — Virtual Herbalist | Medicinal Herbs & Drug Interactions",
+  title: "HerbAlly — Virtual Herbalist | Ask About Medicinal Herbs",
   description:
-    "Ask our AI herbalist about herb safety, drug interactions, and dosage. Explore 2,700+ medicinal herbs. Evidence-based answers from WHO, NCCIH, and PubMed. Free, no account required.",
+    "Ask our AI herbalist about herb safety, drug interactions, and dosage. Explore 2,700+ medicinal herbs. Evidence-based answers. Free, no account required.",
   alternates: {
     canonical: process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app",
   },
 };
 
 export default async function HomePage() {
-  const t = await getTranslations("home");
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("herbally-locale");
+  const locale: Locale = (localeCookie?.value as Locale) || "en";
+  const _t = await getTranslations();
+
   return (
-    <HomePageClient
-      labels={{
-        heroBadge: t("hero.badge"),
-        heroTitle: t("hero.title"),
-        heroSubtitle: t("hero.subtitle"),
-        heroSearchButton: t("hero.searchButton"),
-        heroAskHerbalistButton: t("hero.askHerbalistButton"),
-        trustBadges: t.raw("hero.trustBadgesList") as string[],
-        statsHeading: t("stats.heading"),
-        statsHerbs: t("stats.herbs"),
-        statsInteractions: t("stats.interactions"),
-        statsFree: t("stats.free"),
-        featuresTitle: t("features.title"),
-        featuresSubtitle: t("features.subtitle"),
-        ctaTitle: t("cta.title"),
-        ctaSubtitle: t("cta.subtitle"),
-        ctaButton: t("cta.button"),
-        featureHerbsTitle: t("features.herbs.title"),
-        featureHerbsDescription: t("features.herbs.description"),
-        featureCalculatorTitle: t("features.calculator.title"),
-        featureCalculatorDescription: t("features.calculator.description"),
-        featureInteractionsTitle: t("features.interactions.title"),
-        featureInteractionsDescription: t("features.interactions.description"),
-        featureAiTitle: t("features.ai.title"),
-        featureAiDescription: t("features.ai.description"),
-      }}
-    />
+    <div className="flex h-full flex-col">
+      <ChatInterface locale={locale} />
+    </div>
   );
 }

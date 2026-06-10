@@ -40,7 +40,19 @@
     "about": "About",
     "support": "Support Us",
     "donate": "Donate",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "chat": "Chat",
+    "explore": "Explore",
+    "garden": "My Garden"
+  },
+  "mobileTabs": {
+    "chat": "Chat",
+    "explore": "Explore",
+    "garden": "Garden",
+    "symptoms": "Symptoms",
+    "herbs": "Herbs",
+    "search": "Search",
+    "calc": "Calc"
   },
   "home": {
     "hero": {
@@ -299,6 +311,33 @@
       "title": "Donation canceled",
       "message": "No worries! Feel free to try again whenever you're ready."
     }
+  },
+  "garden": {
+    "title": "My Garden",
+    "subtitle": "Your personal collection of herbs and discoveries.",
+    "savedHerbs": "Saved Herbs",
+    "dayStreak": "Day Streak",
+    "best": "Best!",
+    "explored": "Herbs Explored",
+    "yourCollection": "Your Collection",
+    "emptyTitle": "Your garden is empty",
+    "emptyDesc": "Save herbs you discover to build your personal collection. Tap the heart icon on any herb card.",
+    "exploreHerbs": "Explore Herbs",
+    "askHerbalist": "Ask Herbalist",
+    "browseHerbs": "Browse Herbs",
+    "browseHerbsDesc": "Discover new herbs from our database",
+    "talkToHerbalist": "Talk to Herbalist",
+    "talkToHerbalistDesc": "Ask questions and get personalized guidance",
+    "remove": "Remove",
+    "saved": "Added to your garden",
+    "alreadySaved": "Already in your garden"
+  },
+  "herbTabs": {
+    "overview": "Overview",
+    "uses": "Uses",
+    "science": "Science",
+    "dosage": "Dosage",
+    "safety": "Safety"
   },
   "about": {
     "title": "About HerbAlly",

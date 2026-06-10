@@ -9,11 +9,6 @@ import {
   Trash2,
   Mic,
   MicOff,
-  Sparkles,
-  Moon,
-  Heart,
-  Shield,
-  Calculator,
   Check,
   Square,
   RefreshCcw,
@@ -21,6 +16,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { ChatMarkdown } from "./markdown-renderer";
+import { ChatEmptyStateV2 } from "./chat-empty-state-v2";
 import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -87,14 +83,6 @@ function parseCommand(text: string): {
 
   return { command: null, args: null, systemContext: null };
 }
-
-// ─── Suggestion Card Type ───────────────────────────────────────────
-
-type SuggestionCard = {
-  icon: typeof Sparkles;
-  text: string;
-  gradient: string;
-};
 
 // ─── Component ──────────────────────────────────────────────────────
 
@@ -541,32 +529,6 @@ export function ChatInterface({
 
   // ─── Derived state ────────────────────────────────────────────────
 
-  const suggestionCards: SuggestionCard[] = useMemo(
-    () => [
-      {
-        icon: Moon,
-        text: t("pharmacist.suggestedQuestions.0"),
-        gradient: "from-indigo-500/10 to-purple-500/10",
-      },
-      {
-        icon: Shield,
-        text: t("pharmacist.suggestedQuestions.1"),
-        gradient: "from-amber-500/10 to-orange-500/10",
-      },
-      {
-        icon: Heart,
-        text: t("pharmacist.suggestedQuestions.2"),
-        gradient: "from-rose-500/10 to-pink-500/10",
-      },
-      {
-        icon: Calculator,
-        text: t("pharmacist.suggestedQuestions.3"),
-        gradient: "from-teal-500/10 to-emerald-500/10",
-      },
-    ],
-    [t]
-  );
-
   const isEmpty = messages.length <= 1 && !isLoading && showSuggestions;
   const lastMessage = messages[messages.length - 1];
   const showFollowUps =
@@ -605,12 +567,6 @@ export function ChatInterface({
   const followUpQuestions = showFollowUps
     ? getFollowUpQuestions(lastMessage.content)
     : [];
-
-  const stats = [
-    { value: "2,700+", label: t("home.stats.herbs") },
-    { value: "500+", label: t("home.stats.interactions") },
-    { value: "100%", label: t("home.stats.free") },
-  ];
 
   const conversationTitle = useMemo(() => {
     const firstUserMsg = messages.find((m) => m.role === "user");
@@ -679,130 +635,21 @@ export function ChatInterface({
 
   return (
     <div className="flex h-full flex-col">
-      {/* ═══ EMPTY STATE: centered, inviting, ChatGPT-style ═══ */}
+      {/* ═══ EMPTY STATE: enhanced discovery dashboard ═══ */}
       {isEmpty ? (
-        <div className="flex flex-1 flex-col items-center justify-center px-4 pb-6">
-          {/* Badge */}
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-primary backdrop-blur-sm">
-            <Sparkles className="size-4" />
-            <span>{t("homeAI.badge")}</span>
-          </div>
-
-          {/* Heading */}
-          <h1 className="text-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {t("homeAI.title")}
-          </h1>
-          <p className="mt-2 max-w-md text-center text-sm text-muted-foreground">
-            {t("homeAI.subtitle")}
-          </p>
-
-          {/* Centered large input */}
-          <div className="mt-8 w-full max-w-xl">
-            <form onSubmit={handleSubmit} className="flex items-end gap-2">
-              <Textarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={t("pharmacist.placeholder")}
-                className="min-h-[52px] max-h-40 resize-none pr-2 text-base shadow-lg focus-ring-animated"
-                rows={1}
-                disabled={isLoading}
-                aria-label="Chat message input"
-                autoFocus
-              />
-              {hasVoiceSupport && (
-                <Button
-                  type="button"
-                  size="icon"
-                  variant={isListening ? "destructive" : "outline"}
-                  onClick={toggleVoice}
-                  className="shrink-0"
-                  aria-label={
-                    isListening
-                      ? t("pharmacist.voiceStop")
-                      : t("pharmacist.voiceStart")
-                  }
-                >
-                  {isListening ? (
-                    <MicOff className="size-4" />
-                  ) : (
-                    <Mic className="size-4" />
-                  )}
-                </Button>
-              )}
-              {isLoading ? (
-                <Button
-                  type="button"
-                  size="icon"
-                  variant="destructive"
-                  onClick={stopGeneration}
-                  aria-label="Stop generating"
-                  className="shadow-lg animate-pulse"
-                >
-                  <Square className="size-4" />
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  size="icon"
-                  disabled={!input.trim() || isLoading}
-                  aria-label="Send message"
-                  className="shadow-lg"
-                >
-                  <Send className="size-4" />
-                </Button>
-              )}
-            </form>
-
-            {/* Command hints */}
-            <p className="mt-2 text-center text-xs text-muted-foreground/60">
-              {t("pharmacist.commandHint")}
-            </p>
-          </div>
-
-          {/* Suggestion cards — grid of 2 on mobile, 4 on desktop */}
-          <div className="mt-8 grid w-full max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
-            {suggestionCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <button
-                  key={card.text}
-                  type="button"
-                  onClick={() => sendMessage(card.text)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl border p-4 text-left text-sm font-medium transition-all",
-                    "bg-gradient-to-br",
-                    card.gradient,
-                    "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
-                    "text-foreground border-border/60"
-                  )}
-                >
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-background/80">
-                    <Icon className="size-4 text-primary" />
-                  </div>
-                  <span className="line-clamp-2">{card.text}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Stats — subtle trust bar */}
-          <div className="mt-8 flex items-center gap-3">
-            {stats.map((stat, i) => (
-              <div
-                key={stat.label}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground"
-              >
-                {i > 0 && <span className="text-border">•</span>}
-                <span className="font-semibold text-foreground">
-                  {stat.value}
-                </span>
-                <span className="hidden sm:inline">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ChatEmptyStateV2
+          input={input}
+          setInput={setInput}
+          onSubmit={handleSubmit}
+          onKeyDown={handleKeyDown}
+          onSendMessage={sendMessage}
+          isLoading={isLoading}
+          textareaRef={textareaRef}
+          hasVoiceSupport={hasVoiceSupport}
+          isListening={isListening}
+          onToggleVoice={toggleVoice}
+          onStopGeneration={stopGeneration}
+        />
       ) : (
         /* ═══ ACTIVE CHAT STATE ═══ */
         <>

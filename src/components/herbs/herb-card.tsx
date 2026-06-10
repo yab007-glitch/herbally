@@ -4,7 +4,6 @@ import Link from "next/link";
 import { trackEvent } from "@/lib/analytics";
 import {
   ArrowRight,
-  Calculator,
   Leaf,
   Flower2,
   TreePine,
@@ -12,13 +11,19 @@ import {
   Cherry,
   Bean,
   Droplets,
+  Heart,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { HerbSafetyBadges } from "@/components/herbs/herb-safety-badges";
 import { HerbImage } from "@/components/herbs/herb-image";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
+import {
+  addToGarden,
+  removeFromGarden,
+  isInGarden,
+} from "@/lib/garden/local-garden";
 
 const categoryIconMap: Record<string, keyof typeof IconComponents> = {
   adaptogen: "Sprout",
@@ -40,7 +45,6 @@ function getCategoryIconKey(
   return "Leaf";
 }
 
-// Predefined icons to avoid creating components during render
 const IconComponents = {
   Leaf,
   Sprout,
@@ -51,6 +55,12 @@ const IconComponents = {
   Droplets,
 } as const;
 
+const safetyColorMap = {
+  safe: "bg-green-500",
+  caution: "bg-amber-500",
+  unsafe: "bg-red-500",
+} as const;
+
 function getSafetyLevel(
   pregnancySafe: boolean | null,
   nursingSafe: boolean | null
@@ -58,7 +68,7 @@ function getSafetyLevel(
   if (pregnancySafe && nursingSafe) return "safe";
   if (pregnancySafe === false && nursingSafe === false) return "unsafe";
   if (pregnancySafe === false || nursingSafe === false) return "caution";
-  return "caution"; // null = unknown = caution
+  return "caution";
 }
 
 interface HerbCardProps {
@@ -79,12 +89,6 @@ interface HerbCardProps {
   className?: string;
 }
 
-const safetyColorMap = {
-  safe: "from-green-500 to-emerald-500",
-  caution: "from-amber-500 to-yellow-500",
-  unsafe: "from-red-500 to-orange-500",
-} as const;
-
 export function HerbCard({ herb, className }: HerbCardProps) {
   const t = useTranslations();
   const safetyLevel = getSafetyLevel(herb.pregnancy_safe, herb.nursing_safe);
@@ -92,38 +96,50 @@ export function HerbCard({ herb, className }: HerbCardProps) {
     IconComponents[getCategoryIconKey(herb.herb_categories?.name)];
   const primaryBenefit = herb.traditional_uses?.[0];
 
-  const safetyLabelKey =
-    safetyLevel === "safe"
-      ? "herbBadges.safetySafe"
-      : safetyLevel === "unsafe"
-        ? "herbBadges.safetyUnsafe"
-        : "herbBadges.safetyCaution";
+  const [saved, setSaved] = useState(() => isInGarden(herb.slug));
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (saved) {
+      removeFromGarden(herb.slug);
+      setSaved(false);
+    } else {
+      addToGarden({
+        id: herb.id,
+        slug: herb.slug,
+        name: herb.name,
+        scientific_name: herb.scientific_name,
+        image_url: herb.image_url,
+      });
+      setSaved(true);
+    }
+  };
 
   return (
     <Link
       href={`/herbs/${herb.slug}`}
       onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
       className="group"
-      aria-label={`${herb.name}. ${t(safetyLabelKey)}`}
+      aria-label={`${herb.name}`}
     >
       <Card
         className={cn(
-          "card-press relative h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 border-border/50",
-          safetyLevel === "safe" && "safety-border-safe",
-          safetyLevel === "caution" && "safety-border-caution",
-          safetyLevel === "unsafe" && "safety-border-unsafe",
+          "relative h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-border/50 rounded-2xl",
           className
         )}
       >
-        {/* Top gradient accent with safety-aware color */}
+        {/* Top gradient accent */}
         <div
           className={cn(
-            "absolute inset-x-0 top-0 h-1 bg-gradient-to-r opacity-80 transition-opacity group-hover:opacity-100",
-            safetyColorMap[safetyLevel]
+            "absolute inset-x-0 top-0 h-1 opacity-80 transition-opacity group-hover:opacity-100",
+            safetyLevel === "safe" && "bg-gradient-to-r from-green-500 to-emerald-500",
+            safetyLevel === "caution" && "bg-gradient-to-r from-amber-500 to-yellow-500",
+            safetyLevel === "unsafe" && "bg-gradient-to-r from-red-500 to-orange-500"
           )}
         />
 
-        {/* Hover gradient reveal */}
+        {/* Hover gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         <CardContent className="relative p-5">
@@ -131,29 +147,27 @@ export function HerbCard({ herb, className }: HerbCardProps) {
             <HerbImage
               name={herb.name}
               imageUrl={herb.image_url}
-              className="size-14 shrink-0 rounded-lg shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-105"
+              className="size-14 shrink-0 rounded-xl shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:scale-105"
             />
             <div className="flex-1 min-w-0">
-              {/* Category Badge */}
-              <div className="mb-2">
+              <div className="mb-2 flex items-center gap-2">
                 {herb.herb_categories?.name ? (
                   <Badge
                     variant="secondary"
-                    className="text-xs font-medium gap-1"
+                    className="text-xs font-medium gap-1 rounded-full"
                   >
                     <CategoryIcon className="size-3" />
                     {herb.herb_categories.name}
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs rounded-full">
                     <Leaf className="mr-1 size-3" />
                     {t("herbBadges.herb")}
                   </Badge>
                 )}
               </div>
 
-              {/* Title */}
-              <h3 className="mb-1 text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+              <h3 className="mb-0.5 text-lg font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                 {herb.name}
               </h3>
               <p className="text-sm italic text-muted-foreground truncate">
@@ -162,35 +176,55 @@ export function HerbCard({ herb, className }: HerbCardProps) {
             </div>
           </div>
 
-          {/* Description */}
-          <p className="mt-3 line-clamp-2 break-words text-sm text-muted-foreground">
-            {herb.description}
-          </p>
-
-          {/* Key info preview */}
-          {(herb.dosage_adult || primaryBenefit) && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {primaryBenefit && (
-                <span className="inline-flex items-center rounded-md bg-primary/5 px-2 py-0.5 text-xs text-primary/80">
-                  {primaryBenefit}
-                </span>
-              )}
-              {herb.dosage_adult && (
-                <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  <Calculator className="size-3" />
-                  {herb.dosage_adult}
-                </span>
-              )}
+          {/* Primary benefit chip */}
+          {primaryBenefit && (
+            <div className="mt-3">
+              <span className="inline-flex items-center rounded-full bg-primary/5 px-3 py-1 text-xs text-primary/80">
+                {primaryBenefit}
+              </span>
             </div>
           )}
 
-          {/* Safety Badges + Arrow */}
+          {/* Bottom row: safety dot + save + arrow */}
           <div className="mt-4 flex items-center justify-between">
-            <HerbSafetyBadges
-              pregnancySafe={herb.pregnancy_safe ?? false}
-              nursingSafe={herb.nursing_safe ?? false}
-            />
-            <ArrowRight className="size-4 text-muted-foreground/50 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
+            <div className="flex items-center gap-2">
+              <span
+                className={cn(
+                  "size-2.5 rounded-full",
+                  safetyColorMap[safetyLevel]
+                )}
+                title={
+                  safetyLevel === "safe"
+                    ? t("herbBadges.safetySafe")
+                    : safetyLevel === "unsafe"
+                    ? t("herbBadges.safetyUnsafe")
+                    : t("herbBadges.safetyCaution")
+                }
+              />
+              <span className="text-xs text-muted-foreground">
+                {safetyLevel === "safe"
+                  ? t("herbBadges.safetySafe")
+                  : safetyLevel === "unsafe"
+                  ? t("herbBadges.safetyUnsafe")
+                  : t("herbBadges.safetyCaution")}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleSave}
+                className={cn(
+                  "rounded-full p-1.5 transition-all hover:scale-110",
+                  saved
+                    ? "text-rose-500"
+                    : "text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-rose-500"
+                )}
+                aria-label={saved ? t("garden.remove") : t("garden.saved")}
+              >
+                <Heart className={cn("size-4", saved && "fill-current")} />
+              </button>
+              <ArrowRight className="size-4 text-muted-foreground/50 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary" />
+            </div>
           </div>
         </CardContent>
       </Card>
