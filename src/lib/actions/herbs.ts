@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getAnonClient } from "@/lib/supabase/anonymous";
 import { cookies } from "next/headers";
 import {
   localizeHerb,
@@ -142,10 +143,17 @@ export async function getHerbs(params: {
 }
 
 export async function getHerbBySlug(
-  slug: string
+  slug: string,
+  opts?: { locale?: string; skipCookies?: boolean }
 ): Promise<ActionResponse<HerbWithInteractions>> {
   try {
-    const supabase = await createClient();
+    const supabase = opts?.skipCookies
+      ? getAnonClient()
+      : await createClient();
+
+    if (!supabase) {
+      return { success: false, error: "Supabase client not configured" };
+    }
 
     const { data, error } = await supabase
       .from("herbs")
@@ -159,7 +167,7 @@ export async function getHerbBySlug(
       return { success: false, error: error.message };
     }
 
-    const locale = await getLocale();
+    const locale = opts?.locale ?? (await getLocale());
     const herb = localizeHerb(data as HerbWithInteractions, locale);
     const interactions = (herb.drug_interactions || []).map((ix) =>
       localizeInteraction(ix, locale)

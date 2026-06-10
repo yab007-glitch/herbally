@@ -1154,13 +1154,6 @@
     "medsAutoQuery": "Je prends : {meds}. Vérifiez les interactions connues entre ces médicaments et les compléments phytothérapiques courants. Signalez les associations dangereuses.",
     "herbAutoQuery": "Quelles sont les principales interactions médicamenteuses et précautions de sécurité pour {name} ({scientific}) ? Listez les interactions les plus importantes, leur gravité et les personnes qui doivent l'éviter."
   },
-  "mobileTabs": {
-    "symptoms": "Symptômes",
-    "herbs": "Herbes",
-    "search": "Recherche",
-    "chat": "Chat",
-    "calc": "Calcul"
-  },
   "donateButtons": {
     "coffee": "Café",
     "supporter": "Soutien",

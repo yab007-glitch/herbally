@@ -9,9 +9,7 @@ import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { SourceAttribution } from "@/components/herbs/citations";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { type Locale } from "@/lib/i18n/config";
 
 export const revalidate = 3600;
 
@@ -39,8 +37,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
 
   const [resultA, resultB] = await Promise.all([
-    getHerbBySlug(slug1),
-    getHerbBySlug(slug2),
+    getHerbBySlug(slug1, { locale: "en", skipCookies: true }),
+    getHerbBySlug(slug2, { locale: "en", skipCookies: true }),
   ]);
 
   const herbA = resultA.success ? resultA.data : null;
@@ -59,13 +57,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ComparePage({ params }: Props) {
   const { slug1, slug2 } = await params;
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const _locale: Locale = (localeCookie?.value as Locale) || "en";
   const t = await getTranslations();
   const [resultA, resultB] = await Promise.all([
-    getHerbBySlug(slug1),
-    getHerbBySlug(slug2),
+    getHerbBySlug(slug1, { skipCookies: true }),
+    getHerbBySlug(slug2, { skipCookies: true }),
   ]);
 
   if (!resultA.success || !resultB.success || !resultA.data || !resultB.data) {

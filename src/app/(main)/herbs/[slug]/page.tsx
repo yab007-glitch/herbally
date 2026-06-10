@@ -47,7 +47,7 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getHerbBySlug(slug);
+  const result = await getHerbBySlug(slug, { locale: "en", skipCookies: true });
   if (!result.success || !result.data) {
     return { title: "Herbally" };
   }
@@ -301,32 +301,37 @@ export default async function HerbDetailPage({ params }: Props) {
       <HerbHeroV2 herb={{ ...herb, evidence_level: evidenceLevel }} />
 
       {/* Tabbed Content */}
-      <HerbDetailTabs>
-        {(tab) => (
-          <>
-            {tab === "overview" && (
+      <HerbDetailTabs
+        tabs={[
+          {
+            key: "overview",
+            content: (
               <HerbOverviewPanel
                 herb={herb}
                 monograph={monograph}
                 lastReviewed={lastReviewed}
                 reviewedBy={reviewedBy}
               />
-            )}
-            {tab === "uses" && <HerbUsesPanel herb={herb} />}
-            {tab === "science" && (
-              <HerbSciencePanel herb={herb} monograph={monograph} />
-            )}
-            {tab === "dosage" && <HerbDosagePanel herb={herb} />}
-            {tab === "safety" && (
+            ),
+          },
+          { key: "uses", content: <HerbUsesPanel herb={herb} /> },
+          {
+            key: "science",
+            content: <HerbSciencePanel herb={herb} monograph={monograph} />,
+          },
+          { key: "dosage", content: <HerbDosagePanel herb={herb} /> },
+          {
+            key: "safety",
+            content: (
               <HerbSafetyPanel
                 herb={herb}
                 interactions={interactions}
                 severityCounts={severityCounts}
               />
-            )}
-          </>
-        )}
-      </HerbDetailTabs>
+            ),
+          },
+        ]}
+      />
 
       {/* Citations */}
       <section className="pt-4">

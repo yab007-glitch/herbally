@@ -1154,13 +1154,6 @@
     "medsAutoQuery": "I'm taking: {meds}. Check for any known interactions between these medications and common herbal supplements. Flag any dangerous combinations.",
     "herbAutoQuery": "What are the key drug interactions and safety concerns for {name} ({scientific})? List the most important interactions, severity, and who should avoid it."
   },
-  "mobileTabs": {
-    "symptoms": "Symptoms",
-    "herbs": "Herbs",
-    "search": "Search",
-    "chat": "Chat",
-    "calc": "Calc"
-  },
   "donateButtons": {
     "coffee": "Coffee",
     "supporter": "Supporter",

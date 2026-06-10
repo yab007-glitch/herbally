@@ -4,7 +4,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
-const tabs = [
+const tabConfig = [
   { key: "overview", labelKey: "herbTabs.overview" },
   { key: "uses", labelKey: "herbTabs.uses" },
   { key: "science", labelKey: "herbTabs.science" },
@@ -12,22 +12,29 @@ const tabs = [
   { key: "safety", labelKey: "herbTabs.safety" },
 ] as const;
 
-type TabKey = (typeof tabs)[number]["key"];
+type TabKey = (typeof tabConfig)[number]["key"];
 
-interface HerbDetailTabsProps {
-  children: (activeTab: TabKey) => React.ReactNode;
+export interface TabItem {
+  key: TabKey;
+  content: React.ReactNode;
 }
 
-export function HerbDetailTabs({ children }: HerbDetailTabsProps) {
+interface HerbDetailTabsProps {
+  tabs: TabItem[];
+}
+
+export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
   const t = useTranslations();
   const [active, setActive] = useState<TabKey>("overview");
+
+  const activeTab = tabs.find((tab) => tab.key === active);
 
   return (
     <div className="space-y-6">
       {/* Tab bar */}
       <div className="sticky top-14 z-30 -mx-4 bg-background/90 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
-          {tabs.map((tab) => (
+          {tabConfig.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActive(tab.key)}
@@ -48,7 +55,7 @@ export function HerbDetailTabs({ children }: HerbDetailTabsProps) {
       </div>
 
       {/* Tab content with fade transition */}
-      <div className="animate-message-in">{children(active)}</div>
+      <div className="animate-message-in">{activeTab?.content}</div>
     </div>
   );
 }
