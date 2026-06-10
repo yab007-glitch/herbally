@@ -172,7 +172,7 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
               className="rounded-full"
             >
               <MessageCircle className="mr-1.5 size-3.5" />
-              {t("herbDetail.askHerbalist") || "Ask Herbalist"}
+              {t("herbDetail.askHerbalist")}
             </Button>
             <Button
               size="sm"
@@ -181,7 +181,7 @@ export function HerbHeroV2({ herb }: HerbHeroV2Props) {
               className="rounded-full"
             >
               <Calculator className="mr-1.5 size-3.5" />
-              {t("herbDetail.calculateDose") || "Calculate Dose"}
+              {t("herbDetail.calculateDose")}
             </Button>
           </div>
         </div>

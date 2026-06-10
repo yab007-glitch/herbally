@@ -436,7 +436,8 @@
     "herb": "Herb",
     "notFoundDesc": "The herb you're looking for doesn't exist or may have been removed.",
     "browseHerbs": "Browse all herbs",
-    "herbsAtAGlance": "Herbs at a Glance"
+    "herbsAtAGlance": "Herbs at a Glance",
+    "askHerbalist": "Ask Herbalist"
   },
   "search": {
     "placeholder": "Search herbs by name, symptom, or use...",
@@ -1040,7 +1041,8 @@
       "nccih": "NCCIH",
       "pubmed": "PubMed",
       "commissionE": "Commission E"
-    }
+    },
+    "reviewedBy": "Reviewed by:"
   },
   "notFound": {
     "title": "Page Not Found",

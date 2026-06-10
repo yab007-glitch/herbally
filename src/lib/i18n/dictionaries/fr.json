@@ -436,7 +436,8 @@
     "herb": "Plante",
     "notFoundDesc": "La plante que vous recherchez n'existe pas ou a été supprimée.",
     "browseHerbs": "Parcourir toutes les plantes",
-    "herbsAtAGlance": "Plantes en Bref"
+    "herbsAtAGlance": "Plantes en Bref",
+    "askHerbalist": "Demander à l'herboriste"
   },
   "search": {
     "placeholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
@@ -1040,7 +1041,8 @@
       "nccih": "NCCIH",
       "pubmed": "PubMed",
       "commissionE": "Commission E"
-    }
+    },
+    "reviewedBy": "Révisé par :"
   },
   "notFound": {
     "title": "Page Non Trouvée",
