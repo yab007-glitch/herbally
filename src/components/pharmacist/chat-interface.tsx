@@ -553,7 +553,7 @@ export function ChatInterface({
       <div className="shrink-0 border-t border-border/50 px-4 py-1.5 text-center">
         <p className="text-[10px] text-muted-foreground/60">
           <AlertCircle className="inline size-2.5 -mt-0.5 mr-1" />
-          {t("pharmacist.disclaimer")}
+          {t("pharmacist.disclaimer")} Citations may be AI-generated — verify independently.
         </p>
       </div>
 

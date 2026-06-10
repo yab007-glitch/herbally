@@ -5,18 +5,17 @@ import type { ComponentPropsWithoutRef } from "react";
 import { remarkHerbAlly } from "@/lib/chat/enrichment";
 import { EvidenceGradeBadge } from "@/components/herbs/evidence-grade";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Leaf, PillBottle } from "lucide-react";
+import { ExternalLink, Leaf, PillBottle, AlertCircle } from "lucide-react";
 
 type EvidenceLevel = "strong" | "moderate" | "limited" | "traditional";
 type InteractionSeverity = "mild" | "moderate" | "severe" | "contraindicated";
 
-const EVIDENCE_TO_GRADE: Record<EvidenceLevel, "A" | "B" | "C" | "D" | "trad"> =
-  {
-    strong: "A",
-    moderate: "B",
-    limited: "D",
-    traditional: "trad",
-  };
+const EVIDENCE_TO_GRADE: Record<EvidenceLevel, "A" | "B" | "C" | "D" | "trad"> = {
+  strong: "A",
+  moderate: "B",
+  limited: "D",
+  traditional: "trad",
+};
 
 const SEVERITY_STYLES: Record<
   InteractionSeverity,
@@ -49,14 +48,12 @@ const SEVERITY_STYLES: Record<
 };
 
 /**
- * ChatMarkdown — ReactMarkdown wrapper that:
- *   - runs remarkHerbAlly to enrich the AST (PMID links, evidence pills, interaction cards)
- *   - provides a `components` map that styles the enriched nodes
- *
- * The enricher writes data attributes (data-pmid, data-evidence-level, data-interaction*)
- * into mdast `hProperties`; react-markdown's `components` map receives them as
- * `node.properties` and we pick them up via the spread props.
+ * Detect if a link is a PubMed PMID link.
  */
+function isPmidLink(href: string | undefined): boolean {
+  return !!href && /pubmed\.ncbi\.nlm\.nih\.gov\/\d+/.test(href);
+}
+
 export function ChatMarkdown({ children }: { children: string }) {
   return (
     <ReactMarkdown remarkPlugins={[remarkHerbAlly]} components={components}>
@@ -68,6 +65,7 @@ export function ChatMarkdown({ children }: { children: string }) {
 const components: Components = {
   a({ href, title, children, ...rest }: ComponentPropsWithoutRef<"a">) {
     const isExternal = !!href && /^https?:\/\//.test(href);
+    const isPmid = isPmidLink(href);
     return (
       <a
         href={href}
@@ -78,22 +76,26 @@ const components: Components = {
         {...rest}
       >
         {children}
-        {isExternal && (
+        {isExternal && !isPmid && (
           <ExternalLink
             className="ml-0.5 inline size-3 align-baseline"
             aria-hidden="true"
           />
         )}
+        {/* PMID links get a subtle "verify" indicator */}
+        {isPmid && (
+          <span
+            className="ml-1 inline-flex items-center gap-0.5 rounded bg-amber-100 dark:bg-amber-950/30 px-1 py-px text-[10px] text-amber-700 dark:text-amber-400"
+            title="AI-generated citation — verify on PubMed"
+          >
+            <AlertCircle className="size-2.5" aria-hidden="true" />
+            verify
+          </span>
+        )}
       </a>
     );
   },
 
-  // The enricher leaves PMID:NNN text inside a custom <a data-pmid="NNN">,
-  // which react-markdown renders via the `a` component above. We additionally
-  // style those with a small PubMed pill icon.
-  // (handled by the `a` override; PMID links get the ExternalLink icon automatically)
-
-  // Intercept paragraphs that the enricher marked as interaction lines.
   p({
     children,
     node,
@@ -104,8 +106,7 @@ const components: Components = {
     if (props["data-interaction"] === "true") {
       const herb = props["data-interaction-herb"] ?? "";
       const drug = props["data-interaction-drug"] ?? "";
-      const sev = (props["data-interaction-severity"] ??
-        "mild") as InteractionSeverity;
+      const sev = (props["data-interaction-severity"] ?? "mild") as InteractionSeverity;
       const style = SEVERITY_STYLES[sev] ?? SEVERITY_STYLES.mild;
       return (
         <div
@@ -130,7 +131,6 @@ const components: Components = {
     return <p {...rest}>{children}</p>;
   },
 
-  // Intercept strong nodes the enricher marked as evidence levels.
   strong({
     children,
     node,
@@ -149,8 +149,6 @@ const components: Components = {
     }
     return <strong {...rest}>{children}</strong>;
   },
-
-  // Suppress the default link icon for the inline evidence rendering path.
 };
 
 export default ChatMarkdown;
