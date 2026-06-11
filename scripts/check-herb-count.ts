@@ -9,18 +9,21 @@ async function main() {
   if (!url || !key) { console.log("No creds"); process.exit(1); }
   const supabase = createClient(url, key);
 
-  // Check what citations look like
-  const { data } = await supabase
-    .from("herbs")
-    .select("name, slug, scientific_name, citations")
-    .eq("is_published", true)
-    .limit(10);
+  const { data: cats } = await supabase
+    .from("herb_categories")
+    .select("id, name, slug")
+    .order("sort_order");
 
-  if (!data) { console.log("No data"); process.exit(1); }
-
-  for (const h of data as any[]) {
-    console.log(`\n${h.name} (${h.scientific_name}):`);
-    console.log(`  Citations: ${JSON.stringify(h.citations).substring(0, 300)}`);
+  if (cats) {
+    console.log("Category distribution:");
+    for (const cat of cats as any[]) {
+      const { count } = await supabase
+        .from("herbs")
+        .select("*", { count: "exact", head: true })
+        .eq("is_published", true)
+        .eq("category_id", cat.id);
+      console.log(`  ${cat.name} (${cat.slug}): ${count} herbs`);
+    }
   }
 }
 
