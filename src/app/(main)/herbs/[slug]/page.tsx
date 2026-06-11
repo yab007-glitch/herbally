@@ -11,6 +11,8 @@ import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
 import type { Monograph } from "@/lib/data/monographs";
+import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getTranslations } from "next-intl/server";
@@ -144,6 +146,43 @@ export default async function HerbDetailPage({ params }: Props) {
     notFound();
   }
 
+  // Define cached fetcher
+  const getMonographCached = unstable_cache(
+    async (herbSlug: string) => {
+      const supabase = getAnonClient();
+      if (!supabase) return null;
+      const { data: dbMonograph } = await supabase
+        .from("herb_monographs")
+        .select(
+          "summary, mechanism, claims, safety_notes, drug_interactions, pregnancy_category, key_citations, status"
+        )
+        .eq("herb_slug", herbSlug)
+        .eq("status", "published")
+        .single();
+      return dbMonograph;
+    },
+    [`monograph-${slug}`],
+    { revalidate: 86400, tags: [`monograph-${slug}`] }
+  );
+
+  const dbMonograph = await getMonographCached(slug);
+  
+  let monograph: Monograph | null = null;
+  if (dbMonograph) {
+    monograph = {
+      slug,
+      summary: dbMonograph.summary,
+      mechanism: dbMonograph.mechanism,
+      claims: dbMonograph.claims as Monograph["claims"],
+      safetyNotes: dbMonograph.safety_notes as Monograph["safetyNotes"],
+      drugInteractions:
+        dbMonograph.drug_interactions as Monograph["drugInteractions"],
+      pregnancyCategory:
+        dbMonograph.pregnancy_category as Monograph["pregnancyCategory"],
+      keyCitations: dbMonograph.key_citations as Monograph["keyCitations"],
+    };
+  }
+
   const herb = result.data;
 
   after(async () => {
@@ -153,36 +192,6 @@ export default async function HerbDetailPage({ params }: Props) {
     }
   });
 
-  let monograph: Monograph | null = null;
-  const supabase = getAnonClient();
-  if (supabase) {
-    try {
-      const { data: dbMonograph } = await supabase
-        .from("herb_monographs")
-        .select(
-          "summary, mechanism, claims, safety_notes, drug_interactions, pregnancy_category, key_citations, status"
-        )
-        .eq("herb_slug", slug)
-        .eq("status", "published")
-        .single();
-      if (dbMonograph) {
-        monograph = {
-          slug,
-          summary: dbMonograph.summary,
-          mechanism: dbMonograph.mechanism,
-          claims: dbMonograph.claims as Monograph["claims"],
-          safetyNotes: dbMonograph.safety_notes as Monograph["safetyNotes"],
-          drugInteractions:
-            dbMonograph.drug_interactions as Monograph["drugInteractions"],
-          pregnancyCategory:
-            dbMonograph.pregnancy_category as Monograph["pregnancyCategory"],
-          keyCitations: dbMonograph.key_citations as Monograph["keyCitations"],
-        };
-      }
-    } catch {
-      // fall through
-    }
-  }
 
   if (!monograph) {
     monograph = generateMonograph({

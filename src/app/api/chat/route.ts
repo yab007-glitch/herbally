@@ -1,4 +1,6 @@
+import { createHash } from "crypto";
 import { NextResponse, type NextRequest } from "next/server";
+import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getSystemPrompt } from "@/lib/ai/system-prompt";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 import { rateLimit } from "@/lib/rate-limit";
@@ -80,19 +82,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Rate limit
-  const ip = getClientIP(request);
-  const { success } = await rateLimit(ip, 20, 60_000);
-  if (!success) {
-    return NextResponse.json(
-      { error: "Too many requests. Please try again later." },
-      {
-        status: 429,
-        headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" },
-      }
-    );
-  }
-
   let body: {
     messages?: unknown;
     herbContext?: string;
@@ -151,6 +140,25 @@ export async function POST(request: NextRequest) {
     })),
   ];
 
+  // ── AI Response Caching ──────────────────────────────────────────
+  const promptHash = createHash("sha256")
+    .update(JSON.stringify(chatMessages))
+  const supabase = getAnonClient();
+  if (supabase) {
+    const { data: cached } = await supabase
+      .from("ai_response_cache")
+      .select("response")
+      .eq("prompt_hash", promptHash)
+      .gt("expires_at", new Date().toISOString())
+      .single();
+
+    if (cached) {
+      return new NextResponse(cached.response, {
+        status: 200,
+        headers: { "content-type": "text/event-stream" },
+      });
+    }
+  }
   // ── Call OpenRouter with fallback chain ────────────────────────────
   const modelsToTry = [
     primaryModel,
@@ -245,12 +253,22 @@ export async function POST(request: NextRequest) {
 
       scheduleTimeout();
 
+      let fullContent = "";
       function pump() {
         reader
           .read()
           .then(({ done, value }) => {
             if (done) {
               cancelTimeout();
+              // Persist to cache
+              if (supabase && fullContent) {
+                supabase
+                  .from("ai_response_cache")
+                  .insert({ prompt_hash: promptHash, response: fullContent })
+                  .then(({ error }) => {
+                    if (error) console.error("Failed to cache AI response:", error);
+                  });
+              }
               controller.close();
               return;
             }
@@ -264,6 +282,15 @@ export async function POST(request: NextRequest) {
               if (!trimmed) continue;
               if (trimmed === "data: [DONE]") {
                 cancelTimeout();
+                // Persist to cache
+                if (supabase && fullContent) {
+                  supabase
+                    .from("ai_response_cache")
+                    .insert({ prompt_hash: promptHash, response: fullContent })
+                    .then(({ error }) => {
+                      if (error) console.error("Failed to cache AI response:", error);
+                    });
+                }
                 controller.close();
                 return;
               }
@@ -272,6 +299,7 @@ export async function POST(request: NextRequest) {
                 const data = JSON.parse(trimmed.slice(6));
                 const content = data.choices?.[0]?.delta?.content;
                 if (content) {
+                  fullContent += content;
                   controller.enqueue(encoder.encode(content));
                 }
               } catch {

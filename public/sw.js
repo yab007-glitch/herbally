@@ -15,8 +15,13 @@ const STATIC_URLS = [
 ];
 
 // API endpoints to cache for offline herb browsing
+const DB_CACHE_URLS = [
+  "/api/herbs/list",
+  "/api/herbs/search",
+];
+
 const API_URLS = [
-  "/api/herbs/search?q=",
+  ...DB_CACHE_URLS,
   "/api/herbs/random",
 ];
 

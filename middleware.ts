@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { rateLimit } from "@/lib/rate-limit";
 
 const adminRoutes = ["/admin"];
 
@@ -81,6 +82,20 @@ export default async function middleware(request: NextRequest) {
 
   // Route guards
   const pathname = request.nextUrl.pathname;
+  // API Chat Rate limit (Edge-native)
+  if (pathname.startsWith("/api/chat")) {
+    const ip = request.ip || "unknown";
+    const { success } = await rateLimit(ip, 20, 60_000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" },
+        }
+      );
+    }
+  }
 
   if (adminRoutes.some((route) => pathname.startsWith(route))) {
     if (!user) {
