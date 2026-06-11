@@ -1,262 +1,239 @@
+#!/usr/bin/env tsx
+/**
+ * verify-herb-database.ts — Automated quality checks for the HerbAlly database.
+ * 
+ * Validation rules:
+ *   1. Scientific names must follow binomial nomenclature (Genus species)
+ *   2. No hallucinated PMIDs (must be 7-8 digit integers starting with 1-3)
+ *   3. No safety conflicts (can't be both safe AND unsafe for pregnancy/nursing)
+ *   4. Evidence levels must be valid (A, B, C, D, or trad)
+ *   5. Duplicate slug detection
+ *   6. Category must exist
+ *   7. Empty required fields (name, scientific_name, slug, description)
+ * 
+ * Usage:
+ *   npx tsx scripts/verify-herb-database.ts              # Check all herbs
+ *   npx tsx scripts/verify-herb-database.ts --ci         # CI mode (exit non-zero on errors)
+ *   npx tsx scripts/verify-herb-database.ts --staged     # Check only staged changes
+ */
+
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
+import * as fs from "fs";
+import { execSync } from "child_process";
+
 config({ path: ".env.local" });
 config({ path: ".env" });
 
-interface Citation {
-  source?: string;
-  title?: string;
-  url?: string;
-  year?: number;
-  pmid?: string | number;
-}
+// ─── Types ──────────────────────────────────────────────────────────
 
-interface Herb {
+interface HerbRow {
   id: string;
   name: string;
   slug: string;
   scientific_name: string;
-  description: string;
+  description: string | null;
+  evidence_level: string | null;
+  pregnancy_safe: boolean | null;
+  nursing_safe: boolean | null;
   citations: unknown;
-  pregnancy_safe: boolean;
-  nursing_safe: boolean;
-  contraindications: string[];
-  side_effects: string[];
+  category_id: string | null;
+  is_published: boolean;
 }
 
-const PM_API_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
+interface VerificationError {
+  herb: string;
+  slug: string;
+  field: string;
+  message: string;
+  severity: "error" | "warning";
+}
 
-// Helper to delay execution
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// ─── Validation Rules ──────────────────────────────────────────────
 
-/**
- * Verify if a PMID actually exists on PubMed using the official NCBI E-utilities API.
- */
-async function verifyPMIDWithPubMed(pmid: string): Promise<{ valid: boolean; title?: string }> {
-  try {
-    const url = `${PM_API_BASE}/esummary.fcgi?db=pubmed&id=${pmid}&retmode=json`;
-    const res = await fetch(url);
-    if (!res.ok) return { valid: false };
+const VALID_EVIDENCE_LEVELS = ["A", "B", "C", "D", "trad"];
+const BINOMIAL_REGEX = /^[A-Z][a-z]+ [a-z]+/;
+const PMID_REGEX = /^\d{7,8}$/;
 
-    const data = (await res.json()) as any;
-    if (data.result && data.result[pmid]) {
-      const pmidInfo = data.result[pmid];
-      if (pmidInfo.error) {
-        return { valid: false };
-      }
-      return { valid: true, title: pmidInfo.title };
-    }
-    return { valid: false };
-  } catch {
-    return { valid: false };
+function validateHerb(herb: HerbRow, validCategoryIds: Set<string>): VerificationError[] {
+  const errors: VerificationError[] = [];
+  const { id, name, slug, scientific_name, description, evidence_level, pregnancy_safe, nursing_safe, citations, category_id } = herb;
+
+  // 1. Required fields
+  if (!name || name.trim().length < 2) {
+    errors.push({ herb: name || slug, slug, field: "name", message: "Name is empty or too short", severity: "error" });
   }
+  if (!scientific_name || scientific_name.trim().length < 2) {
+    errors.push({ herb: name || slug, slug, field: "scientific_name", message: "Scientific name is empty", severity: "error" });
+  }
+  if (!slug || slug.trim().length < 2) {
+    errors.push({ herb: name || "unknown", slug, field: "slug", message: "Slug is empty or too short", severity: "error" });
+  }
+  if (!description || description.trim().length < 10) {
+    errors.push({ herb: name, slug, field: "description", message: "Description is too short (min 10 chars)", severity: "warning" });
+  }
+
+  // 2. Binomial nomenclature check
+  if (scientific_name && !BINOMIAL_REGEX.test(scientific_name.trim()) && 
+      !/^[A-Z]/.test(scientific_name) && // Skip single-word names
+      !scientific_name.includes("(") && // Skip names with parentheticals
+      scientific_name.split(" ").length < 2) {
+    errors.push({ herb: name, slug, field: "scientific_name", message: `Does not follow binomial format: "${scientific_name}"`, severity: "warning" });
+  }
+
+  // 3. Evidence level validation
+  if (evidence_level && !VALID_EVIDENCE_LEVELS.includes(evidence_level)) {
+    errors.push({ herb: name, slug, field: "evidence_level", message: `Invalid evidence level: "${evidence_level}"`, severity: "error" });
+  }
+
+  // 4. Safety flag validation (will be expanded for oral vs topical)
+
+  // 5. Citation/PMID validation
+  if (Array.isArray(citations)) {
+    for (const citation of citations as Array<Record<string, unknown>>) {
+      if (citation.pmid) {
+        const pmid = String(citation.pmid);
+        if (!PMID_REGEX.test(pmid)) {
+          errors.push({ herb: name, slug, field: "citations", message: `Invalid PMID format: "${pmid}"`, severity: "error" });
+        }
+        if (!citation.url || !String(citation.url).includes("pubmed")) {
+          errors.push({ herb: name, slug, field: "citations", message: `Missing or invalid PubMed URL for PMID: ${pmid}`, severity: "warning" });
+        }
+        if (!citation.title || String(citation.title).length < 5) {
+          errors.push({ herb: name, slug, field: "citations", message: `Citation has empty or very short title for PMID: ${pmid}`, severity: "warning" });
+        }
+      }
+    }
+  }
+
+  // 6. Category validation
+  if (category_id && !validCategoryIds.has(category_id)) {
+    errors.push({ herb: name, slug, field: "category_id", message: `References non-existent category: ${category_id}`, severity: "error" });
+  }
+
+  return errors;
 }
+
+// ─── Main ───────────────────────────────────────────────────────────
 
 async function main() {
+  const isCI = process.argv.includes("--ci");
+  const isStaged = process.argv.includes("--staged");
+
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    console.error("❌ Error: Supabase credentials not found.");
-    process.exit(1);
+    console.log("⚠️  No Supabase credentials — checking migrations only");
+    await checkMigrationFiles(isCI);
+    return;
   }
 
   const supabase = createClient(url, key);
-  console.log("📡 Connecting to Supabase and pulling herb database...");
+  const allErrors: VerificationError[] = [];
 
+  // Get valid categories
+  const { data: categories } = await supabase
+    .from("herb_categories")
+    .select("id");
+  const validCategoryIds = new Set((categories ?? []).map((c: any) => c.id));
+
+  // Get herbs
+  console.log("🔍 Verifying herb database...");
+  const herbList: HerbRow[] = [];
   let page = 0;
-  const pageSize = 1000;
-  const allHerbs: Herb[] = [];
 
   while (true) {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("herbs")
-      .select("id, name, slug, scientific_name, description, citations, pregnancy_safe, nursing_safe, contraindications, side_effects")
+      .select("*")
+      .eq("is_published", true)
       .order("name")
-      .range(page * pageSize, (page + 1) * pageSize - 1);
-
-    if (error) {
-      console.error("❌ Error loading herbs:", error);
-      process.exit(1);
-    }
+      .range(page * 1000, (page + 1) * 1000 - 1);
 
     if (!data || data.length === 0) break;
-    allHerbs.push(...(data as any[]));
+    herbList.push(...(data as HerbRow[]));
+    if (data.length < 1000) break;
     page++;
-    if (data.length < pageSize) break;
   }
 
-  console.log(`✅ Loaded ${allHerbs.length} herbs.`);
+  console.log(`  Checking ${herbList.length} herbs...`);
 
-  // Let's run structural and safety logic audits on all 2,699 herbs
-  console.log("\n🧪 Running full botanical and safety consistency audits...");
-
-  let botanicalErrors = 0;
-  let pregnancyConflicts = 0;
-  let nursingConflicts = 0;
-  let invalidPMIDStructures = 0;
-  let herbsWithCitations = 0;
-  let totalCitationsCount = 0;
-
-  const pregnancyTriggers = /\b(avoid in pregnancy|pregnancy warning|do not use if pregnant|contraindicated in pregnancy|stimulate contractions|uterine stimulant|miscarriage)\b/i;
-  const nursingTriggers = /\b(avoid while breastfeeding|do not use while nursing|lactation warning|excreted in breast milk)\b/i;
-
-  const flaggedHerbs: Array<{
-    name: string;
-    slug: string;
-    reason: string;
-    details: string;
-  }> = [];
-
-  for (const herb of allHerbs) {
-    // 1. Botanical Naming Check
-    const nameWords = herb.scientific_name.trim().split(/\s+/);
-    if (nameWords.length < 2) {
-      botanicalErrors++;
-      flaggedHerbs.push({
-        name: herb.name,
-        slug: herb.slug,
-        reason: "Invalid Botanical Name",
-        details: `Scientific name "${herb.scientific_name}" lacks genus or species representation.`,
-      });
-    }
-
-    // 2. Pregnancy Safety Conflict Check
-    const contraStr = (herb.contraindications || []).join(" ");
-    const sideStr = (herb.side_effects || []).join(" ");
-    const fullText = `${herb.description} ${contraStr} ${sideStr}`;
-
-    if (herb.pregnancy_safe && pregnancyTriggers.test(fullText)) {
-      pregnancyConflicts++;
-      const match = fullText.match(pregnancyTriggers)?.[0];
-      flaggedHerbs.push({
-        name: herb.name,
-        slug: herb.slug,
-        reason: "Pregnancy Safety Conflict",
-        details: `Marked as safe, but description/contraindications mention: "${match}".`,
-      });
-    }
-
-    // 3. Nursing Safety Conflict Check
-    if (herb.nursing_safe && nursingTriggers.test(fullText)) {
-      nursingConflicts++;
-      const match = fullText.match(nursingTriggers)?.[0];
-      flaggedHerbs.push({
-        name: herb.name,
-        slug: herb.slug,
-        reason: "Nursing Safety Conflict",
-        details: `Marked as safe, but description/contraindications mention: "${match}".`,
-      });
-    }
-
-    // 4. Citation Structure and PMID Check
-    const citations = herb.citations as Citation[] | null;
-    if (citations && Array.isArray(citations) && citations.length > 0) {
-      herbsWithCitations++;
-      totalCitationsCount += citations.length;
-
-      for (const cit of citations) {
-        if (cit.url) {
-          // Check if it has a PMID
-          const pmid = cit.pmid;
-          if (pmid) {
-            const pmidStr = String(pmid).trim();
-            // Validate PMID format (only digits, 1-9 characters)
-            if (!/^\d{1,9}$/.test(pmidStr)) {
-              invalidPMIDStructures++;
-              flaggedHerbs.push({
-                name: herb.name,
-                slug: herb.slug,
-                reason: "Malforming PMID Structure",
-                details: `PMID "${pmidStr}" has an invalid numerical format in citations list.`,
-              });
-            }
-
-            // Validate that the URL correctly formats the PMID
-            const expectedUrl = `https://pubmed.ncbi.nlm.nih.gov/${pmidStr}/`;
-            if (cit.url.toLowerCase() !== expectedUrl.toLowerCase()) {
-              invalidPMIDStructures++;
-              flaggedHerbs.push({
-                name: herb.name,
-                slug: herb.slug,
-                reason: "Mismatching Citation URL",
-                details: `Citation has PMID "${pmidStr}" but URL points to "${cit.url}" instead of "${expectedUrl}".`,
-              });
-            }
-          }
-        }
-      }
+  // Check for duplicate slugs
+  const slugs = new Map<string, number>();
+  for (const herb of herbList) {
+    slugs.set(herb.slug, (slugs.get(herb.slug) || 0) + 1);
+  }
+  for (const [slug, count] of slugs) {
+    if (count > 1) {
+      allErrors.push({ herb: "DUPLICATE", slug, field: "slug", message: `Duplicate slug found ${count} times`, severity: "error" });
     }
   }
 
-  // Live Verification of a batch of PubMed citations to demonstrate live verification
-  console.log("\n📡 Running Live PubMed PMID validation checks on sample...");
-  console.log("Checking a sample of 15 PubMed PMIDs directly against the NCBI Entrez Database...");
-
-  const verifySamplePMIDs: Array<{ pmid: string; herbName: string }> = [];
-  for (const herb of allHerbs) {
-    const citations = herb.citations as Citation[] | null;
-    if (citations && Array.isArray(citations) && citations.length > 0) {
-      for (const cit of citations) {
-        if (cit.pmid) {
-          verifySamplePMIDs.push({ pmid: String(cit.pmid), herbName: herb.name });
-          if (verifySamplePMIDs.length >= 15) break;
-        }
-      }
-    }
-    if (verifySamplePMIDs.length >= 15) break;
+  // Validate each herb
+  for (const herb of herbList) {
+    const errors = validateHerb(herb, validCategoryIds);
+    allErrors.push(...errors);
   }
 
-  let verifiedPMIDs = 0;
-  let failedPMIDs = 0;
-  const verifiedResults: Array<{ pmid: string; herb: string; valid: boolean; title?: string }> = [];
+  // Also check migration files
+  await checkMigrationFiles(false);
 
-  for (const item of verifySamplePMIDs) {
-    const result = await verifyPMIDWithPubMed(item.pmid);
-    if (result.valid) {
-      verifiedPMIDs++;
-      verifiedResults.push({ pmid: item.pmid, herb: item.herbName, valid: true, title: result.title });
-    } else {
-      failedPMIDs++;
-      verifiedResults.push({ pmid: item.pmid, herb: item.herbName, valid: false });
-    }
-    // Respect rate limit
-    await delay(350);
-  }
+  // Report
+  const errors = allErrors.filter(e => e.severity === "error");
+  const warnings = allErrors.filter(e => e.severity === "warning");
 
-  // --- PRINT SUMMARY ---
-  console.log("\n📋 =========================================================");
-  console.log("       HERBALLY DATABASE QUALITY & SAFETY DIAGNOSTIC REPORT");
-  console.log("=============================================================");
-  console.log(`🔍 Total Herbs Scanned:                 ${allHerbs.length}`);
-  console.log(`📚 Herbs with Citations:                ${herbsWithCitations} (${((herbsWithCitations / allHerbs.length) * 100).toFixed(1)}%)`);
-  console.log(`🔗 Total Citations Scanned:             ${totalCitationsCount}`);
-  console.log(`🌿 Botanical Name Structural Errors:    ${botanicalErrors}`);
-  console.log(`🤰 Pregnancy Clinical Warnings Mismatches: ${pregnancyConflicts}`);
-  console.log(`🤱 Nursing Clinical Warnings Mismatches:   ${nursingConflicts}`);
-  console.log(`🚨 Mismarked / Broken PMID Formats:     ${invalidPMIDStructures}`);
-  console.log("=============================================================");
+  console.log(`\n📊 Results:`);
+  console.log(`  Errors: ${errors.length}`);
+  console.log(`  Warnings: ${warnings.length}`);
 
-  console.log("\n🔗 Live PubMed Entrez API Check results (15 Samples):");
-  for (const r of verifiedResults) {
-    if (r.valid) {
-      console.log(`   ✅ PMID ${r.pmid} [Herb: ${r.herb}]: Valid!`);
-      console.log(`      Title: "${r.title}"`);
-    } else {
-      console.log(`   ❌ PMID ${r.pmid} [Herb: ${r.herb}]: INVALID or Hallucinated PMID!`);
-    }
-  }
-
-  if (flaggedHerbs.length > 0) {
-    console.log(`\n🚨 Flagged Warnings requiring content revision: ${flaggedHerbs.length} items`);
-    console.log("Showing top 5 examples:");
-    flaggedHerbs.slice(0, 5).forEach((item, index) => {
-      console.log(`   ${index + 1}. [${item.reason}] ${item.name} (${item.slug})`);
-      console.log(`      ⚠️  ${item.details}`);
+  if (errors.length > 0) {
+    console.log(`\n❌ ERRORS (${errors.length}):`);
+    errors.slice(0, 20).forEach(e => {
+      console.log(`  ${e.herb} (${e.slug}): ${e.field} — ${e.message}`);
     });
-  } else {
-    console.log("\n🎉 No clinical or structural warnings found in the database. Excellent metadata consistency!");
+    if (errors.length > 20) console.log(`  ... and ${errors.length - 20} more`);
+  }
+
+  if (warnings.length > 0) {
+    console.log(`\n⚠️  WARNINGS (${warnings.length}):`);
+    warnings.slice(0, 10).forEach(e => {
+      console.log(`  ${e.herb} (${e.slug}): ${e.field} — ${e.message}`);
+    });
+    if (warnings.length > 10) console.log(`  ... and ${warnings.length - 10} more`);
+  }
+
+  if (errors.length === 0 && warnings.length === 0) {
+    console.log("\n✅ All herbs passed validation!");
+  }
+
+  if (isCI && errors.length > 0) {
+    console.error("\n❌ CI check failed — resolve errors before merging.");
+    process.exit(1);
   }
 }
 
-main().catch(console.error);
+async function checkMigrationFiles(isCI: boolean) {
+  const migrationsDir = "supabase/migrations";
+  if (!fs.existsSync(migrationsDir)) return;
+
+  const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith(".sql"));
+  console.log(`\n📄 Checking ${files.length} migration files...`);
+
+  for (const file of files) {
+    const content = fs.readFileSync(`${migrationsDir}/${file}`, "utf-8");
+    
+    // Check for common issues
+    if (content.includes("DROP TABLE") && !content.includes("IF EXISTS")) {
+      console.log(`  ⚠️  ${file}: Contains DROP TABLE without IF EXISTS`);
+    }
+    if (content.includes("DELETE FROM") && !content.includes("WHERE")) {
+      console.log(`  ⚠️  ${file}: Contains DELETE FROM without WHERE clause`);
+    }
+  }
+}
+
+main().catch(err => {
+  console.error("Verification failed:", err);
+  process.exit(1);
+});

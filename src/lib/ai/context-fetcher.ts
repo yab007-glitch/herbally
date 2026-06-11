@@ -26,6 +26,10 @@ export interface VerifiedHerb {
   dosage_adult: string | null;
   pregnancy_safe: boolean | null;
   nursing_safe: boolean | null;
+  pregnancy_safe_oral: boolean | null;
+  pregnancy_safe_topical: boolean | null;
+  nursing_safe_oral: boolean | null;
+  nursing_safe_topical: boolean | null;
   evidence_level: string | null;
   active_compounds: string[];
   provenance_method: string | null;
@@ -185,6 +189,10 @@ async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
       dosage_adult: herb.dosage_adult ?? null,
       pregnancy_safe: herb.pregnancy_safe,
       nursing_safe: herb.nursing_safe,
+      pregnancy_safe_oral: (herb as any).pregnancy_safe_oral ?? herb.pregnancy_safe,
+      pregnancy_safe_topical: (herb as any).pregnancy_safe_topical ?? herb.pregnancy_safe,
+      nursing_safe_oral: (herb as any).nursing_safe_oral ?? herb.nursing_safe,
+      nursing_safe_topical: (herb as any).nursing_safe_topical ?? herb.nursing_safe,
       evidence_level: herb.evidence_level,
       active_compounds: herb.active_compounds ?? [],
       provenance_method:

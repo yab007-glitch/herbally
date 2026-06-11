@@ -59,7 +59,15 @@ export function getSystemPrompt(
       if (herb.side_effects.length > 0) {
         verifiedDataSection += `Side effects: ${herb.side_effects.join("; ")}\n`;
       }
-      verifiedDataSection += `Pregnancy safety: ${herb.pregnancy_safe === true ? "Generally safe" : herb.pregnancy_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
+      if (herb.pregnancy_safe_oral !== herb.pregnancy_safe_topical) {
+      if (herb.nursing_safe_oral !== herb.nursing_safe_topical) {
+        verifiedDataSection += `Nursing safety: Oral=${herb.nursing_safe_oral === true ? "Safe" : herb.nursing_safe_oral === false ? "UNSAFE" : "Unknown"}, Topical=${herb.nursing_safe_topical === true ? "Safe" : herb.nursing_safe_topical === false ? "UNSAFE" : "Unknown"}\n`;
+      } else {
+        verifiedDataSection += `Nursing safety: ${herb.nursing_safe === true ? "Generally safe" : herb.nursing_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
+      }
+      } else {
+        verifiedDataSection += `Pregnancy safety: ${herb.pregnancy_safe === true ? "Generally safe" : herb.pregnancy_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
+      }
       verifiedDataSection += `Nursing safety: ${herb.nursing_safe === true ? "Generally safe" : herb.nursing_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
 
       if (herb.drug_interactions.length > 0) {

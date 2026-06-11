@@ -16,6 +16,21 @@ jobs:
       - name: Scan for secrets
         run: ./scripts/detect-secrets.sh --all
 
+  verify-db:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Verify herb database integrity
+        run: npx tsx scripts/verify-herb-database.ts --ci
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -88,7 +103,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, test, format, secrets]
+    needs: [lint, typecheck, test, format, verify-db, secrets]
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder

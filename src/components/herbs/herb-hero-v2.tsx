@@ -34,6 +34,10 @@ interface HerbHeroV2Props {
     image_url?: string | null;
     pregnancy_safe: boolean | null;
     nursing_safe: boolean | null;
+    pregnancy_safe_oral?: boolean | null;
+    pregnancy_safe_topical?: boolean | null;
+    nursing_safe_oral?: boolean | null;
+    nursing_safe_topical?: boolean | null;
     herb_categories?: { name: string } | null;
     evidence_level?: string | null;
     traditional_uses?: string[] | null;
@@ -128,33 +132,67 @@ export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
             </div>
           )}
 
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-            <span className="inline-flex items-center gap-1 text-xs">
-              {herb.pregnancy_safe ? (
-                <>
-                  <ShieldCheck className="size-3.5 text-green-600" />
-                  <span className="text-green-600">{t("herbDetail.safePregnancy")}</span>
-                </>
-              ) : (
-                <>
-                  <ShieldX className="size-3.5 text-destructive" />
-                  <span className="text-destructive">{t("herbDetail.notSafePregnancy")}</span>
-                </>
-              )}
-            </span>
-            <span className="inline-flex items-center gap-1 text-xs">
-              {herb.nursing_safe ? (
-                <>
-                  <ShieldCheck className="size-3.5 text-green-600" />
-                  <span className="text-green-600">{t("herbDetail.safeNursing")}</span>
-                </>
-              ) : (
-                <>
-                  <ShieldX className="size-3.5 text-destructive" />
-                  <span className="text-destructive">{t("herbDetail.notSafeNursing")}</span>
-                </>
-              )}
-            </span>
+          <div className="mt-3 flex flex-col gap-2">
+            {/* Pregnancy safety */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Pregnancy</span>
+              <span className="inline-flex items-center gap-1 text-xs">
+                {herb.pregnancy_safe_oral === false && herb.pregnancy_safe_topical === true ? (
+                  <>
+                    <ShieldX className="size-3 text-destructive" />
+                    <span className="text-destructive">Unsafe orally</span>
+                    <span className="text-muted-foreground">·</span>
+                    <ShieldCheck className="size-3 text-green-600" />
+                    <span className="text-green-600">Safe topically</span>
+                  </>
+                ) : herb.pregnancy_safe ? (
+                  <>
+                    <ShieldCheck className="size-3 text-green-600" />
+                    <span className="text-green-600">Generally safe</span>
+                  </>
+                ) : herb.pregnancy_safe === false ? (
+                  <>
+                    <ShieldX className="size-3 text-destructive" />
+                    <span className="text-destructive">Not safe</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldX className="size-3 text-muted-foreground" />
+                    <span className="text-muted-foreground">Unknown</span>
+                  </>
+                )}
+              </span>
+            </div>
+            {/* Nursing safety */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Nursing</span>
+              <span className="inline-flex items-center gap-1 text-xs">
+                {herb.nursing_safe_oral === false && herb.nursing_safe_topical === true ? (
+                  <>
+                    <ShieldX className="size-3 text-destructive" />
+                    <span className="text-destructive">Unsafe orally</span>
+                    <span className="text-muted-foreground">·</span>
+                    <ShieldCheck className="size-3 text-green-600" />
+                    <span className="text-green-600">Safe topically</span>
+                  </>
+                ) : herb.nursing_safe ? (
+                  <>
+                    <ShieldCheck className="size-3 text-green-600" />
+                    <span className="text-green-600">Generally safe</span>
+                  </>
+                ) : herb.nursing_safe === false ? (
+                  <>
+                    <ShieldX className="size-3 text-destructive" />
+                    <span className="text-destructive">Not safe</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldX className="size-3 text-muted-foreground" />
+                    <span className="text-muted-foreground">Unknown</span>
+                  </>
+                )}
+              </span>
+            </div>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
