@@ -1,3 +1,4 @@
+import { logger } from "@/lib/utils/logger";
 import { createHash } from "crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { getAnonClient } from "@/lib/supabase/anonymous";
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
   ).trim();
 
   if (!apiKey) {
-    console.error("OpenRouter API key not configured");
+    logger.error("api_chat_key_missing");
     return NextResponse.json(
       { error: "AI service is not configured. Please contact support." },
       { status: 503 }
@@ -122,6 +123,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (err) {
     console.error("[chat] Context fetch failed, proceeding without:", err);
+    logger.error("api_chat_context_fetch_failed", { error: err });
   }
 
   // ── Build system prompt with verified data ────────────────────────
@@ -181,7 +183,7 @@ export async function POST(request: NextRequest) {
     
     if (response && response.ok) {
       if (model !== primaryModel) {
-        console.warn("[chat] primary model failed, using fallback", {
+        logger.warn("api_chat_primary_model_failed", {
           primaryModel,
           fallbackModel: model,
         });
@@ -194,12 +196,7 @@ export async function POST(request: NextRequest) {
     const status = response.status;
     const errorText = await response.text().catch(() => "Unknown error");
     lastError = { status, text: errorText };
-    console.error(
-      `OpenRouter API error for model ${model}:`,
-      status,
-      errorText.substring(0, 200)
-    );
-
+    logger.error("api_chat_upstream_error", { model, status, error: errorText.substring(0, 200) });
     if (status === 401 || status === 429) break;
     if (status >= 500) continue;
     if (status === 404 || status === 422) continue;
