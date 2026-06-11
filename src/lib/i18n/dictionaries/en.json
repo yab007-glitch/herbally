@@ -883,138 +883,17 @@
     "checkoutError": "Failed to create checkout session"
   },
   "symptomsPage": {
-    "title": "Find Herbs for Your Symptoms",
-    "subtitle": "Don't know which herb you need? Start here. Select a symptom or condition and we'll show you evidence-based herbs that may help.",
-    "disclaimerTitle": "Medical Disclaimer",
-    "disclaimerText": "This information is for educational purposes only. Herbs can interact with medications and may not be safe for everyone. Always consult your healthcare provider before starting any herbal supplement, especially if you are pregnant, nursing, or taking prescription drugs.",
-    "browseHerbs": "Browse herbs →",
-    "notSureTitle": "Not Sure Where to Start?",
-    "notSureDesc": "Try our AI Virtual Herbalist for personalized guidance.",
-    "askHerbalist": "Ask the Virtual Herbalist",
-    "browseAllHerbs": "Browse All Herbs",
-    "mental": {
-      "title": "Mental & Emotional",
-      "anxiety": {
-        "name": "Anxiety & Stress",
-        "desc": "Herbs traditionally used for anxiety and stress relief"
-      },
-      "depression": {
-        "name": "Depression & Mood",
-        "desc": "Herbs that may support mood and emotional wellbeing"
-      },
-      "sleep": {
-        "name": "Sleep & Insomnia",
-        "desc": "Herbs traditionally used to promote sleep"
-      },
-      "focus": {
-        "name": "Focus & Memory",
-        "desc": "Herbs that may support cognitive function"
-      }
-    },
-    "pain": {
-      "title": "Pain & Inflammation",
-      "inflammation": {
-        "name": "Inflammation",
-        "desc": "Herbs with anti-inflammatory properties"
-      },
-      "joint": {
-        "name": "Joint & Muscle Pain",
-        "desc": "Herbs for musculoskeletal discomfort"
-      },
-      "headache": {
-        "name": "Headaches & Migraines",
-        "desc": "Herbs traditionally used for headache relief"
-      },
-      "nerve": {
-        "name": "Nerve Pain",
-        "desc": "Herbs that may support nerve health"
-      }
-    },
-    "digestive": {
-      "title": "Digestive Health",
-      "indigestion": {
-        "name": "Indigestion & Bloating",
-        "desc": "Herbs for digestive comfort"
-      },
-      "nausea": {
-        "name": "Nausea",
-        "desc": "Herbs traditionally used for nausea relief"
-      },
-      "constipation": {
-        "name": "Constipation",
-        "desc": "Herbs that support regularity"
-      },
-      "liver": {
-        "name": "Liver Support",
-        "desc": "Herbs that support liver health"
-      }
-    },
-    "heart": {
-      "title": "Heart & Circulation",
-      "bloodPressure": {
-        "name": "Blood Pressure",
-        "desc": "Herbs that may support cardiovascular health"
-      },
-      "cholesterol": {
-        "name": "Cholesterol",
-        "desc": "Herbs traditionally used for lipid management"
-      },
-      "circulation": {
-        "name": "Circulation",
-        "desc": "Herbs that may improve circulation"
-      }
-    },
-    "immune": {
-      "title": "Immune & Respiratory",
-      "cold": {
-        "name": "Cold & Flu",
-        "desc": "Herbs for immune support during illness"
-      },
-      "cough": {
-        "name": "Cough & Sore Throat",
-        "desc": "Herbs traditionally used for respiratory relief"
-      },
-      "allergy": {
-        "name": "Allergies",
-        "desc": "Herbs that may help with allergic responses"
-      },
-      "immuneSupport": {
-        "name": "Immune Support",
-        "desc": "Herbs for general immune support"
-      }
-    },
-    "womens": {
-      "title": "Women's Health",
-      "menstrual": {
-        "name": "Menstrual Cramps",
-        "desc": "Herbs for menstrual comfort"
-      },
-      "menopause": {
-        "name": "Menopause",
-        "desc": "Herbs traditionally used during menopause"
-      },
-      "hormonal": {
-        "name": "Hormonal Balance",
-        "desc": "Herbs that may support hormonal health"
-      }
-    },
-    "skin": {
-      "title": "Skin & Wound Care",
-      "eczema": {
-        "name": "Eczema & Psoriasis",
-        "desc": "Herbs for inflammatory skin conditions"
-      },
-      "wound": {
-        "name": "Wound Healing",
-        "desc": "Herbs traditionally used for wound care"
-      },
-      "acne": {
-        "name": "Acne",
-        "desc": "Herbs that may support clear skin"
-      }
-    },
-    "viewDetails": "View details",
-    "allSymptoms": "All Symptoms"
+    "title": "Find Herbs by Symptom",
+    "subtitle": "Describe how you feel in plain English and discover which herbs may help.",
+    "searchPlaceholder": "Describe your symptoms... e.g., \"I can't sleep and feel anxious\"",
+    "search": "Search",
+    "examples": "Try describing how you feel:",
+    "searching": "Finding herbs that match your symptoms...",
+    "foundHerbs": "Found {count} herbs that may help with your symptoms",
+    "noResults": "No herbs found for your symptoms.",
+    "tryDifferent": "Try describing your symptoms differently, or ask the AI herbalist.",
+    "askAI": "Ask the AI herbalist about your symptoms",
+    "askAIFallback": "Ask the AI herbalist instead"
   },
   "herbDetailContent": {
     "herbNotFound": "Herb Not Found",

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, Leaf } from "lucide-react";
+import { ArrowRight, ShieldCheck, Leaf, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -225,6 +225,17 @@ export function HomePageClient({ labels }: { labels: Labels }) {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Quick link to symptom search */}
+        <div className="mt-6">
+          <button
+            onClick={() => router.push("/symptoms")}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Sparkles className="size-3.5" />
+            Not sure which herb? Describe your symptoms →
+          </button>
         </div>
 
         {/* Trust line */}

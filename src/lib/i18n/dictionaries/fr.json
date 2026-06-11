@@ -883,138 +883,17 @@
     "checkoutError": "Échec de la création de la session de paiement"
   },
   "symptomsPage": {
-    "title": "Trouvez des Herbes pour Vos Symptômes",
-    "subtitle": "Vous ne savez pas quelle herbe vous avez besoin ? Commencez ici. Sélectionnez un symptôme ou une condition et nous vous montrerons des herbes fondées sur des preuves qui peuvent aider.",
-    "disclaimerTitle": "Avertissement Médical",
-    "disclaimerText": "Ces informations sont à des fins éducatives uniquement. Les plantes peuvent interagir avec les médicaments et ne sont pas sûres pour tout le monde. Consultez toujours votre professionnel de santé avant de commencer tout supplément à base de plantes, surtout si vous êtes enceinte, allaitez ou prenez des médicaments sur ordonnance.",
-    "browseHerbs": "Parcourir les herbes →",
-    "notSureTitle": "Par où Commencer ?",
-    "notSureDesc": "Essayez notre Herboriste Virtuel IA pour des conseils personnalisés.",
-    "askHerbalist": "Demander à l'Herboriste Virtuel",
-    "browseAllHerbs": "Parcourir Toutes les Herbes",
-    "mental": {
-      "title": "Mental & Émotionnel",
-      "anxiety": {
-        "name": "Anxiété & Stress",
-        "desc": "Herbes traditionnellement utilisées pour le soulagement de l'anxiété et du stress"
-      },
-      "depression": {
-        "name": "Dépression & Humeur",
-        "desc": "Herbes pouvant soutenir l'humeur et le bien-être émotionnel"
-      },
-      "sleep": {
-        "name": "Sommeil & Insomnie",
-        "desc": "Herbes traditionnellement utilisées pour favoriser le sommeil"
-      },
-      "focus": {
-        "name": "Concentration & Mémoire",
-        "desc": "Herbes pouvant soutenir la fonction cognitive"
-      }
-    },
-    "pain": {
-      "title": "Douleur & Inflammation",
-      "inflammation": {
-        "name": "Inflammation",
-        "desc": "Herbes aux propriétés anti-inflammatoires"
-      },
-      "joint": {
-        "name": "Douleurs Articulaires & Musculaires",
-        "desc": "Herbes pour les inconforts musculosquelettiques"
-      },
-      "headache": {
-        "name": "Maux de Tête & Migraines",
-        "desc": "Herbes traditionnellement utilisées pour le soulagement des maux de tête"
-      },
-      "nerve": {
-        "name": "Douleurs Nerveuses",
-        "desc": "Herbes pouvant soutenir la santé nerveuse"
-      }
-    },
-    "digestive": {
-      "title": "Santé Digestive",
-      "indigestion": {
-        "name": "Indigestion & Ballonnements",
-        "desc": "Herbes pour le confort digestif"
-      },
-      "nausea": {
-        "name": "Nausées",
-        "desc": "Herbes traditionnellement utilisées pour le soulagement des nausées"
-      },
-      "constipation": {
-        "name": "Constipation",
-        "desc": "Herbes favorisant la régularité"
-      },
-      "liver": {
-        "name": "Soutien Hépatique",
-        "desc": "Herbes soutenant la santé du foie"
-      }
-    },
-    "heart": {
-      "title": "Cœur & Circulation",
-      "bloodPressure": {
-        "name": "Tension Artérielle",
-        "desc": "Herbes pouvant soutenir la santé cardiovasculaire"
-      },
-      "cholesterol": {
-        "name": "Cholestérol",
-        "desc": "Herbes traditionnellement utilisées pour la gestion des lipides"
-      },
-      "circulation": {
-        "name": "Circulation",
-        "desc": "Herbes pouvant améliorer la circulation"
-      }
-    },
-    "immune": {
-      "title": "Immunité & Respiration",
-      "cold": {
-        "name": "Rhume & Grippe",
-        "desc": "Herbes pour le soutien immunitaire pendant la maladie"
-      },
-      "cough": {
-        "name": "Toux & Mal de Gorge",
-        "desc": "Herbes traditionnellement utilisées pour le soulagement respiratoire"
-      },
-      "allergy": {
-        "name": "Allergies",
-        "desc": "Herbes pouvant aider avec les réactions allergiques"
-      },
-      "immuneSupport": {
-        "name": "Soutien Immunitaire",
-        "desc": "Herbes pour le soutien immunitaire général"
-      }
-    },
-    "womens": {
-      "title": "Santé Féminine",
-      "menstrual": {
-        "name": "Crampes Menstruelles",
-        "desc": "Herbes pour le confort menstruel"
-      },
-      "menopause": {
-        "name": "Ménopause",
-        "desc": "Herbes traditionnellement utilisées pendant la ménopause"
-      },
-      "hormonal": {
-        "name": "Équilibre Hormonal",
-        "desc": "Herbes pouvant soutenir la santé hormonale"
-      }
-    },
-    "skin": {
-      "title": "Peau & Soins des Plaies",
-      "eczema": {
-        "name": "Eczéma & Psoriasis",
-        "desc": "Herbes pour les affections cutanées inflammatoires"
-      },
-      "wound": {
-        "name": "Cicatrisation",
-        "desc": "Herbes traditionnellement utilisées pour les soins des plaies"
-      },
-      "acne": {
-        "name": "Acné",
-        "desc": "Herbes pouvant soutenir une peau claire"
-      }
-    },
-    "viewDetails": "Voir les détails",
-    "allSymptoms": "Tous les Symptômes"
+    "title": "Trouver des plantes par symptôme",
+    "subtitle": "Décrivez comment vous vous sentez et découvrez quelles plantes peuvent vous aider.",
+    "searchPlaceholder": "Décrivez vos symptômes... ex., \"Je n'arrive pas à dormir et je me sens anxieux\"",
+    "search": "Rechercher",
+    "examples": "Essayez de décrire ce que vous ressentez :",
+    "searching": "Recherche de plantes correspondant à vos symptômes...",
+    "foundHerbs": "{count} plantes trouvées qui pourraient aider",
+    "noResults": "Aucune plante trouvée pour vos symptômes.",
+    "tryDifferent": "Essayez de décrire vos symptômes différemment, ou demandez à l'herboriste IA.",
+    "askAI": "Demander à l'herboriste IA",
+    "askAIFallback": "Demander à l'herboriste IA à la place"
   },
   "herbDetailContent": {
     "herbNotFound": "Herbe Non Trouvée",

@@ -1,22 +1,29 @@
-const CACHE_NAME = "herbally-v3";
+const CACHE_NAME = "herbally-v4";
+const API_CACHE = "herbally-api-v1";
+
+// Core pages to cache on install
 const STATIC_URLS = [
   "/",
   "/herbs",
   "/symptoms",
-  "/faq",
   "/herbalist",
   "/calculator",
+  "/garden",
+  "/faq",
+  "/about",
+  "/offline.html",
 ];
-const OFFLINE_FALLBACK = "/offline.html";
 
-// Stale-while-revalidate for herb pages, network-first for everything else
+// API endpoints to cache for offline herb browsing
+const API_URLS = [
+  "/api/herbs/search?q=",
+  "/api/herbs/random",
+];
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      // Cache static pages — don't block install on failures
       await cache.addAll(STATIC_URLS).catch(() => {});
-      // Cache offline fallback
-      await cache.add(OFFLINE_FALLBACK).catch(() => {});
     })
   );
   self.skipWaiting();
@@ -27,7 +34,7 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => name !== CACHE_NAME)
+          .filter((name) => name !== CACHE_NAME && name !== API_CACHE)
           .map((name) => caches.delete(name))
       );
     })
@@ -37,57 +44,71 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-
+  
   const url = new URL(event.request.url);
+  
+  // Skip non-app requests
+  if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/auth/")) return;
+  if (url.pathname.startsWith("/api/chat")) return; // Don't cache AI chat
 
-  // Skip API calls, auth, and external requests
-  if (
-    url.pathname.startsWith("/api/") ||
-    url.pathname.startsWith("/auth/") ||
-    url.origin !== self.location.origin
-  ) {
+  // API requests: network-first, cache for offline
+  if (url.pathname.startsWith("/api/")) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(API_CACHE).then((cache) => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match(event.request);
+          if (cached) return cached;
+          return new Response(JSON.stringify([]), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          });
+        })
+    );
     return;
   }
 
-  // Herb detail pages: stale-while-revalidate (fast load from cache, update in background)
-  if (url.pathname.startsWith("/herbs/") && !url.pathname.endsWith("/")) {
+  // Herb detail pages: cache-first, network update
+  if (url.pathname.startsWith("/herbs/") && url.pathname.split("/").length === 3) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(event.request);
-        const fetchPromise = fetch(event.request)
+        const networkFetch = fetch(event.request)
           .then((response) => {
-            if (response.ok) {
-              cache.put(event.request, response.clone());
-            }
+            if (response.ok) cache.put(event.request, response.clone());
             return response;
           })
           .catch(() => cached);
-
-        // Return cached immediately if available, otherwise wait for network
-        return cached || fetchPromise;
+        return cached || networkFetch;
       })
     );
     return;
   }
 
-  // Everything else: network first, cache fallback
+  // Navigation & static: network-first with cache fallback
   event.respondWith(
     fetch(event.request)
       .then((response) => {
         if (response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, clone);
-          });
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return response;
       })
       .catch(async () => {
         const cached = await caches.match(event.request);
         if (cached) return cached;
-        // For navigation requests, show offline page
         if (event.request.mode === "navigate") {
-          const offline = await caches.match(OFFLINE_FALLBACK);
+          const offline = await caches.match("/offline.html");
           if (offline) return offline;
         }
         return new Response("Offline", { status: 503 });
