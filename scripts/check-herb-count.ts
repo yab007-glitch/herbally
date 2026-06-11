@@ -1,99 +1,74 @@
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
+import * as fs from "fs";
 config({ path: ".env.local" });
 config({ path: ".env" });
 
-// ─── Reference list: medically recognized herbs ────────────────────
-const REFERENCE_SLUGS = new Set([
-  "ashwagandha","rhodiola","holy-basil","eleuthero","schisandra","maca",
-  "american-ginseng","ginseng","cordyceps","reishi","turmeric","ginger",
-  "boswellia","devils-claw","willow-bark","cats-claw","andrographis",
-  "peppermint","chamomile","artichoke","milk-thistle","fennel","psyllium",
-  "slippery-elm","licorice-root","marshmallow-root","ginkgo-biloba","bacopa",
-  "gotu-kola","lions-mane","saffron","sage","valerian","passionflower",
-  "lavender","lemon-balm","hops","skullcap","kava","echinacea","elderberry",
-  "garlic","astragalus","oregano","olive-leaf","neem","hawthorn","green-tea",
-  "black-cohosh","vitex","dong-quai","evening-primrose","red-clover",
-  "fenugreek","saw-palmetto","pygeum","tongkat-ali","tribulus","aloe-vera",
-  "calendula","tea-tree","witch-hazel","arnica","comfrey","mullein","thyme",
-  "elderflower","butterbur","yarrow","cinnamon","berberine","gymnema",
-  "moringa","feverfew","cayenne","spirulina","chlorella","nettle","cranberry",
-  "uva-ursi","dandelion","bilberry","goldenseal","black-seed","clove",
-  "st-johns-wort","horsetail","rosemary","coleus","garcinia","horse-chestnut",
-  "turkey-tail","chaga","black-walnut","wormwood","white-willow","meadowsweet",
-  "plantain","milk-vetch","java-turmeric","nettle-root","curcumin",
-  "sambucol",
-]);
-
-// ─── Seed file slugs ────────────────────────────────────────────────
-import * as fs from "fs";
-const seedContent = fs.readFileSync("supabase/migrations/00015_seed_herbs.sql", "utf-8");
-const seedSlugs = new Set<string>();
-const matches = seedContent.matchAll(/^\s+'([a-z][a-z0-9-]*)'/gm);
-for (const m of matches) {
-  seedSlugs.add(m[1]);
-}
-
-console.log(`Reference herbs: ${REFERENCE_SLUGS.size}`);
-console.log(`Seed file herbs: ${seedSlugs.size}`);
-
-// Find missing
-const missing = [...REFERENCE_SLUGS].filter(s => !seedSlugs.has(s));
-const inBoth = [...REFERENCE_SLUGS].filter(s => seedSlugs.has(s));
-const onlyInSeed = [...seedSlugs].filter(s => !REFERENCE_SLUGS.has(s));
-
-console.log(`\nIn both: ${inBoth.length}`);
-console.log(`Missing from seed: ${missing.length}`);
-console.log(`Only in seed: ${onlyInSeed.length}`);
-
-if (missing.length > 0) {
-  console.log("\n❌ MISSING — medically recognized herbs not in seed database:");
-  missing.sort().forEach(s => console.log(`  - ${s}`));
-}
-
-if (onlyInSeed.length > 0) {
-  console.log("\nℹ️ In seed but not in reference list:");
-  onlyInSeed.sort().forEach(s => console.log(`  - ${s}`));
-}
-
-// ─── Try DB if available ────────────────────────────────────────────
-async function checkDB() {
+async function main() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
-    console.log("\n⚠️ No Supabase credentials — DB check skipped.");
-    return;
-  }
-
+  if (!url || !key) { console.log("No creds"); process.exit(1); }
   const supabase = createClient(url, key);
-  const { count, error } = await supabase
-    .from("herbs")
-    .select("*", { count: "exact", head: true })
-    .eq("is_published", true);
 
-  if (error) {
-    console.log(`\n⚠️ DB error: ${error.message}`);
-    return;
-  }
-
-  console.log(`\n📊 Production database: ${count} published herbs`);
-
-  // Check which reference herbs are in DB
+  // Get all DB slugs
   const { data } = await supabase
     .from("herbs")
     .select("slug")
     .eq("is_published", true);
 
-  if (data) {
-    const dbSlugs = new Set((data as Array<{ slug: string }>).map(r => r.slug));
-    const missingFromDB = [...REFERENCE_SLUGS].filter(s => !dbSlugs.has(s));
-    console.log(`Reference herbs in DB: ${[...REFERENCE_SLUGS].filter(s => dbSlugs.has(s)).length}/${REFERENCE_SLUGS.size}`);
-    if (missingFromDB.length > 0) {
-      console.log(`\n❌ Missing from production DB (${missingFromDB.length}):`);
-      missingFromDB.sort().forEach(s => console.log(`  - ${s}`));
+  const dbSlugs = new Set((data as Array<{ slug: string }> ?? []).map(r => r.slug));
+  console.log(`DB has ${dbSlugs.size} unique slugs`);
+
+  // Get seed file slugs
+  const seedContent = fs.readFileSync("supabase/migrations/00015_seed_herbs.sql", "utf-8");
+  const seedSlugs: string[] = [];
+  const matches = seedContent.matchAll(/^\s+'([a-z][a-z0-9-]*)'/gm);
+  for (const m of matches) {
+    seedSlugs.push(m[1]);
+  }
+
+  console.log(`Seed file has ${seedSlugs.length} herbs`);
+
+  // Find which seed herbs are missing from DB
+  const missing = seedSlugs.filter(s => !dbSlugs.has(s));
+  const present = seedSlugs.filter(s => dbSlugs.has(s));
+
+  console.log(`\nSeed herbs in DB: ${present.length}/${seedSlugs.length}`);
+  console.log(`Seed herbs MISSING from DB: ${missing.length}`);
+
+  if (missing.length > 0) {
+    console.log("\n❌ Seed herbs NOT in production DB:");
+    missing.forEach(s => console.log(`  - ${s}`));
+  }
+
+  // Also check: which DB herbs have the same name as seed herbs but different slugs?
+  console.log("\n--- Herbs present but under variant slugs ---");
+  const seedNames = new Map<string, string>(); // slug → name
+  const nameLines = seedContent.matchAll(/^\s+'([a-z][a-z0-9-]*?)',\s*'([^']+)'/gm);
+  for (const m of nameLines) {
+    seedNames.set(m[1], m[2]);
+  }
+
+  // Get DB herbs with names
+  const { data: dbHerbs } = await supabase
+    .from("herbs")
+    .select("name, slug")
+    .eq("is_published", true);
+
+  if (dbHerbs) {
+    for (const [seedSlug, seedName] of seedNames) {
+      if (!dbSlugs.has(seedSlug)) {
+        // Check if a herb with similar name exists under different slug
+        const similar = (dbHerbs as Array<{ name: string; slug: string }>).filter(h =>
+          h.name.toLowerCase().includes(seedName.toLowerCase()) ||
+          seedName.toLowerCase().includes(h.name.toLowerCase())
+        );
+        if (similar.length > 0) {
+          console.log(`  ${seedName} (${seedSlug}) → found as: ${similar.map(h => `${h.name} (${h.slug})`).join(", ")}`);
+        }
+      }
     }
   }
 }
 
-checkDB();
+main();

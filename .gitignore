@@ -56,3 +56,4 @@ AUDIT_REPORT_*.md
 playwright-report/
 test-results/
 
+.env*
