@@ -1,32 +1,23 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSystemPrompt } from "@/lib/ai/system-prompt";
+import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 import { rateLimit } from "@/lib/rate-limit";
 
-// Max request body size: 50KB (prevents memory exhaustion and excessive token usage)
 const MAX_BODY_SIZE = 50 * 1024;
 
-// OpenRouter fallback model chain (tried in order if primary model fails)
 const FALLBACK_MODELS = [
   "openrouter/free",
   "google/gemma-3-27b-it:free",
   "meta-llama/llama-3.1-8b-instruct:free",
 ];
 
-/**
- * Extract the real client IP from request headers.
- * Handles Vercel (x-vercel-forwarded-for), Cloudflare (cf-connecting-ip),
- * and generic proxies (x-forwarded-for).
- */
 function getClientIP(request: NextRequest): string {
-  // Vercel: trusted forwarded-for
   const vercelIP = request.headers.get("x-vercel-forwarded-for");
   if (vercelIP) return vercelIP.trim();
 
-  // Cloudflare
   const cfIP = request.headers.get("cf-connecting-ip");
   if (cfIP) return cfIP.trim();
 
-  // Generic proxy: rightmost IP in x-forwarded-for
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     const ips = forwarded.split(",").map((s) => s.trim());
@@ -55,7 +46,7 @@ async function tryOpenRouter(
       messages: chatMessages,
       stream: true,
       max_tokens: 2048,
-      temperature: 0.7,
+      temperature: 0.3, // Lower temperature for more factual responses
     }),
   });
 }
@@ -89,7 +80,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Rate limit using platform-aware IP extraction
+  // Rate limit
   const ip = getClientIP(request);
   const { success } = await rateLimit(ip, 20, 60_000);
   if (!success) {
@@ -125,16 +116,42 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const systemPrompt = getSystemPrompt(herbContext, medications, locale);
+  const msgArray = messages as Array<{ role: string; content: string }>;
+
+  // ── Pre-fetch verified context from our database ──────────────────
+  // Extract the latest user message to analyze for herb/medication names
+  const lastUserMessage = [...msgArray].reverse().find(
+    (m) => m.role === "user"
+  )?.content ?? "";
+
+  let verifiedContext = null;
+  try {
+    verifiedContext = await fetchVerifiedContext(
+      lastUserMessage,
+      herbContext,
+      medications
+    );
+  } catch (err) {
+    console.error("[chat] Context fetch failed, proceeding without:", err);
+  }
+
+  // ── Build system prompt with verified data ────────────────────────
+  const systemPrompt = getSystemPrompt(
+    herbContext,
+    medications,
+    locale,
+    verifiedContext
+  );
+
   const chatMessages = [
     { role: "system" as const, content: systemPrompt },
-    ...(messages as Array<{ role: string; content: string }>).map((m) => ({
+    ...msgArray.map((m) => ({
       role: m.role as "user" | "assistant",
       content: m.content,
     })),
   ];
 
-  // Try primary model first, then fallbacks
+  // ── Call OpenRouter with fallback chain ────────────────────────────
   const modelsToTry = [
     primaryModel,
     ...FALLBACK_MODELS.filter((m) => m !== primaryModel),
@@ -155,9 +172,6 @@ export async function POST(request: NextRequest) {
 
     if (response.ok) {
       if (model !== primaryModel) {
-        // Observability: surface every primary-model failure so we notice when
-        // the free pool degrades. Wire to Sentry via console.error which the
-        // @sentry/nextjs integration captures.
         console.warn("[chat] primary model failed, using fallback", {
           primaryModel,
           fallbackModel: model,
@@ -166,7 +180,6 @@ export async function POST(request: NextRequest) {
       break;
     }
 
-    // Model not available (404/422) — try next fallback
     const status = response.status;
     const errorText = await response.text().catch(() => "Unknown error");
     lastError = { status, text: errorText };
@@ -176,19 +189,9 @@ export async function POST(request: NextRequest) {
       errorText.substring(0, 200)
     );
 
-    if (status === 401 || status === 429) {
-      // Auth or rate limit — don't retry with other models, same key
-      break;
-    }
-    if (status >= 500) {
-      // Server error — try next fallback
-      continue;
-    }
-    if (status === 404 || status === 422) {
-      // Model not found or invalid — try next fallback
-      continue;
-    }
-    // Other 4xx — don't retry
+    if (status === 401 || status === 429) break;
+    if (status >= 500) continue;
+    if (status === 404 || status === 422) continue;
     break;
   }
 
@@ -210,6 +213,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // ── Stream the response ───────────────────────────────────────────
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
@@ -285,10 +289,17 @@ export async function POST(request: NextRequest) {
     },
   });
 
+  const dataSource = verifiedContext?.source ?? "none";
+  const herbsFound = verifiedContext?.herbs.length ?? 0;
+  const interactionsFound = verifiedContext?.interactions.length ?? 0;
+
   return new Response(stream, {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
+      "X-HerbAlly-Data-Source": dataSource,
+      "X-HerbAlly-Herbs-Found": String(herbsFound),
+      "X-HerbAlly-Interactions-Found": String(interactionsFound),
     },
   });
 }

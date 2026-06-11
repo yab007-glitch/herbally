@@ -120,6 +120,7 @@ export function ChatInterface({
   const [justSaved, setJustSaved] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [hasSentMessage, setHasSentMessage] = useState(false);
+  const [dataSource, setDataSource] = useState<"database" | "none" | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -262,6 +263,10 @@ export function ChatInterface({
         body: JSON.stringify(body),
         signal: controller.signal,
       });
+
+      // Read data-source header for transparency
+      const dsHeader = response.headers.get("X-HerbAlly-Data-Source");
+      setDataSource(dsHeader === "database" ? "database" : "none");
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({ error: "Unknown error" }));
@@ -457,6 +462,12 @@ export function ChatInterface({
                         </div>
                       ) : (
                         <div className="group relative rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5 text-sm leading-relaxed text-foreground">
+                          {dataSource === "database" && message.role === "assistant" && (
+                            <div className="mb-1.5 inline-flex items-center gap-1 rounded bg-green-100 dark:bg-green-950/30 px-1.5 py-0.5 text-[10px] text-green-700 dark:text-green-400">
+                              <span className="size-1.5 rounded-full bg-green-500" />
+                              Verified data
+                            </div>
+                          )}
                           <ChatMarkdown>{message.content}</ChatMarkdown>
                           {/* Copy button — show on hover */}
                           <button
