@@ -1,6 +1,6 @@
 # HerbAlly
 
-A medical herbs SaaS application featuring a searchable database of 2,700+ medicinal herbs, age/weight-based dosage calculator, and an AI-powered virtual pharmacist for herb-drug interaction checking.
+A medical herbs SaaS application featuring a searchable database of 180+ medicinal herbs, age/weight-based dosage calculator, and an AI-powered virtual pharmacist for herb-drug interaction checking.
 
 ## Tech Stack
 
@@ -77,7 +77,7 @@ src/
 ## Routes
 
 - `/` — Marketing landing page (hero, stats, feature grid, CTA).
-- `/herbs` — Browseable catalog of 2,700+ herbs.
+- `/herbs` — Browseable catalog of 180+ herbs.
 - `/herbs/[slug]` — Herb detail page with provenance badge.
 - `/herbalist` — Full-screen AI chat with PMID-linkified markdown and safety guard.
 - `/calculator` — Pediatric/adult dosage calculator.
@@ -165,6 +165,18 @@ curl -X POST http://localhost:3000/api/chat \
   -d '{"messages":[{"role":"user","content":"hi"}]}'
 # Expected: streamed text/event-stream, 200 OK
 ```
+
+## Herb Coverage
+
+HerbAlly's database covers **180+ medicinal herbs** across 22 therapeutic categories
+including adaptogens, anti-inflammatories, cognitive enhancers, digestive aids,
+cardiovascular support, women's and men's health, immune modulators, and more.
+Each herb is categorized by evidence level (A through C and traditional use)
+based on WHO monographs, EMA assessments, Commission E reports, and
+peer-reviewed systematic reviews.
+
+See `supabase/migrations/00028_seed_additional_herbs.sql` for the most recent
+batch of additions.
 
 ## Disclaimer
 
