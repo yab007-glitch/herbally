@@ -2,14 +2,27 @@
 # Check Upstash Redis usage for 1Herb
 # Usage: ./scripts/check-redis-usage.sh
 
-REDIS_URL="stirring-beagle-81353.upstash.io"
-REDIS_TOKEN="gQAAAAAAAT3JAAIncDI0ZjA5M2UwNGY2NzU0YWRiOWFlMDJlYmEyNjRlZWIzNHAyODEzNTM"
+# Load environment variables from .env.local or .env if they exist
+if [ -f .env.local ]; then
+  export $(grep -v '^#' .env.local | xargs)
+elif [ -f .env ]; then
+  export $(grep -v '^#' .env | xargs)
+fi
+
+REDIS_URL_FULL="${UPSTASH_REDIS_REST_URL}"
+REDIS_TOKEN="${UPSTASH_REDIS_REST_TOKEN}"
+
+if [ -z "$REDIS_URL_FULL" ] || [ -z "$REDIS_TOKEN" ]; then
+  echo "❌ Error: UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN are not configured."
+  echo "Please check your .env.local or .env file."
+  exit 1
+fi
 
 echo "📊 Upstash Redis Usage for 1Herb"
 echo "================================"
 
 # Get memory info
-MEMORY=$(curl -s -X POST "https://${REDIS_URL}/pipeline" \
+MEMORY=$(curl -s -X POST "${REDIS_URL_FULL}/pipeline" \
   -H "Authorization: Bearer ${REDIS_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '[["INFO", "memory"]]' | jq -r '.[0].result' 2>/dev/null)
@@ -21,7 +34,7 @@ echo "$MEMORY" | grep -E "used_memory_human|maxmemory_human" | while read line; 
 done
 
 # Get stats
-STATS=$(curl -s -X POST "https://${REDIS_URL}/pipeline" \
+STATS=$(curl -s -X POST "${REDIS_URL_FULL}/pipeline" \
   -H "Authorization: Bearer ${REDIS_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '[["INFO", "stats"]]' | jq -r '.[0].result' 2>/dev/null)
@@ -33,7 +46,7 @@ echo "$STATS" | grep -E "total_commands_processed|instantaneous_ops_per_sec|max_
 done
 
 # Get key count
-KEYS=$(curl -s -X POST "https://${REDIS_URL}/pipeline" \
+KEYS=$(curl -s -X POST "${REDIS_URL_FULL}/pipeline" \
   -H "Authorization: Bearer ${REDIS_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '[["DBSIZE"]]' | jq -r '.[0].result' 2>/dev/null)
