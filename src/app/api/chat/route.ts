@@ -143,6 +143,7 @@ export async function POST(request: NextRequest) {
   // ── AI Response Caching ──────────────────────────────────────────
   const promptHash = createHash("sha256")
     .update(JSON.stringify(chatMessages))
+    .digest("hex");
   const supabase = getAnonClient();
   if (supabase) {
     const { data: cached } = await supabase

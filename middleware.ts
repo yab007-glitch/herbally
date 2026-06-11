@@ -1,6 +1,21 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { rateLimit } from "@/lib/rate-limit";
+function getClientIP(request: NextRequest): string {
+  const vercelIP = request.headers.get("x-vercel-forwarded-for");
+  if (vercelIP) return vercelIP.trim();
+
+  const cfIP = request.headers.get("cf-connecting-ip");
+  if (cfIP) return cfIP.trim();
+
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const ips = forwarded.split(",").map((s) => s.trim());
+    return ips[ips.length - 1] || "unknown";
+  }
+
+  return "unknown";
+}
 
 const adminRoutes = ["/admin"];
 
@@ -84,7 +99,7 @@ export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   // API Chat Rate limit (Edge-native)
   if (pathname.startsWith("/api/chat")) {
-    const ip = request.ip || "unknown";
+    const ip = getClientIP(request);
     const { success } = await rateLimit(ip, 20, 60_000);
     if (!success) {
       return NextResponse.json(

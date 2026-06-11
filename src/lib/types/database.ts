@@ -39,6 +39,30 @@ export type Database = {
   };
   public: {
     Tables: {
+      ai_response_cache: {
+        Row: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          prompt_hash: string;
+          response: string;
+        };
+        Insert: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          prompt_hash: string;
+          response: string;
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          prompt_hash?: string;
+          response?: string;
+        };
+        Relationships: [];
+      };
       chat_messages: {
         Row: {
           content: string;
