@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
 import { getExploredHerbs } from "@/lib/garden/streaks";
+import { useTranslations } from "next-intl";
 
 export function RecentlyViewed() {
+  const t = useTranslations();
   const [herbs, setHerbs] = useState<string[]>([]);
   const [mounted, setMounted] = useState(false);
 
@@ -27,7 +29,7 @@ export function RecentlyViewed() {
       <div className="flex items-center gap-2 mb-2">
         <Clock className="size-3.5 text-muted-foreground" />
         <span className="text-xs font-medium text-muted-foreground">
-          Recently viewed
+          {t("common.recentlyViewed")}
         </span>
       </div>
       <div className="flex flex-wrap gap-2">

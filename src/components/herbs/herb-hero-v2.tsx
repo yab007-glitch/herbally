@@ -109,7 +109,7 @@ export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
             {isVerified && (
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                 <BadgeCheck className="size-3" />
-                Verified
+                {t("common.verified")}
               </span>
             )}
           </div>

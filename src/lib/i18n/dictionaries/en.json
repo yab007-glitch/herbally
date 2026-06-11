@@ -19,7 +19,7 @@
     "dark": "Dark",
     "system": "System",
     "menu": "Menu",
-    "copied": "Copied!",
+    "copied": "Copied",
     "copyLink": "Copy Link",
     "toggleTheme": "Toggle theme",
     "changeLanguage": "Change language",
@@ -30,7 +30,17 @@
     "aiSuggestedAlternatives": "AI-Suggested Alternatives",
     "basedOnCompounds": "Based on similar active compounds and traditional uses",
     "suggestionsComingSoon": "Personalized herb suggestions coming soon",
-    "aiWillAnalyze": "Our AI will analyze active compounds and mechanisms to find related herbs"
+    "aiWillAnalyze": "Our AI will analyze active compounds and mechanisms to find related herbs",
+    "verified": "Verified",
+    "recentlyViewed": "Recently viewed",
+    "newMessages": "New messages",
+    "clearConversation": "Clear conversation",
+    "saving": "Saving...",
+    "saved": "✓ Saved",
+    "copy": "Copy",
+    "verifyCitation": "verify",
+    "verifiedData": "Verified data",
+    "citationsDisclaimer": "Citations may be AI-generated — verify independently."
   },
   "nav": {
     "symptoms": "By Symptom",

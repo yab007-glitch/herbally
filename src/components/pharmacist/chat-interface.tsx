@@ -465,7 +465,7 @@ export function ChatInterface({
                           {dataSource === "database" && message.role === "assistant" && (
                             <div className="mb-1.5 inline-flex items-center gap-1 rounded bg-green-100 dark:bg-green-950/30 px-1.5 py-0.5 text-[10px] text-green-700 dark:text-green-400">
                               <span className="size-1.5 rounded-full bg-green-500" />
-                              Verified data
+                              {t("common.verifiedData")}
                             </div>
                           )}
                           <ChatMarkdown>{message.content}</ChatMarkdown>
@@ -478,12 +478,12 @@ export function ChatInterface({
                             {copiedId === message.id ? (
                               <>
                                 <Check className="size-3 text-green-600" />
-                                Copied
+                                {t("common.copied")}
                               </>
                             ) : (
                               <>
                                 <Copy className="size-3" />
-                                Copy
+                                {t("common.copy")}
                               </>
                             )}
                           </button>
@@ -556,7 +556,7 @@ export function ChatInterface({
           className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground shadow-md hover:text-foreground transition-all"
         >
           <ArrowDown className="size-3" />
-          New messages
+          {t("common.newMessages")}
         </button>
       )}
 
@@ -564,7 +564,7 @@ export function ChatInterface({
       <div className="shrink-0 border-t border-border/50 px-4 py-1.5 text-center">
         <p className="text-[10px] text-muted-foreground/60">
           <AlertCircle className="inline size-2.5 -mt-0.5 mr-1" />
-          {t("pharmacist.disclaimer")} Citations may be AI-generated — verify independently.
+          {t("pharmacist.disclaimer")} {t("common.citationsDisclaimer")}
         </p>
       </div>
 
@@ -612,10 +612,10 @@ export function ChatInterface({
               onClick={clearChat}
               className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors"
             >
-              Clear conversation
+              {t("common.clearConversation")}
             </button>
             <span className="text-[10px] text-muted-foreground/60">
-              {isSaving ? "Saving..." : justSaved ? "✓ Saved" : ""}
+              {isSaving ? t("common.saving") : justSaved ? t("common.saved") : ""}
             </span>
           </div>
         )}

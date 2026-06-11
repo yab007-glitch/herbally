@@ -19,7 +19,7 @@
     "dark": "Sombre",
     "system": "Système",
     "menu": "Menu",
-    "copied": "Copié !",
+    "copied": "Copié",
     "copyLink": "Copier le lien",
     "toggleTheme": "Changer le thème",
     "changeLanguage": "Changer la langue",
@@ -30,7 +30,17 @@
     "aiSuggestedAlternatives": "Alternatives suggérées par l'IA",
     "basedOnCompounds": "Basé sur des composés actifs et des usages traditionnels similaires",
     "suggestionsComingSoon": "Suggestions personnalisées d'herbes bientôt disponibles",
-    "aiWillAnalyze": "Notre IA analysera les composés actifs et les mécanismes pour trouver des herbes similaires"
+    "aiWillAnalyze": "Notre IA analysera les composés actifs et les mécanismes pour trouver des herbes similaires",
+    "verified": "Vérifié",
+    "recentlyViewed": "Consultés récemment",
+    "newMessages": "Nouveaux messages",
+    "clearConversation": "Effacer la conversation",
+    "saving": "Sauvegarde...",
+    "saved": "✓ Sauvegardé",
+    "copy": "Copier",
+    "verifyCitation": "vérifier",
+    "verifiedData": "Données vérifiées",
+    "citationsDisclaimer": "Les citations peuvent être générées par IA — vérifiez indépendamment."
   },
   "nav": {
     "symptoms": "Par Symptôme",

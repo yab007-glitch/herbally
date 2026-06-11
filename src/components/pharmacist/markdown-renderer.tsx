@@ -6,6 +6,7 @@ import { remarkHerbAlly } from "@/lib/chat/enrichment";
 import { EvidenceGradeBadge } from "@/components/herbs/evidence-grade";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Leaf, PillBottle, AlertCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type EvidenceLevel = "strong" | "moderate" | "limited" | "traditional";
 type InteractionSeverity = "mild" | "moderate" | "severe" | "contraindicated";
@@ -47,108 +48,101 @@ const SEVERITY_STYLES: Record<
   },
 };
 
-/**
- * Detect if a link is a PubMed PMID link.
- */
 function isPmidLink(href: string | undefined): boolean {
   return !!href && /pubmed\.ncbi\.nlm\.nih\.gov\/\d+/.test(href);
 }
 
 export function ChatMarkdown({ children }: { children: string }) {
+  const t = useTranslations();
+
+  const components: Components = {
+    a({ href, title, children: linkChildren, ...rest }: ComponentPropsWithoutRef<"a">) {
+      const isExternal = !!href && /^https?:\/\//.test(href);
+      const isPmid = isPmidLink(href);
+      return (
+        <a
+          href={href}
+          title={title}
+          target={isExternal ? "_blank" : undefined}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          className="font-medium text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+          {...rest}
+        >
+          {linkChildren}
+          {isExternal && !isPmid && (
+            <ExternalLink className="ml-0.5 inline size-3 align-baseline" aria-hidden="true" />
+          )}
+          {isPmid && (
+            <span
+              className="ml-1 inline-flex items-center gap-0.5 rounded bg-amber-100 dark:bg-amber-950/30 px-1 py-px text-[10px] text-amber-700 dark:text-amber-400"
+              title="AI-generated citation — verify on PubMed"
+            >
+              <AlertCircle className="size-2.5" aria-hidden="true" />
+              {t("common.verifyCitation")}
+            </span>
+          )}
+        </a>
+      );
+    },
+
+    p({
+      children: pChildren,
+      node,
+      ...rest
+    }: ComponentPropsWithoutRef<"p"> & { node?: unknown }) {
+      const props = ((node as { properties?: Record<string, string> } | undefined)
+        ?.properties ?? {}) as Record<string, string>;
+      if (props["data-interaction"] === "true") {
+        const herb = props["data-interaction-herb"] ?? "";
+        const drug = props["data-interaction-drug"] ?? "";
+        const sev = (props["data-interaction-severity"] ?? "mild") as InteractionSeverity;
+        const style = SEVERITY_STYLES[sev] ?? SEVERITY_STYLES.mild;
+        return (
+          <div className={`my-2 flex flex-wrap items-center gap-2 rounded-md border ${style.border} ${style.bg} px-3 py-2 text-sm`}>
+            <span className="flex items-center gap-1.5 font-medium text-foreground">
+              <Leaf className="size-3.5 text-green-600" aria-hidden="true" />
+              {herb}
+            </span>
+            <span className="text-muted-foreground">+</span>
+            <span className="flex items-center gap-1.5 font-medium text-foreground">
+              <PillBottle className="size-3.5 text-blue-600" aria-hidden="true" />
+              {drug}
+            </span>
+            <span className="text-muted-foreground">→</span>
+            <Badge className={`${style.bg} ${style.text} border-current/20`}>
+              {style.label}
+            </Badge>
+          </div>
+        );
+      }
+      return <p {...rest}>{pChildren}</p>;
+    },
+
+    strong({
+      children: strongChildren,
+      node,
+      ...rest
+    }: ComponentPropsWithoutRef<"strong"> & { node?: unknown }) {
+      const props = ((node as { properties?: Record<string, string> } | undefined)
+        ?.properties ?? {}) as Record<string, string>;
+      const level = props["data-evidence-level"] as EvidenceLevel | undefined;
+      if (level) {
+        const grade = EVIDENCE_TO_GRADE[level];
+        return (
+          <span className="mx-1 inline-flex align-middle">
+            <EvidenceGradeBadge level={grade} />
+          </span>
+        );
+      }
+      return <strong {...rest}>{strongChildren}</strong>;
+    },
+  };
+
   return (
     <ReactMarkdown remarkPlugins={[remarkHerbAlly]} components={components}>
       {children}
     </ReactMarkdown>
   );
 }
-
-const components: Components = {
-  a({ href, title, children, ...rest }: ComponentPropsWithoutRef<"a">) {
-    const isExternal = !!href && /^https?:\/\//.test(href);
-    const isPmid = isPmidLink(href);
-    return (
-      <a
-        href={href}
-        title={title}
-        target={isExternal ? "_blank" : undefined}
-        rel={isExternal ? "noopener noreferrer" : undefined}
-        className="font-medium text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
-        {...rest}
-      >
-        {children}
-        {isExternal && !isPmid && (
-          <ExternalLink
-            className="ml-0.5 inline size-3 align-baseline"
-            aria-hidden="true"
-          />
-        )}
-        {/* PMID links get a subtle "verify" indicator */}
-        {isPmid && (
-          <span
-            className="ml-1 inline-flex items-center gap-0.5 rounded bg-amber-100 dark:bg-amber-950/30 px-1 py-px text-[10px] text-amber-700 dark:text-amber-400"
-            title="AI-generated citation — verify on PubMed"
-          >
-            <AlertCircle className="size-2.5" aria-hidden="true" />
-            verify
-          </span>
-        )}
-      </a>
-    );
-  },
-
-  p({
-    children,
-    node,
-    ...rest
-  }: ComponentPropsWithoutRef<"p"> & { node?: unknown }) {
-    const props = ((node as { properties?: Record<string, string> } | undefined)
-      ?.properties ?? {}) as Record<string, string>;
-    if (props["data-interaction"] === "true") {
-      const herb = props["data-interaction-herb"] ?? "";
-      const drug = props["data-interaction-drug"] ?? "";
-      const sev = (props["data-interaction-severity"] ?? "mild") as InteractionSeverity;
-      const style = SEVERITY_STYLES[sev] ?? SEVERITY_STYLES.mild;
-      return (
-        <div
-          className={`my-2 flex flex-wrap items-center gap-2 rounded-md border ${style.border} ${style.bg} px-3 py-2 text-sm`}
-        >
-          <span className="flex items-center gap-1.5 font-medium text-foreground">
-            <Leaf className="size-3.5 text-green-600" aria-hidden="true" />
-            {herb}
-          </span>
-          <span className="text-muted-foreground">+</span>
-          <span className="flex items-center gap-1.5 font-medium text-foreground">
-            <PillBottle className="size-3.5 text-blue-600" aria-hidden="true" />
-            {drug}
-          </span>
-          <span className="text-muted-foreground">→</span>
-          <Badge className={`${style.bg} ${style.text} border-current/20`}>
-            {style.label}
-          </Badge>
-        </div>
-      );
-    }
-    return <p {...rest}>{children}</p>;
-  },
-
-  strong({
-    children,
-    node,
-    ...rest
-  }: ComponentPropsWithoutRef<"strong"> & { node?: unknown }) {
-    const props = ((node as { properties?: Record<string, string> } | undefined)
-      ?.properties ?? {}) as Record<string, string>;
-    const level = props["data-evidence-level"] as EvidenceLevel | undefined;
-    if (level) {
-      const grade = EVIDENCE_TO_GRADE[level];
-      return (
-        <span className="mx-1 inline-flex align-middle">
-          <EvidenceGradeBadge level={grade} />
-        </span>
-      );
-    }
-    return <strong {...rest}>{children}</strong>;
-  },
-};
 
 export default ChatMarkdown;
