@@ -169,8 +169,8 @@ export async function POST(request: NextRequest) {
       );
       continue;
     }
-
-    if (response.ok) {
+    
+    if (response && response.ok) {
       if (model !== primaryModel) {
         console.warn("[chat] primary model failed, using fallback", {
           primaryModel,
@@ -179,6 +179,8 @@ export async function POST(request: NextRequest) {
       }
       break;
     }
+    
+    if (!response) continue;
 
     const status = response.status;
     const errorText = await response.text().catch(() => "Unknown error");

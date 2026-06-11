@@ -12,7 +12,7 @@ import { NextRequest } from "next/server";
  */
 
 // Mocks must be declared before importing the route handler.
-const fetchMock = vi.fn();
+const fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
 vi.stubGlobal("fetch", fetchMock);
 
 const rateLimitMock = vi.fn();
@@ -21,7 +21,7 @@ vi.mock("@/lib/rate-limit", () => ({
 }));
 
 async function loadRoute() {
-  // Re-import after mocks are set so the route picks up the stubbed fetch.
+  vi.resetModules();
   const mod = await import("../chat/route");
   return mod;
 }
@@ -44,18 +44,25 @@ function makeRequest(
 
 function streamResponse(): Response {
   const enc = new TextEncoder();
-  return new Response(
-    new ReadableStream({
-      start(controller) {
-        controller.enqueue(
-          enc.encode('data: {"choices":[{"delta":{"content":"hi"}}]}\n\n')
-        );
-        controller.enqueue(enc.encode("data: [DONE]\n\n"));
-        controller.close();
-      },
-    }),
-    { status: 200, headers: { "content-type": "text/event-stream" } }
-  );
+  const response = new Response(null, {
+    status: 200,
+    headers: { "content-type": "text/event-stream" },
+  });
+  // Override body to allow multiple reads for testing
+  Object.defineProperty(response, "body", {
+    get: () =>
+      new ReadableStream({
+        start(controller) {
+          controller.enqueue(
+            enc.encode('data: {"choices":[{"delta":{"content":"hi"}}]}\n\n')
+          );
+          controller.enqueue(enc.encode("data: [DONE]\n\n"));
+          controller.close();
+        },
+      }),
+    configurable: true,
+  });
+  return response;
 }
 
 const ORIGINAL_ENV = { ...process.env };
@@ -191,7 +198,7 @@ describe("POST /api/chat — model fallback chain", () => {
 
 describe("POST /api/chat — happy path", () => {
   it("streams back the assistant delta from the upstream response", async () => {
-    fetchMock.mockResolvedValueOnce(streamResponse());
+    fetchMock.mockResolvedValue(streamResponse());
 
     const { POST } = await loadRoute();
     const res = await POST(

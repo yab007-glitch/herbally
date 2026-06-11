@@ -21,6 +21,7 @@ function makeRequest(params: { term?: string }): NextRequest {
 }
 
 beforeEach(() => {
+  process.env.OPENFDA_BASE_URL = "https://api.fda.gov";
   fetchMock.mockReset();
 });
 
