@@ -17,11 +17,11 @@ const KNOWN_EXCEPTIONS: Record<string, { po: boolean; pt: boolean; no: boolean; 
   "witch-hazel": { po: false, pt: true, no: false, nt: true },
   "cayenne": { po: false, pt: true, no: false, nt: true },
   "eucalyptus": { po: false, pt: true, no: false, nt: true },
-  "shea-butter": { po: null, pt: true, no: null, nt: true },
-  "jojoba": { po: null, pt: true, no: null, nt: true },
-  "rosehip": { po: null, pt: true, no: null, nt: true },
-  "centella": { po: null, pt: true, no: null, nt: true },
-  "butterbur": { po: false, pt: null, no: false, nt: null },
+  "shea-butter": { po: false, pt: true, no: false, nt: true },
+  "jojoba": { po: false, pt: true, no: false, nt: true },
+  "rosehip": { po: false, pt: true, no: false, nt: true },
+  "centella": { po: false, pt: true, no: false, nt: true },
+  "butterbur": { po: false, pt: false, no: false, nt: false },
 };
 
 async function main() {
