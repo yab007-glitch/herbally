@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Leaf, Home, Users, AlertTriangle } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
 const adminNavItems = [
   { href: "/admin", label: "Overview", icon: Home },
@@ -8,11 +10,32 @@ const adminNavItems = [
   { href: "/admin/users", label: "Users", icon: Users },
 ];
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
+
+  // Verify admin role against database profile, not just JWT metadata
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const role = profile?.role ?? user.user_metadata?.role ?? "user";
+  if (role !== "admin") {
+    redirect("/");
+  }
+
   return (
     <div className="flex min-h-screen">
       <aside className="w-64 border-r bg-card p-4 hidden md:block">

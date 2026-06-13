@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { openai, MODEL } from "@/lib/ai/openai-client";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit } from "@/lib/rate-limit";import { logger } from "@/lib/utils/logger";
+
 
 const MAX_BODY_SIZE = 10 * 1024; // 10KB max for search interpretation
 
@@ -101,7 +102,7 @@ Examples:
 
     return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
   } catch (error) {
-    console.error("[interpret-search] Failed:", error);
+    logger.error("interpret_search_failed", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({
       keywords: [originalQuery.toLowerCase() || ""],
     });

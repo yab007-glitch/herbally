@@ -16,7 +16,6 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
-import * as fs from "fs";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
@@ -135,6 +134,7 @@ async function main() {
 
   if (!herbs) { console.error("No herbs found"); process.exit(1); }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sample = sampleSize > 0 ? (herbs as any[]).slice(0, sampleSize) : (herbs as any[]);
   console.log(`Validating ${sample.length} scientific names against POWO...`);
 

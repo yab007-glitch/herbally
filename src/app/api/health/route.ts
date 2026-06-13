@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/utils/logger";
 
 export async function GET() {
   const startTime = Date.now();
@@ -9,8 +10,6 @@ export async function GET() {
       status: string;
       latency?: number;
       error?: string;
-      backend?: string;
-      configured?: boolean;
     }
   > = {};
 
@@ -22,32 +21,26 @@ export async function GET() {
     const dbLatency = Date.now() - dbStart;
 
     if (error) {
-      checks.database = { status: "unhealthy", error: error.message };
+      checks.database = { status: "unhealthy", error: "Database query failed" };
     } else {
       checks.database = { status: "healthy", latency: dbLatency };
     }
-  } catch (err) {
+  } catch {
     checks.database = {
       status: "unhealthy",
-      error: err instanceof Error ? err.message : "Unknown error",
+      error: "Database connection failed",
     };
   }
 
-  // Check environment variables
-  const requiredEnvVars = [
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "OPENROUTER_API_KEY",
-  ];
-
-  const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
+  // Check environment variables (don't leak names publicly)
+  const hasRequiredEnv =
+    !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+    !!process.env.OPENROUTER_API_KEY;
 
   checks.environment = {
-    status: missingEnvVars.length === 0 ? "healthy" : "degraded",
-    error:
-      missingEnvVars.length > 0
-        ? `Missing: ${missingEnvVars.join(", ")}`
-        : undefined,
+    status: hasRequiredEnv ? "healthy" : "degraded",
+    error: hasRequiredEnv ? undefined : "One or more required variables are not set",
   };
 
   // Check OpenRouter API by making a lightweight models request
@@ -60,10 +53,9 @@ export async function GET() {
     if (!openrouterKey || openrouterKey.startsWith("sk-or-v1-REPLACE")) {
       checks.ai = {
         status: "unconfigured",
-        error: "OPENROUTER_API_KEY not set or is a placeholder",
+        error: "API key not set",
       };
     } else {
-      // Quick validation: list models (lightweight, no token cost)
       const aiStart = Date.now();
       const aiResponse = await fetch(`${openrouterBaseUrl}/models`, {
         headers: { Authorization: `Bearer ${openrouterKey}` },
@@ -81,49 +73,44 @@ export async function GET() {
         };
       }
     }
-  } catch (err) {
+  } catch {
     checks.ai = {
       status: "unhealthy",
-      error: err instanceof Error ? err.message : "Connection failed",
+      error: "Connection failed",
     };
   }
 
   // Check Stripe configuration
   checks.stripe = {
     status: process.env.STRIPE_SECRET_KEY ? "healthy" : "unconfigured",
-    error: !process.env.STRIPE_SECRET_KEY
-      ? "STRIPE_SECRET_KEY not set"
-      : undefined,
   };
 
-  // Check rate limiting backend
+  // Check rate limiting backend (generic status only)
   const rateLimitBackend = process.env.RATE_LIMIT_BACKEND || "memory";
+  const rateLimitConfigured =
+    rateLimitBackend === "upstash"
+      ? !!(
+          process.env.UPSTASH_REDIS_REST_URL &&
+          process.env.UPSTASH_REDIS_REST_TOKEN
+        )
+      : true;
+
   checks.rateLimit = {
-    status: "healthy",
-    backend: rateLimitBackend,
-    configured:
-      rateLimitBackend === "upstash"
-        ? !!(
-            process.env.UPSTASH_REDIS_REST_URL &&
-            process.env.UPSTASH_REDIS_REST_TOKEN
-          )
-        : true,
+    status: rateLimitConfigured ? "healthy" : "degraded",
+    error: rateLimitConfigured ? undefined : "Backend not fully configured",
   };
 
   // Overall status
-  const allHealthy = Object.values(checks).every(
-    (c) => c.status === "healthy" || c.status === "unconfigured"
-  );
   const anyUnhealthy = Object.values(checks).some(
     (c) => c.status === "unhealthy"
   );
 
-  const status = anyUnhealthy
-    ? "unhealthy"
-    : allHealthy
-      ? "healthy"
-      : "degraded";
+  const status = anyUnhealthy ? "unhealthy" : "healthy";
   const totalLatency = Date.now() - startTime;
+
+  if (status === "unhealthy") {
+    logger.error("health_check_unhealthy", { checks });
+  }
 
   return NextResponse.json(
     {

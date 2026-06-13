@@ -4,7 +4,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getSystemPrompt } from "@/lib/ai/system-prompt";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
-import { rateLimit } from "@/lib/rate-limit";
 
 const MAX_BODY_SIZE = 50 * 1024;
 
@@ -13,22 +12,6 @@ const FALLBACK_MODELS = [
   "google/gemma-3-27b-it:free",
   "meta-llama/llama-3.1-8b-instruct:free",
 ];
-
-function getClientIP(request: NextRequest): string {
-  const vercelIP = request.headers.get("x-vercel-forwarded-for");
-  if (vercelIP) return vercelIP.trim();
-
-  const cfIP = request.headers.get("cf-connecting-ip");
-  if (cfIP) return cfIP.trim();
-
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const ips = forwarded.split(",").map((s) => s.trim());
-    return ips[ips.length - 1] || "unknown";
-  }
-
-  return "unknown";
-}
 
 async function tryOpenRouter(
   baseUrl: string,
@@ -51,6 +34,7 @@ async function tryOpenRouter(
       max_tokens: 2048,
       temperature: 0.3, // Lower temperature for more factual responses
     }),
+    signal: AbortSignal.timeout(20000),
   });
 }
 
@@ -122,7 +106,6 @@ export async function POST(request: NextRequest) {
       medications
     );
   } catch (err) {
-    console.error("[chat] Context fetch failed, proceeding without:", err);
     logger.error("api_chat_context_fetch_failed", { error: err });
   }
 
@@ -262,7 +245,7 @@ export async function POST(request: NextRequest) {
               if (supabase && fullContent) {
                 supabase
                   .from("ai_response_cache")
-                  .insert({ prompt_hash: promptHash, response: fullContent })
+                  .insert({ prompt_hash: promptHash, response: fullContent, expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() })
                   .then(({ error }) => {
                     if (error) console.error("Failed to cache AI response:", error);
                   });

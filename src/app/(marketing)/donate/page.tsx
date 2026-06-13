@@ -24,9 +24,7 @@ const DonationButtons = dynamic(() =>
     (mod) => mod.DonationButtons
   )
 );
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { type Locale } from "@/lib/i18n/config";
 
 export const metadata: Metadata = {
   title: "Support Us - Keep Herbal Medicine Free",
@@ -60,10 +58,7 @@ export default async function DonatePage({
   searchParams: Promise<{ success?: string; canceled?: string }>;
 }) {
   const params = await searchParams;
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
-  const t = await getTranslations();
+    const t = await getTranslations();
 
   const costs = costKeys.map((key) => ({
     key,

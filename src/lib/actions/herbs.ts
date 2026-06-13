@@ -167,7 +167,7 @@ export async function getHerbBySlug(
       return { success: false, error: error.message };
     }
 
-    const locale = opts?.locale ?? (await getLocale());
+    const locale = opts?.locale ?? (opts?.skipCookies ? "en" : await getLocale());
     const herb = localizeHerb(data as HerbWithInteractions, locale);
     const interactions = (herb.drug_interactions || []).map((ix) =>
       localizeInteraction(ix, locale)

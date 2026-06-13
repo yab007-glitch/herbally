@@ -9,9 +9,7 @@ import {
   FileCheck,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { type Locale } from "@/lib/i18n/config";
 
 export const metadata: Metadata = {
   title: "Our Methodology",
@@ -40,10 +38,7 @@ const sectionKeys = [
 ] as const;
 
 export default async function MethodologyPage() {
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
-  const t = await getTranslations();
+    const t = await getTranslations();
 
   const methodologySections = sectionKeys.map(({ key, icon }) => ({
     icon,

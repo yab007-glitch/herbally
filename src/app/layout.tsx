@@ -1,14 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { NextIntlClientProvider } from "next-intl";
 import { Analytics } from "@vercel/analytics/next";
 import { OrganizationSchema } from "@/components/seo/organization-schema";
 import { SWRegistration } from "@/components/shared/service-worker-registration";
 import { SkipToContent } from "@/components/shared/skip-to-content";
 import { WebVitals } from "@/components/analytics/web-vitals";
+import { LocaleProvider } from "@/components/i18n/locale-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -85,37 +84,35 @@ export const metadata: Metadata = {
   },
 };
 
-async function loadMessages(locale: string) {
-  if (locale === "fr") {
-    return (await import("@/lib/i18n/dictionaries/fr.json")).default;
-  }
-  return (await import("@/lib/i18n/dictionaries/en.json")).default;
-}
+const localeScript = `
+  (function() {
+    var m = document.cookie.match(/herbally-locale=([^;]+)/);
+    if (m && m[1] === 'fr') document.documentElement.lang = 'fr';
+  })();
+`;
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const locale = localeCookie?.value === "fr" ? "fr" : "en";
-  const messages = await loadMessages(locale);
-
   return (
     <html
-      lang={locale}
+      lang="en"
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <head>
         <OrganizationSchema />
+        <script
+          dangerouslySetInnerHTML={{ __html: localeScript }}
+        />
       </head>
       <body className="bg-background text-foreground">
-        <NextIntlClientProvider messages={messages} locale={locale}>
+        <LocaleProvider>
           <SkipToContent />
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
-        </NextIntlClientProvider>
+        </LocaleProvider>
         <SWRegistration />
         <WebVitals />
         <Analytics />

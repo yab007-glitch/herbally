@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/supabase/admin";import { logger } from "@/lib/utils/logger";
+
 
 /**
  * POST /api/garden — sync local garden to the server.
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (err) {
-    console.error("Garden sync error:", err);
+    logger.error("garden_sync_error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to sync garden" },
       { status: 500 }
@@ -167,7 +168,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ herbs: [] });
   } catch (err) {
-    console.error("Garden fetch error:", err);
+    logger.error("garden_fetch_error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to fetch garden" },
       { status: 500 }
@@ -229,7 +230,7 @@ export async function DELETE(request: NextRequest) {
       { status: 401 }
     );
   } catch (err) {
-    console.error("Garden delete error:", err);
+    logger.error("garden_delete_error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to remove herb" },
       { status: 500 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
+import { unstable_cache } from "next/cache";
 import { cookies } from "next/headers";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,8 +12,6 @@ import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
 import type { Monograph } from "@/lib/data/monographs";
-import { cache } from "react";
-import { unstable_cache } from "next/cache";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getTranslations } from "next-intl/server";
@@ -25,25 +24,9 @@ import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
 import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
-import { parseProvenance, isVerified } from "@/lib/types/provenance";
 
-export async function generateStaticParams() {
-  try {
-    const supabase = getAnonClient();
-    if (!supabase) return [];
-    const { data: herbs } = await supabase
-      .from("herbs")
-      .select("slug")
-      .eq("is_published", true)
-      .order("name", { ascending: true })
-      .limit(500);
-    return (herbs ?? []).map((herb) => ({ slug: herb.slug }));
-  } catch {
-    return [];
-  }
-}
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -139,8 +122,7 @@ export default async function HerbDetailPage({ params }: Props) {
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
   const locale: Locale = (localeCookie?.value as Locale) || "en";
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
-  const t = await getTranslations();
+    const t = await getTranslations();
 
   if (!result.success || !result.data) {
     notFound();
@@ -188,6 +170,7 @@ export default async function HerbDetailPage({ params }: Props) {
   after(async () => {
     const supabase = getAnonClient();
     if (supabase && herb.id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase.rpc as any)("increment_herb_view", { herb_id: herb.id });
     }
   });

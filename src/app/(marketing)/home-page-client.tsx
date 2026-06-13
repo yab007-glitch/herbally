@@ -2,9 +2,9 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, Leaf, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Leaf, ShieldCheck, Sparkles } from "lucide-react";
 
 type Labels = {
   heroTitle: string;

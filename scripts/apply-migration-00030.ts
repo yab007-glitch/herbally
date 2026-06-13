@@ -56,6 +56,7 @@ async function main() {
     .neq("slug", "not-common");
   const catMap = new Map<string, string>();
   if (allCats) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const c of allCats as any[]) {
       catMap.set(c.slug, c.id);
     }
@@ -81,6 +82,7 @@ async function main() {
   let skipped = 0;
   let errors = 0;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
   for (const herb of levelAB as any[]) {
     const category = inferCategory(herb.name);
     

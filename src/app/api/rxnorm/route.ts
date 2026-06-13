@@ -1,6 +1,7 @@
 import { captureException } from "@sentry/nextjs";
 import { NextResponse, type NextRequest } from "next/server";
-import { searchDrugs } from "@/lib/utils/rxnorm-client";
+import { searchDrugs } from "@/lib/utils/rxnorm-client";import { logger } from "@/lib/utils/logger";
+
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ results });
   } catch (error) {
     captureException(error);
-    console.error("RxNorm API error:", error);
+    logger.error("rxnorm_api_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Failed to search drugs" },
       { status: 500 }

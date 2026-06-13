@@ -4,7 +4,7 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
-import * as fs from "fs";
+// import * as fs from "fs"; // unused
 
 config({ path: ".env.local" });
 config({ path: ".env" });
@@ -42,6 +42,7 @@ async function main() {
       .eq("is_published", true)
       .range(page * 1000, (page + 1) * 1000 - 1);
     if (!data || data.length === 0) break;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     herbList.push(...(data as any[]));
     if (data.length < 1000) break;
     page++;

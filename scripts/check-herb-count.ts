@@ -17,6 +17,7 @@ async function main() {
     .eq("is_published", true);
 
   if (data) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const h of data as any[]) {
       console.log(`${h.name}: oral(p=${h.pregnancy_safe_oral}, n=${h.nursing_safe_oral}) topical(p=${h.pregnancy_safe_topical}, n=${h.nursing_safe_topical})`);
     }
@@ -31,6 +32,7 @@ async function main() {
     .limit(500);
 
   if (all) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dual = all.filter((h: any) => h.pregnancy_safe_oral !== h.pregnancy_safe_topical);
     console.log(`\nDual-route herbs (sample): ${dual.length}/${all.length}`);
   }

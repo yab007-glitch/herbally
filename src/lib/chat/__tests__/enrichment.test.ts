@@ -6,8 +6,6 @@ import type {
   Paragraph,
   Text,
   Link,
-  Strong,
-  PhrasingContent,
 } from "mdast";
 import { enrichTree } from "../enrichment";
 
@@ -110,7 +108,7 @@ describe("remarkHerbAlly — PMID linkification", () => {
 
   it("matches PMIDs with 4-9 digits only (rejects 10+)", () => {
     const tree = parse("PMID:1234567890 should not match.");
-    const links = collectLinks(tree);
+    const _links = collectLinks(tree);
     enrichTree(tree);
     expect(collectLinks(tree)).toHaveLength(0);
     // Re-affirm original state by re-parsing.

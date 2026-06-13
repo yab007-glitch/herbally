@@ -1,28 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/utils/logger";
 
 /**
- * NOTE: The `donations` table is defined in migration 00026_create_donations.sql.
+ * NOTE: The \`donations\` table is defined in migration 00026_create_donations.sql.
  * Until applied, regenerate types:
  *   supabase gen types typescript --linked > src/lib/types/database.ts
  */
 
+const stripeKey = process.env.STRIPE_SECRET_KEY;
 let stripeInstance: Stripe | null = null;
 
-function getStripe(): Stripe | null {
-  if (stripeInstance) return stripeInstance;
-
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) return null;
-
+if (stripeKey) {
   try {
-    stripeInstance = new Stripe(key);
-    return stripeInstance;
+    stripeInstance = new Stripe(stripeKey);
   } catch (e) {
-    console.error("Failed to initialize Stripe:", e);
-    return null;
+    logger.error("stripe_init_failed", {
+      error: e instanceof Error ? e.message : String(e),
+    });
   }
+}
+
+function getStripe(): Stripe | null {
+  return stripeInstance;
 }
 
 function db() {
@@ -62,7 +63,10 @@ async function upsertDonation(session: Stripe.Checkout.Session) {
   );
 
   if (error) {
-    console.error("Failed to upsert donation:", error);
+    logger.error("stripe_upsert_donation_failed", {
+      sessionId: session.id,
+      error: error.message,
+    });
   }
 
   return { amountCents, email, status };
@@ -75,7 +79,10 @@ async function markDonationFailed(paymentIntent: Stripe.PaymentIntent) {
     .eq("stripe_payment_intent_id", paymentIntent.id);
 
   if (error) {
-    console.error("Failed to mark donation as failed:", error);
+    logger.error("stripe_mark_failed_failed", {
+      paymentIntentId: paymentIntent.id,
+      error: error.message,
+    });
   }
 }
 
@@ -89,7 +96,10 @@ async function markDonationRefunded(charge: Stripe.Charge) {
     .eq("stripe_payment_intent_id", piId);
 
   if (error) {
-    console.error("Failed to mark donation as refunded:", error);
+    logger.error("stripe_mark_refunded_failed", {
+      paymentIntentId: piId,
+      error: error.message,
+    });
   }
 }
 
@@ -97,7 +107,7 @@ export async function POST(request: NextRequest) {
   const stripeClient = getStripe();
 
   if (!stripeClient) {
-    console.error("STRIPE_SECRET_KEY is not configured");
+    logger.error("stripe_not_configured");
     return NextResponse.json(
       { error: "Stripe not configured" },
       { status: 500 }
@@ -117,7 +127,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!webhookSecret) {
-    console.error("STRIPE_WEBHOOK_SECRET is not configured");
+    logger.error("stripe_webhook_secret_missing");
     return NextResponse.json(
       { error: "Webhook secret not configured" },
       { status: 500 }
@@ -133,7 +143,9 @@ export async function POST(request: NextRequest) {
       webhookSecret
     );
   } catch (err) {
-    console.error("Webhook signature verification failed:", err);
+    logger.error("stripe_webhook_signature_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -142,9 +154,11 @@ export async function POST(request: NextRequest) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const { amountCents, email, status } = await upsertDonation(session);
-        console.log(
-          `Donation completed: ${email ?? "anonymous"} $${(amountCents / 100).toFixed(2)} (${status})`
-        );
+        logger.info("stripe_donation_completed", {
+          email: email ?? "anonymous",
+          amount: amountCents,
+          status,
+        });
         break;
       }
 
@@ -178,7 +192,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (err) {
-    console.error("Error processing webhook:", err);
+    logger.error("stripe_webhook_processing_failed", {
+      eventType: event.type,
+      error: err instanceof Error ? err.message : String(err),
+    });
     return NextResponse.json(
       { error: "Webhook processing failed" },
       { status: 500 }

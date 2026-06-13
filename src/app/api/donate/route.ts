@@ -1,30 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { logger } from "@/lib/utils/logger";
 
+const stripeKey = process.env.STRIPE_SECRET_KEY;
 let stripeInstance: Stripe | null = null;
 
-function getStripe(): Stripe | null {
-  if (stripeInstance) return stripeInstance;
-
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) {
-    console.error("STRIPE_SECRET_KEY is not configured");
-    return null;
-  }
-
+if (stripeKey) {
   try {
-    stripeInstance = new Stripe(key);
-    return stripeInstance;
+    stripeInstance = new Stripe(stripeKey);
   } catch (e) {
-    console.error("Failed to initialize Stripe:", e);
-    return null;
+    logger.error("stripe_donate_init_failed", {
+      error: e instanceof Error ? e.message : String(e),
+    });
   }
+}
+
+function getStripe(): Stripe | null {
+  return stripeInstance;
 }
 
 export async function POST(req: NextRequest) {
   const stripe = getStripe();
 
   if (!stripe) {
+    logger.error("stripe_donate_not_configured");
     return NextResponse.json(
       {
         error: "Donations are not currently available. Please try again later.",
@@ -82,7 +81,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     const err = error as Error & { type?: string; code?: string };
-    console.error("Stripe checkout error:", {
+    logger.error("stripe_checkout_error", {
       message: err.message || "Unknown error",
       type: err.type,
       code: err.code,

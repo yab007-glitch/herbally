@@ -37,6 +37,7 @@ function hasRealCitations(citations: unknown): boolean {
   if (!Array.isArray(citations)) return false;
   if (citations.length === 0) return false;
   // Check if any citation has a PMID (real citation) vs generic placeholders
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
   return citations.some((c: any) => c.pmid && /^\d{7,8}$/.test(String(c.pmid)));
 }
 

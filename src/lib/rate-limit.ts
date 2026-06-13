@@ -6,6 +6,8 @@
  * - upstash: Production-ready, requires UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
  */
 
+import { logger } from "@/lib/utils/logger";
+
 type RateLimitResult = { success: boolean; remaining: number };
 
 // Memory-based rate limiter (default)
@@ -56,9 +58,9 @@ async function upstashRateLimit(
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
   if (!url || !token) {
-    console.warn(
-      "Upstash credentials not configured, falling back to memory rate limit"
-    );
+    logger.warn("rate_limit_upstash_missing_credentials", {
+      backend: "upstash",
+    });
     return memoryRateLimit(key, limit, windowMs);
   }
 
@@ -88,7 +90,9 @@ async function upstashRateLimit(
     });
 
     if (!response.ok) {
-      console.error("Upstash rate limit error, falling back to memory");
+      logger.error("rate_limit_upstash_error", {
+        status: response.status,
+      });
       return memoryRateLimit(key, limit, windowMs);
     }
 
@@ -101,7 +105,9 @@ async function upstashRateLimit(
 
     return { success: true, remaining: limit - count - 1 };
   } catch (error) {
-    console.error("Upstash rate limit error:", error);
+    logger.error("rate_limit_upstash_exception", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return memoryRateLimit(key, limit, windowMs);
   }
 }
@@ -123,6 +129,14 @@ export async function rateLimit(
 
   if (backend === "upstash") {
     return upstashRateLimit(key, limit, windowMs);
+  }
+
+  // In production, warn that memory rate limiting doesn't scale
+  if (process.env.NODE_ENV === "production" && backend === "memory") {
+    logger.warn("rate_limit_memory_in_production", {
+      message:
+        "Memory rate limiter is active in production. Deployments with multiple instances will not share rate limit state.",
+    });
   }
 
   return memoryRateLimit(key, limit, windowMs);

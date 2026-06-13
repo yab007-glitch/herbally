@@ -44,6 +44,7 @@ async function main() {
 
   const evidenceBreakdown: Record<string, number> = {};
   if (evidenceData) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     evidenceData.forEach((h: any) => {
       const level = h.evidence_level || "None/Traditional";
       evidenceBreakdown[level] = (evidenceBreakdown[level] || 0) + 1;
@@ -57,6 +58,7 @@ async function main() {
 
   const categoryMap: Record<string, string> = {};
   if (categoryData) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     categoryData.forEach((c: any) => {
       categoryMap[c.id] = c.name;
     });
@@ -68,6 +70,7 @@ async function main() {
 
   const categoryBreakdown: Record<string, number> = {};
   if (herbsWithCat) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     herbsWithCat.forEach((h: any) => {
       const catName = h.category_id ? (categoryMap[h.category_id] || "Unknown Category") : "No Category";
       categoryBreakdown[catName] = (categoryBreakdown[catName] || 0) + 1;

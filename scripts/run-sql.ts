@@ -11,7 +11,7 @@ config({ path: ".env" });
 async function main() {
   const projectRef = process.env.NEXT_PUBLIC_SUPABASE_URL?.match(/https:\/\/(.+)\.supabase\.co/)?.[1];
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const _anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!projectRef) { console.error("No project ref"); process.exit(1); }
 
@@ -22,7 +22,7 @@ async function main() {
 
   // Approach 1: Try the SQL API endpoint directly
   console.log("\nTrying SQL API...");
-  const apiUrl = `https://${projectRef}.supabase.co/rest/v1/`;
+  const _apiUrl = `https://${projectRef}.supabase.co/rest/v1/`;
   
   // The Supabase platform has a SQL endpoint at /sql
   const sqlEndpoint = `https://${projectRef}.supabase.co/sql`;

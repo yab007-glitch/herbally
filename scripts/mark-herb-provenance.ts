@@ -142,8 +142,7 @@ async function mergeProvenance(
   if (updateErr) {
     throw new Error(`Update failed: ${updateErr.message}`);
   }
-  // eslint-disable-next-line no-console
-  console.log(
+    console.log(
     `✓ ${slug} → ${update.verification_method} (${mergedSources.length} sources)`
   );
 }
@@ -163,8 +162,7 @@ async function clearProvenance(
     .update({ provenance: {} })
     .eq("id", data.id);
   if (updateErr) throw new Error(updateErr.message);
-  // eslint-disable-next-line no-console
-  console.log(`✓ ${slug} cleared`);
+    console.log(`✓ ${slug} cleared`);
 }
 
 // -------------------------------------------------------------------
@@ -300,8 +298,7 @@ async function runCsv(
     ? (null as unknown as ReturnType<typeof getSupabase>)
     : getSupabase();
 
-  // eslint-disable-next-line no-console
-  console.log(
+    console.log(
     `${dryRun ? "[DRY RUN] " : ""}Processing ${rows.length} rows from ${csvPath}...`
   );
 
@@ -320,8 +317,7 @@ async function runCsv(
 
     try {
       if (dryRun) {
-        // eslint-disable-next-line no-console
-        console.log(
+                console.log(
           `  [DRY] ${row.slug} → ${update.verification_method} (${update.sources.length} sources)`
         );
         succeeded++;
@@ -351,8 +347,7 @@ async function main() {
     }
     const dryRun = hasFlag("dry-run");
     const { total, succeeded, failed } = await runCsv(csvPath, dryRun);
-    // eslint-disable-next-line no-console
-    console.log(
+        console.log(
       `\n${dryRun ? "[DRY RUN] " : ""}Done. ${succeeded}/${total} succeeded${failed > 0 ? `, ${failed} failed` : ""}.`
     );
     if (failed > 0 && !dryRun) process.exit(1);
@@ -374,7 +369,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
-  console.error(`✗ ${err.message ?? err}`);
+    console.error(`✗ ${err.message ?? err}`);
   process.exit(1);
 });

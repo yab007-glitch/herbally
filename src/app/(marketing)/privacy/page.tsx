@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { type Locale } from "@/lib/i18n/config";
 
@@ -19,10 +18,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PrivacyPage() {
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
-  const t = await getTranslations();
+  const locale = "en" as Locale;
+    const t = await getTranslations();
 
   const howWeUseItems = [
     t("privacy.howWeUse.items.0"),

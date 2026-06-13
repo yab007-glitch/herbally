@@ -152,9 +152,12 @@ async function main() {
     .eq("is_published", true);
 
   if (data) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const h of data as any[]) {
       const c = h.citations;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
       const pmids = Array.isArray(c) ? c.filter((ci: any) => ci.pmid && /^\d+$/.test(String(ci.pmid))) : [];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
       console.log(`  ${pmids.length > 0 ? "✅" : "❌"} ${h.name}: ${pmids.length} PMIDs${pmids.length > 0 ? " — " + pmids.map((p: any) => p.pmid).join(", ") : ""}`);
     }
   }

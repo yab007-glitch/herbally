@@ -1,9 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { rateLimit } from "@/lib/rate-limit";
+
 function getClientIP(request: NextRequest): string {
-  const vercelIP = request.headers.get("x-vercel-forwarded-for");
-  if (vercelIP) return vercelIP.trim();
+  // Only trust Vercel-specific header when actually running on Vercel
+  if (process.env.VERCEL === "1") {
+    const vercelIP = request.headers.get("x-vercel-forwarded-for");
+    if (vercelIP) return vercelIP.trim();
+  }
 
   const cfIP = request.headers.get("cf-connecting-ip");
   if (cfIP) return cfIP.trim();
@@ -19,27 +23,37 @@ function getClientIP(request: NextRequest): string {
 
 const adminRoutes = ["/admin"];
 
-const securityHeaders = {
-  "X-Frame-Options": "DENY",
-  "X-Content-Type-Options": "nosniff",
-  "X-XSS-Protection": "1; mode=block",
-  "Referrer-Policy": "strict-origin-when-cross-origin",
-  "X-DNS-Prefetch-Control": "on",
-  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-  "Content-Security-Policy": [
+function buildCSP(): string {
+  const directives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com",
+    "script-src 'self' 'unsafe-inline' *.stripe.com",
     "connect-src 'self' *.supabase.co *.openrouter.ai *.stripe.com",
     "img-src 'self' data: blob: https:",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "frame-src *.stripe.com",
     "frame-ancestors 'none'",
-  ].join("; "),
+  ];
+
+  // Only allow eval in development; production standalone builds shouldn't need it
+  if (process.env.NODE_ENV !== "production") {
+    directives[1] = "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com";
+  }
+
+  return directives.join("; ");
+}
+
+const baseSecurityHeaders: Record<string, string> = {
+  "X-Frame-Options": "DENY",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "X-DNS-Prefetch-Control": "on",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Content-Security-Policy": buildCSP(),
 };
 
 function applySecurityHeaders(response: NextResponse): NextResponse {
-  for (const [key, value] of Object.entries(securityHeaders)) {
+  for (const [key, value] of Object.entries(baseSecurityHeaders)) {
     response.headers.set(key, value);
   }
   if (process.env.NODE_ENV === "production") {
@@ -97,6 +111,7 @@ export default async function middleware(request: NextRequest) {
 
   // Route guards
   const pathname = request.nextUrl.pathname;
+
   // API Chat Rate limit (Edge-native)
   if (pathname.startsWith("/api/chat")) {
     const ip = getClientIP(request);

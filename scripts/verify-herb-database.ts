@@ -20,7 +20,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
 import * as fs from "fs";
-import { execSync } from "child_process";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
@@ -57,7 +56,7 @@ const PMID_REGEX = /^\d{7,8}$/;
 
 function validateHerb(herb: HerbRow, validCategoryIds: Set<string>): VerificationError[] {
   const errors: VerificationError[] = [];
-  const { id, name, slug, scientific_name, description, evidence_level, pregnancy_safe, nursing_safe, citations, category_id } = herb;
+  const { id: _id, name, slug, scientific_name, description, evidence_level, pregnancy_safe: _pregnancy_safe, nursing_safe: _nursing_safe, citations, category_id } = herb;
 
   // 1. Required fields
   if (!name || name.trim().length < 2) {
@@ -118,7 +117,7 @@ function validateHerb(herb: HerbRow, validCategoryIds: Set<string>): Verificatio
 
 async function main() {
   const isCI = process.argv.includes("--ci");
-  const isStaged = process.argv.includes("--staged");
+  const _isStaged = process.argv.includes("--staged");
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -136,6 +135,7 @@ async function main() {
   const { data: categories } = await supabase
     .from("herb_categories")
     .select("id");
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
   const validCategoryIds = new Set((categories ?? []).map((c: any) => c.id));
 
   // Get herbs
@@ -213,7 +213,7 @@ async function main() {
   }
 }
 
-async function checkMigrationFiles(isCI: boolean) {
+async function checkMigrationFiles(_isCI: boolean) {
   const migrationsDir = "supabase/migrations";
   if (!fs.existsSync(migrationsDir)) return;
 
