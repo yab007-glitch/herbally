@@ -1,19 +1,22 @@
 import { captureException } from "@sentry/nextjs";
+import { z } from "zod";
 import { NextResponse } from "next/server";import { logger } from "@/lib/utils/logger";
 
 
 const OPENFDA_BASE = process.env.OPENFDA_BASE_URL || "https://api.fda.gov";
 
 export async function GET(request: Request) {
+  const schema = z.object({ term: z.string().min(1).max(100) });
   const { searchParams } = new URL(request.url);
-  const term = searchParams.get("term");
-
-  if (!term) {
+  const termRaw = searchParams.get("term");
+  const parsed = schema.safeParse({ term: termRaw });
+  if (!parsed.success) {
     return NextResponse.json(
       { error: "Missing term parameter" },
       { status: 400 }
     );
   }
+  const term = parsed.data.term;
 
   try {
     const res = await fetch(

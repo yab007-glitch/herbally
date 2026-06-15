@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo, useDeferredValue } from "react";
 import {
   Send,
   AlertCircle,
@@ -109,6 +109,7 @@ export function ChatInterface({
 
   // ── State ──
   const [messages, setMessages] = useState<Message[]>([]);
+  const deferredMessages = useDeferredValue(messages);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
@@ -427,7 +428,7 @@ export function ChatInterface({
           </div>
         ) : (
           <div className="mx-auto max-w-2xl space-y-1 px-4 py-4">
-            {messages.map((message) => (
+            {deferredMessages.map((message) => (
               <div
                 key={message.id}
                 className={cn(

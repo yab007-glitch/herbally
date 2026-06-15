@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { ActionResponse } from "@/lib/types";
+import { logger } from "@/lib/utils/logger";
 
 export type ChatMessage = {
   role: "user" | "assistant";
@@ -43,13 +44,13 @@ export async function getChatSessions(): Promise<
       .limit(50);
 
     if (error) {
-      console.error("[chat.getChatSessions]", error);
+      logger.error("chat_get_sessions_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: (data || []) as ChatSession[] };
   } catch (error) {
-    console.error("[chat.getChatSessions]", error);
+    logger.error("chat_get_sessions_failed", { error: error instanceof Error ? error.message : String(error) });
     return { success: false, error: "Failed to fetch chat sessions" };
   }
 }
@@ -78,13 +79,13 @@ export async function getChatSession(
       .single();
 
     if (error) {
-      console.error("[chat.getChatSession]", error);
+      logger.error("chat_get_session_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: data as ChatSession };
   } catch (error) {
-    console.error("[chat.getChatSession]", error);
+    logger.error("chat_get_session_failed", { error: error instanceof Error ? error.message : String(error) });
     return { success: false, error: "Failed to fetch chat session" };
   }
 }
@@ -117,13 +118,13 @@ export async function createChatSession(
       .single();
 
     if (error) {
-      console.error("[chat.createChatSession]", error);
+      logger.error("chat_create_session_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: data as ChatSession };
   } catch (error) {
-    console.error("[chat.createChatSession]", error);
+    logger.error("chat_create_session_failed", { error: error instanceof Error ? error.message : String(error) });
     return { success: false, error: "Failed to create chat session" };
   }
 }
@@ -178,13 +179,13 @@ export async function updateChatSession(
       .single();
 
     if (error) {
-      console.error("[chat.updateChatSession]", error);
+      logger.error("chat_update_session_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: data as ChatSession };
   } catch (error) {
-    console.error("[chat.updateChatSession]", error);
+    logger.error("chat_update_session_failed", { error: error instanceof Error ? error.message : String(error) });
     return { success: false, error: "Failed to update chat session" };
   }
 }
@@ -212,13 +213,13 @@ export async function deleteChatSession(
       .eq("user_id", user.id);
 
     if (error) {
-      console.error("[chat.deleteChatSession]", error);
+      logger.error("chat_delete_session_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: null };
   } catch (error) {
-    console.error("[chat.deleteChatSession]", error);
+    logger.error("chat_delete_session_failed", { error: error instanceof Error ? error.message : String(error) });
     return { success: false, error: "Failed to delete chat session" };
   }
 }

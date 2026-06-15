@@ -8,6 +8,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/utils/logger";
 
 export const metadata = {
   title: "Admin Overview",
@@ -91,7 +92,7 @@ export default async function AdminOverviewPage() {
       },
     ];
   } catch (error) {
-    console.error("Admin stats error:", error);
+    logger.error("admin_stats_error", { error: error instanceof Error ? error.message : String(error) });
     // Show zeros if service role key not configured
     stats = [
       {

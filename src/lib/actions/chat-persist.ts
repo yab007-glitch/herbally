@@ -1,6 +1,7 @@
 "use server";
 
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { logger } from "@/lib/utils/logger";
 
 // Note: Supabase RPC functions for guest chat are SECURITY DEFINER
 // (see migration 00022), so they work with the anon key safely.
@@ -40,7 +41,7 @@ export async function createGuestSession(
     });
 
     if (error || !data) {
-      console.error("[chat-persist] Create guest session error:", error);
+      logger.error("chat_persist_create_guest_session", { error: error instanceof Error ? error.message : String(error) });
       return null;
     }
 
@@ -53,7 +54,7 @@ export async function createGuestSession(
       messages: [],
     };
   } catch (error) {
-    console.error("[chat-persist] Create guest session error:", error);
+    logger.error("chat_persist_create_guest_session", { error: error instanceof Error ? error.message : String(error) });
     return null;
   }
 }
@@ -77,7 +78,7 @@ export async function getGuestSessions(
       messages: [],
     }));
   } catch (error) {
-    console.error("[chat-persist] Get guest sessions error:", error);
+    logger.error("chat_persist_get_guest_sessions", { error: error instanceof Error ? error.message : String(error) });
     return [];
   }
 }
@@ -116,7 +117,7 @@ export async function getGuestSession(
       })),
     };
   } catch (error) {
-    console.error("[chat-persist] Get guest session error:", error);
+    logger.error("chat_persist_get_guest_session", { error: error instanceof Error ? error.message : String(error) });
     return null;
   }
 }
@@ -138,7 +139,7 @@ export async function addGuestMessage(
     });
 
     if (error) {
-      console.error("[chat-persist] Add guest message error:", error);
+      logger.error("chat_persist_add_guest_message", { error: error instanceof Error ? error.message : String(error) });
       return null;
     }
 
@@ -149,7 +150,7 @@ export async function addGuestMessage(
       createdAt: data.created_at,
     };
   } catch (error) {
-    console.error("[chat-persist] Add guest message error:", error);
+    logger.error("chat_persist_add_guest_message", { error: error instanceof Error ? error.message : String(error) });
     return null;
   }
 }
@@ -167,7 +168,7 @@ export async function deleteGuestSession(
     });
     return !error && !!data;
   } catch (error) {
-    console.error("[chat-persist] Delete guest session error:", error);
+    logger.error("chat_persist_delete_guest_session", { error: error instanceof Error ? error.message : String(error) });
     return false;
   }
 }

@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { logger } from "@/lib/utils/logger";
 
 // OpenRouter API (OpenAI-compatible)
 // Base URL: https://openrouter.ai/api/v1
@@ -9,7 +10,7 @@ const getApiKey = () => process.env.OPENROUTER_API_KEY?.trim();
 if (typeof window === "undefined" && process.env.NODE_ENV === "production") {
   const key = getApiKey();
   if (!key) {
-    console.error("OPENROUTER_API_KEY is required in production");
+    logger.error("openai_key_missing");
   }
 }
 

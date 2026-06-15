@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { logger } from "@/lib/utils/logger";
+import { z } from "zod";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 let stripeInstance: Stripe | null = null;
@@ -34,7 +35,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { amount, idempotencyKey } = body;
+    const schema = z.object({
+      amount: z.number().min(100).max(1000000),
+      idempotencyKey: z.string().optional(),
+    });
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
+    const { amount, idempotencyKey } = parsed.data;
 
     // Validate amount (min $1, max $10000)
     const donationAmount = Math.max(

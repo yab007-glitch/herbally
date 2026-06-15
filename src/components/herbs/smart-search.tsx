@@ -11,6 +11,7 @@ import {
 } from "@/components/herbs/recent-searches";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { useTranslations } from "next-intl";
+import { logger } from "@/lib/utils/logger";
 
 interface SmartSearchProps {
   defaultValue?: string;
@@ -117,7 +118,7 @@ export function SmartSearch({ defaultValue = "", category }: SmartSearchProps) {
                 }
               }
             } catch (error) {
-              console.error("[smart-search] Random herb error:", error);
+              logger.error("smart_search_random_herb", { error: error instanceof Error ? error.message : String(error) });
               router.push("/herbs");
             }
           }}

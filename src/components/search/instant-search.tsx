@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { useDebounce } from "@/lib/hooks/use-debounce";
 import { useTranslations } from "next-intl";
+import { logger } from "@/lib/utils/logger";
 
 interface SearchResult {
   id: string;
@@ -52,7 +53,7 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
         setResults(data.herbs || []);
       }
     } catch (error) {
-      console.error("Search failed:", error);
+      logger.error("instant_search_failed", { error: error instanceof Error ? error.message : String(error) });
     } finally {
       setIsLoading(false);
     }

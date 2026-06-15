@@ -247,7 +247,7 @@ export async function POST(request: NextRequest) {
                   .from("ai_response_cache")
                   .insert({ prompt_hash: promptHash, response: fullContent, expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() })
                   .then(({ error }) => {
-                    if (error) console.error("Failed to cache AI response:", error);
+                    if (error) logger.error("api_chat_cache_failed", { error: error.message });
                   });
               }
               controller.close();
@@ -269,7 +269,7 @@ export async function POST(request: NextRequest) {
                     .from("ai_response_cache")
                     .insert({ prompt_hash: promptHash, response: fullContent })
                     .then(({ error }) => {
-                      if (error) console.error("Failed to cache AI response:", error);
+                      if (error) logger.error("api_chat_cache_failed", { error: error.message });
                     });
                 }
                 controller.close();
@@ -291,7 +291,7 @@ export async function POST(request: NextRequest) {
           })
           .catch((error) => {
             cancelTimeout();
-            console.error("Stream error:", error);
+            logger.error("api_chat_stream_error", { error: error instanceof Error ? error.message : String(error) });
             controller.close();
           });
       }

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { logger } from "@/lib/utils/logger";
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
@@ -117,7 +118,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = getAnonClient();
 
     if (!supabase) {
-      console.error("Supabase client not configured for sitemap");
+      logger.error("sitemap_supabase_not_configured");
       return staticPages;
     }
 
@@ -151,7 +152,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticPages, ...categoryPages, ...herbPages];
   } catch (error) {
-    console.error("Error generating sitemap:", error);
+    logger.error("sitemap_generation_error", { error: error instanceof Error ? error.message : String(error) });
     // Return static pages only on error
     return staticPages;
   }

@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { openai, MODEL } from "@/lib/ai/openai-client";
 import { rateLimit } from "@/lib/rate-limit";import { logger } from "@/lib/utils/logger";
+import { z } from "zod";
 
 
 const MAX_BODY_SIZE = 10 * 1024; // 10KB max for search interpretation
@@ -50,15 +51,15 @@ export async function POST(request: NextRequest) {
 
   let originalQuery = "";
   try {
-    const { query } = await request.json();
-    originalQuery = query ?? "";
+    const schema = z.object({ query: z.string().min(2).max(200) });
+    const body = await request.json();
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) { return NextResponse.json({ keywords: [body?.query || ""] }); }
+    originalQuery = parsed.data.query;
 
-    if (!query || typeof query !== "string" || query.length < 2) {
-      return NextResponse.json({ keywords: [query || ""] });
-    }
 
     // Max 200 chars to prevent token abuse
-    const trimmed = query.trim().slice(0, 200);
+    const trimmed = originalQuery.trim().slice(0, 200);
     const words = trimmed.split(/\s+/);
     if (words.length <= 2 && /^[a-zA-Z\s]+$/.test(trimmed)) {
       return NextResponse.json({ keywords: [trimmed.toLowerCase()] });

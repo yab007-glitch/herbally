@@ -87,7 +87,7 @@ export function SymptomSearchClient() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("symptomsPage.searchPlaceholder")}
+            placeholder={t("symptomsPage.searchPlaceholder")} aria-label="Search symptoms"
             className="w-full rounded-xl border border-border bg-background px-5 py-4 text-base text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
           <Button

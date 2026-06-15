@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 import Link from "next/link";
 import { ArrowLeftRight, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ export default function CompareError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Compare page error:", error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

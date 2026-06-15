@@ -23,16 +23,16 @@ export function MarketingFooter() {
 
           {/* Links */}
           <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
-            <Link href="/herbs" className="hover:text-foreground transition-colors">
+            <Link href="/herbs" prefetch={true} className="hover:text-foreground transition-colors">
               {t("nav.herbs")}
             </Link>
-            <Link href="/herbalist" className="hover:text-foreground transition-colors">
+            <Link href="/herbalist" prefetch={true} className="hover:text-foreground transition-colors">
               {t("nav.herbalist")}
             </Link>
-            <Link href="/calculator" className="hover:text-foreground transition-colors">
+            <Link href="/calculator" prefetch={true} className="hover:text-foreground transition-colors">
               {t("nav.calculator")}
             </Link>
-            <Link href="/about" className="hover:text-foreground transition-colors">
+            <Link href="/about" prefetch={true} className="hover:text-foreground transition-colors">
               {t("nav.about")}
             </Link>
             <Link href="/disclaimer" className="hover:text-foreground transition-colors">

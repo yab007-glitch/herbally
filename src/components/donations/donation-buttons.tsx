@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
+import { logger } from "@/lib/utils/logger";
 
 export function DonationButtons() {
   const t = useTranslations();
@@ -53,7 +54,7 @@ export function DonationButtons() {
         throw new Error("Failed to create checkout session");
       }
     } catch (error) {
-      console.error("Donation error:", error);
+      logger.error("donation_button_error", { error: error instanceof Error ? error.message : String(error) });
       alert(t("donateButtons.errorMessage"));
     } finally {
       setLoading(null);

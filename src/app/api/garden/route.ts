@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";import { logger } from "@/lib/utils/logger";
+import { z } from "zod";
 
 
 /**
@@ -14,21 +15,12 @@ import { createAdminClient } from "@/lib/supabase/admin";import { logger } from 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    const schema = z.object({ herbs: z.array(z.object({ slug: z.string().min(1), name: z.string().min(1), scientific_name: z.string().min(1), image_url: z.string().url().optional().nullable(), note: z.string().max(500).optional() })).max(100), guestId: z.string().optional() });
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) { return NextResponse.json({ error: "Invalid request body" }, { status: 400 }); }
+    const herbs = parsed.data.herbs;
 
-    if (!body.herbs || !Array.isArray(body.herbs)) {
-      return NextResponse.json(
-        { error: "herbs array is required" },
-        { status: 400 }
-      );
-    }
 
-    const herbs = body.herbs as Array<{
-      slug: string;
-      name: string;
-      scientific_name: string;
-      image_url?: string | null;
-      note?: string;
-    }>;
 
     if (herbs.length === 0) {
       return NextResponse.json({ saved: 0, errors: [] });

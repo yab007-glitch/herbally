@@ -16,13 +16,14 @@ import type {
   HerbWithInteractions,
   HerbCategory,
 } from "@/lib/types";
+import { logger } from "@/lib/utils/logger";
 
 async function getLocale(): Promise<string> {
   try {
     const store = await cookies();
     return store.get("herbally-locale")?.value === "fr" ? "fr" : "en";
   } catch (error) {
-    console.error("[herbs.getLocale]", error);
+    logger.error("herbs_get_locale_failed", { error: error instanceof Error ? error.message : String(error) });
     return "en";
   }
 }
@@ -121,7 +122,7 @@ export async function getHerbs(params: {
     const { data, count, error } = await query;
 
     if (error) {
-      console.error("[herbs.getHerbs]", error);
+      logger.error("herbs_get_herbs_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
@@ -163,7 +164,7 @@ export async function getHerbBySlug(
       .single();
 
     if (error) {
-      console.error("[herbs.getHerbBySlug]", error);
+      logger.error("herbs_get_herb_by_slug_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
@@ -195,7 +196,7 @@ export async function getHerbCategories() {
       .order("sort_order", { ascending: true });
 
     if (error) {
-      console.error("[herbs.getHerbCategories]", error);
+      logger.error("herbs_get_categories_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
@@ -238,7 +239,7 @@ export async function getSymptomCounts(
       .limit(1000);
 
     if (error) {
-      console.error("[herbs.getSymptomCounts]", error);
+      logger.error("herbs_get_symptom_counts_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
@@ -307,7 +308,7 @@ export async function searchHerbs(
       .limit(10);
 
     if (error) {
-      console.error("[herbs.searchHerbs]", error);
+      logger.error("herbs_search_failed", { error: error instanceof Error ? error.message : String(error) });
       return { success: false, error: error.message };
     }
 
