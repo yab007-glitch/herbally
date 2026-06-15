@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { HomePageClient } from "./home-page-client";
 
 export default async function HomePage() {
-  const t = await getTranslations();
+  const t = await getTranslations({locale: "en"});
 
   const labels = {
     heroTitle: t("home.heroTitle"),

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default async function PrivacyPage() {
   const locale = "en" as Locale;
-    const t = await getTranslations();
+    const t = await getTranslations({locale: "en"});
 
   const howWeUseItems = [
     t("privacy.howWeUse.items.0"),

@@ -122,7 +122,7 @@ export default async function HerbDetailPage({ params }: Props) {
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
   const locale: Locale = (localeCookie?.value as Locale) || "en";
-    const t = await getTranslations();
+    const t = await getTranslations({locale: "en"});
 
   if (!result.success || !result.data) {
     notFound();

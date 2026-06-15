@@ -16,7 +16,7 @@ export default async function PharmacistPage({
   searchParams: Promise<{ herb?: string; medications?: string; q?: string }>;
 }) {
   const params = await searchParams;
-  const t = await getTranslations();
+  const t = await getTranslations({locale: "en"});
   let herbContext: string | null = null;
   let autoQuery: string | null = null;
 

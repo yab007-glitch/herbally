@@ -44,7 +44,7 @@ export default async function CalculatorPage({
   const cookieStore = await cookies();
   const localeCookie = cookieStore.get("herbally-locale");
   const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
-  const t = await getTranslations();
+  const t = await getTranslations({locale: "en"});
   const herbSlug = params.herb;
 
   let prefill: {

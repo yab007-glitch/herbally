@@ -38,7 +38,7 @@ const sectionKeys = [
 ] as const;
 
 export default async function MethodologyPage() {
-    const t = await getTranslations();
+    const t = await getTranslations({locale: "en"});
 
   const methodologySections = sectionKeys.map(({ key, icon }) => ({
     icon,

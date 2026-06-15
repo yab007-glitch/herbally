@@ -66,7 +66,7 @@ const categorySubKey: Record<string, string> = {
 };
 
 export default async function FAQPage() {
-    const t = await getTranslations();
+    const t = await getTranslations({locale: "en"});
 
   const faqCategories = categoryKeys.map((catKey) => ({
     title: t(`faqContent.${catKey}`),

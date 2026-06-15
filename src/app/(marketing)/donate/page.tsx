@@ -58,7 +58,7 @@ export default async function DonatePage({
   searchParams: Promise<{ success?: string; canceled?: string }>;
 }) {
   const params = await searchParams;
-    const t = await getTranslations();
+    const t = await getTranslations({locale: "en"});
 
   const costs = costKeys.map((key) => ({
     key,

@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ComparePage({ params }: Props) {
   const { slug1, slug2 } = await params;
-  const t = await getTranslations();
+  const t = await getTranslations({locale: "en"});
   const [resultA, resultB] = await Promise.all([
     getHerbBySlug(slug1, { skipCookies: true }),
     getHerbBySlug(slug2, { skipCookies: true }),

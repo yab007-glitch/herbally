@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SymptomsPage() {
-  const t = await getTranslations();
+  const t = await getTranslations({locale: "en"});
   
   return (
     <div>

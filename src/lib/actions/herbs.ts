@@ -23,7 +23,7 @@ async function getLocale(): Promise<string> {
     const store = await cookies();
     return store.get("herbally-locale")?.value === "fr" ? "fr" : "en";
   } catch (error) {
-    logger.error("herbs_get_locale_failed", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("herbs_get_locale_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
     return "en";
   }
 }
@@ -122,7 +122,7 @@ export async function getHerbs(params: {
     const { data, count, error } = await query;
 
     if (error) {
-      logger.error("herbs_get_herbs_failed", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("herbs_get_herbs_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
       return { success: false, error: error.message };
     }
 
@@ -164,7 +164,7 @@ export async function getHerbBySlug(
       .single();
 
     if (error) {
-      logger.error("herbs_get_herb_by_slug_failed", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("herbs_get_herb_by_slug_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
       return { success: false, error: error.message };
     }
 
@@ -196,7 +196,7 @@ export async function getHerbCategories() {
       .order("sort_order", { ascending: true });
 
     if (error) {
-      logger.error("herbs_get_categories_failed", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("herbs_get_categories_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
       return { success: false, error: error.message };
     }
 
@@ -239,7 +239,7 @@ export async function getSymptomCounts(
       .limit(1000);
 
     if (error) {
-      logger.error("herbs_get_symptom_counts_failed", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("herbs_get_symptom_counts_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
       return { success: false, error: error.message };
     }
 
@@ -308,7 +308,7 @@ export async function searchHerbs(
       .limit(10);
 
     if (error) {
-      logger.error("herbs_search_failed", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("herbs_search_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
       return { success: false, error: error.message };
     }
 
