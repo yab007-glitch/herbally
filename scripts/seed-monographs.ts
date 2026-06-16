@@ -28,7 +28,6 @@ async function main() {
   let failed = 0;
 
   for (const [slug, monograph] of Object.entries(monographs)) {
-    // First, find the herb by slug
     const { data: herb, error: herbError } = await supabase
       .from("herbs")
       .select("id, slug")
@@ -42,7 +41,6 @@ async function main() {
       continue;
     }
 
-    // Upsert the monograph
     const { error: upsertError } = await supabase
       .from("herb_monographs")
       .upsert(
@@ -62,6 +60,11 @@ async function main() {
           reviewer_credentials:
             "Medical herbalists and healthcare professionals",
           last_reviewed_at: new Date().toISOString(),
+          provenance: {
+            verification_method: "manual",
+            reviewed_by_human: true,
+            source: "hand_written_editorial",
+          },
         },
         { onConflict: "herb_slug" }
       );

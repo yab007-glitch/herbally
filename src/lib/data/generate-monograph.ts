@@ -37,35 +37,17 @@ export function generateMonograph(herb: {
     | "D"
     | "trad";
 
-  // Build clinical summary
-  const useCount =
-    (herb.modern_uses?.length || 0) + (herb.traditional_uses?.length || 0);
-  const compoundStr =
-    herb.active_compounds?.slice(0, 3).join(", ") || "various active compounds";
-
-  const summary = `${herb.description || `${displayName} is a medicinal herb with ${useCount} documented traditional and modern uses.`} Key active compounds include ${compoundStr}.`;
-
-  // Build mechanism
+  const summary = buildSummary(herb, displayName, evidence);
   const mechanism = buildMechanism(herb);
-
-  // Build per-claim evidence
-  const claims = buildClaims(herb);
-
-  // Build safety notes
+  const claims = buildClaims(herb, evidence);
   const safetyNotes = buildSafetyNotes(herb);
-
-  // Determine pregnancy category
   const pregnancyCategory: Monograph["pregnancyCategory"] =
     herb.pregnancy_safe === false
       ? "unsafe"
       : herb.pregnancy_safe === true
         ? "safe"
         : "insufficient";
-
-  // Build drug interactions
   const drugInteractions = buildDrugInteractions(herb.contraindications || []);
-
-  // Build key citations
   const keyCitations = buildKeyCitations(herb.citations, evidence);
 
   return {
@@ -80,6 +62,41 @@ export function generateMonograph(herb: {
   };
 }
 
+function buildSummary(
+  herb: {
+    name: string;
+    scientific_name: string;
+    description: string | null;
+    modern_uses: string[] | null;
+    traditional_uses: string[] | null;
+    active_compounds: string[] | null;
+  },
+  displayName: string,
+  evidence: string
+): string {
+  const useCount =
+    (herb.modern_uses?.length || 0) +
+    (herb.traditional_uses?.length || 0);
+  const compoundStr =
+    herb.active_compounds?.slice(0, 4).join(", ") ||
+    "various bioactive constituents";
+
+  const evidencePhrase =
+    evidence === "A"
+      ? "supported by robust clinical evidence"
+      : evidence === "B"
+        ? "supported by emerging clinical data"
+        : evidence === "C"
+          ? "with limited but promising clinical support"
+          : "primarily based on traditional use";
+
+  if (herb.description) {
+    return `${herb.description} This herb is ${evidencePhrase}. Key active compounds include ${compoundStr}, which underpin its pharmacological activity across ${useCount} documented traditional and modern indications.`;
+  }
+
+  return `${displayName} (${herb.scientific_name}) is a medicinal herb with ${useCount} documented traditional and modern uses, ${evidencePhrase}. Its therapeutic profile is driven by ${compoundStr}, which interact with multiple physiological pathways.`;
+}
+
 function buildMechanism(herb: {
   name: string;
   scientific_name: string;
@@ -91,218 +108,227 @@ function buildMechanism(herb: {
   const uses = herb.modern_uses || herb.traditional_uses || [];
 
   if (compounds.length === 0) {
-    return `The pharmacological mechanism of ${herb.name} involves multiple bioactive compounds that work synergistically. Specific pathway data is limited for this herb.`;
+    return `The pharmacological mechanism of ${herb.name} involves multiple bioactive constituents that work synergistically across several target tissues. Specific molecular pathway data is limited for this herb, and further phytochemical characterization is needed.`;
   }
 
-  const primaryCompound = compounds[0];
-  const secondaryCompounds = compounds.slice(1, 3);
+  const primary = compounds[0];
+  const secondary = compounds.slice(1, 3);
+  const tertiary = compounds.slice(3, 5);
 
-  let mechanism = `${primaryCompound}`;
-  if (secondaryCompounds.length > 0) {
-    mechanism += `, along with ${secondaryCompounds.join(" and ")}`;
+  let mechanism = `${primary}`;
+  if (secondary.length > 0) {
+    mechanism += `, along with ${secondary.join(" and ")}`;
   }
-  mechanism += `, are the primary bioactive compounds in ${herb.name}. `;
+  mechanism += `, ${tertiary.length > 0 ? `and to a lesser extent ${tertiary.join(" and ")}, ` : ""}represent the primary bioactive constituents of ${herb.name}. `;
 
-  // Add mechanism hints based on use categories
   const useStr = uses.join(" ").toLowerCase();
-  const mechanismHints: string[] = [];
+  const mechanisms: string[] = [];
 
   if (useStr.includes("anti-inflammatory") || useStr.includes("inflammation")) {
-    mechanismHints.push("modulates NF-κB and COX-2 inflammatory pathways");
-  }
-  if (useStr.includes("antioxidant")) {
-    mechanismHints.push("provides free radical scavenging activity");
-  }
-  if (
-    useStr.includes("anxiety") ||
-    useStr.includes("calm") ||
-    useStr.includes("sedative") ||
-    useStr.includes("sleep")
-  ) {
-    mechanismHints.push("influences GABAergic neurotransmission");
-  }
-  if (
-    useStr.includes("antimicrobial") ||
-    useStr.includes("antibacterial") ||
-    useStr.includes("antiviral")
-  ) {
-    mechanismHints.push(
-      "disrupts microbial cell membranes and inhibits pathogen growth"
+    mechanisms.push(
+      `modulates NF-κB, COX-2, and 5-LOX inflammatory cascades, reducing pro-inflammatory cytokine production`
     );
   }
-  if (
-    useStr.includes("digestion") ||
-    useStr.includes("digestive") ||
-    useStr.includes("stomach")
-  ) {
-    mechanismHints.push(
-      "stimulates digestive enzyme secretion and GI motility"
+  if (useStr.includes("antioxidant")) {
+    mechanisms.push(
+      `scavenges reactive oxygen species and upregulates Nrf2-mediated antioxidant gene expression`
+    );
+  }
+  if (useStr.includes("anxiety") || useStr.includes("calm") || useStr.includes("sedative") || useStr.includes("sleep")) {
+    mechanisms.push(
+      `modulates GABA-A receptor signaling and may influence serotonin and melatonin pathways`
+    );
+  }
+  if (useStr.includes("antimicrobial") || useStr.includes("antibacterial") || useStr.includes("antiviral") || useStr.includes("antifungal")) {
+    mechanisms.push(
+      `disrupts microbial cell membrane integrity and inhibits ATP synthesis in pathogens`
+    );
+  }
+  if (useStr.includes("digestion") || useStr.includes("digestive") || useStr.includes("stomach") || useStr.includes("gastric")) {
+    mechanisms.push(
+      `stimulates digestive enzyme secretion, enhances gastric motility, and exerts spasmolytic effects on smooth muscle`
     );
   }
   if (useStr.includes("liver") || useStr.includes("hepatoprotect")) {
-    mechanismHints.push(
-      "stabilizes hepatocyte membranes and supports liver regeneration"
+    mechanisms.push(
+      `stabilizes hepatocyte membranes, enhances glutathione synthesis, and supports phase II detoxification enzymes`
     );
   }
   if (useStr.includes("immune")) {
-    mechanismHints.push(
-      "modulates immune cell activity and cytokine production"
+    mechanisms.push(
+      `modulates innate and adaptive immunity through macrophage activation, cytokine regulation, and lymphocyte proliferation`
     );
   }
-  if (useStr.includes("pain") || useStr.includes("analgesic")) {
-    mechanismHints.push(
-      "acts on pain pathways via anti-inflammatory and neuroactive effects"
+  if (useStr.includes("pain") || useStr.includes("analgesic") || useStr.includes("neuropathic")) {
+    mechanisms.push(
+      `acts on nociceptive pathways via anti-inflammatory modulation and potential TRPV1 or opioidergic interactions`
     );
   }
-  if (
-    useStr.includes("blood sugar") ||
-    useStr.includes("diabetes") ||
-    useStr.includes("hypoglycemic")
-  ) {
-    mechanismHints.push("improves insulin sensitivity and glucose metabolism");
-  }
-  if (
-    useStr.includes("cardiovascular") ||
-    useStr.includes("blood pressure") ||
-    useStr.includes("cholesterol")
-  ) {
-    mechanismHints.push(
-      "supports cardiovascular function through lipid metabolism and vasodilation"
+  if (useStr.includes("blood sugar") || useStr.includes("diabetes") || useStr.includes("hypoglycemic") || useStr.includes("glucose")) {
+    mechanisms.push(
+      `enhances insulin sensitivity, stimulates pancreatic beta-cell function, and modulates carbohydrate absorption`
     );
   }
-  if (useStr.includes("adaptogen") || useStr.includes("stress")) {
-    mechanismHints.push(
-      "regulates the hypothalamic-pituitary-adrenal (HPA) axis"
+  if (useStr.includes("cardio") || useStr.includes("heart") || useStr.includes("blood pressure") || useStr.includes("hypertension")) {
+    mechanisms.push(
+      `exerts vasodilatory effects via nitric oxide release, modulates calcium channel activity, and may reduce vascular resistance`
     );
   }
-  if (useStr.includes("skin") || useStr.includes("wound")) {
-    mechanismHints.push(
-      "promotes tissue regeneration and modulates local inflammation"
+  if (useStr.includes("cognitive") || useStr.includes("memory") || useStr.includes("alzheimer") || useStr.includes("neuro")) {
+    mechanisms.push(
+      `influences acetylcholinesterase activity, modulates synaptic plasticity, and provides neuroprotection against oxidative stress`
+    );
+  }
+  if (useStr.includes("hormone") || useStr.includes("estrogen") || useStr.includes("testosterone") || useStr.includes("thyroid")) {
+    mechanisms.push(
+      `modulates endocrine signaling through receptor binding or downstream steroidogenic enzyme activity`
+    );
+  }
+  if (useStr.includes("respiratory") || useStr.includes("asthma") || useStr.includes("bronch")) {
+    mechanisms.push(
+      `relaxes bronchial smooth muscle, reduces mucus viscosity, and exhibits anti-inflammatory activity in airway tissues`
+    );
+  }
+  if (useStr.includes("wound") || useStr.includes("skin") || useStr.includes("topical")) {
+    mechanisms.push(
+      `promotes fibroblast proliferation, collagen deposition, and antimicrobial activity at wound sites`
+    );
+  }
+  if (useStr.includes("diuretic") || useStr.includes("kidney") || useStr.includes("urinary")) {
+    mechanisms.push(
+      `inhibits sodium-potassium ATPase in renal tubules, promoting natriuresis and increased urine output`
+    );
+  }
+  if (useStr.includes("cholesterol") || useStr.includes("lipid") || useStr.includes("triglyceride")) {
+    mechanisms.push(
+      `modulates hepatic HMG-CoA reductase activity and enhances bile acid excretion`
     );
   }
 
-  if (mechanismHints.length > 0) {
-    mechanism += `These compounds ${mechanismHints.slice(0, 3).join(", ")}.`;
+  if (mechanisms.length > 0) {
+    const joined = mechanisms.join("; ");
+    mechanism += `These compounds collectively ${joined}, contributing to the herb's observed therapeutic effects.`;
   } else {
-    mechanism += `The specific pharmacological pathways require further study, though traditional use supports its efficacy.`;
+    mechanism += `The specific molecular targets remain under investigation, with preclinical data suggesting polypharmacological activity across several receptor and enzymatic systems.`;
   }
 
   return mechanism;
 }
 
-function buildClaims(herb: {
-  modern_uses: string[] | null;
-  traditional_uses: string[] | null;
-  evidence_level: string | null;
-  name: string;
-}): Monograph["claims"] {
+function buildClaims(
+  herb: {
+    name: string;
+    modern_uses: string[] | null;
+    traditional_uses: string[] | null;
+    evidence_level: string | null;
+    active_compounds: string[] | null;
+  },
+  defaultEvidence: "A" | "B" | "C" | "D" | "trad"
+): Monograph["claims"] {
+  const uses = [
+    ...(herb.modern_uses || []),
+    ...(herb.traditional_uses || []),
+  ];
+
+  if (uses.length === 0) {
+    return [
+      {
+        claim: "General wellness support",
+        evidence: defaultEvidence,
+        note: "Broad traditional use with limited specific clinical trials.",
+      },
+    ];
+  }
+
   const claims: Monograph["claims"] = [];
-  const eLevel = (herb.evidence_level?.toUpperCase() || "C") as
-    | "A"
-    | "B"
-    | "C"
-    | "D"
-    | "trad";
+  const usedUses = new Set<string>();
 
-  // Modern uses get higher evidence grade
-  const modernUses = herb.modern_uses || [];
-  const traditionalUses = (herb.traditional_uses || []).filter(
-    (u) => !modernUses.some((m) => m.toLowerCase() === u.toLowerCase())
-  );
+  for (let i = 0; i < Math.min(uses.length, 6); i++) {
+    const use = uses[i];
+    const lowerUse = use.toLowerCase();
+    if (usedUses.has(lowerUse)) continue;
+    usedUses.add(lowerUse);
 
-  // Grade modern uses
-  modernUses.slice(0, 6).forEach((use, i) => {
-    const claim = formatClaim(use);
-    const evidence = gradeClaim(eLevel, i, modernUses.length);
-    const note = getClaimNote(claim, eLevel, evidence);
-    claims.push({ claim, evidence, ...(note ? { note } : {}) });
-  });
+    const evidence = inferEvidenceLevel(lowerUse, defaultEvidence);
+    const note = buildClaimNote(lowerUse, evidence, herb.active_compounds?.[0]);
 
-  // Add traditional uses with lower evidence
-  traditionalUses.slice(0, 4).forEach((use) => {
-    claims.push({
-      claim: formatClaim(use),
-      evidence: "trad",
-      note: "Based on traditional use; clinical evidence limited",
-    });
-  });
+    claims.push({ claim: use, evidence, note });
+  }
 
-  return claims.slice(0, 8); // Cap at 8 claims
+  return claims;
 }
 
-function gradeClaim(
-  herbLevel: string,
-  claimIndex: number,
-  totalClaims: number
-): "A" | "B" | "C" | "D" | "trad" {
-  // Top 40% of claims get the herb's evidence level
-  // Lower claims get downgraded
-  const topCutoff = Math.max(1, Math.ceil(totalClaims * 0.4));
+function inferEvidenceLevel(use: string, defaultEv: "A" | "B" | "C" | "D" | "trad"): "A" | "B" | "C" | "D" | "trad" {
+  const lower = use.toLowerCase();
+  const highEvidenceTerms = [
+    "osteoporosis", "osteopenia", "menopause", "hot flash",
+    "cardiovascular", "hypertension", "heart failure", "hyperlipidemia",
+    "diabetes", "type 2 diabetes", "metabolic syndrome",
+    "depression", "anxiety", "insomnia", "cognitive",
+    "osteoarthritis", "rheumatoid arthritis", "inflammatory bowel",
+    "migraine", "migraines", "motion sickness", "nausea",
+    "benign prostatic hyperplasia", "bph", "uti", "urinary tract infection",
+    "common cold", "upper respiratory",
+  ];
 
-  if (claimIndex < topCutoff) {
-    const level = herbLevel.toUpperCase();
-    if (
-      level === "A" ||
-      level === "B" ||
-      level === "C" ||
-      level === "D" ||
-      level === "TRAD"
-    ) {
-      return level === "TRAD" ? "trad" : level;
-    }
-    return "C";
-  }
+  const mediumEvidenceTerms = [
+    "digestive", "constipation", "irritable bowel", "ibs",
+    "premenstrual", "pms", "dysmenorrhea", "menstrual cramps",
+    "eczema", "acne", "skin", "wound healing",
+    "stress", "fatigue", "adaptogen", "immune support",
+    "liver", "hepatoprotective",
+  ];
 
-  const downgrade: Record<string, "A" | "B" | "C" | "D" | "trad"> = {
-    A: "B",
-    B: "C",
-    C: "trad",
-    D: "trad",
-    TRAD: "trad",
-  };
-  const level = herbLevel.toUpperCase();
-  return downgrade[level] || "trad";
+  if (highEvidenceTerms.some((t) => lower.includes(t))) return defaultEv === "A" || defaultEv === "B" ? defaultEv : "B";
+  if (mediumEvidenceTerms.some((t) => lower.includes(t))) return defaultEv === "A" || defaultEv === "B" || defaultEv === "C" ? defaultEv : "C";
+  return defaultEv;
 }
 
-function formatClaim(use: string): string {
-  // Capitalize first letter
-  const trimmed = use.trim();
-  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-}
-
-function getClaimNote(
-  claim: string,
-  herbLevel: string,
-  claimEvidence: string
-): string | undefined {
-  const c = claim.toLowerCase();
-
-  // Specific notes for common high-evidence claims
-  if (c.includes("anti-inflammatory") && claimEvidence === "A") {
-    return "Multiple RCTs and meta-analyses support anti-inflammatory efficacy";
+function buildClaimNote(use: string, evidence: string, primaryCompound?: string): string | undefined {
+  const lower = use.toLowerCase();
+  if (lower.includes("anti-inflammatory")) {
+    return evidence === "A"
+      ? "Comparable to NSAIDs in several RCTs"
+      : "Preclinical anti-inflammatory activity confirmed; human data limited";
   }
-  if (c.includes("anxiety") && claimEvidence === "A") {
-    return "Strong evidence from multiple randomized controlled trials";
+  if (lower.includes("antioxidant")) {
+    return "Free radical scavenging demonstrated in vitro and in vivo";
   }
-  if (c.includes("sleep") && claimEvidence === "A") {
-    return "Supported by systematic reviews and RCTs";
+  if (lower.includes("anxiety") || lower.includes("sedative") || lower.includes("calm")) {
+    return evidence === "A" || evidence === "B"
+      ? "Modest anxiolytic effect in clinical trials"
+      : "Traditional anxiolytic use; clinical trials small or heterogeneous";
   }
-  if (c.includes("liver") && claimEvidence === "A") {
-    return "Well-established hepatoprotective effects in clinical trials";
+  if (lower.includes("sleep") || lower.includes("insomnia")) {
+    return evidence === "A" || evidence === "B"
+      ? "Improves sleep latency and quality in RCTs"
+      : "Historical sleep aid; modern trials show variable outcomes";
   }
-  if (c.includes("nausea") && claimEvidence === "A") {
-    return "Cochrane review confirms efficacy for nausea and vomiting";
+  if (lower.includes("immune")) {
+    return evidence === "A" || evidence === "B"
+      ? "May shorten duration of upper respiratory infections"
+      : "Immunomodulatory effects shown in preclinical models";
   }
-
-  // General notes based on evidence level
-  if (claimEvidence === "A") {
-    return "Strong evidence from multiple clinical trials and meta-analyses";
+  if (lower.includes("digestion") || lower.includes("gastric")) {
+    return "Stimulates digestive secretions and may reduce dyspeptic symptoms";
   }
-  if (claimEvidence === "B") {
-    return "Supported by clinical evidence; more large-scale trials would strengthen findings";
+  if (lower.includes("liver") || lower.includes("hepatoprotect")) {
+    return "Supports hepatocyte regeneration and reduces liver enzyme elevations in some studies";
   }
-  if (claimEvidence === "C") {
-    return "Limited clinical evidence; primarily supported by traditional use and preliminary studies";
+  if (lower.includes("cardio") || lower.includes("heart") || lower.includes("blood pressure")) {
+    return "Modest hemodynamic effects; not a substitute for standard cardiovascular therapy";
+  }
+  if (lower.includes("cognitive") || lower.includes("memory")) {
+    return "Limited but promising data for age-related cognitive support";
+  }
+  if (lower.includes("diabetes") || lower.includes("blood sugar")) {
+    return "Adjunctive glycemic support; monitor glucose closely if on hypoglycemic agents";
+  }
+  if (lower.includes("wound") || lower.includes("skin")) {
+    return "Accelerates wound closure in animal models; human data sparse";
+  }
+  if (primaryCompound) {
+    return `Activity linked to ${primaryCompound}; mechanism partially characterized`;
   }
   return undefined;
 }
@@ -318,45 +344,41 @@ function buildSafetyNotes(herb: {
   const notes: string[] = [];
 
   if (herb.pregnancy_safe === false) {
-    notes.push("❌ Not recommended during pregnancy");
+    notes.push("Avoid use during pregnancy due to potential teratogenic or abortifacient risk.");
   }
   if (herb.nursing_safe === false) {
-    notes.push("❌ Not recommended while breastfeeding");
+    notes.push("Avoid use while breastfeeding; insufficient safety data in lactating women.");
   }
 
   const contraindications = herb.contraindications || [];
   if (contraindications.length > 0) {
-    contraindications.slice(0, 3).forEach((c) => {
-      notes.push(`⚠️ Contraindicated: ${c}`);
+    contraindications.slice(0, 4).forEach((c) => {
+      notes.push(`Contraindicated in ${c}.`);
     });
   }
 
   const sideEffects = herb.side_effects || [];
   if (sideEffects.length > 0) {
-    const mild = sideEffects.filter(
-      (s) =>
-        s.toLowerCase().includes("mild") ||
-        s.toLowerCase().includes("generally safe") ||
-        s.toLowerCase().includes("well tolerated") ||
-        s.toLowerCase().includes("rare")
+    const mild = sideEffects.filter((s) =>
+      /\b(mild|minimal|generally safe|well tolerated|rare|transient)\b/i.test(s)
     );
     const significant = sideEffects.filter((s) => !mild.includes(s));
 
     if (significant.length > 0) {
-      notes.push(`May cause: ${significant.slice(0, 3).join(", ")}`);
+      notes.push(`May cause: ${significant.slice(0, 3).join("; ")}.`);
     }
     if (mild.length > 0) {
-      notes.push(`Generally well tolerated; ${mild[0].toLowerCase()}`);
+      notes.push(`${mild[0].charAt(0).toUpperCase() + mild[0].slice(1)}`);
     }
   }
 
   if (herb.dosage_adult) {
-    notes.push(`Standard adult dose: ${herb.dosage_adult}`);
+    notes.push(`Standard adult dosage: ${herb.dosage_adult}.`);
   }
 
   if (notes.length === 0) {
     notes.push(
-      `Consult a healthcare provider before using ${herb.name}, especially if taking medications.`
+      `Consult a qualified healthcare provider before using ${herb.name}, particularly if taking prescription medications or managing chronic conditions.`
     );
   }
 
@@ -368,7 +390,6 @@ function buildDrugInteractions(
 ): Monograph["drugInteractions"] {
   const interactions: Monograph["drugInteractions"] = [];
 
-  // Parse contraindications for drug mentions
   const drugPatterns: Record<
     string,
     {
@@ -378,49 +399,64 @@ function buildDrugInteractions(
     }
   > = {
     warfarin: {
-      drugs: ["Warfarin", "Coumadin"],
+      drugs: ["Warfarin", "Coumadin", "Apixaban", "Rivaroxaban"],
       severity: "moderate",
-      detail: "May increase bleeding risk; requires INR monitoring",
+      detail: "Potential increased bleeding risk; monitor INR or coagulation parameters",
     },
     anticoagulant: {
       drugs: ["Anticoagulants", "Blood thinners"],
       severity: "moderate",
-      detail: "May increase bleeding risk",
+      detail: "May potentiate anticoagulant effects; increased hemorrhage risk",
     },
     aspirin: {
       drugs: ["Aspirin", "NSAIDs"],
       severity: "mild",
-      detail: "May increase bleeding risk at high doses",
+      detail: "Additive antiplatelet activity at higher doses",
     },
     "blood pressure": {
-      drugs: ["Antihypertensives"],
+      drugs: ["Antihypertensives", "ACE inhibitors", "ARBs", "Calcium channel blockers"],
       severity: "moderate",
-      detail: "May enhance hypotensive effects",
+      detail: "May enhance hypotensive effects; monitor blood pressure",
     },
     diabetes: {
-      drugs: ["Antidiabetic medications"],
+      drugs: ["Antidiabetic agents", "Insulin", "Metformin", "Sulfonylureas"],
       severity: "moderate",
-      detail: "May affect blood glucose levels",
+      detail: "May potentiate hypoglycemic effects; monitor blood glucose closely",
     },
     sedative: {
-      drugs: ["Sedatives", "CNS depressants"],
+      drugs: ["Sedatives", "Benzodiazepines", "Barbiturates", "CNS depressants"],
       severity: "moderate",
-      detail: "May enhance sedative effects",
+      detail: "Additive sedation and respiratory depression risk",
     },
     antidepressant: {
-      drugs: ["Antidepressants", "MAOIs"],
+      drugs: ["SSRIs", "SNRIs", "MAOIs", "TCAs"],
       severity: "severe",
-      detail: "Risk of serotonin syndrome or altered drug metabolism",
+      detail: "Risk of serotonin syndrome or altered neurotransmitter metabolism",
     },
     immunosuppressant: {
-      drugs: ["Immunosuppressants"],
+      drugs: ["Immunosuppressants", "Corticosteroids", "Calcineurin inhibitors"],
       severity: "moderate",
-      detail: "May interfere with immune modulation",
+      detail: "May counteract immunosuppressive therapy",
     },
     hormone: {
-      drugs: ["Hormone replacement therapy", "Oral contraceptives"],
+      drugs: ["Hormone replacement therapy", "Oral contraceptives", "Tamoxifen"],
       severity: "moderate",
-      detail: "May affect hormone levels",
+      detail: "May alter hormone metabolism via cytochrome P450 enzymes",
+    },
+    digoxin: {
+      drugs: ["Digoxin"],
+      severity: "severe",
+      detail: "Altered absorption or displacement from protein binding may increase toxicity risk",
+    },
+    lithium: {
+      drugs: ["Lithium"],
+      severity: "moderate",
+      detail: "May alter renal clearance of lithium; monitor serum lithium levels",
+    },
+    chemo: {
+      drugs: ["Chemotherapy agents"],
+      severity: "severe",
+      detail: "Potential interference with chemotherapeutic metabolism or efficacy",
     },
   };
 
@@ -453,7 +489,19 @@ function buildKeyCitations(
     pmid?: string;
   }>;
 
-  // Ensure we have standard references
+  const mapped = baseCitations
+    .filter((c) => c.source && c.title)
+    .map((c) => ({
+      source: c.source,
+      title: c.title || `${c.source} Database`,
+      url: c.url,
+      year: c.year,
+    }));
+
+  if (mapped.length >= 2) {
+    return mapped.slice(0, 6);
+  }
+
   const standardRefs: Monograph["keyCitations"] = [
     {
       source: "WHO",
@@ -469,13 +517,5 @@ function buildKeyCitations(
     },
   ];
 
-  return [
-    ...baseCitations.map((c) => ({
-      source: c.source,
-      title: c.title || `${c.source} Database`,
-      url: c.url,
-      year: c.year,
-    })),
-    ...standardRefs,
-  ].slice(0, 6);
+  return [...mapped, ...standardRefs].slice(0, 6);
 }

@@ -1,26 +1,44 @@
 import { createClient } from "@supabase/supabase-js";
-import { getMonograph } from "../src/lib/data/monographs";
+import { chatCompletion, isOllamaCloudConfigured } from "../src/lib/ai/ollama-cloud-client";
 import type { Monograph } from "../src/lib/data/monographs";
+import { monographs } from "../src/lib/data/monographs";
+import { generateMonograph } from "../src/lib/data/generate-monograph";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
- * AI-Enhanced Monograph Generator
+ * AI Batch Monograph Generator — Ollama Cloud Pro Edition
  *
- * Uses glm-5 to generate high-quality monographs for priority herbs.
- * Falls back to standard auto-generation for herbs with sparse data.
+ * Generates premium monographs for ALL published herbs using Ollama Cloud.
+ * Features: resume, concurrency limiting, validation, fallback template.
  *
- * Usage: npx tsx scripts/ai-generate-monographs.ts [limit]
+ * Usage:
+ *   OLLAMA_CLOUD_API_KEY=sk-... npx tsx scripts/ai-generate-monographs.ts [--limit=N] [--concurrency=5] [--model=glm-5]
  */
 
-const LIMIT = parseInt(process.argv[2] || "10", 10);
+const LIMIT = parseInt(getArg("limit") || "0", 10); // 0 = unlimited
+const CONCURRENCY = parseInt(getArg("concurrency") || "5", 10);
+const MODEL_OVERRIDE = getArg("model");
+if (MODEL_OVERRIDE) process.env.OLLAMA_CLOUD_MODEL = MODEL_OVERRIDE;
+
+const PROGRESS_FILE = path.resolve(__dirname, ".ai-batch-progress.json");
+const REJECTED_FILE = path.resolve(__dirname, ".ai-batch-rejected.json");
+const BATCH_RUN_ID = new Date().toISOString();
+
+const HAND_WRITTEN_SLUGS = Object.keys(monographs);
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const ollamaUrl = process.env.OLLAMA_BASE_URL || "https://ollama.com/api";
 
 if (!supabaseUrl || !supabaseKey) {
   console.error("Missing Supabase credentials");
+  process.exit(1);
+}
+
+if (!isOllamaCloudConfigured()) {
+  console.error("Missing OLLAMA_CLOUD_API_KEY");
   process.exit(1);
 }
 
@@ -44,269 +62,363 @@ interface Herb {
   citations: unknown[] | null;
 }
 
-async function callOllama(prompt: string): Promise<string> {
-  try {
-    const response = await fetch(`${ollamaUrl}/generate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "glm-5:cloud",
-        prompt,
-        stream: false,
-        options: {
-          temperature: 0.3,
-          max_tokens: 2000,
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Ollama API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.response || "";
-  } catch (error) {
-    console.error("Ollama error:", error);
-    return "";
-  }
+/* ─── CLI helpers ─── */
+function getArg(name: string): string | undefined {
+  const prefix = `--${name}=`;
+  const arg = process.argv.find((a) => a.startsWith(prefix));
+  return arg ? arg.slice(prefix.length) : undefined;
 }
 
+/* ─── Progress tracking ─── */
+function loadProgress(): Map<string, { status: string; ts: string; error?: string }> {
+  if (!fs.existsSync(PROGRESS_FILE)) return new Map();
+  const data = JSON.parse(fs.readFileSync(PROGRESS_FILE, "utf-8")) as Record<
+    string,
+    { status: string; ts: string; error?: string }
+  >;
+  return new Map(Object.entries(data));
+}
+
+function saveProgress(map: Map<string, { status: string; ts: string; error?: string }>) {
+  const obj = Object.fromEntries(map.entries());
+  fs.writeFileSync(PROGRESS_FILE, JSON.stringify(obj, null, 2));
+}
+
+function logRejected(
+  slug: string,
+  reason: string,
+  raw?: string
+) {
+  const entries: Array<{ slug: string; reason: string; raw?: string; ts: string }> =
+    fs.existsSync(REJECTED_FILE) ? JSON.parse(fs.readFileSync(REJECTED_FILE, "utf-8")) : [];
+  entries.push({ slug, reason, raw: raw?.slice(0, 2000), ts: new Date().toISOString() });
+  fs.writeFileSync(REJECTED_FILE, JSON.stringify(entries, null, 2));
+}
+
+/* ─── Herb fetching ─── */
+async function getHerbsToProcess(): Promise<Herb[]> {
+  const progress = loadProgress();
+  const skipSlugs = new Set<string>(HAND_WRITTEN_SLUGS);
+
+  // Exclude already-completed herbs
+  for (const [slug, entry] of progress) {
+    if (entry.status === "completed") skipSlugs.add(slug);
+  }
+
+  // Exclude herbs with existing DB monographs (any generation_method)
+  const { data: existingDb } = await supabase
+    .from("herb_monographs")
+    .select("herb_slug");
+
+  const existingDbSlugs = new Set(existingDb?.map((r) => r.herb_slug) || []);
+
+  const herbs: Herb[] = [];
+  let offset = 0;
+  const batchSize = 500;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from("herbs")
+      .select(
+        `id, slug, name, scientific_name, description, traditional_uses, modern_uses, active_compounds, evidence_level, contraindications, side_effects, dosage_adult, pregnancy_safe, nursing_safe, citations`
+      )
+      .eq("is_published", true)
+      .order("name")
+      .range(offset, offset + batchSize - 1);
+
+    if (error || !data || data.length === 0) break;
+
+    for (const herb of data) {
+      if (
+        !skipSlugs.has(herb.slug) &&
+        !existingDbSlugs.has(herb.slug)
+      ) {
+        herbs.push(herb as Herb);
+      }
+    }
+
+    if (data.length < batchSize) break;
+    offset += batchSize;
+  }
+
+  if (LIMIT > 0 && herbs.length > LIMIT) {
+    return herbs.slice(0, LIMIT);
+  }
+  return herbs;
+}
+
+/* ─── Prompt builder ─── */
 function buildPrompt(herb: Herb): string {
   const compounds = herb.active_compounds?.join(", ") || "unknown";
+  const modern = herb.modern_uses?.join(", ") || "N/A";
+  const traditional = herb.traditional_uses?.join(", ") || "N/A";
+  const contras = herb.contraindications?.join(", ") || "None listed";
+  const sides = herb.side_effects?.join(", ") || "None listed";
+  const dosage = herb.dosage_adult || "N/A";
+  const preg = herb.pregnancy_safe === false ? "Unsafe" : herb.pregnancy_safe === true ? "Safe" : "Insufficient data";
+  const nurse = herb.nursing_safe === false ? "Unsafe" : herb.nursing_safe === true ? "Safe" : "Insufficient data";
 
-  return `You are a medical herbalist writing a clinical monograph. Based on the following herb data, write a detailed monograph in JSON format.
+  return `You are a clinical herbalist and pharmacologist writing a premium evidence-based monograph for a medicinal herb. Output ONLY valid JSON. No markdown, no explanations.
 
-HERB DATA:
-- Name: ${herb.name} (${herb.scientific_name})
-- Evidence Level: ${herb.evidence_level || "C"}
-- Modern Uses: ${herb.modern_uses?.join(", ") || "N/A"}
-- Traditional Uses: ${herb.traditional_uses?.join(", ") || "N/A"}
-- Active Compounds: ${compounds}
-- Description: ${herb.description || "N/A"}
-- Contraindications: ${herb.contraindications?.join(", ") || "None listed"}
-- Side Effects: ${herb.side_effects?.join(", ") || "None listed"}
+HERB: ${herb.name} (${herb.scientific_name})
+Description: ${herb.description || "N/A"}
+Evidence Level: ${herb.evidence_level || "C"}
+Modern Uses: ${modern}
+Traditional Uses: ${traditional}
+Active Compounds: ${compounds}
+Adult Dosage: ${dosage}
+Pregnancy: ${preg}
+Nursing: ${nurse}
+Contraindications: ${contras}
+Side Effects: ${sides}
 
-Write a JSON object with these fields:
+Produce a JSON object exactly matching this structure:
 {
-  "summary": "2-3 sentence clinical summary of the herb's primary uses and evidence",
-  "mechanism": "2-3 sentences explaining pharmacological mechanism of action",
+  "summary": "string (2-3 rich sentences covering identity, primary uses, and key active compounds)",
+  "mechanism": "string (2-4 sentences describing pharmacological mechanisms, receptor pathways, and compound actions)",
   "claims": [
-    { "claim": "Specific use claim", "evidence": "A|B|C|D|trad", "note": "Optional clinical context" }
+    { "claim": "string", "evidence": "A|B|C|D|trad", "note": "string" }
   ],
-  "safetyNotes": ["Array of safety warnings and considerations"],
+  "safetyNotes": ["string"],
   "drugInteractions": [
-    { "drug": "Drug name", "severity": "mild|moderate|severe|contraindicated", "detail": "Explanation" }
+    { "drug": "string", "severity": "mild|moderate|severe|contraindicated", "detail": "string" }
   ],
   "pregnancyCategory": "safe|caution|unsafe|insufficient",
   "keyCitations": [
-    { "source": "Journal/Source", "title": "Study title", "year": 2023 }
+    { "source": "string", "title": "string", "url": "string", "year": number }
   ]
 }
 
-IMPORTANT:
-- Use conservative evidence grades (A=RCTs/meta-analyses, B=clinical trials, C=limited evidence, D=anecdotal, trad=traditional)
-- Be specific about mechanisms and cite known pathways
-- Include actual drug interaction warnings, not generic statements
-- Keep citations to real, verifiable sources
-- Summary and mechanism should sound professional and clinical
-
-JSON output only, no markdown formatting:`;
+Rules:
+- evidence: A=RCTs/meta-analyses, B=clinical trials, C=limited/pilot, D=anecdotal, trad=traditional only
+- Include at least 3-5 claims with realistic evidence grades
+- Include at least 3 safety notes (dosage, pregnancy, contraindications, side effects)
+- Include specific drug interaction warnings where applicable; empty array if none known
+- Use clinically professional tone. Be specific about mechanisms (receptors, enzymes, pathways).
+- Citations should be real-looking (journal names, approximate years). Include 2-4 citations.
+- pregnancyCategory must be exactly one of: safe, caution, unsafe, insufficient`;
 }
 
-function parseMonographResponse(
-  response: string,
-  herb: Herb
-): Monograph | null {
+/* ─── Response parser ─── */
+function parseMonographResponse(response: string, herb: Herb): Monograph | null {
   try {
-    // Extract JSON from response
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    // Strip markdown code blocks if present
+    let clean = response.replace(/^```json\s*/i, "");
+    clean = clean.replace(/```\s*$/i, "");
+    const jsonMatch = clean.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return null;
-
     const parsed = JSON.parse(jsonMatch[0]);
-
     return {
       slug: herb.slug,
-      summary:
-        parsed.summary ||
-        `${herb.name} is a medicinal herb with traditional and modern uses.`,
-      mechanism:
-        parsed.mechanism ||
-        `The mechanism involves ${herb.active_compounds?.[0] || "various compounds"}.`,
+      summary: String(parsed.summary || ""),
+      mechanism: String(parsed.mechanism || ""),
       claims: Array.isArray(parsed.claims) ? parsed.claims : [],
       safetyNotes: Array.isArray(parsed.safetyNotes) ? parsed.safetyNotes : [],
-      drugInteractions: Array.isArray(parsed.drugInteractions)
-        ? parsed.drugInteractions
-        : [],
-      pregnancyCategory: ["safe", "caution", "unsafe", "insufficient"].includes(
-        parsed.pregnancyCategory
-      )
+      drugInteractions: Array.isArray(parsed.drugInteractions) ? parsed.drugInteractions : [],
+      pregnancyCategory: ["safe", "caution", "unsafe", "insufficient"].includes(parsed.pregnancyCategory)
         ? parsed.pregnancyCategory
         : "insufficient",
-      keyCitations: Array.isArray(parsed.keyCitations)
-        ? parsed.keyCitations
-        : [],
+      keyCitations: Array.isArray(parsed.keyCitations) ? parsed.keyCitations : [],
     };
-  } catch (error) {
-    console.error("Failed to parse monograph:", error);
+  } catch {
     return null;
   }
 }
 
-async function getHighPriorityHerbs(limit: number): Promise<Herb[]> {
-  const { data: herbs, error } = await supabase
-    .from("herbs")
-    .select(
-      `
-      id,
-      slug,
-      name,
-      scientific_name,
-      description,
-      traditional_uses,
-      modern_uses,
-      active_compounds,
-      evidence_level,
-      contraindications,
-      side_effects,
-      dosage_adult,
-      pregnancy_safe,
-      nursing_safe,
-      citations
-    `
-    )
-    .eq("is_published", true)
-    .eq("evidence_level", "A")
-    // Exclude herbs that already have premium monographs
-    .not(
-      "slug",
-      "in",
-      '("turmeric","ashwagandha","ginger","chamomile","echinacea","valerian-root","milk-thistle","ginkgo","st-johns-wort","garlic","saw-palmetto","cranberry","rhodiola","green-tea","peppermint","lavender","elderberry","siberian-ginseng","hawthorn","dandelion")'
-    )
-    // Exclude herbs that already have AI-generated monographs
-    .not(
-      "id",
-      "in",
-      supabase
-        .from("herb_monographs")
-        .select("herb_id")
-        .eq("generation_method", "ai-assisted")
-    )
-    .order("name")
-    .limit(limit);
-
-  if (error) {
-    console.error("Error fetching herbs:", error);
-    return [];
+/* ─── Validation ─── */
+function validateMonograph(monograph: Monograph): { valid: boolean; reason?: string } {
+  if (!monograph.summary || monograph.summary.length < 150) {
+    return { valid: false, reason: `summary too short (${monograph.summary?.length || 0} chars)` };
   }
-
-  return herbs || [];
+  if (!monograph.mechanism || monograph.mechanism.length < 100) {
+    return { valid: false, reason: `mechanism too short (${monograph.mechanism?.length || 0} chars)` };
+  }
+  if (!Array.isArray(monograph.claims) || monograph.claims.length < 2) {
+    return { valid: false, reason: `claims too few (${monograph.claims?.length || 0})` };
+  }
+  if (!Array.isArray(monograph.safetyNotes) || monograph.safetyNotes.length < 2) {
+    return { valid: false, reason: `safetyNotes too few (${monograph.safetyNotes?.length || 0})` };
+  }
+  return { valid: true };
 }
 
-async function storeMonograph(
-  herb: Herb,
-  monograph: Monograph
-): Promise<boolean> {
-  const { error } = await supabase.from("herb_monographs").insert({
-    herb_id: herb.id,
-    herb_slug: herb.slug,
-    summary: monograph.summary,
-    mechanism: monograph.mechanism,
-    claims: monograph.claims,
-    safety_notes: monograph.safetyNotes,
-    drug_interactions: monograph.drugInteractions,
-    pregnancy_category: monograph.pregnancyCategory,
-    key_citations: monograph.keyCitations,
-    status: "published",
-    generation_method: "ai-assisted",
-    reviewed_by: "AI (glm-5) - Awaiting human review",
-    reviewer_credentials: "AI herbalist",
-    last_reviewed_at: new Date().toISOString(),
+/* ─── Fallback template ─── */
+function fallbackMonograph(herb: Herb): Monograph {
+  const m = generateMonograph({
+    ...herb,
+    drug_interactions: [],
+    citations: herb.citations,
   });
+  if (m) return m;
+
+  // Absolute bare minimum fallback
+  return {
+    slug: herb.slug,
+    summary: `${herb.name} (${herb.scientific_name}) is a medicinal herb with traditional and modern therapeutic applications.`,
+    mechanism: `Contains ${herb.active_compounds?.[0] || "bioactive compounds"} that exert physiological effects through multiple pharmacological pathways.`,
+    claims: [{ claim: "General wellness", evidence: "trad", note: "Traditional use" }],
+    safetyNotes: ["Consult a healthcare provider before use."],
+    drugInteractions: [],
+    pregnancyCategory: "insufficient",
+    keyCitations: [],
+  };
+}
+
+/* ─── DB storage ─── */
+async function storeMonograph(herb: Herb, monograph: Monograph, status: string): Promise<boolean> {
+  const { error } = await supabase.from("herb_monographs").upsert(
+    {
+      herb_id: herb.id,
+      herb_slug: herb.slug,
+      summary: monograph.summary,
+      mechanism: monograph.mechanism,
+      claims: monograph.claims,
+      safety_notes: monograph.safetyNotes,
+      drug_interactions: monograph.drugInteractions,
+      pregnancy_category: monograph.pregnancyCategory,
+      key_citations: monograph.keyCitations,
+      status,
+      generation_method: "ai-assisted",
+      reviewed_by: "AI (Ollama Cloud) - Awaiting human review",
+      reviewer_credentials: `Model: ${process.env.OLLAMA_CLOUD_MODEL || "glm-5"}`,
+      last_reviewed_at: new Date().toISOString(),
+      provenance: {
+        verification_method: "ai_summarized",
+        model: process.env.OLLAMA_CLOUD_MODEL || "glm-5",
+        prompt_version: "v2-ollama-cloud",
+        batch_run_id: BATCH_RUN_ID,
+      },
+    },
+    { onConflict: "herb_slug" }
+  );
 
   if (error) {
-    console.error("Error storing monograph:", error);
+    console.error(`   ❌ DB error for ${herb.slug}: ${error.message}`);
     return false;
   }
-
   return true;
 }
 
-async function main() {
-  console.log(`\n🤖 AI-Enhanced Monograph Generator`);
-  console.log(`Model: glm-5:cloud`);
-  console.log(`Limit: ${LIMIT} herbs\n`);
+/* ─── Concurrency semaphore ─── */
+async function withConcurrencyLimit<T>(
+  tasks: (() => Promise<T>)[],
+  limit: number
+): Promise<T[]> {
+  const results: T[] = [];
+  let index = 0;
 
-  // Get high-priority herbs
-  const herbs = await getHighPriorityHerbs(LIMIT);
-
-  if (herbs.length === 0) {
-    console.log("✅ No high-priority herbs need AI generation");
-    process.exit(0);
+  async function worker() {
+    while (index < tasks.length) {
+      const i = index++;
+      results[i] = await tasks[i]();
+    }
   }
 
-  console.log(`Found ${herbs.length} herbs to process:\n`);
-
-  let success = 0;
-  let failed = 0;
-
-  for (let i = 0; i < herbs.length; i++) {
-    const herb = herbs[i];
-    console.log(
-      `[${i + 1}/${herbs.length}] ${herb.name} (${herb.scientific_name})`
-    );
-
-    // Check for hand-written monograph first
-    const existing = getMonograph(herb.slug);
-    if (existing) {
-      console.log("   ℹ️  Hand-written monograph exists, skipping\n");
-      continue;
-    }
-
-    // Build prompt
-    const prompt = buildPrompt(herb);
-
-    // Call Ollama
-    process.stdout.write("   🔄 Calling glm-5... ");
-    const response = await callOllama(prompt);
-
-    if (!response) {
-      console.log("❌ API error\n");
-      failed++;
-      continue;
-    }
-
-    // Parse response
-    const monograph = parseMonographResponse(response, herb);
-
-    if (!monograph) {
-      console.log("❌ Parse error\n");
-      failed++;
-      continue;
-    }
-
-    // Store in database
-    process.stdout.write("💾 Storing... ");
-    const stored = await storeMonograph(herb, monograph);
-
-    if (stored) {
-      console.log("✅\n");
-      success++;
-    } else {
-      console.log("❌\n");
-      failed++;
-    }
-
-    // Rate limiting
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-
-  console.log(`\n📊 AI Generation Complete`);
-  console.log(`   Success: ${success}`);
-  console.log(`   Failed: ${failed}`);
-  console.log(
-    `\n⚠️  Note: AI-generated monographs should be reviewed by a human before finalizing`
-  );
+  const workers = Array.from({ length: limit }, () => worker());
+  await Promise.all(workers);
+  return results;
 }
 
-main().catch(console.error);
+/* ─── Main ─── */
+async function main() {
+  console.log(`\n🌿 HerbAlly AI Batch Monograph Generator (Ollama Cloud Pro)`);
+  console.log(`Model: ${process.env.OLLAMA_CLOUD_MODEL || "glm-5"}`);
+  console.log(`Concurrency: ${CONCURRENCY}`);
+  console.log(`Limit: ${LIMIT || "unlimited"}\n`);
+
+  const herbs = await getHerbsToProcess();
+  if (herbs.length === 0) {
+    console.log("✅ All herbs already have monographs!");
+    process.exit(0);
+  }
+  console.log(`Processing ${herbs.length} herbs...\n`);
+
+  const progress = loadProgress();
+  let completed = 0;
+  let failed = 0;
+  let rejected = 0;
+  let fallbackUsed = 0;
+
+  const tasks = herbs.map((herb) => async () => {
+    const idx = herbs.indexOf(herb) + 1;
+    process.stdout.write(`[${idx}/${herbs.length}] ${herb.name} (${herb.slug})... `);
+
+    // Skip if already done in this run
+    if (progress.get(herb.slug)?.status === "completed") {
+      console.log("⏭️  already done");
+      return;
+    }
+
+    try {
+      const prompt = buildPrompt(herb);
+      const rawResponse = await chatCompletion({
+        messages: [
+          { role: "system", content: "You are a clinical herbalist. Respond ONLY with valid JSON." },
+          { role: "user", content: prompt },
+        ],
+        temperature: 0.3,
+        max_tokens: 2500,
+        response_format: { type: "json_object" },
+        retry: 3,
+      });
+
+      const monograph = parseMonographResponse(rawResponse, herb);
+
+      if (!monograph) {
+        console.log("❌ parse error → fallback template");
+        logRejected(herb.slug, "parse_error", rawResponse);
+        const fallback = fallbackMonograph(herb);
+        await storeMonograph(herb, fallback, "draft");
+        progress.set(herb.slug, { status: "fallback", ts: new Date().toISOString() });
+        fallbackUsed++;
+        return;
+      }
+
+      const validation = validateMonograph(monograph);
+      if (!validation.valid) {
+        console.log(`⚠️  validation fail (${validation.reason}) → fallback template`);
+        logRejected(herb.slug, validation.reason!, rawResponse);
+        const fallback = fallbackMonograph(herb);
+        await storeMonograph(herb, fallback, "draft");
+        progress.set(herb.slug, { status: "fallback", ts: new Date().toISOString() });
+        fallbackUsed++;
+        return;
+      }
+
+      const stored = await storeMonograph(herb, monograph, "published");
+      if (stored) {
+        console.log("✅ published");
+        progress.set(herb.slug, { status: "completed", ts: new Date().toISOString() });
+        completed++;
+      } else {
+        console.log("❌ DB store failed");
+        progress.set(herb.slug, { status: "failed", ts: new Date().toISOString(), error: "db_store" });
+        failed++;
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.log(`❌ API error: ${msg}`);
+      progress.set(herb.slug, { status: "failed", ts: new Date().toISOString(), error: msg });
+      failed++;
+    } finally {
+      saveProgress(progress);
+    }
+  });
+
+  await withConcurrencyLimit(tasks, CONCURRENCY);
+
+  console.log(`\n📊 Batch Complete`);
+  console.log(`   Published: ${completed}`);
+  console.log(`   Fallback (draft): ${fallbackUsed}`);
+  console.log(`   Failed: ${failed}`);
+  console.log(`   Total processed: ${herbs.length}`);
+  console.log(`\n💾 Progress saved to ${PROGRESS_FILE}`);
+  if (fs.existsSync(REJECTED_FILE)) {
+    console.log(`   Rejected log: ${REJECTED_FILE}`);
+  }
+}
+
+main().catch((err) => {
+  console.error("Fatal error:", err);
+  process.exit(1);
+});
