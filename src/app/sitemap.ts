@@ -122,19 +122,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return staticPages;
     }
 
-    // Get all published herbs with slugs
-    const { data: herbs } = await supabase
-      .from("herbs")
-      .select("slug, updated_at")
-      .eq("is_published", true)
-      .order("name", { ascending: true });
+    // Fetch all published herbs in batches (Supabase default limit = 1000)
+    const herbPages: MetadataRoute.Sitemap = [];
+    let from = 0;
+    const batchSize = 1000;
+    while (true) {
+      const { data: herbsBatch } = await supabase
+        .from("herbs")
+        .select("slug, updated_at")
+        .eq("is_published", true)
+        .order("name", { ascending: true })
+        .range(from, from + batchSize - 1);
 
-    const herbPages: MetadataRoute.Sitemap = (herbs ?? []).map((herb) => ({
-      url: `${baseUrl}/herbs/${herb.slug}`,
-      lastModified: herb.updated_at ? new Date(herb.updated_at) : new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
+      if (!herbsBatch || herbsBatch.length === 0) break;
+
+      for (const herb of herbsBatch) {
+        herbPages.push({
+          url: `${baseUrl}/herbs/${herb.slug}`,
+          lastModified: herb.updated_at ? new Date(herb.updated_at) : new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        });
+      }
+
+      if (herbsBatch.length < batchSize) break;
+      from += batchSize;
+    }
 
     // Get categories for category pages
     const { data: categories } = await supabase
