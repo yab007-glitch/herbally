@@ -369,6 +369,56 @@ export type Database = {
           },
         ];
       };
+      herb_faqs: {
+        Row: {
+          answer: string;
+          category: string;
+          confidence_score: number | null;
+          created_at: string;
+          herb_id: string;
+          id: string;
+          is_featured: boolean | null;
+          question: string;
+          sort_order: number | null;
+          source: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          answer: string;
+          category?: string;
+          confidence_score?: number | null;
+          created_at?: string;
+          herb_id: string;
+          id?: string;
+          is_featured?: boolean | null;
+          question: string;
+          sort_order?: number | null;
+          source?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          answer?: string;
+          category?: string;
+          confidence_score?: number | null;
+          created_at?: string;
+          herb_id?: string;
+          id?: string;
+          is_featured?: boolean | null;
+          question?: string;
+          sort_order?: number | null;
+          source?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "herb_faqs_herb_id_fkey";
+            columns: ["herb_id"];
+            isOneToOne: false;
+            referencedRelation: "herbs";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       herbs: {
         Row: {
           active_compounds: string[] | null;

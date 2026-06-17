@@ -5,6 +5,8 @@ interface HerbFAQSchemaProps {
   safetyNotes: string;
   pregnancyCategory: string;
   drugInteractions: number;
+  // Optional pre-generated FAQs from database (for Featured Snippets)
+  preGeneratedFaqs?: Array<{ question: string; answer: string; category?: string }>;
 }
 
 export function HerbFAQSchema({
@@ -14,7 +16,32 @@ export function HerbFAQSchema({
   safetyNotes,
   pregnancyCategory,
   drugInteractions,
+  preGeneratedFaqs,
 }: HerbFAQSchemaProps) {
+  // If we have pre-generated FAQs from the database, use those
+  if (preGeneratedFaqs && preGeneratedFaqs.length > 0) {
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: preGeneratedFaqs.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
+    };
+
+    return (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
+      />
+    );
+  }
+
+  // Fallback to template-based FAQs
   const topUses = uses.slice(0, 3).map((u) => u.toLowerCase());
   const usesText =
     topUses.length > 0

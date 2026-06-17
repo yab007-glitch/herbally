@@ -52,7 +52,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${herbA.name} vs ${herbB.name} - Herb Comparison`,
     description: `Compare ${herbA.name} and ${herbB.name} side by side. Uses, safety, interactions, and evidence levels.`,
-    alternates: { canonical: `${baseUrl}/compare/${slug1}/vs/${slug2}` },
+    alternates: {
+      canonical: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+      languages: {
+        "en": `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+        "fr": `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`,
+        "x-default": `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+      },
+    },
   };
 }
 

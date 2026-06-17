@@ -1,23 +1,26 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { rateLimit } from "@/lib/rate-limit";
+import {
+  isLocalePrefixed,
+  getLocaleFromPathname,
+  stripLocalePrefix,
+  addLocalePrefix,
+} from "@/lib/i18n/routing";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 
 function getClientIP(request: NextRequest): string {
-  // Only trust Vercel-specific header when actually running on Vercel
   if (process.env.VERCEL === "1") {
     const vercelIP = request.headers.get("x-vercel-forwarded-for");
     if (vercelIP) return vercelIP.trim();
   }
-
   const cfIP = request.headers.get("cf-connecting-ip");
   if (cfIP) return cfIP.trim();
-
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     const ips = forwarded.split(",").map((s) => s.trim());
     return ips[ips.length - 1] || "unknown";
   }
-
   return "unknown";
 }
 
@@ -34,12 +37,9 @@ function buildCSP(): string {
     "frame-src *.stripe.com",
     "frame-ancestors 'none'",
   ];
-
-  // Only allow eval in development; production standalone builds shouldn't need it
   if (process.env.NODE_ENV !== "production") {
     directives[1] = "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com";
   }
-
   return directives.join("; ");
 }
 
@@ -65,13 +65,8 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
   return response;
 }
 
-/**
- * Parse Accept-Language header and detect if French is the preferred language.
- */
-function detectLocaleFromAcceptLanguage(
-  acceptLanguage: string | null
-): string | null {
-  if (!acceptLanguage) return null;
+function detectLocaleFromAcceptLanguage(acceptLanguage: string | null): Locale {
+  if (!acceptLanguage) return DEFAULT_LOCALE;
   const entries = acceptLanguage.split(",").map((entry) => {
     const [tag] = entry.trim().split(";");
     const lang = tag.split("-")[0].toLowerCase();
@@ -80,27 +75,86 @@ function detectLocaleFromAcceptLanguage(
   });
   for (const entry of entries.sort((a, b) => b.q - a.q)) {
     if (entry.lang === "fr") return "fr";
-    if (entry.lang === "en") return null;
+    if (entry.lang === "en") return DEFAULT_LOCALE;
   }
-  return null;
+  return DEFAULT_LOCALE;
+}
+
+/**
+ * Paths that should NOT be locale-prefixed or redirected.
+ */
+const LOCALE_EXCLUDED_PATHS = [
+  "/api",
+  "/_next",
+  "/static",
+  "/favicon.ico",
+  "/robots.txt",
+  "/sitemap.xml",
+  "/manifest",
+  "/opengraph-image",
+  "/twitter-image",
+  "/icon",
+  "/apple-icon",
+];
+
+function shouldSkipLocaleRouting(pathname: string): boolean {
+  return LOCALE_EXCLUDED_PATHS.some((p) => pathname.startsWith(p));
 }
 
 export default async function middleware(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  const pathname = request.nextUrl.pathname;
 
-  // Locale detection: set cookie for first-time visitors
+  // ── Locale routing ─────────────────────────────────────────────────
+  if (!shouldSkipLocaleRouting(pathname)) {
+    const cookieLocale = request.cookies.get("herbally-locale")?.value as Locale | undefined;
+    const acceptLangLocale = detectLocaleFromAcceptLanguage(
+      request.headers.get("accept-language")
+    );
+
+    if (isLocalePrefixed(pathname)) {
+      // /fr/* — rewrite to internal path and set locale header
+      const locale = getLocaleFromPathname(pathname);
+      const internalPath = stripLocalePrefix(pathname);
+      const url = request.nextUrl.clone();
+      url.pathname = internalPath;
+      const rewrite = NextResponse.rewrite(url);
+      rewrite.headers.set("x-locale", locale);
+      rewrite.headers.set("x-pathname", internalPath);
+      rewrite.cookies.set("herbally-locale", locale, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: "lax",
+      });
+      return applySecurityHeaders(rewrite);
+    }
+
+    // No locale prefix — check if we should redirect to /fr/
+    const preferredLocale = cookieLocale ?? acceptLangLocale;
+    if (preferredLocale === "fr") {
+      const redirectPath = addLocalePrefix(pathname === "/" ? "/" : pathname, "fr");
+      const url = request.nextUrl.clone();
+      url.pathname = redirectPath;
+      const redirect = NextResponse.redirect(url);
+      return applySecurityHeaders(redirect);
+    }
+  }
+
+  // Default path — set locale header for downstream consumption
+  let response = NextResponse.next({ request });
+  response.headers.set("x-locale", DEFAULT_LOCALE);
+  response.headers.set("x-pathname", pathname);
+
+  // Locale cookie for first-time visitors (English default)
   const existingLocale = request.cookies.get("herbally-locale")?.value;
   if (!existingLocale) {
     const detected = detectLocaleFromAcceptLanguage(
       request.headers.get("accept-language")
     );
-    if (detected) {
-      response.cookies.set("herbally-locale", detected, {
-        path: "/",
-        maxAge: 60 * 60 * 24 * 365,
-        sameSite: "lax",
-      });
-    }
+    response.cookies.set("herbally-locale", detected, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "lax",
+    });
   }
 
   // Supabase session refresh
@@ -108,9 +162,6 @@ export default async function middleware(request: NextRequest) {
   supabaseResponse.cookies.getAll().forEach((cookie) => {
     response.cookies.set(cookie.name, cookie.value, cookie);
   });
-
-  // Route guards
-  const pathname = request.nextUrl.pathname;
 
   // API Chat Rate limit (Edge-native)
   if (pathname.startsWith("/api/chat")) {

@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+
+const FR_BASE = "/fr";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
 
@@ -19,13 +21,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
+      url: `${baseUrl}${FR_BASE}`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "daily",
+      priority: 1.0,
+    },
+    {
       url: `${baseUrl}/herbs`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
+      url: `${baseUrl}${FR_BASE}/herbs`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/symptoms`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/symptoms`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.9,
@@ -70,7 +90,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}${FR_BASE}/faq`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/calculator`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/calculator`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -83,13 +115,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     {
+      url: `${baseUrl}${FR_BASE}/about`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
       url: `${baseUrl}/donate`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.4,
     },
     {
+      url: `${baseUrl}${FR_BASE}/donate`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
       url: `${baseUrl}/methodology`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/methodology`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.9,
@@ -139,6 +189,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const herb of herbsBatch) {
         herbPages.push({
           url: `${baseUrl}/herbs/${herb.slug}`,
+          lastModified: herb.updated_at ? new Date(herb.updated_at) : new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        });
+        herbPages.push({
+          url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
           lastModified: herb.updated_at ? new Date(herb.updated_at) : new Date(),
           changeFrequency: "weekly" as const,
           priority: 0.7,
@@ -217,14 +273,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     ];
 
-    const categoryPages: MetadataRoute.Sitemap = (categories ?? []).map(
-      (cat) => ({
+    const categoryPages: MetadataRoute.Sitemap = [];
+    for (const cat of categories ?? []) {
+      categoryPages.push({
         url: `${baseUrl}/herbs?category=${cat.slug}`,
         lastModified: STATIC_PAGE_MODIFIED,
         changeFrequency: "weekly" as const,
         priority: 0.6,
-      })
-    );
+      });
+      categoryPages.push({
+        url: `${baseUrl}${FR_BASE}/herbs?category=${cat.slug}`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "weekly" as const,
+        priority: 0.6,
+      });
+    }
 
     return [...staticPages, ...comparePages, ...categoryPages, ...herbPages];
   } catch (error) {

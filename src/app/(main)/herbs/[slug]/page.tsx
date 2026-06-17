@@ -80,7 +80,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? `${herb.description.slice(0, 155)}${herb.description.length > 155 ? "..." : ""}`
       : `Learn about ${herb.name} (${herb.scientific_name}) - uses, dosage, safety, and drug interactions.`,
     keywords,
-    alternates: { canonical: `${baseUrl}/herbs/${slug}` },
+    alternates: {
+      canonical: `${baseUrl}/herbs/${slug}`,
+      languages: {
+        "en": `${baseUrl}/herbs/${slug}`,
+        "fr": `${baseUrl}/fr/herbs/${slug}`,
+        "x-default": `${baseUrl}/herbs/${slug}`,
+      },
+    },
     openGraph: {
       title: `${herb.name} (${herb.scientific_name})`,
       description: herb.description?.slice(0, 160) || undefined,
@@ -206,6 +213,25 @@ export default async function HerbDetailPage({ params }: Props) {
 
   const interactions = (herb.drug_interactions || []) as import("@/components/herbs/interactions-table").Interaction[];
 
+  // Fetch pre-generated FAQs for Featured Snippet optimization
+  const getFaqsCached = unstable_cache(
+    async (herbId: string) => {
+      const supabase = getAnonClient();
+      if (!supabase) return [];
+      const { data } = await supabase
+        .from("herb_faqs")
+        .select("question, answer, category")
+        .eq("herb_id", herbId)
+        .order("sort_order", { ascending: true })
+        .limit(6);
+      return data || [];
+    },
+    [`herb-faqs-${slug}`],
+    { revalidate: 86400, tags: [`herb-faqs-${slug}`] }
+  );
+
+  const preGeneratedFaqs = await getFaqsCached(herb.id);
+
   const severityCounts = {
     contraindicated: interactions.filter(
       (i) => i.severity === "contraindicated"
@@ -288,6 +314,7 @@ export default async function HerbDetailPage({ params }: Props) {
         }
         pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
         drugInteractions={interactions.length}
+        preGeneratedFaqs={preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined}
       />
 
       {/* Back Button */}

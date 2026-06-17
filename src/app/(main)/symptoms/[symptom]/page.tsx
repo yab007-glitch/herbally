@@ -354,7 +354,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: meta.title,
     description: meta.description,
     keywords: meta.keywords,
-    alternates: { canonical: `${baseUrl}/symptoms/${symptom}` },
+    alternates: {
+      canonical: `${baseUrl}/symptoms/${symptom}`,
+      languages: {
+        "en": `${baseUrl}/symptoms/${symptom}`,
+        "fr": `${baseUrl}/fr/symptoms/${symptom}`,
+        "x-default": `${baseUrl}/symptoms/${symptom}`,
+      },
+    },
     openGraph: {
       title: meta.title,
       description: meta.description,
