@@ -1,22 +1,21 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { DEFAULT_LOCALE, type Locale } from "./config";
 
 /**
- * Read the locale from the herbally-locale cookie.
- * This is set by middleware when visiting /fr/* URLs.
- * Falls back to Accept-Language header parsing, then default.
+ * Read the locale from the x-locale header set by middleware during rewrites.
+ * This allows /fr/* URLs to render in French on the server.
  */
 export async function getLocaleFromRequest(): Promise<Locale> {
   try {
-    const cookieStore = await cookies();
-    const cookieLocale = cookieStore.get("herbally-locale")?.value;
-    if (cookieLocale === "fr" || cookieLocale === "en") {
-      return cookieLocale;
+    const h = await headers();
+    const locale = h.get("x-locale");
+    if (locale === "fr" || locale === "en") {
+      return locale;
     }
   } catch {
-    // cookies() may not be available in some contexts
+    // headers() may not be available in some contexts
   }
   return DEFAULT_LOCALE;
 }
