@@ -112,14 +112,14 @@ export default async function middleware(request: NextRequest) {
     );
 
     if (isLocalePrefixed(pathname)) {
-      // /fr/* — rewrite to internal path and set locale header
+      // /fr/* — rewrite to internal path and set locale header on REQUEST
       const locale = getLocaleFromPathname(pathname);
       const internalPath = stripLocalePrefix(pathname);
       const url = request.nextUrl.clone();
       url.pathname = internalPath;
+      request.headers.set("x-locale", locale);
+      request.headers.set("x-pathname", internalPath);
       const rewrite = NextResponse.rewrite(url);
-      rewrite.headers.set("x-locale", locale);
-      rewrite.headers.set("x-pathname", internalPath);
       rewrite.cookies.set("herbally-locale", locale, {
         path: "/",
         maxAge: 60 * 60 * 24 * 365,
@@ -140,9 +140,11 @@ export default async function middleware(request: NextRequest) {
   }
 
   // Default path — set locale header for downstream consumption
+  request.headers.set("x-locale", DEFAULT_LOCALE);
+  request.headers.set("x-pathname", pathname);
   let response = NextResponse.next({ request });
-  response.headers.set("x-locale", DEFAULT_LOCALE);
-  response.headers.set("x-pathname", pathname);
+  
+  
 
   // Locale cookie for first-time visitors (English default)
   const existingLocale = request.cookies.get("herbally-locale")?.value;
