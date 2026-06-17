@@ -893,7 +893,9 @@
     "noResults": "Aucune plante trouvée pour vos symptômes.",
     "tryDifferent": "Essayez de décrire vos symptômes différemment, ou demandez à l'herboriste IA.",
     "askAI": "Demander à l'herboriste IA",
-    "askAIFallback": "Demander à l'herboriste IA à la place"
+    "askAIFallback": "Demander à l'herboriste IA à la place",
+    "allSymptoms": "Tous les symptômes",
+    "viewDetails": "Voir les détails"
   },
   "herbDetailContent": {
     "herbNotFound": "Herbe Non Trouvée",

@@ -893,7 +893,9 @@
     "noResults": "No herbs found for your symptoms.",
     "tryDifferent": "Try describing your symptoms differently, or ask the AI herbalist.",
     "askAI": "Ask the AI herbalist about your symptoms",
-    "askAIFallback": "Ask the AI herbalist instead"
+    "askAIFallback": "Ask the AI herbalist instead",
+    "allSymptoms": "All symptoms",
+    "viewDetails": "View details"
   },
   "herbDetailContent": {
     "herbNotFound": "Herb Not Found",
