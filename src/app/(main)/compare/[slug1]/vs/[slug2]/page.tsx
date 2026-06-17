@@ -11,6 +11,7 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const revalidate = 3600;
 
@@ -65,7 +66,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ComparePage({ params }: Props) {
   const { slug1, slug2 } = await params;
-  const t = await getTranslations({locale: "en"});
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
   const [resultA, resultB] = await Promise.all([
     getHerbBySlug(slug1, { skipCookies: true }),
     getHerbBySlug(slug2, { skipCookies: true }),

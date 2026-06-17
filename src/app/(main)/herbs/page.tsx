@@ -11,6 +11,7 @@ import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { type Locale } from "@/lib/i18n/config";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import Script from "next/script";
 
 export const metadata: Metadata = {
@@ -51,7 +52,8 @@ export default async function HerbsPage({
   const category = params.category || "";
   const page = parseInt(params.page || "1", 10);
   const _locale = await getLocale();
-  const t = await getTranslations({locale: "en"});
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
   const [herbsResult, categoriesResult] = await Promise.all([
     getHerbs({ query, category, page }),
     getHerbCategories(),

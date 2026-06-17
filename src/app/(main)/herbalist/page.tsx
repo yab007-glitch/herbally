@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ChatInterface } from "@/components/pharmacist/chat-interface";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,8 @@ export default async function PharmacistPage({
   searchParams: Promise<{ herb?: string; medications?: string; q?: string }>;
 }) {
   const params = await searchParams;
-  const t = await getTranslations({locale: "en"});
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
   let herbContext: string | null = null;
   let autoQuery: string | null = null;
 

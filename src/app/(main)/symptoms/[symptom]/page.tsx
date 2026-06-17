@@ -8,6 +8,7 @@ import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
 
@@ -378,10 +379,8 @@ export default async function SymptomDetailPage({ params }: Props) {
   const { symptom } = await params;
   const meta = symptomMeta[symptom];
 
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
-  const t = await getTranslations({locale: "en"});
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
   if (!meta) {
     notFound();
   }

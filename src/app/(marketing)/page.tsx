@@ -1,8 +1,10 @@
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { HomePageClient } from "./home-page-client";
 
 export default async function HomePage() {
-  const t = await getTranslations({locale: "en"});
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
 
   const labels = {
     heroTitle: t("home.heroTitle"),

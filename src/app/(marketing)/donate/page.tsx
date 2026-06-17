@@ -25,6 +25,7 @@ const DonationButtons = dynamic(() =>
   )
 );
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const metadata: Metadata = {
   title: "Support Us - Keep Herbal Medicine Free",
@@ -58,7 +59,8 @@ export default async function DonatePage({
   searchParams: Promise<{ success?: string; canceled?: string }>;
 }) {
   const params = await searchParams;
-    const t = await getTranslations({locale: "en"});
+    const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
 
   const costs = costKeys.map((key) => ({
     key,

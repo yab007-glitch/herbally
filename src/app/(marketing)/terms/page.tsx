@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -15,7 +16,8 @@ export const metadata: Metadata = {
 };
 
 export default async function TermsPage() {
-    const t = await getTranslations({locale: "en"});
+    const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">

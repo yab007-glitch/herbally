@@ -14,7 +14,8 @@ import { getComparisonHerbs } from "@/lib/data/comparisons";
 import type { Monograph } from "@/lib/data/monographs";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
 
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
@@ -58,7 +59,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const metaLocale = await getLocale();
+  const metaLocale = await getLocaleFromRequest();
   const result = await getHerbBySlug(slug, { locale: metaLocale, skipCookies: true });
   if (!result.success || !result.data) {
     return { title: "Herb Not Found | HerbAlly", robots: { index: false } };
@@ -153,7 +154,7 @@ function formatCitations(
 
 export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
-  const pageLocale = await getLocale();
+  const pageLocale = await getLocaleFromRequest();
   const result = await getHerbBySlug(slug, { locale: pageLocale as Locale, skipCookies: true });
 
   if (!result.success || !result.data) {
@@ -247,7 +248,7 @@ export default async function HerbDetailPage({ params }: Props) {
   const evidenceLevel = getEvidenceLevel(herb.evidence_level);
 
   // Default locale for static generation; client-side locale switching handles user prefs
-  const locale = await getLocale();
+  const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
 
   const citations = formatCitations(

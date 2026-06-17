@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
@@ -66,7 +67,8 @@ const categorySubKey: Record<string, string> = {
 };
 
 export default async function FAQPage() {
-    const t = await getTranslations({locale: "en"});
+    const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
 
   const faqCategories = categoryKeys.map((catKey) => ({
     title: t(`faqContent.${catKey}`),

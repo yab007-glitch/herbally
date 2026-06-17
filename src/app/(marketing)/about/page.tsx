@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
 
 export const metadata: Metadata = {
@@ -30,8 +31,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const locale = "en" as Locale;
-    const t = await getTranslations({locale: "en"});
+
+    const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
 
   const howItWorks = [
     {

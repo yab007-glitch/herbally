@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SymptomSearchClient } from "./symptom-search-client";
 import { getTranslations } from "next-intl/server";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const metadata: Metadata = {
   alternates: {
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default async function SymptomsPage() {
-  const t = await getTranslations({locale: "en"});
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale });
   
   return (
     <div>
