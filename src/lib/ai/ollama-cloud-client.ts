@@ -53,7 +53,7 @@ export async function chatCompletion(
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
       const res = await fetch(`${baseUrl}/chat/completions`, {
         signal: controller.signal,
         method: "POST",

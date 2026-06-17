@@ -118,5 +118,45 @@
     "slug": "an-xa-huong",
     "reason": "Answer too long for: \"How does An Xa Huong work to treat kidney stones?\"",
     "timestamp": "2026-06-17T14:49:16.457Z"
+  },
+  {
+    "slug": "anchusa-arvensis",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T14:53:59.441Z"
+  },
+  {
+    "slug": "birds-foot-trefoil",
+    "reason": "This operation was aborted",
+    "timestamp": "2026-06-17T14:55:52.550Z"
+  },
+  {
+    "slug": "lemon-balm",
+    "reason": "This operation was aborted",
+    "timestamp": "2026-06-17T14:59:34.686Z"
+  },
+  {
+    "slug": "st-johns-wort",
+    "reason": "This operation was aborted",
+    "timestamp": "2026-06-17T14:59:34.688Z"
+  },
+  {
+    "slug": "piper-sarmentosum",
+    "reason": "Answer too long for: \"How does Piper sarmentosum work as an anti-inflammatory?\"",
+    "timestamp": "2026-06-17T15:00:00.118Z"
+  },
+  {
+    "slug": "hypericum-olympicum",
+    "reason": "Answer too long for: \"How does Hypericum olympicum work as an antidepressant?\"",
+    "timestamp": "2026-06-17T15:00:23.670Z"
+  },
+  {
+    "slug": "american-ginseng",
+    "reason": "This operation was aborted",
+    "timestamp": "2026-06-17T15:02:30.688Z"
+  },
+  {
+    "slug": "achillea-millefolium-var",
+    "reason": "This operation was aborted",
+    "timestamp": "2026-06-17T15:02:30.692Z"
   }
 ]

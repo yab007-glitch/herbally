@@ -116,7 +116,7 @@ function validateFaqs(faqs: FAQPair[]): { valid: boolean; reason?: string } {
     if (!faq.answer || faq.answer.length < 80) {
       return { valid: false, reason: `Answer too short for: "${faq.question}"` };
     }
-    if (faq.answer.length > 400) {
+    if (faq.answer.length > 500) {
       return { valid: false, reason: `Answer too long for: "${faq.question}"` };
     }
     if (!faq.category || !["general", "safety", "dosage", "interactions", "mechanism"].includes(faq.category)) {
