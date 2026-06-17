@@ -15,6 +15,15 @@
     "cananga-odorata": "Answer too long for: \"How does Cananga odorata essential oil work for anxiety?\"",
     "angelica-polymorpha": "Answer too long for: \"How does Angelica polymorpha work as an expectorant?\"",
     "ajuga-reptans-herb": "Answer too long for: \"How does Ajuga reptans work as an anti-inflammatory?\"",
-    "eritrean-rue": "Unterminated string in JSON at position 2341 (line 25 column 182)"
+    "eritrean-rue": "Unterminated string in JSON at position 2341 (line 25 column 182)",
+    "calamus-root": "Answer too long for: \"How does calamus root work in the body?\"",
+    "allocasuarina-verticillata": "Answer too long for: \"How does Allocasuarina verticillata work as a medicinal herb?\"",
+    "artemisia-pontica": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "ardisia-crenata": "Answer too long for: \"How does Ardisia crenata work to reduce inflammation?\"",
+    "ginger": "Answer too long for: \"How does ginger work to relieve nausea?\"",
+    "bawang": "Unterminated string in JSON at position 3056 (line 30 column 71)",
+    "cardamom-seeds": "Answer too long for: \"Does cardamom interact with any medications?\"",
+    "mentha-longifolia": "Answer too long for: \"How does Mentha longifolia work for digestive issues?\"",
+    "an-xa-huong": "Answer too long for: \"How does An Xa Huong work to treat kidney stones?\""
   }
 }
