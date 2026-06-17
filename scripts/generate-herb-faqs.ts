@@ -138,7 +138,18 @@ async function generateFaqsForHerb(herb: Herb): Promise<FAQPair[]> {
     retry: 3,
   });
 
-  const parsed = JSON.parse(response);
+  let cleanResponse = response.trim();
+  // Strip markdown code block wrappers if present
+  if (cleanResponse.startsWith("```json")) {
+    cleanResponse = cleanResponse.slice(7).trim();
+  }
+  if (cleanResponse.startsWith("```")) {
+    cleanResponse = cleanResponse.slice(3).trim();
+  }
+  if (cleanResponse.endsWith("```")) {
+    cleanResponse = cleanResponse.slice(0, -3).trim();
+  }
+  const parsed = JSON.parse(cleanResponse);
   const faqs = parsed.faqs || parsed.FAQs || parsed.faq || [];
 
   const validation = validateFaqs(faqs);
@@ -198,24 +209,30 @@ async function runBatch() {
   const supabase = createClient(supabaseUrl, supabaseKey);
   const progress = loadProgress();
 
-  console.log("Loading herbs without FAQs...");
+  console.log("Loading published herbs...");
 
-  // Get all published herbs that don't have FAQs yet
-  const { data: herbs, error } = await supabase
+  // Get all published herbs
+  const { data: herbsData, error } = await supabase
     .from("herbs")
     .select("id, slug, name, scientific_name, description, traditional_uses, modern_uses, active_compounds, dosage_adult, pregnancy_safe, nursing_safe, contraindications, side_effects, evidence_level")
     .eq("is_published", true)
-    .not("id", "in", (
-      supabase.from("herb_faqs").select("herb_id")
-    ))
-    .order("view_count", { ascending: false });
+    .order("view_count", { ascending: false })
+    .limit(3000);
 
   if (error) {
     console.error("Failed to fetch herbs:", error);
     process.exit(1);
   }
 
-  const allHerbs = (herbs || []) as Herb[];
+  // Fetch herbs that already have FAQs to skip them
+  const { data: faqHerbs } = await supabase
+    .from("herb_faqs")
+    .select("herb_id")
+    .limit(3000);
+  
+  const faqHerbIds = new Set((faqHerbs || []).map((f) => f.herb_id));
+
+  const allHerbs = (herbsData || []).filter((h: any) => !faqHerbIds.has(h.id)) as Herb[];
   const pending = allHerbs.filter((h) => !progress.completed[h.slug] && !progress.failed[h.slug]);
 
   console.log(`Total herbs: ${allHerbs.length}`);

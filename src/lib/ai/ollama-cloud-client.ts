@@ -87,7 +87,8 @@ export async function chatCompletion(
       const data = (await res.json()) as {
         choices?: Array<{ message?: { content?: string } }>;
       };
-      const content = data.choices?.[0]?.message?.content;
+      const msg = data.choices?.[0]?.message;
+      const content = msg?.content || (msg as any)?.reasoning || "";
       if (!content) {
         throw new Error("Empty response from Ollama Cloud");
       }

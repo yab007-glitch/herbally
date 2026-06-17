@@ -1,0 +1,20 @@
+{
+  "completed": {},
+  "failed": {
+    "abutilon-indicum": "Unexpected token '`', \"```json\n{\n\"... is not valid JSON",
+    "acapulco": "Unexpected token '`', \"```json\n{\n\"... is not valid JSON",
+    "abelmoschus-moschatus-herb": "Unexpected token '`', \"```json\n{\n\"... is not valid JSON",
+    "turmeric": "Unexpected token '`', \"```json\n{\n\"... is not valid JSON",
+    "acacia-confusa": "Unexpected token '`', \"```json\n{\n\"... is not valid JSON",
+    "ashwagandha": "Answer too long for: \"What medications should not be taken with ashwagandha?\"",
+    "achillea-ligustica": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "abrus-precatorius": "Unterminated string in JSON at position 2648 (line 25 column 366)",
+    "agave-plant": "Answer too long for: \"Does agave interact with any medications?\"",
+    "dalbergia-odorifera": "Answer too long for: \"How does Dalbergia odorifera work to improve blood circulation?\"",
+    "abies-alba": "Answer too long for: \"How does Abies alba essential oil work for respiratory conditions?\"",
+    "cananga-odorata": "Answer too long for: \"How does Cananga odorata essential oil work for anxiety?\"",
+    "angelica-polymorpha": "Answer too long for: \"How does Angelica polymorpha work as an expectorant?\"",
+    "ajuga-reptans-herb": "Answer too long for: \"How does Ajuga reptans work as an anti-inflammatory?\"",
+    "eritrean-rue": "Unterminated string in JSON at position 2341 (line 25 column 182)"
+  }
+}
