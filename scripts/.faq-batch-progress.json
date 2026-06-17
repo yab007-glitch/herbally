@@ -1,5 +1,13 @@
 {
-  "completed": {},
+  "completed": {
+    "ginseng": "2026-06-17T20:44:36.995Z",
+    "acacia-nilotica": "2026-06-17T20:45:20.786Z",
+    "chamomile-roman": "2026-06-17T20:45:21.177Z",
+    "vitex-negundo": "2026-06-17T20:46:10.975Z",
+    "ginkgo-biloba": "2026-06-17T20:47:09.519Z",
+    "bacopa": "2026-06-17T20:47:46.811Z",
+    "picao-preto": "2026-06-17T20:47:50.388Z"
+  },
   "failed": {
     "abutilon-indicum": "Unexpected token '`', \"```json\n{\n\"... is not valid JSON",
     "acapulco": "Unexpected token '`', \"```json\n{\n\"... is not valid JSON",
@@ -32,6 +40,23 @@
     "piper-sarmentosum": "Answer too long for: \"How does Piper sarmentosum work as an anti-inflammatory?\"",
     "hypericum-olympicum": "Answer too long for: \"How does Hypericum olympicum work as an antidepressant?\"",
     "american-ginseng": "This operation was aborted",
-    "achillea-millefolium-var": "This operation was aborted"
+    "achillea-millefolium-var": "This operation was aborted",
+    "acacia-obtusifolia": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "ximenia-caffra": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "tibetan-valerian": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "ashwagandha-ksm66": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "torch-ginger": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "minthostachys-mollis": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "african-wild-ginger": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "valerian": "Unterminated string in JSON at position 2807 (line 25 column 367)",
+    "lions-mane": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "bai-bian-dou-seed": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "lemon-balm-toronjil": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "reishi": "Unterminated string in JSON at position 1437 (line 15 column 102)",
+    "acacia-arabica": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "japanese-myoga-ginger": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "hops": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "achillea-biebersteinii": "Unterminated string in JSON at position 2651 (line 25 column 320)",
+    "can-sha": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache"
   }
 }

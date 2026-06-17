@@ -158,5 +158,90 @@
     "slug": "achillea-millefolium-var",
     "reason": "This operation was aborted",
     "timestamp": "2026-06-17T15:02:30.692Z"
+  },
+  {
+    "slug": "acacia-obtusifolia",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:37:30.533Z"
+  },
+  {
+    "slug": "ximenia-caffra",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:37:42.219Z"
+  },
+  {
+    "slug": "tibetan-valerian",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:38:06.245Z"
+  },
+  {
+    "slug": "ashwagandha-ksm66",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:38:20.729Z"
+  },
+  {
+    "slug": "torch-ginger",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:38:40.544Z"
+  },
+  {
+    "slug": "minthostachys-mollis",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:38:54.338Z"
+  },
+  {
+    "slug": "african-wild-ginger",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:39:14.007Z"
+  },
+  {
+    "slug": "valerian",
+    "reason": "Unterminated string in JSON at position 2807 (line 25 column 367)",
+    "timestamp": "2026-06-17T20:39:26.562Z"
+  },
+  {
+    "slug": "lions-mane",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:39:41.488Z"
+  },
+  {
+    "slug": "bai-bian-dou-seed",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:40:01.166Z"
+  },
+  {
+    "slug": "lemon-balm-toronjil",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:40:27.714Z"
+  },
+  {
+    "slug": "reishi",
+    "reason": "Unterminated string in JSON at position 1437 (line 15 column 102)",
+    "timestamp": "2026-06-17T20:40:30.687Z"
+  },
+  {
+    "slug": "acacia-arabica",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:41:08.106Z"
+  },
+  {
+    "slug": "japanese-myoga-ginger",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:41:22.209Z"
+  },
+  {
+    "slug": "hops",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:42:01.560Z"
+  },
+  {
+    "slug": "achillea-biebersteinii",
+    "reason": "Unterminated string in JSON at position 2651 (line 25 column 320)",
+    "timestamp": "2026-06-17T20:42:09.607Z"
+  },
+  {
+    "slug": "can-sha",
+    "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
+    "timestamp": "2026-06-17T20:42:42.913Z"
   }
 ]
