@@ -9,6 +9,7 @@ import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { type Locale } from "@/lib/i18n/config";
+import { notFound } from "next/navigation";
 
 export const revalidate = 3600;
 
@@ -345,16 +346,19 @@ const symptomMeta: Record<
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { symptom } = await params;
   const meta = symptomMeta[symptom];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
   if (!meta) {
-    return { title: "HerbAlly" };
+    return { title: "Not Found | HerbAlly", robots: { index: false } };
   }
   return {
     title: meta.title,
     description: meta.description,
     keywords: meta.keywords,
+    alternates: { canonical: `${baseUrl}/symptoms/${symptom}` },
     openGraph: {
       title: meta.title,
       description: meta.description,
+      url: `${baseUrl}/symptoms/${symptom}`,
     },
   };
 }
@@ -372,14 +376,7 @@ export default async function SymptomDetailPage({ params }: Props) {
   const locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
   const t = await getTranslations({locale: "en"});
   if (!meta) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 text-center">
-        <h2 className="text-2xl font-semibold">{t("herbDetail.notFound")}</h2>
-        <Link href="/symptoms" className="text-primary hover:underline">
-          {t("symptomsPage.allSymptoms")}
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

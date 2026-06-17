@@ -65,7 +65,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://herbally.app",
+    languages: {
+      "x-default": "/",
+    },
   },
   openGraph: {
     type: "website",
@@ -75,12 +77,19 @@ export const metadata: Metadata = {
       "Explore 2,700+ medicinal herbs, calculate dosages, and check drug interactions.",
     url: process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app",
     locale: "en_US",
+    images: [{
+      url: "/opengraph-image",
+      width: 1200,
+      height: 630,
+      alt: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
+    }],
   },
   twitter: {
     card: "summary_large_image",
     title: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
     description:
       "Explore 2,700+ medicinal herbs, calculate dosages, and check drug interactions.",
+    images: ["/twitter-image"],
   },
 };
 

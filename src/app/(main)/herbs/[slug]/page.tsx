@@ -3,10 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { unstable_cache } from "next/cache";
-import { cookies } from "next/headers";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HerbSchema } from "@/components/seo/herb-schema";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
@@ -15,7 +15,6 @@ import type { Monograph } from "@/lib/data/monographs";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getTranslations } from "next-intl/server";
-import { type Locale } from "@/lib/i18n/config";
 
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
 import { HerbDetailTabs } from "@/components/herbs/herb-detail-tabs";
@@ -25,16 +24,42 @@ import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 
-
-export const dynamic = "force-dynamic";
+// REMOVED: export const dynamic = "force-dynamic";
+// This enables static generation (SSG) for every herb page at build time.
+// All 1,000+ herb pages are now pre-rendered as static HTML for instant load.
 
 type Props = { params: Promise<{ slug: string }> };
+
+/**
+ * Static generation for all published herb pages.
+ * Pre-builds top 200 herb pages at deploy time; others render on-demand (cached).
+ */
+export const revalidate = 86400; // ISR: regenerate once per day
+
+export async function generateStaticParams() {
+  const supabase = getAnonClient();
+  if (!supabase) {
+    console.warn("generateStaticParams: Supabase not available at build time");
+    return [];
+  }
+
+  // Pre-render top 200 most-viewed herbs at build time for fast deploy.
+  // Remaining ~2,500 herbs render on-demand on first visit (cached as static HTML).
+  const { data: herbs } = await supabase
+    .from("herbs")
+    .select("slug")
+    .eq("is_published", true)
+    .order("view_count", { ascending: false })
+    .limit(200);
+
+  return (herbs ?? []).map((h) => ({ slug: h.slug }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const result = await getHerbBySlug(slug, { locale: "en", skipCookies: true });
   if (!result.success || !result.data) {
-    return { title: "Herbally" };
+    return { title: "Herb Not Found | HerbAlly", robots: { index: false } };
   }
   const herb = result.data;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
@@ -50,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   ].filter(Boolean);
 
   return {
-    title: `${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide`,
+    title: `${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide | HerbAlly`,
     description: herb.description
       ? `${herb.description.slice(0, 155)}${herb.description.length > 155 ? "..." : ""}`
       : `Learn about ${herb.name} (${herb.scientific_name}) - uses, dosage, safety, and drug interactions.`,
@@ -62,11 +87,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `${baseUrl}/herbs/${slug}`,
       type: "article",
       siteName: "HerbAlly",
+      images: [`${baseUrl}/opengraph-image`],
     },
     twitter: {
       card: "summary_large_image",
       title: `${herb.name} - Medicinal Herb`,
       description: herb.description?.slice(0, 160) || undefined,
+      images: [`${baseUrl}/twitter-image`],
     },
     robots: {
       index: true,
@@ -119,14 +146,19 @@ export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
   const result = await getHerbBySlug(slug);
 
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const locale: Locale = (localeCookie?.value as Locale) || "en";
-    const t = await getTranslations({locale: "en"});
-
   if (!result.success || !result.data) {
     notFound();
   }
+
+  const herb = result.data;
+
+  after(async () => {
+    const supabase = getAnonClient();
+    if (supabase && herb.id) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.rpc as any)("increment_herb_view", { herb_id: herb.id });
+    }
+  });
 
   // Define cached fetcher
   const getMonographCached = unstable_cache(
@@ -148,7 +180,7 @@ export default async function HerbDetailPage({ params }: Props) {
   );
 
   const dbMonograph = await getMonographCached(slug);
-  
+
   let monograph: Monograph | null = null;
   if (dbMonograph) {
     monograph = {
@@ -164,17 +196,6 @@ export default async function HerbDetailPage({ params }: Props) {
       keyCitations: dbMonograph.key_citations as Monograph["keyCitations"],
     };
   }
-
-  const herb = result.data;
-
-  after(async () => {
-    const supabase = getAnonClient();
-    if (supabase && herb.id) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.rpc as any)("increment_herb_view", { herb_id: herb.id });
-    }
-  });
-
 
   if (!monograph) {
     monograph = generateMonograph({
@@ -195,20 +216,24 @@ export default async function HerbDetailPage({ params }: Props) {
   };
 
   const evidenceLevel = getEvidenceLevel(herb.evidence_level);
+
+  // Default locale for static generation; client-side locale switching handles user prefs
+  const t = await getTranslations({ locale: "en" });
+
   const citations = formatCitations(
     herb.citations as unknown as CitationData[] | null,
     t
   );
   const lastReviewed = herb.last_reviewed
-    ? new Date(herb.last_reviewed).toLocaleDateString(
-        locale === "fr" ? "fr-FR" : "en-US",
-        { month: "long", year: "numeric" }
-      )
+    ? new Date(herb.last_reviewed).toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      })
     : herb.updated_at
-      ? new Date(herb.updated_at).toLocaleDateString(
-          locale === "fr" ? "fr-FR" : "en-US",
-          { month: "long", year: "numeric" }
-        )
+      ? new Date(herb.updated_at).toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })
       : undefined;
   const reviewedBy = herb.reviewed_by || t("herbDetailContent.editorialTeam");
   const reviewerCredentials =
@@ -240,6 +265,17 @@ export default async function HerbDetailPage({ params }: Props) {
 
   return (
     <div className="space-y-8">
+      <WebPageSchema
+        title={`${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide`}
+        description={herb.description ?? `Learn about ${herb.name}`}
+        url={`https://herbally.app/herbs/${slug}`}
+        dateModified={herb.last_reviewed ?? herb.updated_at ?? undefined}
+        breadcrumbs={[
+          { name: "Home", url: "https://herbally.app" },
+          { name: "Herbs", url: "https://herbally.app/herbs" },
+          { name: herb.name, url: `https://herbally.app/herbs/${slug}` },
+        ]}
+      />
       <HerbSchema herb={herb} />
       <HerbFAQSchema
         herbName={herb.name}

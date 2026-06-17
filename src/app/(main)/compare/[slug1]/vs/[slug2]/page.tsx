@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { SourceAttribution } from "@/components/herbs/citations";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -45,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const herbB = resultB.success ? resultB.data : null;
 
   if (!herbA || !herbB) {
-    return { title: "Herb Comparison Not Found" };
+    return { title: "Herb Comparison Not Found | HerbAlly", robots: { index: false } };
   }
 
   return {
@@ -72,6 +73,16 @@ export default async function ComparePage({ params }: Props) {
 
   return (
     <div className="space-y-8">
+      <WebPageSchema
+        title={`${herbA.name} vs ${herbB.name} - Herb Comparison`}
+        description={`Compare ${herbA.name} and ${herbB.name} side by side.`}
+        url={`https://herbally.app/compare/${slug1}/vs/${slug2}`}
+        breadcrumbs={[
+          { name: "Home", url: "https://herbally.app" },
+          { name: "Herbs", url: "https://herbally.app/herbs" },
+          { name: `${herbA.name} vs ${herbB.name}`, url: `https://herbally.app/compare/${slug1}/vs/${slug2}` },
+        ]}
+      />
       {/* Header */}
       <div>
         <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>

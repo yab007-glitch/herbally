@@ -3,6 +3,7 @@ import { SymptomSearchClient } from "./symptom-search-client";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "https://herbally.app/symptoms" },
   title: "Find Herbs by Symptom",
   description: "Describe your symptoms in plain English and discover which medicinal herbs may help.",
 };

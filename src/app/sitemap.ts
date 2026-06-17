@@ -141,6 +141,69 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from("herb_categories")
       .select("slug");
 
+    const comparePages: MetadataRoute.Sitemap = [
+      {
+        url: `${baseUrl}/compare/turmeric/vs/ginger`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/ashwagandha/vs/rhodiola`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/chamomile/vs/valerian`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/garlic/vs/ginger`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/echinacea/vs/elderberry`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/ginkgo/vs/ginseng`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/lavender/vs/chamomile`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/turmeric/vs/ashwagandha`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/st-johns-wort/vs/kava`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}/compare/milk-thistle/vs/dandelion`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+    ];
+
     const categoryPages: MetadataRoute.Sitemap = (categories ?? []).map(
       (cat) => ({
         url: `${baseUrl}/herbs?category=${cat.slug}`,
@@ -150,7 +213,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
     );
 
-    return [...staticPages, ...categoryPages, ...herbPages];
+    return [...staticPages, ...comparePages, ...categoryPages, ...herbPages];
   } catch (error) {
     logger.error("sitemap_generation_error", { error: error instanceof Error ? error.message : String(error) });
     // Return static pages only on error

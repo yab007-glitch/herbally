@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: "Medicinal Herbs",
   description:
     "Browse 2,700+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
+  alternates: { canonical: "https://herbally.app/herbs" },
   openGraph: {
     title: "Medicinal Herbs — HerbAlly",
     description:
