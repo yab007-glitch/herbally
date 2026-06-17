@@ -60,7 +60,16 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const metaLocale = await getLocaleFromRequest();
-  const result = await getHerbBySlug(slug, { locale: metaLocale, skipCookies: true });
+
+  const getHerbMetaCached = unstable_cache(
+    async (herbSlug: string, locale: string) => {
+      return getHerbBySlug(herbSlug, { locale, skipCookies: true });
+    },
+    ["herb-meta-" + slug],
+    { revalidate: 86400, tags: ["herb-meta-" + slug] }
+  );
+
+  const result = await getHerbMetaCached(slug, metaLocale);
   if (!result.success || !result.data) {
     return { title: "Herb Not Found | HerbAlly", robots: { index: false } };
   }
@@ -155,7 +164,16 @@ function formatCitations(
 export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
   const pageLocale = await getLocaleFromRequest();
-  const result = await getHerbBySlug(slug, { locale: pageLocale as Locale, skipCookies: true });
+
+  const getHerbCached = unstable_cache(
+    async (herbSlug: string, locale: Locale) => {
+      return getHerbBySlug(herbSlug, { locale, skipCookies: true });
+    },
+    ["herb-" + slug],
+    { revalidate: 86400, tags: ["herb-" + slug] }
+  );
+
+  const result = await getHerbCached(slug, pageLocale as Locale);
 
   if (!result.success || !result.data) {
     notFound();
