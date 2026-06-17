@@ -13,11 +13,13 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -64,7 +66,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // Per-page hreflang is handled in individual page generateMetadata functions
   openGraph: {
     type: "website",
     siteName: "HerbAlly",
@@ -92,7 +93,7 @@ export const metadata: Metadata = {
 const localeScript = `
   (function() {
     var m = document.cookie.match(/herbally-locale=([^;]+)/);
-    if (m && m[1] === 'fr') document.documentElement.lang = 'fr';
+    if (m && m[1] === "fr") document.documentElement.lang = "fr";
   })();
 `;
 
@@ -104,9 +105,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={`\${geistSans.variable} \${geistMono.variable} antialiased`}
     >
       <head>
+        <link rel="preconnect" href="https://pnvltmyixympgammxvoo.supabase.co" />
+        <link rel="dns-prefetch" href="https://pnvltmyixympgammxvoo.supabase.co" />
         <OrganizationSchema />
         <script
           dangerouslySetInnerHTML={{ __html: localeScript }}

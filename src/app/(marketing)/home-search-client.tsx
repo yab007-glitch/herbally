@@ -4,12 +4,9 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Leaf, ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck, Sparkles } from "lucide-react";
 
 type Labels = {
-  heroTitle: string;
-  heroSubtitle: string;
-  heroButton: string;
   herbPlaceholder: string;
   medPlaceholder: string;
   checkButton: string;
@@ -35,7 +32,7 @@ const SUGGESTIONS = [
   { herb: "Echinacea", med: "immunosuppressants", query: "Can I take echinacea with immunosuppressants?" },
 ];
 
-export function HomePageClient({ labels }: { labels: Labels }) {
+export function HomeSearchClient({ labels }: { labels: Labels }) {
   const router = useRouter();
   const [herbInput, setHerbInput] = useState("");
   const [medInput, setMedInput] = useState("");
@@ -70,7 +67,6 @@ export function HomePageClient({ labels }: { labels: Labels }) {
     return () => { if (searchTimeout.current) clearTimeout(searchTimeout.current); };
   }, [herbInput, searchHerbs]);
 
-  // Close results on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (resultsRef.current && !resultsRef.current.contains(e.target as Node) &&
@@ -86,7 +82,6 @@ export function HomePageClient({ labels }: { labels: Labels }) {
     const herbName = herbInput.trim();
     const medName = medInput.trim();
     if (!herbName && !medName) return;
-    
     let query = "";
     if (herbName && medName) {
       query = `Is ${herbName} safe to take with ${medName}?`;
@@ -95,7 +90,6 @@ export function HomePageClient({ labels }: { labels: Labels }) {
     } else {
       query = `Tell me about ${medName}`;
     }
-    
     router.push(`/herbalist?q=${encodeURIComponent(query)}`);
   }
 
@@ -132,18 +126,6 @@ export function HomePageClient({ labels }: { labels: Labels }) {
   return (
     <div className="flex min-h-[80dvh] flex-col items-center justify-center px-4">
       <div className="w-full max-w-lg text-center">
-        {/* Logo mark */}
-        <div className="mx-auto mb-6 flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <Leaf className="size-6" />
-        </div>
-
-        <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          {labels.heroTitle}
-        </h1>
-        <p className="mx-auto mt-3 max-w-md text-pretty text-sm text-muted-foreground sm:text-base">
-          {labels.heroSubtitle}
-        </p>
-
         {/* Two-input interaction checker */}
         <div className="mt-8 space-y-3">
           <div className="relative">
@@ -158,7 +140,6 @@ export function HomePageClient({ labels }: { labels: Labels }) {
               className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
               autoComplete="off"
             />
-            {/* Autocomplete dropdown */}
             {showHerbResults && herbResults.length > 0 && (
               <div
                 ref={resultsRef}
