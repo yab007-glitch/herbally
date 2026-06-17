@@ -243,5 +243,50 @@
     "slug": "can-sha",
     "reason": "DB insert failed: Could not find the table 'public.herb_faqs' in the schema cache",
     "timestamp": "2026-06-17T20:42:42.913Z"
+  },
+  {
+    "slug": "albizia",
+    "reason": "Expected double-quoted property name in JSON at position 2082 (line 20 column 418)",
+    "timestamp": "2026-06-17T20:49:56.381Z"
+  },
+  {
+    "slug": "curcumin",
+    "reason": "Answer too long for: \"How does curcumin work to reduce inflammation in the body?\"",
+    "timestamp": "2026-06-17T20:50:24.307Z"
+  },
+  {
+    "slug": "korean-red-ginseng-extract",
+    "reason": "Unterminated string in JSON at position 2317 (line 25 column 175)",
+    "timestamp": "2026-06-17T20:50:30.570Z"
+  },
+  {
+    "slug": "czech-valerian",
+    "reason": "Unterminated string in JSON at position 2042 (line 20 column 422)",
+    "timestamp": "2026-06-17T20:51:39.870Z"
+  },
+  {
+    "slug": "tongan-turmeric",
+    "reason": "Unexpected end of JSON input",
+    "timestamp": "2026-06-17T20:53:50.400Z"
+  },
+  {
+    "slug": "acanthopanax-sessiliflorus",
+    "reason": "Unterminated string in JSON at position 1301 (line 15 column 77)",
+    "timestamp": "2026-06-17T20:54:59.154Z"
+  },
+  {
+    "slug": "peppermint-spanish",
+    "reason": "Unterminated fractional number in JSON at position 2 (line 1 column 3)",
+    "timestamp": "2026-06-17T20:55:04.111Z"
+  },
+  {
+    "slug": "boswellia",
+    "reason": "Answer too long for: \"How does Boswellia work to reduce inflammation in the body?\"",
+    "timestamp": "2026-06-17T20:57:03.751Z"
+  },
+  {
+    "slug": "psyllium",
+    "reason": "Unterminated string in JSON at position 1953 (line 20 column 14)",
+    "timestamp": "2026-06-17T20:57:17.698Z"
   }
 ]
