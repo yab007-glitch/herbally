@@ -144,7 +144,7 @@ function formatCitations(
 
 export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
-  const result = await getHerbBySlug(slug);
+  const result = await getHerbBySlug(slug, { skipCookies: true });
 
   if (!result.success || !result.data) {
     notFound();
