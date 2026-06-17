@@ -2,18 +2,12 @@ import { headers } from "next/headers";
 
 export default async function DebugHeadersPage() {
   const h = await headers();
-  const entries: Record<string, string> = {};
+  const lines: string[] = [];
   h.forEach((value, key) => {
-    entries[key] = value;
+    lines.push(`${key}: ${value}`);
   });
-  const keys = Object.keys(entries).filter(k =>
-    k.includes("locale") || k.includes("path") || k.includes("invoke") || k.includes("forward") || k.includes("matched")
-  ).sort();
-  return (
-    <pre>
-      {keys.map(k => (
-        <div key={k}>{k}: {entries[k]}</div>
-      ))}
-    </pre>
+  const filtered = lines.filter(l =>
+    l.includes("locale") || l.includes("path") || l.includes("invoke") || l.includes("forward") || l.includes("matched")
   );
+  return <pre style={{ whiteSpace: "pre-wrap" }}>{filtered.join("\n")}</pre>;
 }
