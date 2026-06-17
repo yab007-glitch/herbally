@@ -26,7 +26,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   }, [locale]);
 
   return (
-    <NextIntlClientProvider messages={messages} locale={locale}>
+    <NextIntlClientProvider messages={messages} locale={locale} timeZone="America/Toronto">
       {children}
     </NextIntlClientProvider>
   );

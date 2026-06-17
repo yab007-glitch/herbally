@@ -26,5 +26,6 @@ export default getRequestConfig(async ({ locale: pathLocale }) => {
   return {
     locale: resolvedLocale,
     messages: messages[resolvedLocale] ?? messages.en,
+    timeZone: "America/Toronto",
   };
 });

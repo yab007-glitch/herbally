@@ -40,9 +40,29 @@
     "ashwagandha": "2026-06-17T21:00:29.347Z",
     "abelmoschus-moschatus-herb": "2026-06-17T21:00:37.259Z",
     "abrus-precatorius": "2026-06-17T21:00:40.229Z",
-    "achillea-ligustica": "2026-06-17T21:02:29.924Z"
+    "achillea-ligustica": "2026-06-17T21:02:29.924Z",
+    "calamus-root": "2026-06-17T21:04:15.848Z",
+    "angelica-polymorpha": "2026-06-17T21:04:18.009Z",
+    "dalbergia-odorifera": "2026-06-17T21:04:21.371Z",
+    "mentha-longifolia": "2026-06-17T21:04:27.982Z",
+    "ardisia-crenata": "2026-06-17T21:04:29.251Z",
+    "abies-alba": "2026-06-17T21:04:29.595Z",
+    "cananga-odorata": "2026-06-17T21:04:39.496Z",
+    "ajuga-reptans-herb": "2026-06-17T21:04:42.078Z",
+    "allocasuarina-verticillata": "2026-06-17T21:05:37.342Z",
+    "artemisia-pontica": "2026-06-17T21:05:39.964Z",
+    "anchusa-arvensis": "2026-06-17T21:06:14.095Z",
+    "acacia-obtusifolia": "2026-06-17T21:06:19.808Z",
+    "cardamom-seeds": "2026-06-17T21:06:21.206Z",
+    "birds-foot-trefoil": "2026-06-17T21:06:24.956Z",
+    "lemon-balm": "2026-06-17T21:07:28.686Z",
+    "an-xa-huong": "2026-06-17T21:07:32.159Z",
+    "st-johns-wort": "2026-06-17T21:07:39.307Z"
   },
   "failed": {
-    "agave-plant": "This operation was aborted"
+    "agave-plant": "This operation was aborted",
+    "bawang": "This operation was aborted",
+    "ginger": "This operation was aborted",
+    "piper-sarmentosum": "This operation was aborted"
   }
 }
