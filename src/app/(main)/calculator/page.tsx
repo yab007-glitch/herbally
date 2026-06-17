@@ -11,7 +11,7 @@ import { getTranslations } from "next-intl/server";
 import { type Locale } from "@/lib/i18n/config";
 
 export const metadata: Metadata = {
-  title: "HerbAlly - Dose Calculator",
+  title: "Dose Calculator",
   description:
     "Free herbal dosage calculator using Clark's Rule, Young's Rule, BSA, and Fried's Rule. Calculate safe children's and infant doses for 2,700+ medicinal herbs.",
   alternates: {

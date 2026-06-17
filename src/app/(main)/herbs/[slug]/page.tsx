@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   ].filter(Boolean);
 
   return {
-    title: `${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide | HerbAlly`,
+    title: `${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide`,
     description: herb.description
       ? `${herb.description.slice(0, 155)}${herb.description.length > 155 ? "..." : ""}`
       : `Learn about ${herb.name} (${herb.scientific_name}) - uses, dosage, safety, and drug interactions.`,
