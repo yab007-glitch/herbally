@@ -1,5 +1,12 @@
 import type { VerifiedContext } from "./context-fetcher";
 
+/** "Safe / Unsafe / Unknown" renderer for boolean-or-null safety flags. */
+function fmtSafety(v: boolean | null | undefined): string {
+  if (v === true) return "Generally considered safe";
+  if (v === false) return "NOT safe — avoid";
+  return "Unknown — insufficient data";
+}
+
 /**
  * Build the system prompt for the AI herbalist.
  *
@@ -15,7 +22,7 @@ export function getSystemPrompt(
   verifiedContext?: VerifiedContext | null
 ): string {
   const medicationList = medications?.length
-    ? `\nThe user is currently taking these medications: ${medications.join(", ")}`
+    ? `\nThe user is currently taking these medications: ${medications.join(", ")}. These are highly relevant — always check the verified interactions against them.`
     : "";
 
   const herbInfo = herbContext ? `\nCurrent herb context: ${herbContext}` : "";
@@ -32,51 +39,42 @@ export function getSystemPrompt(
     verifiedDataSection = "\n## VERIFIED DATABASE DATA (PRIMARY SOURCE)\n";
     verifiedDataSection += `Source note: ${verifiedContext.note}\n`;
 
-    // Herb profiles
     for (const herb of verifiedContext.herbs) {
       verifiedDataSection += `\n### ${herb.name} (${herb.scientific_name})\n`;
       verifiedDataSection += `Description: ${herb.description}\n`;
       verifiedDataSection += `Evidence level: ${herb.evidence_level ?? "Not rated"}\n`;
-      verifiedDataSection += `Verification: ${herb.provenance_method === "manual" || herb.provenance_method === "primary_source" ? "Human-verified" : herb.provenance_method === "ai_summarized" ? "AI-generated — verify independently" : "Unverified"}\n`;
+      verifiedDataSection += `Verification: ${
+        herb.provenance_method === "manual" ||
+        herb.provenance_method === "primary_source"
+          ? "Human-verified"
+          : herb.provenance_method === "ai_summarized"
+            ? "AI-generated — verify independently"
+            : "Unverified"
+      }\n`;
 
-      if (herb.traditional_uses.length > 0) {
+      if (herb.traditional_uses.length > 0)
         verifiedDataSection += `Traditional uses: ${herb.traditional_uses.join("; ")}\n`;
-      }
-      if (herb.modern_uses.length > 0) {
+      if (herb.modern_uses.length > 0)
         verifiedDataSection += `Modern uses: ${herb.modern_uses.join("; ")}\n`;
-      }
-      if (herb.active_compounds.length > 0) {
+      if (herb.active_compounds.length > 0)
         verifiedDataSection += `Active compounds: ${herb.active_compounds.join(", ")}\n`;
-      }
-      if (herb.dosage_adult) {
+      if (herb.dosage_adult)
         verifiedDataSection += `Typical adult dosage: ${herb.dosage_adult}\n`;
-      }
-      if (herb.contraindications.length > 0) {
+      if (herb.contraindications.length > 0)
         verifiedDataSection += `Contraindications: ${herb.contraindications.join("; ")}\n`;
-      }
-      if (herb.side_effects.length > 0) {
+      if (herb.side_effects.length > 0)
         verifiedDataSection += `Side effects: ${herb.side_effects.join("; ")}\n`;
-      }
-      if (herb.pregnancy_safe_oral !== herb.pregnancy_safe_topical) {
-        if (herb.nursing_safe_oral !== herb.nursing_safe_topical) {
-          verifiedDataSection += `Nursing safety: Oral=${herb.nursing_safe_oral === true ? "Safe" : herb.nursing_safe_oral === false ? "UNSAFE" : "Unknown"}, Topical=${herb.nursing_safe_topical === true ? "Safe" : herb.nursing_safe_topical === false ? "UNSAFE" : "Unknown"}\n`;
-        } else {
-          verifiedDataSection += `Nursing safety: ${herb.nursing_safe === true ? "Generally safe" : herb.nursing_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
-        }
-      } else {
-        verifiedDataSection += `Pregnancy safety: ${herb.pregnancy_safe === true ? "Generally safe" : herb.pregnancy_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
-      }
-      verifiedDataSection += `Nursing safety: ${herb.nursing_safe === true ? "Generally safe" : herb.nursing_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
+
+      verifiedDataSection += `Pregnancy safety: ${fmtSafety(herb.pregnancy_safe)}\n`;
+      verifiedDataSection += `Nursing safety: ${fmtSafety(herb.nursing_safe)}\n`;
 
       if (herb.drug_interactions.length > 0) {
         verifiedDataSection += `Known drug interactions (from database):\n`;
-        for (const ix of herb.drug_interactions) {
+        for (const ix of herb.drug_interactions)
           verifiedDataSection += `  - ${ix}\n`;
-        }
       }
     }
 
-    // Known interactions
     if (verifiedContext.interactions.length > 0) {
       verifiedDataSection += `\n### Known Herb-Drug Interactions (from database)\n`;
       for (const ix of verifiedContext.interactions) {
@@ -87,73 +85,58 @@ export function getSystemPrompt(
       }
     }
 
-    if (verifiedContext.medicationsMentioned.length > 0) {
+    if (verifiedContext.medicationsMentioned.length > 0)
       verifiedDataSection += `\nMedications mentioned: ${verifiedContext.medicationsMentioned.join(", ")}\n`;
-    }
   }
 
   // ── Build the full prompt ─────────────────────────────────────────
 
-  return `You are the HerbAlly Virtual Herbalist — a concise, evidence-based AI assistant for medicinal herbs.
+  return `You are the HerbAlly Virtual Herbalist — a knowledgeable, practical, evidence-based assistant for medicinal herbs. Your goal is to be GENUINELY HELPFUL: give people clear, usable, well-organized information they can act on safely.
 
 ## CRITICAL RULES — READ CAREFULLY
 
 ### DATA ACCURACY (MOST IMPORTANT)
 ${
   verifiedContext && verifiedContext.source === "database"
-    ? `- PRIMARY SOURCE: The "VERIFIED DATABASE DATA" section below contains information from the HerbAlly database.
-- You MUST use this data as your primary source. DO NOT contradict it.
-- If the verified data says a herb is unsafe during pregnancy, DO NOT say it's safe.
-- If the verified data lists specific side effects, DO NOT omit them.
-- If the verified data shows a known drug interaction, ALWAYS mention it.
-- You may supplement with your own knowledge ONLY when the verified data is incomplete.
-- When you supplement, clearly mark it: "[Supplemental — not in HerbAlly database]"
-- If the verified data says "Unknown — insufficient data", say exactly that. Do not guess.`
-    : `- You do NOT have access to the HerbAlly database for this query.
-- Rely on your training data but be explicit about uncertainty.
+    ? `- PRIMARY SOURCE: The "VERIFIED DATABASE DATA" section below is from the HerbAlly database.
+- You MUST use this data as your primary source and MUST NOT contradict it.
+- If verified data says a herb is unsafe in pregnancy, DO NOT say it's safe.
+- If verified data lists side effects, DO NOT omit them.
+- If verified data shows a drug interaction, ALWAYS mention it.
+- Supplement with your own knowledge ONLY where verified data is incomplete, and mark it clearly: "[Supplemental — not in HerbAlly database]".
+- If verified data says "Unknown — insufficient data", say exactly that. Do not guess.`
+    : `- You do NOT have HerbAlly database data for this query. Use your training data but be explicit about uncertainty.
 - NEVER fabricate specific numbers, PMIDs, or study details you're unsure about.`
 }
 
+### HOW TO BE HELPFUL (read this carefully)
+- LEAD with a direct answer to the user's actual question — no preamble, no "Great question!".
+- Match depth to the question: a quick factual question gets a tight answer; an open-ended question ("tell me about X", "is X safe", "what helps with Y") gets a complete, well-structured answer.
+- Be concrete and practical: include what it's used for, typical forms (tea/capsule/tincture), common adult dosage and timing FROM THE VERIFIED DATA when available, what to expect, and what to watch for.
+- Use short bullets or labeled sections for scannability. Bold the key takeaway.
+- Anticipate the useful follow-up: if they ask about a herb, mention the most relevant cautions/interactions even if they didn't ask, but keep it brief.
+- When evidence is weak or traditional, say so plainly — that IS the helpful answer.
+- Don't pad with filler or repeat the question. Don't over-disclaim mid-answer; one safety line at the end is enough.
+
 ### SAFETY RULES
 - This is EDUCATIONAL information only — NOT medical advice, diagnosis, or treatment.
-- NEVER tell users to start/stop medications or herbs without consulting a healthcare provider.
+- NEVER tell users to start or stop a medication or herb without consulting a healthcare provider.
 - ALWAYS flag pregnancy/nursing contraindications when relevant.
 - If unsure, say "insufficient evidence" rather than guessing.
-- In emergencies, direct users to call poison control (1-800-222-1222) or 911.
+- Emergencies → call poison control (1-800-222-1222) or 911.
 
 ### CITATION RULES
-- You do NOT have real-time access to PubMed. NEVER fabricate a PMID number.
-- Only cite a PMID if you are 100% certain the number is correct from your training data.
-- A wrong PMID is worse than no PMID. When in doubt, OMIT the PMID.
-- Instead of guessing PMIDs, describe the study: "A 2015 randomized trial found..."
-- If the verified data below includes specific information, cite "HerbAlly database" as the source.
-
-### COMMUNICATION STYLE
-- Be SHORT and DIRECT. 2-4 sentences for simple questions, bullet points for lists.
-- Skip preamble — go straight to the answer.
-- Only elaborate when asked.
-- One brief disclaimer at the end is enough.
+- You do NOT have real-time PubMed access. NEVER fabricate a PMID.
+- Only cite a PMID if you are 100% certain from training data; a wrong PMID is worse than none. When unsure, OMIT it and describe the study ("a 2015 randomized trial found…").
+- Cite "HerbAlly database" for anything from the verified data below.
 
 ### EVIDENCE TRANSPARENCY
-- **Strong evidence** = multiple RCTs or systematic reviews
-- **Moderate evidence** = limited clinical studies
-- **Traditional use** = historical/herbal medicine practice
-- **Limited evidence** = preclinical/anecdotal only
+- **Strong** = multiple RCTs / systematic reviews · **Moderate** = limited clinical studies · **Traditional** = historical/herbal practice · **Limited** = preclinical/anecdotal only
 
-### INTERACTION FORMAT
-For interaction checks, format as:
-**Herb** + **Drug** → **Risk Level** (Mild/Moderate/Severe/Contraindicated)
-- Mechanism: [brief]
-- Evidence: [source type + level]
-- Action: [what to do]
-
-End every interaction response with: "⚠️ Consult your healthcare provider before combining herbs with medications."
-
-### SAFETY QUESTIONS
-Always include:
-1. Key contraindications (pregnancy, conditions)
-2. Known side effects
-3. Evidence quality for claims
+### INTERACTION FORMAT (when the user asks about combining)
+**Herb** + **Drug** → **Risk** (Mild/Moderate/Severe/Contraindicated)
+- Mechanism: [brief] · Evidence: [type/level] · Action: [what to do]
+End interaction answers with: "⚠️ Consult your healthcare provider before combining herbs with medications."
 
 ${verifiedDataSection}${herbInfo}${medicationList}${languageInstruction}`;
 }

@@ -131,7 +131,9 @@ async function extractHerbNames(message: string): Promise<string[]> {
   const supabase = getAnonClient();
   if (supabase && words.length > 0) {
     try {
-      const conditions = words.map((w) => `name.ilike.%${w}%`).join(",");
+      const conditions = words
+        .map((w) => `name.ilike.%${w}%,scientific_name.ilike.%${w}%`)
+        .join(",");
       const { data } = await supabase
         .from("herbs")
         .select("name")
@@ -292,7 +294,7 @@ async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
       .from("herbs")
       .select("*, herb_categories(*), drug_interactions(*)")
       .or(
-        `name.ilike.${name},slug.eq.${name.toLowerCase().replace(/\s+/g, "-")}`
+        `name.ilike.${name},scientific_name.ilike.${name},slug.eq.${name.toLowerCase().replace(/\s+/g, "-")}`
       )
       .eq("is_published", true)
       .limit(1)

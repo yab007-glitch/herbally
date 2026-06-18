@@ -8,10 +8,13 @@ import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 
 const MAX_BODY_SIZE = 50 * 1024;
 
+// Fallback chain: capable, low-cost models first, free pool only as a last
+// resort. Order matters — we try each in turn if the previous 5xx/404s.
 const FALLBACK_MODELS = [
+  "openai/gpt-4o-mini",
+  "google/gemini-2.0-flash-001",
+  "meta-llama/llama-3.3-70b-instruct",
   "openrouter/free",
-  "google/gemma-3-27b-it:free",
-  "meta-llama/llama-3.1-8b-instruct:free",
 ];
 
 async function tryOpenRouter(
@@ -32,7 +35,7 @@ async function tryOpenRouter(
       model,
       messages: chatMessages,
       stream: true,
-      max_tokens: 2048,
+      max_tokens: 4096,
       temperature: 0.3, // Lower temperature for more factual responses
     }),
     signal: AbortSignal.timeout(20000),
@@ -45,7 +48,7 @@ export async function POST(request: NextRequest) {
     process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1"
   ).trim();
   const primaryModel = (
-    process.env.OPENROUTER_MODEL || "openrouter/free"
+    process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini"
   ).trim();
 
   if (!apiKey) {
@@ -149,7 +152,13 @@ export async function POST(request: NextRequest) {
       .gt("expires_at", new Date().toISOString())
       .single();
 
-    if (cached) {
+    // Skip empty/whitespace-only cached entries (e.g. from a past failed
+    // stream) — treat them as a miss and regenerate live.
+    if (
+      cached &&
+      typeof cached.response === "string" &&
+      cached.response.trim()
+    ) {
       return new NextResponse(cached.response, {
         status: 200,
         headers: { "content-type": "text/event-stream" },
@@ -195,9 +204,15 @@ export async function POST(request: NextRequest) {
       status,
       error: errorText.substring(0, 200),
     });
+    // 401/429 = API-key level problems (bad key, or account rate-limited).
+    // Falling back to another model with the same key won't help -> stop.
     if (status === 401 || status === 429) break;
+    // 402 (no credits for this paid model), 403 (access denied), 404/422
+    // (model not found / bad request), and any 5xx -> try the next model.
+    if (status === 402 || status === 403 || status === 404 || status === 422)
+      continue;
     if (status >= 500) continue;
-    if (status === 404 || status === 422) continue;
+    // Any other 4xx is unexpected -> stop.
     break;
   }
 
@@ -207,6 +222,9 @@ export async function POST(request: NextRequest) {
     if (status === 401) {
       userMessage =
         "AI service is not configured. Please set a valid OPENROUTER_API_KEY.";
+    } else if (status === 402) {
+      userMessage =
+        "AI service is temporarily unavailable. Please try again later.";
     } else if (status === 429) {
       userMessage = "AI service is busy. Please try again in a moment.";
     } else if (status >= 500) {
@@ -256,8 +274,8 @@ export async function POST(request: NextRequest) {
           .then(({ done, value }) => {
             if (done) {
               cancelTimeout();
-              // Persist to cache
-              if (supabase && fullContent) {
+              // Persist to cache (only non-empty responses)
+              if (supabase && fullContent.trim()) {
                 supabase
                   .from("ai_response_cache")
                   .insert({
@@ -287,8 +305,8 @@ export async function POST(request: NextRequest) {
               if (!trimmed) continue;
               if (trimmed === "data: [DONE]") {
                 cancelTimeout();
-                // Persist to cache
-                if (supabase && fullContent) {
+                // Persist to cache (only non-empty responses)
+                if (supabase && fullContent.trim()) {
                   supabase
                     .from("ai_response_cache")
                     .insert({ prompt_hash: promptHash, response: fullContent })
