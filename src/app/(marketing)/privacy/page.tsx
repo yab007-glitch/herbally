@@ -1,7 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
-import { type Locale } from "@/lib/i18n/config";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "privacyPolicy", path: "/privacy" });

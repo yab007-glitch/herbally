@@ -6,10 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { createClient } from "@supabase/supabase-js";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
-import { type Locale } from "@/lib/i18n/config";
 import { notFound } from "next/navigation";
 
 export const revalidate = 3600;
