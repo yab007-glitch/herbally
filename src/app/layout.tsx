@@ -8,6 +8,7 @@ import { SWRegistration } from "@/components/shared/service-worker-registration"
 import { SkipToContent } from "@/components/shared/skip-to-content";
 import { WebVitals } from "@/components/analytics/web-vitals";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -90,33 +91,28 @@ export const metadata: Metadata = {
   },
 };
 
-const localeScript = `
-  (function() {
-    var m = document.cookie.match(/herbally-locale=([^;]+)/);
-    if (m && m[1] === "fr") document.documentElement.lang = "fr";
-  })();
-`;
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // URL is the single source of truth: the proxy sets x-locale from the path,
+  // and we mirror it here so SSR, <html lang>, and the client provider all
+  // agree — no cookie/URL drift, no hydration flash.
+  const locale = await getLocaleFromRequest();
+
   return (
     <html
-      lang="en"
-      className={`\${geistSans.variable} \${geistMono.variable} antialiased`}
+      lang={locale}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <head>
         <link rel="preconnect" href="https://pnvltmyixympgammxvoo.supabase.co" />
         <link rel="dns-prefetch" href="https://pnvltmyixympgammxvoo.supabase.co" />
         <OrganizationSchema />
-        <script
-          dangerouslySetInnerHTML={{ __html: localeScript }}
-        />
       </head>
       <body className="bg-background text-foreground">
-        <LocaleProvider>
+        <LocaleProvider locale={locale}>
           <SkipToContent />
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />

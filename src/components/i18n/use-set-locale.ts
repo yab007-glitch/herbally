@@ -2,36 +2,46 @@
 
 import { useCallback } from "react";
 import type { Locale } from "@/lib/i18n/config";
+import {
+  isLocalePrefixed,
+  addLocalePrefix,
+  stripLocalePrefix,
+} from "@/lib/i18n/routing";
 
 /**
- * Switches locale by updating the cookie and performing a hard navigation.
- * A full reload guarantees the middleware sees the fresh cookie and serves
- * the correct language without any stale-layout or soft-navigation bugs.
+ * Switches locale by performing a hard navigation to the correct URL.
+ *
+ * The URL is the single source of truth for the active locale:
+ *   - French  → /fr prefix is added to the current path
+ *   - English → /fr prefix is stripped from the current path
+ *
+ * The cookie/localStorage writes below are only a first-visit hint for the
+ * proxy middleware's redirect; rendering is always driven by the URL, so the
+ * two can never drift and cause partial translations.
  */
 export function useSetLocale() {
   return useCallback((locale: Locale) => {
-    // Persist preference in cookie (sent to server) and localStorage (client backup)
+    // Persist preference as a first-visit redirect hint for the proxy.
     document.cookie = `herbally-locale=${locale};path=/;max-age=31536000;SameSite=Lax`;
     localStorage.setItem("herbally-locale", locale);
 
-    // Compute the target URL based on the *current* browser location so we
-    // land on the same page in the new language.
     const currentPath = window.location.pathname;
-    let target = currentPath;
+    const alreadyPrefixed = isLocalePrefixed(currentPath);
 
-    if (locale === "fr") {
-      if (!target.startsWith("/fr/")) {
-        target = `/fr${target === "/" ? "/" : target}`;
-      }
-    } else {
-      // en — strip /fr/ prefix
-      if (target.startsWith("/fr/")) {
-        target = target.replace(/^\/fr/, "") || "/";
-      }
-    }
+    // Build the target URL from the *current browser path*. Using the canonical
+    // routing helpers (instead of hand-rolled startsWith checks) guarantees
+    // every path is handled, including the bare "/fr" homepage.
+    const target =
+      locale === "fr"
+        ? alreadyPrefixed
+          ? currentPath
+          : addLocalePrefix(currentPath, "fr")
+        : alreadyPrefixed
+          ? stripLocalePrefix(currentPath)
+          : currentPath;
 
-    // Hard navigation: guarantees middleware sees the new cookie and
-    // eliminates any stale state in the persistent root layout.
+    // Hard navigation guarantees the proxy sees the fresh URL and serves a
+    // fully re-rendered page in the new language with no stale state.
     window.location.assign(target);
   }, []);
 }

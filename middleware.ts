@@ -101,6 +101,22 @@ function shouldSkipLocaleRouting(pathname: string): boolean {
   return LOCALE_EXCLUDED_PATHS.some((p) => pathname.startsWith(p));
 }
 
+/**
+ * Locale routing: the URL is the single source of truth.
+ *   - /fr/*  → rewritten to the internal path with x-locale: "fr"
+ *   - /*     → served as English, redirecting to /fr/* only for first-time
+ *              visitors whose saved preference (cookie) or Accept-Language
+ *              indicates French.
+ *
+ * The `herbally-locale` cookie is a *first-visit hint only*; rendering is
+ * always driven by the URL via the x-locale header, so the cookie and the URL
+ * can never drift and cause partial translations.
+ *
+ * NOTE: Next.js 16 renames "middleware" to "proxy" (file convention + export),
+ * with functionality unchanged. Kept as middleware.ts for now since the
+ * proxy.ts convention isn't reliably recognized by this build setup; migrate
+ * separately.
+ */
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -123,8 +139,8 @@ export default async function middleware(request: NextRequest) {
       const rewrite = NextResponse.rewrite(url, {
         request: { headers: requestHeaders },
       });
-      // Only set the cookie if the user has NOT made an explicit choice.
-      // This prevents /fr/ links from overriding a previously saved English preference.
+      // Only seed the cookie for first-time visitors so /fr links don't
+      // override a previously saved English preference.
       if (!cookieLocale) {
         rewrite.cookies.set("herbally-locale", locale, {
           path: "/",
@@ -135,7 +151,8 @@ export default async function middleware(request: NextRequest) {
       return applySecurityHeaders(rewrite);
     }
 
-    // No locale prefix — check if we should redirect to /fr/
+    // No locale prefix — redirect to /fr/* only if the user prefers French
+    // (first visit via cookie or Accept-Language).
     const preferredLocale = cookieLocale ?? acceptLangLocale;
     if (preferredLocale === "fr") {
       const redirectPath = addLocalePrefix(pathname === "/" ? "/" : pathname, "fr");
@@ -146,11 +163,11 @@ export default async function middleware(request: NextRequest) {
     }
   }
 
-  // Default path — set locale header for downstream consumption
-  request.headers.set("x-locale", DEFAULT_LOCALE);
-  request.headers.set("x-pathname", pathname);
-  let response = NextResponse.next({ request });
-
+  // Default (English) path — set locale header for downstream consumption
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-locale", DEFAULT_LOCALE);
+  requestHeaders.set("x-pathname", pathname);
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
 
   // Locale cookie for first-time visitors (English default)
   const existingLocale = request.cookies.get("herbally-locale")?.value;

@@ -3,8 +3,6 @@
 import { NextIntlClientProvider } from "next-intl";
 import enMessages from "@/lib/i18n/dictionaries/en.json";
 import frMessages from "@/lib/i18n/dictionaries/fr.json";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import type { Locale } from "@/lib/i18n/config";
 
 const allMessages: Record<Locale, typeof enMessages> = {
@@ -12,30 +10,24 @@ const allMessages: Record<Locale, typeof enMessages> = {
   fr: frMessages,
 };
 
-function getCookieLocale(): Locale {
-  if (typeof document === "undefined") return "en";
-  const match = document.cookie.match(/herbally-locale=([^;]+)/);
-  return match?.[1] === "fr" ? "fr" : "en";
-}
-
-export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [locale, setLocale] = useState<Locale>(() => getCookieLocale());
+/**
+ * Provides next-intl messages to all client components.
+ *
+ * The active `locale` is passed in from the server root layout, which reads it
+ * from the `x-locale` request header set by the proxy. Because the locale is
+ * derived from the URL (the single source of truth) and the language toggle
+ * performs a hard navigation, this prop is always correct and never drifts
+ * from what the server rendered — eliminating the partial-translation bug
+ * where the cookie and the URL disagreed.
+ */
+export function LocaleProvider({
+  locale,
+  children,
+}: {
+  locale: Locale;
+  children: React.ReactNode;
+}) {
   const messages = allMessages[locale];
-
-  // Re-read cookie whenever the pathname changes (client-side nav).
-  // This keeps next-intl in sync with the URL locale after switching
-  // languages without a full reload.
-  useEffect(() => {
-    const newLocale = getCookieLocale();
-    if (newLocale !== locale) {
-      setLocale(newLocale);
-    }
-  }, [pathname, locale]);
-
-  useEffect(() => {
-    document.documentElement.lang = locale;
-  }, [locale]);
 
   return (
     <NextIntlClientProvider messages={messages} locale={locale} timeZone="America/Toronto">
