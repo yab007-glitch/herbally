@@ -40,7 +40,8 @@
     "copy": "Copier",
     "verifyCitation": "vérifier",
     "verifiedData": "Données vérifiées",
-    "citationsDisclaimer": "Les citations peuvent être générées par IA — vérifiez indépendamment."
+    "citationsDisclaimer": "Les citations peuvent être générées par IA — vérifiez indépendamment.",
+    "toggleLanguage": "Changer de langue"
   },
   "nav": {
     "symptoms": "Par Symptôme",

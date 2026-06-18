@@ -31,7 +31,7 @@ export function LanguageDrawer({
 
   const trigger = (
     <SheetTrigger className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full h-11 min-w-11 px-2.5 hover:bg-muted hover:text-foreground transition-all outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50">
-      <Globe className="size-5" />
+      <Globe className="size-5" aria-hidden="true" />
       <span className="text-xs font-semibold uppercase tracking-wide hidden sm:inline">
         {locale}
       </span>
@@ -51,7 +51,10 @@ export function LanguageDrawer({
             <div className="px-2 py-1.5 text-xs text-muted-foreground border-b">
               <span>{t("common.suggested")}</span>
               <button
-                onClick={() => setLocale(detectedLocale)}
+                onClick={() => {
+                  onOpenChange?.(false);
+                  setLocale(detectedLocale);
+                }}
                 className="text-primary hover:underline font-medium"
               >
                 {LANGUAGES.find((l) => l.code === detectedLocale)?.nativeName}
@@ -61,8 +64,12 @@ export function LanguageDrawer({
           {LANGUAGES.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => setLocale(lang.code)}
-              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors ${
+              onClick={() => {
+                onOpenChange?.(false);
+                setLocale(lang.code);
+              }}
+              aria-current={lang.code === locale ? "true" : undefined}
+              className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
                 lang.code === locale
                   ? "bg-muted font-medium"
                   : "hover:bg-muted/50"
@@ -76,7 +83,7 @@ export function LanguageDrawer({
                 <p className="text-xs text-muted-foreground">{lang.name}</p>
               </div>
               {lang.code === locale && (
-                <Check className="size-5 text-primary" />
+                <Check className="size-5 text-primary" aria-hidden="true" />
               )}
             </button>
           ))}

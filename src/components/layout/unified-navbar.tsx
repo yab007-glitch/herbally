@@ -24,6 +24,8 @@ import {
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { LanguageSelector } from "@/components/i18n/language-selector";
 import { LanguageDrawer } from "@/components/i18n/language-drawer";
+import { FirstVisitBanner } from "@/components/i18n/first-visit-banner";
+import { LanguageAnnouncement } from "@/components/i18n/language-announcement";
 import { useTranslations, useLocale } from "next-intl";
 import { LANGUAGES } from "@/lib/i18n/config";
 import { cn } from "@/lib/utils";
@@ -76,6 +78,8 @@ export function UnifiedNavbar() {
 
   return (
     <>
+      <LanguageAnnouncement />
+      <FirstVisitBanner />
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4 sm:px-6">
           {/* Logo */}
