@@ -1556,9 +1556,6 @@ export const monographs: Record<string, Monograph> = {
       },
     ],
   },
-
-  
-
 };
 
 export function getMonograph(slug: string): Monograph | null {

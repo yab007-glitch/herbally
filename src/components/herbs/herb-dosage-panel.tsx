@@ -82,7 +82,11 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
       </Card>
 
       <div className="flex justify-center">
-        <Button size="lg" render={<Link href={`/calculator?herb=${herb.slug}`} />} className="rounded-full">
+        <Button
+          size="lg"
+          render={<Link href={`/calculator?herb=${herb.slug}`} />}
+          className="rounded-full"
+        >
           <Calculator className="mr-2 size-4" />
           {t("herbDetail.calculateDose")}
         </Button>

@@ -90,7 +90,10 @@ export async function logout(): Promise<void> {
  * Used by the client AccountMenu to render login/logout without exposing the
  * full session. Safe to call from client components (server action).
  */
-export async function currentUser(): Promise<{ id: string; email?: string | null } | null> {
+export async function currentUser(): Promise<{
+  id: string;
+  email?: string | null;
+} | null> {
   const supabase = await createClient();
   const {
     data: { user },

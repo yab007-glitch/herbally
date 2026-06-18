@@ -41,7 +41,11 @@
     "verifyCitation": "verify",
     "verifiedData": "Verified data",
     "citationsDisclaimer": "Citations may be AI-generated — verify independently.",
-    "toggleLanguage": "Toggle language"
+    "toggleLanguage": "Toggle language",
+    "navPrimary": "Primary",
+    "navMobile": "Mobile menu",
+    "navQuick": "Quick navigation",
+    "navFooter": "Footer"
   },
   "nav": {
     "symptoms": "By Symptom",

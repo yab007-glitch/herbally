@@ -57,9 +57,7 @@ describe("GET /api/openfda", () => {
   });
 
   it("returns empty results when OpenFDA responds with error", async () => {
-    fetchMock.mockResolvedValueOnce(
-      new Response("Not Found", { status: 404 })
-    );
+    fetchMock.mockResolvedValueOnce(new Response("Not Found", { status: 404 }));
 
     const { GET } = await loadRoute();
     const res = await GET(makeRequest({ term: "unknown" }));
@@ -86,7 +84,7 @@ describe("GET /api/openfda", () => {
     const { GET } = await loadRoute();
     await GET(makeRequest({ term: "aspirin" }));
 
-    const url = (fetchMock.mock.calls[0][0] as string);
+    const url = fetchMock.mock.calls[0][0] as string;
     expect(url).toContain("api.fda.gov/drug/event.json");
     expect(url).toContain("patient.drug.medicinalproduct");
     expect(url).toContain("aspirin");

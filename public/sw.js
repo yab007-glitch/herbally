@@ -15,15 +15,9 @@ const STATIC_URLS = [
 ];
 
 // API endpoints to cache for offline herb browsing
-const DB_CACHE_URLS = [
-  "/api/herbs/list",
-  "/api/herbs/search",
-];
+const DB_CACHE_URLS = ["/api/herbs/list", "/api/herbs/search"];
 
-const API_URLS = [
-  ...DB_CACHE_URLS,
-  "/api/herbs/random",
-];
+const API_URLS = [...DB_CACHE_URLS, "/api/herbs/random"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -49,9 +43,9 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  
+
   const url = new URL(event.request.url);
-  
+
   // Skip non-app requests
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith("/auth/")) return;
@@ -83,7 +77,10 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Herb detail pages: cache-first, network update
-  if (url.pathname.startsWith("/herbs/") && url.pathname.split("/").length === 3) {
+  if (
+    url.pathname.startsWith("/herbs/") &&
+    url.pathname.split("/").length === 3
+  ) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(event.request);
@@ -105,7 +102,9 @@ self.addEventListener("fetch", (event) => {
       .then((response) => {
         if (response.ok) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          caches
+            .open(CACHE_NAME)
+            .then((cache) => cache.put(event.request, clone));
         }
         return response;
       })

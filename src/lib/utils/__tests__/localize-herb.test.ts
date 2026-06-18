@@ -79,7 +79,10 @@ describe("localizeHerb", () => {
   });
 
   it("returns original herb when translations object is empty", () => {
-    const herbNoTranslations = { ...baseHerb, translations: null } as unknown as Herb;
+    const herbNoTranslations = {
+      ...baseHerb,
+      translations: null,
+    } as unknown as Herb;
     const result = localizeHerb(herbNoTranslations, "fr");
     expect(result.name).toBe("Ginger");
   });
@@ -119,7 +122,10 @@ describe("localizeInteraction", () => {
   });
 
   it("falls back to English when French missing", () => {
-    const ixNoFr = { ...interaction, translations: {} } as unknown as DrugInteraction;
+    const ixNoFr = {
+      ...interaction,
+      translations: {},
+    } as unknown as DrugInteraction;
     const result = localizeInteraction(ixNoFr, "fr");
     expect(result.description).toBe("May increase bleeding risk.");
   });

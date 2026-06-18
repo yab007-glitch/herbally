@@ -12,7 +12,11 @@ export function MarketingFooter() {
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2" aria-label="HerbAlly home">
+          <Link
+            href="/"
+            className="flex items-center gap-2"
+            aria-label="HerbAlly home"
+          >
             <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <Leaf className="size-3" />
             </div>
@@ -22,26 +26,54 @@ export function MarketingFooter() {
           </Link>
 
           {/* Links */}
-          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm text-muted-foreground" aria-label="Footer">
-            <Link href="/herbs" prefetch={true} className="hover:text-foreground transition-colors">
+          <nav
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm text-muted-foreground"
+            aria-label={t("common.navFooter")}
+          >
+            <Link
+              href="/herbs"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
               {t("nav.herbs")}
             </Link>
-            <Link href="/herbalist" prefetch={true} className="hover:text-foreground transition-colors">
+            <Link
+              href="/herbalist"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
               {t("nav.herbalist")}
             </Link>
-            <Link href="/calculator" prefetch={true} className="hover:text-foreground transition-colors">
+            <Link
+              href="/calculator"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
               {t("nav.calculator")}
             </Link>
-            <Link href="/about" prefetch={true} className="hover:text-foreground transition-colors">
+            <Link
+              href="/about"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
               {t("nav.about")}
             </Link>
-            <Link href="/disclaimer" className="hover:text-foreground transition-colors">
+            <Link
+              href="/disclaimer"
+              className="hover:text-foreground transition-colors"
+            >
               {t("footer.disclaimer")}
             </Link>
-            <Link href="/privacy" className="hover:text-foreground transition-colors">
+            <Link
+              href="/privacy"
+              className="hover:text-foreground transition-colors"
+            >
               {t("footer.privacy")}
             </Link>
-            <Link href="/donate" className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors">
+            <Link
+              href="/donate"
+              className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+            >
               <Heart className="size-3" />
               {t("donate.title")}
             </Link>

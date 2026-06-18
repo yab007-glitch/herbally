@@ -3,7 +3,8 @@ import { GardenClient } from "./garden-client";
 
 export const metadata: Metadata = {
   title: "My Garden — HerbAlly",
-  description: "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
+  description:
+    "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
 };
 
 export default function GardenPage() {

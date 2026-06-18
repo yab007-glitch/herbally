@@ -26,10 +26,26 @@ interface HerbResult {
 }
 
 const SUGGESTIONS = [
-  { herb: "St. John's Wort", med: "SSRI antidepressants", query: "Is St. John's Wort safe to take with SSRIs?" },
-  { herb: "Turmeric", med: "blood thinners like warfarin", query: "Can I take turmeric with blood thinners?" },
-  { herb: "Ginkgo biloba", med: "aspirin", query: "Is ginkgo safe with aspirin?" },
-  { herb: "Echinacea", med: "immunosuppressants", query: "Can I take echinacea with immunosuppressants?" },
+  {
+    herb: "St. John's Wort",
+    med: "SSRI antidepressants",
+    query: "Is St. John's Wort safe to take with SSRIs?",
+  },
+  {
+    herb: "Turmeric",
+    med: "blood thinners like warfarin",
+    query: "Can I take turmeric with blood thinners?",
+  },
+  {
+    herb: "Ginkgo biloba",
+    med: "aspirin",
+    query: "Is ginkgo safe with aspirin?",
+  },
+  {
+    herb: "Echinacea",
+    med: "immunosuppressants",
+    query: "Can I take echinacea with immunosuppressants?",
+  },
 ];
 
 export function HomeSearchClient({ labels }: { labels: Labels }) {
@@ -51,7 +67,9 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       return;
     }
     try {
-      const res = await fetch(`/api/herbs/search?q=${encodeURIComponent(term)}`);
+      const res = await fetch(
+        `/api/herbs/search?q=${encodeURIComponent(term)}`
+      );
       const data = await res.json();
       setHerbResults(Array.isArray(data) ? data.slice(0, 5) : []);
       setShowHerbResults(true);
@@ -64,13 +82,19 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   useEffect(() => {
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     searchTimeout.current = setTimeout(() => searchHerbs(herbInput), 200);
-    return () => { if (searchTimeout.current) clearTimeout(searchTimeout.current); };
+    return () => {
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    };
   }, [herbInput, searchHerbs]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (resultsRef.current && !resultsRef.current.contains(e.target as Node) &&
-          herbRef.current && !herbRef.current.contains(e.target as Node)) {
+      if (
+        resultsRef.current &&
+        !resultsRef.current.contains(e.target as Node) &&
+        herbRef.current &&
+        !herbRef.current.contains(e.target as Node)
+      ) {
         setShowHerbResults(false);
       }
     }
@@ -95,7 +119,11 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
-      if (showHerbResults && activeHerbIndex >= 0 && herbResults[activeHerbIndex]) {
+      if (
+        showHerbResults &&
+        activeHerbIndex >= 0 &&
+        herbResults[activeHerbIndex]
+      ) {
         selectHerb(herbResults[activeHerbIndex]);
         return;
       }
@@ -104,12 +132,12 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     }
     if (e.key === "ArrowDown" && showHerbResults) {
       e.preventDefault();
-      setActiveHerbIndex(i => Math.min(i + 1, herbResults.length - 1));
+      setActiveHerbIndex((i) => Math.min(i + 1, herbResults.length - 1));
       return;
     }
     if (e.key === "ArrowUp" && showHerbResults) {
       e.preventDefault();
-      setActiveHerbIndex(i => Math.max(i - 1, -1));
+      setActiveHerbIndex((i) => Math.max(i - 1, -1));
       return;
     }
     if (e.key === "Escape") {
@@ -156,8 +184,12 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                         : "hover:bg-muted"
                     )}
                   >
-                    <span className="font-medium text-foreground">{herb.name}</span>
-                    <span className="text-xs italic text-muted-foreground">{herb.scientific_name}</span>
+                    <span className="font-medium text-foreground">
+                      {herb.name}
+                    </span>
+                    <span className="text-xs italic text-muted-foreground">
+                      {herb.scientific_name}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -199,7 +231,9 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             {SUGGESTIONS.map((s, i) => (
               <button
                 key={i}
-                onClick={() => router.push(`/herbalist?q=${encodeURIComponent(s.query)}`)}
+                onClick={() =>
+                  router.push(`/herbalist?q=${encodeURIComponent(s.query)}`)
+                }
                 className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
               >
                 {labels[`suggestion${i + 1}` as keyof Labels] || s.query}

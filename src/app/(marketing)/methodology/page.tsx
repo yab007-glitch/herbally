@@ -12,7 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "methodology", path: "/methodology" });
+export const generateMetadata = () =>
+  buildPageMetadata({ titleKey: "methodology", path: "/methodology" });
 
 const sectionKeys = [
   { key: "evidenceGrading", icon: Scale },
@@ -24,7 +25,7 @@ const sectionKeys = [
 ] as const;
 
 export default async function MethodologyPage() {
-    const locale = await getLocaleFromRequest();
+  const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
 
   const methodologySections = sectionKeys.map(({ key, icon }) => ({

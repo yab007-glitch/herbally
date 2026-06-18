@@ -49,7 +49,8 @@ function applyMobileTheme(theme: Theme) {
   const root = document.documentElement;
   root.classList.remove("light", "dark");
   if (theme === "system") {
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
       ? "dark"
       : "light";
     root.classList.add(systemTheme);
@@ -84,7 +85,11 @@ export function UnifiedNavbar() {
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4 sm:px-6">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2" aria-label="HerbAlly home">
+          <Link
+            href="/"
+            className="flex items-center gap-2"
+            aria-label="HerbAlly home"
+          >
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Leaf className="size-3.5" />
             </div>
@@ -94,9 +99,14 @@ export function UnifiedNavbar() {
           </Link>
 
           {/* Desktop links */}
-          <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
+          <nav
+            className="hidden items-center gap-6 md:flex"
+            aria-label={t("common.navPrimary")}
+          >
             {navLinks.map((link) => {
-              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
+              const isActive =
+                pathname === link.href ||
+                (link.href !== "/" && pathname.startsWith(link.href + "/"));
               return (
                 <Link
                   key={link.href}
@@ -137,10 +147,15 @@ export function UnifiedNavbar() {
                   HerbAlly
                 </SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-1 px-2 pt-6" aria-label="Mobile menu">
+              <nav
+                className="flex flex-col gap-1 px-2 pt-6"
+                aria-label={t("common.navMobile")}
+              >
                 {navLinks.map((link) => {
                   const Icon = link.icon;
-                  const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
+                  const isActive =
+                    pathname === link.href ||
+                    (link.href !== "/" && pathname.startsWith(link.href + "/"));
                   return (
                     <Link
                       key={link.href}
@@ -171,7 +186,9 @@ export function UnifiedNavbar() {
                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
                   >
                     <Globe className="size-4" />
-                    <span className="flex-1 text-left">{t("common.language")}</span>
+                    <span className="flex-1 text-left">
+                      {t("common.language")}
+                    </span>
                     {currentLang && (
                       <span className="text-xs text-muted-foreground">
                         {currentLang.flag} {currentLang.code.toUpperCase()}
@@ -180,7 +197,9 @@ export function UnifiedNavbar() {
                   </button>
 
                   <div className="flex items-center gap-2 px-3 py-2">
-                    <span className="text-sm text-muted-foreground">{t("common.theme")}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {t("common.theme")}
+                    </span>
                     <div className="ml-auto flex items-center gap-1 rounded-md border p-0.5">
                       {(["light", "dark", "system"] as Theme[]).map((th) => {
                         const Icon = getMobileThemeIcon(th);
@@ -209,7 +228,11 @@ export function UnifiedNavbar() {
         </div>
       </header>
 
-      <LanguageDrawer open={showLangDrawer} onOpenChange={setShowLangDrawer} hideTrigger />
+      <LanguageDrawer
+        open={showLangDrawer}
+        onOpenChange={setShowLangDrawer}
+        hideTrigger
+      />
     </>
   );
 }

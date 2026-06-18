@@ -18,9 +18,7 @@ export function getSystemPrompt(
     ? `\nThe user is currently taking these medications: ${medications.join(", ")}`
     : "";
 
-  const herbInfo = herbContext
-    ? `\nCurrent herb context: ${herbContext}`
-    : "";
+  const herbInfo = herbContext ? `\nCurrent herb context: ${herbContext}` : "";
 
   const languageInstruction =
     locale === "fr"
@@ -60,11 +58,11 @@ export function getSystemPrompt(
         verifiedDataSection += `Side effects: ${herb.side_effects.join("; ")}\n`;
       }
       if (herb.pregnancy_safe_oral !== herb.pregnancy_safe_topical) {
-      if (herb.nursing_safe_oral !== herb.nursing_safe_topical) {
-        verifiedDataSection += `Nursing safety: Oral=${herb.nursing_safe_oral === true ? "Safe" : herb.nursing_safe_oral === false ? "UNSAFE" : "Unknown"}, Topical=${herb.nursing_safe_topical === true ? "Safe" : herb.nursing_safe_topical === false ? "UNSAFE" : "Unknown"}\n`;
-      } else {
-        verifiedDataSection += `Nursing safety: ${herb.nursing_safe === true ? "Generally safe" : herb.nursing_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
-      }
+        if (herb.nursing_safe_oral !== herb.nursing_safe_topical) {
+          verifiedDataSection += `Nursing safety: Oral=${herb.nursing_safe_oral === true ? "Safe" : herb.nursing_safe_oral === false ? "UNSAFE" : "Unknown"}, Topical=${herb.nursing_safe_topical === true ? "Safe" : herb.nursing_safe_topical === false ? "UNSAFE" : "Unknown"}\n`;
+        } else {
+          verifiedDataSection += `Nursing safety: ${herb.nursing_safe === true ? "Generally safe" : herb.nursing_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
+        }
       } else {
         verifiedDataSection += `Pregnancy safety: ${herb.pregnancy_safe === true ? "Generally safe" : herb.pregnancy_safe === false ? "NOT safe — avoid" : "Unknown — insufficient data"}\n`;
       }
@@ -101,8 +99,9 @@ export function getSystemPrompt(
 ## CRITICAL RULES — READ CAREFULLY
 
 ### DATA ACCURACY (MOST IMPORTANT)
-${verifiedContext && verifiedContext.source === "database"
-  ? `- PRIMARY SOURCE: The "VERIFIED DATABASE DATA" section below contains information from the HerbAlly database.
+${
+  verifiedContext && verifiedContext.source === "database"
+    ? `- PRIMARY SOURCE: The "VERIFIED DATABASE DATA" section below contains information from the HerbAlly database.
 - You MUST use this data as your primary source. DO NOT contradict it.
 - If the verified data says a herb is unsafe during pregnancy, DO NOT say it's safe.
 - If the verified data lists specific side effects, DO NOT omit them.
@@ -110,9 +109,10 @@ ${verifiedContext && verifiedContext.source === "database"
 - You may supplement with your own knowledge ONLY when the verified data is incomplete.
 - When you supplement, clearly mark it: "[Supplemental — not in HerbAlly database]"
 - If the verified data says "Unknown — insufficient data", say exactly that. Do not guess.`
-  : `- You do NOT have access to the HerbAlly database for this query.
+    : `- You do NOT have access to the HerbAlly database for this query.
 - Rely on your training data but be explicit about uncertainty.
-- NEVER fabricate specific numbers, PMIDs, or study details you're unsure about.`}
+- NEVER fabricate specific numbers, PMIDs, or study details you're unsure about.`
+}
 
 ### SAFETY RULES
 - This is EDUCATIONAL information only — NOT medical advice, diagnosis, or treatment.

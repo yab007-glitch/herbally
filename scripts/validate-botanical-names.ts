@@ -2,11 +2,11 @@
 /**
  * validate-botanical-names.ts — Validates scientific plant names against
  * Plants of the World Online (POWO) API from Kew Gardens.
- * 
+ *
  * POWO is the authoritative source for plant taxonomy, maintained by
  * the Royal Botanic Gardens, Kew. It provides accepted names, synonyms,
  * family classification, and distribution data.
- * 
+ *
  * Usage:
  *   npx tsx scripts/validate-botanical-names.ts              # Validate all herbs
  *   npx tsx scripts/validate-botanical-names.ts --fix        # Auto-fix misspellings
@@ -46,7 +46,7 @@ async function searchPOWO(scientificName: string): Promise<POWOResult | null> {
     const res = await fetch(searchUrl);
     if (!res.ok) return null;
 
-    const data = await res.json() as { results?: Array<{ fqId: string }> };
+    const data = (await res.json()) as { results?: Array<{ fqId: string }> };
     if (!data.results || data.results.length === 0) return null;
 
     // Get full record
@@ -55,7 +55,7 @@ async function searchPOWO(scientificName: string): Promise<POWOResult | null> {
     const detailRes = await fetch(detailUrl);
     if (!detailRes.ok) return null;
 
-    const detail = await detailRes.json() as POWOResult;
+    const detail = (await detailRes.json()) as POWOResult;
     return detail;
   } catch {
     return null;
@@ -79,10 +79,10 @@ const KNOWN_CORRECTIONS: Record<string, string> = {
   "Eicosapentaenoic/Docosahexaenoic acid": "Fish oil (not a plant)",
   "S-Adenosyl methionine": "SAM-e (synthetic, not a plant)",
   "Gamma-aminobutyric acid": "GABA (endogenous compound)",
-  "Dehydroepiandrosterone": "DHEA (hormone, not a plant)",
-  "Methylsulfonylmethane": "MSM (synthetic compound)",
-  "Cholecalciferol": "Vitamin D3 (not a plant)",
-  "Ubiquinone": "Coenzyme Q10 (endogenous)",
+  Dehydroepiandrosterone: "DHEA (hormone, not a plant)",
+  Methylsulfonylmethane: "MSM (synthetic compound)",
+  Cholecalciferol: "Vitamin D3 (not a plant)",
+  Ubiquinone: "Coenzyme Q10 (endogenous)",
   "Sarcosine precursor": "Creatine (endogenous compound)",
   "Mineral supplement": "Mineral (not a plant)",
   "Trace mineral": "Mineral (not a plant)",
@@ -112,7 +112,9 @@ interface HerbValidation {
 async function main() {
   const isDryRun = process.argv.includes("--dry-run");
   const shouldFix = process.argv.includes("--fix");
-  const sampleSize = parseInt(process.argv[process.argv.indexOf("--sample") + 1] || "0");
+  const sampleSize = parseInt(
+    process.argv[process.argv.indexOf("--sample") + 1] || "0"
+  );
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -132,10 +134,14 @@ async function main() {
     .eq("is_published", true)
     .order("name");
 
-  if (!herbs) { console.error("No herbs found"); process.exit(1); }
+  if (!herbs) {
+    console.error("No herbs found");
+    process.exit(1);
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sample = sampleSize > 0 ? (herbs as any[]).slice(0, sampleSize) : (herbs as any[]);
+  const sample =
+    sampleSize > 0 ? (herbs as any[]).slice(0, sampleSize) : (herbs as any[]);
   console.log(`Validating ${sample.length} scientific names against POWO...`);
 
   const results: HerbValidation[] = [];
@@ -143,7 +149,7 @@ async function main() {
 
   for (const herb of sample) {
     const sciName = herb.scientific_name as string;
-    
+
     // Check known corrections first
     if (KNOWN_CORRECTIONS[sciName]) {
       results.push({
@@ -159,11 +165,18 @@ async function main() {
     }
 
     // Check if it's not a plant
-    if (sciName.includes("(not a plant)") || sciName.includes("endogenous") || 
-        sciName.includes("synthetic") || sciName.includes("animal-derived") ||
-        sciName.includes("mineral") || sciName.includes("Bee product")) {
+    if (
+      sciName.includes("(not a plant)") ||
+      sciName.includes("endogenous") ||
+      sciName.includes("synthetic") ||
+      sciName.includes("animal-derived") ||
+      sciName.includes("mineral") ||
+      sciName.includes("Bee product")
+    ) {
       results.push({
-        slug: herb.slug, name: herb.name, scientific_name: sciName,
+        slug: herb.slug,
+        name: herb.name,
+        scientific_name: sciName,
         status: "not_a_plant",
         notes: "Non-plant substance — should this be in the database?",
       });
@@ -174,7 +187,9 @@ async function main() {
     // Skip names that are clearly not binomial (single words, formulas, etc.)
     if (!/^[A-Z][a-z]+ [a-z]/.test(sciName) && sciName.split(" ").length < 2) {
       results.push({
-        slug: herb.slug, name: herb.name, scientific_name: sciName,
+        slug: herb.slug,
+        name: herb.name,
+        scientific_name: sciName,
         status: "not_a_plant",
         notes: "Does not follow binomial nomenclature",
       });
@@ -185,19 +200,25 @@ async function main() {
     // Query POWO
     if (!isDryRun) {
       const powoResult = await searchPOWO(sciName);
-      
+
       if (powoResult) {
         const isSynonym = powoResult.synonym;
         results.push({
-          slug: herb.slug, name: herb.name, scientific_name: sciName,
+          slug: herb.slug,
+          name: herb.name,
+          scientific_name: sciName,
           status: isSynonym ? "corrected" : "valid",
           corrected_name: isSynonym ? powoResult.acceptedName : undefined,
           family: powoResult.family,
-          notes: isSynonym ? `Synonym → accepted: ${powoResult.acceptedName}` : `Family: ${powoResult.family}`,
+          notes: isSynonym
+            ? `Synonym → accepted: ${powoResult.acceptedName}`
+            : `Family: ${powoResult.family}`,
         });
       } else {
         results.push({
-          slug: herb.slug, name: herb.name, scientific_name: sciName,
+          slug: herb.slug,
+          name: herb.name,
+          scientific_name: sciName,
           status: "not_found",
           notes: "Not found in POWO database",
         });
@@ -209,18 +230,23 @@ async function main() {
       }
 
       // Rate limiting
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     } else {
-      results.push({ slug: herb.slug, name: herb.name, scientific_name: sciName, status: "skipped" });
+      results.push({
+        slug: herb.slug,
+        name: herb.name,
+        scientific_name: sciName,
+        status: "skipped",
+      });
       validated++;
     }
   }
 
   // Report
-  const valid = results.filter(r => r.status === "valid").length;
-  const corrected = results.filter(r => r.status === "corrected").length;
-  const notFound = results.filter(r => r.status === "not_found").length;
-  const notPlants = results.filter(r => r.status === "not_a_plant").length;
+  const valid = results.filter((r) => r.status === "valid").length;
+  const corrected = results.filter((r) => r.status === "corrected").length;
+  const notFound = results.filter((r) => r.status === "not_found").length;
+  const notPlants = results.filter((r) => r.status === "not_a_plant").length;
 
   console.log(`\n📊 Results:`);
   console.log(`  Valid: ${valid}`);
@@ -229,11 +255,15 @@ async function main() {
   console.log(`  Not plants: ${notPlants}`);
 
   // Show corrections
-  const toFix = results.filter(r => r.status === "corrected" && r.corrected_name);
+  const toFix = results.filter(
+    (r) => r.status === "corrected" && r.corrected_name
+  );
   if (toFix.length > 0) {
     console.log(`\n🔧 Corrections available (${toFix.length}):`);
-    toFix.slice(0, 20).forEach(r => {
-      console.log(`  ${r.name}: "${r.scientific_name}" → "${r.corrected_name}"`);
+    toFix.slice(0, 20).forEach((r) => {
+      console.log(
+        `  ${r.name}: "${r.scientific_name}" → "${r.corrected_name}"`
+      );
     });
   }
 
@@ -245,7 +275,9 @@ async function main() {
       console.error("Need SUPABASE_SERVICE_ROLE_KEY for --fix");
       process.exit(1);
     }
-    const adminClient = createClient(url, serviceKey, { auth: { persistSession: false } });
+    const adminClient = createClient(url, serviceKey, {
+      auth: { persistSession: false },
+    });
 
     let fixed = 0;
     for (const r of toFix) {

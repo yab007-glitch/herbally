@@ -8,14 +8,25 @@ import { useTranslations } from "next-intl";
 
 const tabs = [
   { labelKey: "mobileTabs.chat", href: "/", icon: MessageCircle, exact: true },
-  { labelKey: "mobileTabs.explore", href: "/herbs", icon: Compass, exact: false },
+  {
+    labelKey: "mobileTabs.explore",
+    href: "/herbs",
+    icon: Compass,
+    exact: false,
+  },
   { labelKey: "mobileTabs.garden", href: "/garden", icon: Sprout, exact: true },
 ] as const;
 
 function isActive(pathname: string, href: string, exact: boolean): boolean {
   if (exact) return pathname === href;
   if (href === "/herbs") {
-    return pathname === "/herbs" || pathname.startsWith("/herbs/") || pathname.startsWith("/symptoms") || pathname.startsWith("/calculator") || pathname.startsWith("/compare");
+    return (
+      pathname === "/herbs" ||
+      pathname.startsWith("/herbs/") ||
+      pathname.startsWith("/symptoms") ||
+      pathname.startsWith("/calculator") ||
+      pathname.startsWith("/compare")
+    );
   }
   return pathname === href || pathname.startsWith(href + "/");
 }
@@ -26,7 +37,7 @@ export function UnifiedMobileBar() {
 
   return (
     <nav
-      aria-label="Quick navigation"
+      aria-label={t("common.navQuick")}
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50 md:hidden",
         "bg-background/90 backdrop-blur-xl border-t",
@@ -51,9 +62,7 @@ export function UnifiedMobileBar() {
               <div
                 className={cn(
                   "flex items-center justify-center rounded-xl transition-all duration-200",
-                  active
-                    ? "bg-primary/10 size-10"
-                    : "size-9"
+                  active ? "bg-primary/10 size-10" : "size-9"
                 )}
               >
                 <Icon className="size-5" />

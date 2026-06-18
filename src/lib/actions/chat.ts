@@ -44,13 +44,17 @@ export async function getChatSessions(): Promise<
       .limit(50);
 
     if (error) {
-      logger.error("chat_get_sessions_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("chat_get_sessions_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: (data || []) as ChatSession[] };
   } catch (error) {
-    logger.error("chat_get_sessions_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+    logger.error("chat_get_sessions_failed", {
+      error: error instanceof Error ? error.message : JSON.stringify(error),
+    });
     return { success: false, error: "Failed to fetch chat sessions" };
   }
 }
@@ -79,13 +83,17 @@ export async function getChatSession(
       .single();
 
     if (error) {
-      logger.error("chat_get_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("chat_get_session_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: data as ChatSession };
   } catch (error) {
-    logger.error("chat_get_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+    logger.error("chat_get_session_failed", {
+      error: error instanceof Error ? error.message : JSON.stringify(error),
+    });
     return { success: false, error: "Failed to fetch chat session" };
   }
 }
@@ -118,13 +126,17 @@ export async function createChatSession(
       .single();
 
     if (error) {
-      logger.error("chat_create_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("chat_create_session_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: data as ChatSession };
   } catch (error) {
-    logger.error("chat_create_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+    logger.error("chat_create_session_failed", {
+      error: error instanceof Error ? error.message : JSON.stringify(error),
+    });
     return { success: false, error: "Failed to create chat session" };
   }
 }
@@ -179,13 +191,17 @@ export async function updateChatSession(
       .single();
 
     if (error) {
-      logger.error("chat_update_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("chat_update_session_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: data as ChatSession };
   } catch (error) {
-    logger.error("chat_update_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+    logger.error("chat_update_session_failed", {
+      error: error instanceof Error ? error.message : JSON.stringify(error),
+    });
     return { success: false, error: "Failed to update chat session" };
   }
 }
@@ -213,13 +229,17 @@ export async function deleteChatSession(
       .eq("user_id", user.id);
 
     if (error) {
-      logger.error("chat_delete_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("chat_delete_session_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
     return { success: true, data: null };
   } catch (error) {
-    logger.error("chat_delete_session_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+    logger.error("chat_delete_session_failed", {
+      error: error instanceof Error ? error.message : JSON.stringify(error),
+    });
     return { success: false, error: "Failed to delete chat session" };
   }
 }

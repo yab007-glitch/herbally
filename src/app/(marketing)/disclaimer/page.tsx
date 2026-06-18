@@ -3,10 +3,15 @@ import { AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "medicalDisclaimer", descKey: "medicalDisclaimerDesc", path: "/disclaimer" });
+export const generateMetadata = () =>
+  buildPageMetadata({
+    titleKey: "medicalDisclaimer",
+    descKey: "medicalDisclaimerDesc",
+    path: "/disclaimer",
+  });
 
 export default async function DisclaimerPage() {
-    const locale = await getLocaleFromRequest();
+  const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
 
   return (

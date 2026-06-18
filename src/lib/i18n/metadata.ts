@@ -4,7 +4,9 @@ import { getTranslations } from "next-intl/server";
 import { buildAlternateUrls } from "./routing";
 import type { Locale } from "./config";
 
-const BASE_URL = (process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app").replace(/\/$/, "");
+const BASE_URL = (
+  process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app"
+).replace(/\/$/, "");
 
 export interface PageMetaOptions {
   /** Translation key under the `meta` namespace, e.g. "herbsDatabase". */

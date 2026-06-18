@@ -25,7 +25,9 @@ test.describe("Dosage Calculator", () => {
     await expect(page.getByLabel(/Child's Weight/i)).toBeVisible();
   });
 
-  test("should calculate a child dose from weight (Clark's rule)", async ({ page }) => {
+  test("should calculate a child dose from weight (Clark's rule)", async ({
+    page,
+  }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
     const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
     await expect(calculateBtn).toBeVisible();
@@ -44,7 +46,9 @@ test.describe("Dosage Calculator", () => {
     await expect(doseValue).toHaveText(/\d+(\.\d+)?\s*(mg|ml|g|drops)/);
   });
 
-  test("should show a validation error when calculating with no dose", async ({ page }) => {
+  test("should show a validation error when calculating with no dose", async ({
+    page,
+  }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
     const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
     await expect(calculateBtn).toBeVisible();
@@ -61,7 +65,9 @@ test.describe("Dosage Calculator", () => {
     ).toBeVisible();
   });
 
-  test("passes basic a11y checks (no critical violations)", async ({ page }) => {
+  test("passes basic a11y checks (no critical violations)", async ({
+    page,
+  }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
     const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
     await expect(calculateBtn).toBeVisible();

@@ -66,12 +66,14 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       url: process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app",
       locale: locale === "fr" ? "fr_FR" : "en_US",
-      images: [{
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
-      }],
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
@@ -95,8 +97,14 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <head>
-        <link rel="preconnect" href="https://pnvltmyixympgammxvoo.supabase.co" />
-        <link rel="dns-prefetch" href="https://pnvltmyixympgammxvoo.supabase.co" />
+        <link
+          rel="preconnect"
+          href="https://pnvltmyixympgammxvoo.supabase.co"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://pnvltmyixympgammxvoo.supabase.co"
+        />
         <OrganizationSchema />
       </head>
       <body className="bg-background text-foreground">

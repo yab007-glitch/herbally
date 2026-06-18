@@ -54,11 +54,25 @@ export function LoginForm() {
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="email">{t("login.email")}</Label>
-          <Input id="email" name="email" type="email" required autoComplete="email" placeholder={t("login.emailPlaceholder")} />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder={t("login.emailPlaceholder")}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="password">{t("login.password")}</Label>
-          <Input id="password" name="password" type="password" required autoComplete="current-password" placeholder={t("login.passwordPlaceholder")} />
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            required
+            autoComplete="current-password"
+            placeholder={t("login.passwordPlaceholder")}
+          />
         </div>
         {state?.error && <FieldError message={state.error} />}
         <Button type="submit" disabled={pending} className="w-full">
@@ -92,15 +106,36 @@ export function RegisterForm() {
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="full_name">{t("register.fullName")}</Label>
-          <Input id="full_name" name="full_name" required autoComplete="name" placeholder={t("register.fullNamePlaceholder")} />
+          <Input
+            id="full_name"
+            name="full_name"
+            required
+            autoComplete="name"
+            placeholder={t("register.fullNamePlaceholder")}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="reg-email">{t("register.email")}</Label>
-          <Input id="reg-email" name="email" type="email" required autoComplete="email" placeholder={t("login.emailPlaceholder")} />
+          <Input
+            id="reg-email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder={t("login.emailPlaceholder")}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="reg-password">{t("register.password")}</Label>
-          <Input id="reg-password" name="password" type="password" required minLength={8} autoComplete="new-password" placeholder={t("register.passwordPlaceholder")} />
+          <Input
+            id="reg-password"
+            name="password"
+            type="password"
+            required
+            minLength={8}
+            autoComplete="new-password"
+            placeholder={t("register.passwordPlaceholder")}
+          />
         </div>
         {state?.success ? (
           <p className="rounded-lg bg-primary/10 p-3 text-sm text-foreground">
@@ -132,11 +167,20 @@ export function ForgotPasswordForm() {
 
   return (
     <FormCard title={t("forgot.title")}>
-      <p className="mb-4 text-sm text-muted-foreground">{t("forgot.subtitle")}</p>
+      <p className="mb-4 text-sm text-muted-foreground">
+        {t("forgot.subtitle")}
+      </p>
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="forgot-email">{t("forgot.email")}</Label>
-          <Input id="forgot-email" name="email" type="email" required autoComplete="email" placeholder={t("forgot.emailPlaceholder")} />
+          <Input
+            id="forgot-email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder={t("forgot.emailPlaceholder")}
+          />
         </div>
         {state?.success ? (
           <p className="rounded-lg bg-primary/10 p-3 text-sm text-foreground">
@@ -170,7 +214,15 @@ export function ResetPasswordForm() {
       <form action={formAction} className="space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="new-password">{t("reset.password")}</Label>
-          <Input id="new-password" name="password" type="password" required minLength={8} autoComplete="new-password" placeholder={t("reset.passwordPlaceholder")} />
+          <Input
+            id="new-password"
+            name="password"
+            type="password"
+            required
+            minLength={8}
+            autoComplete="new-password"
+            placeholder={t("reset.passwordPlaceholder")}
+          />
         </div>
         {state?.success ? (
           <p className="rounded-lg bg-primary/10 p-3 text-sm text-foreground">

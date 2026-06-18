@@ -12,8 +12,7 @@ const getBaseUrl = () =>
 
 const getApiKey = () => process.env.OLLAMA_CLOUD_API_KEY?.trim();
 
-const getModel = () =>
-  (process.env.OLLAMA_CLOUD_MODEL || "glm-5").trim();
+const getModel = () => (process.env.OLLAMA_CLOUD_MODEL || "glm-5").trim();
 
 export const OLLAMA_CLOUD_MODEL = getModel();
 
@@ -83,9 +82,7 @@ export async function chatCompletion(
           await delay(backoff);
           continue;
         }
-        throw new Error(
-          `Ollama Cloud HTTP ${res.status}: ${text}`
-        );
+        throw new Error(`Ollama Cloud HTTP ${res.status}: ${text}`);
       }
 
       const data = (await res.json()) as {

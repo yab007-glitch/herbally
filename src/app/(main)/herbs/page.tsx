@@ -14,7 +14,12 @@ import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import Script from "next/script";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "herbsDatabase", descKey: "herbsDatabaseDesc", path: "/herbs" });
+export const generateMetadata = () =>
+  buildPageMetadata({
+    titleKey: "herbsDatabase",
+    descKey: "herbsDatabaseDesc",
+    path: "/herbs",
+  });
 
 async function getLocale(): Promise<Locale> {
   const cookieStore = await cookies();
@@ -103,21 +108,19 @@ export default async function HerbsPage({
             {t("herbs.all")}
           </Badge>
         </Link>
-        {categories
-          .slice(0, 8)
-          .map((cat: { slug: string; name: string }) => (
-            <Link
-              key={cat.slug}
-              href={`/herbs?category=${cat.slug}${query ? `&q=${query}` : ""}`}
+        {categories.slice(0, 8).map((cat: { slug: string; name: string }) => (
+          <Link
+            key={cat.slug}
+            href={`/herbs?category=${cat.slug}${query ? `&q=${query}` : ""}`}
+          >
+            <Badge
+              variant={category === cat.slug ? "default" : "outline"}
+              className="cursor-pointer"
             >
-              <Badge
-                variant={category === cat.slug ? "default" : "outline"}
-                className="cursor-pointer"
-              >
-                {cat.name}
-              </Badge>
-            </Link>
-          ))}
+              {cat.name}
+            </Badge>
+          </Link>
+        ))}
       </div>
 
       {/* Results info */}

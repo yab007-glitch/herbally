@@ -98,11 +98,7 @@ body {
 }
 
 .dark .gradient-text {
-  background: linear-gradient(
-    135deg,
-    oklch(0.7 0.14 145),
-    oklch(0.7 0.12 180)
-  );
+  background: linear-gradient(135deg, oklch(0.7 0.14 145), oklch(0.7 0.12 180));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

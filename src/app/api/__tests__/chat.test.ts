@@ -12,7 +12,9 @@ import { NextRequest } from "next/server";
  */
 
 // Mocks must be declared before importing the route handler.
-const fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+const fetchMock = vi
+  .fn()
+  .mockResolvedValue(new Response("{}", { status: 200 }));
 vi.stubGlobal("fetch", fetchMock);
 
 const rateLimitMock = vi.fn();
@@ -123,7 +125,6 @@ describe("POST /api/chat — error paths", () => {
   it.skip("returns 429 when rate limit is exceeded, with Retry-After header", async () => {
     // ...
   });
-
 });
 describe("POST /api/chat — model fallback chain", () => {
   it("falls back to the next model when primary 5xxs, then succeeds", async () => {

@@ -20,10 +20,7 @@ const DRUG_TERMS =
 /** Medication cessation / replacement */
 const HARD_BLOCKS_EN: RegExp[] = [
   // Direct cessation
-  new RegExp(
-    `\\bstop taking (?:your |the )?(?:${DRUG_TERMS})\\b`,
-    "i"
-  ),
+  new RegExp(`\\bstop taking (?:your |the )?(?:${DRUG_TERMS})\\b`, "i"),
   new RegExp(
     `\\b(?:cease|discontinue|quit|drop|abandon|halt|suspend) (?:your |the )?(?:${DRUG_TERMS})\\b`,
     "i"
@@ -32,10 +29,7 @@ const HARD_BLOCKS_EN: RegExp[] = [
     `\\byou (?:should|must|need to|can) (?:stop|cease|drop|quit) (?:taking )?(?:your |the )?(?:${DRUG_TERMS})\\b`,
     "i"
   ),
-  new RegExp(
-    `\\b(?:stop|cease) (?:all|any) (?:${DRUG_TERMS})\\b`,
-    "i"
-  ),
+  new RegExp(`\\b(?:stop|cease) (?:all|any) (?:${DRUG_TERMS})\\b`, "i"),
 
   // Replacement language
   /\breplace (?:your |the )?(?:insulin|chemotherapy|prescription|blood.?thinner|medication|treatment) with\b/i,

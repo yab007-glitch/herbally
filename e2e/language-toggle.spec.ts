@@ -1,4 +1,9 @@
-import { test, expect, request as requestCtx, type Page } from "@playwright/test";
+import {
+  test,
+  expect,
+  request as requestCtx,
+  type Page,
+} from "@playwright/test";
 
 /**
  * Regression test for the language-toggle bug where switching French → English
@@ -64,7 +69,9 @@ test.describe("Language toggle (URL = single source of truth)", () => {
   }
 
   for (const startPath of ["/", "/herbs"]) {
-    test(`round-trips en → fr → en on ${startPath || "home"}`, async ({ page }) => {
+    test(`round-trips en → fr → en on ${startPath || "home"}`, async ({
+      page,
+    }) => {
       await page.goto(startPath, { waitUntil: "networkidle" });
       await expectLocale(page, "en");
 
@@ -79,7 +86,9 @@ test.describe("Language toggle (URL = single source of truth)", () => {
       await expectLocale(page, "en");
       const enText = (await page.locator("body").innerText()).toLowerCase();
       expect(enText).toMatch(/explore|herbs|herb-drug interactions/);
-      expect(enText).not.toMatch(/explorer les plantes|base de données d'herbes/);
+      expect(enText).not.toMatch(
+        /explorer les plantes|base de données d'herbes/
+      );
     });
   }
 });

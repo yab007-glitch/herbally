@@ -35,7 +35,10 @@ export function FirstVisitBanner() {
 
   function handleSwitch() {
     if (!detected) return;
-    trackEvent("language_changed", { locale: detected, source: "first_visit_banner" });
+    trackEvent("language_changed", {
+      locale: detected,
+      source: "first_visit_banner",
+    });
     setLocale(detected);
     setDismissed(true);
   }

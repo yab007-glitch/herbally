@@ -28,13 +28,19 @@ describe("herbs actions", () => {
   describe("getHerbs", () => {
     it("returns herbs with pagination", async () => {
       const herbs = [
-        { id: "h1", name: "Ginger", slug: "ginger", herb_categories: { name: "Roots" } },
+        {
+          id: "h1",
+          name: "Ginger",
+          slug: "ginger",
+          herb_categories: { name: "Roots" },
+        },
       ];
       fromMock.mockReturnValueOnce({
         select: () => ({
           eq: () => ({
             order: () => ({
-              range: () => Promise.resolve({ data: herbs, count: 1, error: null }),
+              range: () =>
+                Promise.resolve({ data: herbs, count: 1, error: null }),
             }),
           }),
         }),
@@ -49,7 +55,12 @@ describe("herbs actions", () => {
         select: () => ({
           eq: () => ({
             order: () => ({
-              range: () => Promise.resolve({ data: null, count: 0, error: { message: "db timeout" } }),
+              range: () =>
+                Promise.resolve({
+                  data: null,
+                  count: 0,
+                  error: { message: "db timeout" },
+                }),
             }),
           }),
         }),
@@ -89,7 +100,11 @@ describe("herbs actions", () => {
         select: () => ({
           eq: () => ({
             eq: () => ({
-              single: () => Promise.resolve({ data: null, error: { message: "not found" } }),
+              single: () =>
+                Promise.resolve({
+                  data: null,
+                  error: { message: "not found" },
+                }),
             }),
           }),
         }),
@@ -120,7 +135,13 @@ describe("herbs actions", () => {
   describe("searchHerbs", () => {
     it("returns search results for a term (keyword match)", async () => {
       const herbs = [
-        { id: "h1", name: "Ginger", slug: "ginger", scientific_name: "Zingiber officinale", evidence_level: "A" },
+        {
+          id: "h1",
+          name: "Ginger",
+          slug: "ginger",
+          scientific_name: "Zingiber officinale",
+          evidence_level: "A",
+        },
       ];
       fromMock
         .mockReturnValueOnce({

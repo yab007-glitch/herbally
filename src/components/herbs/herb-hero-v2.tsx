@@ -105,7 +105,8 @@ export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
             )}
             <EvidenceGrade
               level={
-                herb.evidence_level && ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
+                herb.evidence_level &&
+                ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
                   ? (herb.evidence_level as "A" | "B" | "C" | "D" | "trad")
                   : "C"
               }
@@ -135,9 +136,12 @@ export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
           <div className="mt-3 flex flex-col gap-2">
             {/* Pregnancy safety */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Pregnancy</span>
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
+                Pregnancy
+              </span>
               <span className="inline-flex items-center gap-1 text-xs">
-                {herb.pregnancy_safe_oral === false && herb.pregnancy_safe_topical === true ? (
+                {herb.pregnancy_safe_oral === false &&
+                herb.pregnancy_safe_topical === true ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
                     <span className="text-destructive">Unsafe orally</span>
@@ -165,9 +169,12 @@ export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
             </div>
             {/* Nursing safety */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Nursing</span>
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
+                Nursing
+              </span>
               <span className="inline-flex items-center gap-1 text-xs">
-                {herb.nursing_safe_oral === false && herb.nursing_safe_topical === true ? (
+                {herb.nursing_safe_oral === false &&
+                herb.nursing_safe_topical === true ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
                     <span className="text-destructive">Unsafe orally</span>

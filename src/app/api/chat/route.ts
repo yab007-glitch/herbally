@@ -106,9 +106,8 @@ export async function POST(request: NextRequest) {
 
   // ── Pre-fetch verified context from our database ──────────────────
   // Extract the latest user message to analyze for herb/medication names
-  const lastUserMessage = [...msgArray].reverse().find(
-    (m) => m.role === "user"
-  )?.content ?? "";
+  const lastUserMessage =
+    [...msgArray].reverse().find((m) => m.role === "user")?.content ?? "";
 
   let verifiedContext = null;
   try {
@@ -175,7 +174,7 @@ export async function POST(request: NextRequest) {
       );
       continue;
     }
-    
+
     if (response && response.ok) {
       if (model !== primaryModel) {
         logger.warn("api_chat_primary_model_failed", {
@@ -185,13 +184,17 @@ export async function POST(request: NextRequest) {
       }
       break;
     }
-    
+
     if (!response) continue;
 
     const status = response.status;
     const errorText = await response.text().catch(() => "Unknown error");
     lastError = { status, text: errorText };
-    logger.error("api_chat_upstream_error", { model, status, error: errorText.substring(0, 200) });
+    logger.error("api_chat_upstream_error", {
+      model,
+      status,
+      error: errorText.substring(0, 200),
+    });
     if (status === 401 || status === 429) break;
     if (status >= 500) continue;
     if (status === 404 || status === 422) continue;
@@ -257,9 +260,18 @@ export async function POST(request: NextRequest) {
               if (supabase && fullContent) {
                 supabase
                   .from("ai_response_cache")
-                  .insert({ prompt_hash: promptHash, response: fullContent, expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() })
+                  .insert({
+                    prompt_hash: promptHash,
+                    response: fullContent,
+                    expires_at: new Date(
+                      Date.now() + 7 * 24 * 60 * 60 * 1000
+                    ).toISOString(),
+                  })
                   .then(({ error }) => {
-                    if (error) logger.error("api_chat_cache_failed", { error: error.message });
+                    if (error)
+                      logger.error("api_chat_cache_failed", {
+                        error: error.message,
+                      });
                   });
               }
               controller.close();
@@ -281,7 +293,10 @@ export async function POST(request: NextRequest) {
                     .from("ai_response_cache")
                     .insert({ prompt_hash: promptHash, response: fullContent })
                     .then(({ error }) => {
-                      if (error) logger.error("api_chat_cache_failed", { error: error.message });
+                      if (error)
+                        logger.error("api_chat_cache_failed", {
+                          error: error.message,
+                        });
                     });
                 }
                 controller.close();
@@ -303,7 +318,9 @@ export async function POST(request: NextRequest) {
           })
           .catch((error) => {
             cancelTimeout();
-            logger.error("api_chat_stream_error", { error: error instanceof Error ? error.message : String(error) });
+            logger.error("api_chat_stream_error", {
+              error: error instanceof Error ? error.message : String(error),
+            });
             controller.close();
           });
       }

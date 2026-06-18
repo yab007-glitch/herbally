@@ -59,16 +59,56 @@ export interface VerifiedContext {
  * before falling back to DB search.
  */
 const COMMON_HERB_NAMES = new Set([
-  "turmeric", "curcumin", "ginger", "garlic", "echinacea", "chamomile",
-  "lavender", "peppermint", "st. john's wort", "st johns wort", "saint john's wort",
-  "ginkgo", "ginkgo biloba", "ginseng", "ashwagandha", "valerian",
-  "milk thistle", "saw palmetto", "black cohosh", "feverfew",
-  "green tea", "kava", "melatonin", "cinnamon", "aloe vera",
-  "cranberry", "dandelion", "elderberry", "licorice", "nettle",
-  "passionflower", "rosemary", "sage", "thyme", "willow bark",
-  "yarrow", "oregano", "basil", "cardamom", "clove", "fennel",
-  "fenugreek", "hawthorn", "lemon balm", "maca", "reishi",
-  "rhodiola", "schisandra", "slippery elm", "turkey tail",
+  "turmeric",
+  "curcumin",
+  "ginger",
+  "garlic",
+  "echinacea",
+  "chamomile",
+  "lavender",
+  "peppermint",
+  "st. john's wort",
+  "st johns wort",
+  "saint john's wort",
+  "ginkgo",
+  "ginkgo biloba",
+  "ginseng",
+  "ashwagandha",
+  "valerian",
+  "milk thistle",
+  "saw palmetto",
+  "black cohosh",
+  "feverfew",
+  "green tea",
+  "kava",
+  "melatonin",
+  "cinnamon",
+  "aloe vera",
+  "cranberry",
+  "dandelion",
+  "elderberry",
+  "licorice",
+  "nettle",
+  "passionflower",
+  "rosemary",
+  "sage",
+  "thyme",
+  "willow bark",
+  "yarrow",
+  "oregano",
+  "basil",
+  "cardamom",
+  "clove",
+  "fennel",
+  "fenugreek",
+  "hawthorn",
+  "lemon balm",
+  "maca",
+  "reishi",
+  "rhodiola",
+  "schisandra",
+  "slippery elm",
+  "turkey tail",
 ]);
 
 /**
@@ -87,13 +127,11 @@ async function extractHerbNames(message: string): Promise<string[]> {
   }
 
   // Also try DB search for any remaining terms
-  const words = lower.split(/[\s,.;:!?]+/).filter(w => w.length > 3);
+  const words = lower.split(/[\s,.;:!?]+/).filter((w) => w.length > 3);
   const supabase = getAnonClient();
   if (supabase && words.length > 0) {
     try {
-      const conditions = words
-        .map(w => `name.ilike.%${w}%`)
-        .join(",");
+      const conditions = words.map((w) => `name.ilike.%${w}%`).join(",");
       const { data } = await supabase
         .from("herbs")
         .select("name")
@@ -115,29 +153,119 @@ async function extractHerbNames(message: string): Promise<string[]> {
 // ─── Medication name extraction ────────────────────────────────────
 
 const COMMON_MEDICATIONS = new Set([
-  "warfarin", "coumadin", "aspirin", "ibuprofen", "advil", "motrin",
-  "naproxen", "aleve", "acetaminophen", "tylenol", "paracetamol",
-  "sertraline", "zoloft", "fluoxetine", "prozac", "citalopram", "celexa",
-  "escitalopram", "lexapro", "paroxetine", "paxil", "venlafaxine", "effexor",
-  "duloxetine", "cymbalta", "amitriptyline", "nortriptyline",
-  "atorvastatin", "lipitor", "simvastatin", "zocor", "rosuvastatin", "crestor",
-  "metformin", "glucophage", "insulin", "levothyroxine", "synthroid",
-  "lisinopril", "prinivil", "zestril", "enalapril", "losartan", "cozaar",
-  "amlodipine", "norvasc", "metoprolol", "lopressor", "toprol",
-  "omeprazole", "prilosec", "esomeprazole", "nexium", "pantoprazole",
-  "furosemide", "lasix", "hydrochlorothiazide", "hctz",
-  "gabapentin", "neurontin", "pregabalin", "lyrica",
-  "clopidogrel", "plavix", "apixaban", "eliquis", "rivaroxaban", "xarelto",
-  "prednisone", "methotrexate", "cyclosporine", "tacrolimus",
-  "digoxin", "lanoxin", "phenytoin", "dilantin", "carbamazepine", "tegretol",
-  "valproate", "depakote", "lamotrigine", "lamictal",
-  "alprazolam", "xanax", "diazepam", "valium", "lorazepam", "ativan",
-  "zolpidem", "ambien", "diphenhydramine", "benadryl",
-  "montelukast", "singulair", "albuterol", "fluticasone",
-  "sildenafil", "viagra", "tadalafil", "cialis",
-  "oxycodone", "morphine", "tramadol", "codeine",
-  "lithium", "haloperidol", "quetiapine", "seroquel", "olanzapine", "zyprexa",
-  "risperidone", "aripiprazole", "abilify",
+  "warfarin",
+  "coumadin",
+  "aspirin",
+  "ibuprofen",
+  "advil",
+  "motrin",
+  "naproxen",
+  "aleve",
+  "acetaminophen",
+  "tylenol",
+  "paracetamol",
+  "sertraline",
+  "zoloft",
+  "fluoxetine",
+  "prozac",
+  "citalopram",
+  "celexa",
+  "escitalopram",
+  "lexapro",
+  "paroxetine",
+  "paxil",
+  "venlafaxine",
+  "effexor",
+  "duloxetine",
+  "cymbalta",
+  "amitriptyline",
+  "nortriptyline",
+  "atorvastatin",
+  "lipitor",
+  "simvastatin",
+  "zocor",
+  "rosuvastatin",
+  "crestor",
+  "metformin",
+  "glucophage",
+  "insulin",
+  "levothyroxine",
+  "synthroid",
+  "lisinopril",
+  "prinivil",
+  "zestril",
+  "enalapril",
+  "losartan",
+  "cozaar",
+  "amlodipine",
+  "norvasc",
+  "metoprolol",
+  "lopressor",
+  "toprol",
+  "omeprazole",
+  "prilosec",
+  "esomeprazole",
+  "nexium",
+  "pantoprazole",
+  "furosemide",
+  "lasix",
+  "hydrochlorothiazide",
+  "hctz",
+  "gabapentin",
+  "neurontin",
+  "pregabalin",
+  "lyrica",
+  "clopidogrel",
+  "plavix",
+  "apixaban",
+  "eliquis",
+  "rivaroxaban",
+  "xarelto",
+  "prednisone",
+  "methotrexate",
+  "cyclosporine",
+  "tacrolimus",
+  "digoxin",
+  "lanoxin",
+  "phenytoin",
+  "dilantin",
+  "carbamazepine",
+  "tegretol",
+  "valproate",
+  "depakote",
+  "lamotrigine",
+  "lamictal",
+  "alprazolam",
+  "xanax",
+  "diazepam",
+  "valium",
+  "lorazepam",
+  "ativan",
+  "zolpidem",
+  "ambien",
+  "diphenhydramine",
+  "benadryl",
+  "montelukast",
+  "singulair",
+  "albuterol",
+  "fluticasone",
+  "sildenafil",
+  "viagra",
+  "tadalafil",
+  "cialis",
+  "oxycodone",
+  "morphine",
+  "tramadol",
+  "codeine",
+  "lithium",
+  "haloperidol",
+  "quetiapine",
+  "seroquel",
+  "olanzapine",
+  "zyprexa",
+  "risperidone",
+  "aripiprazole",
+  "abilify",
 ]);
 
 function extractMedicationNames(message: string): string[] {
@@ -163,7 +291,9 @@ async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
     const { data, error } = await supabase
       .from("herbs")
       .select("*, herb_categories(*), drug_interactions(*)")
-      .or(`name.ilike.${name},slug.eq.${name.toLowerCase().replace(/\s+/g, "-")}`)
+      .or(
+        `name.ilike.${name},slug.eq.${name.toLowerCase().replace(/\s+/g, "-")}`
+      )
       .eq("is_published", true)
       .limit(1)
       .single();
@@ -190,18 +320,21 @@ async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
       pregnancy_safe: herb.pregnancy_safe,
       nursing_safe: herb.nursing_safe,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      pregnancy_safe_oral: (herb as any).pregnancy_safe_oral ?? herb.pregnancy_safe,
+      pregnancy_safe_oral:
+        (herb as any).pregnancy_safe_oral ?? herb.pregnancy_safe,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      pregnancy_safe_topical: (herb as any).pregnancy_safe_topical ?? herb.pregnancy_safe,
+      pregnancy_safe_topical:
+        (herb as any).pregnancy_safe_topical ?? herb.pregnancy_safe,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       nursing_safe_oral: (herb as any).nursing_safe_oral ?? herb.nursing_safe,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      nursing_safe_topical: (herb as any).nursing_safe_topical ?? herb.nursing_safe,
+      nursing_safe_topical:
+        (herb as any).nursing_safe_topical ?? herb.nursing_safe,
       evidence_level: herb.evidence_level,
       active_compounds: herb.active_compounds ?? [],
       provenance_method:
-        (herb.provenance as Record<string, unknown> | undefined)
-          ?.verification_method as string | null ?? null,
+        ((herb.provenance as Record<string, unknown> | undefined)
+          ?.verification_method as string | null) ?? null,
     };
   } catch {
     return null;
@@ -213,7 +346,8 @@ async function lookupInteractions(
   medicationNames: string[]
 ): Promise<VerifiedInteraction[]> {
   const supabase = getAnonClient();
-  if (!supabase || herbNames.length === 0 || medicationNames.length === 0) return [];
+  if (!supabase || herbNames.length === 0 || medicationNames.length === 0)
+    return [];
 
   try {
     // Build conditions for drug names
@@ -240,7 +374,9 @@ async function lookupInteractions(
       const severity = String(row.severity ?? "unknown");
       const mechanism = String(row.mechanism ?? row.description ?? "Unknown");
       const evidence = String(row.source ?? "Not specified");
-      const recommendation = String(row.description ?? "Consult healthcare provider");
+      const recommendation = String(
+        row.description ?? "Consult healthcare provider"
+      );
 
       const herbMatch = herbNames.some((n) =>
         herbName.toLowerCase().includes(n)

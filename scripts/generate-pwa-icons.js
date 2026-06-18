@@ -56,13 +56,13 @@ async function main() {
     const out = path.join(PUBLIC, file);
     const buf = await rasterize(size, padding);
     await fs.writeFile(out, buf);
-        console.log(
+    console.log(
       `✓ ${file} (${size}×${size}${padding ? " maskable" : ""}, ${buf.length} bytes)`
     );
   }
 }
 
 main().catch((err) => {
-    console.error(`✗ ${err.message ?? err}`);
+  console.error(`✗ ${err.message ?? err}`);
   process.exit(1);
 });

@@ -118,7 +118,9 @@ export function SmartSearch({ defaultValue = "", category }: SmartSearchProps) {
                 }
               }
             } catch (error) {
-              logger.error("smart_search_random_herb", { error: error instanceof Error ? error.message : String(error) });
+              logger.error("smart_search_random_herb", {
+                error: error instanceof Error ? error.message : String(error),
+              });
               router.push("/herbs");
             }
           }}

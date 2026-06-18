@@ -9,9 +9,15 @@ interface ChatEmptyStateV2Props {
 }
 
 const SUGGESTIONS = [
-  { text: "Is turmeric safe with blood thinners?", label: "Turmeric + blood thinners" },
+  {
+    text: "Is turmeric safe with blood thinners?",
+    label: "Turmeric + blood thinners",
+  },
   { text: "What herbs help with anxiety?", label: "Herbs for anxiety" },
-  { text: "Can I take echinacea while pregnant?", label: "Echinacea during pregnancy" },
+  {
+    text: "Can I take echinacea while pregnant?",
+    label: "Echinacea during pregnancy",
+  },
   { text: "Tell me about ginger for nausea", label: "Ginger for nausea" },
 ];
 
@@ -36,11 +42,17 @@ export function ChatEmptyStateV2({ onSendMessage }: ChatEmptyStateV2Props) {
         ))}
       </div>
       <p className="mt-6 text-xs text-muted-foreground">
-        <Link href="/herbs" className="underline underline-offset-2 hover:text-foreground">
+        <Link
+          href="/herbs"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
           {t("herbalistPage.browseHerbs")}
         </Link>
         {" · "}
-        <Link href="/calculator" className="underline underline-offset-2 hover:text-foreground">
+        <Link
+          href="/calculator"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
           {t("nav.calculator")}
         </Link>
       </p>

@@ -3,7 +3,6 @@ import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
 
-
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 let stripeInstance: Stripe | null = null;
 
@@ -35,21 +34,23 @@ async function upsertDonation(session: Stripe.Checkout.Session) {
         ? "pending"
         : "expired";
 
-  const { error } = await createAdminClient().from("donations").upsert(
-    {
-      stripe_session_id: session.id,
-      stripe_payment_intent_id: paymentIntentId,
-      amount_cents: amountCents,
-      amount_display: amountDisplay,
-      currency: session.currency ?? "usd",
-      customer_email: email,
-      customer_name: name,
-      status,
-      metadata: session.metadata ?? {},
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "stripe_session_id" }
-  );
+  const { error } = await createAdminClient()
+    .from("donations")
+    .upsert(
+      {
+        stripe_session_id: session.id,
+        stripe_payment_intent_id: paymentIntentId,
+        amount_cents: amountCents,
+        amount_display: amountDisplay,
+        currency: session.currency ?? "usd",
+        customer_email: email,
+        customer_name: name,
+        status,
+        metadata: session.metadata ?? {},
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "stripe_session_id" }
+    );
 
   if (error) {
     logger.error("stripe_upsert_donation_failed", {

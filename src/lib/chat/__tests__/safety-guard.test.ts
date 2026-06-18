@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { evaluateAssistantContent, normalizeForMatching } from "../safety-guard";
+import {
+  evaluateAssistantContent,
+  normalizeForMatching,
+} from "../safety-guard";
 
 describe("evaluateAssistantContent — hard blocks", () => {
   it("returns ok for normal content", () => {
@@ -70,9 +73,7 @@ describe("evaluateAssistantContent — hard blocks", () => {
   });
 
   it("blocks 'double the dose' phrasing", () => {
-    const v = evaluateAssistantContent(
-      "Double your dose for better results."
-    );
+    const v = evaluateAssistantContent("Double your dose for better results.");
     expect(v.verdict).toBe("block");
   });
 
@@ -84,9 +85,7 @@ describe("evaluateAssistantContent — hard blocks", () => {
   });
 
   it("blocks 'don't call 911' phrasing", () => {
-    const v = evaluateAssistantContent(
-      "Don't call 911 — just take this herb."
-    );
+    const v = evaluateAssistantContent("Don't call 911 — just take this herb.");
     expect(v.verdict).toBe("block");
   });
 
@@ -186,9 +185,7 @@ describe("evaluateAssistantContent — adversarial patterns", () => {
   });
 
   it("blocks leet-speak 'd0n't g0 t0 the h0spital'", () => {
-    const v = evaluateAssistantContent(
-      "D0n't g0 t0 the h0spital."
-    );
+    const v = evaluateAssistantContent("D0n't g0 t0 the h0spital.");
     expect(v.verdict).toBe("block");
   });
 

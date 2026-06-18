@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { expandQueryToKeywords } from "@/lib/data/synonym-map";import { logger } from "@/lib/utils/logger";
-
+import { expandQueryToKeywords } from "@/lib/data/synonym-map";
+import { logger } from "@/lib/utils/logger";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -85,7 +85,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(results);
   } catch (err) {
-    logger.error("herbs_search_error", { error: err instanceof Error ? err.message : String(err) });
+    logger.error("herbs_search_error", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return NextResponse.json([]);
   }
 }

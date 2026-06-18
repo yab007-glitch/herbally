@@ -1,10 +1,10 @@
 import { captureException } from "@sentry/nextjs";
 import { z } from "zod";
 import { NextResponse, type NextRequest } from "next/server";
-import { searchDrugs } from "@/lib/utils/rxnorm-client";import { logger } from "@/lib/utils/logger";
+import { searchDrugs } from "@/lib/utils/rxnorm-client";
+import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
-
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,7 +32,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ results });
   } catch (error) {
     captureException(error);
-    logger.error("rxnorm_api_error", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("rxnorm_api_error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Failed to search drugs" },
       { status: 500 }

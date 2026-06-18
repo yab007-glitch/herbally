@@ -40,7 +40,9 @@ export async function GET() {
 
   checks.environment = {
     status: hasRequiredEnv ? "healthy" : "degraded",
-    error: hasRequiredEnv ? undefined : "One or more required variables are not set",
+    error: hasRequiredEnv
+      ? undefined
+      : "One or more required variables are not set",
   };
 
   // Check OpenRouter API by making a lightweight models request

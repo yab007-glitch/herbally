@@ -24,7 +24,14 @@ describe("chat-local (client-side)", () => {
 
     it("returns sessions from localStorage", () => {
       const sessions = [
-        { id: "s1", title: "Chat 1", messages: [], herb_context: null, created_at: "2024-01-01", updated_at: "2024-01-02" },
+        {
+          id: "s1",
+          title: "Chat 1",
+          messages: [],
+          herb_context: null,
+          created_at: "2024-01-01",
+          updated_at: "2024-01-02",
+        },
       ];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
       const result = getChatSessions();
@@ -40,8 +47,22 @@ describe("chat-local (client-side)", () => {
 
     it("returns the matching session", () => {
       const sessions = [
-        { id: "s1", title: "Chat 1", messages: [], herb_context: "ginger", created_at: "2024-01-01", updated_at: "2024-01-02" },
-        { id: "s2", title: "Chat 2", messages: [], herb_context: null, created_at: "2024-01-03", updated_at: "2024-01-04" },
+        {
+          id: "s1",
+          title: "Chat 1",
+          messages: [],
+          herb_context: "ginger",
+          created_at: "2024-01-01",
+          updated_at: "2024-01-02",
+        },
+        {
+          id: "s2",
+          title: "Chat 2",
+          messages: [],
+          herb_context: null,
+          created_at: "2024-01-03",
+          updated_at: "2024-01-04",
+        },
       ];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
       const result = getChatSession("s2");
@@ -72,15 +93,27 @@ describe("chat-local (client-side)", () => {
 
   describe("updateChatSession", () => {
     it("returns null when session does not exist", () => {
-      const result = updateChatSession("s1", [{ role: "user", content: "hi", id: "m1", timestamp: "2024-01-01" }]);
+      const result = updateChatSession("s1", [
+        { role: "user", content: "hi", id: "m1", timestamp: "2024-01-01" },
+      ]);
       expect(result).toBeNull();
     });
 
     it("updates messages and auto-generates title", () => {
       const session = createChatSession();
       const messages = [
-        { role: "user" as const, content: "Tell me about ginger benefits", id: "m1", timestamp: "2024-01-01" },
-        { role: "assistant" as const, content: "Ginger is great!", id: "m2", timestamp: "2024-01-01" },
+        {
+          role: "user" as const,
+          content: "Tell me about ginger benefits",
+          id: "m1",
+          timestamp: "2024-01-01",
+        },
+        {
+          role: "assistant" as const,
+          content: "Ginger is great!",
+          id: "m2",
+          timestamp: "2024-01-01",
+        },
       ];
       const result = updateChatSession(session.id, messages);
       expect(result?.title).toBe("Tell me about ginger benefits");
@@ -94,7 +127,12 @@ describe("chat-local (client-side)", () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
 
       const messages = [
-        { role: "user" as const, content: "hi", id: "m1", timestamp: "2024-01-01" },
+        {
+          role: "user" as const,
+          content: "hi",
+          id: "m1",
+          timestamp: "2024-01-01",
+        },
       ];
       const result = updateChatSession(session.id, messages);
       expect(result?.title).toBe("Custom Title");

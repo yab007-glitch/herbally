@@ -11,7 +11,8 @@ import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "doseCalculator", path: "/calculator" });
+export const generateMetadata = () =>
+  buildPageMetadata({ titleKey: "doseCalculator", path: "/calculator" });
 
 function parseDosage(dosageStr: string | null): {
   dose: number | null;

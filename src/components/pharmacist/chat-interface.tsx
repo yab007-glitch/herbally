@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo, useDeferredValue } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  useDeferredValue,
+} from "react";
 import {
   Send,
   AlertCircle,
@@ -77,8 +84,7 @@ function generateFollowUps(
   lastAssistantMessage: string,
   herbContext?: string | null
 ): string[] {
-  const hasHerb =
-    herbContext && herbContext.length > 20;
+  const hasHerb = herbContext && herbContext.length > 20;
   const base = [
     "What are the side effects?",
     "What's the recommended dosage?",
@@ -121,7 +127,9 @@ export function ChatInterface({
   const [justSaved, setJustSaved] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [hasSentMessage, setHasSentMessage] = useState(false);
-  const [dataSource, setDataSource] = useState<"database" | "none" | null>(null);
+  const [dataSource, setDataSource] = useState<"database" | "none" | null>(
+    null
+  );
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -194,17 +202,30 @@ export function ChatInterface({
         }
         const gid = (await getGuestId()) ?? "unknown";
         if (!sessionIdState) {
-          const session = await createGuestSession(gid, messages[0]?.content.slice(0, 60) ?? "Chat");
+          const session = await createGuestSession(
+            gid,
+            messages[0]?.content.slice(0, 60) ?? "Chat"
+          );
           if (session) {
             const sid = session.id;
             setSessionIdState(sid);
             for (const msg of messages) {
-              await addGuestMessage(sid, msg.role as "user" | "assistant", msg.content, gid);
+              await addGuestMessage(
+                sid,
+                msg.role as "user" | "assistant",
+                msg.content,
+                gid
+              );
             }
           }
         } else {
           const gid2 = (await getGuestId()) ?? "unknown";
-          await addGuestMessage(sessionIdState, messages[messages.length - 1].role as "user" | "assistant", messages[messages.length - 1].content, gid2);
+          await addGuestMessage(
+            sessionIdState,
+            messages[messages.length - 1].role as "user" | "assistant",
+            messages[messages.length - 1].content,
+            gid2
+          );
         }
       } catch {
         // Silent fail
@@ -270,7 +291,9 @@ export function ChatInterface({
       setDataSource(dsHeader === "database" ? "database" : "none");
 
       if (!response.ok) {
-        const err = await response.json().catch(() => ({ error: "Unknown error" }));
+        const err = await response
+          .json()
+          .catch(() => ({ error: "Unknown error" }));
         setMessages((prev) => [
           ...prev,
           {
@@ -375,7 +398,7 @@ export function ChatInterface({
 
   function clearChat() {
     if (sessionIdState) {
-      getGuestId().then(gid => {
+      getGuestId().then((gid) => {
         if (gid) deleteGuestSession(sessionIdState, gid).catch(() => {});
       });
     }
@@ -463,16 +486,19 @@ export function ChatInterface({
                         </div>
                       ) : (
                         <div className="group relative rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5 text-sm leading-relaxed text-foreground">
-                          {dataSource === "database" && message.role === "assistant" && (
-                            <div className="mb-1.5 inline-flex items-center gap-1 rounded bg-green-100 dark:bg-green-950/30 px-1.5 py-0.5 text-[10px] text-green-700 dark:text-green-400">
-                              <span className="size-1.5 rounded-full bg-green-500" />
-                              {t("common.verifiedData")}
-                            </div>
-                          )}
+                          {dataSource === "database" &&
+                            message.role === "assistant" && (
+                              <div className="mb-1.5 inline-flex items-center gap-1 rounded bg-green-100 dark:bg-green-950/30 px-1.5 py-0.5 text-[10px] text-green-700 dark:text-green-400">
+                                <span className="size-1.5 rounded-full bg-green-500" />
+                                {t("common.verifiedData")}
+                              </div>
+                            )}
                           <ChatMarkdown>{message.content}</ChatMarkdown>
                           {/* Copy button — show on hover */}
                           <button
-                            onClick={() => copyToClipboard(message.content, message.id)}
+                            onClick={() =>
+                              copyToClipboard(message.content, message.id)
+                            }
                             className="absolute -bottom-1 right-0 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
                             aria-label="Copy response"
                           >
@@ -571,7 +597,10 @@ export function ChatInterface({
 
       {/* Input area */}
       <div className="shrink-0 border-t border-border/50 px-4 py-3">
-        <form onSubmit={handleSubmit} className="flex items-end gap-2 mx-auto max-w-2xl">
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-end gap-2 mx-auto max-w-2xl"
+        >
           <div className="relative flex-1">
             <textarea
               ref={inputRef}
@@ -616,7 +645,11 @@ export function ChatInterface({
               {t("common.clearConversation")}
             </button>
             <span className="text-[10px] text-muted-foreground">
-              {isSaving ? t("common.saving") : justSaved ? t("common.saved") : ""}
+              {isSaving
+                ? t("common.saving")
+                : justSaved
+                  ? t("common.saved")
+                  : ""}
             </span>
           </div>
         )}

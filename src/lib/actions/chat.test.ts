@@ -68,7 +68,10 @@ describe("chat actions", () => {
       const countResult = { data: sessions, error: null, count: 1 };
       selectMock.mockReturnValueOnce({
         ...chain(),
-        eq: () => ({ ...chain(), order: () => ({ ...chain(), limit: () => countResult }) }),
+        eq: () => ({
+          ...chain(),
+          order: () => ({ ...chain(), limit: () => countResult }),
+        }),
       });
 
       const result = await actions.getChatSessions();

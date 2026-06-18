@@ -189,13 +189,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const herb of herbsBatch) {
         herbPages.push({
           url: `${baseUrl}/herbs/${herb.slug}`,
-          lastModified: herb.updated_at ? new Date(herb.updated_at) : new Date(),
+          lastModified: herb.updated_at
+            ? new Date(herb.updated_at)
+            : new Date(),
           changeFrequency: "weekly" as const,
           priority: 0.7,
         });
         herbPages.push({
           url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
-          lastModified: herb.updated_at ? new Date(herb.updated_at) : new Date(),
+          lastModified: herb.updated_at
+            ? new Date(herb.updated_at)
+            : new Date(),
           changeFrequency: "weekly" as const,
           priority: 0.7,
         });
@@ -291,7 +295,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticPages, ...comparePages, ...categoryPages, ...herbPages];
   } catch (error) {
-    logger.error("sitemap_generation_error", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("sitemap_generation_error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     // Return static pages only on error
     return staticPages;
   }

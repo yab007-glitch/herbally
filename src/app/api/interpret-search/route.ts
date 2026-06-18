@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { openai, MODEL } from "@/lib/ai/openai-client";
-import { rateLimit } from "@/lib/rate-limit";import { logger } from "@/lib/utils/logger";
+import { rateLimit } from "@/lib/rate-limit";
+import { logger } from "@/lib/utils/logger";
 import { z } from "zod";
-
 
 const MAX_BODY_SIZE = 10 * 1024; // 10KB max for search interpretation
 
@@ -54,9 +54,10 @@ export async function POST(request: NextRequest) {
     const schema = z.object({ query: z.string().min(2).max(200) });
     const body = await request.json();
     const parsed = schema.safeParse(body);
-    if (!parsed.success) { return NextResponse.json({ keywords: [body?.query || ""] }); }
+    if (!parsed.success) {
+      return NextResponse.json({ keywords: [body?.query || ""] });
+    }
     originalQuery = parsed.data.query;
-
 
     // Max 200 chars to prevent token abuse
     const trimmed = originalQuery.trim().slice(0, 200);
@@ -103,7 +104,9 @@ Examples:
 
     return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
   } catch (error) {
-    logger.error("interpret_search_failed", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("interpret_search_failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({
       keywords: [originalQuery.toLowerCase() || ""],
     });

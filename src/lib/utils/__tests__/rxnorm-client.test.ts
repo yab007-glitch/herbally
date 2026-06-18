@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { searchDrugs, getDrugByRxcui, getDrugInteractions } from "../rxnorm-client";
+import {
+  searchDrugs,
+  getDrugByRxcui,
+  getDrugInteractions,
+} from "../rxnorm-client";
 
 const fetchMock = vi.fn();
 vi.stubGlobal("fetch", fetchMock);
@@ -30,7 +34,11 @@ describe("rxnorm-client", () => {
 
       const result = await searchDrugs("warfarin");
       expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({ rxcui: "12345", name: "Warfarin", synonym: "Warfarin" });
+      expect(result[0]).toEqual({
+        rxcui: "12345",
+        name: "Warfarin",
+        synonym: "Warfarin",
+      });
     });
 
     it("returns empty array when API returns non-ok", async () => {
@@ -64,7 +72,9 @@ describe("rxnorm-client", () => {
         }),
       });
       await searchDrugs("vitamin c");
-      expect(fetchMock.mock.calls[0][0]).toContain(encodeURIComponent("vitamin c"));
+      expect(fetchMock.mock.calls[0][0]).toContain(
+        encodeURIComponent("vitamin c")
+      );
     });
   });
 

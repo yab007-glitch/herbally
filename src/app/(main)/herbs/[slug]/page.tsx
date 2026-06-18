@@ -95,8 +95,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: {
       canonical: `${baseUrl}/herbs/${slug}`,
       languages: {
-        "en": `${baseUrl}/herbs/${slug}`,
-        "fr": `${baseUrl}/fr/herbs/${slug}`,
+        en: `${baseUrl}/herbs/${slug}`,
+        fr: `${baseUrl}/fr/herbs/${slug}`,
         "x-default": `${baseUrl}/herbs/${slug}`,
       },
     },
@@ -159,7 +159,6 @@ function formatCitations(
   }
   return citations;
 }
-
 
 export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
@@ -233,7 +232,8 @@ export default async function HerbDetailPage({ params }: Props) {
     });
   }
 
-  const interactions = (herb.drug_interactions || []) as import("@/components/herbs/interactions-table").Interaction[];
+  const interactions = (herb.drug_interactions ||
+    []) as import("@/components/herbs/interactions-table").Interaction[];
 
   // Fetch pre-generated FAQs for Featured Snippet optimization
   const getFaqsCached = unstable_cache(
@@ -298,7 +298,9 @@ export default async function HerbDetailPage({ params }: Props) {
     if (supabaseClient) {
       let relatedQuery = supabaseClient
         .from("herbs")
-        .select("name, slug, scientific_name, symptom_keywords, traditional_uses")
+        .select(
+          "name, slug, scientific_name, symptom_keywords, traditional_uses"
+        )
         .eq("is_published", true);
       if (herb.category_id) {
         relatedQuery = relatedQuery.eq("category_id", herb.category_id);
@@ -337,7 +339,9 @@ export default async function HerbDetailPage({ params }: Props) {
         }
         pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
         drugInteractions={interactions.length}
-        preGeneratedFaqs={preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined}
+        preGeneratedFaqs={
+          preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
+        }
       />
 
       {/* Back Button */}
@@ -434,8 +438,6 @@ export default async function HerbDetailPage({ params }: Props) {
           </div>
         </section>
       )}
-
-
     </div>
   );
 }

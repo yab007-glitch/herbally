@@ -8,7 +8,11 @@ export default function AuthLayout({
 }) {
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-4 py-12">
-      <Link href="/" className="mb-8 flex items-center gap-2" aria-label="HerbAlly home">
+      <Link
+        href="/"
+        className="mb-8 flex items-center gap-2"
+        aria-label="HerbAlly home"
+      >
         <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           <Leaf className="size-4" />
         </div>

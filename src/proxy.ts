@@ -38,7 +38,8 @@ function buildCSP(): string {
     "frame-ancestors 'none'",
   ];
   if (process.env.NODE_ENV !== "production") {
-    directives[1] = "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com";
+    directives[1] =
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com";
   }
   return directives.join("; ");
 }
@@ -123,7 +124,9 @@ export default async function proxy(request: NextRequest) {
 
   // ── Locale routing ─────────────────────────────────────────────────
   if (!shouldSkipLocaleRouting(pathname)) {
-    const cookieLocale = request.cookies.get("herbally-locale")?.value as Locale | undefined;
+    const cookieLocale = request.cookies.get("herbally-locale")?.value as
+      | Locale
+      | undefined;
     const acceptLangLocale = detectLocaleFromAcceptLanguage(
       request.headers.get("accept-language")
     );
@@ -156,7 +159,10 @@ export default async function proxy(request: NextRequest) {
     // (first visit via cookie or Accept-Language).
     const preferredLocale = cookieLocale ?? acceptLangLocale;
     if (preferredLocale === "fr") {
-      const redirectPath = addLocalePrefix(pathname === "/" ? "/" : pathname, "fr");
+      const redirectPath = addLocalePrefix(
+        pathname === "/" ? "/" : pathname,
+        "fr"
+      );
       const url = request.nextUrl.clone();
       url.pathname = redirectPath;
       const redirect = NextResponse.redirect(url);

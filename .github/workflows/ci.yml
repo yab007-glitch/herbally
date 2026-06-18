@@ -88,6 +88,13 @@ jobs:
 
   test-e2e:
     runs-on: ubuntu-latest
+    # Placeholder Supabase env so the standalone server's proxy (updateSession)
+    # can construct a client and start. OPENROUTER_API_KEY is intentionally
+    # unset so /api/chat 503s gracefully and AI-dependent tests skip.
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v6
@@ -104,7 +111,7 @@ jobs:
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
-      - run: npm run test:e2e
+      - run: npx playwright test --project=chromium
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

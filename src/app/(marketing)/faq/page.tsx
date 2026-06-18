@@ -12,7 +12,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "faq", path: "/faq" });
+export const generateMetadata = () =>
+  buildPageMetadata({ titleKey: "faq", path: "/faq" });
 
 const categoryIcons: Record<string, typeof Leaf> = {
   aboutHerbAlly: Leaf,
@@ -52,7 +53,7 @@ const categorySubKey: Record<string, string> = {
 };
 
 export default async function FAQPage() {
-    const locale = await getLocaleFromRequest();
+  const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
 
   const faqCategories = categoryKeys.map((catKey) => ({

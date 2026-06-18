@@ -41,7 +41,9 @@ export async function createGuestSession(
     });
 
     if (error || !data) {
-      logger.error("chat_persist_create_guest_session", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("chat_persist_create_guest_session", {
+        error: error instanceof Error ? error.message : String(error),
+      });
       return null;
     }
 
@@ -54,7 +56,9 @@ export async function createGuestSession(
       messages: [],
     };
   } catch (error) {
-    logger.error("chat_persist_create_guest_session", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("chat_persist_create_guest_session", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
@@ -78,7 +82,9 @@ export async function getGuestSessions(
       messages: [],
     }));
   } catch (error) {
-    logger.error("chat_persist_get_guest_sessions", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("chat_persist_get_guest_sessions", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return [];
   }
 }
@@ -117,7 +123,9 @@ export async function getGuestSession(
       })),
     };
   } catch (error) {
-    logger.error("chat_persist_get_guest_session", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("chat_persist_get_guest_session", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
@@ -139,7 +147,9 @@ export async function addGuestMessage(
     });
 
     if (error) {
-      logger.error("chat_persist_add_guest_message", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("chat_persist_add_guest_message", {
+        error: error instanceof Error ? error.message : String(error),
+      });
       return null;
     }
 
@@ -150,7 +160,9 @@ export async function addGuestMessage(
       createdAt: data.created_at,
     };
   } catch (error) {
-    logger.error("chat_persist_add_guest_message", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("chat_persist_add_guest_message", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return null;
   }
 }
@@ -168,7 +180,9 @@ export async function deleteGuestSession(
     });
     return !error && !!data;
   } catch (error) {
-    logger.error("chat_persist_delete_guest_session", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("chat_persist_delete_guest_session", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return false;
   }
 }

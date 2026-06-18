@@ -1,12 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
-import type {
-  Root,
-  Paragraph,
-  Text,
-  Link,
-} from "mdast";
+import type { Root, Paragraph, Text, Link } from "mdast";
 import { enrichTree } from "../enrichment";
 
 /** Parse markdown to an mdast tree using the same remark-parse that ReactMarkdown uses internally. */

@@ -1,9 +1,5 @@
 import Link from "next/link";
-import {
-  AlertTriangle,
-  ShieldCheck,
-  ShieldX,
-} from "lucide-react";
+import { AlertTriangle, ShieldCheck, ShieldX } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -64,12 +60,10 @@ export function HerbSafetyPanel({
       />
 
       {/* Safety Card */}
-      <Card className="overflow-hidden rounded-2xl border-warning/20"
-      >
+      <Card className="overflow-hidden rounded-2xl border-warning/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl text-warning">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-warning/10 text-warning"
-            >
+            <div className="flex size-9 items-center justify-center rounded-xl bg-warning/10 text-warning">
               <AlertTriangle className="size-5" />
             </div>
             {t("herbDetail.safetyInfo")}

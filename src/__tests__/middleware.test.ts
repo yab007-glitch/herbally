@@ -39,21 +39,19 @@ describe("middleware — locale detection", () => {
   });
 
   it("returns null for English (default locale)", () => {
-    expect(
-      detectLocaleFromAcceptLanguage("en-US,en;q=0.9")
-    ).toBeNull();
+    expect(detectLocaleFromAcceptLanguage("en-US,en;q=0.9")).toBeNull();
   });
 
   it("returns 'fr' when French is preferred", () => {
-    expect(
-      detectLocaleFromAcceptLanguage("fr-FR,fr;q=0.9,en;q=0.8")
-    ).toBe("fr");
+    expect(detectLocaleFromAcceptLanguage("fr-FR,fr;q=0.9,en;q=0.8")).toBe(
+      "fr"
+    );
   });
 
   it("returns 'fr' when French has highest quality weight", () => {
-    expect(
-      detectLocaleFromAcceptLanguage("en;q=0.8,fr;q=0.9,de;q=0.7")
-    ).toBe("fr");
+    expect(detectLocaleFromAcceptLanguage("en;q=0.8,fr;q=0.9,de;q=0.7")).toBe(
+      "fr"
+    );
   });
 
   it("returns null when no supported language is found", () => {
@@ -64,9 +62,7 @@ describe("middleware — locale detection", () => {
 
   it("handles multiple entries with same quality", () => {
     // French appears first, so it should win
-    expect(
-      detectLocaleFromAcceptLanguage("fr-CA,en-US")
-    ).toBe("fr");
+    expect(detectLocaleFromAcceptLanguage("fr-CA,en-US")).toBe("fr");
   });
 
   it("handles the fr shorthand without region", () => {

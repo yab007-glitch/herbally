@@ -51,7 +51,10 @@ describe("chat-persist (guest)", () => {
     });
 
     it("returns null on RPC error", async () => {
-      rpcMock.mockResolvedValueOnce({ data: null, error: { message: "db error" } });
+      rpcMock.mockResolvedValueOnce({
+        data: null,
+        error: { message: "db error" },
+      });
       const result = await actions.createGuestSession("guest-123");
       expect(result).toBeNull();
     });
@@ -67,7 +70,13 @@ describe("chat-persist (guest)", () => {
     it("maps RPC result to PersistedChatSession shape", async () => {
       rpcMock.mockResolvedValueOnce({
         data: [
-          { id: "gs1", title: "Chat 1", herb_context: null, created_at: "2024-01-01", updated_at: "2024-01-02" },
+          {
+            id: "gs1",
+            title: "Chat 1",
+            herb_context: null,
+            created_at: "2024-01-01",
+            updated_at: "2024-01-02",
+          },
         ],
         error: null,
       });
@@ -79,7 +88,10 @@ describe("chat-persist (guest)", () => {
 
   describe("getGuestSession", () => {
     it("returns null when session not found", async () => {
-      singleMock.mockResolvedValueOnce({ data: null, error: { message: "not found" } });
+      singleMock.mockResolvedValueOnce({
+        data: null,
+        error: { message: "not found" },
+      });
       const result = await actions.getGuestSession("gs1", "guest-123");
       expect(result).toBeNull();
     });
@@ -88,7 +100,12 @@ describe("chat-persist (guest)", () => {
   describe("addGuestMessage", () => {
     it("returns null on RPC error", async () => {
       rpcMock.mockResolvedValueOnce({ data: null, error: { message: "fail" } });
-      const result = await actions.addGuestMessage("gs1", "user", "hi", "guest-123");
+      const result = await actions.addGuestMessage(
+        "gs1",
+        "user",
+        "hi",
+        "guest-123"
+      );
       expect(result).toBeNull();
     });
   });

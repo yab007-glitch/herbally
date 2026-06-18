@@ -70,10 +70,9 @@ describe("GET /api/rxnorm", () => {
 
   it("returns empty array when RxNorm returns no candidates", async () => {
     fetchMock.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({ approximateGroup: { candidate: [] } }),
-        { status: 200 }
-      )
+      new Response(JSON.stringify({ approximateGroup: { candidate: [] } }), {
+        status: 200,
+      })
     );
 
     const { GET } = await loadRoute();

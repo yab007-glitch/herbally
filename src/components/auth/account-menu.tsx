@@ -29,7 +29,10 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
   // Not yet resolved: render a neutral placeholder (matches SSR logged-out shell).
   if (user === undefined) {
     return compact ? (
-      <span className="inline-flex h-8 w-8 items-center justify-center" aria-hidden />
+      <span
+        className="inline-flex h-8 w-8 items-center justify-center"
+        aria-hidden
+      />
     ) : (
       <span className="inline-flex h-8 w-20" aria-hidden />
     );
@@ -52,7 +55,9 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
     <form action={logout} className="inline-flex">
       <Button type="submit" variant="ghost" size="sm" aria-label={t("logout")}>
         {compact ? <LogOut className="size-4" /> : <User className="size-4" />}
-        {!compact && <span className="ml-1.5 hidden sm:inline">{t("logout")}</span>}
+        {!compact && (
+          <span className="ml-1.5 hidden sm:inline">{t("logout")}</span>
+        )}
       </Button>
     </form>
   );

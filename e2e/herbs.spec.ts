@@ -16,14 +16,18 @@ test.describe("Herbs Catalog", () => {
     await expect(page.getByPlaceholder(/Search herbs by name/i)).toBeVisible();
   });
 
-  test("shows the 'All' category filter linking to /herbs", async ({ page }) => {
+  test("shows the 'All' category filter linking to /herbs", async ({
+    page,
+  }) => {
     await page.goto("/herbs");
     const allBadge = page.getByRole("link", { name: /^All$/ }).first();
     await expect(allBadge).toBeVisible();
     await expect(allBadge).toHaveAttribute("href", /\/herbs/);
   });
 
-  test("renders either herb cards or an empty state (never a crash)", async ({ page }) => {
+  test("renders either herb cards or an empty state (never a crash)", async ({
+    page,
+  }) => {
     await page.goto("/herbs");
     // Either herb detail links exist, or an empty-state heading is shown.
     const herbLinks = page.locator('a[href^="/herbs/"]');
@@ -35,11 +39,13 @@ test.describe("Herbs Catalog", () => {
       expect(href).toMatch(/^\/herbs\/[^/]+$/);
     } else {
       // No data available (e.g. CI without Supabase) -> empty state renders.
-      await expect(page.getByText(/No herbs|Browse all|try searching/i)).toBeVisible();
+      await expect(page.getByText(/No herbs found/i)).toBeVisible();
     }
   });
 
-  test("search input accepts text and filters the catalog", async ({ page }) => {
+  test("search input accepts text and filters the catalog", async ({
+    page,
+  }) => {
     await page.goto("/herbs", { waitUntil: "networkidle" });
     const search = page.getByPlaceholder(/Search herbs by name/i);
     await expect(search).toBeVisible();
@@ -47,10 +53,14 @@ test.describe("Herbs Catalog", () => {
     await expect(search).toHaveValue("ginger");
     // A controlled input that hydrates + updates React state reveals the
     // "Clear search" button only when query is non-empty.
-    await expect(page.getByRole("button", { name: /Clear search/i })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Clear search/i })
+    ).toBeVisible();
   });
 
-  test("should have an accessible heading and focusable search", async ({ page }) => {
+  test("should have an accessible heading and focusable search", async ({
+    page,
+  }) => {
     await page.goto("/herbs");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const search = page.getByPlaceholder(/Search herbs by name/i);
@@ -58,7 +68,9 @@ test.describe("Herbs Catalog", () => {
     await expect(search).toBeFocused();
   });
 
-  test("passes basic a11y checks (no critical violations)", async ({ page }) => {
+  test("passes basic a11y checks (no critical violations)", async ({
+    page,
+  }) => {
     await page.goto("/herbs");
     await page.waitForLoadState("networkidle");
     const results = await new AxeBuilder({ page }).analyze();

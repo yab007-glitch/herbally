@@ -48,7 +48,10 @@ export function LanguageSelector() {
             <span>{t("common.suggested")}</span>{" "}
             <button
               onClick={() => {
-                trackEvent("language_changed", { locale: detectedLocale, source: "dropdown_suggestion" });
+                trackEvent("language_changed", {
+                  locale: detectedLocale,
+                  source: "dropdown_suggestion",
+                });
                 setLocale(detectedLocale);
               }}
               className="text-primary hover:underline font-medium"
@@ -63,7 +66,10 @@ export function LanguageSelector() {
           <DropdownMenuItem
             key={lang.code}
             onClick={() => {
-              trackEvent("language_changed", { locale: lang.code, source: "dropdown" });
+              trackEvent("language_changed", {
+                locale: lang.code,
+                source: "dropdown",
+              });
               setLocale(lang.code);
             }}
             aria-current={lang.code === locale ? "true" : undefined}
@@ -73,9 +79,7 @@ export function LanguageSelector() {
               {lang.flag}
             </span>
             <span className="flex-1">{lang.nativeName}</span>
-            <span className="text-xs text-muted-foreground">
-              {lang.name}
-            </span>
+            <span className="text-xs text-muted-foreground">{lang.name}</span>
             {lang.code === locale && (
               <Check className="size-4 ml-2 text-primary" aria-hidden="true" />
             )}
@@ -89,8 +93,12 @@ export function LanguageSelector() {
             <span>+</span>
             <Shuffle className="size-3" />
             <span>+</span>
-            <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded border px-1 font-mono text-[10px]">L</kbd>
-            <span className="ml-1">{t("common.toggleLanguage") || "Toggle language"}</span>
+            <kbd className="inline-flex h-4 min-w-4 items-center justify-center rounded border px-1 font-mono text-[10px]">
+              L
+            </kbd>
+            <span className="ml-1">
+              {t("common.toggleLanguage") || "Toggle language"}
+            </span>
           </div>
         </div>
       </DropdownMenuContent>

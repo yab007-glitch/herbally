@@ -53,7 +53,9 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
         setResults(data.herbs || []);
       }
     } catch (error) {
-      logger.error("instant_search_failed", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("instant_search_failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
     } finally {
       setIsLoading(false);
     }

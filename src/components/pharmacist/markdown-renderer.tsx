@@ -11,12 +11,13 @@ import { useTranslations } from "next-intl";
 type EvidenceLevel = "strong" | "moderate" | "limited" | "traditional";
 type InteractionSeverity = "mild" | "moderate" | "severe" | "contraindicated";
 
-const EVIDENCE_TO_GRADE: Record<EvidenceLevel, "A" | "B" | "C" | "D" | "trad"> = {
-  strong: "A",
-  moderate: "B",
-  limited: "D",
-  traditional: "trad",
-};
+const EVIDENCE_TO_GRADE: Record<EvidenceLevel, "A" | "B" | "C" | "D" | "trad"> =
+  {
+    strong: "A",
+    moderate: "B",
+    limited: "D",
+    traditional: "trad",
+  };
 
 const SEVERITY_STYLES: Record<
   InteractionSeverity,
@@ -56,7 +57,12 @@ export function ChatMarkdown({ children }: { children: string }) {
   const t = useTranslations();
 
   const components: Components = {
-    a({ href, title, children: linkChildren, ...rest }: ComponentPropsWithoutRef<"a">) {
+    a({
+      href,
+      title,
+      children: linkChildren,
+      ...rest
+    }: ComponentPropsWithoutRef<"a">) {
       const isExternal = !!href && /^https?:\/\//.test(href);
       const isPmid = isPmidLink(href);
       return (
@@ -70,7 +76,10 @@ export function ChatMarkdown({ children }: { children: string }) {
         >
           {linkChildren}
           {isExternal && !isPmid && (
-            <ExternalLink className="ml-0.5 inline size-3 align-baseline" aria-hidden="true" />
+            <ExternalLink
+              className="ml-0.5 inline size-3 align-baseline"
+              aria-hidden="true"
+            />
           )}
           {isPmid && (
             <span
@@ -90,22 +99,29 @@ export function ChatMarkdown({ children }: { children: string }) {
       node,
       ...rest
     }: ComponentPropsWithoutRef<"p"> & { node?: unknown }) {
-      const props = ((node as { properties?: Record<string, string> } | undefined)
-        ?.properties ?? {}) as Record<string, string>;
+      const props = ((
+        node as { properties?: Record<string, string> } | undefined
+      )?.properties ?? {}) as Record<string, string>;
       if (props["data-interaction"] === "true") {
         const herb = props["data-interaction-herb"] ?? "";
         const drug = props["data-interaction-drug"] ?? "";
-        const sev = (props["data-interaction-severity"] ?? "mild") as InteractionSeverity;
+        const sev = (props["data-interaction-severity"] ??
+          "mild") as InteractionSeverity;
         const style = SEVERITY_STYLES[sev] ?? SEVERITY_STYLES.mild;
         return (
-          <div className={`my-2 flex flex-wrap items-center gap-2 rounded-md border ${style.border} ${style.bg} px-3 py-2 text-sm`}>
+          <div
+            className={`my-2 flex flex-wrap items-center gap-2 rounded-md border ${style.border} ${style.bg} px-3 py-2 text-sm`}
+          >
             <span className="flex items-center gap-1.5 font-medium text-foreground">
               <Leaf className="size-3.5 text-green-600" aria-hidden="true" />
               {herb}
             </span>
             <span className="text-muted-foreground">+</span>
             <span className="flex items-center gap-1.5 font-medium text-foreground">
-              <PillBottle className="size-3.5 text-blue-600" aria-hidden="true" />
+              <PillBottle
+                className="size-3.5 text-blue-600"
+                aria-hidden="true"
+              />
               {drug}
             </span>
             <span className="text-muted-foreground">→</span>
@@ -123,8 +139,9 @@ export function ChatMarkdown({ children }: { children: string }) {
       node,
       ...rest
     }: ComponentPropsWithoutRef<"strong"> & { node?: unknown }) {
-      const props = ((node as { properties?: Record<string, string> } | undefined)
-        ?.properties ?? {}) as Record<string, string>;
+      const props = ((
+        node as { properties?: Record<string, string> } | undefined
+      )?.properties ?? {}) as Record<string, string>;
       const level = props["data-evidence-level"] as EvidenceLevel | undefined;
       if (level) {
         const grade = EVIDENCE_TO_GRADE[level];

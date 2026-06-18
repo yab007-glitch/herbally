@@ -14,11 +14,25 @@ import { logger } from "@/lib/utils/logger";
 import * as fs from "fs";
 import * as path from "path";
 
-const PROGRESS_FILE = path.join(process.cwd(), "scripts", ".faq-batch-progress.json");
-const REJECTED_FILE = path.join(process.cwd(), "scripts", ".faq-batch-rejected.json");
+const PROGRESS_FILE = path.join(
+  process.cwd(),
+  "scripts",
+  ".faq-batch-progress.json"
+);
+const REJECTED_FILE = path.join(
+  process.cwd(),
+  "scripts",
+  ".faq-batch-rejected.json"
+);
 
-const CONCURRENCY = parseInt(process.argv.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ?? "10", 10);
-const MODEL = process.argv.find((a) => a.startsWith("--model="))?.split("=")[1] ?? undefined;
+const CONCURRENCY = parseInt(
+  process.argv.find((a) => a.startsWith("--concurrency="))?.split("=")[1] ??
+    "10",
+  10
+);
+const MODEL =
+  process.argv.find((a) => a.startsWith("--model="))?.split("=")[1] ??
+  undefined;
 
 if (MODEL) process.env.OLLAMA_CLOUD_MODEL = MODEL;
 
@@ -64,7 +78,9 @@ function saveProgress(progress: Progress) {
 }
 
 function appendRejected(slug: string, reason: string) {
-  const existing = fs.existsSync(REJECTED_FILE) ? JSON.parse(fs.readFileSync(REJECTED_FILE, "utf-8")) : [];
+  const existing = fs.existsSync(REJECTED_FILE)
+    ? JSON.parse(fs.readFileSync(REJECTED_FILE, "utf-8"))
+    : [];
   existing.push({ slug, reason, timestamp: new Date().toISOString() });
   fs.writeFileSync(REJECTED_FILE, JSON.stringify(existing, null, 2));
 }
@@ -86,9 +102,18 @@ Rules:
 }
 
 function getUserPrompt(herb: Herb): string {
-  const uses = [...(herb.traditional_uses || []), ...(herb.modern_uses || [])].slice(0, 5).join(", ") || "various uses";
-  const compounds = (herb.active_compounds || []).slice(0, 5).join(", ") || "various compounds";
-  const pregnancy = herb.pregnancy_safe === true ? "safe" : herb.pregnancy_safe === false ? "unsafe" : "unknown";
+  const uses =
+    [...(herb.traditional_uses || []), ...(herb.modern_uses || [])]
+      .slice(0, 5)
+      .join(", ") || "various uses";
+  const compounds =
+    (herb.active_compounds || []).slice(0, 5).join(", ") || "various compounds";
+  const pregnancy =
+    herb.pregnancy_safe === true
+      ? "safe"
+      : herb.pregnancy_safe === false
+        ? "unsafe"
+        : "unknown";
   const evidence = herb.evidence_level || "C";
 
   return `Generate FAQ pairs for ${herb.name} (${herb.scientific_name}).
@@ -127,20 +152,37 @@ function extractJson(text: string): string {
 
 function validateFaqs(faqs: FAQPair[]): { valid: boolean; reason?: string } {
   if (!Array.isArray(faqs) || faqs.length < 3) {
-    return { valid: false, reason: `Expected 3+ FAQs, got ${faqs?.length || 0}` };
+    return {
+      valid: false,
+      reason: `Expected 3+ FAQs, got ${faqs?.length || 0}`,
+    };
   }
   for (const faq of faqs) {
     if (!faq.question || faq.question.length < 20) {
       return { valid: false, reason: `Question too short: "${faq.question}"` };
     }
     if (!faq.answer || faq.answer.length < 60) {
-      return { valid: false, reason: `Answer too short for: "${faq.question}"` };
+      return {
+        valid: false,
+        reason: `Answer too short for: "${faq.question}"`,
+      };
     }
     if (faq.answer.length > 800) {
-      return { valid: false, reason: `Answer too long (${faq.answer.length} chars) for: "${faq.question}"` };
+      return {
+        valid: false,
+        reason: `Answer too long (${faq.answer.length} chars) for: "${faq.question}"`,
+      };
     }
-    if (!faq.category || !["general", "safety", "dosage", "interactions", "mechanism"].includes(faq.category)) {
-      return { valid: false, reason: `Invalid category for: "${faq.question}"` };
+    if (
+      !faq.category ||
+      !["general", "safety", "dosage", "interactions", "mechanism"].includes(
+        faq.category
+      )
+    ) {
+      return {
+        valid: false,
+        reason: `Invalid category for: "${faq.question}"`,
+      };
     }
   }
   return { valid: true };
@@ -216,7 +258,9 @@ async function fetchAllHerbs(supabase: any): Promise<Herb[]> {
   while (hasMore) {
     const { data, error } = await supabase
       .from("herbs")
-      .select("id, slug, name, scientific_name, description, traditional_uses, modern_uses, active_compounds, dosage_adult, pregnancy_safe, nursing_safe, contraindications, side_effects, evidence_level")
+      .select(
+        "id, slug, name, scientific_name, description, traditional_uses, modern_uses, active_compounds, dosage_adult, pregnancy_safe, nursing_safe, contraindications, side_effects, evidence_level"
+      )
       .eq("is_published", true)
       .order("view_count", { ascending: false })
       .range(offset, offset + pageSize - 1);
@@ -247,7 +291,9 @@ async function runBatch() {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    console.error("Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL");
+    console.error(
+      "Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL"
+    );
     process.exit(1);
   }
 
@@ -266,13 +312,21 @@ async function runBatch() {
 
   const faqHerbIds = new Set((faqHerbs || []).map((f: any) => f.herb_id));
 
-  const herbsNeedingFaqs = allHerbs.filter((h: any) => !faqHerbIds.has(h.id)) as Herb[];
-  const pending = herbsNeedingFaqs.filter((h) => !progress.completed[h.slug] && !progress.failed[h.slug]);
+  const herbsNeedingFaqs = allHerbs.filter(
+    (h: any) => !faqHerbIds.has(h.id)
+  ) as Herb[];
+  const pending = herbsNeedingFaqs.filter(
+    (h) => !progress.completed[h.slug] && !progress.failed[h.slug]
+  );
 
   console.log(`Total herbs: ${allHerbs.length}`);
   console.log(`Herbs already with FAQs: ${faqHerbIds.size}`);
-  console.log(`Already completed in this run: ${Object.keys(progress.completed).length}`);
-  console.log(`Previously failed in this run: ${Object.keys(progress.failed).length}`);
+  console.log(
+    `Already completed in this run: ${Object.keys(progress.completed).length}`
+  );
+  console.log(
+    `Previously failed in this run: ${Object.keys(progress.failed).length}`
+  );
   console.log(`Pending: ${pending.length}`);
   console.log(`Concurrency: ${CONCURRENCY}`);
   console.log(`Model: ${process.env.OLLAMA_CLOUD_MODEL || "default"}`);
@@ -286,13 +340,17 @@ async function runBatch() {
   // Process in batches of CONCURRENCY
   for (let i = 0; i < pending.length; i += CONCURRENCY) {
     const batch = pending.slice(i, i + CONCURRENCY);
-    await Promise.all(batch.map((herb) => processHerb(herb, supabase, progress)));
+    await Promise.all(
+      batch.map((herb) => processHerb(herb, supabase, progress))
+    );
     saveProgress(progress);
 
     const completed = Object.keys(progress.completed).length;
     const failed = Object.keys(progress.failed).length;
     const pct = ((completed / herbsNeedingFaqs.length) * 100).toFixed(1);
-    console.log(`Progress: ${completed}/${herbsNeedingFaqs.length} completed, ${failed} failed (${pct}%)`);
+    console.log(
+      `Progress: ${completed}/${herbsNeedingFaqs.length} completed, ${failed} failed (${pct}%)`
+    );
   }
 
   console.log("\n=== FAQ Generation Complete ===");

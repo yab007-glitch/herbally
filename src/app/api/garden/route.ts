@@ -114,7 +114,10 @@ export async function POST(request: NextRequest) {
     logger.error("garden_sync_error", {
       error: err instanceof Error ? err.message : String(err),
     });
-    return NextResponse.json({ error: "Failed to sync garden" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to sync garden" },
+      { status: 500 }
+    );
   }
 }
 
@@ -160,7 +163,10 @@ export async function GET(request: NextRequest) {
     logger.error("garden_fetch_error", {
       error: err instanceof Error ? err.message : String(err),
     });
-    return NextResponse.json({ error: "Failed to fetch garden" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch garden" },
+      { status: 500 }
+    );
   }
 }
 
@@ -219,6 +225,9 @@ export async function DELETE(request: NextRequest) {
     logger.error("garden_delete_error", {
       error: err instanceof Error ? err.message : String(err),
     });
-    return NextResponse.json({ error: "Failed to remove herb" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to remove herb" },
+      { status: 500 }
+    );
   }
 }

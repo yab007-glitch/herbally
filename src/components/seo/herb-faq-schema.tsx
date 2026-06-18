@@ -6,7 +6,11 @@ interface HerbFAQSchemaProps {
   pregnancyCategory: string;
   drugInteractions: number;
   // Optional pre-generated FAQs from database (for Featured Snippets)
-  preGeneratedFaqs?: Array<{ question: string; answer: string; category?: string }>;
+  preGeneratedFaqs?: Array<{
+    question: string;
+    answer: string;
+    category?: string;
+  }>;
 }
 
 export function HerbFAQSchema({
@@ -36,7 +40,9 @@ export function HerbFAQSchema({
     return (
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+        }}
       />
     );
   }
@@ -107,7 +113,9 @@ export function HerbFAQSchema({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+      }}
     />
   );
 }

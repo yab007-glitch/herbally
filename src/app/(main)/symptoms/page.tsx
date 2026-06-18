@@ -3,12 +3,17 @@ import { SymptomSearchClient } from "./symptom-search-client";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "herbsBySymptom", descKey: "herbsBySymptomDesc", path: "/symptoms" });
+export const generateMetadata = () =>
+  buildPageMetadata({
+    titleKey: "herbsBySymptom",
+    descKey: "herbsBySymptomDesc",
+    path: "/symptoms",
+  });
 
 export default async function SymptomsPage() {
   const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
-  
+
   return (
     <div>
       <div className="mb-6">

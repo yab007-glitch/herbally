@@ -47,7 +47,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const herbB = resultB.success ? resultB.data : null;
 
   if (!herbA || !herbB) {
-    return { title: "Herb Comparison Not Found | HerbAlly", robots: { index: false } };
+    return {
+      title: "Herb Comparison Not Found | HerbAlly",
+      robots: { index: false },
+    };
   }
 
   return {
@@ -56,8 +59,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: {
       canonical: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
       languages: {
-        "en": `${baseUrl}/compare/${slug1}/vs/${slug2}`,
-        "fr": `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`,
+        en: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+        fr: `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`,
         "x-default": `${baseUrl}/compare/${slug1}/vs/${slug2}`,
       },
     },
@@ -89,7 +92,10 @@ export default async function ComparePage({ params }: Props) {
         breadcrumbs={[
           { name: "Home", url: "https://herbally.app" },
           { name: "Herbs", url: "https://herbally.app/herbs" },
-          { name: `${herbA.name} vs ${herbB.name}`, url: `https://herbally.app/compare/${slug1}/vs/${slug2}` },
+          {
+            name: `${herbA.name} vs ${herbB.name}`,
+            url: `https://herbally.app/compare/${slug1}/vs/${slug2}`,
+          },
         ]}
       />
       {/* Header */}

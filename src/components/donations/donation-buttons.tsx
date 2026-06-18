@@ -54,7 +54,9 @@ export function DonationButtons() {
         throw new Error("Failed to create checkout session");
       }
     } catch (error) {
-      logger.error("donation_button_error", { error: error instanceof Error ? error.message : String(error) });
+      logger.error("donation_button_error", {
+        error: error instanceof Error ? error.message : String(error),
+      });
       alert(t("donateButtons.errorMessage"));
     } finally {
       setLoading(null);

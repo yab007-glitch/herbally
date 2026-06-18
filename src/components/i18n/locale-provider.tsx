@@ -30,7 +30,11 @@ export function LocaleProvider({
   const messages = allMessages[locale];
 
   return (
-    <NextIntlClientProvider messages={messages} locale={locale} timeZone="America/Toronto">
+    <NextIntlClientProvider
+      messages={messages}
+      locale={locale}
+      timeZone="America/Toronto"
+    >
       {children}
     </NextIntlClientProvider>
   );

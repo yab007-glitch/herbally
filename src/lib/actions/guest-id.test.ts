@@ -41,13 +41,17 @@ describe("guest-id actions", () => {
   describe("setGuestId", () => {
     it("sets the guest ID cookie with correct options", async () => {
       await setGuestId("guest-abc-123");
-      expect(setMock).toHaveBeenCalledWith("herbally-guest-id", "guest-abc-123", {
-        httpOnly: true,
-        secure: false, // NODE_ENV !== "production" in test
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 365,
-        path: "/",
-      });
+      expect(setMock).toHaveBeenCalledWith(
+        "herbally-guest-id",
+        "guest-abc-123",
+        {
+          httpOnly: true,
+          secure: false, // NODE_ENV !== "production" in test
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 365,
+          path: "/",
+        }
+      );
     });
   });
 });

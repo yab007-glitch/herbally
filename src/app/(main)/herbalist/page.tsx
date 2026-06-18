@@ -6,7 +6,12 @@ import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const dynamic = "force-dynamic";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "virtualHerbalist", descKey: "virtualHerbalistDesc", path: "/herbalist" });
+export const generateMetadata = () =>
+  buildPageMetadata({
+    titleKey: "virtualHerbalist",
+    descKey: "virtualHerbalistDesc",
+    path: "/herbalist",
+  });
 
 export default async function PharmacistPage({
   searchParams,

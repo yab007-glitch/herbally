@@ -23,7 +23,9 @@ async function getLocale(): Promise<string> {
     const store = await cookies();
     return store.get("herbally-locale")?.value === "fr" ? "fr" : "en";
   } catch (error) {
-    logger.error("herbs_get_locale_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+    logger.error("herbs_get_locale_failed", {
+      error: error instanceof Error ? error.message : JSON.stringify(error),
+    });
     return "en";
   }
 }
@@ -122,7 +124,9 @@ export async function getHerbs(params: {
     const { data, count, error } = await query;
 
     if (error) {
-      logger.error("herbs_get_herbs_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("herbs_get_herbs_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
@@ -148,9 +152,7 @@ export async function getHerbBySlug(
   opts?: { locale?: string; skipCookies?: boolean }
 ): Promise<ActionResponse<HerbWithInteractions>> {
   try {
-    const supabase = opts?.skipCookies
-      ? getAnonClient()
-      : await createClient();
+    const supabase = opts?.skipCookies ? getAnonClient() : await createClient();
 
     if (!supabase) {
       return { success: false, error: "Supabase client not configured" };
@@ -169,16 +171,21 @@ export async function getHerbBySlug(
       // 404 via notFound(). Only log genuine server/DB errors, not misses,
       // so build-time prerendering of a stale slug doesn't spam error logs.
       const code = (error as { code?: string }).code;
-      const isNotFound = code === "PGRST116" || /0 rows|contains 0 rows/i.test(error.message);
+      const isNotFound =
+        code === "PGRST116" || /0 rows|contains 0 rows/i.test(error.message);
       if (!isNotFound) {
         logger.error("herbs_get_herb_by_slug_failed", {
           error: error instanceof Error ? error.message : JSON.stringify(error),
         });
       }
-      return { success: false, error: isNotFound ? "Herb not found" : error.message };
+      return {
+        success: false,
+        error: isNotFound ? "Herb not found" : error.message,
+      };
     }
 
-    const locale = opts?.locale ?? (opts?.skipCookies ? "en" : await getLocale());
+    const locale =
+      opts?.locale ?? (opts?.skipCookies ? "en" : await getLocale());
     const herb = localizeHerb(data as HerbWithInteractions, locale);
     const interactions = (herb.drug_interactions || []).map((ix) =>
       localizeInteraction(ix, locale)
@@ -206,7 +213,9 @@ export async function getHerbCategories() {
       .order("sort_order", { ascending: true });
 
     if (error) {
-      logger.error("herbs_get_categories_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("herbs_get_categories_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
@@ -249,7 +258,9 @@ export async function getSymptomCounts(
       .limit(1000);
 
     if (error) {
-      logger.error("herbs_get_symptom_counts_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("herbs_get_symptom_counts_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 
@@ -318,7 +329,9 @@ export async function searchHerbs(
       .limit(10);
 
     if (error) {
-      logger.error("herbs_search_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
+      logger.error("herbs_search_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
       return { success: false, error: error.message };
     }
 

@@ -27,7 +27,12 @@ interface HerbCardProps {
 
 export function HerbCard({ herb, className }: HerbCardProps) {
   return (
-    <Card className={cn("group transition-colors hover:border-primary/30", className)}>
+    <Card
+      className={cn(
+        "group transition-colors hover:border-primary/30",
+        className
+      )}
+    >
       <Link
         href={`/herbs/${herb.slug}`}
         onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}

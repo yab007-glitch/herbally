@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { z } from "zod/v4";import { logger } from "@/lib/utils/logger";
+import { z } from "zod/v4";
+import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
-
 
 // Core Web Vitals endpoint for real user monitoring
 // Stores metrics in Supabase for analysis
@@ -59,13 +59,17 @@ export async function POST(request: NextRequest) {
       });
 
       if (error) {
-        logger.error("web_vital_store_failed", { error: error instanceof Error ? error.message : String(error) });
+        logger.error("web_vital_store_failed", {
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    logger.error("web_vitals_endpoint_error", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("web_vitals_endpoint_error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

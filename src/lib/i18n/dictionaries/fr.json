@@ -41,7 +41,11 @@
     "verifyCitation": "vérifier",
     "verifiedData": "Données vérifiées",
     "citationsDisclaimer": "Les citations peuvent être générées par IA — vérifiez indépendamment.",
-    "toggleLanguage": "Changer de langue"
+    "toggleLanguage": "Changer de langue",
+    "navPrimary": "Navigation principale",
+    "navMobile": "Menu mobile",
+    "navQuick": "Navigation rapide",
+    "navFooter": "Pied de page"
   },
   "nav": {
     "symptoms": "Par Symptôme",

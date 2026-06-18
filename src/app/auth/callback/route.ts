@@ -13,7 +13,8 @@ export async function GET(request: Request) {
   const nextRaw = url.searchParams.get("next") ?? "/";
 
   // Only allow same-origin absolute-less paths to prevent open redirect.
-  const safeNext = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/";
+  const safeNext =
+    nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/";
 
   if (code) {
     const supabase = await createClient();

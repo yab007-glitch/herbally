@@ -1,11 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  login,
-  register,
-  forgotPassword,
-  resetPassword,
-  logout,
-} from "./auth";
+import { login, register, forgotPassword, resetPassword, logout } from "./auth";
 
 // ─── mocks ──────────────────────────────────────────────────────────
 const signInMock = vi.fn();

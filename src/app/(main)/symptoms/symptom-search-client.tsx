@@ -43,7 +43,7 @@ export function SymptomSearchClient() {
     try {
       // First try AI-powered keyword extraction
       let keywords: string[] = [q.trim().toLowerCase()];
-      
+
       try {
         const aiRes = await fetch("/api/interpret-search", {
           method: "POST",
@@ -62,7 +62,9 @@ export function SymptomSearchClient() {
 
       // Search herbs by keywords
       const searchTerm = keywords.join(" ");
-      const res = await fetch(`/api/herbs/search?q=${encodeURIComponent(searchTerm)}`);
+      const res = await fetch(
+        `/api/herbs/search?q=${encodeURIComponent(searchTerm)}`
+      );
       const data = await res.json();
       setResults(Array.isArray(data) ? data.slice(0, 12) : []);
     } catch {
@@ -87,7 +89,8 @@ export function SymptomSearchClient() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t("symptomsPage.searchPlaceholder")} aria-label="Search symptoms"
+            placeholder={t("symptomsPage.searchPlaceholder")}
+            aria-label="Search symptoms"
             className="w-full rounded-xl border border-border bg-background px-5 py-4 text-base text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
           <Button
@@ -101,7 +104,9 @@ export function SymptomSearchClient() {
             ) : (
               <Search className="size-4" />
             )}
-            <span className="ml-1.5 hidden sm:inline">{t("symptomsPage.search")}</span>
+            <span className="ml-1.5 hidden sm:inline">
+              {t("symptomsPage.search")}
+            </span>
           </Button>
         </div>
       </form>

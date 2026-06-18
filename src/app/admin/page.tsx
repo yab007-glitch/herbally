@@ -92,7 +92,9 @@ export default async function AdminOverviewPage() {
       },
     ];
   } catch (error) {
-    logger.error("admin_stats_error", { error: error instanceof Error ? error.message : String(error) });
+    logger.error("admin_stats_error", {
+      error: error instanceof Error ? error.message : String(error),
+    });
     // Show zeros if service role key not configured
     stats = [
       {
@@ -186,7 +188,6 @@ export default async function AdminOverviewPage() {
           );
         })}
       </div>
-
     </div>
   );
 }

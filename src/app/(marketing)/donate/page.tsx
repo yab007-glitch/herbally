@@ -27,7 +27,12 @@ const DonationButtons = dynamic(() =>
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const generateMetadata = () => buildPageMetadata({ titleKey: "supportUs", descKey: "supportUsDesc", path: "/donate" });
+export const generateMetadata = () =>
+  buildPageMetadata({
+    titleKey: "supportUs",
+    descKey: "supportUsDesc",
+    path: "/donate",
+  });
 
 const costIcons: Record<string, typeof Server> = {
   hosting: Server,
@@ -44,7 +49,7 @@ export default async function DonatePage({
   searchParams: Promise<{ success?: string; canceled?: string }>;
 }) {
   const params = await searchParams;
-    const locale = await getLocaleFromRequest();
+  const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
 
   const costs = costKeys.map((key) => ({
