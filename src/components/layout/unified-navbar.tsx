@@ -94,7 +94,7 @@ export function UnifiedNavbar() {
           </Link>
 
           {/* Desktop links */}
-          <nav className="hidden items-center gap-6 md:flex">
+          <nav className="hidden items-center gap-6 md:flex" aria-label="Primary">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
               return (
@@ -137,7 +137,7 @@ export function UnifiedNavbar() {
                   HerbAlly
                 </SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-1 px-2 pt-6">
+              <nav className="flex flex-col gap-1 px-2 pt-6" aria-label="Mobile menu">
                 {navLinks.map((link) => {
                   const Icon = link.icon;
                   const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));

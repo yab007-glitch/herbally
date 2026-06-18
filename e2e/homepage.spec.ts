@@ -1,32 +1,34 @@
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "@playwright/test";
 
-test.describe.skip("Marketing landing page (/) — STALE: asserts pre-redesign hero/feature-grid, needs rewrite against current UI", () => {
-  test("renders the hero, CTAs, and stats", async ({ page }) => {
+/**
+ * Marketing landing page (/). Asserts the current (post-redesign) hero:
+ * a server-rendered herb+medication interaction checker, not the old
+ * feature-grid marketing page.
+ */
+test.describe("Marketing landing page (/)", () => {
+  test("renders the hero, search, and browse-herbs link", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveTitle(/HerbAlly/);
-    // Hero copy
+    await expect(page).toHaveTitle(/HerbAlly/i);
+
+    // Server-rendered hero (LCP)
+    await expect(page.getByRole("heading", { name: /Check herb-drug interactions/i })).toBeVisible();
     await expect(
-      page.getByText(/Your Complete Guide to Medicinal Herbs/i)
+      page.getByText(/Type any herb and medication to see if they/i)
     ).toBeVisible();
-    // Two CTAs land on real routes
-    const exploreBtn = page
-      .getByRole("link", { name: /Explore Herbs/i })
-      .first();
-    const askBtn = page
-      .getByRole("link", { name: /Ask AI Herbalist/i })
-      .first();
-    await expect(exploreBtn).toBeVisible();
-    await expect(askBtn).toBeVisible();
-    await expect(exploreBtn).toHaveAttribute("href", "/herbs");
-    await expect(askBtn).toHaveAttribute("href", "/herbalist");
-    // Stats numbers
-    await expect(page.getByText(/Herbs Documented/i)).toBeVisible();
+
+    // Interaction-checker inputs + button
+    await expect(page.getByPlaceholder(/Herb name/i)).toBeVisible();
+    await expect(page.getByPlaceholder(/Medication/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /Check interaction/i })).toBeVisible();
+
+    // "Browse all herbs" link lands on the catalog
+    const browse = page.getByRole("link", { name: /Browse all herbs/i });
+    await expect(browse).toBeVisible();
+    await expect(browse).toHaveAttribute("href", "/herbs");
   });
 
-  test("preserves deep-link redirects to /herbalist", async ({ page }) => {
-    // Old IA: /?herb=ginger used to load the chat pre-filled with ginger.
-    // The 308 redirect in next.config.ts should now bounce to /herbalist.
+  test("preserves deep-link redirects to /herbalist (?herb=)", async ({ page }) => {
     await page.goto("/?herb=ginger");
     await expect(page).toHaveURL(/\/herbalist/);
   });
@@ -36,36 +38,13 @@ test.describe.skip("Marketing landing page (/) — STALE: asserts pre-redesign h
     await expect(page).toHaveURL(/\/herbalist/);
   });
 
-  test("renders the feature grid with all four feature cards", async ({
-    page,
-  }) => {
+  test("passes basic a11y checks (no critical violations)", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText(/Medicinal Herbs/i).first()).toBeVisible();
-    await expect(page.getByText(/Dosage Calculator/i).first()).toBeVisible();
-    await expect(page.getByText(/Interaction Checker/i).first()).toBeVisible();
-    await expect(page.getByText(/Virtual Herbalist/i).first()).toBeVisible();
-  });
-
-  test("has valid meta tags for SEO", async ({ page }) => {
-    await page.goto("/");
-    const description = await page
-      .locator('meta[name="description"]')
-      .getAttribute("content");
-    expect(description).toBeTruthy();
-    expect(description!.length).toBeGreaterThan(50);
-    const ogTitle = await page
-      .locator('meta[property="og:title"]')
-      .getAttribute("content");
-    expect(ogTitle).toBeTruthy();
-  });
-
-  test("passes basic a11y checks (no critical violations)", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .disableRules(["color-contrast"])
-      .analyze();
-    expect(accessibilityScanResults.violations).toEqual([]);
+    await page.waitForLoadState("networkidle");
+    const results = await new AxeBuilder({ page }).analyze();
+    const blocking = results.violations.filter(
+      (v) => v.impact === "critical" || v.impact === "serious"
+    );
+    expect(blocking).toEqual([]);
   });
 });

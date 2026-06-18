@@ -48,11 +48,13 @@ export default defineConfig({
 
   /* Run production build before starting tests for realistic results.
    * `next start` is incompatible with `output: standalone`, so we run the
-   * standalone server that the build emits (with .next/static + public already
-   * copied in). .env.local is sourced when present (local dev); CI omits it. */
+   * standalone server that the build emits (then manually
+   * copies .next/static + public into the standalone tree (the build does not do
+   * this automatically — same as the Dockerfile). .env.local is sourced when
+   * present (local dev); CI omits it. */
   webServer: {
     command:
-      "npm run build && (set -a; [ -f .env.local ] && . .env.local; cd .next/standalone && PORT=3000 HOSTNAME=127.0.0.1 node server.js)",
+      "npm run build && cp -r .next/static/. .next/standalone/.next/static/ && cp -r public/. .next/standalone/public/ && (set -a; [ -f .env.local ] && . .env.local; cd .next/standalone && PORT=3000 HOSTNAME=127.0.0.1 node server.js)",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,

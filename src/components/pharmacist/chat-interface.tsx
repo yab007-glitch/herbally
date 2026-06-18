@@ -563,7 +563,7 @@ export function ChatInterface({
 
       {/* Disclaimer — subtle */}
       <div className="shrink-0 border-t border-border/50 px-4 py-1.5 text-center">
-        <p className="text-[10px] text-muted-foreground/60">
+        <p className="text-[10px] text-muted-foreground">
           <AlertCircle className="inline size-2.5 -mt-0.5 mr-1" />
           {t("pharmacist.disclaimer")} {t("common.citationsDisclaimer")}
         </p>
@@ -611,11 +611,11 @@ export function ChatInterface({
           <div className="mt-2 flex items-center justify-between mx-auto max-w-2xl">
             <button
               onClick={clearChat}
-              className="text-[10px] text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+              className="text-[10px] text-muted-foreground hover:text-muted-foreground transition-colors"
             >
               {t("common.clearConversation")}
             </button>
-            <span className="text-[10px] text-muted-foreground/60">
+            <span className="text-[10px] text-muted-foreground">
               {isSaving ? t("common.saving") : justSaved ? t("common.saved") : ""}
             </span>
           </div>

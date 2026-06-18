@@ -22,7 +22,7 @@ export function MarketingFooter() {
           </Link>
 
           {/* Links */}
-          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
+          <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-sm text-muted-foreground" aria-label="Footer">
             <Link href="/herbs" prefetch={true} className="hover:text-foreground transition-colors">
               {t("nav.herbs")}
             </Link>

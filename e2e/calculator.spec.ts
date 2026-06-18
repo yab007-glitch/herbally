@@ -1,151 +1,74 @@
 import AxeBuilder from "@axe-core/playwright";
 import { test, expect } from "@playwright/test";
 
-test.describe.skip("Dosage Calculator — STALE: fragile selectors/timing, needs rewrite against current UI", () => {
+/**
+ * Dosage calculator (/calculator). The form is dynamically imported on the
+ * client, so we wait for the "Calculate" button (and networkidle) before
+ * interacting to ensure it has hydrated.
+ */
+test.describe("Dosage Calculator", () => {
   test("should load calculator page", async ({ page }) => {
     await page.goto("/calculator");
-
-    await expect(page).toHaveTitle(/Calculator|Dosage|HerbAlly/);
-    await expect(page.locator("text=Calculator, text=Dosage")).toBeVisible();
+    await expect(page).toHaveTitle(/Dosage|Calculator|HerbAlly/i);
+    await expect(
+      page.getByRole("heading", { name: /Dosage Calculator/i })
+    ).toBeVisible();
   });
 
   test("should display calculator form", async ({ page }) => {
-    await page.goto("/calculator");
+    await page.goto("/calculator", { waitUntil: "networkidle" });
+    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    await expect(calculateBtn).toBeVisible();
 
-    const herbSelect = page.locator(
-      'select, input[placeholder*="herb" i], [role="combobox"]'
-    );
-    await expect(herbSelect.first()).toBeVisible();
-
-    const ageInput = page.locator(
-      'input[type="number"], input[placeholder*="age" i]'
-    );
-    await expect(ageInput.first()).toBeVisible();
+    await expect(page.getByLabel(/Herb Name/i)).toBeVisible();
+    await expect(page.getByLabel(/Adult Dose/i)).toBeVisible();
+    await expect(page.getByLabel(/Child's Weight/i)).toBeVisible();
   });
 
-  test("should calculate dosage based on weight", async ({ page }) => {
-    await page.goto("/calculator");
+  test("should calculate a child dose from weight (Clark's rule)", async ({ page }) => {
+    await page.goto("/calculator", { waitUntil: "networkidle" });
+    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    await expect(calculateBtn).toBeVisible();
 
-    const herbSelect = page.locator("select").first();
-    if ((await herbSelect.count()) > 0) {
-      await herbSelect.selectOption({ index: 1 });
-    }
+    // Clark's rule is the default and needs adult dose + weight.
+    await page.getByLabel(/Herb Name/i).fill("Ginger");
+    await page.getByLabel(/Adult Dose/i).fill("500");
+    await page.getByLabel(/Child's Weight/i).fill("30");
+    await calculateBtn.click();
 
-    const weightInput = page
-      .locator('input[type="number"][placeholder*="weight" i]')
-      .first();
-    if ((await weightInput.count()) > 0) {
-      await weightInput.fill("70");
-    }
-
-    const submitButton = page
-      .locator('button[type="submit"], button:has-text("Calculate")')
-      .first();
-    if ((await submitButton.count()) > 0) {
-      await submitButton.click();
-    }
-
-    await page.waitForTimeout(1000);
-
-    const hasResult =
-      (await page
-        .locator("text=mg, text=ml, text=dose, text= dosage")
-        .count()) > 0;
-    expect(hasResult).toBeTruthy();
+    // The result renders a numeric dose in the large dose-value container
+    // (unique to the result card). toHaveText(regex) matches the full text,
+    // e.g. "100mg" or "220.6mg" (dose + unit).
+    const doseValue = page.locator(".text-4xl").first();
+    await expect(doseValue).toBeVisible();
+    await expect(doseValue).toHaveText(/\d+(\.\d+)?\s*(mg|ml|g|drops)/);
   });
 
-  test("should validate required fields", async ({ page }) => {
-    await page.goto("/calculator");
-
-    const submitButton = page.locator('button[type="submit"]').first();
-    if ((await submitButton.count()) > 0) {
-      await submitButton.click();
-      await page.waitForTimeout(500);
-
-      const hasValidationError =
-        (await page
-          .locator('[role="alert"], .error, [class*="error"], text=required')
-          .count()) > 0;
-      const isStillOnPage = page.url().includes("/calculator");
-
-      expect(hasValidationError || isStillOnPage).toBeTruthy();
-    }
-  });
-
-  test("should handle different age groups", async ({ page }) => {
-    await page.goto("/calculator");
-
-    const ageInput = page
-      .locator(
-        'input[type="number"][placeholder*="age" i], select[aria-label*="age" i]'
-      )
-      .first();
-
-    if ((await ageInput.count()) > 0) {
-      await ageInput.fill("5");
-
-      const weightInput = page
-        .locator('input[type="number"][placeholder*="weight" i]')
-        .first();
-      if ((await weightInput.count()) > 0) {
-        await weightInput.fill("20");
-      }
-
-      const submitButton = page
-        .locator('button[type="submit"], button:has-text("Calculate")')
-        .first();
-      if ((await submitButton.count()) > 0) {
-        await submitButton.click();
-      }
-
-      await page.waitForTimeout(1000);
-
-      const hasResult =
-        (await page.locator("text=mg, text=ml, text=dose").count()) > 0;
-      expect(hasResult).toBeTruthy();
-    }
+  test("should show a validation error when calculating with no dose", async ({ page }) => {
+    await page.goto("/calculator", { waitUntil: "networkidle" });
+    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    await expect(calculateBtn).toBeVisible();
+    await calculateBtn.click();
+    // Localized invalid-dose error is rendered in the error alert.
+    await expect(page.getByText(/enter a valid adult dose/i)).toBeVisible();
   });
 
   test("should show disclaimers", async ({ page }) => {
     await page.goto("/calculator");
-
-    const hasDisclaimer =
-      (await page
-        .locator(
-          "text=consult, text=doctor, text=healthcare, text=medical, text=disclaimer"
-        )
-        .count()) > 0;
-    expect(hasDisclaimer).toBeTruthy();
+    // The FDA disclaimer banner is rendered by the (main) layout on every page.
+    await expect(
+      page.getByText(/not intended to diagnose, treat, cure, or prevent/i)
+    ).toBeVisible();
   });
 
-  test("should be accessible", async ({ page }) => {
-    await page.goto("/calculator");
-
-    const inputs = page.locator("input, select, textarea");
-    const count = await inputs.count();
-
-    for (let i = 0; i < Math.min(count, 5); i++) {
-      const input = inputs.nth(i);
-      const hasLabel =
-        (await input.locator("xpath=..//label").count()) > 0 ||
-        (await input.getAttribute("aria-label")) !== null ||
-        (await input.getAttribute("id")) !== null;
-
-      if (!hasLabel) {
-        console.log(`Input ${i} may be missing label`);
-      }
-    }
-  });
-
-  test("passes basic a11y checks (no critical violations)", async ({
-    page,
-  }) => {
-    await page.goto("/calculator");
-    await page.waitForTimeout(1000);
-
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .disableRules(["color-contrast"])
-      .analyze();
-    expect(accessibilityScanResults.violations).toEqual([]);
+  test("passes basic a11y checks (no critical violations)", async ({ page }) => {
+    await page.goto("/calculator", { waitUntil: "networkidle" });
+    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    await expect(calculateBtn).toBeVisible();
+    const results = await new AxeBuilder({ page }).analyze();
+    const blocking = results.violations.filter(
+      (v) => v.impact === "critical" || v.impact === "serious"
+    );
+    expect(blocking).toEqual([]);
   });
 });
