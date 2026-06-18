@@ -1,19 +1,8 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const metadata: Metadata = {
-  title: "Terms of Service",
-  description: "HerbAlly terms of service and conditions of use.",
-  alternates: { canonical: "https://herbally.app/terms" },
-  openGraph: {
-    title: "Terms of Service",
-    description: "HerbAlly terms of service and conditions of use.",
-    url: "https://herbally.app/terms",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "termsOfService", descKey: "termsDesc", path: "/terms" });
 
 export default async function TermsPage() {
     const locale = await getLocaleFromRequest();

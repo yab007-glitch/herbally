@@ -1,22 +1,9 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "HerbAlly privacy policy - how we collect, use, and protect your data.",
-  alternates: { canonical: "https://herbally.app/privacy" },
-  openGraph: {
-    title: "Privacy Policy",
-    description:
-      "HerbAlly privacy policy - how we collect, use, and protect your data.",
-    url: "https://herbally.app/privacy",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "privacyPolicy", path: "/privacy" });
 
 export default async function PrivacyPage() {
 

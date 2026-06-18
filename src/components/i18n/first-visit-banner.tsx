@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocale } from "next-intl";
 import { useSetLocale } from "./use-set-locale";
 import { useDetectedLocale } from "./use-detected-locale";
@@ -13,14 +13,17 @@ export function FirstVisitBanner() {
   const locale = useLocale();
   const detected = useDetectedLocale();
   const setLocale = useSetLocale();
-  const [visible, setVisible] = useState(false);
 
-  useEffect(() => {
-    if (!detected || detected === locale) return;
-    const dismissed = sessionStorage.getItem("herbally-lang-banner-dismissed");
-    if (!dismissed) setVisible(true);
-  }, [detected, locale]);
+  // `dismissed` is read once from sessionStorage (client) so we never call
+  // setState inside an effect. SSR renders dismissed=true (banner hidden) to
+  // avoid a flash; the banner can appear after hydration for first-time
+  // visitors whose browser language differs from the current locale.
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return sessionStorage.getItem("herbally-lang-banner-dismissed") === "1";
+  });
 
+  const visible = !dismissed && detected !== null && detected !== locale;
   if (!visible || !detected) return null;
 
   const labels: Record<Locale, { switchTo: string; dismiss: string }> = {
@@ -34,12 +37,12 @@ export function FirstVisitBanner() {
     if (!detected) return;
     trackEvent("language_changed", { locale: detected, source: "first_visit_banner" });
     setLocale(detected);
-    setVisible(false);
+    setDismissed(true);
   }
 
   function handleDismiss() {
     sessionStorage.setItem("herbally-lang-banner-dismissed", "1");
-    setVisible(false);
+    setDismissed(true);
   }
 
   return (

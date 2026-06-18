@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod/v4";import { logger } from "@/lib/utils/logger";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
 
 // Core Web Vitals endpoint for real user monitoring
@@ -20,6 +22,13 @@ const webVitalsSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const { success } = await rateLimit(getClientIP(request), 60, 60_000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests" },
+        { status: 429, headers: { "Retry-After": "60" } }
+      );
+    }
     const raw = await request.json();
 
     const parsed = webVitalsSchema.safeParse(raw);

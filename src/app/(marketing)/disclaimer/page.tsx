@@ -1,20 +1,9 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const metadata: Metadata = {
-  title: "Medical Disclaimer",
-  description: "Read the full medical and FDA disclaimer for HerbAlly.",
-  alternates: { canonical: "https://herbally.app/disclaimer" },
-  openGraph: {
-    title: "Medical Disclaimer",
-    description: "Read the full medical and FDA disclaimer for HerbAlly.",
-    url: "https://herbally.app/disclaimer",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "medicalDisclaimer", descKey: "medicalDisclaimerDesc", path: "/disclaimer" });
 
 export default async function DisclaimerPage() {
     const locale = await getLocaleFromRequest();

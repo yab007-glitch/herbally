@@ -1,6 +1,6 @@
 # HerbAlly
 
-A medical herbs SaaS application featuring a searchable database of 180+ medicinal herbs, age/weight-based dosage calculator, and an AI-powered virtual pharmacist for herb-drug interaction checking.
+A medical herbs SaaS application featuring a searchable database of 2,700+ medicinal herbs, age/weight-based dosage calculator, and an AI-powered virtual pharmacist for herb-drug interaction checking.
 
 ## Tech Stack
 
@@ -63,6 +63,7 @@ src/
     calculator/     # Dosage calculator components
     pharmacist/     # AI chat components (incl. ChatMarkdown with PMID/evidence enrichment)
     layout/         # Navigation, footer
+    auth/           # Login/register/reset forms, account menu
     shared/         # Loading skeletons, common UI
   lib/
     actions/        # Server actions (ActionResponse<T> pattern)
@@ -71,18 +72,19 @@ src/
     supabase/       # Database client factories
     types/          # TypeScript types, database schema (incl. provenance.ts)
     utils/          # Dosage calculations, RxNorm client
-    validations/    # Zod v4 schemas
 ```
 
 ## Routes
 
 - `/` — Marketing landing page (hero, stats, feature grid, CTA).
-- `/herbs` — Browseable catalog of 180+ herbs.
+- `/herbs` — Browseable catalog of 2,700+ herbs.
 - `/herbs/[slug]` — Herb detail page with provenance badge.
 - `/herbalist` — Full-screen AI chat with PMID-linkified markdown and safety guard.
 - `/calculator` — Pediatric/adult dosage calculator.
 - `/symptoms`, `/compare` — Adjacent tools.
-- `/admin` — Herb / interaction / user CRUD.
+- `/admin` — Herb / interaction / user CRUD (admin role required).
+- `/login`, `/register`, `/forgot-password`, `/reset-password` — Supabase auth flows.
+- `/auth/callback` — PKCE email-confirmation / reset callback.
 - `/?herb=<slug>` and `/?medications=<list>` are 308-redirected to `/herbalist` for backward compatibility.
 
 ## AI safety
@@ -168,7 +170,7 @@ curl -X POST http://localhost:3000/api/chat \
 
 ## Herb Coverage
 
-HerbAlly's database covers **180+ medicinal herbs** across 22 therapeutic categories
+HerbAlly's database covers **2,700+ medicinal herbs** across 22 therapeutic categories
 including adaptogens, anti-inflammatories, cognitive enhancers, digestive aids,
 cardiovascular support, women's and men's health, immune modulators, and more.
 Each herb is categorized by evidence level (A through C and traditional use)

@@ -143,6 +143,90 @@ export type Database = {
           },
         ];
       };
+      donations: {
+        Row: {
+          id: string;
+          stripe_session_id: string;
+          stripe_payment_intent_id: string | null;
+          amount_cents: number;
+          amount_display: string;
+          currency: string;
+          customer_email: string | null;
+          customer_name: string | null;
+          status: string;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          stripe_session_id: string;
+          stripe_payment_intent_id?: string | null;
+          amount_cents: number;
+          amount_display: string;
+          currency?: string;
+          customer_email?: string | null;
+          customer_name?: string | null;
+          status?: string;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          stripe_session_id?: string;
+          stripe_payment_intent_id?: string | null;
+          amount_cents?: number;
+          amount_display?: string;
+          currency?: string;
+          customer_email?: string | null;
+          customer_name?: string | null;
+          status?: string;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      garden_herbs: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          guest_id: string | null;
+          herb_slug: string;
+          herb_name: string;
+          scientific_name: string;
+          image_url: string | null;
+          note: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          guest_id?: string | null;
+          herb_slug: string;
+          herb_name: string;
+          scientific_name: string;
+          image_url?: string | null;
+          note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string | null;
+          guest_id?: string | null;
+          herb_slug?: string;
+          herb_name?: string;
+          scientific_name?: string;
+          image_url?: string | null;
+          note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       dosage_calculations: {
         Row: {
           adult_dose: string;

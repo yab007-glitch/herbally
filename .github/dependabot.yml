@@ -1,50 +1,26 @@
 version: 2
 updates:
-  # Enable version updates for npm
-  - package-ecosystem: "npm"
+  - package-ecosystem: npm
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "America/New_York"
+      interval: weekly
     open-pull-requests-limit: 10
-    reviewers:
-      - "yab007-glitch"
-    labels:
-      - "dependencies"
-      - "automated"
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
-    # Group minor and patch updates together
     groups:
-      production-dependencies:
-        dependency-type: "production"
-        update-types:
-          - "minor"
-          - "patch"
-      development-dependencies:
-        dependency-type: "development"
-        update-types:
-          - "minor"
-          - "patch"
-    # Ignore major updates until reviewed
+      next:
+        patterns: ["next", "eslint-config-next", "@next/*"]
+      supabase:
+        patterns: ["@supabase/*"]
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      testing:
+        patterns: ["vitest", "@vitest/*", "@testing-library/*", "playwright", "@playwright/*"]
     ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
-
-  # Enable version updates for GitHub Actions
-  - package-ecosystem: "github-actions"
+      # Major bumps reviewed manually (see audit notes for openai 4->6, react-markdown 9->10)
+      - dependency-name: "openai"
+        update-types: ["major"]
+      - dependency-name: "react-markdown"
+        update-types: ["major"]
+  - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "America/New_York"
-    open-pull-requests-limit: 5
-    labels:
-      - "ci/cd"
-      - "automated"
-    commit-message:
-      prefix: "chore(ci)"
+      interval: weekly

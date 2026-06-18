@@ -3,11 +3,6 @@ import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
 
-/**
- * NOTE: The \`donations\` table is defined in migration 00026_create_donations.sql.
- * Until applied, regenerate types:
- *   supabase gen types typescript --linked > src/lib/types/database.ts
- */
 
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 let stripeInstance: Stripe | null = null;
@@ -26,12 +21,6 @@ function getStripe(): Stripe | null {
   return stripeInstance;
 }
 
-function db() {
-  const supabase = createAdminClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return { from: (table: string) => (supabase.from as any)(table) };
-}
-
 async function upsertDonation(session: Stripe.Checkout.Session) {
   const amountCents = session.amount_total ?? 0;
   const amountDisplay = `$${(amountCents / 100).toFixed(2)}`;
@@ -46,7 +35,7 @@ async function upsertDonation(session: Stripe.Checkout.Session) {
         ? "pending"
         : "expired";
 
-  const { error } = await db().from("donations").upsert(
+  const { error } = await createAdminClient().from("donations").upsert(
     {
       stripe_session_id: session.id,
       stripe_payment_intent_id: paymentIntentId,
@@ -73,7 +62,7 @@ async function upsertDonation(session: Stripe.Checkout.Session) {
 }
 
 async function markDonationFailed(paymentIntent: Stripe.PaymentIntent) {
-  const { error } = await db()
+  const { error } = await createAdminClient()
     .from("donations")
     .update({ status: "failed", updated_at: new Date().toISOString() })
     .eq("stripe_payment_intent_id", paymentIntent.id);
@@ -90,7 +79,7 @@ async function markDonationRefunded(charge: Stripe.Charge) {
   const piId = charge.payment_intent as string;
   if (!piId) return;
 
-  const { error } = await db()
+  const { error } = await createAdminClient()
     .from("donations")
     .update({ status: "refunded", updated_at: new Date().toISOString() })
     .eq("stripe_payment_intent_id", piId);

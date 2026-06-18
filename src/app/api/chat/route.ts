@@ -3,6 +3,7 @@ import { createHash } from "crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getSystemPrompt } from "@/lib/ai/system-prompt";
+import { z } from "zod";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 
 const MAX_BODY_SIZE = 50 * 1024;
@@ -67,14 +68,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: {
-    messages?: unknown;
-    herbContext?: string;
-    medications?: string[];
-    locale?: string;
-  };
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json(
       { error: "Invalid request body" },
@@ -82,15 +78,31 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { messages, herbContext, medications, locale } = body;
-  if (!messages || !Array.isArray(messages)) {
+  const chatSchema = z.object({
+    messages: z
+      .array(
+        z.object({
+          role: z.enum(["user", "assistant", "system"]),
+          content: z.string().min(1).max(8000),
+        })
+      )
+      .min(1)
+      .max(50),
+    herbContext: z.string().max(2000).optional(),
+    medications: z.array(z.string().max(200)).max(20).optional(),
+    locale: z.enum(["en", "fr"]).optional(),
+  });
+
+  const parsed = chatSchema.safeParse(raw);
+  if (!parsed.success) {
     return NextResponse.json(
       { error: "Messages array is required" },
       { status: 400 }
     );
   }
 
-  const msgArray = messages as Array<{ role: string; content: string }>;
+  const { messages, herbContext, medications, locale } = parsed.data;
+  const msgArray = messages;
 
   // ── Pre-fetch verified context from our database ──────────────────
   // Extract the latest user message to analyze for herb/medication names

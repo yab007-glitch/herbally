@@ -9,6 +9,7 @@ import { SkipToContent } from "@/components/shared/skip-to-content";
 import { WebVitals } from "@/components/analytics/web-vitals";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getTranslations } from "next-intl/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,78 +28,65 @@ export const viewport: Viewport = {
   themeColor: "#16a34a",
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app"
-  ),
-  title: {
-    default: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
-    template: "%s | HerbAlly",
-  },
-  description:
-    "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions with our AI-powered virtual herbalist.",
-  keywords: [
-    "medicinal herbs",
-    "herbal medicine",
-    "drug interactions",
-    "dosage calculator",
-    "herbal remedies",
-    "natural medicine",
-    "herb database",
-    "virtual herbalist",
-    "herb-drug interactions",
-    "herbal supplements",
-    "alternative medicine",
-    "holistic health",
-    "plant medicine",
-    "phytotherapy",
-  ],
-  authors: [{ name: "HerbAlly Team" }],
-  creator: "HerbAlly",
-  publisher: "HerbAlly",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+export async function generateMetadata(): Promise<Metadata> {
+  // URL is the single source of truth: the proxy sets x-locale from the path,
+  // and we mirror it here so the default metadata is localized for /fr/* too.
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const title = t("homeTitle");
+  const description = t("appDescription");
+
+  return {
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app"
+    ),
+    title: {
+      default: title,
+      template: `%s | HerbAlly`,
+    },
+    description,
+    authors: [{ name: "HerbAlly Team" }],
+    creator: "HerbAlly",
+    publisher: "HerbAlly",
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  openGraph: {
-    type: "website",
-    siteName: "HerbAlly",
-    title: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
-    description:
-      "Explore 2,700+ medicinal herbs, calculate dosages, and check drug interactions.",
-    url: process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app",
-    locale: "en_US",
-    images: [{
-      url: "/opengraph-image",
-      width: 1200,
-      height: 630,
-      alt: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
-    }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
-    description:
-      "Explore 2,700+ medicinal herbs, calculate dosages, and check drug interactions.",
-    images: ["/twitter-image"],
-  },
-};
+    openGraph: {
+      type: "website",
+      siteName: "HerbAlly",
+      title,
+      description,
+      url: process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app",
+      locale: locale === "fr" ? "fr_FR" : "en_US",
+      images: [{
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
+      }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/twitter-image"],
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // URL is the single source of truth: the proxy sets x-locale from the path,
-  // and we mirror it here so SSR, <html lang>, and the client provider all
-  // agree — no cookie/URL drift, no hydration flash.
   const locale = await getLocaleFromRequest();
 
   return (

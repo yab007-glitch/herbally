@@ -164,8 +164,18 @@ export async function getHerbBySlug(
       .single();
 
     if (error) {
-      logger.error("herbs_get_herb_by_slug_failed", { error: error instanceof Error ? error.message : JSON.stringify(error) });
-      return { success: false, error: error.message };
+      // PGRST116 (0 rows) means the slug simply doesn't exist (or isn't
+      // published). That's an expected "not found" -> the caller renders a
+      // 404 via notFound(). Only log genuine server/DB errors, not misses,
+      // so build-time prerendering of a stale slug doesn't spam error logs.
+      const code = (error as { code?: string }).code;
+      const isNotFound = code === "PGRST116" || /0 rows|contains 0 rows/i.test(error.message);
+      if (!isNotFound) {
+        logger.error("herbs_get_herb_by_slug_failed", {
+          error: error instanceof Error ? error.message : JSON.stringify(error),
+        });
+      }
+      return { success: false, error: isNotFound ? "Herb not found" : error.message };
     }
 
     const locale = opts?.locale ?? (opts?.skipCookies ? "en" : await getLocale());

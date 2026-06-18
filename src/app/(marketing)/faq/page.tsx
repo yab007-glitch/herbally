@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import {
   Leaf,
@@ -12,22 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
-  description:
-    "Common questions about medicinal herbs, drug interactions, dosage safety, and how HerbAlly works. Evidence-based answers reviewed by healthcare professionals.",
-  alternates: {
-    canonical: "https://herbally.app/faq",
-  },
-  openGraph: {
-    title: "Frequently Asked Questions",
-    description:
-      "Common questions about medicinal herbs, drug interactions, dosage safety, and how HerbAlly works.",
-    url: "https://herbally.app/faq",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "faq", path: "/faq" });
 
 const categoryIcons: Record<string, typeof Leaf> = {
   aboutHerbAlly: Leaf,

@@ -85,6 +85,7 @@ function detectLocaleFromAcceptLanguage(acceptLanguage: string | null): Locale {
  */
 const LOCALE_EXCLUDED_PATHS = [
   "/api",
+  "/auth",
   "/_next",
   "/static",
   "/favicon.ico",
@@ -117,7 +118,7 @@ function shouldSkipLocaleRouting(pathname: string): boolean {
  * proxy.ts convention isn't reliably recognized by this build setup; migrate
  * separately.
  */
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // ── Locale routing ─────────────────────────────────────────────────

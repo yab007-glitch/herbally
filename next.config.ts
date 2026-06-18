@@ -11,6 +11,9 @@ const bundleAnalyzer = withBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // Trace from the project dir so `node .next/standalone/server.js` is at a
+  // flat, consistent path (matches the Dockerfile + Playwright webServer).
+  outputFileTracingRoot: process.cwd(),
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
   },

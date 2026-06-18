@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 
 /**
@@ -9,15 +8,11 @@ import { useLocale } from "next-intl";
  */
 export function LanguageAnnouncement() {
   const locale = useLocale();
-  const [announcement, setAnnouncement] = useState("");
-
-  useEffect(() => {
-    const messages: Record<string, string> = {
-      en: "Language switched to English",
-      fr: "Langue changée en Français",
-    };
-    setAnnouncement(messages[locale] || "");
-  }, [locale]);
+  const messages: Record<string, string> = {
+    en: "Language switched to English",
+    fr: "Langue changée en Français",
+  };
+  const announcement = messages[locale] || "";
 
   return (
     <div

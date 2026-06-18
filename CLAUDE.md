@@ -17,7 +17,7 @@
 - `src/components/` - React components (ui/, herbs/, calculator/, pharmacist/, layout/, shared/, auth/)
 - `src/lib/actions/` - Server actions with ActionResponse<T> pattern
 - `src/lib/supabase/` - Database client factories
-- `src/lib/validations/` - Zod v4 schemas
+- Zod v4 schemas (inline in API routes/actions; e.g. /api/chat, /api/donate)
 - `src/lib/types/` - TypeScript types and database schema
 - `src/lib/ai/` - OpenAI client and system prompt
 - `src/lib/utils/` - Utilities (dosage calculations, RxNorm client)

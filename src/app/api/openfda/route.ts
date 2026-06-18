@@ -1,11 +1,18 @@
 import { captureException } from "@sentry/nextjs";
+import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { NextResponse } from "next/server";import { logger } from "@/lib/utils/logger";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
 
 const OPENFDA_BASE = process.env.OPENFDA_BASE_URL || "https://api.fda.gov";
 
 export async function GET(request: Request) {
+  const { success } = await rateLimit(getClientIP(request as NextRequest), 20, 60_000);
+  if (!success) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429, headers: { "Retry-After": "60" } });
+  }
   const schema = z.object({ term: z.string().min(1).max(100) });
   const { searchParams } = new URL(request.url);
   const termRaw = searchParams.get("term");

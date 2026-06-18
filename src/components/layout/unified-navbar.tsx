@@ -24,6 +24,7 @@ import {
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { LanguageSelector } from "@/components/i18n/language-selector";
 import { LanguageDrawer } from "@/components/i18n/language-drawer";
+import { AccountMenu } from "@/components/auth/account-menu";
 import { FirstVisitBanner } from "@/components/i18n/first-visit-banner";
 import { LanguageAnnouncement } from "@/components/i18n/language-announcement";
 import { useTranslations, useLocale } from "next-intl";
@@ -116,6 +117,7 @@ export function UnifiedNavbar() {
 
           {/* Right side */}
           <div className="hidden items-center gap-3 md:flex">
+            <AccountMenu />
             <LanguageSelector />
             <ThemeToggle />
           </div>
@@ -158,6 +160,9 @@ export function UnifiedNavbar() {
                 })}
 
                 <div className="mt-4 space-y-2 border-t pt-4">
+                  <div className="px-3 py-1">
+                    <AccountMenu compact />
+                  </div>
                   <button
                     onClick={() => {
                       setOpen(false);

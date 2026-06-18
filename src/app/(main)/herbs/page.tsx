@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,27 +14,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import Script from "next/script";
 
-export const metadata: Metadata = {
-  title: "Medicinal Herbs",
-  description:
-    "Browse 2,700+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
-  alternates: {
-    canonical: "https://herbally.app/herbs",
-    languages: {
-      "en": "https://herbally.app/herbs",
-      "fr": "https://herbally.app/fr/herbs",
-      "x-default": "https://herbally.app/herbs",
-    },
-  },
-  openGraph: {
-    title: "Medicinal Herbs — HerbAlly",
-    description:
-      "Browse 2,700+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
-    url: "https://herbally.app/herbs",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "herbsDatabase", descKey: "herbsDatabaseDesc", path: "/herbs" });
 
 async function getLocale(): Promise<Locale> {
   const cookieStore = await cookies();

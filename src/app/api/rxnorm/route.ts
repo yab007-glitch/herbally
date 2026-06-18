@@ -2,10 +2,19 @@ import { captureException } from "@sentry/nextjs";
 import { z } from "zod";
 import { NextResponse, type NextRequest } from "next/server";
 import { searchDrugs } from "@/lib/utils/rxnorm-client";import { logger } from "@/lib/utils/logger";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
 
 export async function GET(request: NextRequest) {
   try {
+    const { success } = await rateLimit(getClientIP(request), 20, 60_000);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429, headers: { "Retry-After": "60" } }
+      );
+    }
     const schema = z.object({ term: z.string().min(2).max(100) });
     const { searchParams } = new URL(request.url);
     const termRaw = searchParams.get("term");

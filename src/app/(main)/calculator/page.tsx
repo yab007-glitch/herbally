@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
 const DoseCalculatorForm = dynamic(() =>
@@ -11,14 +11,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Dose Calculator",
-  description:
-    "Free herbal dosage calculator using Clark's Rule, Young's Rule, BSA, and Fried's Rule. Calculate safe children's and infant doses for 2,700+ medicinal herbs.",
-  alternates: {
-    canonical: `${process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app"}/calculator`,
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "doseCalculator", path: "/calculator" });
 
 function parseDosage(dosageStr: string | null): {
   dose: number | null;

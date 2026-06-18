@@ -256,7 +256,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 <span className="text-muted-foreground">
                   {t("calculatorForm.years")}
                 </span>
-                <Switch checked={useMonths} onCheckedChange={setUseMonths} />
+                <Switch checked={useMonths} onCheckedChange={setUseMonths} aria-label={t("calculatorForm.toggleAgeUnit")} />
                 <span className="text-muted-foreground">
                   {t("calculatorForm.months")}
                 </span>
@@ -285,7 +285,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </Label>
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-muted-foreground">kg</span>
-                <Switch checked={useLbs} onCheckedChange={setUseLbs} />
+                <Switch checked={useLbs} onCheckedChange={setUseLbs} aria-label={t("calculatorForm.toggleWeightUnit")} />
                 <span className="text-muted-foreground">lbs</span>
               </div>
             </div>

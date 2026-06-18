@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { ChatInterface } from "@/components/pharmacist/chat-interface";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
@@ -6,10 +6,7 @@ import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Virtual Herbalist",
-  description: "Ask about herb safety, drug interactions, and dosage.",
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "virtualHerbalist", descKey: "virtualHerbalistDesc", path: "/herbalist" });
 
 export default async function PharmacistPage({
   searchParams,

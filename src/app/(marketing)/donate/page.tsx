@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import {
   Heart,
@@ -27,22 +27,7 @@ const DonationButtons = dynamic(() =>
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const metadata: Metadata = {
-  title: "Support Us - Keep Herbal Medicine Free",
-  description:
-    "Help us keep HerbAlly 100% free. Your donation supports hosting, AI costs, and free access for everyone.",
-  alternates: {
-    canonical: "https://herbally.app/donate",
-  },
-  openGraph: {
-    title: "Support Us - Keep Herbal Medicine Free",
-    description:
-      "Help us keep HerbAlly 100% free. Your donation supports hosting, AI costs, and free access for everyone.",
-    url: "https://herbally.app/donate",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "supportUs", descKey: "supportUsDesc", path: "/donate" });
 
 const costIcons: Record<string, typeof Server> = {
   hosting: Server,

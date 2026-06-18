@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import {
   BookOpen,
@@ -12,22 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const metadata: Metadata = {
-  title: "Our Methodology",
-  description:
-    "Learn how HerbAlly grades evidence, sources citations, and ensures accuracy in our herbal medicine database.",
-  alternates: {
-    canonical: "https://herbally.app/methodology",
-  },
-  openGraph: {
-    title: "Our Methodology",
-    description:
-      "Learn how HerbAlly grades evidence, sources citations, and ensures accuracy.",
-    url: "https://herbally.app/methodology",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "methodology", path: "/methodology" });
 
 const sectionKeys = [
   { key: "evidenceGrading", icon: Scale },

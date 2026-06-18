@@ -480,7 +480,47 @@
       "submitting": "Connexion...",
       "forgotPassword": "Mot de passe oublié ?",
       "noAccount": "Pas de compte ?",
-      "register": "S'inscrire"
+      "register": "S'inscrire",
+      "title": "Se connecter",
+      "logout": "Se déconnecter",
+      "account": "Compte"
+    },
+    "register": {
+      "title": "Créer votre compte",
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Jean Dupont",
+      "email": "Email",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Au moins 8 caractères",
+      "submit": "Créer le compte",
+      "submitting": "Création...",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "checkEmail": "Vérifiez votre boîte mail pour le lien de confirmation."
+    },
+    "forgot": {
+      "title": "Réinitialiser votre mot de passe",
+      "subtitle": "Nous vous enverrons un lien sécurisé pour définir un nouveau mot de passe.",
+      "email": "Email",
+      "emailPlaceholder": "vous@exemple.com",
+      "submit": "Envoyer le lien",
+      "submitting": "Envoi...",
+      "checkEmail": "Si un compte existe, un lien de réinitialisation est en route.",
+      "back": "Retour à la connexion"
+    },
+    "reset": {
+      "title": "Définir un nouveau mot de passe",
+      "password": "Nouveau mot de passe",
+      "passwordPlaceholder": "Au moins 8 caractères",
+      "submit": "Mettre à jour",
+      "submitting": "Mise à jour...",
+      "success": "Mot de passe mis à jour. Vous pouvez vous connecter.",
+      "back": "Retour à la connexion"
+    },
+    "errors": {
+      "invalidEmail": "Veuillez saisir un email valide.",
+      "shortPassword": "Le mot de passe doit comporter au moins 8 caractères.",
+      "nameRequired": "Veuillez saisir votre nom."
     }
   },
   "mission": {
@@ -1090,7 +1130,8 @@
     "about": "À Propos",
     "aboutDesc": "Découvrez HerbAlly, notre mission et comment nous vous aidons à prendre des décisions éclairées sur les plantes médicinales.",
     "appDescription": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses avec notre herboriste virtuel alimenté par l'IA.",
-    "herbsFor": "Plantes pour {symptom}"
+    "herbsFor": "Plantes pour {symptom}",
+    "homeTitle": "HerbAlly - Votre guide de confiance pour les herbes médicinales"
   },
   "calculatorForm": {
     "herbName": "Nom de la Plante",
@@ -1147,7 +1188,9 @@
     "explanation": "Explication",
     "enterDetailsPrompt": "Entrez les détails et cliquez sur « Calculer » pour voir les résultats",
     "heightCm": "Taille du Patient (cm)",
-    "optionalForBsa": "facultatif, pour BSA"
+    "optionalForBsa": "facultatif, pour BSA",
+    "toggleAgeUnit": "Basculer l'unité d'âge (années/mois)",
+    "toggleWeightUnit": "Basculer l'unité de poids (kg/lbs)"
   },
   "symptomMeta": {
     "anxiety": {

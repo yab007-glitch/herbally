@@ -84,3 +84,17 @@ export async function logout(): Promise<void> {
   await supabase.auth.signOut();
   redirect("/");
 }
+
+/**
+ * Returns the currently signed-in user (id + email) or null.
+ * Used by the client AccountMenu to render login/logout without exposing the
+ * full session. Safe to call from client components (server action).
+ */
+export async function currentUser(): Promise<{ id: string; email?: string | null } | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  return { id: user.id, email: user.email };
+}

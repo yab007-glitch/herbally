@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import {
   Leaf,
   Search,
@@ -13,22 +13,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "About",
-  description:
-    "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
-  alternates: {
-    canonical: "https://herbally.app/about",
-  },
-  openGraph: {
-    title: "About",
-    description:
-      "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
-    url: "https://herbally.app/about",
-    type: "website",
-    siteName: "HerbAlly",
-  },
-};
+export const generateMetadata = () => buildPageMetadata({ titleKey: "about", descKey: "aboutDesc", path: "/about" });
 
 export default async function AboutPage() {
 

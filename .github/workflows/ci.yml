@@ -64,6 +64,17 @@ jobs:
       - run: npm ci
       - run: npm run test:run
 
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run test:coverage
+
   format:
     runs-on: ubuntu-latest
     steps:
@@ -103,7 +114,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, test, format, verify-db, secrets]
+    needs: [lint, typecheck, test, coverage, format, verify-db, secrets]
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
