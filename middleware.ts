@@ -123,11 +123,15 @@ export default async function middleware(request: NextRequest) {
       const rewrite = NextResponse.rewrite(url, {
         request: { headers: requestHeaders },
       });
-      rewrite.cookies.set("herbally-locale", locale, {
-        path: "/",
-        maxAge: 60 * 60 * 24 * 365,
-        sameSite: "lax",
-      });
+      // Only set the cookie if the user has NOT made an explicit choice.
+      // This prevents /fr/ links from overriding a previously saved English preference.
+      if (!cookieLocale) {
+        rewrite.cookies.set("herbally-locale", locale, {
+          path: "/",
+          maxAge: 60 * 60 * 24 * 365,
+          sameSite: "lax",
+        });
+      }
       return applySecurityHeaders(rewrite);
     }
 
@@ -146,8 +150,7 @@ export default async function middleware(request: NextRequest) {
   request.headers.set("x-locale", DEFAULT_LOCALE);
   request.headers.set("x-pathname", pathname);
   let response = NextResponse.next({ request });
-  
-  
+
 
   // Locale cookie for first-time visitors (English default)
   const existingLocale = request.cookies.get("herbally-locale")?.value;

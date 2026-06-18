@@ -1,42 +1,37 @@
 "use client";
 
 import { useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import type { Locale } from "@/lib/i18n/config";
 
 /**
- * Returns a function that switches the UI locale and navigates to the
- * correctly prefixed URL so the middleware can serve the right language
- * without a full reload.
+ * Switches locale by updating the cookie and performing a hard navigation.
+ * A full reload guarantees the middleware sees the fresh cookie and serves
+ * the correct language without any stale-layout or soft-navigation bugs.
  */
 export function useSetLocale() {
-  const router = useRouter();
-  const pathname = usePathname();
+  return useCallback((locale: Locale) => {
+    // Persist preference in cookie (sent to server) and localStorage (client backup)
+    document.cookie = `herbally-locale=${locale};path=/;max-age=31536000;SameSite=Lax`;
+    localStorage.setItem("herbally-locale", locale);
 
-  return useCallback(
-    (locale: Locale) => {
-      // 1. Persist preference
-      document.cookie = `herbally-locale=${locale};path=/;max-age=31536000;SameSite=Lax`;
-      localStorage.setItem("herbally-locale", locale);
+    // Compute the target URL based on the *current* browser location so we
+    // land on the same page in the new language.
+    const currentPath = window.location.pathname;
+    let target = currentPath;
 
-      // 2. Compute target URL
-      let target = pathname;
-      const isCurrentlyPrefixed = target.startsWith("/fr/");
-
-      if (locale === "fr") {
-        if (!isCurrentlyPrefixed) {
-          target = `/fr${target === "/" ? "/" : target}`;
-        }
-      } else {
-        // en — strip /fr/ prefix
-        if (isCurrentlyPrefixed) {
-          target = target.replace(/^\/fr/, "") || "/";
-        }
+    if (locale === "fr") {
+      if (!target.startsWith("/fr/")) {
+        target = `/fr${target === "/" ? "/" : target}`;
       }
+    } else {
+      // en — strip /fr/ prefix
+      if (target.startsWith("/fr/")) {
+        target = target.replace(/^\/fr/, "") || "/";
+      }
+    }
 
-      // 3. Navigate smoothly instead of reloading
-      router.push(target);
-    },
-    [router, pathname]
-  );
+    // Hard navigation: guarantees middleware sees the new cookie and
+    // eliminates any stale state in the persistent root layout.
+    window.location.assign(target);
+  }, []);
 }
