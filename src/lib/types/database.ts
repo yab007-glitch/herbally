@@ -798,6 +798,42 @@ export type Database = {
           },
         ];
       };
+      web_vitals: {
+        Row: {
+          id: string;
+          metric_name: string;
+          value: number;
+          rating: string;
+          pathname: string;
+          device_type: string;
+          device_memory: number | null;
+          recorded_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          metric_name: string;
+          value: number;
+          rating: string;
+          pathname: string;
+          device_type?: string;
+          device_memory?: number | null;
+          recorded_at?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          metric_name?: string;
+          value?: number;
+          rating?: string;
+          pathname?: string;
+          device_type?: string;
+          device_memory?: number | null;
+          recorded_at?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;

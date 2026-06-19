@@ -1,8 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/utils/logger";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Rate limit health endpoint to prevent abuse
+  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  if (!success) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
   const startTime = Date.now();
   const checks: Record<
     string,

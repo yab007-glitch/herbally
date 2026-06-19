@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { z } from "zod/v4";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import { getAnonClient } from "@/lib/supabase/anonymous";
 
 // Core Web Vitals endpoint for real user monitoring
 // Stores metrics in Supabase for analysis
@@ -42,12 +42,9 @@ export async function POST(request: NextRequest) {
     const body = parsed.data;
 
     // Store in Supabase if configured — uses anon key (safe for public endpoint)
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabase = getAnonClient();
 
-    if (supabaseUrl && supabaseAnonKey) {
-      const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
+    if (supabase) {
       const { error } = await supabase.from("web_vitals").insert({
         metric_name: body.name,
         value: body.value,

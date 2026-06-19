@@ -25,9 +25,9 @@ describe("getClientIP", () => {
     expect(getClientIP(req)).toBe("198.51.100.4");
   });
 
-  it("uses the rightmost x-forwarded-for entry", () => {
+  it("uses the leftmost x-forwarded-for entry (original client)", () => {
     const req = makeReq({ "x-forwarded-for": "1.1.1.1, 2.2.2.2, 3.3.3.3" });
-    expect(getClientIP(req)).toBe("3.3.3.3");
+    expect(getClientIP(req)).toBe("1.1.1.1");
   });
 
   it("returns 'unknown' when no IP headers are present", () => {

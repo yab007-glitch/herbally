@@ -1,31 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { openai, MODEL } from "@/lib/ai/openai-client";
 import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 import { z } from "zod";
 
 const MAX_BODY_SIZE = 10 * 1024; // 10KB max for search interpretation
-
-/**
- * Extract the real client IP from request headers.
- * Handles Vercel (x-vercel-forwarded-for), Render (rightmost x-forwarded-for),
- * and Cloudflare (cf-connecting-ip).
- */
-function getClientIP(request: NextRequest): string {
-  const vercelIP = request.headers.get("x-vercel-forwarded-for");
-  if (vercelIP) return vercelIP.trim();
-
-  const cfIP = request.headers.get("cf-connecting-ip");
-  if (cfIP) return cfIP.trim();
-
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const ips = forwarded.split(",").map((s) => s.trim());
-    return ips[ips.length - 1] || "unknown";
-  }
-
-  return "unknown";
-}
 
 export async function POST(request: NextRequest) {
   // Body size guard
@@ -40,8 +20,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const ip = getClientIP(request);
-  const { success } = await rateLimit(ip, 20, 60_000);
+  const { success } = await rateLimit(getClientIP(request), 20, 60_000);
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests. Please try again later." },

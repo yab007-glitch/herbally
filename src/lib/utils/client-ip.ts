@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 /**
  * Extract the real client IP from request headers.
  * Handles Vercel (x-vercel-forwarded-for), Cloudflare (cf-connecting-ip),
- * and the standard x-forwarded-for (rightmost entry).
+ * and the standard x-forwarded-for (leftmost entry = original client).
  */
 export function getClientIP(request: NextRequest | Request): string {
   if (process.env.VERCEL === "1") {
@@ -15,7 +15,7 @@ export function getClientIP(request: NextRequest | Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     const ips = forwarded.split(",").map((s) => s.trim());
-    return ips[ips.length - 1] || "unknown";
+    return ips[0] || "unknown";
   }
   return "unknown";
 }

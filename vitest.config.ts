@@ -23,14 +23,13 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/lib/types/database.ts",
       ],
-      // Regression floor set just below current coverage (~23% lines after the
-      // garden/i18n test additions). Raise these as coverage improves; the goal
-      // remains 70%+ (see IMPROVEMENT_ROADMAP).
+      // Regression floor — raised after audit fixes (2026-06-19).
+      // Current: ~23% lines. Goal: 40%+ (see IMPROVEMENT_ROADMAP).
       thresholds: {
-        branches: 14,
-        functions: 19,
-        lines: 20,
-        statements: 20,
+        branches: 15,
+        functions: 20,
+        lines: 22,
+        statements: 22,
       },
     },
   },

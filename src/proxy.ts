@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 import {
   isLocalePrefixed,
   getLocaleFromPathname,
@@ -8,21 +9,6 @@ import {
   addLocalePrefix,
 } from "@/lib/i18n/routing";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
-
-function getClientIP(request: NextRequest): string {
-  if (process.env.VERCEL === "1") {
-    const vercelIP = request.headers.get("x-vercel-forwarded-for");
-    if (vercelIP) return vercelIP.trim();
-  }
-  const cfIP = request.headers.get("cf-connecting-ip");
-  if (cfIP) return cfIP.trim();
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const ips = forwarded.split(",").map((s) => s.trim());
-    return ips[ips.length - 1] || "unknown";
-  }
-  return "unknown";
-}
 
 function buildCSP(): string {
   const directives = [
