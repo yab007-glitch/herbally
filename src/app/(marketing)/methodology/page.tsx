@@ -53,7 +53,7 @@ export default async function MethodologyPage() {
               name: "HerbAlly",
               url: siteUrl(),
             },
-          }),
+          }).replace(/</g, "\\u003c"),
         }}
       />
 
