@@ -15,7 +15,9 @@ const MAX_BODY_SIZE = 50 * 1024;
  * (prevents cache poisoning via the public anon key). Fire-and-forget.
  */
 function persistToCache(promptHash: string, response: string) {
-  if (!response.trim()) return;
+  // Don't cache empty or suspiciously short/garbage responses (the free pool
+  // occasionally emits things like "User Safety: safe" for trivial inputs).
+  if (!response.trim() || response.trim().length < 40) return;
   try {
     createAdminClient()
       .from("ai_response_cache")
@@ -35,13 +37,13 @@ function persistToCache(promptHash: string, response: string) {
   }
 }
 
-// Fallback chain: capable, low-cost models first, free pool only as a last
-// resort. Order matters — we try each in turn if the previous 5xx/404s.
+// Fallback chain: capable FREE models (the OpenRouter free tier is now mostly
+// restricted to these). gpt-4o-mini remains the recommended primary when the
+// account has credits; without credits it 402s and we fall back here.
+// Order matters — we try each in turn if the previous 5xx/404s.
 const FALLBACK_MODELS = [
-  "openai/gpt-4o-mini",
-  "google/gemini-2.0-flash-001",
-  "meta-llama/llama-3.3-70b-instruct",
   "openrouter/free",
+  "meta-llama/llama-3.3-70b-instruct:free",
 ];
 
 async function tryOpenRouter(
