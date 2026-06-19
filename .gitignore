@@ -60,3 +60,4 @@ playwright-report/
 test-results/
 
 .env*
+.env.sentry-build-plugin
