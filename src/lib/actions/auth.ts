@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { migrateGuestData } from "@/lib/actions/guest-migration";
 import type { ActionResponse } from "@/lib/types";
 
 export async function login(formData: FormData): Promise<ActionResponse> {
@@ -18,6 +19,11 @@ export async function login(formData: FormData): Promise<ActionResponse> {
   if (error) {
     return { success: false, error: error.message };
   }
+
+  // FUNC-8: claim the guest's anonymous garden + chat history into the
+  // now-authenticated account. Best-effort — never blocks login. See
+  // guest-migration.ts; idempotent and cookie-cleared on success.
+  await migrateGuestData();
 
   return { success: true };
 }
