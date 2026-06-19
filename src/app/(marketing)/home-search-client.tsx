@@ -60,6 +60,9 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   const medRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // Abort the in-flight herb search when a newer term supersedes it, so a
+  // slow earlier response can't overwrite a faster newer one (race).
+  const searchAbort = useRef<AbortController | null>(null);
 
   const searchHerbs = useCallback(async (term: string) => {
     if (term.length < 2) {
@@ -67,15 +70,23 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       setShowHerbResults(false);
       return;
     }
+    searchAbort.current?.abort();
+    const controller = new AbortController();
+    searchAbort.current = controller;
     try {
       const res = await fetch(
-        `/api/herbs/search?q=${encodeURIComponent(term)}`
+        `/api/herbs/search?q=${encodeURIComponent(term)}`,
+        {
+          signal: controller.signal,
+        }
       );
       const data = await res.json();
       setHerbResults(Array.isArray(data) ? data.slice(0, 5) : []);
       setShowHerbResults(true);
       setActiveHerbIndex(-1);
-    } catch {
+    } catch (error) {
+      // Aborted requests are expected when a newer term supersedes this one.
+      if (error instanceof DOMException && error.name === "AbortError") return;
       setHerbResults([]);
     }
   }, []);
@@ -87,6 +98,9 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       if (searchTimeout.current) clearTimeout(searchTimeout.current);
     };
   }, [herbInput, searchHerbs]);
+
+  // Abort any in-flight search on unmount.
+  useEffect(() => () => searchAbort.current?.abort(), []);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

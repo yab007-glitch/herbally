@@ -36,6 +36,10 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
   const debouncedQuery = useDebounce(query, 150);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  // Abort the in-flight search request when a newer query supersedes it,
+  // so a slow earlier response can't overwrite a faster newer one (race) and
+  // we don't burn server work on stale queries.
+  const abortRef = useRef<AbortController | null>(null);
 
   const search = useCallback(async (searchQuery: string) => {
     if (searchQuery.length < 2) {
@@ -43,23 +47,38 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
       return;
     }
 
+    // Cancel any previous in-flight request before issuing a new one.
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/herbs/search?q=${encodeURIComponent(searchQuery)}&limit=8`
+        `/api/herbs/search?q=${encodeURIComponent(searchQuery)}&limit=8`,
+        { signal: controller.signal }
       );
       if (response.ok) {
         const data = await response.json();
         setResults(data.herbs || []);
       }
     } catch (error) {
+      // Aborted requests are expected when a newer query supersedes this one.
+      if (error instanceof DOMException && error.name === "AbortError") return;
       logger.error("instant_search_failed", {
         error: error instanceof Error ? error.message : String(error),
       });
     } finally {
-      setIsLoading(false);
+      // Only clear the spinner if this is still the active request; a
+      // superseded request leaves loading state to its successor.
+      if (abortRef.current === controller) {
+        setIsLoading(false);
+      }
     }
   }, []);
+
+  // Abort any in-flight search on unmount.
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   useEffect(() => {
     search(debouncedQuery);
