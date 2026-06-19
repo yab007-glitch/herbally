@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { migrateGuestData } from "@/lib/actions/guest-migration";
 
 /**
  * Supabase auth callback (PKCE). Email confirmation and password-reset links
@@ -24,6 +25,14 @@ export async function GET(request: Request) {
         `${origin}/login?error=${encodeURIComponent(error.message)}`
       );
     }
+
+    // FUNC-8: a brand-new signup just established its session. Claim the
+    // guest's anonymous garden + chat history into the new account before
+    // redirecting. Best-effort — never blocks the redirect. (For password-reset
+    // flows the user already exists and has no guest data to claim, so this is
+    // a harmless no-op: readGuestId() returns null for a returning user whose
+    // cookie was cleared on their first login.)
+    await migrateGuestData();
   }
 
   return NextResponse.redirect(`${origin}${safeNext}`);

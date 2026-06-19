@@ -34,6 +34,40 @@ export async function getGuestId(): Promise<string> {
 }
 
 /**
+ * Read the guest ID cookie WITHOUT minting a new one. Returns the valid UUID
+ * if present, or null if there is no cookie / it is invalid. Use this (not
+ * getGuestId) when you only want to inspect existing guest state — e.g. the
+ * guest→authenticated data migration on login/signup, which must not create a
+ * brand-new guest identity as a side effect.
+ */
+export async function readGuestId(): Promise<string | null> {
+  const cookieStore = await cookies();
+  const existing = cookieStore.get(GUEST_ID_COOKIE);
+  if (existing?.value && isValidGuestId(existing.value)) {
+    return existing.value;
+  }
+  return null;
+}
+
+/**
+ * Clear the guest ID cookie. Called after the guest→authenticated migration
+ * succeeds so future anonymous browsing mints a fresh guest identity instead
+ * of reusing one that has already been claimed by a user account (which would
+ * let a single guest id leak data across multiple user accounts on shared
+ * devices).
+ */
+export async function clearGuestId(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(GUEST_ID_COOKIE, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 0,
+    path: "/",
+  });
+}
+
+/**
  * Set the guest ID cookie explicitly. Only accepts a valid UUID; any other
  * value is rejected so callers can't write arbitrary data into the cookie.
  */
