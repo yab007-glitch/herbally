@@ -70,7 +70,7 @@ export default async function HerbsPage({
                 url: `${siteUrl()}/herbs/${herb.slug || ""}`,
               },
             })),
-          }),
+          }).replace(/</g, "\\u003c"),
         }}
       />
 
