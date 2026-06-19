@@ -109,14 +109,34 @@ export default async function proxy(request: NextRequest) {
   // unauthenticated flood is rejected without doing DB/session work first.
   if (pathname.startsWith("/api/chat")) {
     const ip = getClientIP(request);
-    const { success } = await rateLimit(ip, 20, 60_000);
-    if (!success) {
+    // Two-tier limit: a short per-minute burst cap (20/min) and a daily
+    // cap (200/day) so a single IP cannot run up free-tier AI costs all
+    // day (20/min alone allows ~28,800/day). Distinct keys per window.
+    const perMinute = await rateLimit(`${ip}:chat:minute`, 20, 60_000);
+    if (!perMinute.success) {
       return applySecurityHeaders(
         NextResponse.json(
           { error: "Too many requests. Please try again later." },
           {
             status: 429,
             headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" },
+          }
+        )
+      );
+    }
+    const perDay = await rateLimit(`${ip}:chat:day`, 200, 86_400_000);
+    if (!perDay.success) {
+      return applySecurityHeaders(
+        NextResponse.json(
+          {
+            error: "Daily message limit reached. Please come back tomorrow.",
+          },
+          {
+            status: 429,
+            headers: {
+              "Retry-After": "3600",
+              "X-RateLimit-Remaining": "0",
+            },
           }
         )
       );
