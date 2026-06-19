@@ -1,9 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
-import {
-  Stethoscope,
-  MessageCircle,
-} from "lucide-react";
+import { Stethoscope, MessageCircle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { FaqSearch } from "./faq-search";

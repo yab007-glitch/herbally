@@ -6,24 +6,48 @@ import { getSystemPrompt } from "@/lib/ai/system-prompt";
 import { z } from "zod";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
 
 const MAX_BODY_SIZE = 50 * 1024;
+
+/**
+ * Run the server-side safety guard over a completed response and return the
+ * text that should be cached. Blocked responses are replaced with the localized
+ * refusal; warned responses get the localized warning appended; clean responses
+ * pass through unchanged. This guarantees nothing unsafe is served from the
+ * shared cache, even if the model emitted a bad line during streaming.
+ */
+function guardResponse(response: string, locale: "en" | "fr"): string {
+  const verdict = evaluateAssistantContent(response, locale);
+  if (verdict.verdict === "block") return verdict.appended ?? response;
+  if (verdict.verdict === "warn") return response + (verdict.appended ?? "");
+  return response;
+}
 
 /**
  * Persist an AI response to the shared cache. Writes go through the
  * service-role client because ai_response_cache RLS allows anon reads only
  * (prevents cache poisoning via the public anon key). Fire-and-forget.
+ *
+ * The response is run through the server-side safety guard BEFORE caching so
+ * that blocked content is replaced with a refusal and warned content gets the
+ * disclaimer appended — unsafe output must never be served from cache.
  */
-function persistToCache(promptHash: string, response: string) {
+function persistToCache(
+  promptHash: string,
+  response: string,
+  locale: "en" | "fr"
+) {
   // Don't cache empty or suspiciously short/garbage responses (the free pool
   // occasionally emits things like "User Safety: safe" for trivial inputs).
   if (!response.trim() || response.trim().length < 40) return;
+  const guarded = guardResponse(response, locale);
   try {
     createAdminClient()
       .from("ai_response_cache")
       .insert({
         prompt_hash: promptHash,
-        response,
+        response: guarded,
         expires_at: new Date(
           Date.now() + 7 * 24 * 60 * 60 * 1000
         ).toISOString(),
@@ -114,7 +138,9 @@ export async function POST(request: NextRequest) {
     messages: z
       .array(
         z.object({
-          role: z.enum(["user", "assistant", "system"]),
+          // "system" is intentionally excluded — clients must not be able to
+          // inject or override the system prompt. The server owns it.
+          role: z.enum(["user", "assistant"]),
           content: z.string().min(1).max(8000),
         })
       )
@@ -128,12 +154,14 @@ export async function POST(request: NextRequest) {
   const parsed = chatSchema.safeParse(raw);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Messages array is required" },
+      { error: "Invalid request body" },
       { status: 400 }
     );
   }
 
   const { messages, herbContext, medications, locale } = parsed.data;
+  // The Zod schema already rejects role:"system", so messages here are
+  // user/assistant only — clients cannot inject or override the system prompt.
   const msgArray = messages;
 
   // ── Pre-fetch verified context from our database ──────────────────
@@ -188,7 +216,8 @@ export async function POST(request: NextRequest) {
       typeof cached.response === "string" &&
       cached.response.trim()
     ) {
-      return new NextResponse(cached.response, {
+      // Re-guard on read in case this entry predates the server-side guard.
+      return new NextResponse(guardResponse(cached.response, locale ?? "en"), {
         status: 200,
         headers: { "content-type": "text/event-stream" },
       });
@@ -255,8 +284,8 @@ export async function POST(request: NextRequest) {
     let userMessage = "AI service is temporarily unavailable.";
     const status = lastError?.status ?? 500;
     if (status === 401) {
-      userMessage =
-        "AI service is not configured. Please set a valid OPENROUTER_API_KEY.";
+      // Don't leak the upstream env-var name to the client.
+      userMessage = "AI service is not configured. Please contact support.";
     } else if (status === 402) {
       userMessage =
         "AI service is temporarily unavailable. Please try again later.";
@@ -310,9 +339,10 @@ export async function POST(request: NextRequest) {
             if (done) {
               cancelTimeout();
               // Cache only primary-model responses (avoid caching
-              // low-quality fallback output for 7 days).
+              // low-quality fallback output for 7 days). The response is
+              // guard-checked inside persistToCache before it lands in the DB.
               if (servedModel === primaryModel)
-                persistToCache(promptHash, fullContent);
+                persistToCache(promptHash, fullContent, locale ?? "en");
               controller.close();
               return;
             }
@@ -327,7 +357,7 @@ export async function POST(request: NextRequest) {
               if (trimmed === "data: [DONE]") {
                 cancelTimeout();
                 if (servedModel === primaryModel)
-                  persistToCache(promptHash, fullContent);
+                  persistToCache(promptHash, fullContent, locale ?? "en");
                 controller.close();
                 return;
               }

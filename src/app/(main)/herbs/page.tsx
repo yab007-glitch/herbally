@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
 import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
+import { siteUrl } from "@/lib/seo/site-url";
 import { type Locale } from "@/lib/i18n/config";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
@@ -66,7 +67,7 @@ export default async function HerbsPage({
                 name: herb.name,
                 alternateName: herb.scientific_name,
                 description: herb.description,
-                url: `https://herbally.app/herbs/${herb.slug || ""}`,
+                url: `${siteUrl()}/herbs/${herb.slug || ""}`,
               },
             })),
           }),

@@ -3,7 +3,14 @@
 import { useState, useMemo } from "react";
 import { Search, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Leaf, Shield, AlertTriangle, Calculator, MessageCircle, Stethoscope } from "lucide-react";
+import {
+  Leaf,
+  Shield,
+  AlertTriangle,
+  Calculator,
+  MessageCircle,
+  Stethoscope,
+} from "lucide-react";
 
 const categoryIcons: Record<string, typeof Leaf> = {
   aboutHerbAlly: Leaf,
@@ -78,7 +85,9 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
 
       {filteredCategories.length === 0 ? (
         <div className="py-12 text-center">
-          <p className="text-muted-foreground">No results found. Try a different search term.</p>
+          <p className="text-muted-foreground">
+            No results found. Try a different search term.
+          </p>
         </div>
       ) : (
         <div className="space-y-10">
@@ -96,7 +105,9 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
                   {category.questions.map((faq, i) => (
                     <Card key={i}>
                       <CardContent className="p-5">
-                        <h3 className="font-semibold text-foreground">{faq.q}</h3>
+                        <h3 className="font-semibold text-foreground">
+                          {faq.q}
+                        </h3>
                         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                           {faq.a}
                         </p>

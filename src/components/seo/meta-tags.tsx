@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteUrl } from "@/lib/seo/site-url";
 
 interface MetaTagsProps {
   title: string;
@@ -16,7 +17,7 @@ export function generateMetaTags({
   title,
   description,
   url,
-  image = "https://herbally.app/opengraph-image.png",
+  image = `${siteUrl()}/opengraph-image.png`,
   type = "website",
   publishedTime,
   modifiedTime,

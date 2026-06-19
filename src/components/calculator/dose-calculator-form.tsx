@@ -82,7 +82,12 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
       return;
     }
 
+    // `age` is in MONTHS when the months toggle is on, YEARS otherwise.
     const age = useMonths ? parseFloat(ageMonths) : parseFloat(ageYears);
+    // Young's rule expects YEARS — convert months so an 18-month-old isn't
+    // treated as an 18-year-old (≈5.5x overdose). Named ageInYears to avoid
+    // shadowing the ageYears state variable.
+    const ageInYears = useMonths && Number.isFinite(age) ? age / 12 : age;
     const rawWeight = parseFloat(weightValue);
     const weight = useLbs && rawWeight ? lbsToKg(rawWeight) : rawWeight;
     const height = parseFloat(heightCm);
@@ -99,11 +104,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
           calcResult = clarksRule(weight, dose);
           break;
         case "youngs_rule":
-          if (!age || age <= 0) {
+          if (!ageInYears || ageInYears <= 0 || !Number.isFinite(ageInYears)) {
             setError(t("calculator.errors.ageRequired"));
             return;
           }
-          calcResult = youngsRule(age, dose);
+          calcResult = youngsRule(ageInYears, dose);
           break;
         case "bsa":
           if (!weight || weight <= 0 || !height || height <= 0) {
@@ -221,12 +226,18 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               />
             </div>
             <div className="space-y-2">
-              <Label>{t("calculatorForm.unit")}</Label>
-              <div className="flex gap-1">
+              <Label id="dose-unit-label">{t("calculatorForm.unit")}</Label>
+              <div
+                className="flex gap-1"
+                role="radiogroup"
+                aria-labelledby="dose-unit-label"
+              >
                 {unitOptions.map((unit) => (
                   <button
                     key={unit}
                     type="button"
+                    role="radio"
+                    aria-checked={doseUnit === unit}
                     onClick={() => setDoseUnit(unit)}
                     className={cn(
                       "rounded-md border px-3 py-2 text-sm font-medium transition-colors",
@@ -330,8 +341,14 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
 
           {/* Formula Selection */}
           <div className="space-y-3">
-            <Label>{t("calculatorForm.calculationFormula")}</Label>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <Label id="formula-label">
+              {t("calculatorForm.calculationFormula")}
+            </Label>
+            <div
+              className="grid gap-3 sm:grid-cols-2"
+              role="radiogroup"
+              aria-labelledby="formula-label"
+            >
               {(
                 Object.entries(DOSAGE_FORMULAS) as [
                   FormulaKey,
@@ -341,6 +358,8 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 <button
                   key={key}
                   type="button"
+                  role="radio"
+                  aria-checked={selectedFormula === key}
                   onClick={() => setSelectedFormula(key)}
                   className={cn(
                     "rounded-lg border p-3 text-left transition-all",
@@ -362,7 +381,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
 
           {/* Error */}
           {error && (
-            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400">
+            <div
+              role="alert"
+              aria-live="polite"
+              className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
+            >
               {error}
             </div>
           )}
@@ -398,6 +421,16 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   </p>
                 )}
               </div>
+
+              {result.clamped && (
+                <div
+                  role="alert"
+                  className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+                >
+                  <Info className="mb-0.5 mr-1 inline-block size-3" />
+                  {t("calculatorForm.clampedWarning")}
+                </div>
+              )}
 
               {/* Visual comparison bar */}
               {adultDose && (

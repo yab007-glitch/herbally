@@ -155,6 +155,11 @@ const FR_WARN =
 export function normalizeForMatching(text: string): string {
   return (
     text
+      // NFKD: decompose accents + collapse full-width/compatibility forms so
+      // "guérir", "ｇｕéｒｉｒ", and Cyrillic-lookalikes reduce to base letters.
+      .normalize("NFKD")
+      // Strip combining marks (diacritics left after NFKD) before lowercasing.
+      .replace(/[̀-ͯ]/g, "")
       .toLowerCase()
       // Collapse whitespace
       .replace(/\s+/g, " ")
@@ -186,20 +191,22 @@ export function normalizeForMatching(text: string): string {
  *
  * The function runs two passes:
  *   1. Direct regex match on the original content.
- *   2. Normalized match after leet-speak and zero-width-char removal.
+ *   2. Normalized match after NFKD + leet-speak + zero-width-char removal.
  *
- * Client-side only. Runs after the upstream stream finishes but before the
- * message is persisted. Worst case: a bad message is shown once in the user's
- * own session and is replaced before it lands in the database.
+ * Pure and dependency-free: safe to run on the server (the chat API uses it to
+ * guard cached responses) AND on the client (the chat interface uses it to
+ * guard live streamed output). Both locale pattern sets are ALWAYS loaded — a
+ * French abuse phrase must not bypass an English-locale session, and vice versa.
  */
 export function evaluateAssistantContent(
   content: string,
   locale: "en" | "fr" = "en"
 ): SafetyVerdict {
-  const hardBlocks =
-    locale === "fr" ? [...HARD_BLOCKS_EN, ...HARD_BLOCKS_FR] : HARD_BLOCKS_EN;
-  const softWarns =
-    locale === "fr" ? [...SOFT_WARNS_EN, ...SOFT_WARNS_FR] : SOFT_WARNS_EN;
+  // Always evaluate against BOTH locale pattern sets. Previously the English
+  // locale only loaded English patterns, so a French cessation phrase in an
+  // English session slipped through. Both sets are small — load them all.
+  const hardBlocks = [...HARD_BLOCKS_EN, ...HARD_BLOCKS_FR];
+  const softWarns = [...SOFT_WARNS_EN, ...SOFT_WARNS_FR];
 
   const contentToTest = [content, normalizeForMatching(content)];
 

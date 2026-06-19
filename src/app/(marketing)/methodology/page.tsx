@@ -11,6 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { siteUrl } from "@/lib/seo/site-url";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "methodology", path: "/methodology" });
@@ -46,11 +47,11 @@ export default async function MethodologyPage() {
             name: "HerbAlly Methodology",
             description:
               "How HerbAlly grades evidence, sources citations, and ensures accuracy",
-            url: "https://herbally.app/methodology",
+            url: `${siteUrl()}/methodology`,
             publisher: {
               "@type": "Organization",
               name: "HerbAlly",
-              url: "https://herbally.app",
+              url: siteUrl(),
             },
           }),
         }}

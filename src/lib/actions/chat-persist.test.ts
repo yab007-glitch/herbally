@@ -87,13 +87,56 @@ describe("chat-persist (guest)", () => {
   });
 
   describe("getGuestSession", () => {
-    it("returns null when session not found", async () => {
-      singleMock.mockResolvedValueOnce({
-        data: null,
-        error: { message: "not found" },
+    it("returns null when session is not in the guest's own list", async () => {
+      // get_guest_chat_sessions returns the guest's sessions; if the requested
+      // id isn't among them, ownership check fails -> null (no singular RPC).
+      rpcMock.mockResolvedValueOnce({
+        data: [
+          {
+            id: "other",
+            title: "Not It",
+            herb_context: null,
+            created_at: "2024-01-01",
+            updated_at: "2024-01-02",
+          },
+        ],
+        error: null,
       });
       const result = await actions.getGuestSession("gs1", "guest-123");
       expect(result).toBeNull();
+    });
+
+    it("returns the session with messages when owned by the guest", async () => {
+      rpcMock
+        .mockResolvedValueOnce({
+          data: [
+            {
+              id: "gs1",
+              title: "Chat 1",
+              herb_context: "turmeric",
+              created_at: "2024-01-01",
+              updated_at: "2024-01-02",
+            },
+          ],
+          error: null,
+        })
+        .mockResolvedValueOnce({
+          data: [
+            {
+              id: "m1",
+              role: "user",
+              content: "hello",
+              created_at: "2024-01-01",
+            },
+          ],
+          error: null,
+        });
+      const result = await actions.getGuestSession("gs1", "guest-123");
+      expect(result).not.toBeNull();
+      expect(result?.id).toBe("gs1");
+      expect(result?.herbContext).toBe("turmeric");
+      expect(result?.messages).toHaveLength(1);
+      expect(result?.messages[0].content).toBe("hello");
     });
   });
 

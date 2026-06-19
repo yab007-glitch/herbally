@@ -96,6 +96,7 @@
   "herbs": {
     "title": "Base de Données d'Herbes Médicinales",
     "subtitle": "Explorez plus de 2 700 herbes avec des informations basées sur des preuves",
+    "herbOfTheDay": "Plante du Jour",
     "searchPlaceholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
     "recentSearches": "Recherches récentes",
     "clearAll": "Tout effacer",
@@ -105,10 +106,7 @@
     "noResults": "Aucune herbe trouvée",
     "tryDifferent": "Essayez un autre terme de recherche",
     "popularSearches": "Recherches Populaires",
-    "resultsFound": {
-      "one": "Trouvé {count} herbe correspondant à \"{query}\"",
-      "other": "Trouvé {count} herbes correspondant à \"{query}\""
-    },
+    "resultsFound": "{count, plural, one {Trouvé # herbe correspondant à \"{query}\"} other {Trouvé # herbes correspondant à \"{query}\"}}",
     "noHerbsQuery": "Aucune herbe trouvée pour \"{query}\"",
     "trySearching": "Essayez de rechercher un symptôme comme maux de tête, anxiété ou inflammation.",
     "browseAll": "Parcourir Toutes les Herbes",
@@ -370,7 +368,8 @@
     "500": {
       "title": "Une Erreur s'est Produite",
       "message": "Une erreur inattendue s'est produite. Veuillez réessayer.",
-      "retry": "Réessayer"
+      "retry": "Réessayer",
+      "dataSafe": "Rassurez-vous — vos données sont en sécurité."
     },
     "somethingWentWrong": "Une erreur est survenue",
     "goHome": "Retour à l'accueil",
@@ -1164,6 +1163,7 @@
     "safeRange": "Plage sûre",
     "result": "Résultat",
     "disclaimer": "Ce calculateur fournit des estimations uniquement. Consultez toujours un professionnel de santé.",
+    "clampedWarning": "La dose calculée dépassait la dose de référence adulte et a été plafonnée à la dose adulte. Veuillez vérifier les données saisies (poids, âge, taille) — elles peuvent être irréalistes pour un patient pédiatrique.",
     "clarkRule": "Règle de Clark",
     "youngsRule": "Règle de Young",
     "salisburyRule": "Règle de Salisbury",

@@ -20,12 +20,24 @@ function getStripe(): Stripe | null {
   return stripeInstance;
 }
 
+/**
+ * Coerce a Stripe `payment_intent` field (which may be a string id OR an
+ * expanded PaymentIntent object) to its id string.
+ */
+function paymentIntentId(
+  pi: string | Stripe.PaymentIntent | null | undefined
+): string | null {
+  if (!pi) return null;
+  if (typeof pi === "string") return pi;
+  return pi.id ?? null;
+}
+
 async function upsertDonation(session: Stripe.Checkout.Session) {
   const amountCents = session.amount_total ?? 0;
   const amountDisplay = `$${(amountCents / 100).toFixed(2)}`;
   const email = session.customer_details?.email ?? null;
   const name = session.customer_details?.name ?? null;
-  const paymentIntentId = (session.payment_intent as string) ?? null;
+  const paymentIntentIdValue = paymentIntentId(session.payment_intent);
 
   const status =
     session.payment_status === "paid"
@@ -34,12 +46,15 @@ async function upsertDonation(session: Stripe.Checkout.Session) {
         ? "pending"
         : "expired";
 
+  // Throw on DB error so the outer handler returns 500 and Stripe retries the
+  // webhook. Previously errors were swallowed and a 200 was returned, losing
+  // donations on transient DB failures.
   const { error } = await createAdminClient()
     .from("donations")
     .upsert(
       {
         stripe_session_id: session.id,
-        stripe_payment_intent_id: paymentIntentId,
+        stripe_payment_intent_id: paymentIntentIdValue,
         amount_cents: amountCents,
         amount_display: amountDisplay,
         currency: session.currency ?? "usd",
@@ -53,10 +68,7 @@ async function upsertDonation(session: Stripe.Checkout.Session) {
     );
 
   if (error) {
-    logger.error("stripe_upsert_donation_failed", {
-      sessionId: session.id,
-      error: error.message,
-    });
+    throw new Error(`upsert_donation_failed: ${error.message}`);
   }
 
   return { amountCents, email, status };
@@ -69,28 +81,74 @@ async function markDonationFailed(paymentIntent: Stripe.PaymentIntent) {
     .eq("stripe_payment_intent_id", paymentIntent.id);
 
   if (error) {
-    logger.error("stripe_mark_failed_failed", {
-      paymentIntentId: paymentIntent.id,
-      error: error.message,
-    });
+    throw new Error(`mark_failed_failed: ${error.message}`);
   }
 }
 
 async function markDonationRefunded(charge: Stripe.Charge) {
-  const piId = charge.payment_intent as string;
+  const piId = paymentIntentId(charge.payment_intent);
+  if (!piId) return;
+
+  // Distinguish full vs partial refunds so the donation record stays accurate.
+  const refunded = charge.amount_refunded ?? 0;
+  const captured = charge.amount_captured ?? 0;
+  const status =
+    captured > 0 && refunded > 0 && refunded < captured
+      ? "partially_refunded"
+      : "refunded";
+
+  const { error } = await createAdminClient()
+    .from("donations")
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq("stripe_payment_intent_id", piId);
+
+  if (error) {
+    throw new Error(`mark_refunded_failed: ${error.message}`);
+  }
+}
+
+async function markDonationDisputed(charge: Stripe.Charge) {
+  const piId = paymentIntentId(charge.payment_intent);
   if (!piId) return;
 
   const { error } = await createAdminClient()
     .from("donations")
-    .update({ status: "refunded", updated_at: new Date().toISOString() })
+    .update({ status: "disputed", updated_at: new Date().toISOString() })
     .eq("stripe_payment_intent_id", piId);
 
   if (error) {
-    logger.error("stripe_mark_refunded_failed", {
-      paymentIntentId: piId,
-      error: error.message,
+    throw new Error(`mark_disputed_failed: ${error.message}`);
+  }
+}
+
+/**
+ * Idempotency guard: record the Stripe event id so a redelivered webhook
+ * doesn't double-process. Returns true if this event was already handled.
+ * Falls back to non-dedup behavior only if the table is unavailable (e.g. the
+ * migration hasn't been applied yet), logging the issue.
+ */
+async function isDuplicateEvent(event: Stripe.Event): Promise<boolean> {
+  const admin = createAdminClient();
+  try {
+    const { error } = await admin
+      .from("webhook_events")
+      .insert({ id: event.id, type: event.type });
+    if (error) {
+      // 23505 = unique_violation → already processed.
+      if (error.code === "23505") return true;
+      // Anything else (e.g. table missing) → log and proceed without dedup.
+      logger.error("stripe_webhook_dedup_error", {
+        eventId: event.id,
+        error: error.message,
+      });
+    }
+  } catch (e) {
+    logger.error("stripe_webhook_dedup_exception", {
+      eventId: event.id,
+      error: e instanceof Error ? e.message : String(e),
     });
   }
+  return false;
 }
 
 export async function POST(request: NextRequest) {
@@ -139,6 +197,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // Dedup before processing (Stripe may redeliver on 5xx or timeout).
+  if (await isDuplicateEvent(event)) {
+    return NextResponse.json({ received: true, duplicate: true });
+  }
+
   try {
     switch (event.type) {
       case "checkout.session.completed": {
@@ -176,6 +239,17 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case "charge.dispute.created": {
+        const dispute = event.data.object as Stripe.Dispute;
+        // dispute.charge is the charge id; fetch the charge to resolve the
+        // payment intent. We update by payment intent id below.
+        const charge = await stripeClient.charges.retrieve(
+          dispute.charge as string
+        );
+        await markDonationDisputed(charge);
+        break;
+      }
+
       default:
         break;
     }
@@ -186,6 +260,7 @@ export async function POST(request: NextRequest) {
       eventType: event.type,
       error: err instanceof Error ? err.message : String(err),
     });
+    // 500 so Stripe retries — a DB failure here must not be silently swallowed.
     return NextResponse.json(
       { error: "Webhook processing failed" },
       { status: 500 }

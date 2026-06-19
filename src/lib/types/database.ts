@@ -12,51 +12,26 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.4";
   };
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       ai_response_cache: {
         Row: {
-          created_at: string;
-          expires_at: string;
+          created_at: string | null;
+          expires_at: string | null;
           id: string;
           prompt_hash: string;
           response: string;
         };
         Insert: {
-          created_at?: string;
-          expires_at?: string;
+          created_at?: string | null;
+          expires_at?: string | null;
           id?: string;
           prompt_hash: string;
           response: string;
         };
         Update: {
-          created_at?: string;
-          expires_at?: string;
+          created_at?: string | null;
+          expires_at?: string | null;
           id?: string;
           prompt_hash?: string;
           response?: string;
@@ -143,6 +118,15 @@ export type Database = {
           },
         ];
       };
+      // ────────────────────────────────────────────────────────────────────
+      // DATA-3 (audit 2026-06-19): the three tables below are referenced by
+      // app code (api/webhooks/stripe, api/garden, donate page) but were ABSENT
+      // from production (migrations 00026/00027 recorded as applied yet tables
+      // missing). Decision: RECREATE in prod with owner-scoped RLS — donations
+      // + garden_herbs via 00040, webhook_events via 00039. These are created on
+      // the next `supabase db push`. The service role (createAdminClient)
+      // bypasses RLS, so the webhook and guest-garden paths work once applied.
+      // ────────────────────────────────────────────────────────────────────
       donations: {
         Row: {
           id: string;
@@ -343,6 +327,39 @@ export type Database = {
           },
         ];
       };
+      health_profiles: {
+        Row: {
+          allergies: string[] | null;
+          conditions: string[] | null;
+          created_at: string;
+          guest_id: string | null;
+          id: string;
+          medications: string[] | null;
+          updated_at: string;
+          user_id: string | null;
+        };
+        Insert: {
+          allergies?: string[] | null;
+          conditions?: string[] | null;
+          created_at?: string;
+          guest_id?: string | null;
+          id?: string;
+          medications?: string[] | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          allergies?: string[] | null;
+          conditions?: string[] | null;
+          created_at?: string;
+          guest_id?: string | null;
+          id?: string;
+          medications?: string[] | null;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
       herb_categories: {
         Row: {
           created_at: string;
@@ -378,6 +395,56 @@ export type Database = {
           sort_order?: number | null;
         };
         Relationships: [];
+      };
+      herb_faqs: {
+        Row: {
+          answer: string;
+          category: string;
+          confidence_score: number | null;
+          created_at: string | null;
+          herb_id: string;
+          id: string;
+          is_featured: boolean | null;
+          question: string;
+          sort_order: number | null;
+          source: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          answer: string;
+          category?: string;
+          confidence_score?: number | null;
+          created_at?: string | null;
+          herb_id: string;
+          id?: string;
+          is_featured?: boolean | null;
+          question: string;
+          sort_order?: number | null;
+          source?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          answer?: string;
+          category?: string;
+          confidence_score?: number | null;
+          created_at?: string | null;
+          herb_id?: string;
+          id?: string;
+          is_featured?: boolean | null;
+          question?: string;
+          sort_order?: number | null;
+          source?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "herb_faqs_herb_id_fkey";
+            columns: ["herb_id"];
+            isOneToOne: false;
+            referencedRelation: "herbs";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       herb_monographs: {
         Row: {
@@ -453,55 +520,35 @@ export type Database = {
           },
         ];
       };
-      herb_faqs: {
+      herb_ratings: {
         Row: {
-          answer: string;
-          category: string;
-          confidence_score: number | null;
           created_at: string;
-          herb_id: string;
+          experience: string | null;
+          guest_id: string | null;
+          herb_slug: string;
           id: string;
-          is_featured: boolean | null;
-          question: string;
-          sort_order: number | null;
-          source: string | null;
-          updated_at: string;
+          rating: number;
+          user_id: string | null;
         };
         Insert: {
-          answer: string;
-          category?: string;
-          confidence_score?: number | null;
           created_at?: string;
-          herb_id: string;
+          experience?: string | null;
+          guest_id?: string | null;
+          herb_slug: string;
           id?: string;
-          is_featured?: boolean | null;
-          question: string;
-          sort_order?: number | null;
-          source?: string | null;
-          updated_at?: string;
+          rating: number;
+          user_id?: string | null;
         };
         Update: {
-          answer?: string;
-          category?: string;
-          confidence_score?: number | null;
           created_at?: string;
-          herb_id?: string;
+          experience?: string | null;
+          guest_id?: string | null;
+          herb_slug?: string;
           id?: string;
-          is_featured?: boolean | null;
-          question?: string;
-          sort_order?: number | null;
-          source?: string | null;
-          updated_at?: string;
+          rating?: number;
+          user_id?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: "herb_faqs_herb_id_fkey";
-            columns: ["herb_id"];
-            isOneToOne: false;
-            referencedRelation: "herbs";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: [];
       };
       herbs: {
         Row: {
@@ -540,6 +587,7 @@ export type Database = {
           traditional_uses: string[] | null;
           translations: Json | null;
           updated_at: string;
+          view_count: number;
         };
         Insert: {
           active_compounds?: string[] | null;
@@ -577,6 +625,7 @@ export type Database = {
           traditional_uses?: string[] | null;
           translations?: Json | null;
           updated_at?: string;
+          view_count?: number;
         };
         Update: {
           active_compounds?: string[] | null;
@@ -614,6 +663,7 @@ export type Database = {
           traditional_uses?: string[] | null;
           translations?: Json | null;
           updated_at?: string;
+          view_count?: number;
         };
         Relationships: [
           {
@@ -675,6 +725,33 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      newsletter_subscribers: {
+        Row: {
+          confirmed_at: string | null;
+          created_at: string;
+          email: string;
+          id: string;
+          locale: string | null;
+          subscribed: boolean | null;
+        };
+        Insert: {
+          confirmed_at?: string | null;
+          created_at?: string;
+          email: string;
+          id?: string;
+          locale?: string | null;
+          subscribed?: boolean | null;
+        };
+        Update: {
+          confirmed_at?: string | null;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          locale?: string | null;
+          subscribed?: boolean | null;
+        };
+        Relationships: [];
       };
       patient_profiles: {
         Row: {
@@ -800,37 +877,58 @@ export type Database = {
       };
       web_vitals: {
         Row: {
+          created_at: string;
+          device_memory: number | null;
+          device_type: string | null;
           id: string;
           metric_name: string;
-          value: number;
-          rating: string;
           pathname: string;
-          device_type: string;
-          device_memory: number | null;
+          rating: string;
           recorded_at: string;
-          created_at: string;
+          value: number;
         };
         Insert: {
+          created_at?: string;
+          device_memory?: number | null;
+          device_type?: string | null;
           id?: string;
           metric_name: string;
-          value: number;
-          rating: string;
           pathname: string;
-          device_type?: string;
-          device_memory?: number | null;
+          rating: string;
           recorded_at?: string;
+          value: number;
+        };
+        Update: {
           created_at?: string;
+          device_memory?: number | null;
+          device_type?: string | null;
+          id?: string;
+          metric_name?: string;
+          pathname?: string;
+          rating?: string;
+          recorded_at?: string;
+          value?: number;
+        };
+        Relationships: [];
+      };
+      // DATA-3 — see note above. webhook_events is created by migration 00039,
+      // applied on the next `supabase db push` (RLS enabled, no policies —
+      // service role only, as the webhook uses createAdminClient).
+      webhook_events: {
+        Row: {
+          id: string;
+          type: string;
+          processed_at: string;
+        };
+        Insert: {
+          id: string;
+          type: string;
+          processed_at?: string;
         };
         Update: {
           id?: string;
-          metric_name?: string;
-          value?: number;
-          rating?: string;
-          pathname?: string;
-          device_type?: string;
-          device_memory?: number | null;
-          recorded_at?: string;
-          created_at?: string;
+          type?: string;
+          processed_at?: string;
         };
         Relationships: [];
       };
@@ -918,8 +1016,8 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      increment_herb_view: { Args: { herb_id: string }; Returns: undefined };
       is_admin: { Args: never; Returns: boolean };
-      increment_herb_view: { Args: { herb_id: string }; Returns: unknown };
       search_herbs_by_symptom: {
         Args: { search_term: string };
         Returns: {
@@ -941,8 +1039,13 @@ export type Database = {
           modern_uses: string[] | null;
           name: string;
           nursing_safe: boolean | null;
+          nursing_safe_oral: boolean | null;
+          nursing_safe_topical: boolean | null;
           pregnancy_safe: boolean | null;
+          pregnancy_safe_oral: boolean | null;
+          pregnancy_safe_topical: boolean | null;
           preparation_notes: string | null;
+          provenance: Json;
           pubchem_cid: string | null;
           reviewed_by: string | null;
           reviewer_credentials: string | null;
@@ -953,6 +1056,7 @@ export type Database = {
           traditional_uses: string[] | null;
           translations: Json | null;
           updated_at: string;
+          view_count: number;
         }[];
         SetofOptions: {
           from: "*";
@@ -1106,9 +1210,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       dosage_form: [

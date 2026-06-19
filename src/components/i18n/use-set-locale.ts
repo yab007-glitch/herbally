@@ -22,7 +22,11 @@ import {
 export function useSetLocale() {
   return useCallback((locale: Locale) => {
     // Persist preference as a first-visit redirect hint for the proxy.
-    document.cookie = `herbally-locale=${locale};path=/;max-age=31536000;SameSite=Lax`;
+    const secureFlag =
+      typeof window !== "undefined" && window.location.protocol === "https:"
+        ? ";Secure"
+        : "";
+    document.cookie = `herbally-locale=${locale};path=/;max-age=31536000;SameSite=Lax${secureFlag}`;
     localStorage.setItem("herbally-locale", locale);
 
     const currentPath = window.location.pathname;

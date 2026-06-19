@@ -350,12 +350,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!meta) {
     return { title: "Not Found | HerbAlly", robots: { index: false } };
   }
+  // Localize title/description from the dictionary when translations exist;
+  // fall back to the English symptomMeta copy (desc is empty in en.json, so
+  // the || fallback yields the English description there too).
+  const t = await getTranslations({ locale: metaLocale });
+  const title = t(`symptomMeta.${symptom}.title`) || meta.title;
+  const description = t(`symptomMeta.${symptom}.desc`) || meta.description;
   return {
-    title: meta.title,
-    description: meta.description,
+    title,
+    description,
     keywords: meta.keywords,
     alternates: {
-      canonical: metaLocale === "fr" ? `${baseUrl}/fr/symptoms/${symptom}` : `${baseUrl}/symptoms/${symptom}`,
+      canonical:
+        metaLocale === "fr"
+          ? `${baseUrl}/fr/symptoms/${symptom}`
+          : `${baseUrl}/symptoms/${symptom}`,
       languages: {
         en: `${baseUrl}/symptoms/${symptom}`,
         fr: `${baseUrl}/fr/symptoms/${symptom}`,
@@ -363,15 +372,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     },
     openGraph: {
-      title: meta.title,
-      description: meta.description,
-      url: metaLocale === "fr" ? `${baseUrl}/fr/symptoms/${symptom}` : `${baseUrl}/symptoms/${symptom}`,
+      title,
+      description,
+      url:
+        metaLocale === "fr"
+          ? `${baseUrl}/fr/symptoms/${symptom}`
+          : `${baseUrl}/symptoms/${symptom}`,
     },
   };
 }
 
+/**
+ * Canonical list of symptom route slugs. Exported so the sitemap (and any
+ * other consumer) derives its URLs from the SAME source of truth as
+ * generateStaticParams — the route can never list a slug the page doesn't
+ * serve (e.g. the old sitemap emitted `blood-pressure`/`cough`, which 404'd
+ * because the real route keys are the camelCase `bloodPressure` and `cough`
+ * was never a symptom).
+ */
+export const SYMPTOM_SLUGS = Object.keys(symptomMeta);
+
 export async function generateStaticParams() {
-  return Object.keys(symptomMeta).map((symptom) => ({ symptom }));
+  return SYMPTOM_SLUGS.map((symptom) => ({ symptom }));
 }
 
 export default async function SymptomDetailPage({ params }: Props) {

@@ -1,3 +1,5 @@
+import { siteUrl } from "@/lib/seo/site-url";
+
 interface Herb {
   name: string;
   scientific_name: string;
@@ -30,7 +32,7 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
     name: herb.name,
     alternateName: herb.scientific_name,
     description: herb.description ?? undefined,
-    url: `https://herbally.app/herbs/${herb.slug}`,
+    url: `${siteUrl()}/herbs/${herb.slug}`,
     mainEntity: {
       "@type": "MedicalSubstance",
       name: herb.name,
@@ -93,7 +95,7 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
     publisher: {
       "@type": "Organization",
       name: "HerbAlly",
-      url: "https://herbally.app",
+      url: siteUrl(),
       ...(herb.reviewed_by && {
         reviewer: {
           "@type": "Person",
