@@ -184,7 +184,7 @@ export default async function HerbDetailPage({ params }: Props) {
     const supabase = getAnonClient();
     if (supabase && herb.id) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.rpc as any)("increment_herb_view", { herb_id: herb.id });
+      await supabase.rpc("increment_herb_view", { herb_id: herb.id });
     }
   });
 

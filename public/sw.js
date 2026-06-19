@@ -1,4 +1,4 @@
-const CACHE_NAME = "herbally-v4";
+const CACHE_NAME = "herbally-v5";
 const API_CACHE = "herbally-api-v1";
 
 // Core pages to cache on install

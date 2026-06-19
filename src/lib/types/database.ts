@@ -523,7 +523,11 @@ export type Database = {
           modern_uses: string[] | null;
           name: string;
           nursing_safe: boolean | null;
+          nursing_safe_oral: boolean | null;
+          nursing_safe_topical: boolean | null;
           pregnancy_safe: boolean | null;
+          pregnancy_safe_oral: boolean | null;
+          pregnancy_safe_topical: boolean | null;
           preparation_notes: string | null;
           provenance: Json;
           pubchem_cid: string | null;
@@ -556,7 +560,11 @@ export type Database = {
           modern_uses?: string[] | null;
           name: string;
           nursing_safe?: boolean | null;
+          nursing_safe_oral?: boolean | null;
+          nursing_safe_topical?: boolean | null;
           pregnancy_safe?: boolean | null;
+          pregnancy_safe_oral?: boolean | null;
+          pregnancy_safe_topical?: boolean | null;
           preparation_notes?: string | null;
           provenance?: Json;
           pubchem_cid?: string | null;
@@ -589,7 +597,11 @@ export type Database = {
           modern_uses?: string[] | null;
           name?: string;
           nursing_safe?: boolean | null;
+          nursing_safe_oral?: boolean | null;
+          nursing_safe_topical?: boolean | null;
           pregnancy_safe?: boolean | null;
+          pregnancy_safe_oral?: boolean | null;
+          pregnancy_safe_topical?: boolean | null;
           preparation_notes?: string | null;
           provenance?: Json;
           pubchem_cid?: string | null;
@@ -871,6 +883,7 @@ export type Database = {
         };
       };
       is_admin: { Args: never; Returns: boolean };
+      increment_herb_view: { Args: { herb_id: string }; Returns: unknown };
       search_herbs_by_symptom: {
         Args: { search_term: string };
         Returns: {

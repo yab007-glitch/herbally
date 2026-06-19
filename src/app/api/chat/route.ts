@@ -5,8 +5,35 @@ import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getSystemPrompt } from "@/lib/ai/system-prompt";
 import { z } from "zod";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const MAX_BODY_SIZE = 50 * 1024;
+
+/**
+ * Persist an AI response to the shared cache. Writes go through the
+ * service-role client because ai_response_cache RLS allows anon reads only
+ * (prevents cache poisoning via the public anon key). Fire-and-forget.
+ */
+function persistToCache(promptHash: string, response: string) {
+  if (!response.trim()) return;
+  try {
+    createAdminClient()
+      .from("ai_response_cache")
+      .insert({
+        prompt_hash: promptHash,
+        response,
+        expires_at: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+      })
+      .then(({ error }) => {
+        if (error)
+          logger.error("api_chat_cache_failed", { error: error.message });
+      });
+  } catch {
+    // Service key not configured (e.g. CI) -> skip caching.
+  }
+}
 
 // Fallback chain: capable, low-cost models first, free pool only as a last
 // resort. Order matters — we try each in turn if the previous 5xx/404s.
@@ -274,24 +301,8 @@ export async function POST(request: NextRequest) {
           .then(({ done, value }) => {
             if (done) {
               cancelTimeout();
-              // Persist to cache (only non-empty responses)
-              if (supabase && fullContent.trim()) {
-                supabase
-                  .from("ai_response_cache")
-                  .insert({
-                    prompt_hash: promptHash,
-                    response: fullContent,
-                    expires_at: new Date(
-                      Date.now() + 7 * 24 * 60 * 60 * 1000
-                    ).toISOString(),
-                  })
-                  .then(({ error }) => {
-                    if (error)
-                      logger.error("api_chat_cache_failed", {
-                        error: error.message,
-                      });
-                  });
-              }
+              // Persist to cache via service role (anon read-only under RLS).
+              persistToCache(promptHash, fullContent);
               controller.close();
               return;
             }
@@ -305,18 +316,7 @@ export async function POST(request: NextRequest) {
               if (!trimmed) continue;
               if (trimmed === "data: [DONE]") {
                 cancelTimeout();
-                // Persist to cache (only non-empty responses)
-                if (supabase && fullContent.trim()) {
-                  supabase
-                    .from("ai_response_cache")
-                    .insert({ prompt_hash: promptHash, response: fullContent })
-                    .then(({ error }) => {
-                      if (error)
-                        logger.error("api_chat_cache_failed", {
-                          error: error.message,
-                        });
-                    });
-                }
+                persistToCache(promptHash, fullContent);
                 controller.close();
                 return;
               }
