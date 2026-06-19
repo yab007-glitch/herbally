@@ -199,6 +199,10 @@ export async function POST(request: NextRequest) {
   ];
   let response: Response | null = null;
   let lastError: { status: number; text: string } | null = null;
+  // The model that actually produced the streamed response. We only cache
+  // primary-model responses — fallback (free) models can emit low-quality
+  // output that we don't want to serve from cache for 7 days.
+  let servedModel: string | null = null;
 
   for (const model of modelsToTry) {
     try {
@@ -212,6 +216,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (response && response.ok) {
+      servedModel = model;
       if (model !== primaryModel) {
         logger.warn("api_chat_primary_model_failed", {
           primaryModel,
@@ -301,8 +306,10 @@ export async function POST(request: NextRequest) {
           .then(({ done, value }) => {
             if (done) {
               cancelTimeout();
-              // Persist to cache via service role (anon read-only under RLS).
-              persistToCache(promptHash, fullContent);
+              // Cache only primary-model responses (avoid caching
+              // low-quality fallback output for 7 days).
+              if (servedModel === primaryModel)
+                persistToCache(promptHash, fullContent);
               controller.close();
               return;
             }
@@ -316,7 +323,8 @@ export async function POST(request: NextRequest) {
               if (!trimmed) continue;
               if (trimmed === "data: [DONE]") {
                 cancelTimeout();
-                persistToCache(promptHash, fullContent);
+                if (servedModel === primaryModel)
+                  persistToCache(promptHash, fullContent);
                 controller.close();
                 return;
               }
