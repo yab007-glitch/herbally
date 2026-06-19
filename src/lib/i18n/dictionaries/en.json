@@ -82,6 +82,7 @@
     "suggestion3": "Ginkgo + aspirin",
     "suggestion4": "Echinacea + immunosuppressants",
     "trustLine": "Evidence-based · Free · No account required",
+    "symptomsLink": "Not sure which herb? Describe your symptoms →",
     "featuresTitle": "What you can do",
     "featureHerbsTitle": "Herb database",
     "featureHerbsDescription": "Search 2,700+ medicinal herbs with detailed profiles, uses, and safety information.",
@@ -357,7 +358,8 @@
     "madeWith": "Made with care for the herbal community",
     "followUs": "Follow Us",
     "faq": "FAQ",
-    "methodology": "Methodology"
+    "methodology": "Methodology",
+"symptoms": "Symptoms"
   },
   "errors": {
     "404": {

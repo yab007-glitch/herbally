@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
@@ -37,6 +38,7 @@ type Props = { params: Promise<{ slug1: string; slug2: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug1, slug2 } = await params;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
+  const metaLocale = await getLocaleFromRequest();
 
   const [resultA, resultB] = await Promise.all([
     getHerbBySlug(slug1, { locale: "en", skipCookies: true }),
@@ -57,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${herbA.name} vs ${herbB.name} - Herb Comparison`,
     description: `Compare ${herbA.name} and ${herbB.name} side by side. Uses, safety, interactions, and evidence levels.`,
     alternates: {
-      canonical: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+      canonical: metaLocale === "fr" ? `${baseUrl}/fr/compare/${slug1}/vs/${slug2}` : `${baseUrl}/compare/${slug1}/vs/${slug2}`,
       languages: {
         en: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
         fr: `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`,
@@ -100,6 +102,7 @@ export default async function ComparePage({ params }: Props) {
       />
       {/* Header */}
       <div>
+        <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: t("nav.herbs"), href: "/herbs" }, { name: `${herbA.name} vs ${herbB.name}` }]} />
         <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>
           <ArrowLeft className="size-4" />
           {t("herbDetail.backToHerbs")}

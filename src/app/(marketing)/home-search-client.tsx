@@ -16,6 +16,7 @@ type Labels = {
   suggestion3: string;
   suggestion4: string;
   trustLine: string;
+  symptomsLink: string;
 };
 
 interface HerbResult {
@@ -249,7 +250,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <Sparkles className="size-3.5" />
-            Not sure which herb? Describe your symptoms →
+            {labels.symptomsLink}
           </button>
         </div>
 

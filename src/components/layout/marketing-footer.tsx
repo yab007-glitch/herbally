@@ -52,6 +52,27 @@ export function MarketingFooter() {
               {t("nav.calculator")}
             </Link>
             <Link
+              href="/symptoms"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.symptoms")}
+            </Link>
+            <Link
+              href="/faq"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.faq")}
+            </Link>
+            <Link
+              href="/methodology"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.methodology")}
+            </Link>
+            <Link
               href="/about"
               prefetch={true}
               className="hover:text-foreground transition-colors"

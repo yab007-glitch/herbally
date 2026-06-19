@@ -346,6 +346,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { symptom } = await params;
   const meta = symptomMeta[symptom];
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
+  const metaLocale = await getLocaleFromRequest();
   if (!meta) {
     return { title: "Not Found | HerbAlly", robots: { index: false } };
   }
@@ -354,7 +355,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: meta.description,
     keywords: meta.keywords,
     alternates: {
-      canonical: `${baseUrl}/symptoms/${symptom}`,
+      canonical: metaLocale === "fr" ? `${baseUrl}/fr/symptoms/${symptom}` : `${baseUrl}/symptoms/${symptom}`,
       languages: {
         en: `${baseUrl}/symptoms/${symptom}`,
         fr: `${baseUrl}/fr/symptoms/${symptom}`,
@@ -364,7 +365,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: meta.title,
       description: meta.description,
-      url: `${baseUrl}/symptoms/${symptom}`,
+      url: metaLocale === "fr" ? `${baseUrl}/fr/symptoms/${symptom}` : `${baseUrl}/symptoms/${symptom}`,
     },
   };
 }

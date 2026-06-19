@@ -5,6 +5,8 @@ import { after } from "next/server";
 import { unstable_cache } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/shared/breadcrumbs";
+import { ShareButtons } from "@/components/shared/share-buttons";
 import { HerbSchema } from "@/components/seo/herb-schema";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
@@ -94,7 +96,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : `Learn about ${herb.name} (${herb.scientific_name}) - uses, dosage, safety, and drug interactions.`,
     keywords,
     alternates: {
-      canonical: `${baseUrl}/herbs/${slug}`,
+      canonical: metaLocale === "fr" ? `${baseUrl}/fr/herbs/${slug}` : `${baseUrl}/herbs/${slug}`,
       languages: {
         en: `${baseUrl}/herbs/${slug}`,
         fr: `${baseUrl}/fr/herbs/${slug}`,
@@ -104,7 +106,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${herb.name} (${herb.scientific_name})`,
       description: herb.description?.slice(0, 160) || undefined,
-      url: `${baseUrl}/herbs/${slug}`,
+      url: metaLocale === "fr" ? `${baseUrl}/fr/herbs/${slug}` : `${baseUrl}/herbs/${slug}`,
       type: "article",
       siteName: "HerbAlly",
       images: [`${baseUrl}/opengraph-image`],
@@ -344,6 +346,9 @@ export default async function HerbDetailPage({ params }: Props) {
         }
       />
 
+      {/* Breadcrumbs */}
+      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: t("nav.herbs"), href: "/herbs" }, { name: herb.name }]} />
+
       {/* Back Button */}
       <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>
         <ArrowLeft className="size-4" />
@@ -410,6 +415,9 @@ export default async function HerbDetailPage({ params }: Props) {
           t("herbDetailContent.sources.commissionE"),
         ]}
       />
+
+      {/* Share buttons */}
+      <ShareButtons title={`${herb.name} (${herb.scientific_name}) - HerbAlly`} url={`${process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app"}/herbs/${slug}`} className="pt-4" />
 
       {/* Related Herbs */}
       {relatedHerbs.length > 0 && (

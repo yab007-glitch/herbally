@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LogIn, LogOut, User } from "lucide-react";
+import { LogIn, LogOut, User, Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { currentUser, logout } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 
-type SessionUser = { id: string; email?: string | null } | null;
+type SessionUser = { id: string; email?: string | null; isAdmin?: boolean } | null;
 
 export function AccountMenu({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("auth.login");
@@ -52,13 +52,25 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <form action={logout} className="inline-flex">
-      <Button type="submit" variant="ghost" size="sm" aria-label={t("logout")}>
-        {compact ? <LogOut className="size-4" /> : <User className="size-4" />}
-        {!compact && (
-          <span className="ml-1.5 hidden sm:inline">{t("logout")}</span>
-        )}
-      </Button>
-    </form>
+    <div className={cn("inline-flex items-center gap-1.5", compact && "w-full justify-between")}>
+      {user.isAdmin && (
+        <Link
+          href="/admin"
+          aria-label="Admin"
+          className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+        >
+          <Shield className="size-4" />
+          {!compact && <span className="hidden sm:inline">Admin</span>}
+        </Link>
+      )}
+      <form action={logout} className="inline-flex">
+        <Button type="submit" variant="ghost" size="sm" aria-label={t("logout")}>
+          {compact ? <LogOut className="size-4" /> : <User className="size-4" />}
+          {!compact && (
+            <span className="ml-1.5 hidden sm:inline">{t("logout")}</span>
+          )}
+        </Button>
+      </form>
+    </div>
   );
 }

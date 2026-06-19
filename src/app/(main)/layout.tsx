@@ -3,6 +3,7 @@ import { FDADisclaimerBanner } from "@/components/layout/fda-disclaimer-banner";
 import { UnifiedMobileBar } from "@/components/layout/unified-mobile-bar";
 import { MarketingFooter } from "@/components/layout/marketing-footer";
 import { FloatingChatButton } from "@/components/layout/floating-chat-button";
+import { BackToTop } from "@/components/shared/back-to-top";
 
 export default function MainLayout({
   children,
@@ -21,6 +22,7 @@ export default function MainLayout({
       <MarketingFooter />
       <UnifiedMobileBar />
       <FloatingChatButton />
+      <BackToTop />
     </div>
   );
 }

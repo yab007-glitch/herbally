@@ -35,6 +35,7 @@ export default async function HomePage() {
             suggestion3: t("home.suggestion3"),
             suggestion4: t("home.suggestion4"),
             trustLine: t("home.trustLine"),
+            symptomsLink: t("home.symptomsLink"),
           }}
         />
 

@@ -82,6 +82,7 @@
     "suggestion3": "Ginkgo + aspirine",
     "suggestion4": "Échinacée + immunosuppresseurs",
     "trustLine": "Basé sur des preuves · Gratuit · Sans compte",
+    "symptomsLink": "Pas sûr de quelle plante ? Décrivez vos symptômes →",
     "featuresTitle": "Ce que vous pouvez faire",
     "featureHerbsTitle": "Base de données",
     "featureHerbsDescription": "Recherchez parmi 2 700+ plantes médicinales avec profils détaillés.",
@@ -357,7 +358,8 @@
     "madeWith": "Fait avec soin pour la communauté de la phytothérapie",
     "followUs": "Suivez-nous",
     "faq": "FAQ",
-    "methodology": "Méthodologie"
+    "methodology": "Méthodologie",
+    "symptoms": "Symptômes"
   },
   "errors": {
     "404": {

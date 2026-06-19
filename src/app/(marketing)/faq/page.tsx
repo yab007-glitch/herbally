@@ -1,28 +1,15 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import {
-  Leaf,
   Stethoscope,
-  Calculator,
-  AlertTriangle,
-  Shield,
   MessageCircle,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { FaqSearch } from "./faq-search";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "faq", path: "/faq" });
-
-const categoryIcons: Record<string, typeof Leaf> = {
-  aboutHerbAlly: Leaf,
-  herbSafety: Shield,
-  drugInteractions: AlertTriangle,
-  dosageUsage: Calculator,
-  virtualHerbalist: MessageCircle,
-  sourcesEvidence: Stethoscope,
-};
 
 const categoryKeys = [
   "aboutHerbAlly",
@@ -98,31 +85,7 @@ export default async function FAQPage() {
       </div>
 
       <div className="space-y-10">
-        {faqCategories.map((category) => {
-          const CategoryIcon = categoryIcons[category.catKey] || Leaf;
-          return (
-            <section key={category.catKey}>
-              <div className="mb-4 flex items-center gap-3">
-                <CategoryIcon className="size-6 text-primary" />
-                <h2 className="text-2xl font-bold text-foreground">
-                  {category.title}
-                </h2>
-              </div>
-              <div className="space-y-4">
-                {category.questions.map((faq, i) => (
-                  <Card key={i}>
-                    <CardContent className="p-5">
-                      <h3 className="font-semibold text-foreground">{faq.q}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                        {faq.a}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
-          );
-        })}
+        <FaqSearch categories={faqCategories} />
       </div>
 
       <div className="mt-12 rounded-lg border bg-muted/50 p-6 text-center">
