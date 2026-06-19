@@ -297,30 +297,42 @@ export default async function HerbDetailPage({ params }: Props) {
   const reviewerCredentials =
     herb.reviewer_credentials || t("herbDetailContent.editorialCredentials");
 
-  let relatedHerbs: Array<{
-    name: string;
-    slug: string;
-    scientific_name: string;
-  }> = [];
-  try {
-    const supabaseClient = getAnonClient();
-    if (supabaseClient) {
+  // Related herbs: the category query is the only un-cached Supabase fetch on
+  // this page (every other query uses tagged `fetch`/`unstable_cache`). Wrap
+  // it in unstable_cache so it shares the page's 86400s revalidation window and
+  // can be purged via the `related-herbs-<slug>` tag instead of re-running on
+  // every daily regeneration. `getComparisonHerbs` is a pure in-memory ranker,
+  // so it runs inside the cache to cache the final ranked result.
+  const getRelatedHerbs = unstable_cache(
+    async (herbSlug: string, categoryId: string | null) => {
+      const supabaseClient = getAnonClient();
+      if (!supabaseClient) return [];
       let relatedQuery = supabaseClient
         .from("herbs")
         .select(
           "name, slug, scientific_name, symptom_keywords, traditional_uses"
         )
         .eq("is_published", true);
-      if (herb.category_id) {
-        relatedQuery = relatedQuery.eq("category_id", herb.category_id);
+      if (categoryId) {
+        relatedQuery = relatedQuery.eq("category_id", categoryId);
       }
       const { data: categoryHerbs } = await relatedQuery;
-      if (categoryHerbs) {
-        relatedHerbs = getComparisonHerbs(slug, categoryHerbs, 3);
-      }
-    }
+      if (!categoryHerbs) return [];
+      return getComparisonHerbs(herbSlug, categoryHerbs, 3);
+    },
+    ["related-herbs-" + slug],
+    { revalidate: 86400, tags: ["related-herbs-" + slug] }
+  );
+
+  let relatedHerbs: Array<{
+    name: string;
+    slug: string;
+    scientific_name: string;
+  }> = [];
+  try {
+    relatedHerbs = await getRelatedHerbs(slug, herb.category_id ?? null);
   } catch {
-    // swallow
+    // swallow — related herbs are non-critical
   }
 
   return (
