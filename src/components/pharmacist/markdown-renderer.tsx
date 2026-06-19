@@ -94,14 +94,10 @@ export function ChatMarkdown({ children }: { children: string }) {
       );
     },
 
-    p({
-      children: pChildren,
-      node,
-      ...rest
-    }: ComponentPropsWithoutRef<"p"> & { node?: unknown }) {
-      const props = ((
-        node as { properties?: Record<string, string> } | undefined
-      )?.properties ?? {}) as Record<string, string>;
+    p({ children: pChildren, ...rest }: ComponentPropsWithoutRef<"p">) {
+      // remarkHerbAlly sets data-* attributes via hProperties; react-markdown
+      // passes them through as HTML props (no `node` access needed in v10).
+      const props = rest as Record<string, string | undefined>;
       if (props["data-interaction"] === "true") {
         const herb = props["data-interaction-herb"] ?? "";
         const drug = props["data-interaction-drug"] ?? "";
@@ -136,12 +132,9 @@ export function ChatMarkdown({ children }: { children: string }) {
 
     strong({
       children: strongChildren,
-      node,
       ...rest
-    }: ComponentPropsWithoutRef<"strong"> & { node?: unknown }) {
-      const props = ((
-        node as { properties?: Record<string, string> } | undefined
-      )?.properties ?? {}) as Record<string, string>;
+    }: ComponentPropsWithoutRef<"strong">) {
+      const props = rest as Record<string, string | undefined>;
       const level = props["data-evidence-level"] as EvidenceLevel | undefined;
       if (level) {
         const grade = EVIDENCE_TO_GRADE[level];

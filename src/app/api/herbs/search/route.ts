@@ -2,8 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { logger } from "@/lib/utils/logger";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
 export async function GET(request: NextRequest) {
+  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  if (!success) {
+    return NextResponse.json([], {
+      status: 429,
+      headers: { "Retry-After": "60" },
+    });
+  }
   const searchParams = request.nextUrl.searchParams;
   const term = searchParams.get("q");
 

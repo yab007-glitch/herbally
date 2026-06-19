@@ -1,7 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { success } = await rateLimit(getClientIP(request), 20, 60_000);
+  if (!success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
   const supabase = await createClient();
 
   // Get count first
