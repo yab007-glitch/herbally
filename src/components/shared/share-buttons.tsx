@@ -72,7 +72,11 @@ export function ShareButtons({ title, url, className }: ShareButtonsProps) {
         aria-label="Copy link"
         className="inline-flex size-8 items-center justify-center p-0"
       >
-        {copied ? <Check className="size-4 text-green-600" /> : <Copy className="size-4" />}
+        {copied ? (
+          <Check className="size-4 text-green-600" />
+        ) : (
+          <Copy className="size-4" />
+        )}
       </Button>
     </div>
   );

@@ -24,14 +24,16 @@ export default async function AdminLayout({
     redirect("/");
   }
 
-  // Verify admin role against database profile, not just JWT metadata
+  // Verify admin role against the database profile ONLY. JWT user_metadata is
+  // client-supplied at signup and must never be trusted for authorization — a
+  // user could set raw_user_meta_data.role = "admin" themselves.
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  const role = profile?.role ?? user.user_metadata?.role ?? "user";
+  const role = profile?.role ?? "user";
   if (role !== "admin") {
     redirect("/");
   }

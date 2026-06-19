@@ -53,12 +53,19 @@ describe("bsaMethod", () => {
     expect(result.unit).toBe("mg");
   });
 
-  it("returns full adult dose for standard adult BSA", () => {
-    // Standard adult: ~173cm, ~70kg -> BSA ~= 1.73
-    const bsa = calculateBSA(173, 70);
+  it("clamps a large adult to the adult reference dose", () => {
+    // 173cm/70kg -> BSA ~= 1.83, so (bsa/1.73)*500 ~= 530, which exceeds the
+    // 500mg adult reference. The pediatric clamp caps it at the adult dose.
     const result = bsaMethod(173, 70, 500);
-    // (bsa/1.73) * 500
-    expect(result.dose).toBeCloseTo((bsa / 1.73) * 500, 0);
+    expect(result.dose).toBe(500);
+    expect(result.clamped).toBe(true);
+  });
+
+  it("does not clamp a sub-adult BSA", () => {
+    // 120cm/30kg -> BSA 1.0 -> 289mg, well below the 500mg adult dose.
+    const result = bsaMethod(120, 30, 500);
+    expect(result.dose).toBe(289);
+    expect(result.clamped).toBe(false);
   });
 });
 

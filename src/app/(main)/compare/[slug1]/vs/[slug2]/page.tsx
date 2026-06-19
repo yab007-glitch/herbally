@@ -16,21 +16,26 @@ import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 export const revalidate = 3600;
 
+/**
+ * Canonical list of popular comparisons. Exported so the sitemap derives its
+ * compare URLs from the SAME source of truth as generateStaticParams.
+ */
+export const POPULAR_COMPARISONS = [
+  { slug1: "turmeric", slug2: "ginger" },
+  { slug1: "ashwagandha", slug2: "rhodiola" },
+  { slug1: "chamomile", slug2: "valerian" },
+  { slug1: "garlic", slug2: "ginger" },
+  { slug1: "echinacea", slug2: "elderberry" },
+  { slug1: "ginkgo", slug2: "ginseng" },
+  { slug1: "lavender", slug2: "chamomile" },
+  { slug1: "turmeric", slug2: "ashwagandha" },
+  { slug1: "st-johns-wort", slug2: "kava" },
+  { slug1: "milk-thistle", slug2: "dandelion" },
+] as const;
+
 // Pre-render popular comparisons for SEO
 export async function generateStaticParams() {
-  const popularComparisons = [
-    { slug1: "turmeric", slug2: "ginger" },
-    { slug1: "ashwagandha", slug2: "rhodiola" },
-    { slug1: "chamomile", slug2: "valerian" },
-    { slug1: "garlic", slug2: "ginger" },
-    { slug1: "echinacea", slug2: "elderberry" },
-    { slug1: "ginkgo", slug2: "ginseng" },
-    { slug1: "lavender", slug2: "chamomile" },
-    { slug1: "turmeric", slug2: "ashwagandha" },
-    { slug1: "st-johns-wort", slug2: "kava" },
-    { slug1: "milk-thistle", slug2: "dandelion" },
-  ];
-  return popularComparisons;
+  return [...POPULAR_COMPARISONS];
 }
 
 type Props = { params: Promise<{ slug1: string; slug2: string }> };
@@ -40,9 +45,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
   const metaLocale = await getLocaleFromRequest();
 
+  // Use the request locale (not hardcoded "en") so the title/description
+  // show localized herb names on /fr pages.
   const [resultA, resultB] = await Promise.all([
-    getHerbBySlug(slug1, { locale: "en", skipCookies: true }),
-    getHerbBySlug(slug2, { locale: "en", skipCookies: true }),
+    getHerbBySlug(slug1, { locale: metaLocale, skipCookies: true }),
+    getHerbBySlug(slug2, { locale: metaLocale, skipCookies: true }),
   ]);
 
   const herbA = resultA.success ? resultA.data : null;
@@ -59,7 +66,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${herbA.name} vs ${herbB.name} - Herb Comparison`,
     description: `Compare ${herbA.name} and ${herbB.name} side by side. Uses, safety, interactions, and evidence levels.`,
     alternates: {
-      canonical: metaLocale === "fr" ? `${baseUrl}/fr/compare/${slug1}/vs/${slug2}` : `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+      canonical:
+        metaLocale === "fr"
+          ? `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`
+          : `${baseUrl}/compare/${slug1}/vs/${slug2}`,
       languages: {
         en: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
         fr: `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`,
@@ -85,24 +95,33 @@ export default async function ComparePage({ params }: Props) {
   const herbA = resultA.data;
   const herbB = resultB.data;
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
+  const compareUrl = `${baseUrl}/compare/${slug1}/vs/${slug2}`;
+
   return (
     <div className="space-y-8">
       <WebPageSchema
         title={`${herbA.name} vs ${herbB.name} - Herb Comparison`}
         description={`Compare ${herbA.name} and ${herbB.name} side by side.`}
-        url={`https://herbally.app/compare/${slug1}/vs/${slug2}`}
+        url={compareUrl}
         breadcrumbs={[
-          { name: "Home", url: "https://herbally.app" },
-          { name: "Herbs", url: "https://herbally.app/herbs" },
+          { name: "Home", url: baseUrl },
+          { name: "Herbs", url: `${baseUrl}/herbs` },
           {
             name: `${herbA.name} vs ${herbB.name}`,
-            url: `https://herbally.app/compare/${slug1}/vs/${slug2}`,
+            url: compareUrl,
           },
         ]}
       />
       {/* Header */}
       <div>
-        <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: t("nav.herbs"), href: "/herbs" }, { name: `${herbA.name} vs ${herbB.name}` }]} />
+        <Breadcrumbs
+          items={[
+            { name: "Home", href: "/" },
+            { name: t("nav.herbs"), href: "/herbs" },
+            { name: `${herbA.name} vs ${herbB.name}` },
+          ]}
+        />
         <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>
           <ArrowLeft className="size-4" />
           {t("herbDetail.backToHerbs")}

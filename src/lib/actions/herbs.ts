@@ -50,8 +50,13 @@ export async function getHerbs(params: {
       .from("herbs")
       .select("*, herb_categories(*)", { count: "exact" })
       .eq("is_published", true)
-      .order("name", { ascending: true })
       .range(from, to);
+
+    // When keyword matches are found we order by evidence level (A→B→C→D→trad)
+    // instead of name, so the strongest-evidence herbs surface first. The flag
+    // is applied AFTER filters below (Supabase accumulates all modifiers into
+    // one query, so call order doesn't affect the final SQL).
+    let orderByEvidence = false;
 
     if (params.query) {
       const q = params.query.trim().slice(0, MAX_QUERY_LENGTH);
@@ -89,6 +94,7 @@ export async function getHerbs(params: {
           );
           matchedIds = sortedResults.map((h: { id: string }) => h.id);
           query = query.in("id", matchedIds);
+          orderByEvidence = true;
         } else {
           const conditions = words
             .flatMap((w) => [
@@ -120,6 +126,12 @@ export async function getHerbs(params: {
     if (params.nursingSafe) {
       query = query.eq("nursing_safe", true);
     }
+
+    // Apply ordering now that all filters are known. evidence_level asc gives
+    // A,B,C,D,trad (uppercase before lowercase) — the desired evidence rank.
+    query = query.order(orderByEvidence ? "evidence_level" : "name", {
+      ascending: true,
+    });
 
     const { data, count, error } = await query;
 
@@ -235,6 +247,76 @@ export async function getHerbCategories() {
 }
 
 /**
+ * Deterministic "herb of the day" — picks a stable herb for the current UTC
+ * date so every visitor sees the same pick on a given day and it rotates daily.
+ * Index = day-of-year modulo the published-herb count, fetched at a fixed
+ * `.order("name")` offset so the index is stable. Replaces the old client-side
+ * localStorage approach where the banner was never populated and never showed.
+ */
+export async function getDailyHerb(): Promise<
+  ActionResponse<{ slug: string; name: string; benefit: string }>
+> {
+  try {
+    const supabase = await createClient();
+
+    const { count } = await supabase
+      .from("herbs")
+      .select("id", { count: "exact", head: true })
+      .eq("is_published", true);
+
+    if (!count || count === 0) {
+      return { success: false, error: "No herbs available" };
+    }
+
+    const now = new Date();
+    const startOfYear = Date.UTC(now.getUTCFullYear(), 0, 0);
+    const dayOfYear = Math.floor(
+      (Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) -
+        startOfYear) /
+        86_400_000
+    );
+    const index = dayOfYear % count;
+
+    const { data, error } = await supabase
+      .from("herbs")
+      .select("slug, name, description, traditional_uses")
+      .eq("is_published", true)
+      .order("name", { ascending: true })
+      .range(index, index)
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) {
+      logger.error("herbs_get_daily_herb_failed", {
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      });
+      return { success: false, error: "Failed to fetch daily herb" };
+    }
+
+    const locale = await getLocale();
+    const localized = localizeHerb(data as Herb, locale);
+    const uses = localized.traditional_uses ?? [];
+    const benefit =
+      uses[0] ||
+      (localized.description
+        ? localized.description.split(/(?<=[.!?])\s/)[0]
+        : localized.name);
+
+    return {
+      success: true,
+      data: {
+        slug: localized.slug,
+        name: localized.name,
+        benefit: benefit.slice(0, 120),
+      },
+    };
+  } catch (error) {
+    logger.error("herbs.getDailyHerb_failed", { error: String(error) });
+    return { success: false, error: "Failed to fetch daily herb" };
+  }
+}
+
+/**
  * Get herb counts for multiple symptoms in a single batched query.
  * Avoids N+1 by combining all symptom searches into one ILIKE query.
  */
@@ -316,7 +398,12 @@ export async function searchHerbs(
           return ea - eb;
         }
       );
-      return { success: true, data: sorted as Herb[] };
+      // Localize keyword hits too — previously this branch returned raw rows
+      // and skipped localizeHerb, so FR users saw English names in results.
+      return {
+        success: true,
+        data: sorted.map((h) => localizeHerb(h as Herb, locale)) as Herb[],
+      };
     }
 
     const { data, error } = await supabase

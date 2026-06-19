@@ -96,6 +96,7 @@
   "herbs": {
     "title": "Medicinal Herbs Database",
     "subtitle": "Explore 2,700+ herbs with evidence-based information",
+    "herbOfTheDay": "Herb of the Day",
     "searchPlaceholder": "Search herbs by name, symptom, or use...",
     "recentSearches": "Recent searches",
     "clearAll": "Clear all",
@@ -105,10 +106,7 @@
     "noResults": "No herbs found",
     "tryDifferent": "Try a different search term",
     "popularSearches": "Popular Searches",
-    "resultsFound": {
-      "one": "Found {count} herb matching \"{query}\"",
-      "other": "Found {count} herbs matching \"{query}\""
-    },
+    "resultsFound": "{count, plural, one {Found # herb matching \"{query}\"} other {Found # herbs matching \"{query}\"}}",
     "noHerbsQuery": "No herbs found for \"{query}\"",
     "trySearching": "Try a single keyword like \"anxiety\", \"inflammation\", or \"sleep\". You can also browse by symptom category.",
     "browseAll": "Browse All Herbs",
@@ -359,7 +357,7 @@
     "followUs": "Follow Us",
     "faq": "FAQ",
     "methodology": "Methodology",
-"symptoms": "Symptoms"
+    "symptoms": "Symptoms"
   },
   "errors": {
     "404": {
@@ -370,7 +368,8 @@
     "500": {
       "title": "Something Went Wrong",
       "message": "An unexpected error occurred. Please try again.",
-      "retry": "Try Again"
+      "retry": "Try Again",
+      "dataSafe": "Don't worry — your data is safe."
     },
     "somethingWentWrong": "Something went wrong",
     "goHome": "Go Home",
@@ -1164,6 +1163,7 @@
     "safeRange": "Safe range",
     "result": "Result",
     "disclaimer": "This calculator provides estimates only. Always consult a healthcare provider.",
+    "clampedWarning": "The calculated dose exceeded the adult reference dose and was capped at the adult dose. Please double-check the inputs (weight, age, height) — they may be implausible for a pediatric patient.",
     "clarkRule": "Clark's Rule",
     "youngsRule": "Young's Rule",
     "salisburyRule": "Salisbury's Rule",

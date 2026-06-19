@@ -15,7 +15,7 @@ import {
 } from "@/lib/actions/auth";
 import type { ActionResponse } from "@/lib/types";
 
-const initialState: ActionResponse = { success: false };
+const initialState: ActionResponse = { success: false, error: "" };
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
@@ -74,7 +74,7 @@ export function LoginForm() {
             placeholder={t("login.passwordPlaceholder")}
           />
         </div>
-        {state?.error && <FieldError message={state.error} />}
+        {!state.success && state.error && <FieldError message={state.error} />}
         <Button type="submit" disabled={pending} className="w-full">
           {pending ? t("login.submitting") : t("login.submit")}
         </Button>

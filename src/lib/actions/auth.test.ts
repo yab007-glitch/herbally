@@ -63,7 +63,7 @@ describe("auth actions", () => {
 
       const result = await login(formData);
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Invalid login credentials");
+      expect(!result.success && result.error).toBe("Invalid login credentials");
     });
   });
 
@@ -98,7 +98,7 @@ describe("auth actions", () => {
 
       const result = await register(formData);
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Email already registered");
+      expect(!result.success && result.error).toBe("Email already registered");
     });
   });
 
@@ -124,7 +124,7 @@ describe("auth actions", () => {
 
       const result = await forgotPassword(formData);
       expect(result.success).toBe(false);
-      expect(result.error).toBe("User not found");
+      expect(!result.success && result.error).toBe("User not found");
     });
   });
 
@@ -150,7 +150,7 @@ describe("auth actions", () => {
 
       const result = await resetPassword(formData);
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Password too weak");
+      expect(!result.success && result.error).toBe("Password too weak");
     });
   });
 

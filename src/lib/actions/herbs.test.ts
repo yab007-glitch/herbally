@@ -38,8 +38,8 @@ describe("herbs actions", () => {
       fromMock.mockReturnValueOnce({
         select: () => ({
           eq: () => ({
-            order: () => ({
-              range: () =>
+            range: () => ({
+              order: () =>
                 Promise.resolve({ data: herbs, count: 1, error: null }),
             }),
           }),
@@ -54,8 +54,8 @@ describe("herbs actions", () => {
       fromMock.mockReturnValueOnce({
         select: () => ({
           eq: () => ({
-            order: () => ({
-              range: () =>
+            range: () => ({
+              order: () =>
                 Promise.resolve({
                   data: null,
                   count: 0,
@@ -68,7 +68,9 @@ describe("herbs actions", () => {
 
       const result = await actions.getHerbs({});
       expect(result.success).toBe(false);
-      expect(result.error).toMatch(/db timeout|Failed to fetch herbs/);
+      expect(!result.success && result.error).toMatch(
+        /db timeout|Failed to fetch herbs/
+      );
     });
   });
 
@@ -190,7 +192,7 @@ describe("herbs actions", () => {
 
       const result = await actions.searchHerbs("xyz123");
       expect(result.success).toBe(true);
-      expect(result.data).toEqual([]);
+      expect(result.success && result.data).toEqual([]);
     });
   });
 });

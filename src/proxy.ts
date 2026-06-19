@@ -98,13 +98,30 @@ function shouldSkipLocaleRouting(pathname: string): boolean {
  * always driven by the URL via the x-locale header, so the cookie and the URL
  * can never drift and cause partial translations.
  *
- * NOTE: Next.js 16 renames "middleware" to "proxy" (file convention + export),
- * with functionality unchanged. Kept as middleware.ts for now since the
- * proxy.ts convention isn't reliably recognized by this build setup; migrate
- * separately.
+ * Next.js 16 renames "middleware" to "proxy" (file convention + export), with
+ * functionality unchanged.
  */
 export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+
+  // ── API rate limiting (before session refresh) ────────────────────
+  // Rate-limit /api/chat BEFORE the Supabase session refresh so an
+  // unauthenticated flood is rejected without doing DB/session work first.
+  if (pathname.startsWith("/api/chat")) {
+    const ip = getClientIP(request);
+    const { success } = await rateLimit(ip, 20, 60_000);
+    if (!success) {
+      return applySecurityHeaders(
+        NextResponse.json(
+          { error: "Too many requests. Please try again later." },
+          {
+            status: 429,
+            headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" },
+          }
+        )
+      );
+    }
+  }
 
   // ── Locale routing ─────────────────────────────────────────────────
   if (!shouldSkipLocaleRouting(pathname)) {
@@ -134,6 +151,7 @@ export default async function proxy(request: NextRequest) {
           path: "/",
           maxAge: 60 * 60 * 24 * 365,
           sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
         });
       }
       return applySecurityHeaders(rewrite);
@@ -170,6 +188,7 @@ export default async function proxy(request: NextRequest) {
       path: "/",
       maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     });
   }
 
@@ -178,21 +197,6 @@ export default async function proxy(request: NextRequest) {
   supabaseResponse.cookies.getAll().forEach((cookie) => {
     response.cookies.set(cookie.name, cookie.value, cookie);
   });
-
-  // API Chat Rate limit (Edge-native)
-  if (pathname.startsWith("/api/chat")) {
-    const ip = getClientIP(request);
-    const { success } = await rateLimit(ip, 20, 60_000);
-    if (!success) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again later." },
-        {
-          status: 429,
-          headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" },
-        }
-      );
-    }
-  }
 
   // Admin authorization is handled by src/app/admin/layout.tsx, which
   // verifies the role against the database profiles table (not just JWT
@@ -204,6 +208,6 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!monitoring|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!monitoring|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

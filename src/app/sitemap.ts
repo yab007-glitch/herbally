@@ -3,6 +3,8 @@ import type { MetadataRoute } from "next";
 const FR_BASE = "/fr";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
+import { SYMPTOM_SLUGS } from "@/app/(main)/symptoms/[symptom]/page";
+import { POPULAR_COMPARISONS } from "@/app/(main)/compare/[slug1]/vs/[slug2]/page";
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
@@ -12,7 +14,7 @@ const STATIC_PAGE_MODIFIED = new Date();
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
 
-  // Static pages
+  // Static pages — every English page has a French counterpart at /fr/*.
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
@@ -50,39 +52,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.9,
     },
-    ...[
-      "anxiety",
-      "sleep",
-      "inflammation",
-      "digestion",
-      "blood-pressure",
-      "immune",
-      "headache",
-      "liver",
-      "skin",
-      "menstrual",
-      "menopause",
-      "cold",
-      "joint",
-      "diabetes",
-      "cholesterol",
-      "depression",
-      "focus",
-      "nausea",
-      "constipation",
-      "nerve",
-      "circulation",
-      "allergy",
-      "cough",
-      "wound",
-      "acne",
-      "hormonal",
-    ].map((s) => ({
-      url: `${baseUrl}/symptoms/${s}`,
-      lastModified: STATIC_PAGE_MODIFIED,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    })),
+    // Symptom detail pages — slugs come from the SAME source of truth as the
+    // route's generateStaticParams (SYMPTOM_SLUGS), so the sitemap can never
+    // emit a symptom URL the page doesn't serve (previously it listed
+    // `blood-pressure`/`cough`, which 404'd: the real keys are the camelCase
+    // `bloodPressure` and `cough` was never a symptom). Both locales emitted.
+    ...SYMPTOM_SLUGS.flatMap((s) => [
+      {
+        url: `${baseUrl}/symptoms/${s}`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      },
+      {
+        url: `${baseUrl}${FR_BASE}/symptoms/${s}`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      },
+    ]),
     {
       url: `${baseUrl}/faq`,
       lastModified: STATIC_PAGE_MODIFIED,
@@ -151,13 +139,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
     {
+      url: `${baseUrl}${FR_BASE}/disclaimer`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
       url: `${baseUrl}/privacy`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "yearly",
       priority: 0.3,
     },
     {
+      url: `${baseUrl}${FR_BASE}/privacy`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
       url: `${baseUrl}/terms`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/terms`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "yearly",
       priority: 0.3,
@@ -214,68 +220,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .from("herb_categories")
       .select("slug");
 
-    const comparePages: MetadataRoute.Sitemap = [
-      {
-        url: `${baseUrl}/compare/turmeric/vs/ginger`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/ashwagandha/vs/rhodiola`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/chamomile/vs/valerian`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/garlic/vs/ginger`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/echinacea/vs/elderberry`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/ginkgo/vs/ginseng`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/lavender/vs/chamomile`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/turmeric/vs/ashwagandha`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/st-johns-wort/vs/kava`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-      {
-        url: `${baseUrl}/compare/milk-thistle/vs/dandelion`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      },
-    ];
+    // Compare pages — pairs come from the SAME source of truth as the
+    // compare route's generateStaticParams (POPULAR_COMPARISONS). Both locales.
+    const comparePages: MetadataRoute.Sitemap = POPULAR_COMPARISONS.flatMap(
+      ({ slug1, slug2 }) => [
+        {
+          url: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+          lastModified: STATIC_PAGE_MODIFIED,
+          changeFrequency: "monthly" as const,
+          priority: 0.6,
+        },
+        {
+          url: `${baseUrl}${FR_BASE}/compare/${slug1}/vs/${slug2}`,
+          lastModified: STATIC_PAGE_MODIFIED,
+          changeFrequency: "monthly" as const,
+          priority: 0.6,
+        },
+      ]
+    );
 
     const categoryPages: MetadataRoute.Sitemap = [];
     for (const cat of categories ?? []) {

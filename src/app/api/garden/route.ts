@@ -5,6 +5,7 @@ import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { z } from "zod";
+import { getGuestId } from "@/lib/actions/guest-id";
 
 const herbSchema = z.object({
   slug: z.string().min(1).max(200),
@@ -16,7 +17,9 @@ const herbSchema = z.object({
 
 const bodySchema = z.object({
   herbs: z.array(herbSchema).max(100),
-  guestId: z.string().min(1).max(200).optional(),
+  // `guestId` from the body is intentionally IGNORED — the guest identity is
+  // derived from the HttpOnly server cookie so a client cannot read another
+  // guest's garden by sending a different id (SEC-9).
 });
 
 async function rateLimited(request: NextRequest) {
@@ -34,10 +37,10 @@ async function rateLimited(request: NextRequest) {
  * POST /api/garden — sync local garden to the server.
  *
  * Authenticated users go through the Supabase server client (anon key + the
- * user's JWT cookie) so RLS enforces `auth.uid() = user_id` — we no longer rely
- * on the service-role key for them. Guests (no session) still use the service
- * role because there is no auth identity for RLS to key on; access is scoped
- * by the client-supplied guestId.
+ * user's JWT cookie) so RLS enforces `auth.uid() = user_id`. Guests (no
+ * session) are identified by the HttpOnly `herbally-guest-id` cookie minted and
+ * read server-side — never by a client-supplied value. Guest writes still use
+ * the service role (no auth identity for RLS), but scoped to that trusted id.
  */
 export async function POST(request: NextRequest) {
   const limited = await rateLimited(request);
@@ -52,7 +55,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    const { herbs, guestId } = parsed.data;
+    const { herbs } = parsed.data;
 
     if (herbs.length === 0) {
       return NextResponse.json({ saved: 0, errors: [] });
@@ -66,8 +69,7 @@ export async function POST(request: NextRequest) {
     const result = { saved: 0, errors: [] as string[] };
 
     if (user) {
-      // Authenticated: use the RLS-scoped server client. RLS policy
-      // "Users can manage own garden" enforces auth.uid() = user_id.
+      // Authenticated: RLS-scoped server client.
       for (const herb of herbs) {
         const { error } = await supabase.from("garden_herbs").upsert(
           {
@@ -80,12 +82,17 @@ export async function POST(request: NextRequest) {
           },
           { onConflict: "user_id,herb_slug", ignoreDuplicates: false }
         );
-        if (error) result.errors.push(`${herb.slug}: ${error.message}`);
-        else result.saved++;
+        if (error) {
+          logger.error("garden_sync_user_error", {
+            slug: herb.slug,
+            error: error.message,
+          });
+          result.errors.push(herb.slug);
+        } else result.saved++;
       }
-    } else if (guestId) {
-      // Guest: no auth identity, so RLS can't apply. Use the service role,
-      // scoped by guestId.
+    } else {
+      // Guest: identity from the HttpOnly cookie, not the request body.
+      const guestId = await getGuestId();
       const adminClient = createAdminClient();
       for (const herb of herbs) {
         const { error } = await adminClient.from("garden_herbs").upsert(
@@ -99,14 +106,14 @@ export async function POST(request: NextRequest) {
           },
           { onConflict: "guest_id,herb_slug", ignoreDuplicates: false }
         );
-        if (error) result.errors.push(`${herb.slug}: ${error.message}`);
-        else result.saved++;
+        if (error) {
+          logger.error("garden_sync_guest_error", {
+            slug: herb.slug,
+            error: error.message,
+          });
+          result.errors.push(herb.slug);
+        } else result.saved++;
       }
-    } else {
-      return NextResponse.json(
-        { error: "Authentication or guestId required" },
-        { status: 401 }
-      );
     }
 
     return NextResponse.json(result);
@@ -129,9 +136,6 @@ export async function GET(request: NextRequest) {
   if (limited) return limited;
 
   try {
-    const url = new URL(request.url);
-    const guestId = url.searchParams.get("guestId");
-
     const supabase = await createClient();
     const {
       data: { user },
@@ -147,18 +151,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ herbs: data ?? [] });
     }
 
-    if (guestId) {
-      const adminClient = createAdminClient();
-      const { data, error } = await adminClient
-        .from("garden_herbs")
-        .select("*")
-        .eq("guest_id", guestId)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return NextResponse.json({ herbs: data ?? [] });
-    }
-
-    return NextResponse.json({ herbs: [] });
+    // Guest: derive identity from the cookie, ignore any ?guestId= param.
+    const guestId = await getGuestId();
+    const adminClient = createAdminClient();
+    const { data, error } = await adminClient
+      .from("garden_herbs")
+      .select("*")
+      .eq("guest_id", guestId)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return NextResponse.json({ herbs: data ?? [] });
   } catch (err) {
     logger.error("garden_fetch_error", {
       error: err instanceof Error ? err.message : String(err),
@@ -171,8 +173,7 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * DELETE /api/garden — remove a herb from server garden.
- * Query: ?slug=ginger&guestId=xxx (for guests)
+ * DELETE /api/garden — remove a herb from server garden. Query: ?slug=ginger
  */
 export async function DELETE(request: NextRequest) {
   const limited = await rateLimited(request);
@@ -181,7 +182,6 @@ export async function DELETE(request: NextRequest) {
   try {
     const url = new URL(request.url);
     const slug = url.searchParams.get("slug");
-    const guestId = url.searchParams.get("guestId");
 
     if (!slug) {
       return NextResponse.json({ error: "slug is required" }, { status: 400 });
@@ -199,28 +199,33 @@ export async function DELETE(request: NextRequest) {
         .eq("user_id", user.id)
         .eq("herb_slug", slug);
       if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        logger.error("garden_delete_user_error", {
+          slug,
+          error: error.message,
+        });
+        return NextResponse.json(
+          { error: "Failed to remove herb" },
+          { status: 500 }
+        );
       }
       return NextResponse.json({ removed: true });
     }
 
-    if (guestId) {
-      const adminClient = createAdminClient();
-      const { error } = await adminClient
-        .from("garden_herbs")
-        .delete()
-        .eq("guest_id", guestId)
-        .eq("herb_slug", slug);
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
-      return NextResponse.json({ removed: true });
+    const guestId = await getGuestId();
+    const adminClient = createAdminClient();
+    const { error } = await adminClient
+      .from("garden_herbs")
+      .delete()
+      .eq("guest_id", guestId)
+      .eq("herb_slug", slug);
+    if (error) {
+      logger.error("garden_delete_guest_error", { slug, error: error.message });
+      return NextResponse.json(
+        { error: "Failed to remove herb" },
+        { status: 500 }
+      );
     }
-
-    return NextResponse.json(
-      { error: "Authentication or guestId required" },
-      { status: 401 }
-    );
+    return NextResponse.json({ removed: true });
   } catch (err) {
     logger.error("garden_delete_error", {
       error: err instanceof Error ? err.message : String(err),

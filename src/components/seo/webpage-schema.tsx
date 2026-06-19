@@ -1,3 +1,5 @@
+import { siteUrl } from "@/lib/seo/site-url";
+
 interface WebPageSchemaProps {
   title: string;
   description: string;
@@ -26,10 +28,10 @@ export function WebPageSchema({
     publisher: {
       "@type": "Organization",
       name: "HerbAlly",
-      url: "https://herbally.app",
+      url: siteUrl(),
       logo: {
         "@type": "ImageObject",
-        url: "https://herbally.app/icon.svg",
+        url: `${siteUrl()}/icon.svg`,
       },
     },
   };

@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
       { status: 429, headers: { "Retry-After": "60" } }
     );
   }
-  const startTime = Date.now();
   const checks: Record<
     string,
     {
@@ -118,19 +117,20 @@ export async function GET(request: NextRequest) {
   );
 
   const status = anyUnhealthy ? "unhealthy" : "healthy";
-  const totalLatency = Date.now() - startTime;
 
   if (status === "unhealthy") {
     logger.error("health_check_unhealthy", { checks });
   }
 
+  // Public response: expose ONLY aggregate status + version. The detailed
+  // `checks` (per-service latency, env presence, AI/Stripe config state) are
+  // recon gold for an attacker and must not be exposed publicly. They are
+  // logged server-side for operators instead.
   return NextResponse.json(
     {
       status,
       version: process.env.npm_package_version || "0.1.0",
       timestamp: new Date().toISOString(),
-      latency: totalLatency,
-      checks,
     },
     { status: status === "unhealthy" ? 503 : 200 }
   );

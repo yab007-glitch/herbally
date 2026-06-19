@@ -13,6 +13,7 @@ import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
+import { siteUrl } from "@/lib/seo/site-url";
 import type { Monograph } from "@/lib/data/monographs";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
@@ -96,7 +97,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : `Learn about ${herb.name} (${herb.scientific_name}) - uses, dosage, safety, and drug interactions.`,
     keywords,
     alternates: {
-      canonical: metaLocale === "fr" ? `${baseUrl}/fr/herbs/${slug}` : `${baseUrl}/herbs/${slug}`,
+      canonical:
+        metaLocale === "fr"
+          ? `${baseUrl}/fr/herbs/${slug}`
+          : `${baseUrl}/herbs/${slug}`,
       languages: {
         en: `${baseUrl}/herbs/${slug}`,
         fr: `${baseUrl}/fr/herbs/${slug}`,
@@ -106,7 +110,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${herb.name} (${herb.scientific_name})`,
       description: herb.description?.slice(0, 160) || undefined,
-      url: metaLocale === "fr" ? `${baseUrl}/fr/herbs/${slug}` : `${baseUrl}/herbs/${slug}`,
+      url:
+        metaLocale === "fr"
+          ? `${baseUrl}/fr/herbs/${slug}`
+          : `${baseUrl}/herbs/${slug}`,
       type: "article",
       siteName: "HerbAlly",
       images: [`${baseUrl}/opengraph-image`],
@@ -321,12 +328,12 @@ export default async function HerbDetailPage({ params }: Props) {
       <WebPageSchema
         title={`${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide`}
         description={herb.description ?? `Learn about ${herb.name}`}
-        url={`https://herbally.app/herbs/${slug}`}
+        url={`${siteUrl()}/herbs/${slug}`}
         dateModified={herb.last_reviewed ?? herb.updated_at ?? undefined}
         breadcrumbs={[
-          { name: "Home", url: "https://herbally.app" },
-          { name: "Herbs", url: "https://herbally.app/herbs" },
-          { name: herb.name, url: `https://herbally.app/herbs/${slug}` },
+          { name: "Home", url: siteUrl() },
+          { name: "Herbs", url: `${siteUrl()}/herbs` },
+          { name: herb.name, url: `${siteUrl()}/herbs/${slug}` },
         ]}
       />
       <HerbSchema herb={herb} />
@@ -347,7 +354,13 @@ export default async function HerbDetailPage({ params }: Props) {
       />
 
       {/* Breadcrumbs */}
-      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: t("nav.herbs"), href: "/herbs" }, { name: herb.name }]} />
+      <Breadcrumbs
+        items={[
+          { name: "Home", href: "/" },
+          { name: t("nav.herbs"), href: "/herbs" },
+          { name: herb.name },
+        ]}
+      />
 
       {/* Back Button */}
       <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>
@@ -417,7 +430,11 @@ export default async function HerbDetailPage({ params }: Props) {
       />
 
       {/* Share buttons */}
-      <ShareButtons title={`${herb.name} (${herb.scientific_name}) - HerbAlly`} url={`${process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app"}/herbs/${slug}`} className="pt-4" />
+      <ShareButtons
+        title={`${herb.name} (${herb.scientific_name}) - HerbAlly`}
+        url={`${siteUrl()}/herbs/${slug}`}
+        className="pt-4"
+      />
 
       {/* Related Herbs */}
       {relatedHerbs.length > 0 && (

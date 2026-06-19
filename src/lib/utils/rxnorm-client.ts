@@ -1,6 +1,10 @@
 const RXNORM_BASE =
   process.env.RXNORM_BASE_URL || "https://rxnav.nlm.nih.gov/REST";
 
+// Bound upstream latency so a hung RxNorm request can't stall a serverless
+// invocation indefinitely.
+const RXNORM_TIMEOUT_MS = 8000;
+
 export type RxNormDrug = {
   rxcui: string;
   name: string;
@@ -11,7 +15,10 @@ export async function searchDrugs(term: string): Promise<RxNormDrug[]> {
   try {
     const res = await fetch(
       `${RXNORM_BASE}/approximateTerm.json?term=${encodeURIComponent(term)}&maxEntries=10`,
-      { next: { revalidate: 86400 } }
+      {
+        next: { revalidate: 86400 },
+        signal: AbortSignal.timeout(RXNORM_TIMEOUT_MS),
+      }
     );
 
     if (!res.ok) return [];
@@ -33,9 +40,14 @@ export async function searchDrugs(term: string): Promise<RxNormDrug[]> {
 
 export async function getDrugByRxcui(rxcui: string): Promise<string | null> {
   try {
-    const res = await fetch(`${RXNORM_BASE}/rxcui/${rxcui}/properties.json`, {
-      next: { revalidate: 86400 },
-    });
+    // Encode rxcui so a malformed/malicious value can't inject path segments.
+    const res = await fetch(
+      `${RXNORM_BASE}/rxcui/${encodeURIComponent(rxcui)}/properties.json`,
+      {
+        next: { revalidate: 86400 },
+        signal: AbortSignal.timeout(RXNORM_TIMEOUT_MS),
+      }
+    );
 
     if (!res.ok) return null;
 
@@ -49,8 +61,11 @@ export async function getDrugByRxcui(rxcui: string): Promise<string | null> {
 export async function getDrugInteractions(rxcui: string) {
   try {
     const res = await fetch(
-      `${RXNORM_BASE}/interaction/interaction.json?rxcui=${rxcui}`,
-      { next: { revalidate: 3600 } }
+      `${RXNORM_BASE}/interaction/interaction.json?rxcui=${encodeURIComponent(rxcui)}`,
+      {
+        next: { revalidate: 3600 },
+        signal: AbortSignal.timeout(RXNORM_TIMEOUT_MS),
+      }
     );
 
     if (!res.ok) return [];

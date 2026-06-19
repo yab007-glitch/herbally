@@ -95,14 +95,25 @@ export async function getGuestSession(
 ): Promise<PersistedChatSession | null> {
   try {
     const supabase = getSupabase();
-    const { data: session, error: sessionError } = await supabase
-      .from("chat_sessions")
-      .select("id, title, herb_context, created_at, updated_at, guest_id")
-      .eq("id", sessionId)
-      .eq("guest_id", guestId)
-      .single();
+    // There is no singular "get one session" RPC on the live database (see
+    // migration 00022). Fetch the guest's session list — get_guest_chat_sessions
+    // is SECURITY DEFINER and scoped to p_guest_id, so only sessions owned by
+    // this guest are returned — and pick the matching id. This enforces
+    // ownership without a direct table SELECT (the guest RLS policy on
+    // chat_sessions reads a JWT claim that is never set for anon, so a direct
+    // SELECT would always be filtered out).
+    const { data: sessions, error: sessionsError } = await supabase.rpc(
+      "get_guest_chat_sessions",
+      { p_guest_id: guestId }
+    );
+    if (sessionsError || !sessions) return null;
+    const session = sessions.find((s) => s.id === sessionId);
+    if (!session) return null;
 
-    if (sessionError || !session) return null;
+    // get_guest_chat_messages takes only p_session_id on the live function
+    // (migration 00022) — passing p_guest_id would error as an unknown arg.
+    // Ownership was already verified above by finding the session in the
+    // guest's own list.
     const { data: messages, error: messagesError } = await supabase.rpc(
       "get_guest_chat_messages",
       { p_session_id: sessionId }
@@ -115,11 +126,11 @@ export async function getGuestSession(
       herbContext: session.herb_context,
       createdAt: session.created_at,
       updatedAt: session.updated_at,
-      messages: (messages || []).map((m: Record<string, unknown>) => ({
-        id: m.id as string,
+      messages: (messages || []).map((m) => ({
+        id: m.id,
         role: m.role as "user" | "assistant" | "system",
-        content: m.content as string,
-        createdAt: m.created_at as string,
+        content: m.content,
+        createdAt: m.created_at,
       })),
     };
   } catch (error) {

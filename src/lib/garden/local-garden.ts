@@ -101,39 +101,29 @@ export function setGardenNote(slug: string, note: string): void {
 
 /**
  * Sync a single herb addition to the server.
- * Uses the existing /api/garden POST endpoint.
+ * Uses the existing /api/garden POST endpoint. The server derives the guest
+ * identity from the HttpOnly `herbally-guest-id` cookie (sent automatically on
+ * same-origin requests) — the client never sends a guestId, which it cannot
+ * read anyway (HttpOnly).
  */
 async function syncHerbToServer(
   herb: Omit<GardenHerb, "savedAt">
 ): Promise<void> {
   try {
-    const guestId = localStorage.getItem("herbally-guest-id");
-    const body: {
-      herbs: Array<{
-        slug: string;
-        name: string;
-        scientific_name: string;
-        image_url?: string | null;
-        note?: string;
-      }>;
-      guestId?: string;
-    } = {
-      herbs: [
-        {
-          slug: herb.slug,
-          name: herb.name,
-          scientific_name: herb.scientific_name,
-          image_url: herb.image_url,
-          note: herb.note,
-        },
-      ],
-    };
-    if (guestId) body.guestId = guestId;
-
     await fetch("/api/garden", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        herbs: [
+          {
+            slug: herb.slug,
+            name: herb.name,
+            scientific_name: herb.scientific_name,
+            image_url: herb.image_url,
+            note: herb.note,
+          },
+        ],
+      }),
     });
   } catch {
     // Silently fail — localStorage is the source of truth
@@ -145,11 +135,7 @@ async function syncHerbToServer(
  */
 async function removeHerbFromServer(slug: string): Promise<void> {
   try {
-    const guestId = localStorage.getItem("herbally-guest-id");
-    const params = new URLSearchParams({ slug });
-    if (guestId) params.set("guestId", guestId);
-
-    await fetch(`/api/garden?${params.toString()}`, {
+    await fetch(`/api/garden?slug=${encodeURIComponent(slug)}`, {
       method: "DELETE",
     });
   } catch {
@@ -166,9 +152,7 @@ export async function mergeServerGarden(): Promise<GardenHerb[]> {
   if (typeof window === "undefined") return getGarden();
 
   try {
-    const guestId = localStorage.getItem("herbally-guest-id");
-    const params = guestId ? `?guestId=${encodeURIComponent(guestId)}` : "";
-    const response = await fetch(`/api/garden${params}`);
+    const response = await fetch("/api/garden");
     if (!response.ok) return getGarden();
 
     const data = (await response.json()) as { herbs?: GardenHerb[] };
