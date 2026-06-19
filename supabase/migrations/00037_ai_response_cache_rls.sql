@@ -12,6 +12,10 @@
 
 ALTER TABLE public.ai_response_cache ENABLE ROW LEVEL SECURITY;
 
+-- Drop+create: this lockdown was applied to prod out-of-band (via MCP) before
+-- the migration was recorded, so the policy may already be present. Idempotent
+-- so the migration records cleanly on re-push.
+DROP POLICY IF EXISTS "ai_response_cache is publicly readable" ON public.ai_response_cache;
 CREATE POLICY "ai_response_cache is publicly readable"
   ON public.ai_response_cache
   FOR SELECT

@@ -117,7 +117,8 @@ CREATE POLICY "Users manage own ratings" ON public.herb_ratings
     OR (user_id IS NULL AND guest_id IS NOT NULL)
   );
 
-CREATE POLICY IF NOT EXISTS "Users delete own ratings" ON public.herb_ratings
+DROP POLICY IF EXISTS "Users delete own ratings" ON public.herb_ratings;
+CREATE POLICY "Users delete own ratings" ON public.herb_ratings
   FOR DELETE
   USING (auth.uid() = user_id);
 
