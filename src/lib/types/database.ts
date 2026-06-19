@@ -118,95 +118,47 @@ export type Database = {
           },
         ];
       };
-      // ────────────────────────────────────────────────────────────────────
-      // DATA-3 (audit 2026-06-19): the three tables below are referenced by
-      // app code (api/webhooks/stripe, api/garden, donate page) but were ABSENT
-      // from production (migrations 00026/00027 recorded as applied yet tables
-      // missing). Decision: RECREATE in prod with owner-scoped RLS — donations
-      // + garden_herbs via 00040, webhook_events via 00039. These are created on
-      // the next `supabase db push`. The service role (createAdminClient)
-      // bypasses RLS, so the webhook and guest-garden paths work once applied.
-      // ────────────────────────────────────────────────────────────────────
       donations: {
         Row: {
-          id: string;
-          stripe_session_id: string;
-          stripe_payment_intent_id: string | null;
           amount_cents: number;
           amount_display: string;
+          created_at: string;
           currency: string;
           customer_email: string | null;
           customer_name: string | null;
-          status: string;
+          id: string;
           metadata: Json;
-          created_at: string;
+          status: string;
+          stripe_payment_intent_id: string | null;
+          stripe_session_id: string;
           updated_at: string;
         };
         Insert: {
-          id?: string;
-          stripe_session_id: string;
-          stripe_payment_intent_id?: string | null;
           amount_cents: number;
           amount_display: string;
+          created_at?: string;
           currency?: string;
           customer_email?: string | null;
           customer_name?: string | null;
-          status?: string;
+          id?: string;
           metadata?: Json;
-          created_at?: string;
+          status?: string;
+          stripe_payment_intent_id?: string | null;
+          stripe_session_id: string;
           updated_at?: string;
         };
         Update: {
-          id?: string;
-          stripe_session_id?: string;
-          stripe_payment_intent_id?: string | null;
           amount_cents?: number;
           amount_display?: string;
+          created_at?: string;
           currency?: string;
           customer_email?: string | null;
           customer_name?: string | null;
-          status?: string;
+          id?: string;
           metadata?: Json;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      garden_herbs: {
-        Row: {
-          id: string;
-          user_id: string | null;
-          guest_id: string | null;
-          herb_slug: string;
-          herb_name: string;
-          scientific_name: string;
-          image_url: string | null;
-          note: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          user_id?: string | null;
-          guest_id?: string | null;
-          herb_slug: string;
-          herb_name: string;
-          scientific_name: string;
-          image_url?: string | null;
-          note?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          user_id?: string | null;
-          guest_id?: string | null;
-          herb_slug?: string;
-          herb_name?: string;
-          scientific_name?: string;
-          image_url?: string | null;
-          note?: string | null;
-          created_at?: string;
+          status?: string;
+          stripe_payment_intent_id?: string | null;
+          stripe_session_id?: string;
           updated_at?: string;
         };
         Relationships: [];
@@ -326,6 +278,45 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      garden_herbs: {
+        Row: {
+          created_at: string;
+          guest_id: string | null;
+          herb_name: string;
+          herb_slug: string;
+          id: string;
+          image_url: string | null;
+          note: string | null;
+          scientific_name: string;
+          updated_at: string;
+          user_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          guest_id?: string | null;
+          herb_name: string;
+          herb_slug: string;
+          id?: string;
+          image_url?: string | null;
+          note?: string | null;
+          scientific_name: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          guest_id?: string | null;
+          herb_name?: string;
+          herb_slug?: string;
+          id?: string;
+          image_url?: string | null;
+          note?: string | null;
+          scientific_name?: string;
+          updated_at?: string;
+          user_id?: string | null;
+        };
+        Relationships: [];
       };
       health_profiles: {
         Row: {
@@ -911,24 +902,21 @@ export type Database = {
         };
         Relationships: [];
       };
-      // DATA-3 — see note above. webhook_events is created by migration 00039,
-      // applied on the next `supabase db push` (RLS enabled, no policies —
-      // service role only, as the webhook uses createAdminClient).
       webhook_events: {
         Row: {
           id: string;
-          type: string;
           processed_at: string;
+          type: string;
         };
         Insert: {
           id: string;
-          type: string;
           processed_at?: string;
+          type: string;
         };
         Update: {
           id?: string;
-          type?: string;
           processed_at?: string;
+          type?: string;
         };
         Relationships: [];
       };
@@ -982,7 +970,7 @@ export type Database = {
         Returns: boolean;
       };
       get_guest_chat_messages: {
-        Args: { p_session_id: string };
+        Args: { p_guest_id?: string; p_session_id: string };
         Returns: {
           content: string;
           created_at: string;
@@ -995,6 +983,25 @@ export type Database = {
           to: "chat_messages";
           isOneToOne: false;
           isSetofReturn: true;
+        };
+      };
+      get_guest_chat_session: {
+        Args: { p_guest_id: string; p_session_id: string };
+        Returns: {
+          created_at: string;
+          guest_id: string | null;
+          herb_context: string | null;
+          id: string;
+          messages: Json;
+          title: string | null;
+          updated_at: string;
+          user_id: string | null;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "chat_sessions";
+          isOneToOne: true;
+          isSetofReturn: false;
         };
       };
       get_guest_chat_sessions: {
