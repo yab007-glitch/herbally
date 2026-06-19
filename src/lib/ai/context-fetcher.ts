@@ -321,14 +321,14 @@ async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
       dosage_adult: herb.dosage_adult ?? null,
       pregnancy_safe: herb.pregnancy_safe,
       nursing_safe: herb.nursing_safe,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       pregnancy_safe_oral: herb.pregnancy_safe_oral ?? herb.pregnancy_safe,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       pregnancy_safe_topical:
         herb.pregnancy_safe_topical ?? herb.pregnancy_safe,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       nursing_safe_oral: herb.nursing_safe_oral ?? herb.nursing_safe,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       nursing_safe_topical: herb.nursing_safe_topical ?? herb.nursing_safe,
       evidence_level: herb.evidence_level,
       active_compounds: herb.active_compounds ?? [],

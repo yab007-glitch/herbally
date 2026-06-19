@@ -14,6 +14,7 @@ import { getComparisonHerbs } from "@/lib/data/comparisons";
 import type { Monograph } from "@/lib/data/monographs";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { type Locale } from "@/lib/i18n/config";
@@ -41,7 +42,7 @@ export const revalidate = 86400; // ISR: regenerate once per day
 export async function generateStaticParams() {
   const supabase = getAnonClient();
   if (!supabase) {
-    console.warn("generateStaticParams: Supabase not available at build time");
+    logger.warn("generateStaticParams: Supabase not available at build time");
     return [];
   }
 
@@ -183,7 +184,6 @@ export default async function HerbDetailPage({ params }: Props) {
   after(async () => {
     const supabase = getAnonClient();
     if (supabase && herb.id) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await supabase.rpc("increment_herb_view", { herb_id: herb.id });
     }
   });

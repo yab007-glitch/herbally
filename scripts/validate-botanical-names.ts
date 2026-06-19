@@ -139,9 +139,7 @@ async function main() {
     process.exit(1);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sample =
-    sampleSize > 0 ? (herbs as any[]).slice(0, sampleSize) : (herbs as any[]);
+  const sample = sampleSize > 0 ? herbs.slice(0, sampleSize) : herbs;
   console.log(`Validating ${sample.length} scientific names against POWO...`);
 
   const results: HerbValidation[] = [];

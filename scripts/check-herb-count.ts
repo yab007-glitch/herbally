@@ -49,9 +49,9 @@ async function main() {
     .limit(500);
 
   if (all) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const dual = all.filter(
-      (h: any) => h.pregnancy_safe_oral !== h.pregnancy_safe_topical
+      (h: { pregnancy_safe_oral: boolean; pregnancy_safe_topical: boolean }) =>
+        h.pregnancy_safe_oral !== h.pregnancy_safe_topical
     );
     console.log(`\nDual-route herbs (sample): ${dual.length}/${all.length}`);
   }

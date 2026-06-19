@@ -8,9 +8,8 @@
  *   npx tsx scripts/generate-herb-faqs.ts [--concurrency=10] [--model=glm-5]
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { chatCompletion } from "@/lib/ai/ollama-cloud-client";
-import { logger } from "@/lib/utils/logger";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -214,7 +213,7 @@ async function generateFaqsForHerb(herb: Herb): Promise<FAQPair[]> {
 
 async function processHerb(
   herb: Herb,
-  supabase: any,
+  supabase: SupabaseClient,
   progress: Progress
 ): Promise<void> {
   try {
@@ -231,7 +230,7 @@ async function processHerb(
       sort_order: index,
     }));
 
-    const { error } = await supabase.from("herb_faqs").upsert(rows as any, {
+    const { error } = await supabase.from("herb_faqs").upsert(rows, {
       onConflict: "herb_id,question",
     });
 
@@ -249,7 +248,7 @@ async function processHerb(
   }
 }
 
-async function fetchAllHerbs(supabase: any): Promise<Herb[]> {
+async function fetchAllHerbs(supabase: SupabaseClient): Promise<Herb[]> {
   const allHerbs: Herb[] = [];
   const pageSize = 1000;
   let offset = 0;
@@ -310,10 +309,12 @@ async function runBatch() {
     .select("herb_id")
     .limit(5000);
 
-  const faqHerbIds = new Set((faqHerbs || []).map((f: any) => f.herb_id));
+  const faqHerbIds = new Set(
+    (faqHerbs || []).map((f: { herb_id: string }) => f.herb_id)
+  );
 
   const herbsNeedingFaqs = allHerbs.filter(
-    (h: any) => !faqHerbIds.has(h.id)
+    (h) => !faqHerbIds.has(h.id)
   ) as Herb[];
   const pending = herbsNeedingFaqs.filter(
     (h) => !progress.completed[h.slug] && !progress.failed[h.slug]

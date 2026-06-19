@@ -173,16 +173,17 @@ async function main() {
     .eq("is_published", true);
 
   if (data) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    for (const h of data as any[]) {
+    for (const h of data as Array<{ name: string; citations: unknown }>) {
       const c = h.citations;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const pmids = Array.isArray(c)
-        ? c.filter((ci: any) => ci.pmid && /^\d+$/.test(String(ci.pmid)))
+        ? c.filter(
+            (ci: { pmid?: string }) => ci.pmid && /^\d+$/.test(String(ci.pmid))
+          )
         : [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       console.log(
-        `  ${pmids.length > 0 ? "✅" : "❌"} ${h.name}: ${pmids.length} PMIDs${pmids.length > 0 ? " — " + pmids.map((p: any) => p.pmid).join(", ") : ""}`
+        `  ${pmids.length > 0 ? "✅" : "❌"} ${h.name}: ${pmids.length} PMIDs${pmids.length > 0 ? " — " + pmids.map((p: { pmid?: string }) => p.pmid).join(", ") : ""}`
       );
     }
   }

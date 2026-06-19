@@ -89,7 +89,8 @@ export async function chatCompletion(
         choices?: Array<{ message?: { content?: string } }>;
       };
       const msg = data.choices?.[0]?.message;
-      const content = msg?.content || (msg as any)?.reasoning || "";
+      const content =
+        msg?.content || (msg as { reasoning?: string })?.reasoning || "";
       if (!content) {
         throw new Error("Empty response from Ollama Cloud");
       }

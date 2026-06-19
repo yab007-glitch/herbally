@@ -48,6 +48,9 @@ next-env.d.ts
 *.key
 *.secret
 
+# Supabase CLI temp files
+supabase/.temp/
+
 # Audit reports
 .audits/
 AUDIT_REPORT_*.md

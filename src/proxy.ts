@@ -24,8 +24,6 @@ function getClientIP(request: NextRequest): string {
   return "unknown";
 }
 
-const adminRoutes = ["/admin"];
-
 function buildCSP(): string {
   const directives = [
     "default-src 'self'",
@@ -190,7 +188,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Supabase session refresh
-  const { supabaseResponse, user } = await updateSession(request);
+  const { supabaseResponse } = await updateSession(request);
   supabaseResponse.cookies.getAll().forEach((cookie) => {
     response.cookies.set(cookie.name, cookie.value, cookie);
   });
@@ -210,15 +208,10 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
-  if (adminRoutes.some((route) => pathname.startsWith(route))) {
-    if (!user) {
-      return Response.redirect(new URL("/", request.url));
-    }
-    const role = user?.user_metadata?.role ?? "user";
-    if (role !== "admin") {
-      return Response.redirect(new URL("/", request.url));
-    }
-  }
+  // Admin authorization is handled by src/app/admin/layout.tsx, which
+  // verifies the role against the database profiles table (not just JWT
+  // metadata, which can be tampered with). No middleware-level check here
+  // to avoid relying on client-controllable JWT claims.
 
   return applySecurityHeaders(response);
 }

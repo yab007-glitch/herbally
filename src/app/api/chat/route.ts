@@ -210,10 +210,11 @@ export async function POST(request: NextRequest) {
     try {
       response = await tryOpenRouter(baseUrl, apiKey, model, chatMessages);
     } catch (fetchError) {
-      console.error(
-        `Fetch to OpenRouter failed for model ${model}:`,
-        fetchError
-      );
+      logger.error("api_chat_fetch_failed", {
+        model,
+        error:
+          fetchError instanceof Error ? fetchError.message : String(fetchError),
+      });
       continue;
     }
 

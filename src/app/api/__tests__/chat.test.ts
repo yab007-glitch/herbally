@@ -120,11 +120,6 @@ describe("POST /api/chat — error paths", () => {
     const res = await POST(makeRequest({ herbContext: "x" }));
     expect(res.status).toBe(400);
   });
-
-  // Test skipped: rate limiting is now handled in middleware, not exercised in this unit test.
-  it.skip("returns 429 when rate limit is exceeded, with Retry-After header", async () => {
-    // ...
-  });
 });
 describe("POST /api/chat — model fallback chain", () => {
   it("falls back to the next model when primary 5xxs, then succeeds", async () => {

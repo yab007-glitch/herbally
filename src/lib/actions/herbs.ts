@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { logger } from "@/lib/utils/logger";
 import { cookies } from "next/headers";
 import {
   localizeHerb,
@@ -16,7 +17,6 @@ import type {
   HerbWithInteractions,
   HerbCategory,
 } from "@/lib/types";
-import { logger } from "@/lib/utils/logger";
 
 async function getLocale(): Promise<string> {
   try {
@@ -142,7 +142,7 @@ export async function getHerbs(params: {
       },
     };
   } catch (error) {
-    console.error("[herbs.getHerbs]", error);
+    logger.error("herbs.getHerbs_failed", { error: String(error) });
     return { success: false, error: "Failed to fetch herbs" };
   }
 }
@@ -198,7 +198,7 @@ export async function getHerbBySlug(
       } as HerbWithInteractions,
     };
   } catch (error) {
-    console.error("[herbs.getHerbBySlug]", error);
+    logger.error("herbs.getHerbBySlug_failed", { error: String(error) });
     return { success: false, error: "Failed to fetch herb" };
   }
 }
@@ -229,7 +229,7 @@ export async function getHerbCategories() {
     }));
     return { success: true, data: localized };
   } catch (error) {
-    console.error("[herbs.getHerbCategories]", error);
+    logger.error("herbs.getHerbCategories_failed", { error: String(error) });
     return { success: false, error: "Failed to fetch categories" };
   }
 }
@@ -277,7 +277,7 @@ export async function getSymptomCounts(
 
     return { success: true, data: counts };
   } catch (error) {
-    console.error("[herbs.getSymptomCounts]", error);
+    logger.error("herbs.getSymptomCounts_failed", { error: String(error) });
     return { success: false, error: "Failed to fetch symptom counts" };
   }
 }
@@ -340,7 +340,7 @@ export async function searchHerbs(
       data: (data || []).map((h) => localizeHerb(h as Herb, locale)) as Herb[],
     };
   } catch (error) {
-    console.error("[herbs.searchHerbs]", error);
+    logger.error("herbs.searchHerbs_failed", { error: String(error) });
     return { success: false, error: "Failed to search herbs" };
   }
 }

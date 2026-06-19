@@ -14,8 +14,7 @@ const {
   isInGarden,
   setGarden,
   getGardenNote,
-  setGardenNote,
-} = mod as typeof mod & { setGardenNote?: never };
+} = mod;
 
 beforeEach(() => localStorage.clear());
 
