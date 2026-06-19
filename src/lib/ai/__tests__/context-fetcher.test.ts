@@ -6,7 +6,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const mockSelect = vi.fn();
 const mockFrom = vi.fn(() => ({ select: mockSelect }));
-const mockEq = vi.fn(() => ({ select: mockSelect, or: mockOr, single: mockSingle, limit: mockLimit }));
+const mockEq = vi.fn(() => ({
+  select: mockSelect,
+  or: mockOr,
+  single: mockSingle,
+  limit: mockLimit,
+}));
 const mockOr = vi.fn(() => ({ eq: mockEq, limit: mockLimit }));
 const mockSingle = vi.fn();
 const mockLimit = vi.fn(() => ({ single: mockSingle }));
@@ -49,7 +54,9 @@ describe("context-fetcher", () => {
         })),
       });
 
-      const ctx = await fetchVerifiedContext("Can I take turmeric with my medications?");
+      const ctx = await fetchVerifiedContext(
+        "Can I take turmeric with my medications?"
+      );
       // The herb name "turmeric" should be detected and a lookup attempted
       // Even if DB returns nothing, the extraction still happened
       expect(ctx.source).toBe("none"); // no DB data returned
@@ -87,7 +94,10 @@ describe("context-fetcher", () => {
         })),
       });
 
-      const ctx = await fetchVerifiedContext("hello", null, ["sertraline", "ibuprofen"]);
+      const ctx = await fetchVerifiedContext("hello", null, [
+        "sertraline",
+        "ibuprofen",
+      ]);
       expect(ctx.medicationsMentioned).toContain("sertraline");
       expect(ctx.medicationsMentioned).toContain("ibuprofen");
     });
@@ -99,7 +109,11 @@ describe("context-fetcher", () => {
         })),
       });
 
-      const ctx = await fetchVerifiedContext("Is this safe?", "Information about ginger", []);
+      const ctx = await fetchVerifiedContext(
+        "Is this safe?",
+        "Information about ginger",
+        []
+      );
       // Ginger should be extracted from the herbContext
       expect(ctx.source).toBe("none"); // DB returns nothing in mock
     });
