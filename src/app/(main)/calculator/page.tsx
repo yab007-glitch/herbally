@@ -1,5 +1,4 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
 const DoseCalculatorForm = dynamic(() =>
   import("@/components/calculator/dose-calculator-form").then(
@@ -9,7 +8,6 @@ const DoseCalculatorForm = dynamic(() =>
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
-import { type Locale } from "@/lib/i18n/config";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "doseCalculator", path: "/calculator" });
@@ -36,9 +34,6 @@ export default async function CalculatorPage({
   searchParams: Promise<{ herb?: string }>;
 }) {
   const params = await searchParams;
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("herbally-locale");
-  const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
   const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
   const herbSlug = params.herb;

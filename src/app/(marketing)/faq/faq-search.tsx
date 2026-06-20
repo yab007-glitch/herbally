@@ -11,6 +11,7 @@ import {
   MessageCircle,
   Stethoscope,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const categoryIcons: Record<string, typeof Leaf> = {
   aboutHerbAlly: Leaf,
@@ -33,6 +34,7 @@ interface FAQCategory {
 }
 
 export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
+  const t = useTranslations();
   const [query, setQuery] = useState("");
 
   const filteredCategories = useMemo(() => {
@@ -63,13 +65,13 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search FAQ..."
+          placeholder={t("faqContent.searchPlaceholder")}
           className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-10 text-sm shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {query && (
           <button
             onClick={() => setQuery("")}
-            aria-label="Clear search"
+            aria-label={t("faqContent.clearSearch")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             <X className="size-4" />
@@ -79,14 +81,14 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
 
       {query && (
         <p className="mb-6 text-center text-sm text-muted-foreground">
-          {totalResults} result{totalResults !== 1 ? "s" : ""}
+          {t("faqContent." + (totalResults !== 1 ? "results" : "result"), { count: totalResults })}
         </p>
       )}
 
       {filteredCategories.length === 0 ? (
         <div className="py-12 text-center">
           <p className="text-muted-foreground">
-            No results found. Try a different search term.
+            {t("faqContent.noResultsFound")}
           </p>
         </div>
       ) : (

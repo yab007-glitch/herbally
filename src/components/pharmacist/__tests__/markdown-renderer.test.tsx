@@ -45,7 +45,7 @@ describe("ChatMarkdown", () => {
     // The interaction card should contain the herb, drug, and severity word.
     expect(container.textContent).toContain("St. John's Wort");
     expect(container.textContent).toContain("Warfarin");
-    expect(container.textContent).toContain("Severe");
+    expect(container.textContent).toContain("interactions.severity.severe");
   });
 
   it("does not break on plain text without enrichments", () => {

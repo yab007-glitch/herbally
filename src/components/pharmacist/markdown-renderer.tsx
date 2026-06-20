@@ -21,28 +21,28 @@ const EVIDENCE_TO_GRADE: Record<EvidenceLevel, "A" | "B" | "C" | "D" | "trad"> =
 
 const SEVERITY_STYLES: Record<
   InteractionSeverity,
-  { label: string; bg: string; text: string; border: string }
+  { labelKey: string; bg: string; text: string; border: string }
 > = {
   contraindicated: {
-    label: "Contraindicated",
+    labelKey: "interactions.severity.contraindicated",
     bg: "bg-red-100 dark:bg-red-950/50",
     text: "text-red-800 dark:text-red-300",
     border: "border-red-300 dark:border-red-800",
   },
   severe: {
-    label: "Severe",
+    labelKey: "interactions.severity.severe",
     bg: "bg-orange-100 dark:bg-orange-950/50",
     text: "text-orange-800 dark:text-orange-300",
     border: "border-orange-300 dark:border-orange-800",
   },
   moderate: {
-    label: "Moderate",
+    labelKey: "interactions.severity.moderate",
     bg: "bg-amber-100 dark:bg-amber-950/50",
     text: "text-amber-800 dark:text-amber-300",
     border: "border-amber-300 dark:border-amber-800",
   },
   mild: {
-    label: "Mild",
+    labelKey: "interactions.severity.mild",
     bg: "bg-yellow-50 dark:bg-yellow-950/30",
     text: "text-yellow-800 dark:text-yellow-300",
     border: "border-yellow-300 dark:border-yellow-800",
@@ -122,7 +122,7 @@ export function ChatMarkdown({ children }: { children: string }) {
             </span>
             <span className="text-muted-foreground">→</span>
             <Badge className={`${style.bg} ${style.text} border-current/20`}>
-              {style.label}
+              {t(style.labelKey)}
             </Badge>
           </div>
         );

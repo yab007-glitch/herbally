@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Share2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface ShareButtonsProps {
   title: string;
@@ -12,6 +13,7 @@ interface ShareButtonsProps {
 }
 
 export function ShareButtons({ title, url, className }: ShareButtonsProps) {
+  const t = useTranslations();
   const [copied, setCopied] = useState(false);
 
   const shareText = encodeURIComponent(title);
@@ -69,7 +71,7 @@ export function ShareButtons({ title, url, className }: ShareButtonsProps) {
         variant="outline"
         size="sm"
         onClick={copyLink}
-        aria-label="Copy link"
+        aria-label={t("common.copyLinkLabel")}
         className="inline-flex size-8 items-center justify-center p-0"
       >
         {copied ? (

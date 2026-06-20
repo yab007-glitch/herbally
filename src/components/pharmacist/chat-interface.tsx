@@ -80,19 +80,16 @@ function parseCommand(text: string): {
 
 // ─── Follow-up question generator ───────────────────────────────────
 
-function generateFollowUps(
-  lastAssistantMessage: string,
-  herbContext?: string | null
-): string[] {
+function generateFollowUpKeys(herbContext?: string | null): string[] {
   const hasHerb = herbContext && herbContext.length > 20;
   const base = [
-    "What are the side effects?",
-    "What's the recommended dosage?",
-    "Is it safe during pregnancy?",
+    "pharmacist.followUpQuestions.sideEffects",
+    "pharmacist.followUpQuestions.dosage",
+    "pharmacist.followUpQuestions.pregnancy",
   ];
   if (hasHerb) {
-    base.push("Any drug interactions I should know about?");
-    base.push("What does the research say?");
+    base.push("pharmacist.followUpQuestions.interactions");
+    base.push("pharmacist.followUpQuestions.research");
   }
   return base.slice(0, 4);
 }
@@ -149,8 +146,8 @@ export function ChatInterface({
 
   const followUpQuestions = useMemo(() => {
     if (!showFollowUps || !lastAssistantMessage) return [];
-    return generateFollowUps(lastAssistantMessage.content, herbContext);
-  }, [showFollowUps, lastAssistantMessage, herbContext]);
+    return generateFollowUpKeys(herbContext).map((key) => t(key));
+  }, [showFollowUps, lastAssistantMessage, herbContext, t]);
 
   const isEmpty = messages.length === 0 && !isLoading;
 
@@ -443,7 +440,7 @@ export function ChatInterface({
         ref={scrollRef}
         className="flex-1 overflow-y-auto scrollbar-hide"
         role="log"
-        aria-label="Chat messages"
+        aria-label={t("common.chatMessagesLabel")}
       >
         {isEmpty ? (
           <div className="flex h-full items-center justify-center p-6">
@@ -500,7 +497,7 @@ export function ChatInterface({
                               copyToClipboard(message.content, message.id)
                             }
                             className="absolute -bottom-1 right-0 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
-                            aria-label="Copy response"
+                            aria-label={t("common.copyResponseLabel")}
                           >
                             {copiedId === message.id ? (
                               <>
@@ -611,7 +608,7 @@ export function ChatInterface({
               className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-colors"
               rows={1}
               disabled={isLoading}
-              aria-label="Chat message input"
+              aria-label={t("common.chatInputlabel")}
             />
           </div>
           {isLoading ? (
@@ -619,7 +616,7 @@ export function ChatInterface({
               type="button"
               onClick={stopGeneration}
               className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
-              aria-label="Stop generating"
+              aria-label={t("common.stopGeneratingLabel")}
             >
               <div className="size-3 rounded-sm bg-destructive" />
             </button>
@@ -628,7 +625,7 @@ export function ChatInterface({
               type="submit"
               disabled={!input.trim()}
               className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 transition-all"
-              aria-label="Send message"
+              aria-label={t("common.sendMessageLabel")}
             >
               <Send className="size-4" />
             </button>

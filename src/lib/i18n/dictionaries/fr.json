@@ -45,7 +45,22 @@
     "navPrimary": "Navigation principale",
     "navMobile": "Menu mobile",
     "navQuick": "Navigation rapide",
-    "navFooter": "Pied de page"
+    "navFooter": "Pied de page",
+    "switchToEnglish": "Switch to English",
+    "switchToFrench": "Passer en Français",
+    "dismiss": "Ignorer",
+    "languageSwitchedEn": "Language switched to English",
+    "languageSwitchedFr": "Langue changée en Français",
+    "breadcrumbHome": "Accueil",
+    "medicalDisclaimerLabel": "Avertissement médical",
+    "copyLinkLabel": "Copier le lien",
+    "breadcrumbLabel": "Fil d'Ariane",
+    "backToTopLabel": "Retour en haut",
+    "chatMessagesLabel": "Messages de discussion",
+    "copyResponseLabel": "Copier la réponse",
+    "chatInputlabel": "Saisie du message de discussion",
+    "stopGeneratingLabel": "Arrêter la génération",
+    "sendMessageLabel": "Envoyer le message"
   },
   "nav": {
     "symptoms": "Par Symptôme",
@@ -255,7 +270,20 @@
     "retrying": "Nouvelle tentative...",
     "errorRetry": "La connexion a échoué après 2 tentatives. Veuillez vérifier votre connexion Internet et réessayer.",
     "safetyWarning": "\n\n⚠️ Cette réponse n'est pas un avis médical. Vérifiez avec un professionnel de santé.",
-    "safetyBlocked": "Je ne peux pas répondre à cela. Consultez votre médecin ou un professionnel de santé qualifié."
+    "safetyBlocked": "Je ne peux pas répondre à cela. Consultez votre médecin ou un professionnel de santé qualifié.",
+    "followUpQuestions": {
+      "sideEffects": "Quels sont les effets secondaires ?",
+      "dosage": "Quelle est la posologie recommandée ?",
+      "pregnancy": "Est-ce sans danger pendant la grossesse ?",
+      "interactions": "Y a-t-il des interactions médicamenteuses à connaître ?",
+      "research": "Que dit la recherche ?"
+    },
+    "suggestionLabels": {
+      "turmericBloodThinners": "Curcuma + anticoagulants",
+      "herbsForAnxiety": "Herbes pour l'anxiété",
+      "echinaceaPregnancy": "Échinacée pendant la grossesse",
+      "gingerForNausea": "Gingembre pour les nausées"
+    }
   },
   "provenance": {
     "verified": "Vérifié",
@@ -376,7 +404,27 @@
     "notFoundTitle": "Page Non Trouvée",
     "notFoundDesc": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "unexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer ou retourner à la page d'accueil.",
-    "tryAgain": "Réessayer"
+    "tryAgain": "Réessayer",
+    "calculatorError": "Erreur du calculateur",
+    "calculatorErrorMsg": "Une erreur s'est produite avec le calculateur de posologie. Veuillez réessayer.",
+    "comparisonError": "Erreur de comparaison",
+    "comparisonErrorMsg": "Impossible de charger la comparaison des plantes. Veuillez réessayer.",
+    "failedToLoadHerbs": "Échec du chargement des plantes",
+    "failedToLoadHerbsMsg": "Impossible de charger le catalogue des plantes. Veuillez réessayer.",
+    "failedToLoadHerb": "Échec du chargement de la plante",
+    "failedToLoadHerbMsg": "Impossible de charger cette plante. Veuillez réessayer.",
+    "failedToLoadSymptoms": "Échec du chargement des symptômes",
+    "failedToLoadSymptomsMsg": "Impossible de charger le catalogue des symptômes. Veuillez réessayer.",
+    "failedToLoadSymptom": "Échec du chargement du symptôme",
+    "failedToLoadSymptomMsg": "Impossible de charger cette page de symptôme. Veuillez réessayer.",
+    "failedToLoadHerbalist": "Échec du chargement de l'herboriste",
+    "failedToLoadHerbalistMsg": "Impossible de charger l'herboriste. Veuillez réessayer.",
+    "failedToLoadPharmacist": "Échec du chargement du pharmacien",
+    "failedToLoadPharmacistMsg": "Impossible de charger le pharmacien. Veuillez réessayer.",
+    "failedToLoadCompare": "Échec du chargement de la comparaison",
+    "failedToLoadCompareMsg": "Impossible de charger la comparaison des plantes. Veuillez réessayer.",
+    "failedToLoadGarden": "Échec du chargement du jardin",
+    "failedToLoadGardenMsg": "Impossible de charger votre jardin. Veuillez réessayer."
   },
   "fda": {
     "disclaimer": "Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir toute maladie. Ces déclarations n'ont pas été évaluées par la Food and Drug Administration."
@@ -823,7 +871,12 @@
         "q": "À quelle fréquence les informations sont-elles mises à jour ?",
         "a": "Les profils de plantes sont examinés régulièrement par notre équipe éditoriale. Chaque page de plante affiche une date de dernière révision et les références du réviseur. Nous mettons à jour les données d'interaction au fur et à mesure que de nouvelles recherches sont publiées."
       }
-    }
+    },
+    "searchPlaceholder": "Rechercher dans la FAQ...",
+    "clearSearch": "Effacer la recherche",
+    "results": "{count} résultats",
+    "result": "{count} résultat",
+    "noResultsFound": "Aucun résultat trouvé. Essayez un autre terme de recherche."
   },
   "methodologyContent": {
     "title": "Notre Méthodologie",
@@ -941,7 +994,15 @@
     "askAI": "Demander à l'herboriste IA",
     "askAIFallback": "Demander à l'herboriste IA à la place",
     "allSymptoms": "Tous les symptômes",
-    "viewDetails": "Voir les détails"
+    "viewDetails": "Voir les détails",
+    "exampleSymptoms": [
+      "J'ai du mal à dormir et je me sens anxieux",
+      "Mes articulations me font mal et sont raides le matin",
+      "J'ai des problèmes digestifs et des ballonnements après les repas",
+      "Je attrape constamment des rhumes et mon système immunitaire me semble faible",
+      "J'ai du brouillard cérébral et du mal à me concentrer"
+    ],
+    "evidenceLabel": "Preuve"
   },
   "herbDetailContent": {
     "herbNotFound": "Herbe Non Trouvée",

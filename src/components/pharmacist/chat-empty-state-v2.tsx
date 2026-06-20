@@ -11,14 +11,20 @@ interface ChatEmptyStateV2Props {
 const SUGGESTIONS = [
   {
     text: "Is turmeric safe with blood thinners?",
-    label: "Turmeric + blood thinners",
+    labelKey: "pharmacist.suggestionLabels.turmericBloodThinners",
   },
-  { text: "What herbs help with anxiety?", label: "Herbs for anxiety" },
+  {
+    text: "What herbs help with anxiety?",
+    labelKey: "pharmacist.suggestionLabels.herbsForAnxiety",
+  },
   {
     text: "Can I take echinacea while pregnant?",
-    label: "Echinacea during pregnancy",
+    labelKey: "pharmacist.suggestionLabels.echinaceaPregnancy",
   },
-  { text: "Tell me about ginger for nausea", label: "Ginger for nausea" },
+  {
+    text: "Tell me about ginger for nausea",
+    labelKey: "pharmacist.suggestionLabels.gingerForNausea",
+  },
 ];
 
 export function ChatEmptyStateV2({ onSendMessage }: ChatEmptyStateV2Props) {
@@ -37,7 +43,7 @@ export function ChatEmptyStateV2({ onSendMessage }: ChatEmptyStateV2Props) {
             size="sm"
             onClick={() => onSendMessage(s.text)}
           >
-            {s.label}
+            {t(s.labelKey)}
           </Button>
         ))}
       </div>

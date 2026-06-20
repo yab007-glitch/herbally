@@ -368,7 +368,7 @@ export default async function HerbDetailPage({ params }: Props) {
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
-          { name: "Home", href: "/" },
+          { name: t("common.breadcrumbHome"), href: "/" },
           { name: t("nav.herbs"), href: "/herbs" },
           { name: herb.name },
         ]}

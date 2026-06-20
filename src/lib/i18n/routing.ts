@@ -1,6 +1,8 @@
 import { type Locale, LOCALES, DEFAULT_LOCALE } from "./config";
 
-const LOCALE_PREFIX = "/fr";
+// Derive the prefix for non-default locales (e.g. "/fr" when default is "en").
+const NON_DEFAULT_LOCALES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
+const LOCALE_PREFIX = NON_DEFAULT_LOCALES.length > 0 ? `/${NON_DEFAULT_LOCALES[0]}` : "";
 
 /**
  * Returns true if the pathname starts with a locale prefix (e.g. /fr/herbs).
