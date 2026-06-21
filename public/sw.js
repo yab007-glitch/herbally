@@ -88,7 +88,8 @@ self.addEventListener("fetch", (event) => {
   // Herb detail pages (including /fr/herbs/*): cache-first, network update
   const pathParts = url.pathname.split("/").filter(Boolean);
   const isHerbDetail =
-    (pathParts[0] === "herbs" || (pathParts[0] === "fr" && pathParts[1] === "herbs")) &&
+    (pathParts[0] === "herbs" ||
+      (pathParts[0] === "fr" && pathParts[1] === "herbs")) &&
     pathParts.length === (pathParts[0] === "fr" ? 3 : 2);
 
   if (isHerbDetail) {

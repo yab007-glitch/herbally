@@ -161,7 +161,8 @@ export function SymptomSearchClient() {
                       </p>
                       {herb.evidence_level && (
                         <span className="mt-1 inline-flex items-center rounded-full bg-primary/5 px-2 py-0.5 text-[10px] font-medium text-primary">
-                          {t("symptomsPage.evidenceLabel")}: {herb.evidence_level}
+                          {t("symptomsPage.evidenceLabel")}:{" "}
+                          {herb.evidence_level}
                         </span>
                       )}
                     </div>

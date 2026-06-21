@@ -51,7 +51,6 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
   return response;
 }
 
-
 /**
  * Paths that should NOT be locale-prefixed or redirected.
  */

@@ -2,7 +2,7 @@
 
 **Date:** 2025-06-19  
 **Scope:** Language option configuration, language toggle mechanism, language content/dictionaries  
-**Architecture:** Next.js 16 + `next-intl` v4 + custom proxy/middleware locale routing  
+**Architecture:** Next.js 16 + `next-intl` v4 + custom proxy/middleware locale routing
 
 ---
 
@@ -27,13 +27,13 @@ export const LANGUAGES = [
 ] as const;
 ```
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Supported locales defined | ✅ | `["en", "fr"]` with `as const` for type safety |
-| Default locale defined | ✅ | `DEFAULT_LOCALE = "en"` |
-| Locale type exported | ✅ | `type Locale = "en" \| "fr"` |
-| Display metadata (flag, nativeName) | ✅ | Used in selector and drawer |
-| Flag choice | ⚠️ LOW | English uses 🇺🇸 (US flag) — may confuse Canadian/UK users. Consider 🇬🇧 or a generic icon. Cosmetic only. |
+| Check                               | Status | Notes                                                                                                    |
+| ----------------------------------- | ------ | -------------------------------------------------------------------------------------------------------- |
+| Supported locales defined           | ✅     | `["en", "fr"]` with `as const` for type safety                                                           |
+| Default locale defined              | ✅     | `DEFAULT_LOCALE = "en"`                                                                                  |
+| Locale type exported                | ✅     | `type Locale = "en" \| "fr"`                                                                             |
+| Display metadata (flag, nativeName) | ✅     | Used in selector and drawer                                                                              |
+| Flag choice                         | ⚠️ LOW | English uses 🇺🇸 (US flag) — may confuse Canadian/UK users. Consider 🇬🇧 or a generic icon. Cosmetic only. |
 
 ### 1.2 `i18n/routing.ts` (top-level, used by `next-intl/plugin`)
 
@@ -42,26 +42,30 @@ export const routing = defineRouting({
   locales: ["en", "fr"],
   defaultLocale: "en",
   localePrefix: "never",
-  localeCookie: { name: "herbally-locale", maxAge: 60*60*24*365, sameSite: "lax" },
+  localeCookie: {
+    name: "herbally-locale",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  },
 });
 ```
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Locales match config.ts | ✅ | `["en", "fr"]` in both files |
-| Cookie name matches proxy | ✅ | `herbally-locale` in both `i18n/routing.ts` and `src/proxy.ts` |
-| `localePrefix: "never"` | ⚠️ MEDIUM | See §1.4 below |
+| Check                     | Status    | Notes                                                          |
+| ------------------------- | --------- | -------------------------------------------------------------- |
+| Locales match config.ts   | ✅        | `["en", "fr"]` in both files                                   |
+| Cookie name matches proxy | ✅        | `herbally-locale` in both `i18n/routing.ts` and `src/proxy.ts` |
+| `localePrefix: "never"`   | ⚠️ MEDIUM | See §1.4 below                                                 |
 
 ### 1.3 `src/lib/i18n/routing.ts` — Custom Routing Helpers
 
 Functions: `isLocalePrefixed`, `getLocaleFromPathname`, `stripLocalePrefix`, `addLocalePrefix`, `buildAlternateUrls`.
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Only `/fr` is prefixed (en is unprefixed) | ✅ | Correct — English is default, no prefix needed |
-| Edge cases handled (`/fr` bare, `/fr/`, `/fr/herbs`) | ✅ | 19 unit tests, all passing |
-| `buildAlternateUrls` generates hreflang correctly | ✅ | Includes `en`, `fr`, `x-default` |
-| Hardcoded `LOCALE_PREFIX = "/fr"` | ⚠️ LOW | Not derived from `LOCALES` or `DEFAULT_LOCALE`. If a third locale is added, this must be manually updated. Consider deriving from config. |
+| Check                                                | Status | Notes                                                                                                                                     |
+| ---------------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Only `/fr` is prefixed (en is unprefixed)            | ✅     | Correct — English is default, no prefix needed                                                                                            |
+| Edge cases handled (`/fr` bare, `/fr/`, `/fr/herbs`) | ✅     | 19 unit tests, all passing                                                                                                                |
+| `buildAlternateUrls` generates hreflang correctly    | ✅     | Includes `en`, `fr`, `x-default`                                                                                                          |
+| Hardcoded `LOCALE_PREFIX = "/fr"`                    | ⚠️ LOW | Not derived from `LOCALES` or `DEFAULT_LOCALE`. If a third locale is added, this must be manually updated. Consider deriving from config. |
 
 ### 1.4 Configurational Ambiguity (MEDIUM)
 
@@ -77,24 +81,24 @@ The `localePrefix: "never"` in the `next-intl` config is **correct** for this ar
 
 ### 1.5 `i18n/request.ts` — Server-side Request Config
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Reads `x-locale` header (set by proxy) | ✅ | Primary mechanism |
-| Falls back to pathLocale, then DEFAULT_LOCALE | ✅ | Defense in depth |
-| Loads dictionaries statically (not dynamic import) | ✅ | Both EN and FR JSON bundled — no async file I/O |
-| Time zone set | ✅ | `"America/Toronto"` (could be configurable, but fine for now) |
+| Check                                              | Status | Notes                                                         |
+| -------------------------------------------------- | ------ | ------------------------------------------------------------- |
+| Reads `x-locale` header (set by proxy)             | ✅     | Primary mechanism                                             |
+| Falls back to pathLocale, then DEFAULT_LOCALE      | ✅     | Defense in depth                                              |
+| Loads dictionaries statically (not dynamic import) | ✅     | Both EN and FR JSON bundled — no async file I/O               |
+| Time zone set                                      | ✅     | `"America/Toronto"` (could be configurable, but fine for now) |
 
 ### 1.6 `src/proxy.ts` (middleware) — Locale Detection & Routing
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Accept-Language parsing with q-weights | ✅ | Correctly sorted by quality value |
-| Cookie as first-visit hint only | ✅ | Only seeds cookie if not already set |
-| `/fr/*` rewrite with `x-locale` header | ✅ | Clean rewrite pattern |
-| Redirect to `/fr/*` for French-preferring first visitors | ✅ | Uses `cookieLocale ?? acceptLangLocale` |
-| Excluded paths list | ✅ | `/api`, `/auth`, `/_next`, etc. |
-| No next-intl middleware used | ✅ | Correct — custom proxy replaces it |
-| `detectLocaleFromAcceptLanguage` returns `DEFAULT_LOCALE` | ✅ | Falls back to "en" for unsupported languages |
+| Check                                                     | Status | Notes                                        |
+| --------------------------------------------------------- | ------ | -------------------------------------------- |
+| Accept-Language parsing with q-weights                    | ✅     | Correctly sorted by quality value            |
+| Cookie as first-visit hint only                           | ✅     | Only seeds cookie if not already set         |
+| `/fr/*` rewrite with `x-locale` header                    | ✅     | Clean rewrite pattern                        |
+| Redirect to `/fr/*` for French-preferring first visitors  | ✅     | Uses `cookieLocale ?? acceptLangLocale`      |
+| Excluded paths list                                       | ✅     | `/api`, `/auth`, `/_next`, etc.              |
+| No next-intl middleware used                              | ✅     | Correct — custom proxy replaces it           |
+| `detectLocaleFromAcceptLanguage` returns `DEFAULT_LOCALE` | ✅     | Falls back to "en" for unsupported languages |
 
 ---
 
@@ -108,20 +112,20 @@ export function useSetLocale() {
     document.cookie = `herbally-locale=${locale};path=/;max-age=31536000;SameSite=Lax${secureFlag}`;
     localStorage.setItem("herbally-locale", locale);
     // ... build target URL via routing helpers ...
-    window.location.assign(target);  // hard navigation
+    window.location.assign(target); // hard navigation
   }, []);
 }
 ```
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Hard navigation (full page reload) | ✅ | Eliminates partial-translation state drift |
-| Cookie + localStorage persisted | ✅ | Both set as first-visit hints |
-| Secure flag conditional on HTTPS | ✅ | `;Secure` appended when on HTTPS |
-| Uses routing helpers (not hand-rolled) | ✅ | `isLocalePrefixed`, `addLocalePrefix`, `stripLocalePrefix` |
-| Already-prefixed path handled | ✅ | If already on `/fr/herbs` and switching to FR, stays put |
-| Bare `/fr` homepage handled | ✅ | `addLocalePrefix("/", "fr")` → `/fr` |
-| No double-prefix risk | ✅ | E2E test explicitly checks `url should not match /\/fr\/fr/` |
+| Check                                  | Status | Notes                                                        |
+| -------------------------------------- | ------ | ------------------------------------------------------------ |
+| Hard navigation (full page reload)     | ✅     | Eliminates partial-translation state drift                   |
+| Cookie + localStorage persisted        | ✅     | Both set as first-visit hints                                |
+| Secure flag conditional on HTTPS       | ✅     | `;Secure` appended when on HTTPS                             |
+| Uses routing helpers (not hand-rolled) | ✅     | `isLocalePrefixed`, `addLocalePrefix`, `stripLocalePrefix`   |
+| Already-prefixed path handled          | ✅     | If already on `/fr/herbs` and switching to FR, stays put     |
+| Bare `/fr` homepage handled            | ✅     | `addLocalePrefix("/", "fr")` → `/fr`                         |
+| No double-prefix risk                  | ✅     | E2E test explicitly checks `url should not match /\/fr\/fr/` |
 
 ### 2.2 `use-detected-locale.ts` — Browser Language Detection
 
@@ -130,94 +134,95 @@ export function useDetectedLocale(): Locale | null {
   return useMemo(() => {
     if (typeof window === "undefined") return null;
     const saved = localStorage.getItem("herbally-locale");
-    if (saved) return null;  // user already chose
+    if (saved) return null; // user already chose
     const browserLang = navigator.language.split("-")[0];
-    if (browserLang === "fr" || browserLang === "en") return browserLang as Locale;
+    if (browserLang === "fr" || browserLang === "en")
+      return browserLang as Locale;
     return null;
   }, []);
 }
 ```
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| SSR-safe (returns null on server) | ✅ | `typeof window === "undefined"` check |
-| Returns null if user has saved preference | ✅ | Respects explicit choice |
-| Only detects `fr` or `en` | ✅ | Other languages → null (no suggestion shown) |
-| `useMemo` with empty deps | ✅ | Runs once, doesn't re-detect on re-render |
+| Check                                     | Status | Notes                                        |
+| ----------------------------------------- | ------ | -------------------------------------------- |
+| SSR-safe (returns null on server)         | ✅     | `typeof window === "undefined"` check        |
+| Returns null if user has saved preference | ✅     | Respects explicit choice                     |
+| Only detects `fr` or `en`                 | ✅     | Other languages → null (no suggestion shown) |
+| `useMemo` with empty deps                 | ✅     | Runs once, doesn't re-detect on re-render    |
 
 ### 2.3 `use-language-hotkey.ts` — Keyboard Shortcut
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Ctrl/Cmd + Shift + L toggles language | ✅ | |
-| `preventDefault` stops browser conflict | ✅ | Avoids address-bar focus |
-| Cleanup on unmount | ✅ | `removeEventListener` in effect cleanup |
-| `onToggle` in dependency array | ✅ | Re-binds if callback changes |
+| Check                                   | Status | Notes                                   |
+| --------------------------------------- | ------ | --------------------------------------- |
+| Ctrl/Cmd + Shift + L toggles language   | ✅     |                                         |
+| `preventDefault` stops browser conflict | ✅     | Avoids address-bar focus                |
+| Cleanup on unmount                      | ✅     | `removeEventListener` in effect cleanup |
+| `onToggle` in dependency array          | ✅     | Re-binds if callback changes            |
 
 ### 2.4 `LanguageSelector` (Desktop Dropdown)
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Globe icon + locale code visible | ✅ | `"EN"` or `"FR"` shown on sm+ screens |
-| `sr-only` label for accessibility | ✅ | `t("common.changeLanguage")` |
-| Current locale highlighted with checkmark | ✅ | `aria-current="true"` + `Check` icon |
-| Detected language suggestion shown | ✅ | Only when `detectedLocale !== locale` |
-| Analytics tracked on change | ✅ | `trackEvent("language_changed", { source: "dropdown" })` |
-| Keyboard hint displayed | ✅ | ⌘ + ⇧ + L visual hint at bottom |
-| Hotkey registered | ✅ | `useLanguageHotkey` with analytics |
+| Check                                     | Status | Notes                                                    |
+| ----------------------------------------- | ------ | -------------------------------------------------------- |
+| Globe icon + locale code visible          | ✅     | `"EN"` or `"FR"` shown on sm+ screens                    |
+| `sr-only` label for accessibility         | ✅     | `t("common.changeLanguage")`                             |
+| Current locale highlighted with checkmark | ✅     | `aria-current="true"` + `Check` icon                     |
+| Detected language suggestion shown        | ✅     | Only when `detectedLocale !== locale`                    |
+| Analytics tracked on change               | ✅     | `trackEvent("language_changed", { source: "dropdown" })` |
+| Keyboard hint displayed                   | ✅     | ⌘ + ⇧ + L visual hint at bottom                          |
+| Hotkey registered                         | ✅     | `useLanguageHotkey` with analytics                       |
 
 ### 2.5 `LanguageDrawer` (Mobile Bottom Sheet)
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Full-width buttons, large tap targets | ✅ | `py-2.5`, `text-xl` flags |
-| Controlled via `open`/`onOpenChange` props | ✅ | Parent controls visibility |
-| `hideTrigger` prop for external trigger | ✅ | Used from navbar mobile menu |
-| Current locale highlighted | ✅ | `aria-current`, bg highlight, checkmark |
-| Detected locale suggestion | ✅ | Same pattern as dropdown |
-| **Missing: analytics tracking** | ⚠️ LOW | The drawer's `setLocale` calls do NOT call `trackEvent("language_changed", ...)`. The dropdown and hotkey both track, but the drawer does not. Language changes via the mobile drawer are invisible to analytics. |
-| **Missing: hotkey support** | ℹ️ INFO | The hotkey is registered in `LanguageSelector` (desktop only). On mobile this is expected. |
+| Check                                      | Status  | Notes                                                                                                                                                                                                             |
+| ------------------------------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full-width buttons, large tap targets      | ✅      | `py-2.5`, `text-xl` flags                                                                                                                                                                                         |
+| Controlled via `open`/`onOpenChange` props | ✅      | Parent controls visibility                                                                                                                                                                                        |
+| `hideTrigger` prop for external trigger    | ✅      | Used from navbar mobile menu                                                                                                                                                                                      |
+| Current locale highlighted                 | ✅      | `aria-current`, bg highlight, checkmark                                                                                                                                                                           |
+| Detected locale suggestion                 | ✅      | Same pattern as dropdown                                                                                                                                                                                          |
+| **Missing: analytics tracking**            | ⚠️ LOW  | The drawer's `setLocale` calls do NOT call `trackEvent("language_changed", ...)`. The dropdown and hotkey both track, but the drawer does not. Language changes via the mobile drawer are invisible to analytics. |
+| **Missing: hotkey support**                | ℹ️ INFO | The hotkey is registered in `LanguageSelector` (desktop only). On mobile this is expected.                                                                                                                        |
 
 ### 2.6 `FirstVisitBanner` — Auto-suggestion Banner
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Only shows when `detected !== locale` | ✅ | |
-| `sessionStorage` dismiss persistence | ✅ | `"herbally-lang-banner-dismissed"` |
-| SSR renders `dismissed=true` (no flash) | ✅ | `typeof window === "undefined" → true` |
-| Labels hardcoded (not from dictionary) | ⚠️ LOW | The `labels` object uses hardcoded English/French strings instead of translation keys. This works because the banner always shows in the *detected* language (not the current locale), but it bypasses the dictionary system. If a third language is added, this won't scale. |
-| Analytics tracked | ✅ | `source: "first_visit_banner"` |
-| `role="status"` for screen readers | ✅ | |
-| `z-40` positioning below sticky header | ✅ | `top-12` accounts for 48px header |
+| Check                                   | Status | Notes                                                                                                                                                                                                                                                                         |
+| --------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Only shows when `detected !== locale`   | ✅     |                                                                                                                                                                                                                                                                               |
+| `sessionStorage` dismiss persistence    | ✅     | `"herbally-lang-banner-dismissed"`                                                                                                                                                                                                                                            |
+| SSR renders `dismissed=true` (no flash) | ✅     | `typeof window === "undefined" → true`                                                                                                                                                                                                                                        |
+| Labels hardcoded (not from dictionary)  | ⚠️ LOW | The `labels` object uses hardcoded English/French strings instead of translation keys. This works because the banner always shows in the _detected_ language (not the current locale), but it bypasses the dictionary system. If a third language is added, this won't scale. |
+| Analytics tracked                       | ✅     | `source: "first_visit_banner"`                                                                                                                                                                                                                                                |
+| `role="status"` for screen readers      | ✅     |                                                                                                                                                                                                                                                                               |
+| `z-40` positioning below sticky header  | ✅     | `top-12` accounts for 48px header                                                                                                                                                                                                                                             |
 
 ### 2.7 `LanguageAnnouncement` — Screen Reader Live Region
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| `aria-live="polite"` | ✅ | Non-interruptive announcement |
-| `aria-atomic="true"` | ✅ | Full text announced on change |
-| `sr-only` (visually hidden) | ✅ | |
-| Hardcoded messages | ⚠️ LOW | Same pattern as FirstVisitBanner — hardcoded strings. Not a dictionary lookup. Functional but not scalable. |
+| Check                       | Status | Notes                                                                                                       |
+| --------------------------- | ------ | ----------------------------------------------------------------------------------------------------------- |
+| `aria-live="polite"`        | ✅     | Non-interruptive announcement                                                                               |
+| `aria-atomic="true"`        | ✅     | Full text announced on change                                                                               |
+| `sr-only` (visually hidden) | ✅     |                                                                                                             |
+| Hardcoded messages          | ⚠️ LOW | Same pattern as FirstVisitBanner — hardcoded strings. Not a dictionary lookup. Functional but not scalable. |
 
 ### 2.8 `LocaleProvider` — Client-side Provider
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Receives `locale` from server layout | ✅ | `getLocaleFromRequest()` → `x-locale` header |
-| Both dictionaries imported statically | ✅ | `enMessages`, `frMessages` |
-| `NextIntlClientProvider` wraps children | ✅ | Standard next-intl pattern |
-| `timeZone="America/Toronto"` | ✅ | Consistent with `i18n/request.ts` |
-| Both dicts bundled (no code-splitting) | ℹ️ INFO | ~145KB of JSON loaded on every page. For a 2-language app this is acceptable. If more locales are added, consider dynamic imports. |
+| Check                                   | Status  | Notes                                                                                                                              |
+| --------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Receives `locale` from server layout    | ✅      | `getLocaleFromRequest()` → `x-locale` header                                                                                       |
+| Both dictionaries imported statically   | ✅      | `enMessages`, `frMessages`                                                                                                         |
+| `NextIntlClientProvider` wraps children | ✅      | Standard next-intl pattern                                                                                                         |
+| `timeZone="America/Toronto"`            | ✅      | Consistent with `i18n/request.ts`                                                                                                  |
+| Both dicts bundled (no code-splitting)  | ℹ️ INFO | ~145KB of JSON loaded on every page. For a 2-language app this is acceptable. If more locales are added, consider dynamic imports. |
 
 ### 2.9 `server-locale.ts` — Server-side Locale Reader
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Reads `x-locale` header from proxy | ✅ | |
-| Validates against `"fr"` or `"en"` | ✅ | Rejects arbitrary header values |
-| Falls back to `DEFAULT_LOCALE` | ✅ | |
-| Try-catch for static generation | ✅ | `headers()` unavailable during SSG |
-| Used consistently across all pages | ✅ | All page components use this (see §3.2 exception) |
+| Check                              | Status | Notes                                             |
+| ---------------------------------- | ------ | ------------------------------------------------- |
+| Reads `x-locale` header from proxy | ✅     |                                                   |
+| Validates against `"fr"` or `"en"` | ✅     | Rejects arbitrary header values                   |
+| Falls back to `DEFAULT_LOCALE`     | ✅     |                                                   |
+| Try-catch for static generation    | ✅     | `headers()` unavailable during SSG                |
+| Used consistently across all pages | ✅     | All page components use this (see §3.2 exception) |
 
 ---
 
@@ -225,13 +230,13 @@ export function useDetectedLocale(): Locale | null {
 
 ### 3.1 Dictionary Key Parity
 
-| Metric | EN | FR |
-|--------|----|----|
-| Total leaf keys | 949 | 949 |
-| Top-level namespaces | 50 | 50 |
-| Missing in FR | 0 | — |
-| Missing in EN | — | 0 |
-| ICU placeholder mismatches | 0 | 0 |
+| Metric                     | EN  | FR  |
+| -------------------------- | --- | --- |
+| Total leaf keys            | 949 | 949 |
+| Top-level namespaces       | 50  | 50  |
+| Missing in FR              | 0   | —   |
+| Missing in EN              | —   | 0   |
+| ICU placeholder mismatches | 0   | 0   |
 
 **Verdict:** ✅ Perfect structural parity. Every key in EN exists in FR and vice versa. All `{placeholder}` interpolations match between locales.
 
@@ -257,32 +262,33 @@ Heuristic scan for English stop-words in FR values (≥3 matches in strings >40 
 
 **22 `symptomMeta.*.desc` keys are empty strings `""` in EN**, but have content in FR:
 
-| Key | EN | FR |
-|-----|----|----|
-| `symptomMeta.anxiety.desc` | `""` | `"Plantes fondées sur les preuves..."` |
-| `symptomMeta.depression.desc` | `""` | `"Plantes fondées sur les preuves..."` |
-| `symptomMeta.sleep.desc` | `""` | `"Plantes fondées sur les preuves..."` |
-| `symptomMeta.inflammation.desc` | `""` | (has content) |
-| `symptomMeta.digestion.desc` | `""` | (has content) |
-| `symptomMeta.nausea.desc` | `""` | (has content) |
-| `symptomMeta.constipation.desc` | `""` | (has content) |
-| `symptomMeta.liver.desc` | `""` | (has content) |
-| `symptomMeta.bloodPressure.desc` | `""` | (has content) |
-| `symptomMeta.cholesterol.desc` | `""` | (has content) |
-| `symptomMeta.circulation.desc` | `""` | (has content) |
-| `symptomMeta.immune.desc` | `""` | (has content) |
-| `symptomMeta.allergy.desc` | `""` | (has content) |
-| `symptomMeta.menstrual.desc` | `""` | (has content) |
-| `symptomMeta.menopause.desc` | `""` | (has content) |
-| `symptomMeta.hormonal.desc` | `""` | (has content) |
-| `symptomMeta.skin.desc` | `""` | (has content) |
-| `symptomMeta.wound.desc` | `""` | (has content) |
-| `symptomMeta.acne.desc` | `""` | (has content) |
-| `symptomMeta.nerve.desc` | `""` | (has content) |
-| `symptomMeta.prostate.desc` | `""` | (has content) |
-| `symptomMeta.diabetes.desc` | `""` | (has content) |
+| Key                              | EN   | FR                                     |
+| -------------------------------- | ---- | -------------------------------------- |
+| `symptomMeta.anxiety.desc`       | `""` | `"Plantes fondées sur les preuves..."` |
+| `symptomMeta.depression.desc`    | `""` | `"Plantes fondées sur les preuves..."` |
+| `symptomMeta.sleep.desc`         | `""` | `"Plantes fondées sur les preuves..."` |
+| `symptomMeta.inflammation.desc`  | `""` | (has content)                          |
+| `symptomMeta.digestion.desc`     | `""` | (has content)                          |
+| `symptomMeta.nausea.desc`        | `""` | (has content)                          |
+| `symptomMeta.constipation.desc`  | `""` | (has content)                          |
+| `symptomMeta.liver.desc`         | `""` | (has content)                          |
+| `symptomMeta.bloodPressure.desc` | `""` | (has content)                          |
+| `symptomMeta.cholesterol.desc`   | `""` | (has content)                          |
+| `symptomMeta.circulation.desc`   | `""` | (has content)                          |
+| `symptomMeta.immune.desc`        | `""` | (has content)                          |
+| `symptomMeta.allergy.desc`       | `""` | (has content)                          |
+| `symptomMeta.menstrual.desc`     | `""` | (has content)                          |
+| `symptomMeta.menopause.desc`     | `""` | (has content)                          |
+| `symptomMeta.hormonal.desc`      | `""` | (has content)                          |
+| `symptomMeta.skin.desc`          | `""` | (has content)                          |
+| `symptomMeta.wound.desc`         | `""` | (has content)                          |
+| `symptomMeta.acne.desc`          | `""` | (has content)                          |
+| `symptomMeta.nerve.desc`         | `""` | (has content)                          |
+| `symptomMeta.prostate.desc`      | `""` | (has content)                          |
+| `symptomMeta.diabetes.desc`      | `""` | (has content)                          |
 
 **Impact:** The symptom detail page (`src/app/(main)/symptoms/[symptom]/page.tsx`) uses:
+
 ```ts
 const description = t(`symptomMeta.${symptom}.desc`) || meta.description;
 ```
@@ -290,6 +296,7 @@ const description = t(`symptomMeta.${symptom}.desc`) || meta.description;
 Since `t("")` returns `""` (falsy), the hardcoded `meta.description` fallback in the page component takes over for English. **This works** but means the English description comes from the hardcoded `symptomMeta` constant in the page file, not the dictionary — creating a hidden dual source of truth.
 
 **Severity:** ⚠️ MEDIUM — The EN descriptions work via fallback, but:
+
 1. The dictionary appears incomplete when inspected directly
 2. The hardcoded fallback in the page file is a second, unmaintained copy
 3. The `generateMetadata` function also calls `t(`symptomMeta.${symptom}.desc`)` — if it returns `""`, the metadata description falls back to the hardcoded `meta.description`, but this coupling is fragile
@@ -316,9 +323,15 @@ These hardcoded English strings are displayed as follow-up question buttons. The
 
 ```ts
 const SUGGESTIONS = [
-  { text: "Is turmeric safe with blood thinners?", label: "Turmeric + blood thinners" },
+  {
+    text: "Is turmeric safe with blood thinners?",
+    label: "Turmeric + blood thinners",
+  },
   { text: "What herbs help with anxiety?", label: "Herbs for anxiety" },
-  { text: "Can I take echinacea while pregnant?", label: "Echinacea during pregnancy" },
+  {
+    text: "Can I take echinacea while pregnant?",
+    label: "Echinacea during pregnancy",
+  },
   { text: "Tell me about ginger for nausea", label: "Ginger for nausea" },
 ];
 ```
@@ -372,24 +385,24 @@ All `/admin/*` pages use hardcoded English labels. This is intentional — admin
 
 ### 3.6 Database Content Localization — `localize-herb.ts`
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| `localizeHerb()` overlays FR fields from `herb.translations.fr` | ✅ | |
-| Falls back to English when FR field is missing/empty | ✅ | Per-field fallback, not all-or-nothing |
-| `localizeInteraction()` overlays FR description + mechanism | ✅ | |
-| `localizeCategoryName()` uses `name_fr` column | ✅ | |
-| Translation script exists (`scripts/translate-herbs-fr.ts`) | ✅ | Resumable, batched, uses OpenRouter |
+| Check                                                           | Status | Notes                                  |
+| --------------------------------------------------------------- | ------ | -------------------------------------- |
+| `localizeHerb()` overlays FR fields from `herb.translations.fr` | ✅     |                                        |
+| Falls back to English when FR field is missing/empty            | ✅     | Per-field fallback, not all-or-nothing |
+| `localizeInteraction()` overlays FR description + mechanism     | ✅     |                                        |
+| `localizeCategoryName()` uses `name_fr` column                  | ✅     |                                        |
+| Translation script exists (`scripts/translate-herbs-fr.ts`)     | ✅     | Resumable, batched, uses OpenRouter    |
 
 ### 3.7 AI Chat Localization — `system-prompt.ts`
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Locale passed to `getSystemPrompt()` | ✅ | From chat API route |
-| French instruction injected when `locale === "fr"` | ✅ | `"Respond in French (Français)"` |
-| Locale sent from client to API | ✅ | `chat-interface.tsx` sends `locale` from `useLocale()` |
-| Safety guard has French regex patterns | ✅ | `safety-guard.ts` includes `\barrêt(?:ez|er|é|ée)...` |
-| Locale validated in API schema | ✅ | `z.enum(["en", "fr"]).optional()` |
-| Cache keyed by locale | ✅ | `persistToCache(promptHash, fullContent, locale ?? "en")` |
+| Check                                              | Status | Notes                                                     |
+| -------------------------------------------------- | ------ | --------------------------------------------------------- | --- | --- | ------- |
+| Locale passed to `getSystemPrompt()`               | ✅     | From chat API route                                       |
+| French instruction injected when `locale === "fr"` | ✅     | `"Respond in French (Français)"`                          |
+| Locale sent from client to API                     | ✅     | `chat-interface.tsx` sends `locale` from `useLocale()`    |
+| Safety guard has French regex patterns             | ✅     | `safety-guard.ts` includes `\barrêt(?:ez                  | er  | é   | ée)...` |
+| Locale validated in API schema                     | ✅     | `z.enum(["en", "fr"]).optional()`                         |
+| Cache keyed by locale                              | ✅     | `persistToCache(promptHash, fullContent, locale ?? "en")` |
 
 ---
 
@@ -397,39 +410,39 @@ All `/admin/*` pages use hardcoded English labels. This is intentional — admin
 
 ### 4.1 `buildPageMetadata()` — `src/lib/i18n/metadata.ts`
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Title/description from dictionary in active locale | ✅ | |
-| Canonical URL matches active locale | ✅ | `alternates[locale]` |
-| hreflang alternates generated | ✅ | `en`, `fr`, `x-default` |
-| OpenGraph localized | ✅ | title, description, URL |
-| Twitter card localized | ✅ | |
+| Check                                              | Status | Notes                   |
+| -------------------------------------------------- | ------ | ----------------------- |
+| Title/description from dictionary in active locale | ✅     |                         |
+| Canonical URL matches active locale                | ✅     | `alternates[locale]`    |
+| hreflang alternates generated                      | ✅     | `en`, `fr`, `x-default` |
+| OpenGraph localized                                | ✅     | title, description, URL |
+| Twitter card localized                             | ✅     |                         |
 
 ### 4.2 Root Layout Metadata — `src/app/layout.tsx`
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| `<html lang={locale}>` | ✅ | Dynamically set from `getLocaleFromRequest()` |
-| `generateMetadata()` uses locale | ✅ | Title, description, OG locale (`fr_FR` or `en_US`) |
-| `metadataBase` set | ✅ | From `NEXT_PUBLIC_APP_URL` |
+| Check                            | Status | Notes                                              |
+| -------------------------------- | ------ | -------------------------------------------------- |
+| `<html lang={locale}>`           | ✅     | Dynamically set from `getLocaleFromRequest()`      |
+| `generateMetadata()` uses locale | ✅     | Title, description, OG locale (`fr_FR` or `en_US`) |
+| `metadataBase` set               | ✅     | From `NEXT_PUBLIC_APP_URL`                         |
 
 ### 4.3 Sitemap — `src/app/sitemap.ts`
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Both EN and FR URLs generated | ✅ | Every page has a `/{path}` and `/fr/{path}` entry |
-| Herb pages: both locales | ✅ | Batched query, both URLs per herb |
-| Symptom pages: both locales | ✅ | Uses `SYMPTOM_SLUGS` from page (single source of truth) |
-| Compare pages: both locales | ✅ | Uses `POPULAR_COMPARISONS` from page |
-| Category pages: both locales | ✅ | |
-| `revalidate = 3600` (1hr) | ✅ | |
+| Check                         | Status | Notes                                                   |
+| ----------------------------- | ------ | ------------------------------------------------------- |
+| Both EN and FR URLs generated | ✅     | Every page has a `/{path}` and `/fr/{path}` entry       |
+| Herb pages: both locales      | ✅     | Batched query, both URLs per herb                       |
+| Symptom pages: both locales   | ✅     | Uses `SYMPTOM_SLUGS` from page (single source of truth) |
+| Compare pages: both locales   | ✅     | Uses `POPULAR_COMPARISONS` from page                    |
+| Category pages: both locales  | ✅     |                                                         |
+| `revalidate = 3600` (1hr)     | ✅     |                                                         |
 
 ### 4.4 Robots — `src/app/robots.ts`
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| Allows crawling all non-admin, non-api paths | ✅ | `disallow: ["/admin/", "/api/"]` |
-| Both /fr and / paths are crawlable | ✅ | `/fr/*` not in disallow list |
+| Check                                        | Status | Notes                            |
+| -------------------------------------------- | ------ | -------------------------------- |
+| Allows crawling all non-admin, non-api paths | ✅     | `disallow: ["/admin/", "/api/"]` |
+| Both /fr and / paths are crawlable           | ✅     | `/fr/*` not in disallow list     |
 
 ---
 
@@ -446,8 +459,8 @@ async function getLocale(): Promise<Locale> {
 }
 
 // Line 40-41: Dead variable
-const _locale = await getLocale();  // never used
-const locale = await getLocaleFromRequest();  // actually used
+const _locale = await getLocale(); // never used
+const locale = await getLocaleFromRequest(); // actually used
 ```
 
 This reads locale from the **cookie** (which can drift from the URL) and then immediately discards it in favor of `getLocaleFromRequest()` (which reads the `x-locale` header from the URL). The dead code is a leftover from before the "URL as source of truth" migration.
@@ -458,7 +471,7 @@ This reads locale from the **cookie** (which can drift from the URL) and then im
 // Line 40-42: Dead variables
 const localeCookie = cookieStore.get("herbally-locale");
 const _locale: Locale = localeCookie?.value === "fr" ? "fr" : "en";
-const locale = await getLocaleFromRequest();  // actually used
+const locale = await getLocaleFromRequest(); // actually used
 ```
 
 Same pattern — reads cookie, discards it, uses header-based locale.
@@ -468,6 +481,7 @@ Same pattern — reads cookie, discards it, uses header-based locale.
 ### 5.3 Duplicate `detectLocaleFromAcceptLanguage` Logic
 
 The `detectLocaleFromAcceptLanguage` function in `src/proxy.ts` is **re-implemented inline** in the middleware test file (`src/__tests__/middleware.test.ts`) rather than imported. This means:
+
 - The test doesn't test the actual production function
 - If the production function changes, the test won't catch it
 
@@ -481,17 +495,17 @@ As noted in §1.4, locale lists are defined in both `i18n/routing.ts` (`["en", "
 
 ## 6. Accessibility Audit
 
-| Check | Status | Notes |
-|-------|--------|-------|
-| `<html lang>` attribute set dynamically | ✅ | Reflects active locale |
-| Language selector has `aria-label` | ✅ | `t("common.changeLanguage")` |
-| `aria-current` on active language option | ✅ | `"true"` for selected |
-| Screen reader announcement on locale change | ✅ | `LanguageAnnouncement` live region |
-| Skip-to-content link | ✅ | In root layout |
-| Keyboard shortcut for language toggle | ✅ | Ctrl/Cmd + Shift + L |
-| Banner has `role="status"` | ✅ | FirstVisitBanner |
-| Dismiss button has `aria-label` | ✅ | `t.dismiss` (hardcoded but present) |
-| Focus styles on selector trigger | ✅ | `focus-visible:ring-3` |
+| Check                                       | Status | Notes                               |
+| ------------------------------------------- | ------ | ----------------------------------- |
+| `<html lang>` attribute set dynamically     | ✅     | Reflects active locale              |
+| Language selector has `aria-label`          | ✅     | `t("common.changeLanguage")`        |
+| `aria-current` on active language option    | ✅     | `"true"` for selected               |
+| Screen reader announcement on locale change | ✅     | `LanguageAnnouncement` live region  |
+| Skip-to-content link                        | ✅     | In root layout                      |
+| Keyboard shortcut for language toggle       | ✅     | Ctrl/Cmd + Shift + L                |
+| Banner has `role="status"`                  | ✅     | FirstVisitBanner                    |
+| Dismiss button has `aria-label`             | ✅     | `t.dismiss` (hardcoded but present) |
+| Focus styles on selector trigger            | ✅     | `focus-visible:ring-3`              |
 
 ---
 
@@ -499,21 +513,21 @@ As noted in §1.4, locale lists are defined in both `i18n/routing.ts` (`["en", "
 
 ### 7.1 Unit Tests
 
-| File | Tests | Status |
-|------|-------|--------|
-| `src/lib/i18n/__tests__/routing.test.ts` | 19 | ✅ All pass |
-| `src/lib/i18n/__tests__/server-locale.test.ts` | 3 | ✅ All pass |
-| `src/__tests__/middleware.test.ts` | 11 | ⚠️ Tests inline reimplementation, not actual function |
+| File                                           | Tests | Status                                                |
+| ---------------------------------------------- | ----- | ----------------------------------------------------- |
+| `src/lib/i18n/__tests__/routing.test.ts`       | 19    | ✅ All pass                                           |
+| `src/lib/i18n/__tests__/server-locale.test.ts` | 3     | ✅ All pass                                           |
+| `src/__tests__/middleware.test.ts`             | 11    | ⚠️ Tests inline reimplementation, not actual function |
 
 ### 7.2 E2E Tests
 
-| File | Coverage | Status |
-|------|----------|--------|
-| `e2e/language-toggle.spec.ts` | en→fr→en round-trip on `/` and `/herbs` | ✅ Comprehensive |
-| Checks URL matches locale | ✅ | No `/fr/fr` double-prefix |
-| Checks `<html lang>` attribute | ✅ | |
-| Checks rendered text language | ✅ | Verifies French words appear, English words gone |
-| Auto-skips on local standalone server | ✅ | `x-locale` forwarding not available locally |
+| File                                  | Coverage                                | Status                                           |
+| ------------------------------------- | --------------------------------------- | ------------------------------------------------ |
+| `e2e/language-toggle.spec.ts`         | en→fr→en round-trip on `/` and `/herbs` | ✅ Comprehensive                                 |
+| Checks URL matches locale             | ✅                                      | No `/fr/fr` double-prefix                        |
+| Checks `<html lang>` attribute        | ✅                                      |                                                  |
+| Checks rendered text language         | ✅                                      | Verifies French words appear, English words gone |
+| Auto-skips on local standalone server | ✅                                      | `x-locale` forwarding not available locally      |
 
 ### 7.3 Missing Test Coverage
 
@@ -530,34 +544,34 @@ As noted in §1.4, locale lists are defined in both `i18n/routing.ts` (`["en", "
 
 ### Medium Severity (3)
 
-| # | Finding | File(s) | Recommendation |
-|---|---------|---------|----------------|
-| M1 | 22 empty `symptomMeta.*.desc` in EN dictionary | `en.json` | Fill with English descriptions (copy from page's hardcoded `symptomMeta`) |
-| M2 | Chat follow-up suggestions hardcoded in English | `chat-interface.tsx` | Move to dictionary with `useTranslations()` |
-| M3 | Dual locale config not linked | `i18n/routing.ts` + `src/lib/i18n/config.ts` | Import `LOCALES`/`DEFAULT_LOCALE` from config in `i18n/routing.ts` |
+| #   | Finding                                         | File(s)                                      | Recommendation                                                            |
+| --- | ----------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------- |
+| M1  | 22 empty `symptomMeta.*.desc` in EN dictionary  | `en.json`                                    | Fill with English descriptions (copy from page's hardcoded `symptomMeta`) |
+| M2  | Chat follow-up suggestions hardcoded in English | `chat-interface.tsx`                         | Move to dictionary with `useTranslations()`                               |
+| M3  | Dual locale config not linked                   | `i18n/routing.ts` + `src/lib/i18n/config.ts` | Import `LOCALES`/`DEFAULT_LOCALE` from config in `i18n/routing.ts`        |
 
 ### Low Severity (9)
 
-| # | Finding | File(s) | Recommendation |
-|---|---------|---------|----------------|
-| L1 | `LanguageDrawer` doesn't track analytics | `language-drawer.tsx` | Add `trackEvent("language_changed", { source: "drawer" })` |
-| L2 | `FirstVisitBanner` labels hardcoded (not from dictionary) | `first-visit-banner.tsx` | Acceptable for 2 langs; add dict keys if scaling |
-| L3 | `LanguageAnnouncement` messages hardcoded | `language-announcement.tsx` | Same as L2 |
-| L4 | Chat empty state labels in English | `chat-empty-state-v2.tsx` | Localize the `label` field |
-| L5 | Markdown renderer severity labels in English | `markdown-renderer.tsx` | Use `t()` with existing `useTranslations()` |
-| L6 | Dead `getLocale()` function + `_locale` variable | `herbs/page.tsx` | Remove dead code |
-| L7 | Dead `localeCookie` + `_locale` variable | `calculator/page.tsx` | Remove dead code |
-| L8 | `LOCALE_PREFIX = "/fr"` hardcoded, not derived from config | `src/lib/i18n/routing.ts` | Derive from `LOCALES`/`DEFAULT_LOCALE` |
-| L9 | Middleware test re-implements function inline | `middleware.test.ts` | Export and import actual function |
+| #   | Finding                                                    | File(s)                     | Recommendation                                             |
+| --- | ---------------------------------------------------------- | --------------------------- | ---------------------------------------------------------- |
+| L1  | `LanguageDrawer` doesn't track analytics                   | `language-drawer.tsx`       | Add `trackEvent("language_changed", { source: "drawer" })` |
+| L2  | `FirstVisitBanner` labels hardcoded (not from dictionary)  | `first-visit-banner.tsx`    | Acceptable for 2 langs; add dict keys if scaling           |
+| L3  | `LanguageAnnouncement` messages hardcoded                  | `language-announcement.tsx` | Same as L2                                                 |
+| L4  | Chat empty state labels in English                         | `chat-empty-state-v2.tsx`   | Localize the `label` field                                 |
+| L5  | Markdown renderer severity labels in English               | `markdown-renderer.tsx`     | Use `t()` with existing `useTranslations()`                |
+| L6  | Dead `getLocale()` function + `_locale` variable           | `herbs/page.tsx`            | Remove dead code                                           |
+| L7  | Dead `localeCookie` + `_locale` variable                   | `calculator/page.tsx`       | Remove dead code                                           |
+| L8  | `LOCALE_PREFIX = "/fr"` hardcoded, not derived from config | `src/lib/i18n/routing.ts`   | Derive from `LOCALES`/`DEFAULT_LOCALE`                     |
+| L9  | Middleware test re-implements function inline              | `middleware.test.ts`        | Export and import actual function                          |
 
 ### Informational (4)
 
-| # | Finding | Notes |
-|---|---------|-------|
-| I1 | `global-error.tsx` is English-only | By design — next-intl unavailable in global error boundary |
-| I2 | `manifest.ts` is English-only | PWA spec limitation |
-| I3 | Admin pages are English-only | Intentional — internal tool |
-| I4 | Both dictionaries bundled (no code-splitting) | Acceptable for 2 locales; revisit if scaling |
+| #   | Finding                                       | Notes                                                      |
+| --- | --------------------------------------------- | ---------------------------------------------------------- |
+| I1  | `global-error.tsx` is English-only            | By design — next-intl unavailable in global error boundary |
+| I2  | `manifest.ts` is English-only                 | PWA spec limitation                                        |
+| I3  | Admin pages are English-only                  | Intentional — internal tool                                |
+| I4  | Both dictionaries bundled (no code-splitting) | Acceptable for 2 locales; revisit if scaling               |
 
 ---
 
@@ -583,4 +597,4 @@ As noted in §1.4, locale lists are defined in both `i18n/routing.ts` (`["en", "
 
 ---
 
-*End of audit report.*
+_End of audit report._

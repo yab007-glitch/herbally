@@ -31,8 +31,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Determine locale from the x-locale header (set by proxy from URL)
-  const locale =
-    request.headers.get("x-locale") === "fr" ? "fr" : "en";
+  const locale = request.headers.get("x-locale") === "fr" ? "fr" : "en";
 
   try {
     const supabase = await createClient();

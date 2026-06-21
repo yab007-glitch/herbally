@@ -105,14 +105,20 @@ export async function POST(request: NextRequest) {
   if (!perMinute.success) {
     return NextResponse.json(
       { error: "Too many requests. Please try again later." },
-      { status: 429, headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" } }
+      {
+        status: 429,
+        headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" },
+      }
     );
   }
   const perDay = await rateLimit(`${ip}:chat:day`, 200, 86_400_000);
   if (!perDay.success) {
     return NextResponse.json(
       { error: "Daily message limit reached. Please come back tomorrow." },
-      { status: 429, headers: { "Retry-After": "3600", "X-RateLimit-Remaining": "0" } }
+      {
+        status: 429,
+        headers: { "Retry-After": "3600", "X-RateLimit-Remaining": "0" },
+      }
     );
   }
 

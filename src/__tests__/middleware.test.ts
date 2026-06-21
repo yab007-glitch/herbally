@@ -32,9 +32,9 @@ describe("middleware — locale detection", () => {
   });
 
   it("returns en (default) when no supported language is found", () => {
-    expect(
-      detectLocaleFromAcceptLanguage("de-DE,de;q=0.9,es;q=0.8")
-    ).toBe("en");
+    expect(detectLocaleFromAcceptLanguage("de-DE,de;q=0.9,es;q=0.8")).toBe(
+      "en"
+    );
   });
 
   it("handles multiple entries with same quality", () => {

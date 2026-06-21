@@ -486,9 +486,8 @@ async function batchLookupHerbs(
               evidence_level: localized.evidence_level,
               active_compounds: localized.active_compounds ?? [],
               provenance_method:
-                ((localized.provenance as
-                  | Record<string, unknown>
-                  | undefined)?.verification_method as string | null) ?? null,
+                ((localized.provenance as Record<string, unknown> | undefined)
+                  ?.verification_method as string | null) ?? null,
             } satisfies VerifiedHerb;
           })
           .filter((h): h is VerifiedHerb => h !== null);
@@ -499,9 +498,7 @@ async function batchLookupHerbs(
   }
 
   // Fallback: individual lookups (parallelized)
-  const results = await Promise.all(
-    names.map((n) => lookupHerb(n, locale))
-  );
+  const results = await Promise.all(names.map((n) => lookupHerb(n, locale)));
   return results.filter((h): h is VerifiedHerb => h !== null);
 }
 

@@ -81,7 +81,9 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
 
       {query && (
         <p className="mb-6 text-center text-sm text-muted-foreground">
-          {t("faqContent." + (totalResults !== 1 ? "results" : "result"), { count: totalResults })}
+          {t("faqContent." + (totalResults !== 1 ? "results" : "result"), {
+            count: totalResults,
+          })}
         </p>
       )}
 
