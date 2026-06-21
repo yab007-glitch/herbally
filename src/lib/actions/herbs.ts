@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
-import { cookies } from "next/headers";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import {
   localizeHerb,
   localizeInteraction,
@@ -18,16 +18,13 @@ import type {
   HerbCategory,
 } from "@/lib/types";
 
+/**
+ * Read the locale from the x-locale request header (set by the proxy from
+ * the URL). This is the single source of truth — the cookie can drift from
+ * the URL, causing French-URL visitors to get English herb data.
+ */
 async function getLocale(): Promise<string> {
-  try {
-    const store = await cookies();
-    return store.get("herbally-locale")?.value === "fr" ? "fr" : "en";
-  } catch (error) {
-    logger.error("herbs_get_locale_failed", {
-      error: error instanceof Error ? error.message : JSON.stringify(error),
-    });
-    return "en";
-  }
+  return getLocaleFromRequest();
 }
 
 const ITEMS_PER_PAGE = 20;

@@ -23,13 +23,12 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/lib/types/database.ts",
       ],
-      // Regression floor — raised after audit fixes (2026-06-19).
-      // Current: ~23% lines. Goal: 40%+ (see IMPROVEMENT_ROADMAP).
+      // Regression floor — raised after workflow audit (2026-06-20).
       thresholds: {
-        branches: 15,
-        functions: 20,
-        lines: 22,
-        statements: 22,
+        branches: 18,
+        functions: 22,
+        lines: 25,
+        statements: 25,
       },
     },
   },

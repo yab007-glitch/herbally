@@ -7,6 +7,8 @@ import { z } from "zod";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
+import { rateLimit } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
 const MAX_BODY_SIZE = 50 * 1024;
 
@@ -96,6 +98,24 @@ async function tryOpenRouter(
 }
 
 export async function POST(request: NextRequest) {
+  // In-route rate limiting as a defense-in-depth fallback in case the
+  // proxy-level rate limiter is bypassed (e.g. misconfigured matcher).
+  const ip = getClientIP(request);
+  const perMinute = await rateLimit(`${ip}:chat:minute`, 20, 60_000);
+  if (!perMinute.success) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" } }
+    );
+  }
+  const perDay = await rateLimit(`${ip}:chat:day`, 200, 86_400_000);
+  if (!perDay.success) {
+    return NextResponse.json(
+      { error: "Daily message limit reached. Please come back tomorrow." },
+      { status: 429, headers: { "Retry-After": "3600", "X-RateLimit-Remaining": "0" } }
+    );
+  }
+
   const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   const baseUrl = (
     process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1"

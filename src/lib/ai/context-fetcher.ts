@@ -11,6 +11,8 @@
  */
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import type { HerbWithInteractions } from "@/lib/types";
+import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -285,7 +287,10 @@ function extractMedicationNames(message: string): string[] {
 
 // ─── DB lookups ─────────────────────────────────────────────────────
 
-async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
+async function lookupHerb(
+  name: string,
+  locale: string
+): Promise<VerifiedHerb | null> {
   const supabase = getAnonClient();
   if (!supabase) return null;
 
@@ -302,9 +307,21 @@ async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
 
     if (error || !data) return null;
 
-    const herb = data as HerbWithInteractions & {
+    // Localize the herb data so the AI prompt contains French descriptions/uses
+    // when the user is on a /fr page, matching the UI language.
+    const herb = localizeHerb(
+      data as HerbWithInteractions & {
+        provenance?: Record<string, unknown>;
+      },
+      locale
+    ) as HerbWithInteractions & {
       provenance?: Record<string, unknown>;
     };
+
+    // Localize interactions so the AI references them in the correct language.
+    const localizedInteractions = (herb.drug_interactions ?? []).map((ix) =>
+      localizeInteraction(ix, locale)
+    );
 
     return {
       name: herb.name,
@@ -314,7 +331,7 @@ async function lookupHerb(name: string): Promise<VerifiedHerb | null> {
       modern_uses: herb.modern_uses ?? [],
       contraindications: herb.contraindications ?? [],
       side_effects: herb.side_effects ?? [],
-      drug_interactions: (herb.drug_interactions ?? []).map(
+      drug_interactions: localizedInteractions.map(
         (ix) =>
           `${ix.drug_name} (${ix.severity}): ${ix.mechanism ?? ix.description ?? "unknown mechanism"}`
       ),
@@ -403,6 +420,91 @@ async function lookupInteractions(
   }
 }
 
+// ─── Batch DB lookup ─────────────────────────────────────────────────
+
+/**
+ * Batch-lookup multiple herbs in a single DB query instead of N individual
+ * queries. Falls back to individual lookups if the batch approach fails.
+ */
+async function batchLookupHerbs(
+  names: string[],
+  locale: string
+): Promise<VerifiedHerb[]> {
+  if (names.length === 0) return [];
+
+  // Try a single batched query first
+  const supabase = getAnonClient();
+  if (supabase) {
+    try {
+      const conditions = names
+        .map(
+          (n) =>
+            `name.ilike.${n},scientific_name.ilike.${n},slug.eq.${n.toLowerCase().replace(/\s+/g, "-")}`
+        )
+        .join(",");
+
+      const { data, error } = await supabase
+        .from("herbs")
+        .select("*, herb_categories(*), drug_interactions(*)")
+        .or(conditions)
+        .eq("is_published", true)
+        .limit(5);
+
+      if (!error && data && data.length > 0) {
+        return data
+          .map((row) => {
+            const herb = row as HerbWithInteractions & {
+              provenance?: Record<string, unknown>;
+            };
+            const localized = localizeHerb(herb, locale) as typeof herb;
+            const localizedInteractions = (
+              localized.drug_interactions ?? []
+            ).map((ix) => localizeInteraction(ix, locale));
+            return {
+              name: localized.name,
+              scientific_name: localized.scientific_name,
+              description: localized.description ?? "",
+              traditional_uses: localized.traditional_uses ?? [],
+              modern_uses: localized.modern_uses ?? [],
+              contraindications: localized.contraindications ?? [],
+              side_effects: localized.side_effects ?? [],
+              drug_interactions: localizedInteractions.map(
+                (ix) =>
+                  `${ix.drug_name} (${ix.severity}): ${ix.mechanism ?? ix.description ?? "unknown mechanism"}`
+              ),
+              dosage_adult: localized.dosage_adult ?? null,
+              pregnancy_safe: localized.pregnancy_safe,
+              nursing_safe: localized.nursing_safe,
+              pregnancy_safe_oral:
+                localized.pregnancy_safe_oral ?? localized.pregnancy_safe,
+              pregnancy_safe_topical:
+                localized.pregnancy_safe_topical ?? localized.pregnancy_safe,
+              nursing_safe_oral:
+                localized.nursing_safe_oral ?? localized.nursing_safe,
+              nursing_safe_topical:
+                localized.nursing_safe_topical ?? localized.nursing_safe,
+              evidence_level: localized.evidence_level,
+              active_compounds: localized.active_compounds ?? [],
+              provenance_method:
+                ((localized.provenance as
+                  | Record<string, unknown>
+                  | undefined)?.verification_method as string | null) ?? null,
+            } satisfies VerifiedHerb;
+          })
+          .filter((h): h is VerifiedHerb => h !== null);
+      }
+    } catch {
+      // Fall through to individual lookups
+    }
+  }
+
+  // Fallback: individual lookups (parallelized)
+  const results = await Promise.all(
+    names.map((n) => lookupHerb(n, locale))
+  );
+  return results.filter((h): h is VerifiedHerb => h !== null);
+}
+
 // ─── Main export ────────────────────────────────────────────────────
 
 /**
@@ -436,11 +538,10 @@ export async function fetchVerifiedContext(
     }
   }
 
-  // Look up herbs
-  const herbPromises = herbNames.slice(0, 5).map(lookupHerb);
-  const herbs = (await Promise.all(herbPromises)).filter(
-    (h): h is VerifiedHerb => h !== null
-  );
+  // Look up herbs — batch into a single DB query instead of N individual
+  // lookups, then localize each result.
+  const locale = await getLocaleFromRequest().catch(() => "en");
+  const herbs = await batchLookupHerbs(herbNames.slice(0, 5), locale);
 
   // Look up interactions
   const interactions = await lookupInteractions(

@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
+import { localizeHerb } from "@/lib/utils/localize-herb";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import type { Herb } from "@/lib/types";
+
+/**
+ * Escape special ILIKE pattern characters so user-supplied search terms
+ * are treated as literal strings, not wildcards.
+ */
+function escapeForIlike(term: string): string {
+  return term.replace(/[%_\\]/g, "\\$&");
+}
 
 export async function GET(request: NextRequest) {
   const { success } = await rateLimit(getClientIP(request), 30, 60_000);
@@ -20,29 +30,37 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([]);
   }
 
+  // Determine locale from the x-locale header (set by proxy from URL)
+  const locale =
+    request.headers.get("x-locale") === "fr" ? "fr" : "en";
+
   try {
     const supabase = await createClient();
     const expandedKeywords = expandQueryToKeywords(term);
 
     const { data: symptomResults, error: symptomError } = await supabase
       .from("herbs")
-      .select("id, name, slug, scientific_name, evidence_level")
+      .select("id, name, slug, scientific_name, evidence_level, translations")
       .eq("is_published", true)
       .overlaps("symptom_keywords", expandedKeywords)
       .limit(30);
 
+    // Sanitize each word to prevent ILIKE wildcard injection
     const words = term.trim().split(/\s+/).filter(Boolean);
     const textConditions = words
-      .flatMap((w) => [
-        `name.ilike.%${w}%`,
-        `scientific_name.ilike.%${w}%`,
-        `description.ilike.%${w}%`,
-      ])
+      .flatMap((w) => {
+        const safe = escapeForIlike(w);
+        return [
+          `name.ilike.%${safe}%`,
+          `scientific_name.ilike.%${safe}%`,
+          `description.ilike.%${safe}%`,
+        ];
+      })
       .join(",");
 
     const { data: textResults, error: textError } = await supabase
       .from("herbs")
-      .select("id, name, slug, scientific_name, evidence_level")
+      .select("id, name, slug, scientific_name, evidence_level, translations")
       .eq("is_published", true)
       .or(textConditions)
       .limit(20);
@@ -67,7 +85,12 @@ export async function GET(request: NextRequest) {
       D: 3,
       trad: 4,
     };
-    const sortedSymptomResults = (symptomResults || []).sort(
+
+    // Localize symptom results
+    const localizedSymptomResults = (symptomResults || []).map((h) =>
+      localizeHerb(h as Herb, locale)
+    );
+    const sortedSymptomResults = localizedSymptomResults.sort(
       (
         a: { evidence_level: string | null },
         b: { evidence_level: string | null }
@@ -85,7 +108,11 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    for (const herb of textResults || []) {
+    // Localize text results
+    const localizedTextResults = (textResults || []).map((h) =>
+      localizeHerb(h as Herb, locale)
+    );
+    for (const herb of localizedTextResults) {
       if (!seen.has(herb.id)) {
         seen.add(herb.id);
         results.push({ ...herb, matchedBy: "name" });
