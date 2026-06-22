@@ -549,7 +549,8 @@
       "submitting": "Creating...",
       "haveAccount": "Already have an account?",
       "signIn": "Sign in",
-      "checkEmail": "Check your email for a confirmation link."
+      "checkEmail": "Check your email for a confirmation link.",
+      "accountExists": "An account with this email already exists. Please log in or reset your password."
     },
     "forgot": {
       "title": "Reset your password",

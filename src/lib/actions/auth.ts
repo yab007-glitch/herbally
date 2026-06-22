@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { migrateGuestData } from "@/lib/actions/guest-migration";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getTranslations } from "next-intl/server";
 import type { ActionResponse } from "@/lib/types";
 
 /**
@@ -65,12 +67,54 @@ export async function register(formData: FormData): Promise<ActionResponse> {
     return { success: false, error: error.message };
   }
 
-  // If email confirmation is disabled in Supabase (as in this project),
-  // signUp returns a session immediately — the user is logged in. Redirect
-  // to home with a welcome flag so the client can show a toast.
+  // Scenario 1: New user with email confirmation DISABLED.
+  // signUp returns a session immediately — the user is logged in.
   if (data.session) {
     await migrateGuestData();
     redirect("/?welcome=register");
+  }
+
+  // Scenario 2: Email confirmation ENABLED — no session, user needs to
+  // confirm via email. Show the "check email" message.
+  // BUT: Supabase also returns { user, session: null, error: null } when
+  // the email ALREADY EXISTS (for security reasons it doesn't reveal this).
+  // In that case, no confirmation email is sent either. We detect this by
+  // trying to sign in with the provided credentials — if it succeeds, the
+  // user already had an account and is now logged in.
+  if (data.user && !data.session) {
+    // Try signing in — this distinguishes between:
+    // - New user with email confirmation enabled (sign-in fails with "not confirmed")
+    // - Existing user with correct password (sign-in succeeds → auto-login)
+    // - Existing user with wrong password (sign-in fails with "invalid credentials")
+    const { data: signInData, error: signInError } =
+      await supabase.auth.signInWithPassword({ email, password });
+
+    if (!signInError && signInData.session) {
+      // The user already had an account with this email + password.
+      // They're now logged in — redirect to home.
+      await migrateGuestData();
+      redirect("/?welcome=login");
+    }
+
+    if (signInError) {
+      const errMsg = signInError.message.toLowerCase();
+      // If the error is about email not being confirmed, this is a genuinely
+      // new user who needs to confirm their email — show the "check email" message.
+      if (
+        errMsg.includes("not confirmed") ||
+        errMsg.includes("email not verified")
+      ) {
+        return { success: true };
+      }
+      // Any other sign-in error (invalid credentials, etc.) means the email
+      // already exists with a different password — tell them to log in.
+      const locale = await getLocaleFromRequest();
+      const t = await getTranslations({ locale, namespace: "auth.register" });
+      return {
+        success: false,
+        error: t("accountExists"),
+      };
+    }
   }
 
   // Email confirmation required — tell the user to check their inbox.

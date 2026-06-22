@@ -33,6 +33,14 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 
+vi.mock("@/lib/i18n/server-locale", () => ({
+  getLocaleFromRequest: async () => "en",
+}));
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: async () => (key: string) => key,
+}));
+
 describe("auth actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -93,6 +101,11 @@ describe("auth actions", () => {
         data: { session: null, user: { id: "u1" } },
         error: null,
       });
+      // signInWithPassword fails with "not confirmed" for a new unconfirmed user
+      signInMock.mockResolvedValueOnce({
+        data: { session: null, user: null },
+        error: { message: "Email not confirmed" },
+      });
       const formData = new FormData();
       formData.set("email", "new@example.com");
       formData.set("password", "securepass");
@@ -100,6 +113,44 @@ describe("auth actions", () => {
 
       const result = await register(formData);
       expect(result.success).toBe(true);
+    });
+
+    it("auto-logins when email already exists with correct password", async () => {
+      signUpMock.mockResolvedValueOnce({
+        data: { session: null, user: { id: "u1" } },
+        error: null,
+      });
+      // signInWithPassword succeeds — the user already existed
+      signInMock.mockResolvedValueOnce({
+        data: { session: { access_token: "x" }, user: { id: "u1" } },
+        error: null,
+      });
+      const formData = new FormData();
+      formData.set("email", "existing@example.com");
+      formData.set("password", "securepass");
+      formData.set("full_name", "Jane Doe");
+
+      await expect(register(formData)).rejects.toThrow("NEXT_REDIRECT");
+      expect(redirectMock).toHaveBeenCalledWith("/?welcome=login");
+    });
+
+    it("returns accountExists error when email exists with wrong password", async () => {
+      signUpMock.mockResolvedValueOnce({
+        data: { session: null, user: { id: "u1" } },
+        error: null,
+      });
+      // signInWithPassword fails with invalid credentials
+      signInMock.mockResolvedValueOnce({
+        data: { session: null, user: null },
+        error: { message: "Invalid login credentials" },
+      });
+      const formData = new FormData();
+      formData.set("email", "existing@example.com");
+      formData.set("password", "wrongpass");
+      formData.set("full_name", "Jane Doe");
+
+      const result = await register(formData);
+      expect(result.success).toBe(false);
     });
 
     it("returns error when registration fails", async () => {

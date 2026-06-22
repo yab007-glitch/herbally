@@ -549,7 +549,8 @@
       "submitting": "Création...",
       "haveAccount": "Vous avez déjà un compte ?",
       "signIn": "Se connecter",
-      "checkEmail": "Vérifiez votre boîte mail pour le lien de confirmation."
+      "checkEmail": "Vérifiez votre boîte mail pour le lien de confirmation.",
+      "accountExists": "Un compte avec cet e-mail existe déjà. Veuillez vous connecter ou réinitialiser votre mot de passe."
     },
     "forgot": {
       "title": "Réinitialiser votre mot de passe",
