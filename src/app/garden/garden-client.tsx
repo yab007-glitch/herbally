@@ -21,10 +21,11 @@ import {
 } from "@/lib/garden/local-garden";
 import { recordVisit, getExploredCount } from "@/lib/garden/streaks";
 import { HerbImage } from "@/components/herbs/HerbImage";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export function GardenClient() {
   const t = useTranslations();
+  const locale = useLocale();
   const [garden, setGarden] = useState<GardenHerb[]>(() => getGarden());
   const [streak] = useState(() => recordVisit());
   const [explored] = useState(() => getExploredCount());
@@ -163,14 +164,16 @@ export function GardenClient() {
                       {herb.scientific_name}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {new Date(herb.savedAt).toLocaleDateString()}
+                      {new Date(herb.savedAt).toLocaleDateString(
+                        locale === "fr" ? "fr-FR" : "en-US"
+                      )}
                     </p>
                   </div>
                 </Link>
                 <button
                   onClick={() => handleRemove(herb.slug)}
                   className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
-                  aria-label={`Remove ${herb.name}`}
+                  aria-label={`${t("garden.remove")} ${herb.name}`}
                 >
                   <Trash2 className="size-4" />
                 </button>

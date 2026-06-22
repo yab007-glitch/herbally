@@ -5,6 +5,18 @@ import { redirect } from "next/navigation";
 import { migrateGuestData } from "@/lib/actions/guest-migration";
 import type { ActionResponse } from "@/lib/types";
 
+/**
+ * Redirect target after login. Defaults to "/" (home page). When a `returnTo`
+ * query param is present on the login page, the client passes it as a hidden
+ * field so the server action can redirect back to the original page.
+ */
+function safeReturnTo(fd: FormData): string {
+  const raw = fd.get("returnTo") as string | null;
+  // Only allow same-origin absolute-less paths to prevent open redirect.
+  if (raw && raw.startsWith("/") && !raw.startsWith("//")) return raw;
+  return "/";
+}
+
 export async function login(formData: FormData): Promise<ActionResponse> {
   const supabase = await createClient();
 
@@ -25,7 +37,9 @@ export async function login(formData: FormData): Promise<ActionResponse> {
   // guest-migration.ts; idempotent and cookie-cleared on success.
   await migrateGuestData();
 
-  return { success: true };
+  // Redirect to the return URL (or home). redirect() throws a special
+  // error that Next.js intercepts — the browser navigates automatically.
+  redirect(safeReturnTo(formData));
 }
 
 export async function register(formData: FormData): Promise<ActionResponse> {
@@ -35,7 +49,7 @@ export async function register(formData: FormData): Promise<ActionResponse> {
   const password = formData.get("password") as string;
   const fullName = formData.get("full_name") as string;
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -48,6 +62,15 @@ export async function register(formData: FormData): Promise<ActionResponse> {
     return { success: false, error: error.message };
   }
 
+  // If email confirmation is disabled in Supabase (as in this project),
+  // signUp returns a session immediately — the user is logged in. Redirect
+  // to home so they don't see a misleading "check email" message.
+  if (data.session) {
+    await migrateGuestData();
+    redirect(safeReturnTo(formData));
+  }
+
+  // Email confirmation required — tell the user to check their inbox.
   return { success: true };
 }
 

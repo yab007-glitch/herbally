@@ -1197,7 +1197,9 @@
     "aboutDesc": "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
     "appDescription": "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions with our AI-powered virtual herbalist.",
     "herbsFor": "Herbs for {symptom}",
-    "homeTitle": "HerbAlly - Your Trusted Guide to Medicinal Herbs"
+    "homeTitle": "HerbAlly - Your Trusted Guide to Medicinal Herbs",
+    "gardenPageTitle": "My Garden — HerbAlly",
+    "gardenSubtitle": "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge."
   },
   "calculatorForm": {
     "herbName": "Herb Name",

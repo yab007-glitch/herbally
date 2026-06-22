@@ -1197,7 +1197,9 @@
     "aboutDesc": "Découvrez HerbAlly, notre mission et comment nous vous aidons à prendre des décisions éclairées sur les plantes médicinales.",
     "appDescription": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses avec notre herboriste virtuel alimenté par l'IA.",
     "herbsFor": "Plantes pour {symptom}",
-    "homeTitle": "HerbAlly - Votre guide de confiance pour les herbes médicinales"
+    "homeTitle": "HerbAlly - Votre guide de confiance pour les herbes médicinales",
+    "gardenPageTitle": "Mon Jardin — HerbAlly",
+    "gardenSubtitle": "Votre collection personnelle de plantes médicinales. Suivez ce que vous avez exploré et enrichissez vos connaissances."
   },
   "calculatorForm": {
     "herbName": "Nom de la Plante",
