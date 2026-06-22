@@ -177,7 +177,7 @@ describe("auth actions", () => {
       const result = await forgotPassword(formData);
       expect(result.success).toBe(true);
       expect(resetPasswordMock).toHaveBeenCalledWith("user@example.com", {
-        redirectTo: "https://herbally.app/reset-password",
+        redirectTo: "https://herbally.app/auth/callback?next=/reset-password",
       });
     });
 

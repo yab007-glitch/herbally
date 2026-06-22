@@ -129,6 +129,19 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
+  // ── Supabase auth code redirect ────────────────────────────────────
+  // When the Supabase dashboard Site URL is misconfigured (e.g., set to
+  // localhost:3000 instead of herbally.app), password-reset and email-confirmation
+  // links arrive at the wrong URL with ?code=... This catches the code on ANY
+  // page and redirects to /auth/callback which exchanges it for a session.
+  const authCode = request.nextUrl.searchParams.get("code");
+  if (authCode && !pathname.startsWith("/auth/callback")) {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = "/auth/callback";
+    callbackUrl.searchParams.set("next", "/reset-password");
+    return applySecurityHeaders(NextResponse.redirect(callbackUrl));
+  }
+
   // ── Locale routing ─────────────────────────────────────────────────
   if (!shouldSkipLocaleRouting(pathname)) {
     const cookieLocale = request.cookies.get("herbally-locale")?.value as
