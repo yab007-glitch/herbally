@@ -1,10 +1,29 @@
-import { captureException } from "@sentry/nextjs";
 import { z } from "zod";
 import { NextResponse, type NextRequest } from "next/server";
 import { searchDrugs } from "@/lib/utils/rxnorm-client";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+
+/**
+ * Returns true for transient network/DNS errors that are infrastructure
+ * issues, not code bugs. These should be logged as warnings, not sent to
+ * Sentry — they're expected when the upstream API is unreachable.
+ */
+function isTransientNetworkError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const msg = error.message.toLowerCase();
+  return (
+    msg.includes("enotfound") ||
+    msg.includes("econnrefused") ||
+    msg.includes("econnreset") ||
+    msg.includes("etimedout") ||
+    msg.includes("timeout") ||
+    msg.includes("fetch failed") ||
+    msg.includes("network") ||
+    msg.includes("dns")
+  );
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,6 +50,17 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ results });
   } catch (error) {
+    // Transient network/DNS errors (ENOTFOUND, ECONNREFUSED, timeout) are
+    // infrastructure issues, not code bugs — log as a warning and return
+    // empty results without triggering Sentry alerts.
+    if (isTransientNetworkError(error)) {
+      logger.warn("rxnorm_api_network_error", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return NextResponse.json({ results: [] });
+    }
+    // Unexpected errors should be captured.
+    const { captureException } = await import("@sentry/nextjs");
     captureException(error);
     logger.error("rxnorm_api_error", {
       error: error instanceof Error ? error.message : String(error),
