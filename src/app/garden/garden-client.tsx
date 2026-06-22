@@ -142,7 +142,9 @@ export function GardenClient() {
             {t("garden.yourCollection") || "Your Collection"}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {garden.map((herb) => (
+            {garden
+              .filter((herb) => herb && herb.slug)
+              .map((herb) => (
               <div
                 key={herb.slug}
                 className="group relative overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg hover:-translate-y-1"

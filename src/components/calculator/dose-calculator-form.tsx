@@ -150,11 +150,19 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               setError(t("calculator.errors.infantAge"));
               return;
             }
+            if (age >= 24) {
+              setError(t("calculator.errors.friedAgeLimit"));
+              return;
+            }
             calcResult = friedsRule(age, dose);
           } else {
             const months = parseFloat(ageYears) * 12;
             if (!months || months <= 0) {
               setError(t("calculator.errors.infantAge"));
+              return;
+            }
+            if (months >= 24) {
+              setError(t("calculator.errors.friedAgeLimit"));
               return;
             }
             calcResult = friedsRule(months, dose);

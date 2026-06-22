@@ -906,16 +906,19 @@ export type Database = {
         Row: {
           id: string;
           processed_at: string;
+          status: string;
           type: string;
         };
         Insert: {
           id: string;
           processed_at?: string;
+          status?: string;
           type: string;
         };
         Update: {
           id?: string;
           processed_at?: string;
+          status?: string;
           type?: string;
         };
         Relationships: [];
@@ -970,7 +973,7 @@ export type Database = {
         Returns: boolean;
       };
       get_guest_chat_messages: {
-        Args: { p_guest_id?: string; p_session_id: string };
+        Args: { p_guest_id: string; p_session_id: string };
         Returns: {
           content: string;
           created_at: string;

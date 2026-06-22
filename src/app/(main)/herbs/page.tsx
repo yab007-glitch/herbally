@@ -103,7 +103,7 @@ export default async function HerbsPage({
         {categories.slice(0, 8).map((cat: { slug: string; name: string }) => (
           <Link
             key={cat.slug}
-            href={`/herbs?category=${cat.slug}${query ? `&q=${query}` : ""}`}
+            href={`/herbs?category=${cat.slug}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
           >
             <Badge
               variant={category === cat.slug ? "default" : "outline"}
@@ -150,7 +150,7 @@ export default async function HerbsPage({
             render={
               page > 1 ? (
                 <Link
-                  href={`/herbs?page=${page - 1}${query ? `&q=${query}` : ""}${category ? `&category=${category}` : ""}`}
+                  href={`/herbs?page=${page - 1}${query ? `&q=${encodeURIComponent(query)}` : ""}${category ? `&category=${category}` : ""}`}
                 />
               ) : undefined
             }
@@ -167,7 +167,7 @@ export default async function HerbsPage({
             render={
               page < totalPages ? (
                 <Link
-                  href={`/herbs?page=${page + 1}${query ? `&q=${query}` : ""}${category ? `&category=${category}` : ""}`}
+                  href={`/herbs?page=${page + 1}${query ? `&q=${encodeURIComponent(query)}` : ""}${category ? `&category=${category}` : ""}`}
                 />
               ) : undefined
             }

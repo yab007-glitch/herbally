@@ -185,6 +185,7 @@
       "ageRequired": "La règle de Young nécessite l'âge du patient en années.",
       "bsaRequired": "La méthode BSA nécessite le poids et la taille.",
       "infantAge": "La règle de Fried nécessite l'âge en mois.",
+      "friedAgeLimit": "La règle de Fried ne s'applique qu'aux nourrissons de moins de 24 mois ; choisissez une autre formule pour les enfants plus âgés.",
       "calculationError": "Une erreur s'est produite lors du calcul. Veuillez vérifier vos entrées."
     },
     "results": {

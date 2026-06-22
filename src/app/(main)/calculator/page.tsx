@@ -18,13 +18,17 @@ function parseDosage(dosageStr: string | null): {
 } {
   if (!dosageStr) return { dose: null, unit: "mg" };
   // Match patterns like "500 mg", "500-1000 mg", "1-3 g", "30 drops", "2-4 ml"
+  // Capture both bounds of an optional range so we can use the midpoint
+  // rather than the low end — dosing off the floor of a range underdoses.
   const match = dosageStr.match(
-    /(\d+(?:\.\d+)?)\s*(?:[-–]\s*\d+(?:\.\d+)?\s*)?(mg|ml|g|drops)/i
+    /(\d+(?:\.\d+)?)\s*(?:[-–]\s*(\d+(?:\.\d+)?)\s*)?(mg|ml|g|drops)/i
   );
   if (!match) return { dose: null, unit: "mg" };
+  const low = parseFloat(match[1]);
+  const high = match[2] ? parseFloat(match[2]) : null;
   return {
-    dose: parseFloat(match[1]),
-    unit: match[2].toLowerCase() as "mg" | "ml" | "g" | "drops",
+    dose: high !== null ? (low + high) / 2 : low,
+    unit: match[3].toLowerCase() as "mg" | "ml" | "g" | "drops",
   };
 }
 

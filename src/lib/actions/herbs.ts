@@ -10,6 +10,7 @@ import {
   localizeCategoryName,
 } from "@/lib/utils/localize-herb";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
+import { escapeForIlike } from "@/lib/utils/ilike";
 import type {
   ActionResponse,
   Herb,
@@ -94,11 +95,14 @@ export async function getHerbs(params: {
           orderByEvidence = true;
         } else {
           const conditions = words
-            .flatMap((w) => [
-              `name.ilike.%${w}%`,
-              `scientific_name.ilike.%${w}%`,
-              `description.ilike.%${w}%`,
-            ])
+            .flatMap((w) => {
+              const safe = escapeForIlike(w);
+              return [
+                `name.ilike.%${safe}%`,
+                `scientific_name.ilike.%${safe}%`,
+                `description.ilike.%${safe}%`,
+              ];
+            })
             .join(",");
           query = query.or(conditions);
         }
@@ -326,7 +330,10 @@ export async function getSymptomCounts(
 
     // Build a single OR condition for all symptoms
     const conditions = symptoms
-      .map((s) => `name.ilike.%${s}%,description.ilike.%${s}%`)
+      .map((s) => {
+        const safe = escapeForIlike(s);
+        return `name.ilike.%${safe}%,description.ilike.%${safe}%`;
+      })
       .join(",");
 
     const { data, error } = await supabase
@@ -367,6 +374,7 @@ export async function searchHerbs(
   try {
     const supabase = await createClient();
     const safeTerm = term.trim().slice(0, MAX_QUERY_LENGTH);
+    const escapedTerm = escapeForIlike(safeTerm);
 
     const expandedKeywords = expandQueryToKeywords(safeTerm);
     const { data: keywordResults } = await supabase
@@ -408,7 +416,7 @@ export async function searchHerbs(
       .select("id, name, slug, scientific_name, translations")
       .eq("is_published", true)
       .or(
-        `name.ilike.%${safeTerm}%,scientific_name.ilike.%${safeTerm}%,description.ilike.%${safeTerm}%`
+        `name.ilike.%${escapedTerm}%,scientific_name.ilike.%${escapedTerm}%,description.ilike.%${escapedTerm}%`
       )
       .limit(10);
 

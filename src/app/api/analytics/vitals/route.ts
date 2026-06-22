@@ -14,7 +14,10 @@ const webVitalsSchema = z.object({
   rating: z.enum(["good", "needs-improvement", "poor"]),
   delta: z.number(),
   id: z.string(),
-  pathname: z.string(),
+  pathname: z
+    .string()
+    .max(200)
+    .regex(/^\/[^?#]*$/, "must be a root-relative path without query/hash"),
   effectiveType: z.string().optional(),
   deviceMemory: z.number().optional(),
   timestamp: z.number(),

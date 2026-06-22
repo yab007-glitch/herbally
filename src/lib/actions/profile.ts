@@ -46,15 +46,6 @@ export async function savePatientProfile(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
-    // If setting as default, unset other defaults first
-    if (profile.is_default) {
-      await supabase
-        .from("patient_profiles")
-        .update({ is_default: false })
-        .eq("user_id", user.id)
-        .eq("is_default", true);
-    }
-
     const { data, error } = await supabase
       .from("patient_profiles")
       .insert({ ...profile, user_id: user.id })
@@ -62,6 +53,20 @@ export async function savePatientProfile(
       .single();
 
     if (error) return { success: false, error: error.message };
+
+    // Enforce a single default per user atomically. Two rapid "add patient"
+    // calls can both pass is_default=true before either render reflects the
+    // first insert; unsetting every *other* profile after the insert
+    // guarantees exactly one default regardless of the race.
+    if (data.is_default) {
+      await supabase
+        .from("patient_profiles")
+        .update({ is_default: false })
+        .eq("user_id", user.id)
+        .eq("is_default", true)
+        .neq("id", data.id);
+    }
+
     return { success: true, data };
   } catch (error) {
     logger.error("savePatientProfile_failed", { error: String(error) });
@@ -86,12 +91,24 @@ export async function updatePatientProfile(
         .from("patient_profiles")
         .update({ is_default: false })
         .eq("user_id", user.id)
-        .eq("is_default", true);
+        .eq("is_default", true)
+        .neq("id", id);
     }
+
+    // Strip immutable/identity columns a caller must never overwrite — a
+    // row-transfer or stale payload could otherwise reassign the profile to
+    // another user. Only allow genuine profile fields through.
+    const {
+      id: _id,
+      user_id: _userId,
+      created_at: _createdAt,
+      updated_at: _updatedAt,
+      ...safeUpdates
+    } = updates;
 
     const { data, error } = await supabase
       .from("patient_profiles")
-      .update(updates)
+      .update(safeUpdates)
       .eq("id", id)
       .eq("user_id", user.id)
       .select()
@@ -156,7 +173,7 @@ export async function getHealthProfile(): Promise<
 }
 
 export async function saveHealthProfile(
-  profile: Pick<HealthProfile, "conditions" | "allergies" | "medications">
+  profile: Pick<HealthProfile, "conditions" | "allergies">
 ): Promise<ActionResponse<HealthProfile>> {
   try {
     const supabase = await createClient();
@@ -165,9 +182,22 @@ export async function saveHealthProfile(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
+    // NOTE: `medications` is intentionally omitted from the upsert payload.
+    // The profile form manages conditions/allergies only; including
+    // `medications: []` here would wipe the user's medication list (managed
+    // separately via addMedication/removeMedication). PostgREST upsert only
+    // UPDATEs the columns supplied, so the existing medications value is
+    // preserved on conflict and the column default applies on first insert.
     const { data, error } = await supabase
       .from("health_profiles")
-      .upsert({ ...profile, user_id: user.id }, { onConflict: "user_id" })
+      .upsert(
+        {
+          conditions: profile.conditions,
+          allergies: profile.allergies,
+          user_id: user.id,
+        },
+        { onConflict: "user_id" }
+      )
       .select()
       .single();
 
@@ -262,13 +292,15 @@ export async function saveDosageCalculation(
     Database["public"]["Tables"]["dosage_calculations"]["Row"],
     "id" | "created_at" | "user_id"
   >
-): Promise<ActionResponse> {
+): Promise<ActionResponse<{ skipped?: boolean }>> {
   try {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return { success: true }; // Silently skip for guests
+    // Distinct skipped state for guests so the UI can tell "saved" apart from
+    // "not signed in" instead of both looking like success.
+    if (!user) return { success: true, data: { skipped: true } };
 
     const { error } = await supabase
       .from("dosage_calculations")

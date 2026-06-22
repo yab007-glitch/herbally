@@ -5,15 +5,8 @@ import { localizeHerb } from "@/lib/utils/localize-herb";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import { escapeForIlike } from "@/lib/utils/ilike";
 import type { Herb } from "@/lib/types";
-
-/**
- * Escape special ILIKE pattern characters so user-supplied search terms
- * are treated as literal strings, not wildcards.
- */
-function escapeForIlike(term: string): string {
-  return term.replace(/[%_\\]/g, "\\$&");
-}
 
 export async function GET(request: NextRequest) {
   const { success } = await rateLimit(getClientIP(request), 30, 60_000);

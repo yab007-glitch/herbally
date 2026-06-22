@@ -110,13 +110,12 @@ export async function getGuestSession(
     const session = sessions.find((s) => s.id === sessionId);
     if (!session) return null;
 
-    // get_guest_chat_messages takes only p_session_id on the live function
-    // (migration 00022) — passing p_guest_id would error as an unknown arg.
-    // Ownership was already verified above by finding the session in the
-    // guest's own list.
+    // get_guest_chat_messages now requires p_guest_id (migration 00046) and
+    // enforces ownership server-side — an app-level check alone was bypassable
+    // via a direct PostgREST RPC call with the anon key.
     const { data: messages, error: messagesError } = await supabase.rpc(
       "get_guest_chat_messages",
-      { p_session_id: sessionId }
+      { p_session_id: sessionId, p_guest_id: guestId }
     );
     if (messagesError) return null;
 

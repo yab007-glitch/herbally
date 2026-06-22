@@ -185,6 +185,7 @@
       "ageRequired": "Young's Rule requires patient age in years.",
       "bsaRequired": "BSA method requires both weight and height.",
       "infantAge": "Fried's Rule requires age in months.",
+      "friedAgeLimit": "Fried's Rule only applies to infants under 24 months; choose another formula for older children.",
       "calculationError": "An error occurred during calculation. Please check your inputs."
     },
     "results": {

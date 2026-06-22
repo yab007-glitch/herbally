@@ -12,6 +12,12 @@ export interface GardenHerb {
 
 const GARDEN_KEY = "herbally-garden";
 const NOTES_KEY = "herbally-garden-notes";
+// Slugs the user intentionally removed. mergeServerGarden consults this so a
+// herb that still exists server-side (e.g. the DELETE sync failed, or it was
+// added on another device) doesn't silently reappear on next load. Capped to
+// the most recent REMOVED_TOMBSTONE_MAX entries.
+const TOMBSTONE_KEY = "herbally-garden-removed";
+const REMOVED_TOMBSTONE_MAX = 100;
 
 export function getGarden(): GardenHerb[] {
   if (typeof window === "undefined") return [];
@@ -22,6 +28,43 @@ export function getGarden(): GardenHerb[] {
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
+  }
+}
+
+function getRemovedSlugs(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(TOMBSTONE_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw) as string[];
+    return new Set(Array.isArray(parsed) ? parsed : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function addRemovedSlug(slug: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const list = [...getRemovedSlugs()];
+    if (!list.includes(slug)) list.push(slug);
+    // Keep only the most recent entries to bound storage.
+    const trimmed = list.slice(-REMOVED_TOMBSTONE_MAX);
+    localStorage.setItem(TOMBSTONE_KEY, JSON.stringify(trimmed));
+  } catch {
+    // ignore
+  }
+}
+
+function clearRemovedSlug(slug: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const set = getRemovedSlugs();
+    if (!set.has(slug)) return;
+    set.delete(slug);
+    localStorage.setItem(TOMBSTONE_KEY, JSON.stringify([...set]));
+  } catch {
+    // ignore
   }
 }
 
@@ -40,6 +83,8 @@ export function addToGarden(herb: Omit<GardenHerb, "savedAt">): GardenHerb[] {
   if (garden.some((h) => h.slug === herb.slug)) return garden;
   const updated = [{ ...herb, savedAt: new Date().toISOString() }, ...garden];
   localStorage.setItem(GARDEN_KEY, JSON.stringify(updated));
+  // Re-adding clears any prior removal tombstone for this slug.
+  clearRemovedSlug(herb.slug);
 
   // Sync to server in background
   syncHerbToServer(herb).catch(() => {
@@ -53,6 +98,8 @@ export function removeFromGarden(slug: string): GardenHerb[] {
   if (typeof window === "undefined") return [];
   const garden = getGarden().filter((h) => h.slug !== slug);
   localStorage.setItem(GARDEN_KEY, JSON.stringify(garden));
+  // Record the removal so mergeServerGarden won't resurrect this slug.
+  addRemovedSlug(slug);
 
   // Sync removal to server in background
   removeHerbFromServer(slug).catch(() => {
@@ -161,7 +208,11 @@ export async function mergeServerGarden(): Promise<GardenHerb[]> {
 
     const local = getGarden();
     const localSlugs = new Set(local.map((h) => h.slug));
-    const newHerbs = serverHerbs.filter((h) => !localSlugs.has(h.slug));
+    // Don't resurrect herbs the user intentionally removed — see tombstone.
+    const removedSlugs = getRemovedSlugs();
+    const newHerbs = serverHerbs.filter(
+      (h) => !localSlugs.has(h.slug) && !removedSlugs.has(h.slug)
+    );
 
     if (newHerbs.length > 0) {
       const merged = [...local, ...newHerbs];

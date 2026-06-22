@@ -1,5 +1,26 @@
 import { type Locale, LOCALES, DEFAULT_LOCALE } from "./config";
 
+/**
+ * Custom locale routing contract (NOT next-intl's built-in middleware).
+ *
+ * This project does not use `next-intl` middleware / `defineRouting` for
+ * routing. Instead the App Router serves localized pages under URL prefixes
+ * for non-default locales (e.g. `/fr/herbs`) while the default locale (`en`)
+ * is served unprefixed at `/herbs`. Locale is resolved per-request:
+ *
+ *   - On the server: `getLocaleFromRequest` (server-locale.ts) reads the
+ *     `x-locale` request header.
+ *   - The header is set by `proxy.ts` (Next.js 16 middleware replacement),
+ *     which inspects the pathname and injects `x-locale` before the request
+ *     reaches the route handler / server component.
+ *   - On the client: `next-intl`'s `useLocale()` is wired via the
+ *     `NextIntlClientProvider` in the root layout, fed from the same source.
+ *
+ * `next-intl` is therefore used only for message resolution (`useTranslations`
+ * / `getTranslations`), not for routing. All prefix add/strip/inspect logic
+ * lives here so the routing contract has one source of truth.
+ */
+
 // Derive the prefix for non-default locales (e.g. "/fr" when default is "en").
 const NON_DEFAULT_LOCALES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
 const LOCALE_PREFIX =

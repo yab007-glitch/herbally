@@ -90,11 +90,14 @@ export async function migrateGuestData(): Promise<boolean> {
 
       // Claim the surviving guest rows. After deleting collisions, none of the
       // remaining guest rows share a herb_slug with the user, so the
-      // (user_id, herb_slug) constraint holds.
+      // (user_id, herb_slug) constraint holds. Only claim rows that are still
+      // guest-owned (user_id IS NULL) — a prior partial migration or an
+      // admin-set row must not be silently re-assigned.
       const { data: claimed, error: claimErr } = await admin
         .from("garden_herbs")
         .update({ user_id: userId, guest_id: null })
         .eq("guest_id", guestId)
+        .is("user_id", null)
         .select("id");
       if (claimErr) throw claimErr;
       gardenClaimed = (claimed ?? []).length;

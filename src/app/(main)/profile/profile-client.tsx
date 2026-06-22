@@ -153,7 +153,6 @@ export function ProfileClient() {
     await saveHealthProfile({
       conditions: updated,
       allergies,
-      medications: [],
     });
   }
 
@@ -165,7 +164,6 @@ export function ProfileClient() {
     await saveHealthProfile({
       conditions,
       allergies: updated,
-      medications: [],
     });
   }
 
@@ -175,7 +173,6 @@ export function ProfileClient() {
     await saveHealthProfile({
       conditions: updated,
       allergies,
-      medications: [],
     });
   }
 
@@ -185,7 +182,6 @@ export function ProfileClient() {
     await saveHealthProfile({
       conditions,
       allergies: updated,
-      medications: [],
     });
   }
 

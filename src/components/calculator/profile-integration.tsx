@@ -112,7 +112,11 @@ export function SaveCalcButton({
         herb_id: null,
         notes: herbName,
       });
-      if (res.success) {
+      if (res.success && res.data?.skipped) {
+        // Guest (not signed in) — calculation wasn't persisted. Surface this
+        // distinctly instead of falsely reporting "saved".
+        toast.info(t("profile.signInToSave") || "Sign in to save calculations");
+      } else if (res.success) {
         setSaved(true);
         toast.success(t("profile.calculationSaved"));
       }

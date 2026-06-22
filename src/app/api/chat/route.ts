@@ -243,9 +243,12 @@ export async function POST(request: NextRequest) {
       cached.response.trim()
     ) {
       // Re-guard on read in case this entry predates the server-side guard.
+      // The cached body is the fully-assembled assistant text (not SSE
+      // chunks), so mirror the live stream's content-type — a mismatch here
+      // breaks clients that sniff the header to decide how to decode.
       return new NextResponse(guardResponse(cached.response, locale ?? "en"), {
         status: 200,
-        headers: { "content-type": "text/event-stream" },
+        headers: { "content-type": "text/plain; charset=utf-8" },
       });
     }
   }
@@ -331,7 +334,7 @@ export async function POST(request: NextRequest) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
-      const rawReader = response!.body?.getReader();
+      const rawReader = response?.body?.getReader();
       if (!rawReader) {
         controller.close();
         return;

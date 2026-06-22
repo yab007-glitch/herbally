@@ -17,6 +17,7 @@ import { siteUrl } from "@/lib/seo/site-url";
 import type { Monograph } from "@/lib/data/monographs";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
@@ -191,9 +192,17 @@ export default async function HerbDetailPage({ params }: Props) {
   const herb = result.data;
 
   after(async () => {
-    const supabase = getAnonClient();
-    if (supabase && herb.id) {
-      await supabase.rpc("increment_herb_view", { herb_id: herb.id });
+    if (!herb.id) return;
+    // L-2 (audit 2026-06-22): increment_herb_view EXECUTE was revoked from
+    // anon/authenticated (migration 00046) to close a direct-RPC view-count
+    // inflation vector. Call it via the service role; the service key may be
+    // absent in local dev, in which case we silently skip — view tracking is
+    // non-critical and must never break the page render.
+    try {
+      const admin = createAdminClient();
+      await admin.rpc("increment_herb_view", { herb_id: herb.id });
+    } catch {
+      /* service role unavailable — skip view-count increment */
     }
   });
 
