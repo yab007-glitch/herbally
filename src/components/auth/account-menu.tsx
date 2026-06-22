@@ -62,6 +62,13 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
         compact && "w-full justify-between"
       )}
     >
+      <Link
+        href="/profile"
+        className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+      >
+        <User className="size-4" />
+        {!compact && <span className="hidden sm:inline">Profile</span>}
+      </Link>
       {user.isAdmin && (
         <Link
           href="/admin"

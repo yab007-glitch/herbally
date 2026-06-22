@@ -56,7 +56,7 @@ describe("auth actions", () => {
         email: "user@example.com",
         password: "secret123",
       });
-      expect(redirectMock).toHaveBeenCalledWith("/");
+      expect(redirectMock).toHaveBeenCalledWith("/?welcome=login");
     });
 
     it("returns error when sign-in fails", async () => {
@@ -85,7 +85,7 @@ describe("auth actions", () => {
       formData.set("full_name", "Jane Doe");
 
       await expect(register(formData)).rejects.toThrow("NEXT_REDIRECT");
-      expect(redirectMock).toHaveBeenCalledWith("/");
+      expect(redirectMock).toHaveBeenCalledWith("/?welcome=register");
     });
 
     it("returns success when email confirmation is required", async () => {

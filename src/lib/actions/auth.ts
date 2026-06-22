@@ -39,7 +39,10 @@ export async function login(formData: FormData): Promise<ActionResponse> {
 
   // Redirect to the return URL (or home). redirect() throws a special
   // error that Next.js intercepts — the browser navigates automatically.
-  redirect(safeReturnTo(formData));
+  redirect(
+    safeReturnTo(formData) +
+      (safeReturnTo(formData) === "/" ? "?welcome=login" : "&welcome=login")
+  );
 }
 
 export async function register(formData: FormData): Promise<ActionResponse> {
@@ -64,10 +67,10 @@ export async function register(formData: FormData): Promise<ActionResponse> {
 
   // If email confirmation is disabled in Supabase (as in this project),
   // signUp returns a session immediately — the user is logged in. Redirect
-  // to home so they don't see a misleading "check email" message.
+  // to home with a welcome flag so the client can show a toast.
   if (data.session) {
     await migrateGuestData();
-    redirect(safeReturnTo(formData));
+    redirect("/?welcome=register");
   }
 
   // Email confirmation required — tell the user to check their inbox.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calculator, Info, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,11 @@ import {
   type DoseResult,
 } from "@/lib/utils/dosage-calculations";
 import { useTranslations } from "next-intl";
+import {
+  useDefaultPatientProfile,
+  AutoFillBadge,
+  SaveCalcButton,
+} from "./profile-integration";
 
 const unitOptions = ["mg", "ml", "g", "drops"] as const;
 
@@ -71,6 +76,28 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     useState<FormulaKey>("clarks_rule");
   const [result, setResult] = useState<DoseResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [autoFilled, setAutoFilled] = useState(false);
+  const { profile, loaded: profileLoaded } = useDefaultPatientProfile();
+
+  /* eslint-disable */
+  // Auto-fill from default patient profile when it loads
+  useEffect(() => {
+    if (profileLoaded && profile) {
+      if (profile.weight_kg) {
+        setWeightValue(String(profile.weight_kg));
+        setAutoFilled(true);
+      }
+      if (profile.age_years) {
+        setAgeYears(String(profile.age_years));
+        setAutoFilled(true);
+      }
+      if (profile.height_cm) {
+        setHeightCm(String(profile.height_cm));
+        setAutoFilled(true);
+      }
+    }
+  }, [profileLoaded, profile]);
+  /* eslint-enable */
 
   function handleCalculate() {
     setError(null);
@@ -252,6 +279,8 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </div>
             </div>
           </div>
+
+          <AutoFillBadge show={autoFilled} />
 
           {/* Age */}
           <div className="space-y-2">
@@ -496,6 +525,17 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   </p>
                 </div>
               </div>
+
+              <SaveCalcButton
+                result={result}
+                herbName={herbName}
+                adultDose={adultDose}
+                doseUnit={doseUnit}
+                weightValue={weightValue}
+                ageYears={ageYears}
+                heightCm={heightCm}
+                selectedFormula={selectedFormula}
+              />
 
               <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
                 <Info className="mb-0.5 mr-1 inline-block size-3" />
