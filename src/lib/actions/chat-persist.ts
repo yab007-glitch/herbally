@@ -1,19 +1,20 @@
 "use server";
 
-import { getAnonClient } from "@/lib/supabase/anonymous";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
 import { getGuestId } from "@/lib/actions/guest-id";
 
-// Note: Supabase RPC functions for guest chat are SECURITY DEFINER
-// (see migration 00022), so they work with the anon key safely.
+// Note: the guest chat RPCs are SECURITY DEFINER and their EXECUTE grants
+// are locked to the service_role (migration 00054) — a raw PostgREST call
+// with the public anon key can no longer reach them. We therefore call them
+// via the service-role admin client from this server action. The cookie-
+// derived guestId still goes into p_guest_id so the RPC's own ownership
+// check (defense in depth) rejects mismatches.
 //
-// M2 (audit 2026-06-22 v2): the guest identity is derived SERVER-SIDE from the
-// HttpOnly `herbally-guest-id` cookie via getGuestId() — the same pattern the
-// garden API route uses. Callers no longer pass a client-supplied guestId, so a
-// tampered client cannot address another guest's sessions or messages by
-// sending an arbitrary UUID. getGuestId() only accepts a valid UUID cookie and
-// mints one (setting the cookie) when absent, so identity is always stable and
-// server-owned.
+// The guest identity is derived SERVER-SIDE from the HttpOnly
+// `herbally-guest-id` cookie via getGuestId() — the same pattern the garden
+// API route uses. Callers never pass a client-supplied guestId, so a tampered
+// client cannot address another guest's sessions or messages.
 
 export type PersistedChatSession = {
   id: string;
@@ -32,9 +33,7 @@ export type PersistedChatMessage = {
 };
 
 function getSupabase() {
-  const supabase = getAnonClient();
-  if (!supabase) throw new Error("Supabase client not configured");
-  return supabase;
+  return createAdminClient();
 }
 
 export async function createGuestSession(

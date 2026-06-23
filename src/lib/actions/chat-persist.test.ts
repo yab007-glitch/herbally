@@ -17,8 +17,8 @@ function chain() {
   };
 }
 
-vi.mock("@/lib/supabase/anonymous", () => ({
-  getAnonClient: () => chain(),
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: () => chain(),
 }));
 
 // M2: chat-persist now derives the guest id server-side from the cookie via

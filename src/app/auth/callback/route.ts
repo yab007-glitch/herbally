@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { migrateGuestData } from "@/lib/actions/guest-migration";
+import { safeNextPath } from "@/lib/utils/safe-redirect";
 
 /**
  * Supabase auth callback (PKCE). Email confirmation and password-reset links
@@ -11,11 +12,10 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const origin = url.origin;
   const code = url.searchParams.get("code");
-  const nextRaw = url.searchParams.get("next") ?? "/";
-
-  // Only allow same-origin absolute-less paths to prevent open redirect.
-  const safeNext =
-    nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/";
+  // safeNextPath rejects protocol-relative URLs, backslash variants (which
+  // browsers normalize to /), percent-encoded backslashes, and explicit
+  // scheme prefixes — see src/lib/utils/safe-redirect.ts for the full rules.
+  const safeNext = safeNextPath(url.searchParams.get("next"));
 
   if (code) {
     const supabase = await createClient();
