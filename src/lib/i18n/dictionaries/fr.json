@@ -433,6 +433,15 @@
   "fda": {
     "disclaimer": "Ce produit n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir toute maladie. Ces déclarations n'ont pas été évaluées par la Food and Drug Administration."
   },
+  "herbHero": {
+    "pregnancy": "Grossesse",
+    "nursing": "Allaitement",
+    "generallySafe": "Généralement sûr",
+    "notSafe": "Déconseillé",
+    "unsafeOrally": "Déconseillé par voie orale",
+    "safeTopically": "Sû en application topique",
+    "unknown": "Données insuffisantes"
+  },
   "herbDetail": {
     "notFound": "Plante Non Trouvée",
     "uncategorized": "Non Classé",

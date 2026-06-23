@@ -433,6 +433,15 @@
   "fda": {
     "disclaimer": "This product is not intended to diagnose, treat, cure, or prevent any disease. These statements have not been evaluated by the Food and Drug Administration."
   },
+  "herbHero": {
+    "pregnancy": "Pregnancy",
+    "nursing": "Nursing",
+    "generallySafe": "Generally safe",
+    "notSafe": "Not safe",
+    "unsafeOrally": "Unsafe orally",
+    "safeTopically": "Safe topically",
+    "unknown": "Unknown"
+  },
   "herbDetail": {
     "notFound": "Herb Not Found",
     "uncategorized": "Uncategorized",

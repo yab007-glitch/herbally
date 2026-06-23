@@ -66,7 +66,9 @@ test.describe("AI Herbalist chat", () => {
     await input.fill("What is this rash?");
     await page.keyboard.press("Enter");
 
-    await expect(page.getByText(/educational information only/i)).toBeVisible({
+    await expect(
+      page.getByText(/⚠️.*educational information only/i)
+    ).toBeVisible({
       timeout: 10000,
     });
   });

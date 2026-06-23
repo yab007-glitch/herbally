@@ -133,32 +133,42 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
             {/* Pregnancy safety */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                Pregnancy
+                {t("herbHero.pregnancy")}
               </span>
               <span className="inline-flex items-center gap-1 text-xs">
                 {herb.pregnancy_safe_oral === false &&
                 herb.pregnancy_safe_topical === true ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">Unsafe orally</span>
+                    <span className="text-destructive">
+                      {t("herbHero.unsafeOrally")}
+                    </span>
                     <span className="text-muted-foreground">·</span>
                     <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">Safe topically</span>
+                    <span className="text-green-600">
+                      {t("herbHero.safeTopically")}
+                    </span>
                   </>
                 ) : herb.pregnancy_safe ? (
                   <>
                     <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">Generally safe</span>
+                    <span className="text-green-600">
+                      {t("herbHero.generallySafe")}
+                    </span>
                   </>
                 ) : herb.pregnancy_safe === false ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">Not safe</span>
+                    <span className="text-destructive">
+                      {t("herbHero.notSafe")}
+                    </span>
                   </>
                 ) : (
                   <>
                     <ShieldX className="size-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">Unknown</span>
+                    <span className="text-muted-foreground">
+                      {t("herbHero.unknown")}
+                    </span>
                   </>
                 )}
               </span>
@@ -166,32 +176,42 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
             {/* Nursing safety */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                Nursing
+                {t("herbHero.nursing")}
               </span>
               <span className="inline-flex items-center gap-1 text-xs">
                 {herb.nursing_safe_oral === false &&
                 herb.nursing_safe_topical === true ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">Unsafe orally</span>
+                    <span className="text-destructive">
+                      {t("herbHero.unsafeOrally")}
+                    </span>
                     <span className="text-muted-foreground">·</span>
                     <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">Safe topically</span>
+                    <span className="text-green-600">
+                      {t("herbHero.safeTopically")}
+                    </span>
                   </>
                 ) : herb.nursing_safe ? (
                   <>
                     <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">Generally safe</span>
+                    <span className="text-green-600">
+                      {t("herbHero.generallySafe")}
+                    </span>
                   </>
                 ) : herb.nursing_safe === false ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">Not safe</span>
+                    <span className="text-destructive">
+                      {t("herbHero.notSafe")}
+                    </span>
                   </>
                 ) : (
                   <>
                     <ShieldX className="size-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">Unknown</span>
+                    <span className="text-muted-foreground">
+                      {t("herbHero.unknown")}
+                    </span>
                   </>
                 )}
               </span>
