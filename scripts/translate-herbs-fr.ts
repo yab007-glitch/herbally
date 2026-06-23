@@ -217,22 +217,29 @@ interface HerbRow {
 async function translateHerbs() {
   console.log("\n--- Translating herbs (batched) ---");
 
-  // Fetch ALL untranslated herbs at once — filter in app to skip already-translated
-  const { data: allHerbs, error } = await supabase
-    .from("herbs")
-    .select(
-      "id, name, common_names, description, traditional_uses, modern_uses, dosage_adult, dosage_child, preparation_notes, contraindications, side_effects, translations"
-    )
-    .eq("is_published", true)
-    .order("name");
+  // Fetch ALL herbs with pagination (Supabase default limit is 1000)
+  let allHerbs: HerbRow[] = [];
+  let offset = 0;
+  const pageSize = 1000;
 
-  if (error) {
-    console.error("  Fetch error:", error.message);
-    return;
-  }
-  if (!allHerbs?.length) {
-    console.log("  No herbs found");
-    return;
+  while (true) {
+    const { data, error } = await supabase
+      .from("herbs")
+      .select(
+        "id, name, common_names, description, traditional_uses, modern_uses, dosage_adult, dosage_child, preparation_notes, contraindications, side_effects, translations"
+      )
+      .eq("is_published", true)
+      .order("name")
+      .range(offset, offset + pageSize - 1);
+
+    if (error) {
+      console.error("  Fetch error:", error.message);
+      return;
+    }
+    if (!data?.length) break;
+    allHerbs = allHerbs.concat(data as HerbRow[]);
+    if (data.length < pageSize) break;
+    offset += pageSize;
   }
 
   // Filter to untranslated only
