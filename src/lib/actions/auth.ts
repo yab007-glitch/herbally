@@ -5,34 +5,21 @@ import { redirect } from "next/navigation";
 import { migrateGuestData } from "@/lib/actions/guest-migration";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { getTranslations } from "next-intl/server";
+import { safeNextPath } from "@/lib/utils/safe-redirect";
 import type { ActionResponse } from "@/lib/types";
 
 /**
  * Redirect target after login. Defaults to "/" (home page). When a `returnTo`
  * query param is present on the login page, the client passes it as a hidden
  * field so the server action can redirect back to the original page.
+ *
+ * Validation is delegated to safeNextPath (src/lib/utils/safe-redirect.ts),
+ * which also backs the auth callback's `next` param. Centralizing keeps the
+ * open-redirect defense rules in one place — see the helper for details on
+ * the protocol-relative / backslash / percent-encoded bypasses it rejects.
  */
 function safeReturnTo(fd: FormData): string {
-  const raw = fd.get("returnTo") as string | null;
-  if (!raw) return "/";
-  // M3 (audit 2026-06-22): the old `raw.startsWith("/") && !raw.startsWith("//")`
-  // check blocked `//evil.com` but NOT `/\evil.com` or `/\\evil.com`, which
-  // several browsers normalize to a protocol-relative `//evil.com` → open
-  // redirect. Reject any backslash outright, then require a single-leading-slash
-  // same-origin path. No query-encoded bypass: decode first so `%2F%2F` and
-  // `%5C` can't sneak through.
-  let decoded = raw;
-  try {
-    decoded = decodeURIComponent(raw);
-  } catch {
-    return "/";
-  }
-  if (decoded.includes("\\")) return "/";
-  if (!decoded.startsWith("/") || decoded.startsWith("//")) return "/";
-  // Block scheme-relative and protocol-relative URLs that begin with "//"
-  // after any leading whitespace, and any explicit scheme.
-  if (/^\s*[a-z][a-z0-9+.-]*:/i.test(decoded)) return "/";
-  return decoded;
+  return safeNextPath(fd.get("returnTo") as string | null);
 }
 
 export async function login(formData: FormData): Promise<ActionResponse> {
