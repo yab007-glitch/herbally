@@ -22,19 +22,14 @@ test.describe("AI Herbalist chat", () => {
   test("renders PMID:NNN as a real PubMed link in the assistant reply", async ({
     page,
   }) => {
+    // The server sends plain text (buffered, guarded). The client renders
+    // it as markdown via ChatMarkdown which linkifies PMID:NNN references.
     await page.route("**/api/chat", async (route) => {
-      const sseBody = [
-        'data: {"choices":[{"delta":{"content":"See "}}]}',
-        'data: {"choices":[{"delta":{"content":"PMID:32747204 "}}]}',
-        'data: {"choices":[{"delta":{"content":"for "}}]}',
-        'data: {"choices":[{"delta":{"content":"**Strong evidence**."}}]}',
-        "data: [DONE]",
-        "",
-      ].join("\n");
+      const body = "See PMID:32747204 for **Strong evidence**.";
       await route.fulfill({
         status: 200,
-        contentType: "text/event-stream",
-        body: sseBody,
+        contentType: "text/plain; charset=utf-8",
+        body,
       });
     });
 
@@ -53,16 +48,16 @@ test.describe("AI Herbalist chat", () => {
   test("appends a safety warning when assistant content triggers a soft warn", async ({
     page,
   }) => {
+    // The server buffers the full response and runs guardResponse() before
+    // sending. For a soft warn, the server appends the warning to the content.
+    // The mock simulates what the server would send after guarding.
     await page.route("**/api/chat", async (route) => {
-      const sseBody = [
-        'data: {"choices":[{"delta":{"content":"I can help diagnose your rash."}}]}',
-        "data: [DONE]",
-        "",
-      ].join("\n");
+      const warnBody =
+        "I can help diagnose your rash.\n\n⚠️ This is educational information only — not medical advice. Always verify with a qualified healthcare provider before acting on it.";
       await route.fulfill({
         status: 200,
-        contentType: "text/event-stream",
-        body: sseBody,
+        contentType: "text/plain; charset=utf-8",
+        body: warnBody,
       });
     });
 
@@ -79,16 +74,17 @@ test.describe("AI Herbalist chat", () => {
   test("replaces assistant content with a refusal on a hard block", async ({
     page,
   }) => {
+    // The server buffers the full response and runs guardResponse() before
+    // sending a single byte to the client. The client receives plain text
+    // (not SSE) with the refusal already replacing the dangerous content.
+    // The mock simulates what the server would send after guarding.
     await page.route("**/api/chat", async (route) => {
-      const sseBody = [
-        'data: {"choices":[{"delta":{"content":"You should stop taking your insulin and use cinnamon instead."}}]}',
-        "data: [DONE]",
-        "",
-      ].join("\n");
+      const refusalBody =
+        "I can't responsibly answer that. Please consult a qualified healthcare provider before making any changes to your medication or treatment.";
       await route.fulfill({
         status: 200,
-        contentType: "text/event-stream",
-        body: sseBody,
+        contentType: "text/plain; charset=utf-8",
+        body: refusalBody,
       });
     });
 
