@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { ChatMarkdown } from "./markdown-renderer";
 import { ChatEmptyStateV2 } from "./chat-empty-state-v2";
-import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -342,26 +341,17 @@ export function ChatInterface({
         scrollToBottom();
       }
 
-      // Run safety guard
-      const safety = evaluateAssistantContent(
-        fullContent,
-        locale === "fr" ? "fr" : "en"
-      );
-
-      let finalContent = fullContent;
-      if (safety.verdict === "block") {
-        finalContent = safety.appended ?? fullContent;
-      } else if (safety.verdict === "warn" && safety.appended) {
-        finalContent += safety.appended;
-      }
-
+      // The server already runs the safety guard on the full response before
+      // sending it (see /api/chat/route.ts — response is buffered and run
+      // through guardResponse). The client no longer re-evaluates — that was
+      // double-processing which could double-append warning disclaimers.
       setStreamingContent("");
       setMessages((prev) => [
         ...prev,
         {
           id: makeId(),
           role: "assistant",
-          content: finalContent,
+          content: fullContent,
           timestamp: new Date().toISOString(),
         },
       ]);

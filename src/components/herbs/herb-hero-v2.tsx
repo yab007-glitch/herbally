@@ -8,12 +8,13 @@ import {
   ShieldCheck,
   ShieldX,
   Check,
-  BadgeCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HerbImage } from "@/components/herbs/HerbImage";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
+import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
+import { parseProvenance } from "@/lib/types/provenance";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
@@ -42,10 +43,13 @@ interface HerbHeroV2Props {
     evidence_level?: string | null;
     traditional_uses?: string[] | null;
   };
-  isVerified?: boolean;
+  provenance?: Record<string, unknown> | null;
 }
 
-export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
+export function HerbHeroV2({
+  herb,
+  provenance = null,
+}: HerbHeroV2Props) {
   const t = useTranslations();
   const [saved, setSaved] = useState(() => isInGarden(herb.slug));
 
@@ -108,15 +112,10 @@ export function HerbHeroV2({ herb, isVerified = false }: HerbHeroV2Props) {
                 herb.evidence_level &&
                 ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
                   ? (herb.evidence_level as "A" | "B" | "C" | "D" | "trad")
-                  : "C"
+                  : "trad"
               }
             />
-            {isVerified && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                <BadgeCheck className="size-3" />
-                {t("common.verified")}
-              </span>
-            )}
+            <ProvenanceBadge provenance={parseProvenance(provenance)} />
           </div>
 
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
