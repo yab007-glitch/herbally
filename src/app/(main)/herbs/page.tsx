@@ -9,8 +9,6 @@ import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
 import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { siteUrl } from "@/lib/seo/site-url";
-import { type Locale } from "@/lib/i18n/config";
-import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import Script from "next/script";
@@ -22,12 +20,6 @@ export const generateMetadata = () =>
     path: "/herbs",
   });
 
-async function getLocale(): Promise<Locale> {
-  const cookieStore = await cookies();
-  const savedLocale = cookieStore.get("herbally-locale")?.value;
-  return (savedLocale === "fr" ? "fr" : "en") as Locale;
-}
-
 export default async function HerbsPage({
   searchParams,
 }: {
@@ -37,7 +29,6 @@ export default async function HerbsPage({
   const query = params.q || "";
   const category = params.category || "";
   const page = parseInt(params.page || "1", 10);
-  const _locale = await getLocale();
   const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
   const [herbsResult, categoriesResult] = await Promise.all([
@@ -112,7 +103,7 @@ export default async function HerbsPage({
         {categories.slice(0, 8).map((cat: { slug: string; name: string }) => (
           <Link
             key={cat.slug}
-            href={`/herbs?category=${cat.slug}${query ? `&q=${query}` : ""}`}
+            href={`/herbs?category=${cat.slug}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
           >
             <Badge
               variant={category === cat.slug ? "default" : "outline"}
@@ -159,7 +150,7 @@ export default async function HerbsPage({
             render={
               page > 1 ? (
                 <Link
-                  href={`/herbs?page=${page - 1}${query ? `&q=${query}` : ""}${category ? `&category=${category}` : ""}`}
+                  href={`/herbs?page=${page - 1}${query ? `&q=${encodeURIComponent(query)}` : ""}${category ? `&category=${category}` : ""}`}
                 />
               ) : undefined
             }
@@ -176,7 +167,7 @@ export default async function HerbsPage({
             render={
               page < totalPages ? (
                 <Link
-                  href={`/herbs?page=${page + 1}${query ? `&q=${query}` : ""}${category ? `&category=${category}` : ""}`}
+                  href={`/herbs?page=${page + 1}${query ? `&q=${encodeURIComponent(query)}` : ""}${category ? `&category=${category}` : ""}`}
                 />
               ) : undefined
             }

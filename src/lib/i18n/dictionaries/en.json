@@ -45,7 +45,22 @@
     "navPrimary": "Primary",
     "navMobile": "Mobile menu",
     "navQuick": "Quick navigation",
-    "navFooter": "Footer"
+    "navFooter": "Footer",
+    "switchToEnglish": "Switch to English",
+    "switchToFrench": "Passer en Français",
+    "dismiss": "Dismiss",
+    "languageSwitchedEn": "Language switched to English",
+    "languageSwitchedFr": "Langue changée en Français",
+    "breadcrumbHome": "Home",
+    "medicalDisclaimerLabel": "Medical disclaimer",
+    "copyLinkLabel": "Copy link",
+    "breadcrumbLabel": "Breadcrumb",
+    "backToTopLabel": "Back to top",
+    "chatMessagesLabel": "Chat messages",
+    "copyResponseLabel": "Copy response",
+    "chatInputlabel": "Chat message input",
+    "stopGeneratingLabel": "Stop generating",
+    "sendMessageLabel": "Send message"
   },
   "nav": {
     "symptoms": "By Symptom",
@@ -170,6 +185,7 @@
       "ageRequired": "Young's Rule requires patient age in years.",
       "bsaRequired": "BSA method requires both weight and height.",
       "infantAge": "Fried's Rule requires age in months.",
+      "friedAgeLimit": "Fried's Rule only applies to infants under 24 months; choose another formula for older children.",
       "calculationError": "An error occurred during calculation. Please check your inputs."
     },
     "results": {
@@ -255,7 +271,20 @@
     "retrying": "Retrying...",
     "errorRetry": "Connection failed after 2 retries. Please check your internet connection and try again.",
     "safetyWarning": "\n\n⚠️ This is educational information only. Verify with a healthcare provider before acting on it.",
-    "safetyBlocked": "I can't responsibly answer that. Please consult a qualified healthcare provider."
+    "safetyBlocked": "I can't responsibly answer that. Please consult a qualified healthcare provider.",
+    "followUpQuestions": {
+      "sideEffects": "What are the side effects?",
+      "dosage": "What's the recommended dosage?",
+      "pregnancy": "Is it safe during pregnancy?",
+      "interactions": "Any drug interactions I should know about?",
+      "research": "What does the research say?"
+    },
+    "suggestionLabels": {
+      "turmericBloodThinners": "Turmeric + blood thinners",
+      "herbsForAnxiety": "Herbs for anxiety",
+      "echinaceaPregnancy": "Echinacea during pregnancy",
+      "gingerForNausea": "Ginger for nausea"
+    }
   },
   "provenance": {
     "verified": "Verified",
@@ -376,7 +405,27 @@
     "notFoundTitle": "Page Not Found",
     "notFoundDesc": "The page you are looking for does not exist or may have been moved.",
     "unexpectedError": "An unexpected error occurred. Please try again or return to the home page.",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "calculatorError": "Calculator error",
+    "calculatorErrorMsg": "Something went wrong with the dosage calculator. Please try again.",
+    "comparisonError": "Comparison error",
+    "comparisonErrorMsg": "We couldn't load the herb comparison. Please try again.",
+    "failedToLoadHerbs": "Failed to load herbs",
+    "failedToLoadHerbsMsg": "We couldn't load the herb catalog. Please try again.",
+    "failedToLoadHerb": "Failed to load herb",
+    "failedToLoadHerbMsg": "We couldn't load this herb. Please try again.",
+    "failedToLoadSymptoms": "Failed to load symptoms",
+    "failedToLoadSymptomsMsg": "We couldn't load the symptom catalog. Please try again.",
+    "failedToLoadSymptom": "Failed to load symptom",
+    "failedToLoadSymptomMsg": "We couldn't load this symptom page. Please try again.",
+    "failedToLoadHerbalist": "Failed to load herbalist",
+    "failedToLoadHerbalistMsg": "We couldn't load the herbalist. Please try again.",
+    "failedToLoadPharmacist": "Failed to load pharmacist",
+    "failedToLoadPharmacistMsg": "We couldn't load the pharmacist. Please try again.",
+    "failedToLoadCompare": "Failed to load comparison",
+    "failedToLoadCompareMsg": "We couldn't load the herb comparison. Please try again.",
+    "failedToLoadGarden": "Failed to load garden",
+    "failedToLoadGardenMsg": "We couldn't load your garden. Please try again."
   },
   "fda": {
     "disclaimer": "This product is not intended to diagnose, treat, cure, or prevent any disease. These statements have not been evaluated by the Food and Drug Administration."
@@ -501,7 +550,8 @@
       "submitting": "Creating...",
       "haveAccount": "Already have an account?",
       "signIn": "Sign in",
-      "checkEmail": "Check your email for a confirmation link."
+      "checkEmail": "Check your email for a confirmation link.",
+      "accountExists": "An account with this email already exists. Please log in or reset your password."
     },
     "forgot": {
       "title": "Reset your password",
@@ -823,7 +873,12 @@
         "q": "How often is the information updated?",
         "a": "Herb profiles are reviewed regularly by our editorial team. Each herb page shows a 'Last reviewed' date and reviewer credentials. We update interaction data as new research becomes available."
       }
-    }
+    },
+    "searchPlaceholder": "Search FAQ...",
+    "clearSearch": "Clear search",
+    "results": "{count} results",
+    "result": "{count} result",
+    "noResultsFound": "No results found. Try a different search term."
   },
   "methodologyContent": {
     "title": "Our Methodology",
@@ -941,7 +996,15 @@
     "askAI": "Ask the AI herbalist about your symptoms",
     "askAIFallback": "Ask the AI herbalist instead",
     "allSymptoms": "All symptoms",
-    "viewDetails": "View details"
+    "viewDetails": "View details",
+    "exampleSymptoms": [
+      "I have trouble sleeping and feel anxious",
+      "My joints hurt and are stiff in the morning",
+      "I have digestive issues and bloating after meals",
+      "I keep getting colds and my immune system feels weak",
+      "I have brain fog and trouble concentrating"
+    ],
+    "evidenceLabel": "Evidence"
   },
   "herbDetailContent": {
     "herbNotFound": "Herb Not Found",
@@ -1008,7 +1071,9 @@
     "severityContraindicated": "Contraindicated",
     "severitySevere": "Severe",
     "severityModerate": "Moderate",
-    "severityMild": "Mild"
+    "severityMild": "Mild",
+    "personalizedInteractionsTitle": "Personalized Interaction Warning",
+    "personalizedInteractionsBody": "Based on the medications in your profile, this herb may interact with one or more drugs you are taking. Do not start, stop, or change any medication or supplement without consulting your healthcare provider or pharmacist."
   },
   "citations": {
     "pending": "Citations pending review. Information based on traditional use and preliminary research.",
@@ -1136,7 +1201,11 @@
     "aboutDesc": "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
     "appDescription": "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions with our AI-powered virtual herbalist.",
     "herbsFor": "Herbs for {symptom}",
-    "homeTitle": "HerbAlly - Your Trusted Guide to Medicinal Herbs"
+    "homeTitle": "HerbAlly - Your Trusted Guide to Medicinal Herbs",
+    "gardenPageTitle": "My Garden — HerbAlly",
+    "gardenSubtitle": "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
+    "profileTitle": "My Profile — HerbAlly",
+    "profileSubtitle": "Manage your health data for personalized dosing and safety warnings"
   },
   "calculatorForm": {
     "herbName": "Herb Name",
@@ -1201,91 +1270,91 @@
   "symptomMeta": {
     "anxiety": {
       "title": "Herbs for Anxiety & Stress",
-      "desc": ""
+      "desc": "Evidence-based herbs for anxiety and stress relief. Compare effectiveness, safety, and drug interactions for herbs like Ashwagandha, Valerian, and Lavender."
     },
     "depression": {
       "title": "Herbs for Depression & Mood",
-      "desc": ""
+      "desc": "Evidence-based herbs for depression and mood support. Compare effectiveness, safety, and drug interactions for St. John's Wort, Saffron, and more."
     },
     "sleep": {
       "title": "Herbs for Sleep & Insomnia",
-      "desc": ""
+      "desc": "Evidence-based herbs for better sleep. Compare effectiveness, safety, and drug interactions for Valerian, Chamomile, and Melatonin."
     },
     "inflammation": {
       "title": "Herbs for Inflammation",
-      "desc": ""
+      "desc": "Evidence-based anti-inflammatory herbs. Compare effectiveness, safety, and drug interactions for Turmeric, Ginger, Boswellia, and more."
     },
     "digestion": {
       "title": "Herbs for Digestive Health",
-      "desc": ""
+      "desc": "Evidence-based herbs for digestive issues including bloating, nausea, and IBS. Compare effectiveness and safety for Peppermint, Ginger, Fennel, and more."
     },
     "nausea": {
       "title": "Herbs for Nausea",
-      "desc": ""
+      "desc": "Evidence-based herbs for nausea and upset stomach. Compare effectiveness and safety for Ginger, Peppermint, Fennel, and more."
     },
     "constipation": {
       "title": "Herbs for Constipation",
-      "desc": ""
+      "desc": "Evidence-based herbs for constipation relief. Compare effectiveness and safety for Senna, Cascara, Psyllium, and more."
     },
     "liver": {
       "title": "Herbs for Liver Health",
-      "desc": ""
+      "desc": "Evidence-based herbs for liver support and detoxification. Compare effectiveness and safety for Milk Thistle, Dandelion Root, Turmeric, and more."
     },
     "bloodPressure": {
       "title": "Herbs for Blood Pressure",
-      "desc": ""
+      "desc": "Evidence-based herbs for blood pressure management. Compare effectiveness and safety for Garlic, Hibiscus, Hawthorn, and more."
     },
     "cholesterol": {
       "title": "Herbs for Cholesterol",
-      "desc": ""
+      "desc": "Evidence-based herbs for cholesterol management. Compare effectiveness and safety for Garlic, Red Yeast Rice, Artichoke, and more."
     },
     "circulation": {
       "title": "Herbs for Circulation",
-      "desc": ""
+      "desc": "Evidence-based herbs for circulation and cardiovascular health. Compare effectiveness and safety for Ginkgo, Cayenne, Horse Chestnut, and more."
     },
     "immune": {
       "title": "Herbs for Immune Support",
-      "desc": ""
+      "desc": "Evidence-based herbs for immune system support. Compare effectiveness and safety for Echinacea, Elderberry, Astragalus, and more."
     },
     "allergy": {
       "title": "Herbs for Allergies",
-      "desc": ""
+      "desc": "Evidence-based herbs for allergy relief. Compare effectiveness and safety for Butterbur, Quercetin, Stinging Nettle, and more."
     },
     "menstrual": {
       "title": "Herbs for Menstrual Health",
-      "desc": ""
+      "desc": "Evidence-based herbs for menstrual cramps, PMS, and cycle support. Compare effectiveness and safety for Vitex, Cramp Bark, Ginger, and more."
     },
     "menopause": {
       "title": "Herbs for Menopause",
-      "desc": ""
+      "desc": "Evidence-based herbs for menopause symptom relief. Compare effectiveness and safety for Black Cohosh, Red Clover, Dong Quai, and more."
     },
     "hormonal": {
       "title": "Hormonal Balance",
-      "desc": ""
+      "desc": "Evidence-based herbs for hormonal balance and endocrine support. Compare effectiveness and safety for Vitex, Maca, Ashwagandha, and more."
     },
     "skin": {
       "title": "Herbs for Skin Health",
-      "desc": ""
+      "desc": "Evidence-based herbs for skin conditions including acne, eczema, and wound healing. Compare effectiveness and safety for Tea Tree, Aloe, Calendula, and more."
     },
     "wound": {
       "title": "Herbs for Wound Healing",
-      "desc": ""
+      "desc": "Evidence-based herbs for wound healing and tissue repair. Compare effectiveness and safety for Calendula, Comfrey, Aloe, and more."
     },
     "acne": {
       "title": "Herbs for Acne",
-      "desc": ""
+      "desc": "Evidence-based herbs for acne treatment and prevention. Compare effectiveness and safety for Tea Tree, Zinc, Burdock, and more."
     },
     "nerve": {
       "title": "Herbs for Nerve Health",
-      "desc": ""
+      "desc": "Evidence-based herbs for nerve health and neuropathy support. Compare effectiveness and safety for St. John's Wort, Lion's Mane, and more."
     },
     "prostate": {
       "title": "Herbs for Prostate Health",
-      "desc": ""
+      "desc": "Evidence-based herbs for prostate support. Compare effectiveness and safety for Saw Palmetto, Pygeum, Stinging Nettle Root, and more."
     },
     "diabetes": {
       "title": "Herbs for Blood Sugar",
-      "desc": ""
+      "desc": "Evidence-based herbs for blood sugar management. Compare effectiveness and safety for Gymnema, Fenugreek, Bitter Melon, and more."
     },
     "focus": {
       "title": "Herbs for Focus & Memory",
@@ -1329,5 +1398,68 @@
     "badge": "AI-Powered Herbal Assistant",
     "title": "Ask anything about herbs and natural health",
     "subtitle": "Type your question below or tap a suggestion. Get evidence-based answers from WHO, NCCIH, and PubMed — instantly and for free."
+  },
+  "profile": {
+    "title": "My Profile",
+    "subtitle": "Manage your health data for personalized dosing and safety warnings",
+    "patientProfiles": "Patient Profiles",
+    "patientProfilesDesc": "Save patient data (weight, age, height) for automatic dose calculator pre-fill",
+    "addPatient": "Add Patient",
+    "editPatient": "Edit",
+    "deletePatient": "Delete",
+    "setDefault": "Set as Default",
+    "defaultPatient": "Default",
+    "name": "Name",
+    "relationship": "Relationship",
+    "self": "Self",
+    "child": "Child",
+    "partner": "Partner",
+    "parent": "Parent",
+    "other": "Other",
+    "weightKg": "Weight (kg)",
+    "weightLbs": "Weight (lbs)",
+    "ageYears": "Age (years)",
+    "ageMonths": "Age (months)",
+    "heightCm": "Height (cm)",
+    "notes": "Notes",
+    "save": "Save",
+    "cancel": "Cancel",
+    "noProfiles": "No patient profiles yet. Add one to auto-fill the dose calculator.",
+    "healthProfile": "Health Profile",
+    "healthProfileDesc": "Your conditions and allergies help personalize safety warnings",
+    "conditions": "Conditions",
+    "allergies": "Allergies",
+    "addCondition": "Add condition",
+    "addAllergy": "Add allergy",
+    "medications": "My Medications",
+    "medicationsDesc": "Track your medications for real-time interaction warnings on herb pages",
+    "addMedication": "Add Medication",
+    "drugName": "Drug name",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "removeMedication": "Remove",
+    "noMedications": "No medications added. Add medications to get interaction warnings.",
+    "dosageHistory": "Dosage History",
+    "dosageHistoryDesc": "Your last 20 saved dosage calculations",
+    "noCalculations": "No saved calculations yet. Use the calculator to save results.",
+    "herbName": "Herb",
+    "calculatedDose": "Calculated Dose",
+    "formula": "Formula",
+    "date": "Date",
+    "gardenNotes": "Garden Notes",
+    "interactionWarning": "Interaction Warning",
+    "interactionWarningDesc": "This herb may interact with your medications",
+    "noInteractions": "No known interactions with your medications",
+    "autoFillNote": "Auto-filled from your default patient profile",
+    "recalculateNote": "Profile updated — recalculate to see new dose",
+    "welcomeRegistered": "Welcome to HerbAlly! Your account is ready.",
+    "welcomeBack": "Welcome back!",
+    "signInForProfile": "Sign in to save your health data and get personalized dosing",
+    "notLoggedIn": "Please sign in to access your profile",
+    "profileSaved": "Profile saved successfully",
+    "medicationAdded": "Medication added",
+    "medicationRemoved": "Medication removed",
+    "calculationSaved": "Calculation saved to history",
+    "saveCalculation": "Save calculation to history"
   }
 }

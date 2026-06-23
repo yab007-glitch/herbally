@@ -1,45 +1,22 @@
 import { describe, expect, it } from "vitest";
+import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
 
 /**
  * Unit tests for middleware.ts — covers locale detection from
  * Accept-Language header and the admin route guard logic.
  *
- * We test the helper functions in isolation since the middleware
- * depends on Supabase session cookies which are hard to mock.
+ * We test the shared detectLocaleFromAcceptLanguage function (imported
+ * from @/lib/i18n/detect-locale) so the tests exercise the actual
+ * production code path used by the proxy.
  */
 
-// ---------------------------------------------------------------------------
-// Import the locale detection helper (extracted for testability)
-// ---------------------------------------------------------------------------
-
 describe("middleware — locale detection", () => {
-  /**
-   * Re-implement the detectLocaleFromAcceptLanguage function inline
-   * so we can test it without mocking cookies and Supabase.
-   */
-  function detectLocaleFromAcceptLanguage(
-    acceptLanguage: string | null
-  ): string | null {
-    if (!acceptLanguage) return null;
-    const entries = acceptLanguage.split(",").map((entry) => {
-      const [tag] = entry.trim().split(";");
-      const lang = tag.split("-")[0]?.toLowerCase() ?? "";
-      const q = parseFloat(entry.split("q=")[1]) || 1.0;
-      return { lang, q };
-    });
-    for (const entry of entries.sort((a, b) => b.q - a.q)) {
-      if (entry.lang === "fr") return "fr";
-      if (entry.lang === "en") return null;
-    }
-    return null;
-  }
-
-  it("returns null when Accept-Language is null", () => {
-    expect(detectLocaleFromAcceptLanguage(null)).toBeNull();
+  it("returns en (default) when Accept-Language is null", () => {
+    expect(detectLocaleFromAcceptLanguage(null)).toBe("en");
   });
 
-  it("returns null for English (default locale)", () => {
-    expect(detectLocaleFromAcceptLanguage("en-US,en;q=0.9")).toBeNull();
+  it("returns en (default) for English", () => {
+    expect(detectLocaleFromAcceptLanguage("en-US,en;q=0.9")).toBe("en");
   });
 
   it("returns 'fr' when French is preferred", () => {
@@ -54,10 +31,10 @@ describe("middleware — locale detection", () => {
     );
   });
 
-  it("returns null when no supported language is found", () => {
-    expect(
-      detectLocaleFromAcceptLanguage("de-DE,de;q=0.9,es;q=0.8")
-    ).toBeNull();
+  it("returns en (default) when no supported language is found", () => {
+    expect(detectLocaleFromAcceptLanguage("de-DE,de;q=0.9,es;q=0.8")).toBe(
+      "en"
+    );
   });
 
   it("handles multiple entries with same quality", () => {
@@ -70,7 +47,7 @@ describe("middleware — locale detection", () => {
   });
 
   it("handles empty string", () => {
-    expect(detectLocaleFromAcceptLanguage("")).toBeNull();
+    expect(detectLocaleFromAcceptLanguage("")).toBe("en");
   });
 });
 
@@ -120,7 +97,10 @@ describe("middleware — CSP", () => {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com",
     "connect-src 'self' *.supabase.co *.openrouter.ai *.stripe.com",
-    "img-src 'self' data: blob: https:",
+    // L16: img-src scoped to the only remote image host we use (Supabase
+    // Storage), matching next.config.ts remotePatterns — no longer a bare
+    // `https:` that permitted any origin.
+    "img-src 'self' data: blob: https://*.supabase.co",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "frame-src *.stripe.com",

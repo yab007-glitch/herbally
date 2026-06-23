@@ -9,13 +9,17 @@ import {
   addLocalePrefix,
 } from "@/lib/i18n/routing";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
+import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
 
 function buildCSP(): string {
   const directives = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' *.stripe.com",
     "connect-src 'self' *.supabase.co *.openrouter.ai *.stripe.com",
-    "img-src 'self' data: blob: https:",
+    // L16 (audit 2026-06-22): scope img-src to the only remote image host we
+    // actually use (Supabase Storage), matching next.config.ts remotePatterns.
+    // A bare `https:` allowed any origin to be a CSP-permitted image source.
+    "img-src 'self' data: blob: https://*.supabase.co",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "frame-src *.stripe.com",
@@ -48,21 +52,6 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
     );
   }
   return response;
-}
-
-function detectLocaleFromAcceptLanguage(acceptLanguage: string | null): Locale {
-  if (!acceptLanguage) return DEFAULT_LOCALE;
-  const entries = acceptLanguage.split(",").map((entry) => {
-    const [tag] = entry.trim().split(";");
-    const lang = tag.split("-")[0].toLowerCase();
-    const q = parseFloat(entry.split("q=")[1]) || 1.0;
-    return { lang, q };
-  });
-  for (const entry of entries.sort((a, b) => b.q - a.q)) {
-    if (entry.lang === "fr") return "fr";
-    if (entry.lang === "en") return DEFAULT_LOCALE;
-  }
-  return DEFAULT_LOCALE;
 }
 
 /**
@@ -141,6 +130,19 @@ export default async function proxy(request: NextRequest) {
         )
       );
     }
+  }
+
+  // ── Supabase auth code redirect ────────────────────────────────────
+  // When the Supabase dashboard Site URL is misconfigured (e.g., set to
+  // localhost:3000 instead of herbally.app), password-reset and email-confirmation
+  // links arrive at the wrong URL with ?code=... This catches the code on ANY
+  // page and redirects to /auth/callback which exchanges it for a session.
+  const authCode = request.nextUrl.searchParams.get("code");
+  if (authCode && !pathname.startsWith("/auth/callback")) {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = "/auth/callback";
+    callbackUrl.searchParams.set("next", "/reset-password");
+    return applySecurityHeaders(NextResponse.redirect(callbackUrl));
   }
 
   // ── Locale routing ─────────────────────────────────────────────────

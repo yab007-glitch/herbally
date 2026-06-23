@@ -8,8 +8,12 @@ import { POPULAR_COMPARISONS } from "@/app/(main)/compare/[slug1]/vs/[slug2]/pag
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
-// static content changes every hour (sitemap revalidate = 3600).
-const STATIC_PAGE_MODIFIED = new Date();
+// static content changes every hour (sitemap revalidate = 3600). A module-top
+// `new Date()` was re-evaluated on every hourly revalidation, bumping
+// lastModified each time — Google re-crawled wastefully (M18, audit
+// 2026-06-22). This is now a fixed literal; bump it deliberately when static
+// page content actually changes.
+const STATIC_PAGE_MODIFIED = new Date("2026-06-22T00:00:00Z");
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
@@ -96,6 +100,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     // /herbalist now redirects to / (chat-first homepage)
+    {
+      url: `${baseUrl}/profile`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/profile`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
     {
       url: `${baseUrl}/about`,
       lastModified: STATIC_PAGE_MODIFIED,

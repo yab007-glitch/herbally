@@ -61,7 +61,6 @@
     "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^9.39.4",
     "eslint-config-next": "16.2.9",
-    "eslint-plugin-vitest": "^0.5.4",
     "jsdom": "^25.0.1",
     "playwright": "^1.60.0",
     "prettier": "^3.8.4",

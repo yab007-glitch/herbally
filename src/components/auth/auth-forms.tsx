@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,9 +40,12 @@ function FormCard({
 export function LoginForm() {
   const t = useTranslations("auth");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo") || "";
   const [state, formAction, pending] = useActionState(
     async (_prev: ActionResponse, fd: FormData) => {
       const res = await login(fd);
+      // If login returns (not redirected), refresh to update UI state.
       if (res.success) router.refresh();
       return res;
     },
@@ -52,6 +55,7 @@ export function LoginForm() {
   return (
     <FormCard title={t("login.title")}>
       <form action={formAction} className="space-y-4">
+        <input type="hidden" name="returnTo" value={returnTo} />
         <div className="space-y-1.5">
           <Label htmlFor="email">{t("login.email")}</Label>
           <Input

@@ -21,10 +21,11 @@ import {
 } from "@/lib/garden/local-garden";
 import { recordVisit, getExploredCount } from "@/lib/garden/streaks";
 import { HerbImage } from "@/components/herbs/HerbImage";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export function GardenClient() {
   const t = useTranslations();
+  const locale = useLocale();
   const [garden, setGarden] = useState<GardenHerb[]>(() => getGarden());
   const [streak] = useState(() => recordVisit());
   const [explored] = useState(() => getExploredCount());
@@ -141,41 +142,45 @@ export function GardenClient() {
             {t("garden.yourCollection") || "Your Collection"}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {garden.map((herb) => (
-              <div
-                key={herb.slug}
-                className="group relative overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg hover:-translate-y-1"
-              >
-                <Link
-                  href={`/herbs/${herb.slug}`}
-                  className="flex items-start gap-4 p-4"
+            {garden
+              .filter((herb) => herb && herb.slug)
+              .map((herb) => (
+                <div
+                  key={herb.slug}
+                  className="group relative overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg hover:-translate-y-1"
                 >
-                  <HerbImage
-                    name={herb.name}
-                    imageUrl={herb.image_url}
-                    className="size-14 shrink-0 rounded-xl shadow-sm transition-transform group-hover:scale-105"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-                      {herb.name}
-                    </h3>
-                    <p className="text-sm italic text-muted-foreground truncate">
-                      {herb.scientific_name}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {new Date(herb.savedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </Link>
-                <button
-                  onClick={() => handleRemove(herb.slug)}
-                  className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
-                  aria-label={`Remove ${herb.name}`}
-                >
-                  <Trash2 className="size-4" />
-                </button>
-              </div>
-            ))}
+                  <Link
+                    href={`/herbs/${herb.slug}`}
+                    className="flex items-start gap-4 p-4"
+                  >
+                    <HerbImage
+                      name={herb.name}
+                      imageUrl={herb.image_url}
+                      className="size-14 shrink-0 rounded-xl shadow-sm transition-transform group-hover:scale-105"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                        {herb.name}
+                      </h3>
+                      <p className="text-sm italic text-muted-foreground truncate">
+                        {herb.scientific_name}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {new Date(herb.savedAt).toLocaleDateString(
+                          locale === "fr" ? "fr-FR" : "en-US"
+                        )}
+                      </p>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={() => handleRemove(herb.slug)}
+                    className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                    aria-label={`${t("garden.remove")} ${herb.name}`}
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
       ) : (

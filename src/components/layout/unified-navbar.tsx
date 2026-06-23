@@ -22,6 +22,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { useTheme, type Theme } from "@/components/theme/use-theme";
 import { LanguageSelector } from "@/components/i18n/language-selector";
 import { LanguageDrawer } from "@/components/i18n/language-drawer";
 import { AccountMenu } from "@/components/auth/account-menu";
@@ -37,26 +38,10 @@ const navLinks = [
   { href: "/garden", labelKey: "nav.garden", icon: Sprout },
 ];
 
-type Theme = "light" | "dark" | "system";
-
 function getMobileThemeIcon(theme: Theme) {
   if (theme === "dark") return Moon;
   if (theme === "light") return Sun;
   return Monitor;
-}
-
-function applyMobileTheme(theme: Theme) {
-  const root = document.documentElement;
-  root.classList.remove("light", "dark");
-  if (theme === "system") {
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
-      ? "dark"
-      : "light";
-    root.classList.add(systemTheme);
-  } else {
-    root.classList.add(theme);
-  }
 }
 
 export function UnifiedNavbar() {
@@ -67,16 +52,11 @@ export function UnifiedNavbar() {
   const pathname = usePathname();
 
   const currentLang = LANGUAGES.find((l) => l.code === locale);
-  const [mobileTheme, setMobileTheme] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "system";
-    return (localStorage.getItem("theme") as Theme) || "system";
-  });
-
-  function handleMobileThemeChange(newTheme: Theme) {
-    setMobileTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-    applyMobileTheme(newTheme);
-  }
+  // M17 (audit 2026-06-22): read the persisted theme via useSyncExternalStore
+  // (see use-theme.ts). The server snapshot is deterministic ("system") so the
+  // first client render matches the server (no hydration mismatch), and the
+  // real localStorage value is read after hydration without a setState-in-effect.
+  const { theme: mobileTheme, setTheme: handleMobileThemeChange } = useTheme();
 
   return (
     <>

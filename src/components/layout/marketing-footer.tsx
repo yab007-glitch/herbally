@@ -102,7 +102,9 @@ export function MarketingFooter() {
         </div>
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          &copy; {new Date().getFullYear()} HerbAlly. {t("footer.copyright")}
+          &copy;{" "}
+          <span suppressHydrationWarning>{new Date().getFullYear()}</span>{" "}
+          HerbAlly. {t("footer.copyright")}
         </p>
       </div>
     </footer>

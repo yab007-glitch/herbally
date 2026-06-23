@@ -2,9 +2,18 @@
 
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
+import { getGuestId } from "@/lib/actions/guest-id";
 
 // Note: Supabase RPC functions for guest chat are SECURITY DEFINER
 // (see migration 00022), so they work with the anon key safely.
+//
+// M2 (audit 2026-06-22 v2): the guest identity is derived SERVER-SIDE from the
+// HttpOnly `herbally-guest-id` cookie via getGuestId() — the same pattern the
+// garden API route uses. Callers no longer pass a client-supplied guestId, so a
+// tampered client cannot address another guest's sessions or messages by
+// sending an arbitrary UUID. getGuestId() only accepts a valid UUID cookie and
+// mints one (setting the cookie) when absent, so identity is always stable and
+// server-owned.
 
 export type PersistedChatSession = {
   id: string;
@@ -29,11 +38,11 @@ function getSupabase() {
 }
 
 export async function createGuestSession(
-  guestId: string,
   herbContext?: string | null
 ): Promise<PersistedChatSession | null> {
   try {
     const supabase = getSupabase();
+    const guestId = await getGuestId();
 
     const { data, error } = await supabase.rpc("create_guest_chat_session", {
       p_guest_id: guestId,
@@ -63,11 +72,10 @@ export async function createGuestSession(
   }
 }
 
-export async function getGuestSessions(
-  guestId: string
-): Promise<PersistedChatSession[]> {
+export async function getGuestSessions(): Promise<PersistedChatSession[]> {
   try {
     const supabase = getSupabase();
+    const guestId = await getGuestId();
     const { data, error } = await supabase.rpc("get_guest_chat_sessions", {
       p_guest_id: guestId,
     });
@@ -90,11 +98,11 @@ export async function getGuestSessions(
 }
 
 export async function getGuestSession(
-  sessionId: string,
-  guestId: string
+  sessionId: string
 ): Promise<PersistedChatSession | null> {
   try {
     const supabase = getSupabase();
+    const guestId = await getGuestId();
     // There is no singular "get one session" RPC on the live database (see
     // migration 00022). Fetch the guest's session list — get_guest_chat_sessions
     // is SECURITY DEFINER and scoped to p_guest_id, so only sessions owned by
@@ -110,13 +118,12 @@ export async function getGuestSession(
     const session = sessions.find((s) => s.id === sessionId);
     if (!session) return null;
 
-    // get_guest_chat_messages takes only p_session_id on the live function
-    // (migration 00022) — passing p_guest_id would error as an unknown arg.
-    // Ownership was already verified above by finding the session in the
-    // guest's own list.
+    // get_guest_chat_messages now requires p_guest_id (migration 00046) and
+    // enforces ownership server-side — an app-level check alone was bypassable
+    // via a direct PostgREST RPC call with the anon key.
     const { data: messages, error: messagesError } = await supabase.rpc(
       "get_guest_chat_messages",
-      { p_session_id: sessionId }
+      { p_session_id: sessionId, p_guest_id: guestId }
     );
     if (messagesError) return null;
 
@@ -144,11 +151,11 @@ export async function getGuestSession(
 export async function addGuestMessage(
   sessionId: string,
   role: "user" | "assistant" | "system",
-  content: string,
-  guestId: string
+  content: string
 ): Promise<PersistedChatMessage | null> {
   try {
     const supabase = getSupabase();
+    const guestId = await getGuestId();
 
     const { data, error } = await supabase.rpc("add_guest_chat_message", {
       p_session_id: sessionId,
@@ -178,12 +185,10 @@ export async function addGuestMessage(
   }
 }
 
-export async function deleteGuestSession(
-  sessionId: string,
-  guestId: string
-): Promise<boolean> {
+export async function deleteGuestSession(sessionId: string): Promise<boolean> {
   try {
     const supabase = getSupabase();
+    const guestId = await getGuestId();
 
     const { data, error } = await supabase.rpc("delete_guest_chat_session", {
       p_session_id: sessionId,

@@ -117,7 +117,7 @@ export default async function ComparePage({ params }: Props) {
       <div>
         <Breadcrumbs
           items={[
-            { name: "Home", href: "/" },
+            { name: t("common.breadcrumbHome"), href: "/" },
             { name: t("nav.herbs"), href: "/herbs" },
             { name: `${herbA.name} vs ${herbB.name}` },
           ]}

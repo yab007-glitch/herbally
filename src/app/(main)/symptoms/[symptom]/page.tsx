@@ -3,12 +3,12 @@ import Link from "next/link";
 import { ArrowRight, Stethoscope, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { createClient } from "@supabase/supabase-js";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { notFound } from "next/navigation";
+import { getAnonClient } from "@/lib/supabase/anonymous";
 
 export const revalidate = 3600;
 
@@ -406,8 +406,7 @@ export default async function SymptomDetailPage({ params }: Props) {
     notFound();
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabase = getAnonClient();
   let herbs: Array<{
     slug: string;
     name: string;
@@ -419,9 +418,8 @@ export default async function SymptomDetailPage({ params }: Props) {
     modern_uses: string[] | null;
   }> = [];
 
-  if (supabaseUrl && supabaseKey) {
+  if (supabase) {
     try {
-      const supabase = createClient(supabaseUrl, supabaseKey);
       const { data } = await supabase
         .from("herbs")
         .select(

@@ -181,11 +181,16 @@ export async function DELETE(request: NextRequest) {
 
   try {
     const url = new URL(request.url);
-    const slug = url.searchParams.get("slug");
-
-    if (!slug) {
+    // L5 (audit 2026-06-22): bound the slug so a caller can't pass an
+    // unbounded string into the eq() filter. Slugs are <=200 chars by the
+    // insert schema; reject anything longer.
+    const slugSchema = z.string().min(1).max(200);
+    const slugRaw = url.searchParams.get("slug");
+    const parsedSlug = slugSchema.safeParse(slugRaw);
+    if (!parsedSlug.success) {
       return NextResponse.json({ error: "slug is required" }, { status: 400 });
     }
+    const slug = parsedSlug.data;
 
     const supabase = await createClient();
     const {

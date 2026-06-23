@@ -3,13 +3,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
-import { cookies } from "next/headers";
+import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import {
   localizeHerb,
   localizeInteraction,
   localizeCategoryName,
 } from "@/lib/utils/localize-herb";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
+import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import type {
   ActionResponse,
   Herb,
@@ -18,16 +19,13 @@ import type {
   HerbCategory,
 } from "@/lib/types";
 
+/**
+ * Read the locale from the x-locale request header (set by the proxy from
+ * the URL). This is the single source of truth — the cookie can drift from
+ * the URL, causing French-URL visitors to get English herb data.
+ */
 async function getLocale(): Promise<string> {
-  try {
-    const store = await cookies();
-    return store.get("herbally-locale")?.value === "fr" ? "fr" : "en";
-  } catch (error) {
-    logger.error("herbs_get_locale_failed", {
-      error: error instanceof Error ? error.message : JSON.stringify(error),
-    });
-    return "en";
-  }
+  return getLocaleFromRequest();
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -97,11 +95,14 @@ export async function getHerbs(params: {
           orderByEvidence = true;
         } else {
           const conditions = words
-            .flatMap((w) => [
-              `name.ilike.%${w}%`,
-              `scientific_name.ilike.%${w}%`,
-              `description.ilike.%${w}%`,
-            ])
+            .flatMap((w) => {
+              const safe = sanitizeFilterValue(w);
+              return [
+                `name.ilike.%${safe}%`,
+                `scientific_name.ilike.%${safe}%`,
+                `description.ilike.%${safe}%`,
+              ];
+            })
             .join(",");
           query = query.or(conditions);
         }
@@ -327,9 +328,27 @@ export async function getSymptomCounts(
     const supabase = await createClient();
     const counts: Record<string, number> = {};
 
+    // L7 (audit 2026-06-22): bound the input so a caller can't force a huge
+    // OR filter or unbounded string values. Cap the symptom count and each
+    // term's length; use sanitizeFilterValue so filter delimiters in a term
+    // can't inject an arbitrary `.or()` clause.
+    const MAX_SYMPTOMS = 40;
+    const MAX_SYMPTOM_LEN = 80;
+    const bounded = symptoms
+      .filter((s) => typeof s === "string" && s.trim().length > 0)
+      .map((s) => s.trim().slice(0, MAX_SYMPTOM_LEN))
+      .slice(0, MAX_SYMPTOMS);
+
+    if (bounded.length === 0) {
+      return { success: true, data: {} };
+    }
+
     // Build a single OR condition for all symptoms
-    const conditions = symptoms
-      .map((s) => `name.ilike.%${s}%,description.ilike.%${s}%`)
+    const conditions = bounded
+      .map((s) => {
+        const safe = sanitizeFilterValue(s);
+        return `name.ilike.%${safe}%,description.ilike.%${safe}%`;
+      })
       .join(",");
 
     const { data, error } = await supabase
@@ -347,7 +366,7 @@ export async function getSymptomCounts(
     }
 
     // Count matches per symptom from the single result set
-    for (const symptom of symptoms) {
+    for (const symptom of bounded) {
       const lower = symptom.toLowerCase();
       counts[symptom] =
         data?.filter(
@@ -370,6 +389,9 @@ export async function searchHerbs(
   try {
     const supabase = await createClient();
     const safeTerm = term.trim().slice(0, MAX_QUERY_LENGTH);
+    // searchHerbs builds a hand-built `.or()` string, so escape both ILIKE
+    // wildcards AND PostgREST filter delimiters (L2, audit 2026-06-22).
+    const escapedTerm = sanitizeFilterValue(safeTerm);
 
     const expandedKeywords = expandQueryToKeywords(safeTerm);
     const { data: keywordResults } = await supabase
@@ -411,7 +433,7 @@ export async function searchHerbs(
       .select("id, name, slug, scientific_name, translations")
       .eq("is_published", true)
       .or(
-        `name.ilike.%${safeTerm}%,scientific_name.ilike.%${safeTerm}%,description.ilike.%${safeTerm}%`
+        `name.ilike.%${escapedTerm}%,scientific_name.ilike.%${escapedTerm}%,description.ilike.%${escapedTerm}%`
       )
       .limit(10);
 

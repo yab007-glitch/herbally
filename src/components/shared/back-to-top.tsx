@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export function BackToTop() {
+  const t = useTranslations();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export function BackToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      aria-label="Back to top"
+      aria-label={t("common.backToTopLabel")}
       className={cn(
         "fixed bottom-20 right-4 z-40 inline-flex size-10 items-center justify-center rounded-full border border-border bg-background shadow-md transition-opacity hover:bg-muted md:bottom-6",
         visible ? "opacity-100" : "opacity-0 pointer-events-none"

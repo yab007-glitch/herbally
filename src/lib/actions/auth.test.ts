@@ -12,7 +12,12 @@ const getUserMock = vi.fn();
 const redirectMock = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  redirect: (...args: string[]) => redirectMock(...args),
+  // redirect() throws a special error in Next.js to interrupt control flow.
+  // The mock must replicate this so tests can assert it was called.
+  redirect: (...args: string[]) => {
+    redirectMock(...args);
+    throw new Error("NEXT_REDIRECT");
+  },
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -28,6 +33,14 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 
+vi.mock("@/lib/i18n/server-locale", () => ({
+  getLocaleFromRequest: async () => "en",
+}));
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: async () => (key: string) => key,
+}));
+
 describe("auth actions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -39,18 +52,19 @@ describe("auth actions", () => {
   });
 
   describe("login", () => {
-    it("returns success when credentials are valid", async () => {
+    it("redirects to home when credentials are valid", async () => {
       signInMock.mockResolvedValueOnce({ error: null });
       const formData = new FormData();
       formData.set("email", "user@example.com");
       formData.set("password", "secret123");
 
-      const result = await login(formData);
-      expect(result.success).toBe(true);
+      // redirect() throws NEXT_REDIRECT — catch it so we can assert.
+      await expect(login(formData)).rejects.toThrow("NEXT_REDIRECT");
       expect(signInMock).toHaveBeenCalledWith({
         email: "user@example.com",
         password: "secret123",
       });
+      expect(redirectMock).toHaveBeenCalledWith("/?welcome=login");
     });
 
     it("returns error when sign-in fails", async () => {
@@ -68,8 +82,30 @@ describe("auth actions", () => {
   });
 
   describe("register", () => {
-    it("returns success when registration succeeds", async () => {
-      signUpMock.mockResolvedValueOnce({ error: null });
+    it("redirects when registration returns a session", async () => {
+      signUpMock.mockResolvedValueOnce({
+        data: { session: { access_token: "x" }, user: { id: "u1" } },
+        error: null,
+      });
+      const formData = new FormData();
+      formData.set("email", "new@example.com");
+      formData.set("password", "securepass");
+      formData.set("full_name", "Jane Doe");
+
+      await expect(register(formData)).rejects.toThrow("NEXT_REDIRECT");
+      expect(redirectMock).toHaveBeenCalledWith("/?welcome=register");
+    });
+
+    it("returns success when email confirmation is required", async () => {
+      signUpMock.mockResolvedValueOnce({
+        data: { session: null, user: { id: "u1" } },
+        error: null,
+      });
+      // signInWithPassword fails with "not confirmed" for a new unconfirmed user
+      signInMock.mockResolvedValueOnce({
+        data: { session: null, user: null },
+        error: { message: "Email not confirmed" },
+      });
       const formData = new FormData();
       formData.set("email", "new@example.com");
       formData.set("password", "securepass");
@@ -77,14 +113,44 @@ describe("auth actions", () => {
 
       const result = await register(formData);
       expect(result.success).toBe(true);
-      expect(signUpMock).toHaveBeenCalledWith({
-        email: "new@example.com",
-        password: "securepass",
-        options: {
-          data: { full_name: "Jane Doe" },
-          emailRedirectTo: "https://herbally.app/auth/callback",
-        },
+    });
+
+    it("auto-logins when email already exists with correct password", async () => {
+      signUpMock.mockResolvedValueOnce({
+        data: { session: null, user: { id: "u1" } },
+        error: null,
       });
+      // signInWithPassword succeeds — the user already existed
+      signInMock.mockResolvedValueOnce({
+        data: { session: { access_token: "x" }, user: { id: "u1" } },
+        error: null,
+      });
+      const formData = new FormData();
+      formData.set("email", "existing@example.com");
+      formData.set("password", "securepass");
+      formData.set("full_name", "Jane Doe");
+
+      await expect(register(formData)).rejects.toThrow("NEXT_REDIRECT");
+      expect(redirectMock).toHaveBeenCalledWith("/?welcome=login");
+    });
+
+    it("returns accountExists error when email exists with wrong password", async () => {
+      signUpMock.mockResolvedValueOnce({
+        data: { session: null, user: { id: "u1" } },
+        error: null,
+      });
+      // signInWithPassword fails with invalid credentials
+      signInMock.mockResolvedValueOnce({
+        data: { session: null, user: null },
+        error: { message: "Invalid login credentials" },
+      });
+      const formData = new FormData();
+      formData.set("email", "existing@example.com");
+      formData.set("password", "wrongpass");
+      formData.set("full_name", "Jane Doe");
+
+      const result = await register(formData);
+      expect(result.success).toBe(false);
     });
 
     it("returns error when registration fails", async () => {
@@ -111,7 +177,7 @@ describe("auth actions", () => {
       const result = await forgotPassword(formData);
       expect(result.success).toBe(true);
       expect(resetPasswordMock).toHaveBeenCalledWith("user@example.com", {
-        redirectTo: "https://herbally.app/reset-password",
+        redirectTo: "https://herbally.app/auth/callback?next=/reset-password",
       });
     });
 
@@ -157,7 +223,7 @@ describe("auth actions", () => {
   describe("logout", () => {
     it("calls signOut and redirects to home", async () => {
       signOutMock.mockResolvedValueOnce({ error: null });
-      await logout();
+      await expect(logout()).rejects.toThrow("NEXT_REDIRECT");
       expect(signOutMock).toHaveBeenCalled();
       expect(redirectMock).toHaveBeenCalledWith("/");
     });

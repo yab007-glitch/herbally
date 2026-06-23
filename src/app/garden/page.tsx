@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { GardenClient } from "./garden-client";
 
-export const metadata: Metadata = {
-  title: "My Garden — HerbAlly",
-  description:
-    "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
-};
+export const generateMetadata = () =>
+  buildPageMetadata({
+    titleKey: "gardenPageTitle",
+    descKey: "gardenSubtitle",
+    path: "/garden",
+  });
 
 export default function GardenPage() {
   return (

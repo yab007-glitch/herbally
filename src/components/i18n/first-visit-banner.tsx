@@ -7,12 +7,13 @@ import { useDetectedLocale } from "./use-detected-locale";
 import { X, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
-import type { Locale } from "@/lib/i18n/config";
+import { useTranslations } from "next-intl";
 
 export function FirstVisitBanner() {
   const locale = useLocale();
   const detected = useDetectedLocale();
   const setLocale = useSetLocale();
+  const t = useTranslations();
 
   // `dismissed` is read once from sessionStorage (client) so we never call
   // setState inside an effect. SSR renders dismissed=true (banner hidden) to
@@ -26,12 +27,10 @@ export function FirstVisitBanner() {
   const visible = !dismissed && detected !== null && detected !== locale;
   if (!visible || !detected) return null;
 
-  const labels: Record<Locale, { switchTo: string; dismiss: string }> = {
-    en: { switchTo: "Switch to English", dismiss: "Dismiss" },
-    fr: { switchTo: "Passer en Français", dismiss: "Ignorer" },
-  };
-
-  const t = labels[detected];
+  const switchToKey =
+    detected === "fr" ? "common.switchToFrench" : "common.switchToEnglish";
+  const switchTo = t(switchToKey);
+  const dismissLabel = t("common.dismiss");
 
   function handleSwitch() {
     if (!detected) return;
@@ -56,7 +55,7 @@ export function FirstVisitBanner() {
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-2 sm:px-6">
         <div className="flex items-center gap-2 text-sm">
           <Globe className="size-4 text-primary" />
-          <span className="text-foreground">{t.switchTo}</span>
+          <span className="text-foreground">{switchTo}</span>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -65,11 +64,11 @@ export function FirstVisitBanner() {
             onClick={handleSwitch}
             className="h-7 text-xs"
           >
-            {t.switchTo}
+            {switchTo}
           </Button>
           <button
             onClick={handleDismiss}
-            aria-label={t.dismiss}
+            aria-label={dismissLabel}
             className="inline-flex size-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <X className="size-4" />

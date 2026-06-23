@@ -133,9 +133,9 @@ export async function rateLimit(
 
   // In production, warn that memory rate limiting doesn't scale
   if (process.env.NODE_ENV === "production" && backend === "memory") {
-    logger.warn("rate_limit_memory_in_production", {
+    logger.error("rate_limit_memory_in_production", {
       message:
-        "Memory rate limiter is active in production. Deployments with multiple instances will not share rate limit state.",
+        "Memory rate limiter is active in production. Deployments with multiple instances will not share rate limit state. Set RATE_LIMIT_BACKEND=upstash with UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.",
     });
   }
 

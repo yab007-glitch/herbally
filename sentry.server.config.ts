@@ -42,7 +42,12 @@ Sentry.init({
   sendDefaultPii: false,
   tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
   enabled: !!process.env.SENTRY_DSN,
-  includeLocalVariables: true,
+  // H-5 (audit 2026-06-22): local-variable capture would send user health
+  // data (chat messages, medications, herb/symptom context) held in server
+  // stack frames to Sentry on an exception — defeating sendDefaultPii:false
+  // for a health app. The scrubEvent hook cannot reach into frame vars, so
+  // disable local-variable capture at the source.
+  includeLocalVariables: false,
   enableLogs: true,
   beforeSend: scrubEvent,
 });

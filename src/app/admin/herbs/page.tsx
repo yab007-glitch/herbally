@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Search } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { escapeForIlike } from "@/lib/utils/ilike";
 
 export const metadata = {
   title: "Manage Herbs",
@@ -42,8 +43,9 @@ export default async function AdminHerbsPage({
       .range(offset, offset + pageSize - 1);
 
     if (query) {
-      countQuery = countQuery.ilike("name", `%${query}%`);
-      dataQuery = dataQuery.ilike("name", `%${query}%`);
+      const safe = escapeForIlike(query);
+      countQuery = countQuery.ilike("name", `%${safe}%`);
+      dataQuery = dataQuery.ilike("name", `%${safe}%`);
     }
 
     const [countResult, dataResult] = await Promise.all([
@@ -183,7 +185,7 @@ export default async function AdminHerbsPage({
           <div className="flex gap-2">
             {page > 1 && (
               <Link
-                href={`/admin/herbs?page=${page - 1}${query ? `&q=${query}` : ""}`}
+                href={`/admin/herbs?page=${page - 1}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
               >
                 <Button variant="outline" size="sm">
                   Previous
@@ -192,7 +194,7 @@ export default async function AdminHerbsPage({
             )}
             {page < totalPages && (
               <Link
-                href={`/admin/herbs?page=${page + 1}${query ? `&q=${query}` : ""}`}
+                href={`/admin/herbs?page=${page + 1}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
               >
                 <Button variant="outline" size="sm">
                   Next

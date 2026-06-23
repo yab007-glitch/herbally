@@ -15,14 +15,6 @@ interface HerbResult {
   matchedBy: string;
 }
 
-const EXAMPLE_SYMPTOMS = [
-  "I have trouble sleeping and feel anxious",
-  "My joints hurt and are stiff in the morning",
-  "I have digestive issues and bloating after meals",
-  "I keep getting colds and my immune system feels weak",
-  "I have brain fog and trouble concentrating",
-];
-
 export function SymptomSearchClient() {
   const t = useTranslations();
   const [query, setQuery] = useState("");
@@ -90,7 +82,7 @@ export function SymptomSearchClient() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("symptomsPage.searchPlaceholder")}
-            aria-label="Search symptoms"
+            aria-label={t("symptomsPage.searchPlaceholder")}
             className="w-full rounded-xl border border-border bg-background px-5 py-4 text-base text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
           />
           <Button
@@ -118,7 +110,7 @@ export function SymptomSearchClient() {
             {t("symptomsPage.examples")}
           </p>
           <div className="flex flex-wrap gap-2">
-            {EXAMPLE_SYMPTOMS.map((example) => (
+            {t.raw("symptomsPage.exampleSymptoms").map((example: string) => (
               <button
                 key={example}
                 onClick={() => {
@@ -169,7 +161,8 @@ export function SymptomSearchClient() {
                       </p>
                       {herb.evidence_level && (
                         <span className="mt-1 inline-flex items-center rounded-full bg-primary/5 px-2 py-0.5 text-[10px] font-medium text-primary">
-                          Evidence: {herb.evidence_level}
+                          {t("symptomsPage.evidenceLabel")}:{" "}
+                          {herb.evidence_level}
                         </span>
                       )}
                     </div>

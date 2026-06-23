@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calculator, Info, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,11 @@ import {
   type DoseResult,
 } from "@/lib/utils/dosage-calculations";
 import { useTranslations } from "next-intl";
+import {
+  useDefaultPatientProfile,
+  AutoFillBadge,
+  SaveCalcButton,
+} from "./profile-integration";
 
 const unitOptions = ["mg", "ml", "g", "drops"] as const;
 
@@ -71,6 +76,28 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     useState<FormulaKey>("clarks_rule");
   const [result, setResult] = useState<DoseResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [autoFilled, setAutoFilled] = useState(false);
+  const { profile, loaded: profileLoaded } = useDefaultPatientProfile();
+
+  /* eslint-disable */
+  // Auto-fill from default patient profile when it loads
+  useEffect(() => {
+    if (profileLoaded && profile) {
+      if (profile.weight_kg) {
+        setWeightValue(String(profile.weight_kg));
+        setAutoFilled(true);
+      }
+      if (profile.age_years) {
+        setAgeYears(String(profile.age_years));
+        setAutoFilled(true);
+      }
+      if (profile.height_cm) {
+        setHeightCm(String(profile.height_cm));
+        setAutoFilled(true);
+      }
+    }
+  }, [profileLoaded, profile]);
+  /* eslint-enable */
 
   function handleCalculate() {
     setError(null);
@@ -101,21 +128,21 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
             setError(t("calculator.errors.weightRequired"));
             return;
           }
-          calcResult = clarksRule(weight, dose);
+          calcResult = clarksRule(weight, dose, doseUnit);
           break;
         case "youngs_rule":
           if (!ageInYears || ageInYears <= 0 || !Number.isFinite(ageInYears)) {
             setError(t("calculator.errors.ageRequired"));
             return;
           }
-          calcResult = youngsRule(ageInYears, dose);
+          calcResult = youngsRule(ageInYears, dose, doseUnit);
           break;
         case "bsa":
           if (!weight || weight <= 0 || !height || height <= 0) {
             setError(t("calculator.errors.bsaRequired"));
             return;
           }
-          calcResult = bsaMethod(height, weight, dose);
+          calcResult = bsaMethod(height, weight, dose, doseUnit);
           break;
         case "fried_rule":
           if (useMonths) {
@@ -123,14 +150,22 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               setError(t("calculator.errors.infantAge"));
               return;
             }
-            calcResult = friedsRule(age, dose);
+            if (age >= 24) {
+              setError(t("calculator.errors.friedAgeLimit"));
+              return;
+            }
+            calcResult = friedsRule(age, dose, doseUnit);
           } else {
             const months = parseFloat(ageYears) * 12;
             if (!months || months <= 0) {
               setError(t("calculator.errors.infantAge"));
               return;
             }
-            calcResult = friedsRule(months, dose);
+            if (months >= 24) {
+              setError(t("calculator.errors.friedAgeLimit"));
+              return;
+            }
+            calcResult = friedsRule(months, dose, doseUnit);
           }
           break;
         default:
@@ -252,6 +287,8 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </div>
             </div>
           </div>
+
+          <AutoFillBadge show={autoFilled} />
 
           {/* Age */}
           <div className="space-y-2">
@@ -496,6 +533,17 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   </p>
                 </div>
               </div>
+
+              <SaveCalcButton
+                result={result}
+                herbName={herbName}
+                adultDose={adultDose}
+                doseUnit={doseUnit}
+                weightValue={weightValue}
+                ageYears={ageYears}
+                heightCm={heightCm}
+                selectedFormula={selectedFormula}
+              />
 
               <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
                 <Info className="mb-0.5 mr-1 inline-block size-3" />

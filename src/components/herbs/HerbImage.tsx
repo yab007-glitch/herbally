@@ -21,7 +21,11 @@ function getHerbGradient(name: string): string {
     "from-violet-500 to-purple-600",
   ];
 
-  const hash = name
+  // Guard against undefined/null/non-string name (Sentry 2f94280a: a garden
+  // herb with a missing `name` crashed here with "Cannot read properties of
+  // undefined (reading 'split')"). Fall back to a stable gradient.
+  const safe = typeof name === "string" && name.length > 0 ? name : "herb";
+  const hash = safe
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return gradients[hash % gradients.length];
@@ -29,7 +33,9 @@ function getHerbGradient(name: string): string {
 
 // Generate initials from herb name
 function getInitials(name: string): string {
-  return name
+  const safe = typeof name === "string" ? name : "";
+  if (!safe.trim()) return "🌿";
+  return safe
     .split(" ")
     .map((word) => word[0]?.toUpperCase())
     .slice(0, 2)
@@ -42,15 +48,16 @@ export function HerbImage({
   className,
   priority,
 }: HerbImageProps) {
-  const gradient = getHerbGradient(name);
-  const initials = getInitials(name);
+  const gradient = getHerbGradient(name ?? "");
+  const initials = getInitials(name ?? "");
+  const altName = typeof name === "string" && name ? name : "herb";
 
   if (imageUrl) {
     return (
       <div className={cn("relative overflow-hidden", className)}>
         <Image
           src={imageUrl}
-          alt={name}
+          alt={altName}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover"

@@ -35,14 +35,18 @@ function clampToAdult(
  * Clark's Rule: (weight_kg / 68) x adult_dose
  * Best for weight-based dosing for children 2+ years
  */
-export function clarksRule(weightKg: number, adultDoseMg: number): DoseResult {
+export function clarksRule(
+  weightKg: number,
+  adultDoseMg: number,
+  unit: string = "mg"
+): DoseResult {
   const raw = (weightKg / 68) * adultDoseMg;
   const { dose, clamped } = clampToAdult(raw, adultDoseMg);
   return {
     dose,
     clamped,
-    unit: "mg",
-    formula: `(${weightKg} kg / 68) x ${adultDoseMg} mg`,
+    unit,
+    formula: `(${weightKg} kg / 68) x ${adultDoseMg} ${unit}`,
     explanation: `Based on Clark's Rule using patient weight of ${weightKg} kg. The standard adult reference weight is 68 kg (150 lbs).`,
   };
 }
@@ -51,14 +55,18 @@ export function clarksRule(weightKg: number, adultDoseMg: number): DoseResult {
  * Young's Rule: (age / (age + 12)) x adult_dose
  * Age-based dosing for children 2-12 years. `ageYears` MUST be in years.
  */
-export function youngsRule(ageYears: number, adultDoseMg: number): DoseResult {
+export function youngsRule(
+  ageYears: number,
+  adultDoseMg: number,
+  unit: string = "mg"
+): DoseResult {
   const raw = (ageYears / (ageYears + 12)) * adultDoseMg;
   const { dose, clamped } = clampToAdult(raw, adultDoseMg);
   return {
     dose,
     clamped,
-    unit: "mg",
-    formula: `(${ageYears} / (${ageYears} + 12)) x ${adultDoseMg} mg`,
+    unit,
+    formula: `(${ageYears} / (${ageYears} + 12)) x ${adultDoseMg} ${unit}`,
     explanation: `Based on Young's Rule using patient age of ${ageYears} years. This formula is best for children aged 2-12 when weight is unknown.`,
   };
 }
@@ -71,7 +79,8 @@ export function youngsRule(ageYears: number, adultDoseMg: number): DoseResult {
 export function bsaMethod(
   heightCm: number,
   weightKg: number,
-  adultDoseMg: number
+  adultDoseMg: number,
+  unit: string = "mg"
 ): DoseResult {
   const bsa = Math.sqrt((heightCm * weightKg) / 3600);
   const raw = (bsa / 1.73) * adultDoseMg;
@@ -79,8 +88,8 @@ export function bsaMethod(
   return {
     dose,
     clamped,
-    unit: "mg",
-    formula: `(${bsa.toFixed(3)} m² / 1.73) x ${adultDoseMg} mg`,
+    unit,
+    formula: `(${bsa.toFixed(3)} m² / 1.73) x ${adultDoseMg} ${unit}`,
     explanation: `Based on BSA method using body surface area of ${bsa.toFixed(3)} m² (height: ${heightCm} cm, weight: ${weightKg} kg). The standard adult BSA is 1.73 m². This is the most accurate dosing method.`,
   };
 }
@@ -89,14 +98,18 @@ export function bsaMethod(
  * Fried's Rule: (age_months / 150) x adult_dose
  * For infants under 2 years
  */
-export function friedsRule(ageMonths: number, adultDoseMg: number): DoseResult {
+export function friedsRule(
+  ageMonths: number,
+  adultDoseMg: number,
+  unit: string = "mg"
+): DoseResult {
   const raw = (ageMonths / 150) * adultDoseMg;
   const { dose, clamped } = clampToAdult(raw, adultDoseMg);
   return {
     dose,
     clamped,
-    unit: "mg",
-    formula: `(${ageMonths} months / 150) x ${adultDoseMg} mg`,
+    unit,
+    formula: `(${ageMonths} months / 150) x ${adultDoseMg} ${unit}`,
     explanation: `Based on Fried's Rule using infant age of ${ageMonths} months. This formula is specifically designed for infants under 2 years of age.`,
   };
 }

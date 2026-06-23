@@ -10,7 +10,13 @@ let stripeInstance: Stripe | null = null;
 
 if (stripeKey) {
   try {
-    stripeInstance = new Stripe(stripeKey);
+    // L11 (audit 2026-06-22): pin the API version explicitly rather than rely
+    // on the library default, so a stripe package bump can't silently change
+    // Checkout Session shapes. Stripe.API_VERSION is the package's own
+    // LatestApiVersion constant, so the pin always tracks the installed SDK.
+    stripeInstance = new Stripe(stripeKey, {
+      apiVersion: Stripe.API_VERSION,
+    });
   } catch (e) {
     logger.error("stripe_donate_init_failed", {
       error: e instanceof Error ? e.message : String(e),

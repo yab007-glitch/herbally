@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 /**
  * Live region that announces locale changes to screen readers.
@@ -8,11 +8,10 @@ import { useLocale } from "next-intl";
  */
 export function LanguageAnnouncement() {
   const locale = useLocale();
-  const messages: Record<string, string> = {
-    en: "Language switched to English",
-    fr: "Langue changée en Français",
-  };
-  const announcement = messages[locale] || "";
+  const t = useTranslations();
+  const announcementKey =
+    locale === "fr" ? "common.languageSwitchedFr" : "common.languageSwitchedEn";
+  const announcement = t(announcementKey);
 
   return (
     <div

@@ -34,7 +34,9 @@ type Chain = {
   insert: () => Chain;
   upsert: () => Chain;
   update: () => Chain;
+  select: () => Chain;
   eq: () => Chain;
+  maybeSingle: () => Chain;
   then: (resolve: (v: { data: unknown; error: unknown }) => unknown) => unknown;
 };
 const chain: Chain = {
@@ -42,7 +44,9 @@ const chain: Chain = {
   insert: () => chain,
   upsert: () => chain,
   update: () => chain,
+  select: () => chain,
   eq: () => chain,
+  maybeSingle: () => chain,
   then: (resolve: (v: { data: unknown; error: unknown }) => unknown) =>
     resolve(responses.shift() ?? { data: null, error: null }),
 };
@@ -95,14 +99,37 @@ describe("POST /api/webhooks/stripe", () => {
 
   it("returns 200 {duplicate:true} when the event was already processed", async () => {
     constructEventMock.mockReturnValue(event("checkout.session.completed", {}));
-    // isDuplicateEvent insert → unique_violation (23505) → duplicate
+    // claimEvent: insert → unique_violation (23505) → read existing status
     responses.push({ data: null, error: { code: "23505", message: "dup" } });
+    responses.push({ data: { status: "done" }, error: null }); // status read
 
     const res = await POST(fakeRequest("payload", "sig"));
     const json = await res.json();
     expect(res.status).toBe(200);
     expect(json).toEqual({ received: true, duplicate: true });
-    // duplicate short-circuits before the upsert → only one DB call consumed
+    // duplicate short-circuits before the upsert → both dedup calls consumed
+    expect(responses).toHaveLength(0);
+  });
+
+  it("reprocesses a previously failed event (status='failed') instead of skipping", async () => {
+    constructEventMock.mockReturnValue(
+      event("checkout.session.completed", {
+        id: "cs_redo",
+        amount_total: 1500,
+        payment_status: "paid",
+        payment_intent: "pi_redo",
+      })
+    );
+    // claimEvent: insert → 23505 → read status='failed' → re-stamp processing
+    responses.push({ data: null, error: { code: "23505", message: "dup" } });
+    responses.push({ data: { status: "failed" }, error: null }); // status read
+    responses.push({ data: null, error: null }); // re-stamp processing update
+    // then process: upsert + markEventDone
+    responses.push({ data: null, error: null }); // upsert
+    responses.push({ data: null, error: null }); // markEventDone
+
+    const res = await POST(fakeRequest("payload", "sig"));
+    expect(res.status).toBe(200);
     expect(responses).toHaveLength(0);
   });
 
@@ -118,7 +145,8 @@ describe("POST /api/webhooks/stripe", () => {
         metadata: { source: "donate" },
       })
     );
-    // 1. dedup insert ok (not duplicate)  2. upsert ok
+    // 1. claim insert ok  2. upsert ok  3. markEventDone ok
+    responses.push({ data: null, error: null });
     responses.push({ data: null, error: null });
     responses.push({ data: null, error: null });
 
@@ -136,8 +164,9 @@ describe("POST /api/webhooks/stripe", () => {
         payment_intent: "pi_2",
       })
     );
-    responses.push({ data: null, error: null }); // dedup ok
+    responses.push({ data: null, error: null }); // claim ok
     responses.push({ data: null, error: { message: "db down" } }); // upsert fails
+    responses.push({ data: null, error: null }); // markEventFailed
 
     const res = await POST(fakeRequest("payload", "sig"));
     expect(res.status).toBe(500);
@@ -147,8 +176,9 @@ describe("POST /api/webhooks/stripe", () => {
     constructEventMock.mockReturnValue(
       event("payment_intent.payment_failed", { id: "pi_3" })
     );
-    responses.push({ data: null, error: null }); // dedup
+    responses.push({ data: null, error: null }); // claim
     responses.push({ data: null, error: null }); // markDonationFailed update
+    responses.push({ data: null, error: null }); // markEventDone
 
     const res = await POST(fakeRequest("payload", "sig"));
     expect(res.status).toBe(200);
@@ -163,8 +193,9 @@ describe("POST /api/webhooks/stripe", () => {
         amount_refunded: 1000,
       })
     );
-    responses.push({ data: null, error: null }); // dedup
+    responses.push({ data: null, error: null }); // claim
     responses.push({ data: null, error: null }); // markDonationRefunded
+    responses.push({ data: null, error: null }); // markEventDone
 
     const res = await POST(fakeRequest("payload", "sig"));
     expect(res.status).toBe(200);
@@ -179,8 +210,9 @@ describe("POST /api/webhooks/stripe", () => {
         amount_refunded: 400,
       })
     );
-    responses.push({ data: null, error: null }); // dedup
+    responses.push({ data: null, error: null }); // claim
     responses.push({ data: null, error: null }); // markDonationRefunded
+    responses.push({ data: null, error: null }); // markEventDone
 
     const res = await POST(fakeRequest("payload", "sig"));
     expect(res.status).toBe(200);
@@ -194,8 +226,9 @@ describe("POST /api/webhooks/stripe", () => {
     chargesRetrieveMock.mockResolvedValue({
       payment_intent: "pi_6",
     });
-    responses.push({ data: null, error: null }); // dedup
+    responses.push({ data: null, error: null }); // claim
     responses.push({ data: null, error: null }); // markDonationDisputed
+    responses.push({ data: null, error: null }); // markEventDone
 
     const res = await POST(fakeRequest("payload", "sig"));
     expect(res.status).toBe(200);
@@ -205,7 +238,8 @@ describe("POST /api/webhooks/stripe", () => {
 
   it("returns 200 and ignores an unhandled event type", async () => {
     constructEventMock.mockReturnValue(event("invoice.paid", {}));
-    responses.push({ data: null, error: null }); // dedup only
+    responses.push({ data: null, error: null }); // claim
+    responses.push({ data: null, error: null }); // markEventDone (no action)
 
     const res = await POST(fakeRequest("payload", "sig"));
     expect(res.status).toBe(200);

@@ -1,23 +1,30 @@
-const CACHE_NAME = "herbally-v5";
-const API_CACHE = "herbally-api-v1";
+const CACHE_NAME = "herbally-v6";
+const API_CACHE = "herbally-api-v2";
 
-// Core pages to cache on install
+// Core pages to cache on install (both EN and FR)
 const STATIC_URLS = [
   "/",
+  "/fr",
   "/herbs",
+  "/fr/herbs",
   "/symptoms",
+  "/fr/symptoms",
   "/herbalist",
+  "/fr/herbalist",
   "/calculator",
+  "/fr/calculator",
   "/garden",
   "/faq",
+  "/fr/faq",
   "/about",
+  "/fr/about",
   "/offline.html",
 ];
 
 // API endpoints to cache for offline herb browsing
-const DB_CACHE_URLS = ["/api/herbs/list", "/api/herbs/search"];
+const DB_CACHE_URLS = ["/api/herbs/search", "/api/herbs/random"];
 
-const API_URLS = [...DB_CACHE_URLS, "/api/herbs/random"];
+const API_URLS = [...DB_CACHE_URLS];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -31,6 +38,8 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      // Clean up ALL old caches — both page cache and API cache — so stale
+      // entries (e.g. the old /api/herbs/list reference) are purged on deploy.
       return Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME && name !== API_CACHE)
@@ -76,11 +85,14 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Herb detail pages: cache-first, network update
-  if (
-    url.pathname.startsWith("/herbs/") &&
-    url.pathname.split("/").length === 3
-  ) {
+  // Herb detail pages (including /fr/herbs/*): cache-first, network update
+  const pathParts = url.pathname.split("/").filter(Boolean);
+  const isHerbDetail =
+    (pathParts[0] === "herbs" ||
+      (pathParts[0] === "fr" && pathParts[1] === "herbs")) &&
+    pathParts.length === (pathParts[0] === "fr" ? 3 : 2);
+
+  if (isHerbDetail) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(event.request);

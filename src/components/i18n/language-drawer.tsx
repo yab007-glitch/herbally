@@ -12,6 +12,7 @@ import { LANGUAGES } from "@/lib/i18n/config";
 import { useTranslations, useLocale } from "next-intl";
 import { useSetLocale } from "./use-set-locale";
 import { useDetectedLocale } from "./use-detected-locale";
+import { trackEvent } from "@/lib/analytics";
 
 interface LanguageDrawerProps {
   open?: boolean;
@@ -52,6 +53,10 @@ export function LanguageDrawer({
               <span>{t("common.suggested")}</span>
               <button
                 onClick={() => {
+                  trackEvent("language_changed", {
+                    locale: detectedLocale,
+                    source: "drawer_suggestion",
+                  });
                   onOpenChange?.(false);
                   setLocale(detectedLocale);
                 }}
@@ -65,6 +70,10 @@ export function LanguageDrawer({
             <button
               key={lang.code}
               onClick={() => {
+                trackEvent("language_changed", {
+                  locale: lang.code,
+                  source: "drawer",
+                });
                 onOpenChange?.(false);
                 setLocale(lang.code);
               }}
