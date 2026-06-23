@@ -30,6 +30,7 @@ import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
 import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
+import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 
 // REMOVED: export const dynamic = "force-dynamic";
 // This enables static generation (SSG) for every herb page at build time.
@@ -396,6 +397,11 @@ export default async function HerbDetailPage({ params }: Props) {
 
       {/* New Hero */}
       <HerbHeroV2 herb={{ ...herb, evidence_level: evidenceLevel }} />
+
+      {/* Personalized interaction warning (H1). Client component so the ISR
+          page stays static for anonymous traffic; signed-in users get a
+          personalized alert after hydration based on their medication list. */}
+      <UserInteractionAlert herbSlug={slug} />
 
       {/* Tabbed Content */}
       <HerbDetailTabs

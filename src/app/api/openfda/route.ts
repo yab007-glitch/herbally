@@ -69,7 +69,12 @@ export async function GET(request: Request) {
     }
 
     const data = await res.json();
-    return NextResponse.json(data);
+    // L8 (audit 2026-06-22): don't proxy the full upstream response body
+    // verbatim — OpenFDA returns meta/error/skip fields that could leak
+    // internal query state or confuse the client. Surface only the results
+    // array the UI consumes, coerced to an array.
+    const results = Array.isArray(data?.results) ? data.results : [];
+    return NextResponse.json({ results });
   } catch (error) {
     // Transient network/DNS errors (ENOTFOUND, ECONNREFUSED, timeout) are
     // infrastructure issues, not code bugs — log as a warning and return

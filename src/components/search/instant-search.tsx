@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ interface InstantSearchProps {
 
 export function InstantSearch({ placeholder, className }: InstantSearchProps) {
   const t = useTranslations();
+  const router = useRouter();
   const resolvedPlaceholder = placeholder || t("search.placeholder");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -110,7 +112,9 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
       e.preventDefault();
       const selected = results[selectedIndex];
       if (selected) {
-        window.location.href = `/herbs/${selected.slug}`;
+        // Client-side nav instead of a full page reload (audit frontend Low,
+        // conf 0.85): keeps SPA state and avoids refetching shared layout.
+        router.push(`/herbs/${selected.slug}`);
       }
     } else if (e.key === "Escape") {
       setIsOpen(false);

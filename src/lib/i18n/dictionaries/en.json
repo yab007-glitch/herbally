@@ -1071,7 +1071,9 @@
     "severityContraindicated": "Contraindicated",
     "severitySevere": "Severe",
     "severityModerate": "Moderate",
-    "severityMild": "Mild"
+    "severityMild": "Mild",
+    "personalizedInteractionsTitle": "Personalized Interaction Warning",
+    "personalizedInteractionsBody": "Based on the medications in your profile, this herb may interact with one or more drugs you are taking. Do not start, stop, or change any medication or supplement without consulting your healthcare provider or pharmacist."
   },
   "citations": {
     "pending": "Citations pending review. Information based on traditional use and preliminary research.",
@@ -1457,6 +1459,7 @@
     "profileSaved": "Profile saved successfully",
     "medicationAdded": "Medication added",
     "medicationRemoved": "Medication removed",
-    "calculationSaved": "Calculation saved to history"
+    "calculationSaved": "Calculation saved to history",
+    "saveCalculation": "Save calculation to history"
   }
 }

@@ -1,10 +1,19 @@
 import { logger } from "@/lib/utils/logger";
 
 /**
- * Ollama Cloud Pro API client
+ * Ollama Cloud Pro API client — DEV-SCRIPT-ONLY.
  *
- * Uses the OpenAI-compatible /chat/completions endpoint
- * with Bearer auth for Ollama Cloud Pro subscriptions.
+ * Uses the OpenAI-compatible /chat/completions endpoint with Bearer auth for
+ * Ollama Cloud Pro subscriptions. This client is imported ONLY by the offline
+ * batch-generation scripts in scripts/ (ai-generate-monographs, generate-herb-
+ * faqs, test-single-faq); it is NOT imported by the runtime app, which uses
+ * src/lib/ai/openai-client.ts (OpenRouter) for the Virtual Herbalist.
+ *
+ * Audit L26 (2026-06-22) initially flagged this as dead code with "zero
+ * callers"; that was a runtime-only count — the three scripts above are real
+ * callers, so the file is retained for the batch tooling. Because it never
+ * runs in the request path, its retry-on-timeout semantics carry no runtime
+ * risk. Do NOT import this from src/app/** or src/lib/actions/**.
  */
 
 const getBaseUrl = () =>

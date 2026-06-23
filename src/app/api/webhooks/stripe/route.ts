@@ -8,7 +8,13 @@ let stripeInstance: Stripe | null = null;
 
 if (stripeKey) {
   try {
-    stripeInstance = new Stripe(stripeKey);
+    // L11 (audit 2026-06-22): pin the API version explicitly rather than
+    // relying on the library default, so a stripe package bump can't silently
+    // change webhook/event shapes under us. Stripe.API_VERSION is the
+    // package's own LatestApiVersion constant, so the pin tracks the SDK.
+    stripeInstance = new Stripe(stripeKey, {
+      apiVersion: Stripe.API_VERSION,
+    });
   } catch (e) {
     logger.error("stripe_init_failed", {
       error: e instanceof Error ? e.message : String(e),
@@ -32,19 +38,28 @@ function paymentIntentId(
   return pi.id ?? null;
 }
 
-async function upsertDonation(session: Stripe.Checkout.Session) {
+async function upsertDonation(
+  session: Stripe.Checkout.Session,
+  statusOverride?: string
+) {
   const amountCents = session.amount_total ?? 0;
   const amountDisplay = `$${(amountCents / 100).toFixed(2)}`;
   const email = session.customer_details?.email ?? null;
   const name = session.customer_details?.name ?? null;
   const paymentIntentIdValue = paymentIntentId(session.payment_intent);
 
+  // M7 (audit 2026-06-22): an explicit status override wins. The
+  // `checkout.session.expired` event carries a session whose payment_status is
+  // `unpaid`, so the derived status below would map it to `pending` forever and
+  // the `expired` enum (00026/00040) was unreachable. The caller passes
+  // "expired" for that event type.
   const status =
-    session.payment_status === "paid"
+    statusOverride ??
+    (session.payment_status === "paid"
       ? "completed"
       : session.payment_status === "unpaid"
         ? "pending"
-        : "expired";
+        : "expired");
 
   // Throw on DB error so the outer handler returns 500 and Stripe retries the
   // webhook. Previously errors were swallowed and a 200 was returned, losing
@@ -87,7 +102,16 @@ async function markDonationFailed(paymentIntent: Stripe.PaymentIntent) {
 
 async function markDonationRefunded(charge: Stripe.Charge) {
   const piId = paymentIntentId(charge.payment_intent);
-  if (!piId) return;
+  if (!piId) {
+    // L9 (audit 2026-06-22): previously this returned silently, so a refund
+    // event on a charge with no expandable PI vanished without a trace and
+    // the donation stayed "completed". Log it so operators can reconcile
+    // manually instead of losing the signal entirely.
+    logger.warn("stripe_refund_no_payment_intent", {
+      chargeId: charge.id,
+    });
+    return;
+  }
 
   // Distinguish full vs partial refunds so the donation record stays accurate.
   const refunded = charge.amount_refunded ?? 0;
@@ -109,7 +133,14 @@ async function markDonationRefunded(charge: Stripe.Charge) {
 
 async function markDonationDisputed(charge: Stripe.Charge) {
   const piId = paymentIntentId(charge.payment_intent);
-  if (!piId) return;
+  if (!piId) {
+    // L9: same rationale as markDonationRefunded — surface the skip rather
+    // than silently dropping the dispute update.
+    logger.warn("stripe_dispute_no_payment_intent", {
+      chargeId: charge.id,
+    });
+    return;
+  }
 
   const { error } = await createAdminClient()
     .from("donations")
@@ -177,7 +208,10 @@ async function claimEvent(event: Stripe.Event): Promise<boolean> {
       // 'processing' (stale crash) or 'failed' (prior throw) → reprocess.
       await admin
         .from("webhook_events")
-        .update({ status: "processing", processed_at: new Date().toISOString() })
+        .update({
+          status: "processing",
+          processed_at: new Date().toISOString(),
+        })
         .eq("id", event.id);
       return true;
     }
@@ -246,10 +280,14 @@ export async function POST(request: NextRequest) {
   }
 
   if (!webhookSecret) {
+    // L10 (audit 2026-06-22): a missing webhook secret is a configuration
+    // error, not a transient failure. Returning 500 made Stripe retry forever
+    // (pointlessly, since the secret won't appear mid-retry). 400 tells Stripe
+    // the event is bad and stops the retry storm.
     logger.error("stripe_webhook_secret_missing");
     return NextResponse.json(
       { error: "Webhook secret not configured" },
-      { status: 500 }
+      { status: 400 }
     );
   }
 
@@ -314,7 +352,9 @@ export async function POST(request: NextRequest) {
 
       case "checkout.session.expired": {
         const session = event.data.object as Stripe.Checkout.Session;
-        await upsertDonation(session);
+        // M7: pass "expired" explicitly — the session's payment_status is
+        // `unpaid` here, so the default mapper would persist "pending" forever.
+        await upsertDonation(session, "expired");
         break;
       }
 
@@ -332,11 +372,17 @@ export async function POST(request: NextRequest) {
 
       case "charge.dispute.created": {
         const dispute = event.data.object as Stripe.Dispute;
-        // dispute.charge is the charge id; fetch the charge to resolve the
-        // payment intent. We update by payment intent id below.
-        const charge = await stripeClient.charges.retrieve(
-          dispute.charge as string
-        );
+        // L12 (audit 2026-06-22): `dispute.charge` is typed as `string |
+        // Stripe.Charge` — it's usually the charge id string, but it can be an
+        // expanded Charge object. Coerce defensively instead of assuming a
+        // string, so an expanded object doesn't get passed to charges.retrieve
+        // as a bogus id.
+        const chargeId =
+          typeof dispute.charge === "string"
+            ? dispute.charge
+            : dispute.charge?.id;
+        if (!chargeId) break;
+        const charge = await stripeClient.charges.retrieve(chargeId);
         await markDonationDisputed(charge);
         break;
       }

@@ -10,7 +10,7 @@ import {
   localizeCategoryName,
 } from "@/lib/utils/localize-herb";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
-import { escapeForIlike } from "@/lib/utils/ilike";
+import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import type {
   ActionResponse,
   Herb,
@@ -96,7 +96,7 @@ export async function getHerbs(params: {
         } else {
           const conditions = words
             .flatMap((w) => {
-              const safe = escapeForIlike(w);
+              const safe = sanitizeFilterValue(w);
               return [
                 `name.ilike.%${safe}%`,
                 `scientific_name.ilike.%${safe}%`,
@@ -328,10 +328,25 @@ export async function getSymptomCounts(
     const supabase = await createClient();
     const counts: Record<string, number> = {};
 
+    // L7 (audit 2026-06-22): bound the input so a caller can't force a huge
+    // OR filter or unbounded string values. Cap the symptom count and each
+    // term's length; use sanitizeFilterValue so filter delimiters in a term
+    // can't inject an arbitrary `.or()` clause.
+    const MAX_SYMPTOMS = 40;
+    const MAX_SYMPTOM_LEN = 80;
+    const bounded = symptoms
+      .filter((s) => typeof s === "string" && s.trim().length > 0)
+      .map((s) => s.trim().slice(0, MAX_SYMPTOM_LEN))
+      .slice(0, MAX_SYMPTOMS);
+
+    if (bounded.length === 0) {
+      return { success: true, data: {} };
+    }
+
     // Build a single OR condition for all symptoms
-    const conditions = symptoms
+    const conditions = bounded
       .map((s) => {
-        const safe = escapeForIlike(s);
+        const safe = sanitizeFilterValue(s);
         return `name.ilike.%${safe}%,description.ilike.%${safe}%`;
       })
       .join(",");
@@ -351,7 +366,7 @@ export async function getSymptomCounts(
     }
 
     // Count matches per symptom from the single result set
-    for (const symptom of symptoms) {
+    for (const symptom of bounded) {
       const lower = symptom.toLowerCase();
       counts[symptom] =
         data?.filter(
@@ -374,7 +389,9 @@ export async function searchHerbs(
   try {
     const supabase = await createClient();
     const safeTerm = term.trim().slice(0, MAX_QUERY_LENGTH);
-    const escapedTerm = escapeForIlike(safeTerm);
+    // searchHerbs builds a hand-built `.or()` string, so escape both ILIKE
+    // wildcards AND PostgREST filter delimiters (L2, audit 2026-06-22).
+    const escapedTerm = sanitizeFilterValue(safeTerm);
 
     const expandedKeywords = expandQueryToKeywords(safeTerm);
     const { data: keywordResults } = await supabase

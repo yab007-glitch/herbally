@@ -90,7 +90,18 @@ export function useSaveSearch() {
     if (!query.trim()) return;
 
     const saved = localStorage.getItem(STORAGE_KEY);
-    const existing: string[] = saved ? JSON.parse(saved) : [];
+    // L25 (audit 2026-06-22): guard the JSON.parse — a corrupted/tampered
+    // localStorage value used to throw and abort saving the new search.
+    let existing: string[] = [];
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed))
+          existing = parsed.filter((s) => typeof s === "string");
+      } catch {
+        existing = [];
+      }
+    }
 
     const updated = [
       query.trim(),

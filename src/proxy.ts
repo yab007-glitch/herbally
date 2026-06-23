@@ -16,7 +16,10 @@ function buildCSP(): string {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' *.stripe.com",
     "connect-src 'self' *.supabase.co *.openrouter.ai *.stripe.com",
-    "img-src 'self' data: blob: https:",
+    // L16 (audit 2026-06-22): scope img-src to the only remote image host we
+    // actually use (Supabase Storage), matching next.config.ts remotePatterns.
+    // A bare `https:` allowed any origin to be a CSP-permitted image source.
+    "img-src 'self' data: blob: https://*.supabase.co",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "frame-src *.stripe.com",

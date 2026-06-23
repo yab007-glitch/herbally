@@ -21,6 +21,13 @@ vi.mock("@/lib/supabase/anonymous", () => ({
   getAnonClient: () => chain(),
 }));
 
+// M2: chat-persist now derives the guest id server-side from the cookie via
+// getGuestId(). Stub it so the RPC functions receive a deterministic p_guest_id
+// without touching next/headers cookies.
+vi.mock("@/lib/actions/guest-id", () => ({
+  getGuestId: vi.fn().mockResolvedValue("guest-123"),
+}));
+
 describe("chat-persist (guest)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -44,10 +51,15 @@ describe("chat-persist (guest)", () => {
         error: null,
       });
 
-      const result = await actions.createGuestSession("guest-123", "turmeric");
+      const result = await actions.createGuestSession("turmeric");
       expect(result).not.toBeNull();
       expect(result?.id).toBe("gs1");
       expect(result?.herbContext).toBe("turmeric");
+      // guest id is passed to the RPC, derived from the cookie server-side
+      expect(rpcMock).toHaveBeenCalledWith("create_guest_chat_session", {
+        p_guest_id: "guest-123",
+        p_herb_context: "turmeric",
+      });
     });
 
     it("returns null on RPC error", async () => {
@@ -55,7 +67,7 @@ describe("chat-persist (guest)", () => {
         data: null,
         error: { message: "db error" },
       });
-      const result = await actions.createGuestSession("guest-123");
+      const result = await actions.createGuestSession();
       expect(result).toBeNull();
     });
   });
@@ -63,7 +75,7 @@ describe("chat-persist (guest)", () => {
   describe("getGuestSessions", () => {
     it("returns empty array when no sessions", async () => {
       rpcMock.mockResolvedValueOnce({ data: null, error: null });
-      const result = await actions.getGuestSessions("guest-123");
+      const result = await actions.getGuestSessions();
       expect(result).toEqual([]);
     });
 
@@ -80,7 +92,7 @@ describe("chat-persist (guest)", () => {
         ],
         error: null,
       });
-      const result = await actions.getGuestSessions("guest-123");
+      const result = await actions.getGuestSessions();
       expect(result).toHaveLength(1);
       expect(result[0].herbContext).toBeNull();
     });
@@ -102,7 +114,7 @@ describe("chat-persist (guest)", () => {
         ],
         error: null,
       });
-      const result = await actions.getGuestSession("gs1", "guest-123");
+      const result = await actions.getGuestSession("gs1");
       expect(result).toBeNull();
     });
 
@@ -131,7 +143,7 @@ describe("chat-persist (guest)", () => {
           ],
           error: null,
         });
-      const result = await actions.getGuestSession("gs1", "guest-123");
+      const result = await actions.getGuestSession("gs1");
       expect(result).not.toBeNull();
       expect(result?.id).toBe("gs1");
       expect(result?.herbContext).toBe("turmeric");
@@ -143,12 +155,7 @@ describe("chat-persist (guest)", () => {
   describe("addGuestMessage", () => {
     it("returns null on RPC error", async () => {
       rpcMock.mockResolvedValueOnce({ data: null, error: { message: "fail" } });
-      const result = await actions.addGuestMessage(
-        "gs1",
-        "user",
-        "hi",
-        "guest-123"
-      );
+      const result = await actions.addGuestMessage("gs1", "user", "hi");
       expect(result).toBeNull();
     });
   });
@@ -156,13 +163,13 @@ describe("chat-persist (guest)", () => {
   describe("deleteGuestSession", () => {
     it("returns true on success", async () => {
       rpcMock.mockResolvedValueOnce({ data: true, error: null });
-      const result = await actions.deleteGuestSession("gs1", "guest-123");
+      const result = await actions.deleteGuestSession("gs1");
       expect(result).toBe(true);
     });
 
     it("returns false on error", async () => {
       rpcMock.mockResolvedValueOnce({ data: null, error: { message: "fail" } });
-      const result = await actions.deleteGuestSession("gs1", "guest-123");
+      const result = await actions.deleteGuestSession("gs1");
       expect(result).toBe(false);
     });
   });

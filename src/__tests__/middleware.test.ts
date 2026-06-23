@@ -97,7 +97,10 @@ describe("middleware — CSP", () => {
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com",
     "connect-src 'self' *.supabase.co *.openrouter.ai *.stripe.com",
-    "img-src 'self' data: blob: https:",
+    // L16: img-src scoped to the only remote image host we use (Supabase
+    // Storage), matching next.config.ts remotePatterns — no longer a bare
+    // `https:` that permitted any origin.
+    "img-src 'self' data: blob: https://*.supabase.co",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "frame-src *.stripe.com",

@@ -128,21 +128,21 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
             setError(t("calculator.errors.weightRequired"));
             return;
           }
-          calcResult = clarksRule(weight, dose);
+          calcResult = clarksRule(weight, dose, doseUnit);
           break;
         case "youngs_rule":
           if (!ageInYears || ageInYears <= 0 || !Number.isFinite(ageInYears)) {
             setError(t("calculator.errors.ageRequired"));
             return;
           }
-          calcResult = youngsRule(ageInYears, dose);
+          calcResult = youngsRule(ageInYears, dose, doseUnit);
           break;
         case "bsa":
           if (!weight || weight <= 0 || !height || height <= 0) {
             setError(t("calculator.errors.bsaRequired"));
             return;
           }
-          calcResult = bsaMethod(height, weight, dose);
+          calcResult = bsaMethod(height, weight, dose, doseUnit);
           break;
         case "fried_rule":
           if (useMonths) {
@@ -154,7 +154,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               setError(t("calculator.errors.friedAgeLimit"));
               return;
             }
-            calcResult = friedsRule(age, dose);
+            calcResult = friedsRule(age, dose, doseUnit);
           } else {
             const months = parseFloat(ageYears) * 12;
             if (!months || months <= 0) {
@@ -165,7 +165,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               setError(t("calculator.errors.friedAgeLimit"));
               return;
             }
-            calcResult = friedsRule(months, dose);
+            calcResult = friedsRule(months, dose, doseUnit);
           }
           break;
         default:

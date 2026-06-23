@@ -70,13 +70,27 @@ export function DonationButtons() {
         {suggestedAmounts.map((tier) => {
           const Icon = tier.icon;
           const isLoading = loading === tier.amount;
+          const trigger = () => {
+            trackEvent("donation_clicked", { amount: tier.amount });
+            handleDonate(tier.amount);
+          };
           return (
             <Card
               key={tier.amount}
-              className="group relative cursor-pointer overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg"
-              onClick={() => {
-                trackEvent("donation_clicked", { amount: tier.amount });
-                handleDonate(tier.amount);
+              role="button"
+              tabIndex={0}
+              aria-label={`${t(tier.labelKey)} — $${tier.amount}`}
+              className="group relative cursor-pointer overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={trigger}
+              onKeyDown={(e) => {
+                if (
+                  e.key === "Enter" ||
+                  e.key === " " ||
+                  e.key === "Spacebar"
+                ) {
+                  e.preventDefault();
+                  trigger();
+                }
               }}
             >
               <div
@@ -119,6 +133,7 @@ export function DonationButtons() {
               <input
                 type="number"
                 value={customAmount}
+                aria-label={t("donateButtons.customAmount")}
                 onChange={(e) =>
                   setCustomAmount(
                     Math.max(1, Math.min(1000, Number(e.target.value)))

@@ -18,6 +18,15 @@ const NOTES_KEY = "herbally-garden-notes";
 // the most recent REMOVED_TOMBSTONE_MAX entries.
 const TOMBSTONE_KEY = "herbally-garden-removed";
 const REMOVED_TOMBSTONE_MAX = 100;
+// L20 (audit 2026-06-22): slugs confirmed present on the server (after a
+// successful POST sync). mergeServerGarden uses this to make the SERVER
+// authoritative for removals across devices — if a slug is synced but absent
+// from the server response, another device removed it and we drop it locally
+// too. Without this, the tombstone was per-device only: a removal on device A
+// never propagated to device B, which kept showing the herb until manually
+// removed there as well.
+const SYNCED_KEY = "herbally-garden-synced";
+const SYNCED_MAX = 200;
 
 export function getGarden(): GardenHerb[] {
   if (typeof window === "undefined") return [];
@@ -63,6 +72,48 @@ function clearRemovedSlug(slug: string): void {
     if (!set.has(slug)) return;
     set.delete(slug);
     localStorage.setItem(TOMBSTONE_KEY, JSON.stringify([...set]));
+  } catch {
+    // ignore
+  }
+}
+
+function getSyncedSlugs(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(SYNCED_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw) as string[];
+    return new Set(Array.isArray(parsed) ? parsed : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function markSynced(slug: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const set = getSyncedSlugs();
+    set.add(slug);
+    // Bound storage; drop oldest beyond the cap.
+    const list = [...set].slice(-SYNCED_MAX);
+    localStorage.setItem(SYNCED_KEY, JSON.stringify(list));
+  } catch {
+    // ignore
+  }
+}
+
+function clearSyncedSlugs(slugs: Iterable<string>): void {
+  if (typeof window === "undefined") return;
+  try {
+    const set = getSyncedSlugs();
+    let changed = false;
+    for (const s of slugs) {
+      if (set.has(s)) {
+        set.delete(s);
+        changed = true;
+      }
+    }
+    if (changed) localStorage.setItem(SYNCED_KEY, JSON.stringify([...set]));
   } catch {
     // ignore
   }
@@ -157,7 +208,7 @@ async function syncHerbToServer(
   herb: Omit<GardenHerb, "savedAt">
 ): Promise<void> {
   try {
-    await fetch("/api/garden", {
+    const res = await fetch("/api/garden", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -172,6 +223,10 @@ async function syncHerbToServer(
         ],
       }),
     });
+    // L20: only mark synced when the server actually accepted the write, so
+    // mergeServerGarden can trust "synced but absent from server" as a real
+    // cross-device removal rather than a never-synced local-only herb.
+    if (res.ok) markSynced(herb.slug);
   } catch {
     // Silently fail — localStorage is the source of truth
   }
@@ -204,18 +259,37 @@ export async function mergeServerGarden(): Promise<GardenHerb[]> {
 
     const data = (await response.json()) as { herbs?: GardenHerb[] };
     const serverHerbs: GardenHerb[] = data.herbs ?? [];
-    if (serverHerbs.length === 0) return getGarden();
+    const serverSlugs = new Set(serverHerbs.map((h) => h.slug));
 
     const local = getGarden();
-    const localSlugs = new Set(local.map((h) => h.slug));
     // Don't resurrect herbs the user intentionally removed — see tombstone.
     const removedSlugs = getRemovedSlugs();
-    const newHerbs = serverHerbs.filter(
-      (h) => !localSlugs.has(h.slug) && !removedSlugs.has(h.slug)
-    );
 
-    if (newHerbs.length > 0) {
-      const merged = [...local, ...newHerbs];
+    // L20: server-authoritative removals. A slug that we previously confirmed
+    // on the server but is now absent server-side was removed on another
+    // device — drop it locally so the per-device tombstone is no longer the
+    // only signal. Local-only herbs (never synced) are preserved (offline adds).
+    const synced = getSyncedSlugs();
+    const removedRemotely = local.filter(
+      (h) => synced.has(h.slug) && !serverSlugs.has(h.slug)
+    );
+    let reconciled = local;
+    if (removedRemotely.length > 0) {
+      const removedSlugsSet = new Set(removedRemotely.map((h) => h.slug));
+      reconciled = local.filter((h) => !removedSlugsSet.has(h.slug));
+      clearSyncedSlugs(removedSlugsSet);
+    }
+
+    // Add server herbs not present locally (and not tombstoned).
+    const reconciledSlugs = new Set(reconciled.map((h) => h.slug));
+    const newHerbs = serverHerbs.filter(
+      (h) => !reconciledSlugs.has(h.slug) && !removedSlugs.has(h.slug)
+    );
+    // Newly arrived server herbs are by definition synced.
+    for (const h of newHerbs) markSynced(h.slug);
+
+    if (removedRemotely.length > 0 || newHerbs.length > 0) {
+      const merged = [...reconciled, ...newHerbs];
       localStorage.setItem(GARDEN_KEY, JSON.stringify(merged));
       return merged;
     }

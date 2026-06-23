@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { slugify } from "@/lib/utils";
 import { logger } from "@/lib/utils/logger";
 import type { ActionResponse } from "@/lib/types";
@@ -99,6 +99,44 @@ function validateRow(row: Omit<HerbInsert, "slug">): string | null {
   return null;
 }
 
+/**
+ * Invalidate every unstable_cache tag the herb detail page attaches to a slug
+ * (M8, audit 2026-06-22). Previously admin edits only called revalidatePath for
+ * the edited slug, never revalidateTag — so the herb's own cached fetches
+ * (meta/herb/monograph/faqs) and, more importantly, OTHER herbs' cached
+ * `related-herbs-<slug>` entries (which render this herb's name) stayed stale up
+ * to the 24h TTL after a rename/republish.
+ */
+function invalidateHerbTags(slug: string): void {
+  for (const tag of [
+    `herb-meta-${slug}`,
+    `herb-${slug}`,
+    `monograph-${slug}`,
+    `herb-faqs-${slug}`,
+    `related-herbs-${slug}`,
+  ]) {
+    // Next 16: revalidateTag now takes a cache-life profile as the second
+    // argument (passing only the tag is deprecated). "max" is the longest-
+    // lived profile, appropriate for "purge and let the next request refill".
+    revalidateTag(tag, "max");
+  }
+}
+
+/**
+ * A name or publish-state change ripples into other herbs' "related herbs"
+ * lists and the compare/symptoms indexes. We can't wildcard revalidateTag, so
+ * bust the whole /herbs layout subtree (forces every herb page to regenerate
+ * and re-read fresh DB data) plus the compare and symptoms paths. Called only
+ * when `name` or `is_published` actually changed vs. the prior row.
+ */
+function invalidateCrossHerbCaches(): void {
+  // Next 16: revalidatePath's second arg is the literal 'layout' | 'page', not
+  // an options object.
+  revalidatePath("/herbs", "layout");
+  revalidatePath("/compare", "layout");
+  revalidatePath("/symptoms", "layout");
+}
+
 export async function createHerb(
   formData: FormData
 ): Promise<ActionResponse<Herb>> {
@@ -117,9 +155,16 @@ export async function createHerb(
       .select()
       .single();
     if (error) {
+      // L14 (audit 2026-06-22): don't leak the raw PostgREST error to the client
+      // (it can expose schema/column/constraint names). Log the detail
+      // server-side, surface a generic message.
       logger.error("createHerb_failed", { error: error.message });
-      return { success: false, error: error.message };
+      return { success: false, error: "Failed to create herb" };
     }
+    // M8: bust this herb's tagged caches + the cross-herb indexes (a new herb
+    // may appear in other herbs' related lists / compare / symptoms).
+    invalidateHerbTags(slug);
+    invalidateCrossHerbCaches();
     revalidatePath("/herbs");
     revalidatePath(`/herbs/${slug}`);
     revalidatePath("/admin/herbs");
@@ -144,6 +189,15 @@ export async function updateHerb(
   if (validationError) return { success: false, error: validationError };
 
   try {
+    // Fetch the prior row so we can (a) invalidate this herb's tagged caches by
+    // its slug and (b) detect name/publish changes that ripple into other
+    // herbs' related-herbs lists and the compare/symptoms indexes (M8).
+    const { data: prior } = await supabase
+      .from("herbs")
+      .select("slug, name, is_published")
+      .eq("id", id)
+      .maybeSingle();
+
     // Slug is intentionally NOT updated on edit — changing the URL would break
     // inbound links and the sitemap. Only the editable fields are sent.
     const { data, error } = await supabase
@@ -153,11 +207,22 @@ export async function updateHerb(
       .select()
       .single();
     if (error) {
+      // L14 (audit 2026-06-22): don't leak the raw PostgREST error to the client.
       logger.error("updateHerb_failed", { error: error.message });
-      return { success: false, error: error.message };
+      return { success: false, error: "Failed to update herb" };
+    }
+    // M8: bust this herb's own tagged caches by slug.
+    const slug = data.slug ?? prior?.slug;
+    if (slug) invalidateHerbTags(slug);
+    // A name or publish-state change affects other herbs' related-herbs caches
+    // and the compare/symptoms indexes — bust the whole layout subtrees.
+    const nameChanged = !!prior && prior.name !== row.name;
+    const publishChanged = !!prior && prior.is_published !== row.is_published;
+    if (nameChanged || publishChanged) {
+      invalidateCrossHerbCaches();
     }
     revalidatePath("/herbs");
-    revalidatePath(`/herbs/${data.slug}`);
+    if (slug) revalidatePath(`/herbs/${slug}`);
     revalidatePath(`/admin/herbs/${id}/edit`);
     revalidatePath("/admin/herbs");
   } catch (error) {

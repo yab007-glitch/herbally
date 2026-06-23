@@ -13,6 +13,7 @@ import { getAnonClient } from "@/lib/supabase/anonymous";
 import type { HerbWithInteractions } from "@/lib/types";
 import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { sanitizeFilterValue } from "@/lib/utils/ilike";
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -134,7 +135,10 @@ async function extractHerbNames(message: string): Promise<string[]> {
   if (supabase && words.length > 0) {
     try {
       const conditions = words
-        .map((w) => `name.ilike.%${w}%,scientific_name.ilike.%${w}%`)
+        .map((w) => {
+          const s = sanitizeFilterValue(w);
+          return `name.ilike.%${s}%,scientific_name.ilike.%${s}%`;
+        })
         .join(",");
       const { data } = await supabase
         .from("herbs")
@@ -299,7 +303,13 @@ async function lookupHerb(
       .from("herbs")
       .select("*, herb_categories(*), drug_interactions(*)")
       .or(
-        `name.ilike.${name},scientific_name.ilike.${name},slug.eq.${name.toLowerCase().replace(/\s+/g, "-")}`
+        (() => {
+          const s = sanitizeFilterValue(name);
+          const slug = sanitizeFilterValue(
+            name.toLowerCase().replace(/\s+/g, "-")
+          );
+          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug}`;
+        })()
       )
       .eq("is_published", true)
       .limit(1)
@@ -369,7 +379,7 @@ async function lookupInteractions(
   try {
     // Build conditions for drug names
     const drugConditions = medicationNames
-      .map((n) => `drug_name.ilike.%${n}%`)
+      .map((n) => `drug_name.ilike.%${sanitizeFilterValue(n)}%`)
       .join(",");
 
     const { data } = await supabase
@@ -437,10 +447,13 @@ async function batchLookupHerbs(
   if (supabase) {
     try {
       const conditions = names
-        .map(
-          (n) =>
-            `name.ilike.${n},scientific_name.ilike.${n},slug.eq.${n.toLowerCase().replace(/\s+/g, "-")}`
-        )
+        .map((n) => {
+          const s = sanitizeFilterValue(n);
+          const slug = sanitizeFilterValue(
+            n.toLowerCase().replace(/\s+/g, "-")
+          );
+          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug}`;
+        })
         .join(",");
 
       const { data, error } = await supabase
@@ -515,7 +528,8 @@ async function batchLookupHerbs(
 export async function fetchVerifiedContext(
   userMessage: string,
   herbContext?: string | null,
-  medications?: string[]
+  medications?: string[],
+  locale?: "en" | "fr"
 ): Promise<VerifiedContext> {
   // Extract names from the message
   const herbNames = await extractHerbNames(userMessage);
@@ -536,9 +550,13 @@ export async function fetchVerifiedContext(
   }
 
   // Look up herbs — batch into a single DB query instead of N individual
-  // lookups, then localize each result.
-  const locale = await getLocaleFromRequest().catch(() => "en");
-  const herbs = await batchLookupHerbs(herbNames.slice(0, 5), locale);
+  // lookups, then localize each result. Prefer the explicit locale from the
+  // request body (M-9) so DB-injected context and the system prompt share one
+  // locale; fall back to the x-locale request header for callers that don't pass
+  // a locale (e.g. tests).
+  const resolvedLocale =
+    locale ?? (await getLocaleFromRequest().catch(() => "en"));
+  const herbs = await batchLookupHerbs(herbNames.slice(0, 5), resolvedLocale);
 
   // Look up interactions
   const interactions = await lookupInteractions(

@@ -41,13 +41,20 @@ describe("rxnorm-client", () => {
       });
     });
 
-    it("returns empty array when API returns non-ok", async () => {
-      fetchMock.mockResolvedValueOnce({ ok: false, status: 500 });
+    it("returns empty array on 404 (no matches is expected)", async () => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 404 });
       const result = await searchDrugs("aspirin");
       expect(result).toEqual([]);
     });
 
-    it("returns empty array on network error", async () => {
+    it("throws on a non-2xx non-404 upstream error (M11)", async () => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 500 });
+      await expect(searchDrugs("aspirin")).rejects.toThrow(
+        "rxnorm_search_status_500"
+      );
+    });
+
+    it("returns empty array on transient network error", async () => {
       fetchMock.mockRejectedValueOnce(new Error("network failure"));
       const result = await searchDrugs("aspirin");
       expect(result).toEqual([]);
@@ -91,13 +98,20 @@ describe("rxnorm-client", () => {
       expect(result).toBe("Warfarin 5mg");
     });
 
-    it("returns null when API non-ok", async () => {
-      fetchMock.mockResolvedValueOnce({ ok: false });
+    it("returns null on 404 (no such rxcui is expected)", async () => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 404 });
       const result = await getDrugByRxcui("99999");
       expect(result).toBeNull();
     });
 
-    it("returns null on network error", async () => {
+    it("throws on a non-2xx non-404 upstream error (M11)", async () => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 500 });
+      await expect(getDrugByRxcui("99999")).rejects.toThrow(
+        "rxnorm_get_status_500"
+      );
+    });
+
+    it("returns null on transient network error", async () => {
       fetchMock.mockRejectedValueOnce(new Error("timeout"));
       const result = await getDrugByRxcui("12345");
       expect(result).toBeNull();
@@ -117,13 +131,20 @@ describe("rxnorm-client", () => {
       expect(result).toHaveLength(1);
     });
 
-    it("returns empty array when API non-ok", async () => {
-      fetchMock.mockResolvedValueOnce({ ok: false });
+    it("returns empty array on 404 (no interactions is expected)", async () => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 404 });
       const result = await getDrugInteractions("12345");
       expect(result).toEqual([]);
     });
 
-    it("returns empty array on network error", async () => {
+    it("throws on a non-2xx non-404 upstream error (M11)", async () => {
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 503 });
+      await expect(getDrugInteractions("12345")).rejects.toThrow(
+        "rxnorm_interactions_status_503"
+      );
+    });
+
+    it("returns empty array on transient network error", async () => {
       fetchMock.mockRejectedValueOnce(new Error("timeout"));
       const result = await getDrugInteractions("12345");
       expect(result).toEqual([]);

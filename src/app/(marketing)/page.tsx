@@ -1,9 +1,17 @@
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { HomeSearchClient } from "./home-search-client";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
 import { Leaf } from "lucide-react";
 import Link from "next/link";
+
+// M10 (audit 2026-06-22): the homepage previously had no generateMetadata, so
+// it emitted no canonical URL or hreflang alternates — the highest-traffic
+// page lacked the locale signals Google uses for en/fr routing. buildPageMetadata
+// derives canonical + en/fr/x-default alternates from the path "/".
+export const generateMetadata = () =>
+  buildPageMetadata({ titleKey: "homeTitle", path: "/" });
 
 export default async function HomePage() {
   const locale = await getLocaleFromRequest();

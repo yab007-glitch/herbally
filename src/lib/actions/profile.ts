@@ -2,12 +2,82 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/utils/logger";
+import { matchesDrugInteraction } from "@/lib/utils/drug-match";
+import { z } from "zod";
 import type { ActionResponse } from "@/lib/types";
 import type { Database } from "@/lib/types/database";
 
 type PatientProfile = Database["public"]["Tables"]["patient_profiles"]["Row"];
 type HealthProfile = Database["public"]["Tables"]["health_profiles"]["Row"];
 type UserMedication = Database["public"]["Tables"]["user_medications"]["Row"];
+
+// ─── Input validation (M4) ────────────────────────────────────────
+// Server actions accept arbitrary JSON from the client; the TypeScript
+// signature is erased at runtime, so a malicious/stale payload could include
+// id/user_id/created_at/updated_at (row-transfer or privilege escalation) or
+// unbounded strings/numbers. Zod parses and STRIPS unknown keys (default
+// behavior), and bounds every field. The validated object is the ONLY thing
+// spread into the insert — server-owned columns (user_id) are added by the
+// action itself, never trusted from the client.
+
+const boundedNumber = (min: number, max: number) =>
+  z
+    .number()
+    .finite()
+    .min(min)
+    .max(max)
+    .nullish()
+    .transform((v) => (v === undefined ? null : v));
+
+const nullableString = (max: number) =>
+  z
+    .string()
+    .max(max)
+    .nullish()
+    .transform((v) => (v === undefined ? null : v));
+
+const patientProfileSchema = z.object({
+  name: z.string().min(1).max(100),
+  relationship: z.string().min(1).max(50),
+  weight_kg: boundedNumber(0, 1000),
+  age_years: boundedNumber(0, 130),
+  age_months: boundedNumber(0, 1200),
+  height_cm: boundedNumber(0, 300),
+  is_default: z
+    .boolean()
+    .nullish()
+    .transform((v) => v ?? false),
+  notes: nullableString(2000),
+});
+
+const healthProfileSchema = z.object({
+  conditions: z.array(z.string().min(1).max(100)).max(50).default([]),
+  allergies: z.array(z.string().min(1).max(100)).max(50).default([]),
+});
+
+const medicationSchema = z.object({
+  drug_name: z.string().min(1).max(200),
+  dosage: nullableString(100),
+  frequency: nullableString(100),
+  rxcui: nullableString(50),
+  notes: nullableString(2000),
+});
+
+const dosageCalculationSchema = z.object({
+  adult_dose: z.string().min(1).max(100),
+  calculated_dose: z.string().min(1).max(100),
+  formula_used: z.enum(["clarks_rule", "youngs_rule", "bsa", "fried_rule"]),
+  patient_weight_kg: boundedNumber(0, 1000),
+  patient_age: boundedNumber(0, 130),
+  patient_height_cm: boundedNumber(0, 300),
+  patient_bsa: boundedNumber(0, 10),
+  herb_id: z
+    .string()
+    .uuid()
+    .nullish()
+    .transform((v) => v ?? null),
+  notes: nullableString(500),
+});
 
 // ─── Patient Profiles ─────────────────────────────────────────────
 
@@ -46,9 +116,14 @@ export async function savePatientProfile(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
+    // M4: validate + strip server-owned/garbage keys before insert.
+    const parsed = patientProfileSchema.safeParse(profile);
+    if (!parsed.success)
+      return { success: false, error: "Invalid profile data" };
+
     const { data, error } = await supabase
       .from("patient_profiles")
-      .insert({ ...profile, user_id: user.id })
+      .insert({ ...parsed.data, user_id: user.id })
       .select()
       .single();
 
@@ -188,12 +263,19 @@ export async function saveHealthProfile(
     // separately via addMedication/removeMedication). PostgREST upsert only
     // UPDATEs the columns supplied, so the existing medications value is
     // preserved on conflict and the column default applies on first insert.
+    //
+    // M4: validate + strip server-owned keys (user_id/guest_id/id/timestamps)
+    // before upsert. Only conditions/allergies are carried through.
+    const parsed = healthProfileSchema.safeParse(profile);
+    if (!parsed.success)
+      return { success: false, error: "Invalid health profile data" };
+
     const { data, error } = await supabase
       .from("health_profiles")
       .upsert(
         {
-          conditions: profile.conditions,
-          allergies: profile.allergies,
+          conditions: parsed.data.conditions,
+          allergies: parsed.data.allergies,
           user_id: user.id,
         },
         { onConflict: "user_id" }
@@ -225,7 +307,10 @@ export async function getUserMedications(): Promise<
       .from("user_medications")
       .select("*")
       .eq("user_id", user.id)
-      .order("is_active", { ascending: false })
+      // L21 (audit 2026-06-22): only active meds are shown to the user;
+      // removeMedication now soft-deletes (is_active=false) so the row is
+      // preserved as an audit trail rather than hard-removed.
+      .eq("is_active", true)
       .order("created_at", { ascending: true });
 
     if (error) return { success: false, error: error.message };
@@ -249,9 +334,14 @@ export async function addMedication(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
+    // M4: validate + strip server-owned keys (id/user_id/timestamps/is_active).
+    const parsed = medicationSchema.safeParse(med);
+    if (!parsed.success)
+      return { success: false, error: "Invalid medication data" };
+
     const { data, error } = await supabase
       .from("user_medications")
-      .insert({ ...med, user_id: user.id, is_active: true })
+      .insert({ ...parsed.data, user_id: user.id, is_active: true })
       .select()
       .single();
 
@@ -271,11 +361,17 @@ export async function removeMedication(id: string): Promise<ActionResponse> {
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
+    // L21 (audit 2026-06-22): soft-delete by toggling is_active=false instead
+    // of hard-deleting the row, so the medication history is preserved as an
+    // audit trail and the user can no longer trigger interactions on it
+    // (checkUserMedicationInteractions filters is_active=true). Scoped to
+    // the authenticated user via RLS + the explicit user_id eq.
     const { error } = await supabase
       .from("user_medications")
-      .delete()
+      .update({ is_active: false })
       .eq("id", id)
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .eq("is_active", true);
 
     if (error) return { success: false, error: error.message };
     return { success: true };
@@ -302,9 +398,15 @@ export async function saveDosageCalculation(
     // "not signed in" instead of both looking like success.
     if (!user) return { success: true, data: { skipped: true } };
 
+    // M4: validate + strip server-owned keys (id/created_at/user_id) before
+    // insert.
+    const parsed = dosageCalculationSchema.safeParse(calc);
+    if (!parsed.success)
+      return { success: false, error: "Invalid calculation data" };
+
     const { error } = await supabase
       .from("dosage_calculations")
-      .insert({ ...calc, user_id: user.id });
+      .insert({ ...parsed.data, user_id: user.id });
 
     if (error) {
       logger.error("saveDosageCalculation_failed", { error: error.message });
@@ -427,14 +529,16 @@ export async function checkUserMedicationInteractions(
         },
       };
 
-    // Filter interactions to only those matching user's medications
-    const userMedNames = meds.map((m) => m.drug_name.toLowerCase());
-    const matched = interactions.filter((ix) => {
-      const ixName = ix.drug_name.toLowerCase();
-      return userMedNames.some(
-        (mn) => ixName.includes(mn) || mn.includes(ixName)
-      );
-    });
+    // Filter interactions to those matching the user's medications. The seed
+    // drug_interactions rows carry rxcui = NULL (migration 00016), so RxCUI
+    // matching is impossible; this uses token-based matching + a curated
+    // brand↔generic↔class synonym map (see src/lib/utils/drug-match.ts). The old
+    // bidirectional String.includes() produced false negatives ("birth control"
+    // vs "Oral Contraceptives") and false positives ("na" matching anything
+    // containing "na"). Over-warning is the safe direction for a checker.
+    const matched = interactions.filter((ix) =>
+      meds.some((m) => matchesDrugInteraction(m.drug_name, ix.drug_name))
+    );
 
     return {
       success: true,

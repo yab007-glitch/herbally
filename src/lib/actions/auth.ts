@@ -14,9 +14,25 @@ import type { ActionResponse } from "@/lib/types";
  */
 function safeReturnTo(fd: FormData): string {
   const raw = fd.get("returnTo") as string | null;
-  // Only allow same-origin absolute-less paths to prevent open redirect.
-  if (raw && raw.startsWith("/") && !raw.startsWith("//")) return raw;
-  return "/";
+  if (!raw) return "/";
+  // M3 (audit 2026-06-22): the old `raw.startsWith("/") && !raw.startsWith("//")`
+  // check blocked `//evil.com` but NOT `/\evil.com` or `/\\evil.com`, which
+  // several browsers normalize to a protocol-relative `//evil.com` → open
+  // redirect. Reject any backslash outright, then require a single-leading-slash
+  // same-origin path. No query-encoded bypass: decode first so `%2F%2F` and
+  // `%5C` can't sneak through.
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    return "/";
+  }
+  if (decoded.includes("\\")) return "/";
+  if (!decoded.startsWith("/") || decoded.startsWith("//")) return "/";
+  // Block scheme-relative and protocol-relative URLs that begin with "//"
+  // after any leading whitespace, and any explicit scheme.
+  if (/^\s*[a-z][a-z0-9+.-]*:/i.test(decoded)) return "/";
+  return decoded;
 }
 
 export async function login(formData: FormData): Promise<ActionResponse> {

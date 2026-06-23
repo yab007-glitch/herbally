@@ -1071,7 +1071,9 @@
     "severityContraindicated": "Contre-indiqué",
     "severitySevere": "Sévère",
     "severityModerate": "Modéré",
-    "severityMild": "Léger"
+    "severityMild": "Léger",
+    "personalizedInteractionsTitle": "Avertissement d'interaction personnalisé",
+    "personalizedInteractionsBody": "D'après les médicaments de votre profil, cette plante peut interagir avec un ou plusieurs médicaments que vous prenez. Ne commencez, n'arrêtez ni ne modifiez aucun médicament ou supplément sans consulter votre professionnel de santé ou votre pharmacien."
   },
   "citations": {
     "pending": "Citations en attente de révision. Informations basées sur l'utilisation traditionnelle et la recherche préliminaire.",
@@ -1457,6 +1459,7 @@
     "profileSaved": "Profil enregistré avec succès",
     "medicationAdded": "Médicament ajouté",
     "medicationRemoved": "Médicament retiré",
-    "calculationSaved": "Calcul enregistré dans l'historique"
+    "calculationSaved": "Calcul enregistré dans l'historique",
+    "saveCalculation": "Enregistrer le calcul dans l'historique"
   }
 }

@@ -26,6 +26,13 @@ function parseDosage(dosageStr: string | null): {
   if (!match) return { dose: null, unit: "mg" };
   const low = parseFloat(match[1]);
   const high = match[2] ? parseFloat(match[2]) : null;
+  // L22: reject malformed multi-bound ranges like "500-1000-2000 mg". The
+  // regex would backtrack to "1000-2000" and silently discard the low bound,
+  // biasing the computed pediatric dose HIGH (toward overdose). More than one
+  // range separator means malformed input — leave the prefill empty rather
+  // than surface a silently-truncated value.
+  const separatorCount = (dosageStr.match(/[-–]/g) || []).length;
+  if (separatorCount > 1) return { dose: null, unit: "mg" };
   return {
     dose: high !== null ? (low + high) / 2 : low,
     unit: match[3].toLowerCase() as "mg" | "ml" | "g" | "drops",

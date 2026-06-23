@@ -5,7 +5,7 @@ import { localizeHerb } from "@/lib/utils/localize-herb";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
-import { escapeForIlike } from "@/lib/utils/ilike";
+import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import type { Herb } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
@@ -37,11 +37,13 @@ export async function GET(request: NextRequest) {
       .overlaps("symptom_keywords", expandedKeywords)
       .limit(30);
 
-    // Sanitize each word to prevent ILIKE wildcard injection
+    // Sanitize each word to prevent ILIKE wildcard injection AND PostgREST
+    // `.or()` filter-syntax injection (a `,` or `.` in the value would let a
+    // caller inject an arbitrary filter clause — L2, audit 2026-06-22).
     const words = term.trim().split(/\s+/).filter(Boolean);
     const textConditions = words
       .flatMap((w) => {
-        const safe = escapeForIlike(w);
+        const safe = sanitizeFilterValue(w);
         return [
           `name.ilike.%${safe}%`,
           `scientific_name.ilike.%${safe}%`,

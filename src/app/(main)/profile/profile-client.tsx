@@ -13,7 +13,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { toast } from "sonner";
 import {
   getPatientProfiles,
@@ -61,6 +61,7 @@ type DosageCalc = {
 
 export function ProfileClient() {
   const t = useTranslations();
+  const locale = useLocale();
   const [patients, setPatients] = useState<PatientProfile[]>([]);
   const [medications, setMedications] = useState<Medication[]>([]);
   const [calculations, setCalculations] = useState<DosageCalc[]>([]);
@@ -146,8 +147,15 @@ export function ProfileClient() {
   }
 
   async function handleAddCondition() {
-    if (!newCondition.trim()) return;
-    const updated = [...conditions, newCondition.trim()];
+    const trimmed = newCondition.trim();
+    if (!trimmed) return;
+    // Dedupe case-insensitively so the badge list stays unique and the value
+    // can be used as a stable React key (audit frontend Low: array-index keys).
+    if (conditions.some((c) => c.toLowerCase() === trimmed.toLowerCase())) {
+      setNewCondition("");
+      return;
+    }
+    const updated = [...conditions, trimmed];
     setConditions(updated);
     setNewCondition("");
     await saveHealthProfile({
@@ -157,8 +165,13 @@ export function ProfileClient() {
   }
 
   async function handleAddAllergy() {
-    if (!newAllergy.trim()) return;
-    const updated = [...allergies, newAllergy.trim()];
+    const trimmed = newAllergy.trim();
+    if (!trimmed) return;
+    if (allergies.some((a) => a.toLowerCase() === trimmed.toLowerCase())) {
+      setNewAllergy("");
+      return;
+    }
+    const updated = [...allergies, trimmed];
     setAllergies(updated);
     setNewAllergy("");
     await saveHealthProfile({
@@ -288,16 +301,18 @@ export function ProfileClient() {
             <div className="space-y-3 rounded-lg border p-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label>{t("profile.name")}</Label>
+                  <Label htmlFor="pf-name">{t("profile.name")}</Label>
                   <Input
+                    id="pf-name"
                     value={pName}
                     onChange={(e) => setPName(e.target.value)}
                     placeholder="Jane Doe"
                   />
                 </div>
                 <div>
-                  <Label>{t("profile.relationship")}</Label>
+                  <Label htmlFor="pf-rel">{t("profile.relationship")}</Label>
                   <select
+                    id="pf-rel"
                     value={pRel}
                     onChange={(e) => setPRel(e.target.value)}
                     className="h-9 w-full rounded-lg border bg-transparent px-3 text-sm"
@@ -310,8 +325,9 @@ export function ProfileClient() {
                   </select>
                 </div>
                 <div>
-                  <Label>{t("profile.weightKg")}</Label>
+                  <Label htmlFor="pf-weight">{t("profile.weightKg")}</Label>
                   <Input
+                    id="pf-weight"
                     type="number"
                     value={pWeight}
                     onChange={(e) => setPWeight(e.target.value)}
@@ -319,8 +335,9 @@ export function ProfileClient() {
                   />
                 </div>
                 <div>
-                  <Label>{t("profile.ageYears")}</Label>
+                  <Label htmlFor="pf-age">{t("profile.ageYears")}</Label>
                   <Input
+                    id="pf-age"
                     type="number"
                     value={pAge}
                     onChange={(e) => setPAge(e.target.value)}
@@ -328,8 +345,9 @@ export function ProfileClient() {
                   />
                 </div>
                 <div>
-                  <Label>{t("profile.heightCm")}</Label>
+                  <Label htmlFor="pf-height">{t("profile.heightCm")}</Label>
                   <Input
+                    id="pf-height"
                     type="number"
                     value={pHeight}
                     onChange={(e) => setPHeight(e.target.value)}
@@ -375,11 +393,13 @@ export function ProfileClient() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label className="mb-2 block">{t("profile.conditions")}</Label>
+            <Label htmlFor="pf-condition" className="mb-2 block">
+              {t("profile.conditions")}
+            </Label>
             <div className="flex flex-wrap gap-2 mb-2">
               {conditions.map((c, i) => (
                 <Badge
-                  key={i}
+                  key={c}
                   variant="secondary"
                   className="cursor-pointer"
                   onClick={() => handleRemoveCondition(i)}
@@ -390,6 +410,7 @@ export function ProfileClient() {
             </div>
             <div className="flex gap-2">
               <Input
+                id="pf-condition"
                 value={newCondition}
                 onChange={(e) => setNewCondition(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddCondition()}
@@ -402,11 +423,13 @@ export function ProfileClient() {
             </div>
           </div>
           <div>
-            <Label className="mb-2 block">{t("profile.allergies")}</Label>
+            <Label htmlFor="pf-allergy" className="mb-2 block">
+              {t("profile.allergies")}
+            </Label>
             <div className="flex flex-wrap gap-2 mb-2">
               {allergies.map((a, i) => (
                 <Badge
-                  key={i}
+                  key={a}
                   variant="secondary"
                   className="cursor-pointer"
                   onClick={() => handleRemoveAllergy(i)}
@@ -417,6 +440,7 @@ export function ProfileClient() {
             </div>
             <div className="flex gap-2">
               <Input
+                id="pf-allergy"
                 value={newAllergy}
                 onChange={(e) => setNewAllergy(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddAllergy()}
@@ -471,8 +495,9 @@ export function ProfileClient() {
           {showAddMed && (
             <div className="space-y-3 rounded-lg border p-4">
               <div>
-                <Label>{t("profile.drugName")}</Label>
+                <Label htmlFor="pf-drug-name">{t("profile.drugName")}</Label>
                 <Input
+                  id="pf-drug-name"
                   value={medName}
                   onChange={(e) => setMedName(e.target.value)}
                   placeholder="Warfarin"
@@ -480,16 +505,18 @@ export function ProfileClient() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label>{t("profile.dosage")}</Label>
+                  <Label htmlFor="pf-dosage">{t("profile.dosage")}</Label>
                   <Input
+                    id="pf-dosage"
                     value={medDosage}
                     onChange={(e) => setMedDosage(e.target.value)}
                     placeholder="5mg"
                   />
                 </div>
                 <div>
-                  <Label>{t("profile.frequency")}</Label>
+                  <Label htmlFor="pf-frequency">{t("profile.frequency")}</Label>
                   <Input
+                    id="pf-frequency"
                     value={medFreq}
                     onChange={(e) => setMedFreq(e.target.value)}
                     placeholder="Once daily"
@@ -549,7 +576,9 @@ export function ProfileClient() {
                     </p>
                   </div>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(c.created_at).toLocaleDateString()}
+                    {new Date(c.created_at).toLocaleDateString(
+                      locale === "fr" ? "fr-FR" : "en-US"
+                    )}
                   </span>
                 </div>
               ))}

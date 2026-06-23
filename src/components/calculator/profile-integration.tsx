@@ -134,6 +134,9 @@ export function SaveCalcButton({
       className="w-full"
       onClick={handleSave}
       disabled={saved}
+      aria-label={
+        saved ? t("profile.calculationSaved") : t("profile.saveCalculation")
+      }
     >
       <Save className="size-4 mr-1" />
       {saved ? "✓" : t("profile.calculationSaved")}

@@ -29,23 +29,28 @@ function guardResponse(response: string, locale: "en" | "fr"): string {
 /**
  * Persist an AI response to the shared cache. Writes go through the
  * service-role client because ai_response_cache RLS allows anon reads only
- * (prevents cache poisoning via the public anon key). Fire-and-forget.
+ * (prevents cache poisoning via the public anon key). Returns a promise the
+ * stream awaits before closing (M-13) so the serverless invocation isn't
+ * frozen/killed before the fire-and-forget DB insert resolves.
  *
  * The response is run through the server-side safety guard BEFORE caching so
  * that blocked content is replaced with a refusal and warned content gets the
- * disclaimer appended — unsafe output must never be served from cache.
+ * disclaimer appended — unsafe output must never be served from cache. The
+ * live response is guarded separately and sent to the client; passing the RAW
+ * `fullContent` here (not the pre-guarded text) means the guard runs exactly
+ * once — never double-appending the warn disclaimer.
  */
-function persistToCache(
+async function persistToCache(
   promptHash: string,
   response: string,
   locale: "en" | "fr"
-) {
+): Promise<void> {
   // Don't cache empty or suspiciously short/garbage responses (the free pool
   // occasionally emits things like "User Safety: safe" for trivial inputs).
   if (!response.trim() || response.trim().length < 40) return;
   const guarded = guardResponse(response, locale);
   try {
-    createAdminClient()
+    const { error } = await createAdminClient()
       .from("ai_response_cache")
       .insert({
         prompt_hash: promptHash,
@@ -53,11 +58,8 @@ function persistToCache(
         expires_at: new Date(
           Date.now() + 7 * 24 * 60 * 60 * 1000
         ).toISOString(),
-      })
-      .then(({ error }) => {
-        if (error)
-          logger.error("api_chat_cache_failed", { error: error.message });
       });
+    if (error) logger.error("api_chat_cache_failed", { error: error.message });
   } catch {
     // Service key not configured (e.g. CI) -> skip caching.
   }
@@ -200,7 +202,8 @@ export async function POST(request: NextRequest) {
     verifiedContext = await fetchVerifiedContext(
       lastUserMessage,
       herbContext,
-      medications
+      medications,
+      locale
     );
   } catch (err) {
     logger.error("api_chat_context_fetch_failed", { error: err });
@@ -331,6 +334,16 @@ export async function POST(request: NextRequest) {
   }
 
   // ── Stream the response ───────────────────────────────────────────
+  // C3 + H2 (audit 2026-06-22 v2): the response is BUFFERED server-side and run
+  // through guardResponse before a single byte reaches the client. Previously
+  // chunks were enqueued verbatim, so a dangerous line ("stop taking your
+  // insulin") streamed to the user's screen unfiltered and the client-side
+  // guard (post-stream, bypassable) was the only defense. Buffering sacrifices
+  // token-by-token streaming UX but is the only way to fully prevent unsafe
+  // medical output from being displayed. The guard runs for EVERY model in the
+  // fallback chain — fallback (free) models are the least aligned and most
+  // prompt-injection-vulnerable, so guarding only the primary was an inverted
+  // safety priority. Cache still stores primary-model output only (guarded).
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
@@ -348,7 +361,7 @@ export async function POST(request: NextRequest) {
         if (timeoutId !== null) clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
           reader.cancel();
-          controller.close();
+          finish("timeout");
         }, 30_000);
       };
       const cancelTimeout = () => {
@@ -358,21 +371,48 @@ export async function POST(request: NextRequest) {
         }
       };
 
+      let fullContent = "";
+      // M-23: a single finalize guard so the timeout, done, and error paths
+      // can't double-close the controller (which throws TypeError). `finalized`
+      // is set synchronously so concurrent entries (e.g. timeout firing while
+      // the done promise is mid-await) no-op.
+      let finalized = false;
+      const finish = async (source: string) => {
+        if (finalized) return;
+        finalized = true;
+        cancelTimeout();
+        try {
+          // Guard the buffered content and send the safe text to the client.
+          const guarded = guardResponse(fullContent, locale ?? "en");
+          controller.enqueue(encoder.encode(guarded));
+          // M-13: await the cache write before closing so the serverless
+          // invocation isn't frozen/killed before the DB insert resolves. The
+          // guarded text is already enqueued, so the client receives it
+          // immediately; only the stream close waits on the cache write.
+          if (servedModel === primaryModel)
+            await persistToCache(promptHash, fullContent, locale ?? "en");
+        } catch (err) {
+          logger.error("api_chat_finalize_failed", {
+            source,
+            error: err instanceof Error ? err.message : String(err),
+          });
+        } finally {
+          try {
+            controller.close();
+          } catch {
+            // Already closed — safe to ignore.
+          }
+        }
+      };
+
       scheduleTimeout();
 
-      let fullContent = "";
       function pump() {
         reader
           .read()
           .then(({ done, value }) => {
             if (done) {
-              cancelTimeout();
-              // Cache only primary-model responses (avoid caching
-              // low-quality fallback output for 7 days). The response is
-              // guard-checked inside persistToCache before it lands in the DB.
-              if (servedModel === primaryModel)
-                persistToCache(promptHash, fullContent, locale ?? "en");
-              controller.close();
+              finish("done");
               return;
             }
 
@@ -384,10 +424,7 @@ export async function POST(request: NextRequest) {
               const trimmed = line.trim();
               if (!trimmed) continue;
               if (trimmed === "data: [DONE]") {
-                cancelTimeout();
-                if (servedModel === primaryModel)
-                  persistToCache(promptHash, fullContent, locale ?? "en");
-                controller.close();
+                finish("done");
                 return;
               }
               if (!trimmed.startsWith("data: ")) continue;
@@ -395,8 +432,8 @@ export async function POST(request: NextRequest) {
                 const data = JSON.parse(trimmed.slice(6));
                 const content = data.choices?.[0]?.delta?.content;
                 if (content) {
+                  // Buffer only — do NOT enqueue per-chunk (see C3+H2 above).
                   fullContent += content;
-                  controller.enqueue(encoder.encode(content));
                 }
               } catch {
                 // Skip invalid JSON lines
@@ -405,11 +442,13 @@ export async function POST(request: NextRequest) {
             pump();
           })
           .catch((error) => {
-            cancelTimeout();
+            // reader.cancel() from the timeout/done path rejects the pending
+            // read — that's not an error, finalization already happened.
+            if (finalized) return;
             logger.error("api_chat_stream_error", {
               error: error instanceof Error ? error.message : String(error),
             });
-            controller.close();
+            finish("error");
           });
       }
 

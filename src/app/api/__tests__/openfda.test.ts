@@ -52,8 +52,10 @@ describe("GET /api/openfda", () => {
     const res = await GET(makeRequest({ term: "ibuprofen" }));
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.meta.results.total).toBe(5);
+    // L8 (audit 2026-06-22): the route surfaces only the `results` array, not
+    // the full upstream body (meta/error/skip fields are not proxied through).
     expect(json.results[0].safetyreportid).toBe("123");
+    expect(json.meta).toBeUndefined();
   });
 
   it("returns empty results when OpenFDA responds with error", async () => {

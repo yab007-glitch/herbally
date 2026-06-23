@@ -28,7 +28,6 @@ import {
   addGuestMessage,
   deleteGuestSession,
 } from "@/lib/actions/chat-persist";
-import { getGuestId, setGuestId } from "@/lib/actions/guest-id";
 import type { ChatMessage } from "@/lib/actions/chat";
 import { useTranslations, useLocale } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
@@ -131,6 +130,14 @@ export function ChatInterface({
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // M15 (audit 2026-06-22): index of the first message not yet persisted to
+  // the guest session. The persistence effect debounces 1500ms on messages.length;
+  // a user send + assistant reply within that window used to clear the timer
+  // before the user message was saved, and the surviving timer saved only the
+  // last (assistant) message — the user message was lost. Tracking the saved
+  // index and persisting every message since it fixes the race without losing
+  // anything, regardless of how many messages land within one debounce window.
+  const lastSavedIndex = useRef(0);
 
   const lastAssistantMessage = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -187,20 +194,19 @@ export function ChatInterface({
   }, [autoQuery]);
 
   // ── Session persistence ──
+  // M2: the guest identity is derived server-side inside chat-persist (from
+  // the HttpOnly cookie) — the client no longer passes a guestId, so a tampered
+  // client can't address another guest's session/messages. The server action
+  // mints the cookie on first call when one is absent.
+  // M15: persist every message since `lastSavedIndex` (not just the last one),
+  // so the debounce race can no longer drop the user message.
   useEffect(() => {
     if (messages.length <= 1) return;
     const save = async () => {
       setIsSaving(true);
       try {
-        const guestId = await getGuestId();
-        if (!guestId) {
-          const newId = makeId();
-          await setGuestId(newId);
-        }
-        const gid = (await getGuestId()) ?? "unknown";
         if (!sessionIdState) {
           const session = await createGuestSession(
-            gid,
             messages[0]?.content.slice(0, 60) ?? "Chat"
           );
           if (session) {
@@ -210,19 +216,21 @@ export function ChatInterface({
               await addGuestMessage(
                 sid,
                 msg.role as "user" | "assistant",
-                msg.content,
-                gid
+                msg.content
               );
             }
+            lastSavedIndex.current = messages.length;
           }
         } else {
-          const gid2 = (await getGuestId()) ?? "unknown";
-          await addGuestMessage(
-            sessionIdState,
-            messages[messages.length - 1].role as "user" | "assistant",
-            messages[messages.length - 1].content,
-            gid2
-          );
+          // Persist only messages added since the last successful save.
+          for (let i = lastSavedIndex.current; i < messages.length; i++) {
+            await addGuestMessage(
+              sessionIdState,
+              messages[i].role as "user" | "assistant",
+              messages[i].content
+            );
+          }
+          lastSavedIndex.current = messages.length;
         }
       } catch {
         // Silent fail
@@ -238,19 +246,36 @@ export function ChatInterface({
   }, [messages.length]);
 
   // ── Send message ──
-  async function sendMessage(text?: string) {
+  // M16 (audit 2026-06-22): accept an optional history override + retry flag so
+  // `retryFailed` can pass the history with the stale error message already
+  // sliced out. Previously retryFailed called sendMessage(content) and
+  // sendMessage built the request from its closure-captured `messages` (which
+  // still contained the error assistant text), so the retried request sent the
+  // error text as assistant history AND duplicated the user message.
+  async function sendMessage(
+    text?: string,
+    opts?: { history?: Message[]; isRetry?: boolean }
+  ) {
     const content = (text ?? input).trim();
     if (!content || isLoading) return;
 
     setHasSentMessage(true);
-    const userMessage: Message = {
-      id: makeId(),
-      role: "user",
-      content,
-      timestamp: new Date().toISOString(),
-    };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const isRetry = !!opts?.isRetry;
+    const history = opts?.history ?? messages;
+    // On a retry the user message is already present in `history`; don't add a
+    // duplicate. On a normal send, append a fresh user message to state and to
+    // the request body.
+    const userMessage: Message | null = isRetry
+      ? null
+      : {
+          id: makeId(),
+          role: "user",
+          content,
+          timestamp: new Date().toISOString(),
+        };
+
+    if (userMessage) setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
     setStreamingContent("");
@@ -265,8 +290,8 @@ export function ChatInterface({
 
     try {
       const msgs = [
-        ...messages.filter((m) => m.role !== ("system" as never)),
-        userMessage,
+        ...history.filter((m) => m.role !== ("system" as never)),
+        ...(userMessage ? [userMessage] : []),
       ];
       const body: Record<string, unknown> = {
         messages: msgs.map((m) => ({ role: m.role, content: m.content })),
@@ -378,8 +403,16 @@ export function ChatInterface({
   }
 
   const retryFailed = useCallback(() => {
-    setMessages((prev) => prev.slice(0, -1));
-    sendMessage(messages[messages.length - 2]?.content ?? "");
+    // Drop the trailing failed/error assistant message, then re-send the last
+    // user message. Pass the sliced history explicitly so sendMessage builds the
+    // request from it (M16) instead of its stale closure copy that still
+    // contained the error text. isRetry=true tells sendMessage not to append a
+    // duplicate user message (it's already in the sliced history).
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    if (!lastUser) return;
+    const sliced = messages.slice(0, -1);
+    setMessages(sliced);
+    sendMessage(lastUser.content, { history: sliced, isRetry: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
@@ -395,14 +428,13 @@ export function ChatInterface({
 
   function clearChat() {
     if (sessionIdState) {
-      getGuestId().then((gid) => {
-        if (gid) deleteGuestSession(sessionIdState, gid).catch(() => {});
-      });
+      deleteGuestSession(sessionIdState).catch(() => {});
     }
     setMessages([]);
     setSessionIdState(null);
     setStreamingContent("");
     setHasSentMessage(false);
+    lastSavedIndex.current = 0;
   }
 
   function handleSubmit(e: React.FormEvent) {
