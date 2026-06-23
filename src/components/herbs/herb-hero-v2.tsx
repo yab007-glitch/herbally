@@ -46,10 +46,7 @@ interface HerbHeroV2Props {
   provenance?: Record<string, unknown> | null;
 }
 
-export function HerbHeroV2({
-  herb,
-  provenance = null,
-}: HerbHeroV2Props) {
+export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
   const t = useTranslations();
   const [saved, setSaved] = useState(() => isInGarden(herb.slug));
 

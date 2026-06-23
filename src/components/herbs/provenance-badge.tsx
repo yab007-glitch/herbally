@@ -1,5 +1,10 @@
 import { useTranslations } from "next-intl";
-import { CheckCircle2, Sparkles, AlertCircle, AlertTriangle } from "lucide-react";
+import {
+  CheckCircle2,
+  Sparkles,
+  AlertCircle,
+  AlertTriangle,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { type Provenance, isVerified } from "@/lib/types/provenance";
 

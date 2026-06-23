@@ -33,7 +33,8 @@ async function main() {
   });
 
   // Fetch all herbs with pagination
-  const selectCols = "id, name, slug, scientific_name, pregnancy_safe, nursing_safe, contraindications, citations";
+  const selectCols =
+    "id, name, slug, scientific_name, pregnancy_safe, nursing_safe, contraindications, citations";
   const allHerbs: Array<Record<string, unknown>> = [];
   let page = 0;
   while (true) {
@@ -43,14 +44,19 @@ async function main() {
       .eq("is_published", true)
       .order("name")
       .range(page * 1000, (page + 1) * 1000 - 1);
-    if (error) { console.error("Fetch error:", error.message); process.exit(1); }
+    if (error) {
+      console.error("Fetch error:", error.message);
+      process.exit(1);
+    }
     if (!data || data.length === 0) break;
     allHerbs.push(...data);
     if (data.length < 1000) break;
     page++;
   }
 
-  process.stdout.write(`Processing ${allHerbs.length} herbs (${dryRun ? "DRY RUN" : "LIVE"})...\n\n`);
+  process.stdout.write(
+    `Processing ${allHerbs.length} herbs (${dryRun ? "DRY RUN" : "LIVE"})...\n\n`
+  );
 
   let fixedSafety = 0;
   let fixedPmid = 0;
@@ -60,7 +66,6 @@ async function main() {
   for (const herb of allHerbs) {
     const updates: Record<string, unknown> = {};
     const slug = herb.slug as string;
-    
 
     // 1. Safety conflict: pregnancy_safe=true but contraindication mentions pregnancy
     const contra = (herb.contraindications as string[]) || [];
@@ -69,42 +74,68 @@ async function main() {
       if (hasPregContra) {
         updates.pregnancy_safe = false;
         if (!dryRun) {
-          await supabase.from("herbs").update({ pregnancy_safe: false }).eq("id", herb.id);
+          await supabase
+            .from("herbs")
+            .update({ pregnancy_safe: false })
+            .eq("id", herb.id);
         }
         fixedSafety++;
-        process.stdout.write(`  [safety] ${slug}: pregnancy_safe true→false (contraindication: "${contra.find((c) => /pregnan/i.test(c))}")\n`);
+        process.stdout.write(
+          `  [safety] ${slug}: pregnancy_safe true→false (contraindication: "${contra.find((c) => /pregnan/i.test(c))}")\n`
+        );
       }
     }
 
     // 2. Safety conflict: nursing_safe=true but contraindication mentions nursing/breastfeeding
     if (herb.nursing_safe === true) {
-      const hasNurseContra = contra.some((c) => /nurs|breastfeed|lactat/i.test(c));
+      const hasNurseContra = contra.some((c) =>
+        /nurs|breastfeed|lactat/i.test(c)
+      );
       if (hasNurseContra) {
         updates.nursing_safe = false;
         if (!dryRun) {
-          await supabase.from("herbs").update({ nursing_safe: false }).eq("id", herb.id);
+          await supabase
+            .from("herbs")
+            .update({ nursing_safe: false })
+            .eq("id", herb.id);
         }
         fixedSafety++;
-        process.stdout.write(`  [safety] ${slug}: nursing_safe true→false (contraindication: "${contra.find((c) => /nurs|breastfeed|lactat/i.test(c))}")\n`);
+        process.stdout.write(
+          `  [safety] ${slug}: nursing_safe true→false (contraindication: "${contra.find((c) => /nurs|breastfeed|lactat/i.test(c))}")\n`
+        );
       }
     }
 
     // 3. Fix short PMIDs (6 digits → pad to 7)
-    const citations = herb.citations as Array<{ pmid?: string; url?: string }> | null;
+    const citations = herb.citations as Array<{
+      pmid?: string;
+      url?: string;
+    }> | null;
     if (Array.isArray(citations)) {
       let citationsChanged = false;
       const fixedCitations = citations.map((c) => {
-        if (c.pmid && !PMID_REGEX.test(String(c.pmid)) && /^\d{6}$/.test(String(c.pmid))) {
+        if (
+          c.pmid &&
+          !PMID_REGEX.test(String(c.pmid)) &&
+          /^\d{6}$/.test(String(c.pmid))
+        ) {
           citationsChanged = true;
           const padded = "0" + String(c.pmid);
           fixedPmid++;
           process.stdout.write(`  [pmid] ${slug}: PMID ${c.pmid}→${padded}\n`);
-          return { ...c, pmid: padded, url: `https://pubmed.ncbi.nlm.nih.gov/${padded}/` };
+          return {
+            ...c,
+            pmid: padded,
+            url: `https://pubmed.ncbi.nlm.nih.gov/${padded}/`,
+          };
         }
         return c;
       });
       if (citationsChanged && !dryRun) {
-        await supabase.from("herbs").update({ citations: fixedCitations }).eq("id", herb.id);
+        await supabase
+          .from("herbs")
+          .update({ citations: fixedCitations })
+          .eq("id", herb.id);
       }
     }
 
@@ -115,14 +146,27 @@ async function main() {
       const match = sciName.match(/[A-Z][a-z]+ [a-z-]+/);
       if (match) {
         if (!dryRun) {
-          await supabase.from("herbs").update({ scientific_name: match[0] }).eq("id", herb.id);
+          await supabase
+            .from("herbs")
+            .update({ scientific_name: match[0] })
+            .eq("id", herb.id);
         }
         fixedSciName++;
-        process.stdout.write(`  [sciname] ${slug}: "${sciName.slice(0, 40)}"→"${match[0]}"\n`);
+        process.stdout.write(
+          `  [sciname] ${slug}: "${sciName.slice(0, 40)}"→"${match[0]}"\n`
+        );
       }
     }
 
-    if (Object.keys(updates).length === 0 && !citations?.some((c) => c.pmid && !PMID_REGEX.test(String(c.pmid)) && /^\d{6}$/.test(String(c.pmid)))) {
+    if (
+      Object.keys(updates).length === 0 &&
+      !citations?.some(
+        (c) =>
+          c.pmid &&
+          !PMID_REGEX.test(String(c.pmid)) &&
+          /^\d{6}$/.test(String(c.pmid))
+      )
+    ) {
       if (!sciName?.startsWith("{") && !sciName?.startsWith("[")) {
         skipped++;
       }
@@ -136,4 +180,7 @@ async function main() {
   process.stdout.write(`  Skipped (no issues): ${skipped}\n`);
 }
 
-main().catch((e) => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
