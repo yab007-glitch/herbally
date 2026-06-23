@@ -50,7 +50,7 @@ export function ShareButtons({ title, url, className }: ShareButtonsProps) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <span className="text-sm text-muted-foreground">
-        <Share2 className="inline size-4 -mt-0.5" /> Share:
+        <Share2 className="inline size-4 -mt-0.5" /> {t("common.shareLabel")}
       </span>
       {links.map((link) => (
         <a
