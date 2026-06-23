@@ -145,7 +145,11 @@ function getEvidenceLevel(
 ): "A" | "B" | "C" | "D" | "trad" {
   if (level && ["A", "B", "C", "D", "trad"].includes(level))
     return level as "A" | "B" | "C" | "D" | "trad";
-  return "C";
+  // Default to "trad" (Traditional Use) rather than "C" (Limited Evidence).
+  // Most unverified herbs have no clinical evidence data — presenting them
+  // as "C - Traditional/preclinical" overstates the evidence basis. "trad"
+  // is honest: it says "used traditionally, science may be limited."
+  return "trad";
 }
 
 interface CitationData {
@@ -396,7 +400,10 @@ export default async function HerbDetailPage({ params }: Props) {
       </p>
 
       {/* New Hero */}
-      <HerbHeroV2 herb={{ ...herb, evidence_level: evidenceLevel }} />
+      <HerbHeroV2
+        herb={{ ...herb, evidence_level: evidenceLevel }}
+        provenance={herb.provenance as Record<string, unknown> | null}
+      />
 
       {/* Personalized interaction warning (H1). Client component so the ISR
           page stays static for anonymous traffic; signed-in users get a

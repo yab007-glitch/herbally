@@ -1,19 +1,36 @@
 import { useTranslations } from "next-intl";
-import { CheckCircle2, Sparkles, AlertCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  Sparkles,
+  AlertCircle,
+  AlertTriangle,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { type Provenance, isVerified } from "@/lib/types/provenance";
 
 /**
- * ProvenanceBadge — renders a small pill indicating how a herb/monograph
- * was verified. Renders nothing for unverified entries (soft default —
- * we don't shame the long tail of 2,700+ herbs that haven't been
- * individually reviewed yet).
+ * ProvenanceBadge — renders a pill indicating how a herb/monograph was
+ * verified. For unverified entries, renders an amber "AI-Generated" badge
+ * so users understand the content has not been reviewed against primary
+ * sources. Previously returned null for unverified, which silently
+ * presented AI-generated medical content as authoritative.
  */
 export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
   const t = useTranslations("provenance");
   const method = provenance.verification_method;
 
-  if (method === "unverified") return null;
+  if (method === "unverified") {
+    return (
+      <Badge
+        variant="outline"
+        className="border-amber-400 bg-amber-50 text-amber-800 dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-300"
+        title={t("unverifiedTooltip")}
+      >
+        <AlertTriangle className="mr-1 size-3" aria-hidden="true" />
+        {t("unverified")}
+      </Badge>
+    );
+  }
 
   if (isVerified(provenance)) {
     const who = provenance.verified_by;

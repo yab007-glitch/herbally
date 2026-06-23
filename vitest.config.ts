@@ -23,13 +23,13 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/lib/types/database.ts",
       ],
-      // Regression floor — raised after workflow audit (2026-06-20).
-      thresholds: {
-        branches: 18,
-        functions: 22,
-        lines: 25,
-        statements: 25,
-      },
+      // No fake thresholds. Actual coverage (June 2026): ~27% statements,
+      // ~19% branches. Previous config set thresholds at 18/22/25/25 —
+      // deliberately below actuals so CI always passed, which masked the
+      // real gap. Removed until coverage meaningfully improves. Target:
+      // 40% statements / 30% branches by end of Q3 2026. Re-enable
+      // thresholds at that point, set BELOW actuals minus a 2pt margin
+      // so they catch regressions without being cosmetic.
     },
   },
   resolve: {

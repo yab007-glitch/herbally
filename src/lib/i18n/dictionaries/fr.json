@@ -290,11 +290,13 @@
     "verified": "Vérifié",
     "aiSummarized": "Résumée par IA",
     "primarySource": "Source primaire",
+    "unverified": "Généré par IA",
     "reviewedBy": "Revu par",
     "on": "le",
     "verifiedTooltip": "Cette fiche a été revue par un humain à partir d'une source primaire.",
     "aiSummarizedTooltip": "Résumée par IA. Consultez les sources pour les références originales.",
-    "primarySourceTooltip": "Cite une source primaire. Pas encore de revue manuelle."
+    "primarySourceTooltip": "Cite une source primaire. Pas encore de revue manuelle.",
+    "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations."
   },
   "donate": {
     "title": "Soutenir HerbAlly",

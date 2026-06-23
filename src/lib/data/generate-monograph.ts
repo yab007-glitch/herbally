@@ -30,7 +30,10 @@ export function generateMonograph(herb: {
 
   // Auto-generate from DB data
   const displayName = herb.name || herb.scientific_name;
-  const evidence = (herb.evidence_level?.toUpperCase() || "C") as
+  // Default to "trad" (Traditional Use) for unverified herbs without
+  // explicit evidence levels. Previously defaulted to "C" which overstates
+  // the evidence basis for AI-generated monographs with no clinical data.
+  const evidence = (herb.evidence_level?.toUpperCase() || "trad") as
     | "A"
     | "B"
     | "C"
@@ -87,7 +90,9 @@ function buildSummary(
         ? "supported by emerging clinical data"
         : evidence === "C"
           ? "with limited but promising clinical support"
-          : "primarily based on traditional use";
+          : evidence === "trad"
+            ? "primarily based on traditional use; clinical evidence is limited or ongoing"
+            : "primarily based on historical use with limited scientific validation";
 
   if (herb.description) {
     return `${herb.description} This herb is ${evidencePhrase}. Key active compounds include ${compoundStr}, which underpin its pharmacological activity across ${useCount} documented traditional and modern indications.`;
@@ -107,164 +112,27 @@ function buildMechanism(herb: {
   const uses = herb.modern_uses || herb.traditional_uses || [];
 
   if (compounds.length === 0) {
-    return `The pharmacological mechanism of ${herb.name} involves multiple bioactive constituents that work synergistically across several target tissues. Specific molecular pathway data is limited for this herb, and further phytochemical characterization is needed.`;
+    return `The pharmacological mechanism of ${herb.name} has not been characterized in the literature available to this database. Further phytochemical study is needed before specific molecular pathways can be described with confidence.`;
   }
 
   const primary = compounds[0];
   const secondary = compounds.slice(1, 3);
-  const tertiary = compounds.slice(3, 5);
 
-  let mechanism = `${primary}`;
+  let mechanism = `${herb.name} contains ${primary}`;
   if (secondary.length > 0) {
-    mechanism += `, along with ${secondary.join(" and ")}`;
+    mechanism += ` along with ${secondary.join(" and ")}`;
   }
-  mechanism += `, ${tertiary.length > 0 ? `and to a lesser extent ${tertiary.join(" and ")}, ` : ""}represent the primary bioactive constituents of ${herb.name}. `;
+  mechanism += ` as principal bioactive constituents. `;
 
-  const useStr = uses.join(" ").toLowerCase();
-  const mechanisms: string[] = [];
-
-  if (useStr.includes("anti-inflammatory") || useStr.includes("inflammation")) {
-    mechanisms.push(
-      `modulates NF-κB, COX-2, and 5-LOX inflammatory cascades, reducing pro-inflammatory cytokine production`
-    );
-  }
-  if (useStr.includes("antioxidant")) {
-    mechanisms.push(
-      `scavenges reactive oxygen species and upregulates Nrf2-mediated antioxidant gene expression`
-    );
-  }
-  if (
-    useStr.includes("anxiety") ||
-    useStr.includes("calm") ||
-    useStr.includes("sedative") ||
-    useStr.includes("sleep")
-  ) {
-    mechanisms.push(
-      `modulates GABA-A receptor signaling and may influence serotonin and melatonin pathways`
-    );
-  }
-  if (
-    useStr.includes("antimicrobial") ||
-    useStr.includes("antibacterial") ||
-    useStr.includes("antiviral") ||
-    useStr.includes("antifungal")
-  ) {
-    mechanisms.push(
-      `disrupts microbial cell membrane integrity and inhibits ATP synthesis in pathogens`
-    );
-  }
-  if (
-    useStr.includes("digestion") ||
-    useStr.includes("digestive") ||
-    useStr.includes("stomach") ||
-    useStr.includes("gastric")
-  ) {
-    mechanisms.push(
-      `stimulates digestive enzyme secretion, enhances gastric motility, and exerts spasmolytic effects on smooth muscle`
-    );
-  }
-  if (useStr.includes("liver") || useStr.includes("hepatoprotect")) {
-    mechanisms.push(
-      `stabilizes hepatocyte membranes, enhances glutathione synthesis, and supports phase II detoxification enzymes`
-    );
-  }
-  if (useStr.includes("immune")) {
-    mechanisms.push(
-      `modulates innate and adaptive immunity through macrophage activation, cytokine regulation, and lymphocyte proliferation`
-    );
-  }
-  if (
-    useStr.includes("pain") ||
-    useStr.includes("analgesic") ||
-    useStr.includes("neuropathic")
-  ) {
-    mechanisms.push(
-      `acts on nociceptive pathways via anti-inflammatory modulation and potential TRPV1 or opioidergic interactions`
-    );
-  }
-  if (
-    useStr.includes("blood sugar") ||
-    useStr.includes("diabetes") ||
-    useStr.includes("hypoglycemic") ||
-    useStr.includes("glucose")
-  ) {
-    mechanisms.push(
-      `enhances insulin sensitivity, stimulates pancreatic beta-cell function, and modulates carbohydrate absorption`
-    );
-  }
-  if (
-    useStr.includes("cardio") ||
-    useStr.includes("heart") ||
-    useStr.includes("blood pressure") ||
-    useStr.includes("hypertension")
-  ) {
-    mechanisms.push(
-      `exerts vasodilatory effects via nitric oxide release, modulates calcium channel activity, and may reduce vascular resistance`
-    );
-  }
-  if (
-    useStr.includes("cognitive") ||
-    useStr.includes("memory") ||
-    useStr.includes("alzheimer") ||
-    useStr.includes("neuro")
-  ) {
-    mechanisms.push(
-      `influences acetylcholinesterase activity, modulates synaptic plasticity, and provides neuroprotection against oxidative stress`
-    );
-  }
-  if (
-    useStr.includes("hormone") ||
-    useStr.includes("estrogen") ||
-    useStr.includes("testosterone") ||
-    useStr.includes("thyroid")
-  ) {
-    mechanisms.push(
-      `modulates endocrine signaling through receptor binding or downstream steroidogenic enzyme activity`
-    );
-  }
-  if (
-    useStr.includes("respiratory") ||
-    useStr.includes("asthma") ||
-    useStr.includes("bronch")
-  ) {
-    mechanisms.push(
-      `relaxes bronchial smooth muscle, reduces mucus viscosity, and exhibits anti-inflammatory activity in airway tissues`
-    );
-  }
-  if (
-    useStr.includes("wound") ||
-    useStr.includes("skin") ||
-    useStr.includes("topical")
-  ) {
-    mechanisms.push(
-      `promotes fibroblast proliferation, collagen deposition, and antimicrobial activity at wound sites`
-    );
-  }
-  if (
-    useStr.includes("diuretic") ||
-    useStr.includes("kidney") ||
-    useStr.includes("urinary")
-  ) {
-    mechanisms.push(
-      `inhibits sodium-potassium ATPase in renal tubules, promoting natriuresis and increased urine output`
-    );
-  }
-  if (
-    useStr.includes("cholesterol") ||
-    useStr.includes("lipid") ||
-    useStr.includes("triglyceride")
-  ) {
-    mechanisms.push(
-      `modulates hepatic HMG-CoA reductase activity and enhances bile acid excretion`
-    );
+  if (uses.length > 0) {
+    mechanism += `Reported traditional and modern uses include ${uses.slice(0, 5).join(", ").toLowerCase()}. `;
   }
 
-  if (mechanisms.length > 0) {
-    const joined = mechanisms.join("; ");
-    mechanism += `These compounds collectively ${joined}, contributing to the herb's observed therapeutic effects.`;
-  } else {
-    mechanism += `The specific molecular targets remain under investigation, with preclinical data suggesting polypharmacological activity across several receptor and enzymatic systems.`;
-  }
+  // Do NOT fabricate specific molecular pathways (NF-κB, COX-2, GABA-A, etc.)
+  // from keyword matching on use names. That was generating plausible-sounding
+  // but unsourced pharmacology claims for 2,700+ unverified herbs. Instead,
+  // state honestly that specific mechanisms require literature verification.
+  mechanism += `The specific molecular targets and pharmacokinetic pathways by which these compounds exert their reported effects have not been verified against primary literature for this entry. Consult PubMed or a qualified pharmacognosist for evidence-based mechanism data.`;
 
   return mechanism;
 }
@@ -381,57 +249,66 @@ function buildClaimNote(
   primaryCompound?: string
 ): string | undefined {
   const lower = use.toLowerCase();
-  if (lower.includes("anti-inflammatory")) {
-    return evidence === "A"
-      ? "Comparable to NSAIDs in several RCTs"
-      : "Preclinical anti-inflammatory activity confirmed; human data limited";
+
+  // Only provide specific clinical context when evidence is A or B
+  // (meaning real clinical data exists in the DB for this herb).
+  // For C, D, or trad evidence, use honest hedged language that doesn't
+  // fabricate clinical trial references.
+  if (evidence === "A" || evidence === "B") {
+    if (lower.includes("anti-inflammatory")) {
+      return evidence === "A"
+        ? "Comparable to NSAIDs in several RCTs"
+        : "Preclinical anti-inflammatory activity confirmed; human data limited";
+    }
+    if (lower.includes("antioxidant")) {
+      return "Free radical scavenging demonstrated in vitro and in vivo";
+    }
+    if (
+      lower.includes("anxiety") ||
+      lower.includes("sedative") ||
+      lower.includes("calm")
+    ) {
+      return evidence === "A" || evidence === "B"
+        ? "Modest anxiolytic effect in clinical trials"
+        : "Traditional anxiolytic use; clinical trials small or heterogeneous";
+    }
+    if (lower.includes("sleep") || lower.includes("insomnia")) {
+      return evidence === "A" || evidence === "B"
+        ? "Improves sleep latency and quality in RCTs"
+        : "Historical sleep aid; modern trials show variable outcomes";
+    }
+    if (lower.includes("immune")) {
+      return evidence === "A" || evidence === "B"
+        ? "May shorten duration of upper respiratory infections"
+        : "Immunomodulatory effects shown in preclinical models";
+    }
+    if (lower.includes("digestion") || lower.includes("gastric")) {
+      return "Stimulates digestive secretions and may reduce dyspeptic symptoms";
+    }
+    if (lower.includes("liver") || lower.includes("hepatoprotect")) {
+      return "Supports hepatocyte regeneration and reduces liver enzyme elevations in some studies";
+    }
+    if (
+      lower.includes("cardio") ||
+      lower.includes("heart") ||
+      lower.includes("blood pressure")
+    ) {
+      return "Modest hemodynamic effects; not a substitute for standard cardiovascular therapy";
+    }
+    if (lower.includes("cognitive") || lower.includes("memory")) {
+      return "Limited but promising data for age-related cognitive support";
+    }
+    if (lower.includes("diabetes") || lower.includes("blood sugar")) {
+      return "Adjunctive glycemic support; monitor glucose closely if on hypoglycemic agents";
+    }
+    if (lower.includes("wound") || lower.includes("skin")) {
+      return "Accelerates wound closure in animal models; human data sparse";
+    }
   }
-  if (lower.includes("antioxidant")) {
-    return "Free radical scavenging demonstrated in vitro and in vivo";
-  }
-  if (
-    lower.includes("anxiety") ||
-    lower.includes("sedative") ||
-    lower.includes("calm")
-  ) {
-    return evidence === "A" || evidence === "B"
-      ? "Modest anxiolytic effect in clinical trials"
-      : "Traditional anxiolytic use; clinical trials small or heterogeneous";
-  }
-  if (lower.includes("sleep") || lower.includes("insomnia")) {
-    return evidence === "A" || evidence === "B"
-      ? "Improves sleep latency and quality in RCTs"
-      : "Historical sleep aid; modern trials show variable outcomes";
-  }
-  if (lower.includes("immune")) {
-    return evidence === "A" || evidence === "B"
-      ? "May shorten duration of upper respiratory infections"
-      : "Immunomodulatory effects shown in preclinical models";
-  }
-  if (lower.includes("digestion") || lower.includes("gastric")) {
-    return "Stimulates digestive secretions and may reduce dyspeptic symptoms";
-  }
-  if (lower.includes("liver") || lower.includes("hepatoprotect")) {
-    return "Supports hepatocyte regeneration and reduces liver enzyme elevations in some studies";
-  }
-  if (
-    lower.includes("cardio") ||
-    lower.includes("heart") ||
-    lower.includes("blood pressure")
-  ) {
-    return "Modest hemodynamic effects; not a substitute for standard cardiovascular therapy";
-  }
-  if (lower.includes("cognitive") || lower.includes("memory")) {
-    return "Limited but promising data for age-related cognitive support";
-  }
-  if (lower.includes("diabetes") || lower.includes("blood sugar")) {
-    return "Adjunctive glycemic support; monitor glucose closely if on hypoglycemic agents";
-  }
-  if (lower.includes("wound") || lower.includes("skin")) {
-    return "Accelerates wound closure in animal models; human data sparse";
-  }
+
+  // For lower evidence levels, provide honest traditional-use context
   if (primaryCompound) {
-    return `Activity linked to ${primaryCompound}; mechanism partially characterized`;
+    return `Traditional use associated with ${primaryCompound}; clinical evidence has not been verified for this entry.`;
   }
   return undefined;
 }
