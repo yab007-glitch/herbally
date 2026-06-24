@@ -1,4 +1,5 @@
 import { siteUrl } from "@/lib/seo/site-url";
+import { getReviewer } from "@/lib/data/reviewers";
 
 interface Herb {
   name: string;
@@ -26,6 +27,7 @@ interface HerbSchemaProps {
 }
 
 export function HerbSchema({ herb }: HerbSchemaProps) {
+  const reviewer = getReviewer(herb.reviewed_by);
   const schema = {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
@@ -97,13 +99,26 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
       name: "HerbAlly",
       url: siteUrl(),
       ...(herb.reviewed_by && {
-        reviewer: {
-          "@type": "Person",
-          name: herb.reviewed_by,
-          ...(herb.reviewer_credentials && {
-            jobTitle: herb.reviewer_credentials,
-          }),
-        },
+        reviewer: reviewer
+          ? {
+              "@type": "Person",
+              name: reviewer.name,
+              jobTitle: reviewer.credentials,
+              url: reviewer.profileUrl,
+              ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
+              affiliation: reviewer.affiliations.map((a) => ({
+                "@type": "Organization",
+                name: a.name,
+                ...(a.url && { url: a.url }),
+              })),
+            }
+          : {
+              "@type": "Person",
+              name: herb.reviewed_by,
+              ...(herb.reviewer_credentials && {
+                jobTitle: herb.reviewer_credentials,
+              }),
+            },
       }),
     },
     ...(herb.last_reviewed && {

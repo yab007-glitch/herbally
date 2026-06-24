@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { HerbImage } from "@/components/herbs/HerbImage";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
-import { parseProvenance } from "@/lib/types/provenance";
+import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useState, useEffect } from "react";
@@ -71,6 +71,25 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
   };
 
   const firstBenefit = herb.traditional_uses?.[0];
+
+  // AI-generated pregnancy/nursing flags are not authoritative — only show a
+  // safe/unsafe verdict when the monograph has been human-reviewed against a
+  // primary source (manual / primary_source). Otherwise render "unknown" so a
+  // fabricated AI boolean can never display as "Generally Safe" for an
+  // unreviewed herb.
+  const verified = isVerified(parseProvenance(provenance));
+  const pregnancySafe = verified ? herb.pregnancy_safe : null;
+  const nursingSafe = verified ? herb.nursing_safe : null;
+  const pregnancySafeOral = verified
+    ? (herb.pregnancy_safe_oral ?? null)
+    : null;
+  const pregnancySafeTopical = verified
+    ? (herb.pregnancy_safe_topical ?? null)
+    : null;
+  const nursingSafeOral = verified ? (herb.nursing_safe_oral ?? null) : null;
+  const nursingSafeTopical = verified
+    ? (herb.nursing_safe_topical ?? null)
+    : null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl border bg-card">
@@ -136,8 +155,8 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
                 {t("herbHero.pregnancy")}
               </span>
               <span className="inline-flex items-center gap-1 text-xs">
-                {herb.pregnancy_safe_oral === false &&
-                herb.pregnancy_safe_topical === true ? (
+                {pregnancySafeOral === false &&
+                pregnancySafeTopical === true ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
                     <span className="text-destructive">
@@ -149,14 +168,14 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
                       {t("herbHero.safeTopically")}
                     </span>
                   </>
-                ) : herb.pregnancy_safe ? (
+                ) : pregnancySafe ? (
                   <>
                     <ShieldCheck className="size-3 text-green-600" />
                     <span className="text-green-600">
                       {t("herbHero.generallySafe")}
                     </span>
                   </>
-                ) : herb.pregnancy_safe === false ? (
+                ) : pregnancySafe === false ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
                     <span className="text-destructive">
@@ -179,8 +198,7 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
                 {t("herbHero.nursing")}
               </span>
               <span className="inline-flex items-center gap-1 text-xs">
-                {herb.nursing_safe_oral === false &&
-                herb.nursing_safe_topical === true ? (
+                {nursingSafeOral === false && nursingSafeTopical === true ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
                     <span className="text-destructive">
@@ -192,14 +210,14 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
                       {t("herbHero.safeTopically")}
                     </span>
                   </>
-                ) : herb.nursing_safe ? (
+                ) : nursingSafe ? (
                   <>
                     <ShieldCheck className="size-3 text-green-600" />
                     <span className="text-green-600">
                       {t("herbHero.generallySafe")}
                     </span>
                   </>
-                ) : herb.nursing_safe === false ? (
+                ) : nursingSafe === false ? (
                   <>
                     <ShieldX className="size-3 text-destructive" />
                     <span className="text-destructive">

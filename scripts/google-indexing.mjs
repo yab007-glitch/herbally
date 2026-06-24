@@ -16,7 +16,7 @@ const KEY_PAGES = [
   `https://${DOMAIN}`,
   `https://${DOMAIN}/herbs`,
   `https://${DOMAIN}/calculator`,
-  `https://${DOMAIN}/pharmacist`,
+  `https://${DOMAIN}/herbalist`,
   `https://${DOMAIN}/herbs/turmeric`,
   `https://${DOMAIN}/herbs/chamomile`,
   `https://${DOMAIN}/herbs/ginger`,

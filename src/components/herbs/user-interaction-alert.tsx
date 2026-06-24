@@ -69,6 +69,9 @@ export function UserInteractionAlert({ herbSlug }: { herbSlug: string }) {
           </li>
         ))}
       </ul>
+      <p className="mt-2 text-xs text-muted-foreground">
+        {t("interactions.coverageNotice")}
+      </p>
     </SafetyAlert>
   );
 }

@@ -195,7 +195,8 @@
       "adultDose": "Adult Dose",
       "formulaUsed": "Formula Used",
       "explanation": "Explanation",
-      "disclaimer": "This calculation is for reference only. Always verify dosages with a qualified healthcare provider."
+      "disclaimer": "This calculation is for reference only. Always verify dosages with a qualified healthcare provider.",
+      "unverifiedHerbNotice": "This herb's monograph is AI-generated and has not been reviewed against authoritative sources. No validated reference dose is available, so the adult dose field is left blank. Enter a dose from a trusted source yourself, and confirm any result with a qualified healthcare provider."
     },
     "placeholders": {
       "herb": "e.g., Turmeric, Echinacea...",
@@ -524,6 +525,7 @@
     "title": "Known Drug Interactions",
     "showMore": "Show {count} More",
     "showLess": "Show Less",
+    "coverageNotice": "This list reflects a curated subset of documented interactions and is not exhaustive. The absence of a drug here is not proof that it is safe to combine. Always confirm with a pharmacist or healthcare provider.",
     "severity": {
       "contraindicated": "Contraindicated",
       "severe": "Severe",
@@ -1091,7 +1093,8 @@
     "pending": "Citations pending review. Information based on traditional use and preliminary research.",
     "reviewedBy": "Reviewed by: ",
     "lastUpdated": "Last updated: ",
-    "sources": "Sources: "
+    "sources": "Sources: ",
+    "researchProfile": "Research profile"
   },
   "herbBadges": {
     "pregnancy": "Pregnancy",

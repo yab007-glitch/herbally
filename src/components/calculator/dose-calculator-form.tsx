@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Calculator, Info, Leaf } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +44,7 @@ type PrefillData = {
   dosageAdultRaw: string | null;
   dosageChildRaw: string | null;
   dosageForms: string[];
+  verified: boolean;
 } | null;
 
 const FORMULA_KEY_MAP: Record<FormulaKey, string> = {
@@ -203,13 +205,13 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       name: prefill.herbName,
                     })}
                   </p>
-                  {prefill.dosageAdultRaw && (
+                  {prefill.verified && prefill.dosageAdultRaw && (
                     <p className="text-green-700 dark:text-green-300">
                       {t("calculatorForm.standardAdultDose")}:{" "}
                       {prefill.dosageAdultRaw}
                     </p>
                   )}
-                  {prefill.dosageChildRaw && (
+                  {prefill.verified && prefill.dosageChildRaw && (
                     <p className="text-green-700 dark:text-green-300">
                       {t("calculatorForm.referenceChildDose")}:{" "}
                       {prefill.dosageChildRaw}
@@ -229,6 +231,18 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Unverified-source notice — do not present AI dosages as reference doses */}
+          {prefill && !prefill.verified && (
+            <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-950/30">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
+                <p className="text-sm text-amber-900 dark:text-amber-100">
+                  {t("calculatorForm.unverifiedHerbNotice")}
+                </p>
               </div>
             </div>
           )}

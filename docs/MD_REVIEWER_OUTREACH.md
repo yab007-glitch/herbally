@@ -8,13 +8,22 @@ Secure a named MD with herbal medicine credentials to officially review HerbAlly
 
 ### Tier 1 (Reach out first)
 
-1. **Dr. Aviva Romm, MD** - Yale-trained OB/GYN, midwife, herbalist
+1. **Dr. Dawn Wong, PhD (Health Sciences), BM (Chinese Medicine)** — TCM practitioner & RMIT University educator (existing founder contact)
+   - Email: info@hope-tcm.com
+   - Profile: https://www.hope-tcm.com/dr-dawn-wong
+   - Research: https://www.researchgate.net/profile/Dawn-Wong-Lit-Wan
+   - Qualifications: BM (Chinese Medicine), Beijing University of Chinese Medicine; PhD (Health Sciences), RMIT University; Graduate Certificate in Mental Health Practice, Griffith University; Accredited Mental Health First Aider
+   - Why: PhD + clinical TCM practice + academic affiliation (teaches in RMIT's Chinese Medicine programs since 2014) = strong, externally verifiable E-E-A-T for the traditional-use / TCM herb subset and pain, digestive, sleep & mental-health herbs. Multi-lingual (English, French, Mandarin) fits our bilingual EN/FR site.
+   - Approach: Already known to the founder. Lead with the bilingual + free-educational-resource angle and her pain/mental-health expertise; propose reviewing a focused TCM / traditional-use herb batch first (e.g. turmeric, ginger, ginseng, ashwagandha, valerian).
+   - Status: Existing contact — outreach pending.
+
+2. **Dr. Aviva Romm, MD** - Yale-trained OB/GYN, midwife, herbalist
    - Email: info@avivaromm.com (foundation) or via Yale Medicine
    - Website: https://avivaromm.com
    - Why: OB/GYN + herbalist combo is perfect for HerbAlly's women's health focus
    - Approach: Emphasize evidence-based approach, safety focus, reaching underserved populations
 
-2. **Dr. Tieraona Low Dog, MD** - NCCIH advisory board, Low Dog Foundation
+3. **Dr. Tieraona Low Dog, MD** - NCCIH advisory board, Low Dog Foundation
    - Email: info@lowdogfoundation.org
    - Website: https://www.lowdogfoundation.org
    - Why: Federal advisory role = instant credibility

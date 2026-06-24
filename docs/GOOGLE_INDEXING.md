@@ -63,12 +63,15 @@ This guide will help you get HerbAlly indexed by Google and other search engines
    - `https://herbally.app`
    - `https://herbally.app/herbs`
    - `https://herbally.app/calculator`
-   - `https://herbally.app/pharmacist`
-   - `https://herbally.app/herbs/turmeric`
-   - `https://herbally.app/herbs/chamomile`
-   - `https://herbally.app/herbs/ginger`
-   - `https://herbally.app/herbs/lavender`
-   - `https://herbally.app/herbs/echinacea`
+
+- `https://herbally.app/pharmacist`
+- `https://herbally.app/herbalist`
+- `https://herbally.app/herbs/turmeric`
+- `https://herbally.app/herbs/chamomile`
+- `https://herbally.app/herbs/ginger`
+- `https://herbally.app/herbs/lavender`
+- `https://herbally.app/herbs/echinacea`
+
 3. For each URL:
    - Click **"Request Indexing"**
    - Wait for confirmation

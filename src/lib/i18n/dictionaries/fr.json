@@ -195,7 +195,8 @@
       "adultDose": "Dose Adulte",
       "formulaUsed": "Formule Utilisée",
       "explanation": "Explication",
-      "disclaimer": "Ce calcul est fourni à titre indicatif uniquement. Vérifiez toujours les posologies avec un professionnel de santé qualifié."
+      "disclaimer": "Ce calcul est fourni à titre indicatif uniquement. Vérifiez toujours les posologies avec un professionnel de santé qualifié.",
+      "unverifiedHerbNotice": "La monographie de cette plante est générée par IA et n'a pas été revue par rapport à des sources faisant autorité. Aucune dose de référence validée n'est disponible, le champ de la dose adulte est donc laissé vide. Saisissez vous-même une dose provenant d'une source fiable et confirmez tout résultat auprès d'un professionnel de santé qualifié."
     },
     "placeholders": {
       "herb": "ex., Curcuma, Echinacea...",
@@ -524,6 +525,7 @@
     "title": "Interactions Médicamenteuses Connues",
     "showMore": "Afficher {count} de plus",
     "showLess": "Afficher moins",
+    "coverageNotice": "Cette liste reflète un sous-ensemble sélectionné d'interactions documentées et n'est pas exhaustive. L'absence d'un médicament ici ne prouve pas qu'il est sans danger à combiner. Confirmez toujours auprès d'un pharmacien ou d'un professionnel de santé.",
     "severity": {
       "contraindicated": "Contre-indiqué",
       "severe": "Sévère",
@@ -1091,7 +1093,8 @@
     "pending": "Citations en attente de révision. Informations basées sur l'utilisation traditionnelle et la recherche préliminaire.",
     "reviewedBy": "Révisé par : ",
     "lastUpdated": "Dernière mise à jour : ",
-    "sources": "Sources : "
+    "sources": "Sources : ",
+    "researchProfile": "Profil de recherche"
   },
   "herbBadges": {
     "pregnancy": "Grossesse",

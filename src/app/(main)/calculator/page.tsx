@@ -8,6 +8,7 @@ const DoseCalculatorForm = dynamic(() =>
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { parseProvenance, isVerified } from "@/lib/types/provenance";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "doseCalculator", path: "/calculator" });
@@ -56,20 +57,30 @@ export default async function CalculatorPage({
     dosageAdultRaw: string | null;
     dosageChildRaw: string | null;
     dosageForms: string[];
+    verified: boolean;
   } | null = null;
 
   if (herbSlug) {
     const result = await getHerbBySlug(herbSlug);
     if (result.success && result.data) {
       const herb = result.data;
+      // Only surface a reference adult dose when the monograph has been
+      // human-reviewed against a primary source (manual / primary_source).
+      // AI-generated dosages are unverified — prefilling them would present
+      // an authoritative-looking number from unchecked data, which is
+      // especially dangerous feeding a pediatric calculator.
+      const verified = isVerified(
+        parseProvenance(herb.provenance as Record<string, unknown> | null)
+      );
       const parsed = parseDosage(herb.dosage_adult);
       prefill = {
         herbName: herb.name,
-        adultDose: parsed.dose ? String(parsed.dose) : "",
+        adultDose: verified && parsed.dose ? String(parsed.dose) : "",
         doseUnit: parsed.unit,
         dosageAdultRaw: herb.dosage_adult,
         dosageChildRaw: herb.dosage_child,
         dosageForms: herb.dosage_forms || [],
+        verified,
       };
     }
   }

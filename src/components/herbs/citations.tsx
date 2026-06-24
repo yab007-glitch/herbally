@@ -1,7 +1,9 @@
 "use client";
 
 import { ExternalLink, BookOpen, FileText, Globe } from "lucide-react";
+import { GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getReviewer } from "@/lib/data/reviewers";
 import { useTranslations } from "next-intl";
 
 interface Citation {
@@ -123,23 +125,60 @@ export function SourceAttribution({
   className,
 }: SourceAttributionProps) {
   const t = useTranslations();
+  const reviewer = getReviewer(reviewedBy);
 
   return (
     <div className={cn("rounded-lg border bg-muted/50 p-4 text-sm", className)}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        {reviewedBy && (
-          <div>
-            <span className="text-muted-foreground">
-              {t("citations.reviewedBy")}
-            </span>
-            <span className="font-medium">{reviewedBy}</span>
-            {reviewerCredentials && (
+        {reviewedBy &&
+          (reviewer ? (
+            <div className="min-w-0">
               <span className="text-muted-foreground">
-                , {reviewerCredentials}
+                {t("citations.reviewedBy")}
               </span>
-            )}
-          </div>
-        )}
+              <a
+                href={reviewer.profileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground hover:text-primary hover:underline"
+              >
+                {reviewer.name}
+              </a>
+              <span className="text-muted-foreground">
+                {" "}
+                — {reviewer.credentials}
+              </span>
+              <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <GraduationCap className="size-3" />
+                  {reviewer.affiliation}
+                </span>
+                {reviewer.researchUrl && (
+                  <a
+                    href={reviewer.researchUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-primary hover:underline"
+                  >
+                    <ExternalLink className="size-3" />
+                    {t("citations.researchProfile")}
+                  </a>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <span className="text-muted-foreground">
+                {t("citations.reviewedBy")}
+              </span>
+              <span className="font-medium">{reviewedBy}</span>
+              {reviewerCredentials && (
+                <span className="text-muted-foreground">
+                  , {reviewerCredentials}
+                </span>
+              )}
+            </div>
+          ))}
         {lastReviewed && (
           <div>
             <span className="text-muted-foreground">
