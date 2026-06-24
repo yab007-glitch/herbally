@@ -137,6 +137,11 @@ export function InteractionsTable({
           </Button>
         </div>
       )}
+
+      {/* Coverage-limit disclaimer — the curated subset is not exhaustive */}
+      <p className="mt-4 text-xs text-muted-foreground">
+        {t("interactions.coverageNotice")}
+      </p>
     </section>
   );
 }

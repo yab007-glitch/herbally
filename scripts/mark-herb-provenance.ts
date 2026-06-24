@@ -134,9 +134,29 @@ async function mergeProvenance(
     ...(update.notes ? { notes: update.notes } : {}),
   };
 
+  // A named reviewer on a human-verified method (manual / primary_source)
+  // must also stamp the `reviewed_by` and `last_reviewed` columns — the herb
+  // page reads those (not provenance.verified_by) to render "Reviewed by …"
+  // attribution. Without this, marking provenance alone never surfaced the
+  // reviewer on the page. Store the DISPLAY NAME (e.g. "Dr. Dawn Wong") so
+  // every renderer shows a human-readable name; the UI reviewer registry
+  // resolves it back to a linked, credentialed profile.
+  const isHumanVerified =
+    update.verification_method === "manual" ||
+    update.verification_method === "primary_source";
+  const columnUpdate: Record<string, unknown> = { provenance: next };
+  if (isHumanVerified && update.verified_by) {
+    columnUpdate.reviewed_by = update.verified_by;
+    columnUpdate.last_reviewed = update.last_verified_at;
+  } else if (!isHumanVerified) {
+    // Non-verified methods are not human-reviewed — clear stale attribution.
+    columnUpdate.reviewed_by = null;
+    columnUpdate.last_reviewed = null;
+  }
+
   const { error: updateErr } = await supabase
     .from("herbs")
-    .update({ provenance: next })
+    .update(columnUpdate)
     .eq("id", data.id);
 
   if (updateErr) {
@@ -159,7 +179,7 @@ async function clearProvenance(
   if (fetchErr || !data) throw new Error(`Herb not found: ${slug}`);
   const { error: updateErr } = await supabase
     .from("herbs")
-    .update({ provenance: {} })
+    .update({ provenance: {}, reviewed_by: null, last_reviewed: null })
     .eq("id", data.id);
   if (updateErr) throw new Error(updateErr.message);
   console.log(`✓ ${slug} cleared`);
