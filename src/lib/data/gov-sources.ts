@@ -14,9 +14,11 @@
  *   - EMA HMPC (EU medicines agency) herbal monographs — index
  *   - WHO monographs — index
  *
- * Only NCCIH URLs that have been verified to resolve (HTTP 200) are mapped as
- * direct `monograph` links. Everything else is exposed as a `search` link that
- * always resolves, so we never present a fabricated or dead citation.
+ * The NCCIH direct URLs were discovered from the official "Herbs at a Glance"
+ * index (https://www.nccih.nih.gov/health/herbsataglance.htm) and each mapped
+ * to the matching HerbAlly database slug (by common name, then scientific name
+ * for synonym herbs, e.g. ginkgo-biloba -> NCCIH "ginkgo"). Only pages that
+ * exist in the NCCIH index are mapped — no fabricated URLs.
  *
  * IMPORTANT: surfacing a government source link does NOT mean the stored herb
  * row matches that source — the row may still be AI-generated. The page makes
@@ -74,39 +76,65 @@ export const GOV_SOURCES: Record<string, SourceDef> = {
 };
 
 /**
- * Direct NCCIH "Herbs at a Glance" URLs, verified to return HTTP 200.
- * Keyed by the herb's database slug.
+ * Direct NCCIH "Herbs at a Glance" URLs, discovered from the official NCCIH
+ * index and mapped to HerbAlly database slugs (54 herbs). Keyed by slug.
  */
 const NCCIH_DIRECT: Record<string, string> = {
-  turmeric: "https://www.nccih.nih.gov/health/turmeric",
-  ginger: "https://www.nccih.nih.gov/health/ginger",
-  echinacea: "https://www.nccih.nih.gov/health/echinacea",
-  ginkgo: "https://www.nccih.nih.gov/health/ginkgo",
-  "st-johns-wort": "https://www.nccih.nih.gov/health/st-johns-wort",
-  valerian: "https://www.nccih.nih.gov/health/valerian",
-  "milk-thistle": "https://www.nccih.nih.gov/health/milk-thistle",
-  "black-cohosh": "https://www.nccih.nih.gov/health/black-cohosh",
-  "saw-palmetto": "https://www.nccih.nih.gov/health/saw-palmetto",
-  // NCCIH splits ginseng into Asian / American; the verified page is Asian ginseng.
-  ginseng: "https://www.nccih.nih.gov/health/asian-ginseng",
-  ashwagandha: "https://www.nccih.nih.gov/health/ashwagandha",
-  cranberry: "https://www.nccih.nih.gov/health/cranberry",
-  garlic: "https://www.nccih.nih.gov/health/garlic",
-  "green-tea": "https://www.nccih.nih.gov/health/green-tea",
-  kava: "https://www.nccih.nih.gov/health/kava",
-  lavender: "https://www.nccih.nih.gov/health/lavender",
-  "red-clover": "https://www.nccih.nih.gov/health/red-clover",
-  rhodiola: "https://www.nccih.nih.gov/health/rhodiola",
-  elderberry: "https://www.nccih.nih.gov/health/elderberry",
+  "acai-berry-antioxidant": "https://www.nccih.nih.gov/health/acai",
   "aloe-vera": "https://www.nccih.nih.gov/health/aloe-vera",
+  ashwagandha: "https://www.nccih.nih.gov/health/ashwagandha",
   astragalus: "https://www.nccih.nih.gov/health/astragalus",
+  bilberry: "https://www.nccih.nih.gov/health/bilberry",
+  "bitter-orange": "https://www.nccih.nih.gov/health/bitter-orange",
+  "black-cohosh": "https://www.nccih.nih.gov/health/black-cohosh",
+  boswellia: "https://www.nccih.nih.gov/health/boswellia",
+  butterbur: "https://www.nccih.nih.gov/health/butterbur",
+  "cats-claw": "https://www.nccih.nih.gov/health/cats-claw",
+  chamomile: "https://www.nccih.nih.gov/health/chamomile",
+  cinnamon: "https://www.nccih.nih.gov/health/cinnamon",
+  "cook-island-noni-leaf": "https://www.nccih.nih.gov/health/noni",
+  "corynanthe-yohimbe": "https://www.nccih.nih.gov/health/yohimbe",
+  cranberry: "https://www.nccih.nih.gov/health/cranberry",
+  dandelion: "https://www.nccih.nih.gov/health/dandelion",
+  echinacea: "https://www.nccih.nih.gov/health/echinacea",
+  elderberry: "https://www.nccih.nih.gov/health/elderberry",
+  "ephedra-sinica": "https://www.nccih.nih.gov/health/ephedra",
+  "european-mistletoe": "https://www.nccih.nih.gov/health/european-mistletoe",
+  "evening-primrose": "https://www.nccih.nih.gov/health/evening-primrose-oil",
   fenugreek: "https://www.nccih.nih.gov/health/fenugreek",
   feverfew: "https://www.nccih.nih.gov/health/feverfew",
+  "flaxseed-oil-herb":
+    "https://www.nccih.nih.gov/health/flaxseed-and-flaxseed-oil",
+  garcinia: "https://www.nccih.nih.gov/health/garcinia-cambogia",
+  garlic: "https://www.nccih.nih.gov/health/garlic",
+  ginger: "https://www.nccih.nih.gov/health/ginger",
+  "ginkgo-biloba": "https://www.nccih.nih.gov/health/ginkgo",
+  ginseng: "https://www.nccih.nih.gov/health/asian-ginseng",
   goldenseal: "https://www.nccih.nih.gov/health/goldenseal",
+  "grape-seed": "https://www.nccih.nih.gov/health/grape-seed-extract",
+  "green-tea": "https://www.nccih.nih.gov/health/green-tea",
   hawthorn: "https://www.nccih.nih.gov/health/hawthorn",
-  // NCCIH covers peppermint via its peppermint-oil page.
+  hoodia: "https://www.nccih.nih.gov/health/hoodia",
+  "horse-chestnut": "https://www.nccih.nih.gov/health/horse-chestnut",
+  kava: "https://www.nccih.nih.gov/health/kava",
+  lavender: "https://www.nccih.nih.gov/health/lavender",
+  "licorice-root": "https://www.nccih.nih.gov/health/licorice-root",
+  "milk-thistle": "https://www.nccih.nih.gov/health/milk-thistle",
+  "mugwort-european": "https://www.nccih.nih.gov/health/mugwort",
+  "mulberry-leaf": "https://www.nccih.nih.gov/health/white-mulberry-leaf",
+  passionflower: "https://www.nccih.nih.gov/health/passionflower",
   peppermint: "https://www.nccih.nih.gov/health/peppermint-oil",
-  chasteberry: "https://www.nccih.nih.gov/health/chasteberry",
+  "pomegranate-peel": "https://www.nccih.nih.gov/health/pomegranate",
+  "red-clover": "https://www.nccih.nih.gov/health/red-clover",
+  rhodiola: "https://www.nccih.nih.gov/health/rhodiola",
+  sage: "https://www.nccih.nih.gov/health/sage",
+  "saw-palmetto": "https://www.nccih.nih.gov/health/saw-palmetto",
+  "st-johns-wort": "https://www.nccih.nih.gov/health/st-johns-wort",
+  "tea-tree": "https://www.nccih.nih.gov/health/tea-tree-oil",
+  "tripterygium-wilfordii": "https://www.nccih.nih.gov/health/thunder-god-vine",
+  turmeric: "https://www.nccih.nih.gov/health/turmeric",
+  valerian: "https://www.nccih.nih.gov/health/valerian",
+  vitex: "https://www.nccih.nih.gov/health/chasteberry",
 };
 
 /**
