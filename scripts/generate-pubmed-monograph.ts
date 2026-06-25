@@ -32,6 +32,7 @@ config({ path: ".env" });
 
 import { createClient } from "@supabase/supabase-js";
 import { writeFileSync } from "fs";
+import { hasManualMonograph } from "../src/lib/data/monographs";
 
 const EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 
@@ -46,7 +47,7 @@ function getMaxAbstracts(): number {
 const MAX_ABSTRACTS = getMaxAbstracts();
 
 const COMPILE_MODELS = (
-  process.env.PUBMED_COMPILE_MODELS || "glm-5.2,qwen3.5:397b,deepseek-v4-pro"
+  process.env.PUBMED_COMPILE_MODELS || "gemma4:31b,glm-5.2,qwen3.5:397b"
 )
   .split(",")
   .map((m) => m.trim())
@@ -336,15 +337,152 @@ async function compileSheet(herb: Herb, articles: Article[]) {
   );
 }
 
+async function fetchAllHerbs() {
+  const sb = getSupabase();
+  const all: {
+    slug: string;
+    name: string;
+    scientific_name: string;
+    common_names: string[] | null;
+  }[] = [];
+  let from = 0;
+  for (;;) {
+    const { data, error } = await sb
+      .from("herbs")
+      .select("slug,name,scientific_name,common_names")
+      .eq("is_published", true)
+      .order("slug", { ascending: true })
+      .range(from, from + 999);
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0) break;
+    all.push(...(data as typeof all));
+    if (data.length < 1000) break;
+    from += 1000;
+  }
+  return all;
+}
+
+async function existingSheetSlugs(): Promise<Set<string>> {
+  const sb = getSupabase();
+  const set = new Set<string>();
+  let from = 0;
+  for (;;) {
+    const { data, error } = await sb
+      .from("herb_pubmed_monographs")
+      .select("slug")
+      .range(from, from + 999);
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0) break;
+    for (const r of data as { slug: string }[]) set.add(r.slug);
+    if (data.length < 1000) break;
+    from += 1000;
+  }
+  return set;
+}
+
+async function generateForSlug(
+  herb: Herb,
+  opts: { write: boolean }
+): Promise<{ ok: boolean; cited: number; articles: number; error?: string }> {
+  try {
+    const term = buildSearchTerm(herb);
+    const ids = await esearch(term);
+    if (ids.length === 0)
+      return { ok: false, cited: 0, articles: 0, error: "no pubmed results" };
+    await sleep(340);
+    const articles = await efetchAbstracts(ids.slice(0, MAX_ABSTRACTS));
+    if (articles.length === 0)
+      return { ok: false, cited: 0, articles: 0, error: "no abstracts" };
+    const { sheet, citedPmids, model } = await compileSheet(herb, articles);
+    const citations = articles
+      .filter((a) => citedPmids.includes(a.pmid))
+      .map((a) => ({
+        pmid: a.pmid,
+        title: a.title,
+        authors: [] as string[],
+        journal: a.journal,
+        year: a.year,
+        pubtype: a.pubtypes,
+        url: `https://pubmed.ncbi.nlm.nih.gov/${a.pmid}/`,
+        evidenceLevel: evidenceLevel(a.pubtypes),
+      }));
+    const record = {
+      slug: herb.slug,
+      content: sheet,
+      citations,
+      pmids: citedPmids,
+      article_count: articles.length,
+      model,
+      generated_at: new Date().toISOString(),
+      status: "compiled",
+    };
+    if (opts.write) {
+      const sb = getSupabase();
+      const { error } = await sb
+        .from("herb_pubmed_monographs")
+        .upsert(record, { onConflict: "slug" });
+      if (error) throw new Error(`DB upsert failed: ${error.message}`);
+    }
+    return { ok: true, cited: citedPmids.length, articles: articles.length };
+  } catch (e) {
+    return {
+      ok: false,
+      cited: 0,
+      articles: 0,
+      error: e instanceof Error ? e.message : String(e),
+    };
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
-  const slug = args[0];
+  const doWrite = args.includes("--write");
+  const isBatch = args.includes("--batch");
+  const limitIdx = args.indexOf("--limit");
+  const limit = limitIdx >= 0 ? Number(args[limitIdx + 1]) : 0;
   const outIdx = args.indexOf("--out");
   const outPath = outIdx >= 0 ? args[outIdx + 1] : null;
-  const doWrite = args.includes("--write");
+
+  if (isBatch) {
+    // Batch mode: generate sheets for every published herb that has no
+    // hand-written monograph and no existing sheet. Resumable — already-
+    // generated slugs are skipped. Logs a progress line per herb.
+    const herbs = await fetchAllHerbs();
+    const done = await existingSheetSlugs();
+    const todo = herbs.filter(
+      (h) => !hasManualMonograph(h.slug) && !done.has(h.slug)
+    );
+    const n = limit > 0 ? Math.min(limit, todo.length) : todo.length;
+    console.log(
+      `Batch: ${todo.length} herbs to generate${limit > 0 ? ` (limited to ${n})` : ""}; write=${doWrite}`
+    );
+    let ok = 0;
+    let failed = 0;
+    const failedList: string[] = [];
+    for (let i = 0; i < n; i++) {
+      const herb = todo[i];
+      process.stdout.write(`[${i + 1}/${n}] ${herb.slug} ... `);
+      const r = await generateForSlug(herb, { write: doWrite });
+      if (r.ok) {
+        ok++;
+        console.log(`ok (${r.articles} abstracts, ${r.cited} cited)`);
+      } else {
+        failed++;
+        failedList.push(`${herb.slug}: ${r.error}`);
+        console.log(`FAIL (${r.error})`);
+      }
+    }
+    console.log(`\nBatch done: ${ok} ok, ${failed} failed of ${n}.`);
+    if (failedList.length) {
+      console.log("Failed:\n  " + failedList.join("\n  "));
+    }
+    return;
+  }
+
+  const slug = args[0];
   if (!slug) {
     console.error(
-      "Usage: npx tsx scripts/generate-pubmed-monograph.ts <slug> [--out file.json] [--max 80] [--write]"
+      "Usage:\n  npx tsx scripts/generate-pubmed-monograph.ts <slug> [--out file.json] [--max 80] [--write]\n  npx tsx scripts/generate-pubmed-monograph.ts --batch --write [--limit N]"
     );
     process.exit(1);
   }
@@ -414,9 +552,9 @@ async function main() {
 
   if (doWrite) {
     const sb = getSupabase();
-    const { error } = await sb.from("herb_pubmed_monographs").upsert(record, {
-      onConflict: "slug",
-    });
+    const { error } = await sb
+      .from("herb_pubmed_monographs")
+      .upsert(record, { onConflict: "slug" });
     if (error) throw new Error(`DB upsert failed: ${error.message}`);
     console.log(`✓ upserted herb_pubmed_monographs for ${herb.slug}`);
   }
