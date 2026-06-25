@@ -1096,6 +1096,13 @@
     "sources": "Sources : ",
     "researchProfile": "Profil de recherche"
   },
+  "govSources": {
+    "title": "Sources gouvernementales",
+    "directMonograph": "monographie directe",
+    "searchFallback": "recherche",
+    "index": "index",
+    "noMonographNotice": "Aucune monographie gouvernementale directe n'est disponible pour cette plante. Le contenu ci-dessous est généré par IA et n'a pas été vérifié par rapport à une source gouvernementale faisant autorité. Utilisez les liens de recherche pour consulter les sources officielles avant de vous fier à ces informations."
+  },
   "herbBadges": {
     "pregnancy": "Grossesse",
     "nursing": "Allaitement",

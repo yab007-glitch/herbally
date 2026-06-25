@@ -32,6 +32,7 @@ import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
+import { GovSources } from "@/components/herbs/gov-sources";
 
 // REMOVED: export const dynamic = "force-dynamic";
 // This enables static generation (SSG) for every herb page at build time.
@@ -489,13 +490,12 @@ export default async function HerbDetailPage({ params }: Props) {
         reviewedBy={reviewedBy}
         reviewerCredentials={reviewerCredentials}
         lastReviewed={lastReviewed}
-        sources={[
-          t("herbDetailContent.sources.who"),
-          t("herbDetailContent.sources.nccih"),
-          t("herbDetailContent.sources.pubmed"),
-          t("herbDetailContent.sources.commissionE"),
-        ]}
       />
+
+      {/* Government sources — the credible source-of-truth layer. Direct
+          NCCIH/NIH monograph links where mapped; honest notice when no
+          government monograph covers this herb. */}
+      <GovSources slug={slug} displayName={herb.name} />
 
       {/* Share buttons */}
       <ShareButtons
