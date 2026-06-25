@@ -14,6 +14,51 @@ export type Database = {
   };
   public: {
     Tables: {
+      herb_pubmed_monographs: {
+        Row: {
+          id: string;
+          slug: string;
+          content: Record<string, unknown>;
+          citations: unknown[] | null;
+          pmids: string[] | null;
+          article_count: number | null;
+          model: string | null;
+          generated_at: string;
+          status: string | null;
+          last_reviewed: string | null;
+          reviewed_by: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          content: Record<string, unknown>;
+          citations?: unknown[] | null;
+          pmids?: string[] | null;
+          article_count?: number | null;
+          model?: string | null;
+          generated_at?: string | null;
+          status?: string | null;
+          last_reviewed?: string | null;
+          reviewed_by?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          content?: Record<string, unknown>;
+          citations?: unknown[] | null;
+          pmids?: string[] | null;
+          article_count?: number | null;
+          model?: string | null;
+          generated_at?: string | null;
+          status?: string | null;
+          last_reviewed?: string | null;
+          reviewed_by?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       ai_response_cache: {
         Row: {
           created_at: string | null;

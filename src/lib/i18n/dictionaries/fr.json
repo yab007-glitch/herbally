@@ -1105,6 +1105,31 @@
     "stubTitle": "Aucune monographie rédigée par un humain pour cette plante",
     "stubBody": "Cette plante ne dispose pas d'une monographie rédigée par un humain, et le contenu généré par IA n'est pas affiché ici. Consultez les sources gouvernementales et les études primaires PubMed (NIH) listées ci-dessous pour des informations fiables. Confirmez toujours auprès d'un professionnel de santé avant utilisation."
   },
+  "pubmedSheet": {
+    "compiledTitle": "Fiche d'information compilée à partir de PubMed",
+    "compiledBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) avec l'assistance d'une IA. Chaque affirmation factuelle est citée par un article PubMed réel (voir la liste des sources). Elle n'a pas encore été révisée par un humain — confirmez auprès d'un professionnel de santé avant utilisation.",
+    "reviewedTitle": "Fiche d'information révisée",
+    "reviewedBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) et a été révisée par un humain. Chaque affirmation est citée par un article PubMed réel (voir la liste des sources).",
+    "compiledFrom": "Compilé à partir de {count} articles PubMed · modèle : {model}",
+    "summary": "Résumé",
+    "background": "Contexte",
+    "traditionalUses": "Usages traditionnels",
+    "activeCompounds": "Composés actifs",
+    "mechanism": "Mécanisme d'action",
+    "clinicalEvidence": "Preuves cliniques",
+    "safety": "Sécurité et effets indésirables",
+    "pregnancy": "Grossesse et allaitement",
+    "interactions": "Interactions médicamenteuses",
+    "dosage": "Posologie et administration",
+    "evidenceSummary": "Synthèse des preuves",
+    "citations": "Sources PubMed",
+    "level": {
+      "A": "Preuve A",
+      "B": "Preuve B",
+      "C": "Preuve C",
+      "D": "Preuve D"
+    }
+  },
   "herbBadges": {
     "pregnancy": "Grossesse",
     "nursing": "Allaitement",

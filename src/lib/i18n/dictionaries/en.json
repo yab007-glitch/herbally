@@ -1105,6 +1105,31 @@
     "stubTitle": "No human-written monograph for this herb",
     "stubBody": "This herb does not have a human-authored monograph, and AI-generated content is not shown here. See the government sources and PubMed (NIH) primary studies listed below for credible information. Always confirm with a healthcare provider before use."
   },
+  "pubmedSheet": {
+    "compiledTitle": "PubMed-compiled information sheet",
+    "compiledBody": "This sheet was compiled from PubMed (NIH) abstracts using AI assistance. Every factual claim is cited to a real PubMed article (see the source list). It has not yet been human-reviewed — confirm with a healthcare provider before use.",
+    "reviewedTitle": "Reviewed information sheet",
+    "reviewedBody": "This sheet was compiled from PubMed (NIH) abstracts and has been human-reviewed. Every claim is cited to a real PubMed article (see the source list).",
+    "compiledFrom": "Compiled from {count} PubMed articles · model: {model}",
+    "summary": "Summary",
+    "background": "Background",
+    "traditionalUses": "Traditional uses",
+    "activeCompounds": "Active compounds",
+    "mechanism": "Mechanism of action",
+    "clinicalEvidence": "Clinical evidence",
+    "safety": "Safety & adverse effects",
+    "pregnancy": "Pregnancy & lactation",
+    "interactions": "Drug interactions",
+    "dosage": "Dosage & administration",
+    "evidenceSummary": "Evidence summary",
+    "citations": "PubMed sources",
+    "level": {
+      "A": "Evidence A",
+      "B": "Evidence B",
+      "C": "Evidence C",
+      "D": "Evidence D"
+    }
+  },
   "herbBadges": {
     "pregnancy": "Pregnancy",
     "nursing": "Nursing",
