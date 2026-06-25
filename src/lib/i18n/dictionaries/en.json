@@ -1101,7 +1101,9 @@
     "directMonograph": "direct monograph",
     "searchFallback": "search",
     "index": "index",
-    "noMonographNotice": "No direct government monograph is available for this herb. The content below is AI-generated and has not been verified against an authoritative government source. Use the search links to check official sources before relying on this information."
+    "noMonographNotice": "No direct government monograph is available for this herb. The content below is AI-generated and has not been verified against an authoritative government source. Use the search links to check official sources before relying on this information.",
+    "stubTitle": "No human-written monograph for this herb",
+    "stubBody": "This herb does not have a human-authored monograph, and AI-generated content is not shown here. See the government sources and PubMed (NIH) primary studies listed below for credible information. Always confirm with a healthcare provider before use."
   },
   "herbBadges": {
     "pregnancy": "Pregnancy",

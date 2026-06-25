@@ -33,6 +33,8 @@ import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { GovSources } from "@/components/herbs/gov-sources";
+import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
+import { hasManualMonograph } from "@/lib/data/monographs";
 
 // REMOVED: export const dynamic = "force-dynamic";
 // This enables static generation (SSG) for every herb page at build time.
@@ -248,7 +250,14 @@ export default async function HerbDetailPage({ params }: Props) {
     provenance.verification_method === "ai_summarized";
 
   let monograph: Monograph | null = null;
+  // Option B: only herbs with a hand-written (human-authored) monograph show
+  // the rich narrative. Every other herb renders the government-sourced view
+  // (government sources + PubMed citations) instead of AI-generated text.
+  const isManualMonograph = hasManualMonograph(slug);
   if (dbMonograph) {
+    // Option B: the rich narrative is only RENDERED for herbs with a
+    // hand-written monograph (see the tabs gate). The monograph object is
+    // still built so references/SEO metadata stay consistent.
     monograph = {
       slug,
       summary: dbMonograph.summary,
@@ -445,38 +454,56 @@ export default async function HerbDetailPage({ params }: Props) {
           personalized alert after hydration based on their medication list. */}
       <UserInteractionAlert herbSlug={slug} />
 
-      {/* Tabbed Content */}
-      <HerbDetailTabs
-        tabs={[
-          {
-            key: "overview",
-            content: (
-              <HerbOverviewPanel
-                herb={herb}
-                monograph={monograph}
-                lastReviewed={lastReviewed}
-                reviewedBy={reviewedBy}
-              />
-            ),
-          },
-          { key: "uses", content: <HerbUsesPanel herb={herb} /> },
-          {
-            key: "science",
-            content: <HerbSciencePanel herb={herb} monograph={monograph} />,
-          },
-          { key: "dosage", content: <HerbDosagePanel herb={herb} /> },
-          {
-            key: "safety",
-            content: (
-              <HerbSafetyPanel
-                herb={herb}
-                interactions={interactions}
-                severityCounts={severityCounts}
-              />
-            ),
-          },
-        ]}
-      />
+      {/* Tabbed Content — only hand-written monographs show the narrative
+          tabs; every other herb renders the government-sourced view (Option B)
+          so no AI-generated content is displayed. */}
+      {isManualMonograph ? (
+        <HerbDetailTabs
+          tabs={[
+            {
+              key: "overview",
+              content: (
+                <HerbOverviewPanel
+                  herb={herb}
+                  monograph={monograph}
+                  lastReviewed={lastReviewed}
+                  reviewedBy={reviewedBy}
+                />
+              ),
+            },
+            { key: "uses", content: <HerbUsesPanel herb={herb} /> },
+            {
+              key: "science",
+              content: <HerbSciencePanel herb={herb} monograph={monograph} />,
+            },
+            { key: "dosage", content: <HerbDosagePanel herb={herb} /> },
+            {
+              key: "safety",
+              content: (
+                <HerbSafetyPanel
+                  herb={herb}
+                  interactions={interactions}
+                  severityCounts={severityCounts}
+                />
+              ),
+            },
+          ]}
+        />
+      ) : (
+        <>
+          {/* Option B: no hand-written monograph — do not show AI-generated
+              narrative. Surface government sources + PubMed citations + any
+              curated (non-AI) interaction data below. */}
+          <GovSourcedBanner />
+          {interactions.length > 0 && (
+            <HerbSafetyPanel
+              herb={herb}
+              interactions={interactions}
+              severityCounts={severityCounts}
+            />
+          )}
+        </>
+      )}
 
       {/* Citations */}
       <section className="pt-4">

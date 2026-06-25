@@ -1101,7 +1101,9 @@
     "directMonograph": "monographie directe",
     "searchFallback": "recherche",
     "index": "index",
-    "noMonographNotice": "Aucune monographie gouvernementale directe n'est disponible pour cette plante. Le contenu ci-dessous est généré par IA et n'a pas été vérifié par rapport à une source gouvernementale faisant autorité. Utilisez les liens de recherche pour consulter les sources officielles avant de vous fier à ces informations."
+    "noMonographNotice": "Aucune monographie gouvernementale directe n'est disponible pour cette plante. Le contenu ci-dessous est généré par IA et n'a pas été vérifié par rapport à une source gouvernementale faisant autorité. Utilisez les liens de recherche pour consulter les sources officielles avant de vous fier à ces informations.",
+    "stubTitle": "Aucune monographie rédigée par un humain pour cette plante",
+    "stubBody": "Cette plante ne dispose pas d'une monographie rédigée par un humain, et le contenu généré par IA n'est pas affiché ici. Consultez les sources gouvernementales et les études primaires PubMed (NIH) listées ci-dessous pour des informations fiables. Confirmez toujours auprès d'un professionnel de santé avant utilisation."
   },
   "herbBadges": {
     "pregnancy": "Grossesse",
