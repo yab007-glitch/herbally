@@ -66,6 +66,26 @@ function getSupabase() {
   });
 }
 
+/** Best-effort on-demand revalidation of a herb's PubMed sheet cache. */
+async function revalidateSheet(slug: string): Promise<void> {
+  const secret = process.env.REVALIDATE_SECRET;
+  if (!secret) return; // not configured — skip silently
+  const base =
+    process.env.REVALIDATE_URL ||
+    `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/api/revalidate-pubmed-sheet`;
+  if (!base) return;
+  try {
+    await fetch(base, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug, secret }),
+      signal: AbortSignal.timeout(10000),
+    });
+  } catch {
+    // Non-fatal — the 1h cache revalidate still picks up the sheet.
+  }
+}
+
 interface Herb {
   slug: string;
   name: string;
@@ -462,6 +482,9 @@ async function generateForSlug(
         .from("herb_pubmed_monographs")
         .upsert(record, { onConflict: "slug" });
       if (error) throw new Error(`DB upsert failed: ${error.message}`);
+      // On-demand revalidation so the new sheet appears on the herb page
+      // instantly (instead of waiting for the 1h cache). Best-effort.
+      await revalidateSheet(herb.slug);
     }
     return { ok: true, cited: citedPmids.length, articles: articles.length };
   } catch (e) {

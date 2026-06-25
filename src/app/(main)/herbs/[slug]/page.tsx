@@ -253,7 +253,10 @@ export default async function HerbDetailPage({ params }: Props) {
       return data;
     },
     [`pubmed-sheet-${slug}`],
-    { revalidate: 86400, tags: [`pubmed-sheet-${slug}`] }
+    // 1h revalidate so newly-written PubMed sheets appear without waiting the
+    // full day; on-demand revalidation (/api/revalidate-pubmed-sheet) makes a
+    // freshly compiled sheet appear instantly.
+    { revalidate: 3600, tags: [`pubmed-sheet-${slug}`] }
   );
 
   const dbMonograph = await getMonographCached(slug);
