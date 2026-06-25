@@ -34,6 +34,11 @@ import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { GovSources } from "@/components/herbs/gov-sources";
 import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
+import { PubmedMonographSheet } from "@/components/herbs/pubmed-monograph-sheet";
+import type {
+  SheetContent,
+  Citation,
+} from "@/components/herbs/pubmed-monograph-sheet";
 import { hasManualMonograph } from "@/lib/data/monographs";
 
 // REMOVED: export const dynamic = "force-dynamic";
@@ -234,7 +239,25 @@ export default async function HerbDetailPage({ params }: Props) {
     { revalidate: 86400, tags: [`monograph-${slug}`] }
   );
 
+  // PubMed-compiled information sheet (for herbs with no hand-written
+  // monograph). Cached like the monograph; anon-readable via RLS.
+  const getPubmedSheetCached = unstable_cache(
+    async (herbSlug: string) => {
+      const supabase = getAnonClient();
+      if (!supabase) return null;
+      const { data } = await supabase
+        .from("herb_pubmed_monographs")
+        .select("content, citations, pmids, article_count, model, status")
+        .eq("slug", herbSlug)
+        .single();
+      return data;
+    },
+    [`pubmed-sheet-${slug}`],
+    { revalidate: 86400, tags: [`pubmed-sheet-${slug}`] }
+  );
+
   const dbMonograph = await getMonographCached(slug);
+  const pubmedSheet = await getPubmedSheetCached(slug);
 
   // Parse provenance to determine if this herb's content has been verified
   const provenance = parseProvenance(
@@ -491,10 +514,21 @@ export default async function HerbDetailPage({ params }: Props) {
         />
       ) : (
         <>
-          {/* Option B: no hand-written monograph — do not show AI-generated
-              narrative. Surface government sources + PubMed citations + any
-              curated (non-AI) interaction data below. */}
-          <GovSourcedBanner />
+          {/* Option B: no hand-written monograph. If a PubMed-compiled sheet
+              exists, show it (AI-assisted, every claim cited to a PubMed
+              article). Otherwise show the government-sources stub. Either
+              way, curated (non-AI) interaction data is shown when present. */}
+          {pubmedSheet?.content ? (
+            <PubmedMonographSheet
+              content={pubmedSheet.content as unknown as SheetContent}
+              citations={(pubmedSheet.citations as unknown as Citation[]) ?? []}
+              articleCount={pubmedSheet.article_count ?? 0}
+              model={pubmedSheet.model}
+              status={pubmedSheet.status}
+            />
+          ) : (
+            <GovSourcedBanner />
+          )}
           {interactions.length > 0 && (
             <HerbSafetyPanel
               herb={herb}
