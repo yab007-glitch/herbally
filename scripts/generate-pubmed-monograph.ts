@@ -91,6 +91,56 @@ function ncbiParams(extra: Record<string, string>) {
   return p;
 }
 
+// ── Global eutils rate limiter ─────────────────────────────────────
+// NIH eutils enforces ~3 req/s WITHOUT an api key (and returns 429 above it),
+// so high worker concurrency must NOT let eutils calls burst. We serialize ALL
+// eutils requests through a single gate (≥400ms apart = ~2.5/s) and retry on
+// 429/5xx. The Ollama compile (the real bottleneck, ~10-15s) still runs fully
+// in parallel across workers — only eutils is throttled.
+const EUTILS_MIN_INTERVAL_MS = process.env.NCBI_API_KEY ? 120 : 400;
+let eutilsLastAt = 0;
+let eutilsChain: Promise<void> = Promise.resolve();
+
+/** Serialize eutils calls so the global rate stays under NIH's limit. */
+async function eutilsGate(): Promise<() => void> {
+  const prev = eutilsChain;
+  let release!: () => void;
+  eutilsChain = new Promise<void>((r) => (release = r));
+  await prev;
+  const elapsed = Date.now() - eutilsLastAt;
+  if (elapsed < EUTILS_MIN_INTERVAL_MS) {
+    await sleep(EUTILS_MIN_INTERVAL_MS - elapsed);
+  }
+  eutilsLastAt = Date.now();
+  return release;
+}
+
+/** Gated + retrying fetch for eutils. */
+async function eutilsFetch(url: string, timeoutMs: number): Promise<Response> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const release = await eutilsGate();
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "User-Agent": "HerbAlly/1.0 (research; contact: info@herbally.app)",
+        },
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (res.status === 429 || res.status >= 500) {
+        // Backoff and retry — release the gate so the next call can proceed
+        // after the backoff window (rate limit is time-based).
+        release();
+        await sleep(Math.min(1000 * 2 ** attempt, 15000));
+        continue;
+      }
+      return res;
+    } finally {
+      release();
+    }
+  }
+  throw new Error(`eutils rate-limited/failed after retries: ${url}`);
+}
+
 async function esearch(term: string): Promise<string[]> {
   const url = `${EUTILS}/esearch.fcgi?${ncbiParams({
     db: "pubmed",
@@ -99,12 +149,7 @@ async function esearch(term: string): Promise<string[]> {
     retmode: "json",
     sort: "relevance",
   })}`;
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent": "HerbAlly/1.0 (research; contact: info@herbally.app)",
-    },
-    signal: AbortSignal.timeout(20000),
-  });
+  const res = await eutilsFetch(url, 20000);
   if (!res.ok) throw new Error(`esearch HTTP ${res.status}`);
   const j = await res.json();
   return (j?.esearchresult?.idlist ?? []) as string[];
@@ -173,12 +218,7 @@ async function efetchAbstracts(ids: string[]): Promise<Article[]> {
     rettype: "abstract",
     retmode: "xml",
   })}`;
-  const res = await fetch(url, {
-    headers: {
-      "User-Agent": "HerbAlly/1.0 (research; contact: info@herbally.app)",
-    },
-    signal: AbortSignal.timeout(30000),
-  });
+  const res = await eutilsFetch(url, 30000);
   if (!res.ok) throw new Error(`efetch HTTP ${res.status}`);
   const xml = await res.text();
   return parseArticles(xml);
@@ -440,6 +480,11 @@ async function main() {
   const isBatch = args.includes("--batch");
   const limitIdx = args.indexOf("--limit");
   const limit = limitIdx >= 0 ? Number(args[limitIdx + 1]) : 0;
+  const concIdx = args.indexOf("--concurrency");
+  const concurrency =
+    concIdx >= 0 && Number(args[concIdx + 1]) > 0
+      ? Number(args[concIdx + 1])
+      : 8;
   const outIdx = args.indexOf("--out");
   const outPath = outIdx >= 0 ? args[outIdx + 1] : null;
 
@@ -456,22 +501,39 @@ async function main() {
     console.log(
       `Batch: ${todo.length} herbs to generate${limit > 0 ? ` (limited to ${n})` : ""}; write=${doWrite}`
     );
+    // Worker pool: run `concurrency` herbs in parallel. The bottleneck is the
+    // Ollama compile (~10-15s), not eutils, so parallelizing compiles gives a
+    // near-linear speedup. Each worker keeps a small eutils sleep so the
+    // combined PubMed request rate stays well under NIH's limit without an
+    // API key.
     let ok = 0;
     let failed = 0;
+    let next = 0;
     const failedList: string[] = [];
-    for (let i = 0; i < n; i++) {
-      const herb = todo[i];
-      process.stdout.write(`[${i + 1}/${n}] ${herb.slug} ... `);
-      const r = await generateForSlug(herb, { write: doWrite });
-      if (r.ok) {
-        ok++;
-        console.log(`ok (${r.articles} abstracts, ${r.cited} cited)`);
-      } else {
-        failed++;
-        failedList.push(`${herb.slug}: ${r.error}`);
-        console.log(`FAIL (${r.error})`);
+    async function worker(workerId: number) {
+      while (true) {
+        const i = next++;
+        if (i >= n) return;
+        const herb = todo[i];
+        const r = await generateForSlug(herb, { write: doWrite });
+        if (r.ok) {
+          ok++;
+          console.log(
+            `[${i + 1}/${n}] ${herb.slug} ok (${r.articles} abstracts, ${r.cited} cited) [w${workerId}]`
+          );
+        } else {
+          failed++;
+          failedList.push(`${herb.slug}: ${r.error}`);
+          console.log(
+            `[${i + 1}/${n}] ${herb.slug} FAIL (${r.error}) [w${workerId}]`
+          );
+        }
       }
     }
+    const workers = Array.from({ length: concurrency }, (_, k) =>
+      worker(k + 1)
+    );
+    await Promise.all(workers);
     console.log(`\nBatch done: ${ok} ok, ${failed} failed of ${n}.`);
     if (failedList.length) {
       console.log("Failed:\n  " + failedList.join("\n  "));
