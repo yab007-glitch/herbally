@@ -148,12 +148,25 @@ async function main() {
   if (args.includes("--list")) {
     // List herbs that have a direct government monograph mapped.
     const supabase = getSupabase();
-    const { data, error } = await supabase
-      .from("herbs")
-      .select("slug, name")
-      .eq("is_published", true);
-    if (error) throw new Error(error.message);
-    const mapped = (data ?? []).filter((h) => hasGovMonograph(h.slug));
+    // Paginate — Supabase's default row limit is 1000, but the catalog has
+    // 2,700+ herbs. Without this, mapped herbs beyond the first 1000 (e.g.
+    // turmeric, ginger) were silently omitted from the coverage report.
+    const all: { slug: string; name: string }[] = [];
+    let from = 0;
+    for (;;) {
+      const { data, error } = await supabase
+        .from("herbs")
+        .select("slug, name")
+        .eq("is_published", true)
+        .order("name", { ascending: true })
+        .range(from, from + 999);
+      if (error) throw new Error(error.message);
+      if (!data || data.length === 0) break;
+      all.push(...(data as { slug: string; name: string }[]));
+      if (data.length < 1000) break;
+      from += 1000;
+    }
+    const mapped = all.filter((h) => hasGovMonograph(h.slug));
     console.log(`Herbs with a direct government monograph (${mapped.length}):`);
     for (const h of mapped) console.log(`  ${h.slug}  —  ${h.name}`);
     return;
