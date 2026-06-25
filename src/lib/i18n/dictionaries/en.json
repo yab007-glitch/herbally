@@ -1096,6 +1096,13 @@
     "sources": "Sources: ",
     "researchProfile": "Research profile"
   },
+  "govSources": {
+    "title": "Government sources",
+    "directMonograph": "direct monograph",
+    "searchFallback": "search",
+    "index": "index",
+    "noMonographNotice": "No direct government monograph is available for this herb. The content below is AI-generated and has not been verified against an authoritative government source. Use the search links to check official sources before relying on this information."
+  },
   "herbBadges": {
     "pregnancy": "Pregnancy",
     "nursing": "Nursing",
