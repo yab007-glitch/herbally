@@ -61,6 +61,13 @@ export function ChatEmptyStateV2({ onSendMessage }: ChatEmptyStateV2Props) {
         >
           {t("nav.calculator")}
         </Link>
+        {" · "}
+        <Link
+          href="/herb-drug-interactions"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
+          {t("herbalistPage.learnInteractions")}
+        </Link>
       </p>
     </div>
   );

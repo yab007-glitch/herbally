@@ -1,12 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Leaf, Home, Users, AlertTriangle } from "lucide-react";
+import { ClipboardCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 const adminNavItems = [
   { href: "/admin", label: "Overview", icon: Home },
   { href: "/admin/herbs", label: "Herbs", icon: Leaf },
   { href: "/admin/interactions", label: "Interactions", icon: AlertTriangle },
+  {
+    href: "/admin/pubmed-review",
+    label: "PubMed Review",
+    icon: ClipboardCheck,
+  },
   { href: "/admin/users", label: "Users", icon: Users },
 ];
 
