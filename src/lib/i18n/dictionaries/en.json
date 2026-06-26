@@ -390,6 +390,7 @@
     "followUs": "Follow Us",
     "faq": "FAQ",
     "methodology": "Methodology",
+    "herbDrugInteractions": "Herb–Drug Interactions",
     "symptoms": "Symptoms"
   },
   "errors": {
@@ -537,6 +538,35 @@
       "severity": "Severity",
       "description": "Description"
     }
+  },
+  "interactionExplainer": {
+    "title": "What is a herb–drug interaction?",
+    "whatIs": "A herb–drug interaction happens when a plant or supplement changes how a medication works in your body — making it stronger, weaker, or more likely to cause harm. Herbs contain active compounds that can speed up or slow down the enzymes and transporters your body uses to process drugs.",
+    "whyHeading": "Why it matters",
+    "ex1Name": "St. John's Wort",
+    "ex1Effect": "can make birth control, antidepressants, and blood thinners less effective.",
+    "ex2Name": "Garlic",
+    "ex2Effect": "can increase bleeding risk with warfarin and other blood thinners (also ginkgo, ginger, and turmeric).",
+    "ex3Name": "Kava",
+    "ex3Effect": "can amplify sedation when taken with anxiety or sleep medications (also valerian).",
+    "riskLine": "The risk is highest for older adults, anyone taking several medications, and people with chronic conditions.",
+    "actionLine": "Always tell your doctor and pharmacist about every herb and supplement you take — and check below before combining."
+  },
+  "herbDrugInteractionsPage": {
+    "heading": "Herb–Drug Interactions",
+    "intro": "Herbs and supplements can change how your medications work — sometimes dangerously. This guide explains what herb–drug interactions are, which combinations are riskiest, and how to check before you combine.",
+    "commonHeading": "Common herbs with important interactions",
+    "ctaTitle": "Check your medications against a herb",
+    "ctaBody": "Tell the Virtual Herbalist what you're taking and ask whether a herb is safe to combine. Always confirm with your pharmacist.",
+    "ctaButton": "Ask the Virtual Herbalist",
+    "cTurmeric": "Turmeric",
+    "cGinger": "Ginger",
+    "cGinkgo": "Ginkgo",
+    "cStJohnsWort": "St. John's Wort",
+    "cGarlic": "Garlic",
+    "cKava": "Kava",
+    "cMilkThistle": "Milk Thistle",
+    "cAshwagandha": "Ashwagandha"
   },
   "auth": {
     "login": {
@@ -1248,6 +1278,8 @@
     "herbComparisonNotFound": "Herb Comparison Not Found",
     "about": "About",
     "aboutDesc": "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
+    "herbDrugInteractions": "Herb–Drug Interactions",
+    "herbDrugInteractionsDesc": "What herb–drug interactions are, why they matter, and how to check them. High-risk examples (St. John's Wort, garlic, ginkgo, turmeric, kava, warfarin) and how to stay safe.",
     "appDescription": "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions with our AI-powered virtual herbalist.",
     "herbsFor": "Herbs for {symptom}",
     "homeTitle": "HerbAlly - Your Trusted Guide to Medicinal Herbs",
