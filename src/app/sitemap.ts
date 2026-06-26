@@ -149,6 +149,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/herb-drug-interactions`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/herb-drug-interactions`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/disclaimer`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "yearly",

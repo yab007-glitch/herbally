@@ -2,7 +2,7 @@ import { config } from "dotenv";
 config({ path: ".env.local" });
 config({ path: ".env" });
 import { createClient } from "@supabase/supabase-js";
-import { readFileSync, writeFileSync, existsSync, appendFileSync } from "fs";
+import { readFileSync, existsSync, appendFileSync } from "fs";
 
 /**
  * One-time sweep: revalidate the page cache for every herb that has a

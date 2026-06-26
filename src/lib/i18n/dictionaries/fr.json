@@ -390,6 +390,7 @@
     "followUs": "Suivez-nous",
     "faq": "FAQ",
     "methodology": "Méthodologie",
+    "herbDrugInteractions": "Interactions Plante-Médicament",
     "symptoms": "Symptômes"
   },
   "errors": {
@@ -537,6 +538,35 @@
       "severity": "Sévérité",
       "description": "Description"
     }
+  },
+  "interactionExplainer": {
+    "title": "Qu'est-ce qu'une interaction plante-médicament ?",
+    "whatIs": "Une interaction plante-médicament se produit lorsqu'une plante ou un complément modifie l'action d'un médicament dans votre organisme — en le rendant plus puissant, moins efficace, ou plus susceptible de provoquer des effets nocifs. Les plantes contiennent des composés actifs qui peuvent accélérer ou ralentir les enzymes et transporteurs utilisés pour métaboliser les médicaments.",
+    "whyHeading": "Pourquoi c'est important",
+    "ex1Name": "Millepertuis",
+    "ex1Effect": "peut rendre la contraception, les antidépresseurs et les anticoagulants moins efficaces.",
+    "ex2Name": "Ail",
+    "ex2Effect": "peut augmenter le risque de saignement avec la warfarine et autres anticoagulants (aussi ginkgo, gingembre et curcuma).",
+    "ex3Name": "Kava",
+    "ex3Effect": "peut amplifier la sédation avec les médicaments contre l'anxiété ou le sommeil (aussi la valériane).",
+    "riskLine": "Le risque est plus élevé chez les personnes âgées, ceux qui prennent plusieurs médicaments et les personnes atteintes de maladies chroniques.",
+    "actionLine": "Indiquez toujours à votre médecin et à votre pharmacien toutes les plantes et compléments que vous prenez — et vérifiez ci-dessous avant toute association."
+  },
+  "herbDrugInteractionsPage": {
+    "heading": "Interactions Plante-Médicament",
+    "intro": "Les plantes et compléments peuvent modifier l'action de vos médicaments — parfois dangereusement. Ce guide explique ce que sont les interactions plante-médicament, quelles combinaisons sont les plus risquées et comment vérifier avant d'associer.",
+    "commonHeading": "Plantes courantes avec interactions importantes",
+    "ctaTitle": "Vérifiez vos médicaments avec une plante",
+    "ctaBody": "Indiquez à l'Herboriste Virtuel ce que vous prenez et demandez si une plante peut être associée sans danger. Confirmez toujours auprès de votre pharmacien.",
+    "ctaButton": "Demander à l'Herboriste Virtuel",
+    "cTurmeric": "Curcuma",
+    "cGinger": "Gingembre",
+    "cGinkgo": "Ginkgo",
+    "cStJohnsWort": "Millepertuis",
+    "cGarlic": "Ail",
+    "cKava": "Kava",
+    "cMilkThistle": "Chardon-Marie",
+    "cAshwagandha": "Ashwagandha"
   },
   "auth": {
     "login": {
@@ -1248,6 +1278,8 @@
     "herbComparisonNotFound": "Comparaison de Plantes Non Trouvée",
     "about": "À Propos",
     "aboutDesc": "Découvrez HerbAlly, notre mission et comment nous vous aidons à prendre des décisions éclairées sur les plantes médicinales.",
+    "herbDrugInteractions": "Interactions Plante-Médicament",
+    "herbDrugInteractionsDesc": "Ce que sont les interactions plante-médicament, pourquoi elles comptent et comment les vérifier. Exemples à risque (millepertuis, ail, ginkgo, curcuma, kava, warfarine) et comment rester prudent.",
     "appDescription": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses avec notre herboriste virtuel alimenté par l'IA.",
     "herbsFor": "Plantes pour {symptom}",
     "homeTitle": "HerbAlly - Votre guide de confiance pour les herbes médicinales",

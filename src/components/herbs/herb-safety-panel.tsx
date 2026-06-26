@@ -12,6 +12,7 @@ import {
   InteractionsTable,
   type Interaction,
 } from "@/components/herbs/interactions-table";
+import { InteractionExplainer } from "@/components/herbs/interaction-explainer";
 import {
   PregnancyAlert,
   InteractionAlert,
@@ -139,6 +140,7 @@ export function HerbSafetyPanel({
       </Card>
 
       {/* Interactions Table */}
+      <InteractionExplainer />
       <InteractionsTable interactions={interactions} />
 
       {/* CTA */}
