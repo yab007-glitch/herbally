@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getGuestId, setGuestId } from "./guest-id";
+import { getGuestId } from "./guest-id";
 
 const getMock = vi.fn();
 const setMock = vi.fn();
@@ -58,27 +58,6 @@ describe("guest-id actions", () => {
         result,
         expect.objectContaining({ httpOnly: true, path: "/" })
       );
-    });
-  });
-
-  describe("setGuestId", () => {
-    it("sets the guest ID cookie with correct options for a valid UUID", async () => {
-      const id = "11111111-2222-3333-4444-555555555555";
-      await setGuestId(id);
-      expect(setMock).toHaveBeenCalledWith("herbally-guest-id", id, {
-        httpOnly: true,
-        secure: false, // NODE_ENV !== "production" in test
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 365,
-        path: "/",
-      });
-    });
-
-    it("rejects a non-UUID value", async () => {
-      await expect(setGuestId("guest-abc-123")).rejects.toThrow(
-        "Invalid guest id"
-      );
-      expect(setMock).not.toHaveBeenCalled();
     });
   });
 });

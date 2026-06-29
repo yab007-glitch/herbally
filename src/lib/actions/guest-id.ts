@@ -66,21 +66,3 @@ export async function clearGuestId(): Promise<void> {
     path: "/",
   });
 }
-
-/**
- * Set the guest ID cookie explicitly. Only accepts a valid UUID; any other
- * value is rejected so callers can't write arbitrary data into the cookie.
- */
-export async function setGuestId(guestId: string): Promise<void> {
-  if (!isValidGuestId(guestId)) {
-    throw new Error("Invalid guest id");
-  }
-  const cookieStore = await cookies();
-  cookieStore.set(GUEST_ID_COOKIE, guestId, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 365, // 1 year
-    path: "/",
-  });
-}
