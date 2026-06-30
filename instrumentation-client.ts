@@ -43,6 +43,15 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0,
   enabled: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
   beforeSend: scrubEvent,
+  ignoreErrors: [
+    // Unactionable rejections injected by embedded Chromium (CEF/.NET) clients
+    // and browser extensions — e.g.
+    // "Object Not Found Matching Id:2, MethodName:update, ParamCount:4".
+    // These originate outside our app code (no client-side realtime/supabase),
+    // so drop them instead of alerting.
+    /Object Not Found Matching Id:/,
+    /MethodName:\w+,\s*ParamCount:/,
+  ],
   integrations: [
     // Mask all text and block media in Session Replay — on-screen health
     // content (herb queries, symptoms, chat messages) must not be captured.
