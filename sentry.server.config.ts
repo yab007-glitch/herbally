@@ -50,4 +50,11 @@ Sentry.init({
   includeLocalVariables: false,
   enableLogs: true,
   beforeSend: scrubEvent,
+  ignoreErrors: [
+    // Unactionable rejections injected by embedded Chromium (CEF/.NET)
+    // clients and browser extensions — e.g.
+    // "Object Not Found Matching Id:2, MethodName:update, ParamCount:4".
+    /Object Not Found Matching Id:/,
+    /MethodName:\w+,\s*ParamCount:/,
+  ],
 });
