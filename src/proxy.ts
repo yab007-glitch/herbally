@@ -148,8 +148,7 @@ export default async function proxy(request: NextRequest) {
   // ── Locale routing ─────────────────────────────────────────────────
   if (!shouldSkipLocaleRouting(pathname)) {
     const cookieLocale = request.cookies.get("herbally-locale")?.value as
-      | Locale
-      | undefined;
+      Locale | undefined;
     const acceptLangLocale = detectLocaleFromAcceptLanguage(
       request.headers.get("accept-language")
     );

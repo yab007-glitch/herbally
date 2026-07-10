@@ -59,12 +59,13 @@ Check system health and service status.
 Search for herbs by name, common names, or traditional uses.
 
 **Parameters:**
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `q` | string | Yes | Search query |
-| `category` | string | No | Filter by category |
-| `limit` | number | No | Max results (default: 20) |
-| `offset` | number | No | Pagination offset |
+
+| Parameter  | Type   | Required | Description               |
+| ---------- | ------ | -------- | ------------------------- |
+| `q`        | string | Yes      | Search query              |
+| `category` | string | No       | Filter by category        |
+| `limit`    | number | No       | Max results (default: 20) |
+| `offset`   | number | No       | Pagination offset         |
 
 **Example:**
 
@@ -215,9 +216,10 @@ Analyze potential herb-drug interactions.
 Proxy to RxNorm API for drug information.
 
 **Parameters:**
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `q` | string | Yes | Drug name |
+
+| Parameter | Type   | Required | Description |
+| --------- | ------ | -------- | ----------- |
+| `q`       | string | Yes      | Drug name   |
 
 **Response:** RxNorm API response (proxied)
 
@@ -226,10 +228,11 @@ Proxy to RxNorm API for drug information.
 Proxy to OpenFDA API for adverse events.
 
 **Parameters:**
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `q` | string | Yes | Drug name |
-| `limit` | number | No | Max results (default: 10) |
+
+| Parameter | Type   | Required | Description               |
+| --------- | ------ | -------- | ------------------------- |
+| `q`       | string | Yes      | Drug name                 |
+| `limit`   | number | No       | Max results (default: 10) |
 
 **Response:** OpenFDA API response (proxied)
 

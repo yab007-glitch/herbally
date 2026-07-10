@@ -504,11 +504,7 @@ export default async function SymptomDetailPage({ params }: Props) {
                         <EvidenceGrade
                           level={
                             (herb.evidence_level || "C") as
-                              | "A"
-                              | "B"
-                              | "C"
-                              | "D"
-                              | "trad"
+                              "A" | "B" | "C" | "D" | "trad"
                           }
                           showLabel={false}
                         />
