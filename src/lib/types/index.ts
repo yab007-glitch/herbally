@@ -13,10 +13,7 @@ export type DosageCalculation = Tables<"dosage_calculations">;
 
 export type UserRole = "user" | "admin";
 export type InteractionSeverity =
-  | "mild"
-  | "moderate"
-  | "severe"
-  | "contraindicated";
+  "mild" | "moderate" | "severe" | "contraindicated";
 export type DosageForm =
   | "capsule"
   | "tablet"
@@ -61,5 +58,4 @@ export type DosageCalculationWithHerb = DosageCalculation & {
  * surface `undefined` to users; the union makes that a compile error.
  */
 export type ActionResponse<T = void> =
-  | { success: true; data?: T }
-  | { success: false; error: string };
+  { success: true; data?: T } | { success: false; error: string };

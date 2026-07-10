@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type IllustrationVariant =
-  | "herbs"
-  | "search"
-  | "chat"
-  | "medications"
-  | "default";
+  "herbs" | "search" | "chat" | "medications" | "default";
 
 const illustrationConfig: Record<
   IllustrationVariant,

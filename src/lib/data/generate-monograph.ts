@@ -34,11 +34,7 @@ export function generateMonograph(herb: {
   // explicit evidence levels. Previously defaulted to "C" which overstates
   // the evidence basis for AI-generated monographs with no clinical data.
   const evidence = (herb.evidence_level?.toUpperCase() || "trad") as
-    | "A"
-    | "B"
-    | "C"
-    | "D"
-    | "trad";
+    "A" | "B" | "C" | "D" | "trad";
 
   const summary = buildSummary(herb, displayName, evidence);
   const mechanism = buildMechanism(herb);

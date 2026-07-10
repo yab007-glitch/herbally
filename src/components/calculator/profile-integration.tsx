@@ -101,10 +101,7 @@ export function SaveCalcButton({
         adult_dose: `${adultDose} ${doseUnit}`,
         calculated_dose: `${result.dose} ${result.unit}`,
         formula_used: selectedFormula as
-          | "clarks_rule"
-          | "youngs_rule"
-          | "bsa"
-          | "fried_rule",
+          "clarks_rule" | "youngs_rule" | "bsa" | "fried_rule",
         patient_weight_kg: weightValue ? parseFloat(weightValue) : null,
         patient_age: ageYears ? parseFloat(ageYears) : null,
         patient_height_cm: heightCm ? parseFloat(heightCm) : null,
