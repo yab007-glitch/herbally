@@ -186,7 +186,10 @@ export default async function HerbsPage({
 
       {/* FAQ Section */}
       <section className="mt-12 space-y-6" aria-labelledby="herbs-faq-heading">
-        <h2 id="herbs-faq-heading" className="text-2xl font-bold text-foreground">
+        <h2
+          id="herbs-faq-heading"
+          className="text-2xl font-bold text-foreground"
+        >
           {t("herbs.herbsFaq.title")}
         </h2>
         <script
@@ -245,31 +248,41 @@ export default async function HerbsPage({
             <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
               {t("herbs.herbsFaq.q1")}
             </summary>
-            <p className="mt-3 text-muted-foreground">{t("herbs.herbsFaq.a1")}</p>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a1")}
+            </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
             <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
               {t("herbs.herbsFaq.q2")}
             </summary>
-            <p className="mt-3 text-muted-foreground">{t("herbs.herbsFaq.a2")}</p>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a2")}
+            </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
             <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
               {t("herbs.herbsFaq.q3")}
             </summary>
-            <p className="mt-3 text-muted-foreground">{t("herbs.herbsFaq.a3")}</p>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a3")}
+            </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
             <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
               {t("herbs.herbsFaq.q4")}
             </summary>
-            <p className="mt-3 text-muted-foreground">{t("herbs.herbsFaq.a4")}</p>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a4")}
+            </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
             <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
               {t("herbs.herbsFaq.q5")}
             </summary>
-            <p className="mt-3 text-muted-foreground">{t("herbs.herbsFaq.a5")}</p>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a5")}
+            </p>
           </details>
         </div>
       </section>

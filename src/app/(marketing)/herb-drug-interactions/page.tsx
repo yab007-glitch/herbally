@@ -111,7 +111,10 @@ export default async function HerbDrugInteractionsPage() {
 
       {/* FAQ Section */}
       <section className="mt-10 space-y-6" aria-labelledby="faq-heading">
-        <h2 id="faq-heading" className="text-2xl font-bold text-foreground flex items-center gap-2">
+        <h2
+          id="faq-heading"
+          className="text-2xl font-bold text-foreground flex items-center gap-2"
+        >
           <HelpCircle className="size-6 text-primary" />
           {t("faqHeading")}
         </h2>
