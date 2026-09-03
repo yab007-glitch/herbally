@@ -235,8 +235,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           priority: 0.7,
         });
         const t = herb.translations as Record<string, unknown> | null;
-        const hasFr =
-          !!t && typeof t === "object" && "fr" in t && t.fr != null;
+        const hasFr = !!t && typeof t === "object" && "fr" in t && t.fr != null;
         if (hasFr) {
           herbPages.push({
             url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,

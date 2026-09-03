@@ -96,7 +96,10 @@ export function HerbFaqSection({
 
   const faqs: FaqItem[] =
     preGeneratedFaqs && preGeneratedFaqs.length > 0
-      ? preGeneratedFaqs.map((f) => ({ question: f.question, answer: f.answer }))
+      ? preGeneratedFaqs.map((f) => ({
+          question: f.question,
+          answer: f.answer,
+        }))
       : fallbackFaqs;
 
   return (

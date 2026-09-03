@@ -83,10 +83,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`,
-    description: `Compare ${herbA.name} vs ${herbB.name}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator.`.slice(
-      0,
-      158
-    ),
+    description:
+      `Compare ${herbA.name} vs ${herbB.name}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator.`.slice(
+        0,
+        158
+      ),
     alternates: {
       canonical:
         metaLocale === "fr"

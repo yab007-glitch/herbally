@@ -109,7 +109,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // intents: "{common} in english", benefits, dosage, pregnancy safety,
   // "X vs Y", and "herbal dosage calculator".
   const commonNames = (herb.common_names || []).slice(0, 3).join(", ");
-  const topUses = [...(herb.traditional_uses || []), ...(herb.modern_uses || [])]
+  const topUses = [
+    ...(herb.traditional_uses || []),
+    ...(herb.modern_uses || []),
+  ]
     .slice(0, 3)
     .join(", ");
   const title = `${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`;
