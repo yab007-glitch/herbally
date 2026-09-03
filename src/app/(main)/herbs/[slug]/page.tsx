@@ -19,6 +19,7 @@ import { siteUrl } from "@/lib/seo/site-url";
 import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
+import { POPULAR_COMPARISONS } from "@/app/(main)/compare/[slug1]/vs/[slug2]/page";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
@@ -98,9 +99,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ...(herb.common_names || []),
     ...(herb.traditional_uses || []).slice(0, 5),
     ...(herb.active_compounds || []).slice(0, 5),
-    "medicinal herb",
-    "herbal remedy",
-    "natural medicine",
+    ...(metaLocale === "fr"
+      ? ["plante médicinale", "remède naturel", "phytothérapie"]
+      : ["medicinal herb", "herbal remedy", "natural medicine"]),
   ].filter(Boolean);
 
   // Click-optimized title/description (Search Console Sep 2026: 26.6k imp,
@@ -108,6 +109,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Guide" matched no query. New template targets the actual converting
   // intents: "{common} in english", benefits, dosage, pregnancy safety,
   // "X vs Y", and "herbal dosage calculator".
+  //
+  // FR (/fr/herbs/*) holds a large share of impressions with ~0 clicks while
+  // serving ENGLISH titles ("Benefits, Dosage, Safety & Evidence",
+  // "What is X in English?") to French searchers. Template words are
+  // localized below; herb data (name, common_names, uses) already arrives
+  // translated via getHerbBySlug(locale).
   const commonNames = (herb.common_names || []).slice(0, 3).join(", ");
   const topUses = [
     ...(herb.traditional_uses || []),
@@ -115,21 +122,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   ]
     .slice(0, 3)
     .join(", ");
-  const title = `${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`;
-  const description = commonNames
-    ? `What is ${herb.name} in English (${commonNames})? Uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety & drug interactions. Evidence-based guide with PubMed sources. Free dose calculator included.`.slice(
-        0,
-        158
-      )
-    : herb.description
-      ? `${herb.description.slice(0, 120)} Uses, dosage, pregnancy safety & interactions. Free calculator included.`.slice(
-          0,
-          158
-        )
-      : `Learn about ${herb.name} (${herb.scientific_name}) — uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety, side effects & drug interactions. Free calculator included.`.slice(
-          0,
-          158
-        );
+  const isFr = metaLocale === "fr";
+  const title = isFr
+    ? `${herb.name} (${herb.scientific_name}) : Bienfaits, Posologie, Sécurité et Preuves | HerbAlly`
+    : `${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`;
+  const description = (
+    isFr
+      ? commonNames
+        ? `Qu'est-ce que ${herb.name} en français (${commonNames}) ? Usages pour ${topUses || "le bien-être traditionnel"}, posologie, sécurité pendant la grossesse et interactions médicamenteuses. Guide fondé sur des preuves avec sources PubMed. Calculateur de dose gratuit inclus.`
+        : herb.description
+          ? `${herb.description.slice(0, 120)} Usages, posologie, sécurité grossesse et interactions. Calculateur gratuit inclus.`
+          : `Tout sur ${herb.name} (${herb.scientific_name}) — usages pour ${topUses || "le bien-être traditionnel"}, posologie, sécurité grossesse, effets secondaires et interactions médicamenteuses. Calculateur gratuit inclus.`
+      : commonNames
+        ? `What is ${herb.name} in English (${commonNames})? Uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety & drug interactions. Evidence-based guide with PubMed sources. Free dose calculator included.`
+        : herb.description
+          ? `${herb.description.slice(0, 120)} Uses, dosage, pregnancy safety & interactions. Free calculator included.`
+          : `Learn about ${herb.name} (${herb.scientific_name}) — uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety, side effects & drug interactions. Free calculator included.`
+  ).slice(0, 158);
 
   return {
     title,
@@ -447,6 +456,52 @@ export default async function HerbDetailPage({ params }: Props) {
     // swallow — related herbs are non-critical
   }
 
+  // Compare links: /compare/* pages are the site's best converters (GSC Sep
+  // 2026: 5-10% CTR vs 0.4% average). Funnel herb views toward the pairs that
+  // feature this herb, and give crawlers relevance paths between herb and
+  // compare pages. Cached on the same 86400s window as related herbs.
+  const getCompareLinks = unstable_cache(
+    async (herbSlug: string, loc: string) => {
+      const pairs = POPULAR_COMPARISONS.filter(
+        (p) => p.slug1 === herbSlug || p.slug2 === herbSlug
+      ).slice(0, 3);
+      const links: Array<{ slug1: string; slug2: string; otherName: string }> =
+        [];
+      for (const p of pairs) {
+        const other = p.slug1 === herbSlug ? p.slug2 : p.slug1;
+        try {
+          const r = await getHerbBySlug(other, {
+            locale: loc as Locale,
+            skipCookies: true,
+          });
+          if (r.success && r.data) {
+            links.push({
+              slug1: p.slug1,
+              slug2: p.slug2,
+              otherName: r.data.name,
+            });
+          }
+        } catch {
+          // swallow — a missing counterpart skips the link, not the page
+        }
+      }
+      return links;
+    },
+    ["compare-links-" + slug, locale],
+    { revalidate: 86400, tags: ["compare-links-" + slug] }
+  );
+
+  let compareLinks: Array<{
+    slug1: string;
+    slug2: string;
+    otherName: string;
+  }> = [];
+  try {
+    compareLinks = await getCompareLinks(slug, locale);
+  } catch {
+    // swallow — compare links are non-critical
+  }
+
   return (
     <div className="space-y-8">
       <WebPageSchema
@@ -636,6 +691,35 @@ export default async function HerbDetailPage({ params }: Props) {
           </Button>
         </div>
       </section>
+
+      {/* Compare with similar herbs — cross-links to the highest-converting
+          pages on the site (/compare/* at 5-10% CTR). Rendered only when this
+          herb features in a popular comparison. */}
+      {compareLinks.length > 0 && (
+        <section
+          aria-label={
+            locale === "fr" ? `Comparer ${herb.name}` : `Compare ${herb.name}`
+          }
+          className="rounded-2xl border bg-muted/50 p-4"
+        >
+          <h2 className="font-semibold text-foreground">
+            {locale === "fr"
+              ? `Comparer ${herb.name} aux plantes similaires`
+              : `Compare ${herb.name} with similar herbs`}
+          </h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {compareLinks.map((l) => (
+              <Link
+                key={`${l.slug1}-vs-${l.slug2}`}
+                href={`/compare/${l.slug1}/vs/${l.slug2}`}
+                className="rounded-full border bg-background px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:border-primary/50 hover:text-primary"
+              >
+                {herb.name} vs {l.otherName}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Share buttons */}
       <ShareButtons

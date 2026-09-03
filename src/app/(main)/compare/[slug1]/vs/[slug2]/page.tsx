@@ -26,6 +26,15 @@ export const revalidate = 3600;
  * pages already get clicks at 5-10% CTR vs 0.4% site average:
  * st-johns-wort/vs/nettle, dulse/vs/irish-moss, milk-thistle/vs/psyllium,
  * garlic/vs/hawthorn, peppermint/vs/fennel, hops/vs/valerian, etc.
+ *
+ * Second expansion (GSC Pages report): dynamic pairs Google already
+ * discovered + shows impressions for, promoted to pre-rendered + sitemap
+ * (both slugs verified published 2026-09-03). Near-duplicate reverse pairs
+ * (echinacea/elderberry, fennel/peppermint, ginger/ginger-mint, senna pairs,
+ * shankhpushpi reverses, silverweed/potentilla-anserina = same plant) are
+ * intentionally listed once to avoid splitting ranking signals. Dead pairs
+ * pointing at unpublished slugs (olive, fish-oil) were replaced/removed —
+ * they rendered noindex 404s while wasting sitemap entries.
  */
 export const POPULAR_COMPARISONS = [
   { slug1: "turmeric", slug2: "ginger" },
@@ -46,10 +55,22 @@ export const POPULAR_COMPARISONS = [
   { slug1: "hops", slug2: "valerian" },
   { slug1: "lemon-basil", slug2: "thai-basil" },
   { slug1: "vervain", slug2: "valerian" },
-  { slug1: "olive", slug2: "fish-oil" },
-  { slug1: "turmeric", slug2: "fish-oil" },
+  { slug1: "olive-oil-polyphenols", slug2: "omega3-cardiovasc" },
   { slug1: "selfheal-herb", slug2: "salvia-pratensis" },
   { slug1: "kelp", slug2: "ascophyllum-nodosum" },
+  { slug1: "cordyceps", slug2: "ginseng" },
+  { slug1: "blue-vervain", slug2: "tibetan-valerian" },
+  { slug1: "american-ginseng", slug2: "green-tea" },
+  { slug1: "pilewort", slug2: "sophora-japonica" },
+  { slug1: "ginger-mint", slug2: "ginger" },
+  { slug1: "erva-cidreira", slug2: "lemon-balm-toronjil" },
+  { slug1: "feverfew", slug2: "white-willow" },
+  { slug1: "chanterelle", slug2: "morel" },
+  { slug1: "passionflower", slug2: "valerian" },
+  { slug1: "white-willow", slug2: "devils-claw" },
+  { slug1: "lemon-balm", slug2: "chamomile" },
+  { slug1: "mallow", slug2: "marshmallow-leaf" },
+  { slug1: "shankhpushpi", slug2: "shankhpushpi-morning-glory" },
 ] as const;
 
 // Pre-render popular comparisons for SEO
@@ -76,18 +97,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!herbA || !herbB) {
     return {
-      title: "Herb Comparison Not Found | HerbAlly",
+      title:
+        metaLocale === "fr"
+          ? "Comparaison Non Trouvée | HerbAlly"
+          : "Herb Comparison Not Found | HerbAlly",
       robots: { index: false },
     };
   }
 
+  // FR template localized: /fr/compare/* pages serve French searchers
+  // (GSC shows FR compare impressions with ~0 clicks on EN copy).
+  const title =
+    metaLocale === "fr"
+      ? `${herbA.name} vs ${herbB.name} : Différences, Bienfaits et Lequel Choisir ?`
+      : `${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`;
+  const description = (
+    metaLocale === "fr"
+      ? `Comparez ${herbA.name} vs ${herbB.name} : usages, posologie, sécurité grossesse, effets secondaires et interactions médicamenteuses. Verdict fondé sur des preuves + calculateur de dose gratuit.`
+      : `Compare ${herbA.name} vs ${herbB.name}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator.`
+  ).slice(0, 158);
+
   return {
-    title: `${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`,
-    description:
-      `Compare ${herbA.name} vs ${herbB.name}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator.`.slice(
-        0,
-        158
-      ),
+    title,
+    description,
     alternates: {
       canonical:
         metaLocale === "fr"
@@ -106,9 +138,11 @@ export default async function ComparePage({ params }: Props) {
   const { slug1, slug2 } = await params;
   const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
+  // Pass locale so /fr/compare/* renders translated herb data (names, uses),
+  // matching the localized metadata above. Previously defaulted to "en".
   const [resultA, resultB] = await Promise.all([
-    getHerbBySlug(slug1, { skipCookies: true }),
-    getHerbBySlug(slug2, { skipCookies: true }),
+    getHerbBySlug(slug1, { locale, skipCookies: true }),
+    getHerbBySlug(slug2, { locale, skipCookies: true }),
   ]);
 
   if (!resultA.success || !resultB.success || !resultA.data || !resultB.data) {
