@@ -10,12 +10,22 @@ const bundleAnalyzer = withBundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Standalone output is for Docker/self-host only (`node
+  // .next/standalone/server.js`). On Vercel it must be OFF: Vercel's build
+  // hook expects the default trace layout (.next/*.nft.json), and Next 16.3
+  // changed the standalone trace layout, breaking Vercel's onBuildComplete
+  // with ENOENT on .next/next-server.js.nft.json. Vercel sets VERCEL=1.
+  ...(process.env.VERCEL
+    ? {}
+    : {
+        output: "standalone" as const,
+        // Trace from the project dir so `node .next/standalone/server.js` is
+        // at a flat, consistent path (matches Dockerfile + Playwright
+        // webServer).
+        outputFileTracingRoot: process.cwd(),
+      }),
   // Don't advertise the runtime/framework in response headers.
   poweredByHeader: false,
-  // Trace from the project dir so `node .next/standalone/server.js` is at a
-  // flat, consistent path (matches the Dockerfile + Playwright webServer).
-  outputFileTracingRoot: process.cwd(),
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
   },
