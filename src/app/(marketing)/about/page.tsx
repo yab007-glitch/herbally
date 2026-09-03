@@ -11,6 +11,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -46,6 +47,12 @@ export default async function AboutPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: t("common.breadcrumbHome"), url: "/" },
+          { name: t("aboutContent.header"), url: "/about" },
+        ]}
+      />
       {/* Header */}
       <div className="mb-16 text-center">
         <div className="mb-4 inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">

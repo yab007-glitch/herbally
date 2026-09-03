@@ -7,6 +7,7 @@ import { SmartSearch } from "@/components/herbs/smart-search";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
 import { RecentlyViewed } from "@/components/herbs/recently-viewed";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
@@ -43,6 +44,12 @@ export default async function HerbsPage({
 
   return (
     <div>
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("herbs.title"), url: "/herbs" },
+        ]}
+      />
       <Script
         id="herbs-structured-data"
         type="application/ld+json"
@@ -176,6 +183,109 @@ export default async function HerbsPage({
           </Button>
         </div>
       )}
+
+      {/* FAQ Section */}
+      <section className="mt-12 space-y-6" aria-labelledby="herbs-faq-heading">
+        <h2
+          id="herbs-faq-heading"
+          className="text-2xl font-bold text-foreground"
+        >
+          {t("herbs.herbsFaq.title")}
+        </h2>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: t("herbs.herbsFaq.q1"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("herbs.herbsFaq.a1"),
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: t("herbs.herbsFaq.q2"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("herbs.herbsFaq.a2"),
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: t("herbs.herbsFaq.q3"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("herbs.herbsFaq.a3"),
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: t("herbs.herbsFaq.q4"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("herbs.herbsFaq.a4"),
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: t("herbs.herbsFaq.q5"),
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: t("herbs.herbsFaq.a5"),
+                  },
+                },
+              ],
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
+        <div className="space-y-4">
+          <details className="group border rounded-lg p-4 bg-background">
+            <summary className="cursor-pointer font-medium text-foreground">
+              {t("herbs.herbsFaq.q1")}
+            </summary>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a1")}
+            </p>
+          </details>
+          <details className="group border rounded-lg p-4 bg-background">
+            <summary className="cursor-pointer font-medium text-foreground">
+              {t("herbs.herbsFaq.q2")}
+            </summary>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a2")}
+            </p>
+          </details>
+          <details className="group border rounded-lg p-4 bg-background">
+            <summary className="cursor-pointer font-medium text-foreground">
+              {t("herbs.herbsFaq.q3")}
+            </summary>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a3")}
+            </p>
+          </details>
+          <details className="group border rounded-lg p-4 bg-background">
+            <summary className="cursor-pointer font-medium text-foreground">
+              {t("herbs.herbsFaq.q4")}
+            </summary>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a4")}
+            </p>
+          </details>
+          <details className="group border rounded-lg p-4 bg-background">
+            <summary className="cursor-pointer font-medium text-foreground">
+              {t("herbs.herbsFaq.q5")}
+            </summary>
+            <p className="mt-3 text-muted-foreground">
+              {t("herbs.herbsFaq.a5")}
+            </p>
+          </details>
+        </div>
+      </section>
     </div>
   );
 }

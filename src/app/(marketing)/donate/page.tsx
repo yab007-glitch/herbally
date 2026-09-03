@@ -26,6 +26,7 @@ const DonationButtons = dynamic(() =>
 );
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -68,6 +69,12 @@ export default async function DonatePage({
 
   return (
     <div className="mx-auto max-w-4xl space-y-12 py-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: t("common.breadcrumbHome"), url: "/" },
+          { name: t("donateContent.title"), url: "/donate" },
+        ]}
+      />
       {/* Success/Canceled Messages */}
       {params.success === "true" && (
         <Card className="border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-900/20">

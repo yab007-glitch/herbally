@@ -1,6 +1,7 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "privacyPolicy", path: "/privacy" });
@@ -19,6 +20,12 @@ export default async function PrivacyPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: t("common.breadcrumbHome"), url: "/" },
+          { name: t("privacy.title"), url: "/privacy" },
+        ]}
+      />
       <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
         {t("privacy.title")}
       </h1>

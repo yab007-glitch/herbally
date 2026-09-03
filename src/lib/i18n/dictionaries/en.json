@@ -150,7 +150,20 @@
     },
     "dontKnowWhichHerb": "Don't know which herb you need?",
     "dontKnowDesc": "Search by symptom or condition — anxiety, sleep, inflammation, and more.",
-    "findBysymptom": "Find Herbs by Symptom →"
+    "findBysymptom": "Find Herbs by Symptom →",
+    "herbsFaq": {
+      "title": "Frequently Asked Questions About Our Herb Database",
+      "q1": "How many herbs are in the database?",
+      "a1": "Our database contains over 2,700 medicinal herbs from around the world. Each herb profile includes traditional uses, modern applications, active compounds, dosage recommendations, safety information, and drug interaction warnings.",
+      "q2": "Is the information accurate?",
+      "a2": "Every herb profile is compiled from PubMed (NIH) abstracts using AI assistance, with every factual claim cited to a real PubMed article. Our evidence grading system (A through D, plus Traditional) rates the quality of the underlying research so you can judge confidence yourself.",
+      "q3": "Can I search by symptom?",
+      "a3": "Yes — browse herbs by symptom category (anxiety, sleep, inflammation, digestion, and 20+ more) or search directly by herb name, active compound, or traditional use. Our smart search understands synonyms and common names.",
+      "q4": "Are the dosage recommendations safe?",
+      "a4": "Dosage ranges are based on traditional use and published clinical studies where available. However, safe dosage depends on age, weight, health conditions, and other medications. Always consult your healthcare provider before starting any herbal supplement. Use our dosage calculator for weight-based guidance.",
+      "q5": "Is this database free?",
+      "a5": "Yes, HerbAlly is 100% free with no ads, no premium tiers, and no data selling. We are donation-supported so everyone has access to evidence-based herbal information."
+    }
   },
   "calculator": {
     "title": "Dosage Calculator",
@@ -559,6 +572,23 @@
     "ctaTitle": "Check your medications against a herb",
     "ctaBody": "Tell the Virtual Herbalist what you're taking and ask whether a herb is safe to combine. Always confirm with your pharmacist.",
     "ctaButton": "Ask the Virtual Herbalist",
+    "faqHeading": "Frequently Asked Questions",
+    "faq1": {
+      "q": "What is an herb–drug interaction?",
+      "a": "An herb–drug interaction occurs when a herb and a medication affect each other's activity in the body. This can make the drug less effective, increase side effects, or cause toxicity. St. John's Wort, for example, speeds up liver enzymes that break down many antidepressants and blood thinners."
+    },
+    "faq2": {
+      "q": "How accurate is our interaction checker?",
+      "a": "Our AI herbalist cross-references PubMed, WHO, and NCCIH sources for every herb and medication pair. We flag known interactions and cite the evidence. However, AI can miss rare interactions — always consult your healthcare provider before combining herbs with prescription medications."
+    },
+    "faq3": {
+      "q": "Which herbs are most likely to interact with medications?",
+      "a": "The most commonly reported high-risk herbs include St. John's Wort (affects many antidepressants and blood thinners), garlic and ginkgo (may increase bleeding risk with warfarin or aspirin), turmeric (may affect blood sugar and anticoagulants), kava (can interact with sedatives and alcohol), and milk thistle (may alter how the liver processes certain drugs)."
+    },
+    "faq4": {
+      "q": "Can I safely take herbs with my prescription medication?",
+      "a": "It depends on the specific herb and medication. Some herbs are safe to combine, while others can be dangerous. The safest approach is to consult your healthcare provider or pharmacist before combining any herb with a prescription medication. Our AI herbalist can provide evidence-based information to discuss with your provider."
+    },
     "cTurmeric": "Turmeric",
     "cGinger": "Ginger",
     "cGinkgo": "Ginkgo",
@@ -1259,28 +1289,28 @@
     }
   },
   "meta": {
-    "herbsDatabase": "Medicinal Herbs Database",
+    "herbsDatabase": "2,700+ Medicinal Herbs — Evidence-Based Profiles, Compounds & Drug Interactions",
     "herbsDatabaseDesc": "Browse our comprehensive database of 2,700+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
     "virtualHerbalist": "Virtual Herbalist",
     "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
     "doseCalculator": "Herbal Dosage Calculator: Safe Adult & Child Doses by Weight",
     "doseCalculatorDesc": "Free herbal dosage calculator: safe adult & pediatric doses by weight and age (Clark's & Young's rules). 2,700+ herbs, evidence-based, no account required.",
-    "herbsBySymptom": "Herbs by Symptom",
+    "herbsBySymptom": "Herbs for Every Symptom — Evidence-Based Herbal Relief for Anxiety, Sleep, Pain & More",
     "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
-    "privacyPolicy": "Privacy Policy",
-    "medicalDisclaimer": "Medical Disclaimer",
+    "privacyPolicy": "HerbAlly Privacy Policy — How We Protect Your Health Data",
+    "medicalDisclaimer": "HerbAlly Medical & FDA Disclaimer",
     "medicalDisclaimerDesc": "Read the full medical and FDA disclaimer for HerbAlly.",
-    "faq": "Frequently Asked Questions",
-    "methodology": "Our Methodology",
-    "termsOfService": "Terms of Service",
+    "faq": "HerbAlly FAQ — Herb Safety, Dosage, Drug Interactions & Virtual Herbalist",
+    "methodology": "How HerbAlly Grades Evidence — PubMed-Sourced, Transparent Methodology",
+    "termsOfService": "HerbAlly Terms of Service & Conditions of Use",
     "termsDesc": "HerbAlly terms of service and conditions of use.",
-    "supportUs": "Support Us - Keep Herbal Medicine Free",
+    "supportUs": "Support HerbAlly — Keep Herbal Medicine Free & Accessible for Everyone",
     "supportUsDesc": "Help us keep HerbAlly 100% free. Your donation supports hosting, AI costs, and free access for everyone.",
     "herbNotFound": "Herb Not Found",
     "herbComparisonNotFound": "Herb Comparison Not Found",
-    "about": "About",
+    "about": "About HerbAlly — Your Trusted Guide to Medicinal Herbs & Herbal Medicine",
     "aboutDesc": "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
-    "herbDrugInteractions": "Herb–Drug Interactions",
+    "herbDrugInteractions": "Herb–Drug Interactions — Safe Herb & Medicine Combinations | HerbAlly",
     "herbDrugInteractionsDesc": "What herb–drug interactions are, why they matter, and how to check them. High-risk examples (St. John's Wort, garlic, ginkgo, turmeric, kava, warfarin) and how to stay safe.",
     "appDescription": "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions with our AI-powered virtual herbalist.",
     "herbsFor": "Herbs for {symptom}",

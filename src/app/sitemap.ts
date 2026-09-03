@@ -101,18 +101,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     // /herbalist now redirects to / (chat-first homepage)
     {
-      url: `${baseUrl}/profile`,
-      lastModified: STATIC_PAGE_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}${FR_BASE}/profile`,
-      lastModified: STATIC_PAGE_MODIFIED,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
       url: `${baseUrl}/about`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "monthly",
