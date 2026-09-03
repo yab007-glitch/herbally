@@ -9,7 +9,9 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { HerbSchema } from "@/components/seo/herb-schema";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
+import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
@@ -101,11 +103,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     "natural medicine",
   ].filter(Boolean);
 
+  // Click-optimized title/description (Search Console Sep 2026: 26.6k imp,
+  // 0.4% CTR, avg pos 20). Old template "{Name} ({Latin}) - Medicinal Herb
+  // Guide" matched no query. New template targets the actual converting
+  // intents: "{common} in english", benefits, dosage, pregnancy safety,
+  // "X vs Y", and "herbal dosage calculator".
+  const commonNames = (herb.common_names || []).slice(0, 3).join(", ");
+  const topUses = [...(herb.traditional_uses || []), ...(herb.modern_uses || [])]
+    .slice(0, 3)
+    .join(", ");
+  const title = `${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`;
+  const description = commonNames
+    ? `What is ${herb.name} in English (${commonNames})? Uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety & drug interactions. Evidence-based guide with PubMed sources. Free dose calculator included.`.slice(
+        0,
+        158
+      )
+    : herb.description
+      ? `${herb.description.slice(0, 120)} Uses, dosage, pregnancy safety & interactions. Free calculator included.`.slice(
+          0,
+          158
+        )
+      : `Learn about ${herb.name} (${herb.scientific_name}) — uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety, side effects & drug interactions. Free calculator included.`.slice(
+          0,
+          158
+        );
+
   return {
-    title: `${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide`,
-    description: herb.description
-      ? `${herb.description.slice(0, 155)}${herb.description.length > 155 ? "..." : ""}`
-      : `Learn about ${herb.name} (${herb.scientific_name}) - uses, dosage, safety, and drug interactions.`,
+    title,
+    description,
     keywords,
     alternates: {
       canonical:
@@ -119,8 +144,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     },
     openGraph: {
-      title: `${herb.name} (${herb.scientific_name})`,
-      description: herb.description?.slice(0, 160) || undefined,
+      title,
+      description,
       url:
         metaLocale === "fr"
           ? `${baseUrl}/fr/herbs/${slug}`
@@ -131,8 +156,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${herb.name} - Medicinal Herb`,
-      description: herb.description?.slice(0, 160) || undefined,
+      title,
+      description,
       images: [`${baseUrl}/twitter-image`],
     },
     robots: {
@@ -422,11 +447,18 @@ export default async function HerbDetailPage({ params }: Props) {
   return (
     <div className="space-y-8">
       <WebPageSchema
-        title={`${herb.name} (${herb.scientific_name}) - Medicinal Herb Guide`}
+        title={`${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`}
         description={herb.description ?? `Learn about ${herb.name}`}
         url={`${siteUrl()}/herbs/${slug}`}
         dateModified={herb.last_reviewed ?? herb.updated_at ?? undefined}
         breadcrumbs={[
+          { name: "Home", url: siteUrl() },
+          { name: "Herbs", url: `${siteUrl()}/herbs` },
+          { name: herb.name, url: `${siteUrl()}/herbs/${slug}` },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
           { name: "Home", url: siteUrl() },
           { name: "Herbs", url: `${siteUrl()}/herbs` },
           { name: herb.name, url: `${siteUrl()}/herbs/${slug}` },
@@ -561,9 +593,50 @@ export default async function HerbDetailPage({ params }: Props) {
           government monograph covers this herb. */}
       <GovSources slug={slug} displayName={herb.name} />
 
+      {/* Visible FAQ — must match HerbFAQSchema Q&A above or Google ignores
+          the FAQPage rich result (Search Appearance = No data, Sep 2026).
+          Also targets converting intents: "X in english", dosage/calculator. */}
+      <HerbFaqSection
+        herbName={herb.name}
+        scientificName={herb.scientific_name}
+        uses={[...(herb.traditional_uses || []), ...(herb.modern_uses || [])]}
+        safetyNotes={
+          monograph?.safetyNotes?.join(". ") ||
+          herb.side_effects?.join(". ") ||
+          ""
+        }
+        pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
+        drugInteractions={interactions.length}
+        commonNames={herb.common_names || []}
+        preGeneratedFaqs={
+          preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
+        }
+      />
+
+      {/* Calculator CTA — /calculator is the #1 converting page (4 clicks /
+          92 imp). Funnel every herb view toward it with a crawlable link. */}
+      <section
+        aria-label={`Calculate a safe dose of ${herb.name}`}
+        className="rounded-2xl border bg-muted/50 p-4"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold text-foreground">
+              Calculate a safe dose of {herb.name}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Free herbal dosage calculator — adult & child doses by weight.
+            </p>
+          </div>
+          <Button render={<Link href={`/calculator?herb=${slug}`} />}>
+            Calculate Dose
+          </Button>
+        </div>
+      </section>
+
       {/* Share buttons */}
       <ShareButtons
-        title={`${herb.name} (${herb.scientific_name}) - HerbAlly`}
+        title={`${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence - HerbAlly`}
         url={`${siteUrl()}/herbs/${slug}`}
         className="pt-4"
       />

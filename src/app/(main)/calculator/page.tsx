@@ -1,4 +1,7 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { FAQSchema } from "@/components/seo/faq-schema";
+import { siteUrl } from "@/lib/seo/site-url";
 import dynamic from "next/dynamic";
 const DoseCalculatorForm = dynamic(() =>
   import("@/components/calculator/dose-calculator-form").then(
@@ -11,7 +14,11 @@ import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 
 export const generateMetadata = () =>
-  buildPageMetadata({ titleKey: "doseCalculator", path: "/calculator" });
+  buildPageMetadata({
+    titleKey: "doseCalculator",
+    descKey: "doseCalculatorDesc",
+    path: "/calculator",
+  });
 
 function parseDosage(dosageStr: string | null): {
   dose: number | null;
@@ -87,6 +94,31 @@ export default async function CalculatorPage({
 
   return (
     <div className="space-y-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: siteUrl() },
+          { name: "Dose Calculator", url: `${siteUrl()}/calculator` },
+        ]}
+      />
+      <FAQSchema
+        items={[
+          {
+            question: "How do I calculate a safe herbal dose for a child?",
+            answer:
+              "Enter the adult reference dose, plus the child's age and weight. HerbAlly applies Clark's rule (weight-based) and Young's rule (age-based) and caps the result at the adult dose. Always consult your healthcare provider.",
+          },
+          {
+            question: "What is Clark's rule vs Young's rule?",
+            answer:
+              "Clark's rule scales by weight (child weight / 68kg × adult dose). Young's rule scales by age (age / (age+12) × adult dose). HerbAlly shows both so you can compare.",
+          },
+          {
+            question: "Is the herbal dosage calculator free?",
+            answer:
+              "Yes — free, evidence-based, no account required. Reference doses come from our 2,700+ herb database with PubMed, WHO and NCCIH sources.",
+          },
+        ]}
+      />
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           {t("calculator.title")}
@@ -94,6 +126,47 @@ export default async function CalculatorPage({
         <p className="mt-2 text-muted-foreground">{t("calculator.subtitle")}</p>
       </div>
       <DoseCalculatorForm prefill={prefill} />
+      <section aria-labelledby="calculator-faq-heading" className="pt-4">
+        <h2
+          id="calculator-faq-heading"
+          className="mb-3 text-xl font-semibold text-foreground"
+        >
+          Frequently asked questions
+        </h2>
+        <div className="divide-y rounded-2xl border">
+          <details className="px-4 py-3">
+            <summary className="cursor-pointer font-medium text-foreground">
+              How do I calculate a safe herbal dose for a child?
+            </summary>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Enter the adult reference dose, plus the child&apos;s age and
+              weight. HerbAlly applies Clark&apos;s rule (weight-based) and
+              Young&apos;s rule (age-based) and caps the result at the adult
+              dose. Always consult your healthcare provider.
+            </p>
+          </details>
+          <details className="px-4 py-3">
+            <summary className="cursor-pointer font-medium text-foreground">
+              What is Clark&apos;s rule vs Young&apos;s rule?
+            </summary>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Clark&apos;s rule scales by weight (child weight / 68kg × adult
+              dose). Young&apos;s rule scales by age (age / (age+12) × adult
+              dose). HerbAlly shows both so you can compare.
+            </p>
+          </details>
+          <details className="px-4 py-3">
+            <summary className="cursor-pointer font-medium text-foreground">
+              Is the herbal dosage calculator free?
+            </summary>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Yes — free, evidence-based, no account required. Reference doses
+              come from our 2,700+ herb database with PubMed, WHO and NCCIH
+              sources.
+            </p>
+          </details>
+        </div>
+      </section>
     </div>
   );
 }

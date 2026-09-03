@@ -14,7 +14,7 @@ import { logger } from "@/lib/utils/logger";
  * Secured by REVALIDATE_SECRET (shared with the ingestion script). Rate-limited.
  */
 export async function POST(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 60, 60_000);
+  const { success } = await rateLimit(getClientIP(request), 20, 60_000);
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests" },
