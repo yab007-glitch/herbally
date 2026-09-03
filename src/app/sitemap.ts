@@ -206,14 +206,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return staticPages;
     }
 
-    // Fetch all published herbs in batches (Supabase default limit = 1000)
+    // Fetch all published herbs in batches (Supabase default limit = 1000).
+    // FR URLs are only emitted when a French translation actually exists
+    // (translations->'fr'). Emitting FR URLs for untranslated herbs creates
+    // EN-content-on-FR-URL duplicates — Google then picks the EN URL as
+    // canonical and reports "Alternative page with proper canonical tag"
+    // (2,155 cases in Search Console, Sep 2026).
     const herbPages: MetadataRoute.Sitemap = [];
     let from = 0;
     const batchSize = 1000;
     while (true) {
       const { data: herbsBatch } = await supabase
         .from("herbs")
-        .select("slug, updated_at")
+        .select("slug, updated_at, translations")
         .eq("is_published", true)
         .order("name", { ascending: true })
         .range(from, from + batchSize - 1);
@@ -229,24 +234,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency: "weekly" as const,
           priority: 0.7,
         });
-        herbPages.push({
-          url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
-          lastModified: herb.updated_at
-            ? new Date(herb.updated_at)
-            : new Date(),
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-        });
+        const t = herb.translations as Record<string, unknown> | null;
+        const hasFr = !!t && typeof t === "object" && "fr" in t && t.fr != null;
+        if (hasFr) {
+          herbPages.push({
+            url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
+            lastModified: herb.updated_at
+              ? new Date(herb.updated_at)
+              : new Date(),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+          });
+        }
       }
 
       if (herbsBatch.length < batchSize) break;
       from += batchSize;
     }
-
-    // Get categories for category pages
-    const { data: categories } = await supabase
-      .from("herb_categories")
-      .select("slug");
 
     // Compare pages — pairs come from the SAME source of truth as the
     // compare route's generateStaticParams (POPULAR_COMPARISONS). Both locales.
@@ -267,23 +271,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ]
     );
 
-    const categoryPages: MetadataRoute.Sitemap = [];
-    for (const cat of categories ?? []) {
-      categoryPages.push({
-        url: `${baseUrl}/herbs?category=${cat.slug}`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "weekly" as const,
-        priority: 0.6,
-      });
-      categoryPages.push({
-        url: `${baseUrl}${FR_BASE}/herbs?category=${cat.slug}`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "weekly" as const,
-        priority: 0.6,
-      });
-    }
+    // NOTE: /herbs?category=* and /herbs?page=* / ?q=* faceted/search URLs are
+    // intentionally NOT in the sitemap. They canonicalize to /herbs (see
+    // buildPageMetadata path="/herbs"), so listing them here only creates
+    // "Alternative page with proper canonical tag" exclusions in Search
+    // Console. Let Google discover facets via internal links, not the sitemap.
 
-    return [...staticPages, ...comparePages, ...categoryPages, ...herbPages];
+    return [...staticPages, ...comparePages, ...herbPages];
   } catch (error) {
     logger.error("sitemap_generation_error", {
       error: error instanceof Error ? error.message : String(error),

@@ -24,6 +24,10 @@ function buildCSP(): string {
     "font-src 'self' data:",
     "frame-src *.stripe.com",
     "frame-ancestors 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
   ];
   if (process.env.NODE_ENV !== "production") {
     directives[1] =

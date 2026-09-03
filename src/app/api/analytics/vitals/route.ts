@@ -45,6 +45,12 @@ export async function POST(request: NextRequest) {
       );
     }
     const raw = await request.json();
+    if (JSON.stringify(raw).length > 10 * 1024) {
+      return NextResponse.json(
+        { error: "Invalid vitals payload" },
+        { status: 413 }
+      );
+    }
 
     const parsed = webVitalsSchema.safeParse(raw);
     if (!parsed.success) {

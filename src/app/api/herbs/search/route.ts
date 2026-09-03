@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const term = searchParams.get("q");
 
-  if (!term || term.length < 2) {
+  if (!term || term.length < 2 || term.length > 200) {
     return NextResponse.json([]);
   }
 
@@ -40,7 +40,8 @@ export async function GET(request: NextRequest) {
     // Sanitize each word to prevent ILIKE wildcard injection AND PostgREST
     // `.or()` filter-syntax injection (a `,` or `.` in the value would let a
     // caller inject an arbitrary filter clause — L2, audit 2026-06-22).
-    const words = term.trim().split(/\s+/).filter(Boolean);
+    // Cap words to bound PostgREST URL size and slow leading-wildcard ILIKEs.
+    const words = term.trim().split(/\s+/).filter(Boolean).slice(0, 10);
     const textConditions = words
       .flatMap((w) => {
         const safe = sanitizeFilterValue(w);

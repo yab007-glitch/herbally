@@ -20,11 +20,21 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { success } = await rateLimit(getClientIP(request), 20, 60_000);
-  if (!success) {
+  const ip = getClientIP(request);
+  const perMinute = await rateLimit(`${ip}:interpret:minute`, 20, 60_000);
+  if (!perMinute.success) {
     return NextResponse.json(
       { error: "Too many requests. Please try again later." },
       { status: 429, headers: { "Retry-After": "60" } }
+    );
+  }
+  // Daily cap so a single IP cannot burn free-tier AI costs all day
+  // (20/min alone allows ~28k/day). Matches /api/chat two-tier pattern.
+  const perDay = await rateLimit(`${ip}:interpret:day`, 200, 86_400_000);
+  if (!perDay.success) {
+    return NextResponse.json(
+      { error: "Daily limit reached. Please come back tomorrow." },
+      { status: 429, headers: { "Retry-After": "3600" } }
     );
   }
 
@@ -32,6 +42,14 @@ export async function POST(request: NextRequest) {
   try {
     const schema = z.object({ query: z.string().min(2).max(200) });
     const body = await request.json();
+    // Chunked-encoding bypass guard: content-length may be missing, so
+    // enforce a post-parse size cap before Zod validation.
+    if (JSON.stringify(body).length > MAX_BODY_SIZE) {
+      return NextResponse.json(
+        { error: "Request body too large" },
+        { status: 413 }
+      );
+    }
     const parsed = schema.safeParse(body);
     if (!parsed.success) {
       // L6 (audit 2026-06-22): don't reflect the unvalidated `body.query` back

@@ -19,6 +19,8 @@ interface Herb {
   reviewed_by?: string | null;
   reviewer_credentials?: string | null;
   last_reviewed?: string | null;
+  updated_at?: string | null;
+  created_at?: string | null;
   evidence_level?: string | null;
 }
 
@@ -124,7 +126,16 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
     ...(herb.last_reviewed && {
       dateModified: herb.last_reviewed,
     }),
-    datePublished: new Date().toISOString(),
+    // datePublished must be stable. Emitting new Date() on every regeneration
+    // makes every herb look freshly published daily — a classic thin-content /
+    // freshness-spam signal that erodes trust for the 335 crawled-not-indexed
+    // pages. Prefer created_at, fall back to last_reviewed/updated_at.
+    ...(herb.created_at || herb.last_reviewed || herb.updated_at
+      ? {
+          datePublished:
+            herb.created_at ?? herb.last_reviewed ?? herb.updated_at,
+        }
+      : {}),
   };
 
   return (

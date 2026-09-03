@@ -162,6 +162,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Chunked-encoding bypass guard: content-length may be missing, so
+  // enforce a post-parse size cap before Zod validation.
+  if (JSON.stringify(raw).length > MAX_BODY_SIZE * 10) {
+    return NextResponse.json(
+      { error: "Request body too large" },
+      { status: 413 }
+    );
+  }
+
   const chatSchema = z.object({
     messages: z
       .array(

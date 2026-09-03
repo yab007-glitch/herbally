@@ -9,6 +9,8 @@ import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { SourceAttribution } from "@/components/herbs/citations";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -19,6 +21,11 @@ export const revalidate = 3600;
 /**
  * Canonical list of popular comparisons. Exported so the sitemap derives its
  * compare URLs from the SAME source of truth as generateStaticParams.
+ *
+ * Extended Sep 2026 from Search Console converting queries — these /compare/
+ * pages already get clicks at 5-10% CTR vs 0.4% site average:
+ * st-johns-wort/vs/nettle, dulse/vs/irish-moss, milk-thistle/vs/psyllium,
+ * garlic/vs/hawthorn, peppermint/vs/fennel, hops/vs/valerian, etc.
  */
 export const POPULAR_COMPARISONS = [
   { slug1: "turmeric", slug2: "ginger" },
@@ -31,6 +38,18 @@ export const POPULAR_COMPARISONS = [
   { slug1: "turmeric", slug2: "ashwagandha" },
   { slug1: "st-johns-wort", slug2: "kava" },
   { slug1: "milk-thistle", slug2: "dandelion" },
+  { slug1: "st-johns-wort", slug2: "nettle" },
+  { slug1: "dulse", slug2: "irish-moss" },
+  { slug1: "milk-thistle", slug2: "psyllium" },
+  { slug1: "garlic", slug2: "hawthorn" },
+  { slug1: "peppermint", slug2: "fennel" },
+  { slug1: "hops", slug2: "valerian" },
+  { slug1: "lemon-basil", slug2: "thai-basil" },
+  { slug1: "vervain", slug2: "valerian" },
+  { slug1: "olive", slug2: "fish-oil" },
+  { slug1: "turmeric", slug2: "fish-oil" },
+  { slug1: "selfheal-herb", slug2: "salvia-pratensis" },
+  { slug1: "kelp", slug2: "ascophyllum-nodosum" },
 ] as const;
 
 // Pre-render popular comparisons for SEO
@@ -63,8 +82,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${herbA.name} vs ${herbB.name} - Herb Comparison`,
-    description: `Compare ${herbA.name} and ${herbB.name} side by side. Uses, safety, interactions, and evidence levels.`,
+    title: `${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`,
+    description:
+      `Compare ${herbA.name} vs ${herbB.name}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator.`.slice(
+        0,
+        158
+      ),
     alternates: {
       canonical:
         metaLocale === "fr"
@@ -101,8 +124,8 @@ export default async function ComparePage({ params }: Props) {
   return (
     <div className="space-y-8">
       <WebPageSchema
-        title={`${herbA.name} vs ${herbB.name} - Herb Comparison`}
-        description={`Compare ${herbA.name} and ${herbB.name} side by side.`}
+        title={`${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`}
+        description={`Compare ${herbA.name} vs ${herbB.name}: uses, dosage, safety & interactions.`}
         url={compareUrl}
         breadcrumbs={[
           { name: "Home", url: baseUrl },
@@ -110,6 +133,32 @@ export default async function ComparePage({ params }: Props) {
           {
             name: `${herbA.name} vs ${herbB.name}`,
             url: compareUrl,
+          },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: baseUrl },
+          { name: "Herbs", url: `${baseUrl}/herbs` },
+          {
+            name: `${herbA.name} vs ${herbB.name}`,
+            url: compareUrl,
+          },
+        ]}
+      />
+      <FAQSchema
+        items={[
+          {
+            question: `What is the difference between ${herbA.name} and ${herbB.name}?`,
+            answer: `${herbA.name} (${herbA.scientific_name}) is traditionally used for ${(herbA.traditional_uses || []).slice(0, 3).join(", ") || "various wellness applications"}, while ${herbB.name} (${herbB.scientific_name}) is used for ${(herbB.traditional_uses || []).slice(0, 3).join(", ") || "various wellness applications"}. See the comparison table for dosage, safety and interactions.`,
+          },
+          {
+            question: `Which is better, ${herbA.name} or ${herbB.name}?`,
+            answer: `It depends on your goal. Compare evidence levels, pregnancy safety and drug interactions in the table above, then use our free dose calculator. Consult your healthcare provider for personalized advice.`,
+          },
+          {
+            question: `Can I take ${herbA.name} and ${herbB.name} together?`,
+            answer: `Combining herbs can change safety and interactions. Check each herb's interaction profile above and consult your healthcare provider before combining ${herbA.name} with ${herbB.name}.`,
           },
         ]}
       />
@@ -331,7 +380,60 @@ export default async function ComparePage({ params }: Props) {
           <Leaf className="size-4" />
           {t("compare.viewDetails", { name: herbB.name })}
         </Button>
+        <Button
+          variant="outline"
+          render={<Link href={`/calculator?herb=${slug1}`} />}
+        >
+          Calculate {herbA.name} Dose
+        </Button>
       </div>
+
+      {/* Visible FAQ — must mirror FAQSchema above for rich-result eligibility */}
+      <section aria-labelledby="compare-faq-heading" className="pt-4">
+        <h2
+          id="compare-faq-heading"
+          className="mb-3 text-xl font-semibold text-foreground"
+        >
+          Frequently asked questions
+        </h2>
+        <div className="divide-y rounded-2xl border">
+          <details className="px-4 py-3">
+            <summary className="cursor-pointer font-medium text-foreground">
+              What is the difference between {herbA.name} and {herbB.name}?
+            </summary>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              {herbA.name} ({herbA.scientific_name}) is traditionally used for{" "}
+              {(herbA.traditional_uses || []).slice(0, 3).join(", ") ||
+                "various wellness applications"}
+              , while {herbB.name} ({herbB.scientific_name}) is used for{" "}
+              {(herbB.traditional_uses || []).slice(0, 3).join(", ") ||
+                "various wellness applications"}
+              . See the comparison table for dosage, safety and interactions.
+            </p>
+          </details>
+          <details className="px-4 py-3">
+            <summary className="cursor-pointer font-medium text-foreground">
+              Which is better, {herbA.name} or {herbB.name}?
+            </summary>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              It depends on your goal. Compare evidence levels, pregnancy safety
+              and drug interactions in the table above, then use our free dose
+              calculator. Consult your healthcare provider for personalized
+              advice.
+            </p>
+          </details>
+          <details className="px-4 py-3">
+            <summary className="cursor-pointer font-medium text-foreground">
+              Can I take {herbA.name} and {herbB.name} together?
+            </summary>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Combining herbs can change safety and interactions. Check each
+              herb&apos;s interaction profile above and consult your healthcare
+              provider before combining {herbA.name} with {herbB.name}.
+            </p>
+          </details>
+        </div>
+      </section>
     </div>
   );
 }

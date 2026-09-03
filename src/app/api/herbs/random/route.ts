@@ -13,10 +13,11 @@ export async function GET(request: NextRequest) {
   }
   const supabase = await createClient();
 
-  // Get count first
+  // Get count first (published only — defense-in-depth alongside RLS)
   const { count } = await supabase
     .from("herbs")
-    .select("*", { count: "exact", head: true });
+    .select("*", { count: "exact", head: true })
+    .eq("is_published", true);
 
   if (!count || count === 0) {
     return NextResponse.json({ error: "No herbs found" }, { status: 404 });
@@ -25,10 +26,11 @@ export async function GET(request: NextRequest) {
   // Get a random offset
   const randomOffset = Math.floor(Math.random() * count);
 
-  // Fetch one herb at that offset
+  // Fetch one herb at that offset (published only)
   const { data, error } = await supabase
     .from("herbs")
     .select("slug")
+    .eq("is_published", true)
     .range(randomOffset, randomOffset)
     .limit(1)
     .single();

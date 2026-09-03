@@ -63,6 +63,18 @@ export async function markSheetReviewedAction(
 
 /** Count of sheets still awaiting review (for the admin overview/dashboard). */
 export async function unreviewedSheetCount(): Promise<number> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return 0;
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (profile?.role !== "admin") return 0;
+
   const admin = createAdminClient();
   const { count } = await admin
     .from("herb_pubmed_monographs")

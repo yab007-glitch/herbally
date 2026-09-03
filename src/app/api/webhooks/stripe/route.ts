@@ -269,6 +269,19 @@ export async function POST(request: NextRequest) {
 
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  // Bound body before buffering: Stripe events are KBs. Reject oversized
+  // unsigned bodies to prevent memory/CPU DoS before signature verification.
+  const contentLength = parseInt(
+    request.headers.get("content-length") || "0",
+    10
+  );
+  if (contentLength > 1024 * 1024) {
+    return NextResponse.json(
+      { error: "Request body too large" },
+      { status: 413 }
+    );
+  }
+
   const body = await request.text();
   const signature = request.headers.get("stripe-signature");
 

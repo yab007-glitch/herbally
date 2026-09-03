@@ -63,6 +63,10 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   // Abort the in-flight herb search when a newer term supersedes it, so a
   // slow earlier response can't overwrite a faster newer one (race).
   const searchAbort = useRef<AbortController | null>(null);
+  // Name set by selectHerb — suppresses the re-search triggered by the
+  // herbInput change to the selected name, which would otherwise reopen
+  // the dropdown over the Check button immediately after selection.
+  const justSelected = useRef<string | null>(null);
 
   const searchHerbs = useCallback(async (term: string) => {
     if (term.length < 2) {
@@ -70,6 +74,11 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       setShowHerbResults(false);
       return;
     }
+    if (justSelected.current !== null && term === justSelected.current) {
+      setShowHerbResults(false);
+      return;
+    }
+    justSelected.current = null;
     searchAbort.current?.abort();
     const controller = new AbortController();
     searchAbort.current = controller;
@@ -118,6 +127,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   }, []);
 
   function handleCheck() {
+    setShowHerbResults(false);
     const herbName = herbInput.trim();
     const medName = medInput.trim();
     if (!herbName && !medName) return;
@@ -161,6 +171,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   }
 
   function selectHerb(herb: HerbResult) {
+    justSelected.current = herb.name;
     setHerbInput(herb.name);
     setShowHerbResults(false);
     medRef.current?.focus();
@@ -186,7 +197,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             {showHerbResults && herbResults.length > 0 && (
               <div
                 ref={resultsRef}
-                className="absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden rounded-xl border border-border bg-background shadow-lg"
+                className="absolute left-0 right-0 top-full z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border border-border bg-background shadow-lg"
               >
                 {herbResults.map((herb, i) => (
                   <button
