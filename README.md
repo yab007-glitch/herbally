@@ -43,8 +43,10 @@ npm run dev
 | `npm run test`          | Run tests (watch mode)       |
 | `npm run test:run`      | Run tests (single run)       |
 | `npm run test:coverage` | Run tests with coverage      |
+| `npm run test:e2e`      | Run Playwright e2e tests     |
 | `npm run format`        | Format code with Prettier    |
 | `npm run format:check`  | Check formatting             |
+| `npm run analyze`       | Bundle analysis build        |
 
 ## Project Structure
 
@@ -89,11 +91,13 @@ src/
 
 ## AI safety
 
-The chat route streams OpenRouter responses. After the stream completes, a
-client-side safety guard (`src/lib/chat/safety-guard.ts`) scans the final
-text for red-flag phrases (e.g. "stop taking your insulin") and either
-appends a localised disclaimer (soft warn) or replaces the response with
-a refusal (hard block) before the message is persisted.
+The chat route buffers the OpenRouter response server-side and runs it
+through the safety guard (`src/lib/chat/safety-guard.ts`) BEFORE a single
+byte reaches the client. The guard scans for red-flag phrases (e.g. "stop
+taking your insulin") and either appends a localised disclaimer (soft warn)
+or replaces the response with a refusal (hard block). Guarded text is what
+gets streamed to the client and what gets cached — the client-side guard is
+defense-in-depth only, never the sole control.
 
 ## Herb provenance
 

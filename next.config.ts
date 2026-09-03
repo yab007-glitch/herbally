@@ -56,6 +56,10 @@ const nextConfig: NextConfig = {
           "font-src 'self' data:",
           "frame-src *.stripe.com",
           "frame-ancestors 'none'",
+          "object-src 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+          "upgrade-insecure-requests",
         ].join("; "),
       },
       ...(process.env.NODE_ENV === "production"
@@ -69,8 +73,9 @@ const nextConfig: NextConfig = {
     ];
     return [
       {
-        source:
-          "/:path*{svg,png,jpg,jpeg,gif,webp,ico,woff,woff2,ttf,eot,css,js}",
+        // Apply to ALL routes (including static assets). The proxy matcher
+        // excludes statics, so next.config headers is the uniform layer.
+        source: "/:path*",
         headers: securityHeaders,
       },
     ];

@@ -46,8 +46,26 @@ export async function POST(request: NextRequest) {
   const limited = await rateLimited(request);
   if (limited) return limited;
 
+  // Bound body before parsing (chunked-encoding may omit content-length).
+  const contentLength = parseInt(
+    request.headers.get("content-length") || "0",
+    10
+  );
+  if (contentLength > 100 * 1024) {
+    return NextResponse.json(
+      { error: "Request body too large" },
+      { status: 413 }
+    );
+  }
+
   try {
     const body = await request.json();
+    if (JSON.stringify(body).length > 100 * 1024) {
+      return NextResponse.json(
+        { error: "Request body too large" },
+        { status: 413 }
+      );
+    }
     const parsed = bodySchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(

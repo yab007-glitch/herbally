@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
+import { timingSafeEqual } from "crypto";
 import { z } from "zod";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
@@ -47,7 +48,13 @@ export async function POST(request: NextRequest) {
       secret: z.string(),
     })
     .safeParse(raw);
-  if (!parsed.success || parsed.data.secret !== secret) {
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  // Constant-time comparison to prevent timing attacks.
+  const a = Buffer.from(parsed.data.secret);
+  const b = Buffer.from(secret);
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
