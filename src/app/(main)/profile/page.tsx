@@ -9,6 +9,7 @@ export const generateMetadata = () =>
     titleKey: "profileTitle",
     descKey: "profileSubtitle",
     path: "/profile",
+    robots: { index: false, follow: false },
   });
 
 export default async function ProfilePage() {

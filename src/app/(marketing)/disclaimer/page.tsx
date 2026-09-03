@@ -2,6 +2,7 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -16,6 +17,12 @@ export default async function DisclaimerPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: t("common.breadcrumbHome"), url: "/" },
+          { name: t("disclaimer.title"), url: "/disclaimer" },
+        ]}
+      />
       <div className="mb-8 text-center">
         <div className="mb-4 inline-flex size-14 items-center justify-center rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
           <AlertTriangle className="size-7" />

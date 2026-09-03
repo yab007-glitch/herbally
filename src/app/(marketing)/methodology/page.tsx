@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { siteUrl } from "@/lib/seo/site-url";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "methodology", path: "/methodology" });
@@ -37,6 +38,12 @@ export default async function MethodologyPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: t("common.breadcrumbHome"), url: "/" },
+          { name: t("methodologyContent.title"), url: "/methodology" },
+        ]}
+      />
       {/* Schema */}
       <script
         type="application/ld+json"

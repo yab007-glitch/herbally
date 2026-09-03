@@ -150,7 +150,20 @@
     "browseSymptoms": "Parcourir par Symptôme",
     "dontKnowWhichHerb": "Vous ne savez pas quelle herbe vous faut ?",
     "dontKnowDesc": "Recherchez par symptôme ou condition — anxiété, sommeil, inflammation et plus.",
-    "findBysymptom": "Trouver des Herbes par Symptôme →"
+    "findBysymptom": "Trouver des Herbes par Symptôme →",
+    "herbsFaq": {
+      "title": "Questions Fréquentes sur Notre Base de Données de Plantes",
+      "q1": "Combien de plantes sont dans la base de données ?",
+      "a1": "Notre base de données contient plus de 2 700 plantes médicinales du monde entier. Chaque profil de plante inclut les usages traditionnels, les applications modernes, les composés actifs, les recommandations de posologie, les informations de sécurité et les avertissements d'interactions médicamenteuses.",
+      "q2": "L'information est-elle précise ?",
+      "a2": "Chaque profil de plante est compilé à partir d'abstracts PubMed (NIH) avec une assistance IA, chaque affirmation factuelle étant citée vers un article PubMed réel. Notre système de classification des preuves (A à D, plus Traditionnel) évalue la qualité de la recherche sous-jacente pour que vous puissiez juger vous-même de la fiabilité.",
+      "q3": "Puis-je rechercher par symptôme ?",
+      "a3": "Oui — parcourez les plantes par catégorie de symptômes (anxiété, sommeil, inflammation, digestion, et 20+ autres) ou recherchez directement par nom de plante, composé actif ou usage traditionnel. Notre recherche intelligente comprend les synonymes et noms communs.",
+      "q4": "Les recommandations de posologie sont-elles sûres ?",
+      "a4": "Les fourchettes de posologie sont basées sur l'usage traditionnel et les études cliniques publiées lorsque disponibles. Cependant, une posologie sûre dépend de l'âge, du poids, des conditions de santé et des autres médicaments. Consultez toujours votre professionnel de santé avant de commencer un supplément à base de plantes. Utilisez notre calculateur de posologie pour des conseils basés sur le poids.",
+      "q5": "Cette base de données est-elle gratuite ?",
+      "a5": "Oui, HerbAlly est 100% gratuit sans publicité, sans niveaux premium et sans vente de données. Nous sommes soutenus par les dons pour que tout le monde ait accès à l'information phytothérapeutique fondée sur des preuves."
+    }
   },
   "calculator": {
     "title": "Calculateur de Posologie",
@@ -566,7 +579,24 @@
     "cGarlic": "Ail",
     "cKava": "Kava",
     "cMilkThistle": "Chardon-Marie",
-    "cAshwagandha": "Ashwagandha"
+    "cAshwagandha": "Ashwagandha",
+    "faqHeading": "Questions Fréquemment Posées",
+    "faq1": {
+      "q": "Qu'est-ce qu'une interaction plante-médicament ?",
+      "a": "Une interaction plante-médicament se produit lorsqu'une plante et un médicament affectent l'activité l'un de l'autre dans le corps. Cela peut rendre le médicament moins efficace, augmenter les effets secondaires ou causer des toxicités. Le millepertuis, par exemple, accélère les enzymes hépatiques qui décomposent de nombreux antidépresseurs et anticoagulants."
+    },
+    "faq2": {
+      "q": "Quelle est la précision de notre vérificateur d'interactions ?",
+      "a": "Notre herboriste virtuel croise les sources de l'OMS, du NCCIH et de PubMed pour chaque paire plante-médicament. Nous signalons les interactions connues et citons les preuves. Cependant, l'IA peut manquer les interactions rares — consultez toujours votre professionnel de santé avant d'associer des plantes à des médicaments sur ordonnance."
+    },
+    "faq3": {
+      "q": "Quelles plantes sont les plus susceptibles d'interagir avec les médicaments ?",
+      "a": "Les plantes à haut risque les plus couramment signalées incluent le millepertuis (affecte de nombreux antidépresseurs et anticoagulants), l'ail et le ginkgo (peuvent augmenter le risque de saignement avec la warfarine ou l'aspirine), le curcuma (peut affecter la glycémie et les anticoagulants), le kava (peut interagir avec les sédatifs et l'alcool) et le chardon-marie (peut modifier la façon dont le foie traite certains médicaments)."
+    },
+    "faq4": {
+      "q": "Puis-je prendre des plantes en toute sécurité avec mon médicament sur ordonnance ?",
+      "a": "Cela dépend de la plante et du médicament spécifiques. Certaines plantes sont sûres à combiner, tandis que d'autres peuvent être dangereuses. L'approche la plus sûre consiste à consulter votre professionnel de santé ou votre pharmacien avant de combiner une plante avec un médicament sur ordonnance. Notre herboriste virtuel peut fournir des informations fondées sur des preuves pour en discuter avec votre prestataire."
+    }
   },
   "auth": {
     "login": {
@@ -1259,28 +1289,28 @@
     }
   },
   "meta": {
-    "herbsDatabase": "Base de Données de Plantes Médicinales",
+    "herbsDatabase": "2 700+ Plantes Médicinales — Profils Fondés sur les Preuves, Composants & Interactions",
     "herbsDatabaseDesc": "Parcourez notre base de données complète de plus de 2 700 plantes médicinales avec des profils détaillés, composants actifs et interactions médicamenteuses.",
     "virtualHerbalist": "Herboriste Virtuel",
     "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et la posologie. Réponses fondées sur les sources OMS, NCCIH et PubMed. Gratuit, sans compte requis.",
-    "doseCalculator": "Calculateur de Posologie: Doses Sûres Adulte & Enfant",
+    "doseCalculator": "Calculateur de Posologie: Doses Sûres Adulte & Enfant par Poids",
     "doseCalculatorDesc": "Calculateur de posologie gratuit : doses sûres adulte et enfant par poids et âge (règles de Clark & Young). 2 700+ plantes, fondé sur les preuves, sans compte.",
-    "herbsBySymptom": "Plantes par Symptôme",
+    "herbsBySymptom": "Plantes pour Chaque Symptôme — Soulagement Phytothérapeutique Fondé sur les Preuves pour l'Anxiété, le Sommeil, la Douleur & Plus",
     "herbsBySymptomDesc": "Trouvez les bonnes plantes pour vos symptômes. Parcourez les recommandations phytothérapiques fondées sur les preuves pour l'anxiété, le sommeil, l'inflammation, la digestion et plus encore.",
-    "privacyPolicy": "Politique de Confidentialité",
-    "medicalDisclaimer": "Avertissement Médical",
+    "privacyPolicy": "Politique de Confidentialité HerbAlly — Comment Nous Protégeons Vos Données de Santé",
+    "medicalDisclaimer": "Avertissement Médical & FDA HerbAlly",
     "medicalDisclaimerDesc": "Lisez l'avertissement médical et FDA complet pour HerbAlly.",
-    "faq": "Questions Fréquemment Posées",
-    "methodology": "Notre Méthodologie",
-    "termsOfService": "Conditions d'Utilisation",
+    "faq": "FAQ HerbAlly — Sécurité des Plantes, Posologie, Interactions Médicamenteuses & Herboriste Virtuel",
+    "methodology": "Comment HerbAlly Évalue les Preuves — Méthodologie Transparente Fondée sur PubMed",
+    "termsOfService": "Conditions d'Utilisation HerbAlly & Conditions d'Utilisation",
     "termsDesc": "Conditions d'utilisation et d'utilisation de HerbAlly.",
-    "supportUs": "Soutenez-nous - Gardez la Médecine par les Plantes Gratuite",
+    "supportUs": "Soutenez HerbAlly — Gardez la Médecine par les Plantes Gratuite & Accessible pour Tous",
     "supportUsDesc": "Aidez-nous à garder HerbAlly 100% gratuit. Votre don soutient l'hébergement, les coûts IA et l'accès gratuit pour tous.",
     "herbNotFound": "Plante Non Trouvée",
     "herbComparisonNotFound": "Comparaison de Plantes Non Trouvée",
-    "about": "À Propos",
+    "about": "À Propos de HerbAlly — Votre Guide de Confiance pour les Plantes Médicinales & la Phytothérapie",
     "aboutDesc": "Découvrez HerbAlly, notre mission et comment nous vous aidons à prendre des décisions éclairées sur les plantes médicinales.",
-    "herbDrugInteractions": "Interactions Plante-Médicament",
+    "herbDrugInteractions": "Interactions Plante-Médicament — Combinaisons Sûres de Plantes & Médicaments | HerbAlly",
     "herbDrugInteractionsDesc": "Ce que sont les interactions plante-médicament, pourquoi elles comptent et comment les vérifier. Exemples à risque (millepertuis, ail, ginkgo, curcuma, kava, warfarine) et comment rester prudent.",
     "appDescription": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses avec notre herboriste virtuel alimenté par l'IA.",
     "herbsFor": "Plantes pour {symptom}",

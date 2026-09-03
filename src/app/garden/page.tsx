@@ -6,6 +6,7 @@ export const generateMetadata = () =>
     titleKey: "gardenPageTitle",
     descKey: "gardenSubtitle",
     path: "/garden",
+    robots: { index: false, follow: false },
   });
 
 export default function GardenPage() {

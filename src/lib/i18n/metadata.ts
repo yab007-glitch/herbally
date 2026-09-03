@@ -15,6 +15,8 @@ export interface PageMetaOptions {
   descKey?: string;
   /** Path without locale prefix, e.g. "/herbs" or "/". */
   path: string;
+  /** Optional robots directive. Defaults to index,follow. */
+  robots?: Metadata["robots"];
 }
 
 /**
@@ -26,6 +28,7 @@ export async function buildPageMetadata({
   titleKey,
   descKey,
   path,
+  robots,
 }: PageMetaOptions): Promise<Metadata> {
   const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale, namespace: "meta" });
@@ -36,6 +39,7 @@ export async function buildPageMetadata({
   return {
     title,
     description,
+    robots,
     alternates: {
       canonical: alternates[locale],
       languages: {
