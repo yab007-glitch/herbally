@@ -245,7 +245,7 @@ export default async function HerbsPage({
         />
         <div className="space-y-4">
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("herbs.herbsFaq.q1")}
             </summary>
             <p className="mt-3 text-muted-foreground">
@@ -253,7 +253,7 @@ export default async function HerbsPage({
             </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("herbs.herbsFaq.q2")}
             </summary>
             <p className="mt-3 text-muted-foreground">
@@ -261,7 +261,7 @@ export default async function HerbsPage({
             </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("herbs.herbsFaq.q3")}
             </summary>
             <p className="mt-3 text-muted-foreground">
@@ -269,7 +269,7 @@ export default async function HerbsPage({
             </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("herbs.herbsFaq.q4")}
             </summary>
             <p className="mt-3 text-muted-foreground">
@@ -277,7 +277,7 @@ export default async function HerbsPage({
             </p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("herbs.herbsFaq.q5")}
             </summary>
             <p className="mt-3 text-muted-foreground">

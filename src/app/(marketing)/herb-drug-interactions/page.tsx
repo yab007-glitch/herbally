@@ -163,25 +163,25 @@ export default async function HerbDrugInteractionsPage() {
         />
         <div className="space-y-4">
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("faq1.q")}
             </summary>
             <p className="mt-3 text-muted-foreground">{t("faq1.a")}</p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("faq2.q")}
             </summary>
             <p className="mt-3 text-muted-foreground">{t("faq2.a")}</p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("faq3.q")}
             </summary>
             <p className="mt-3 text-muted-foreground">{t("faq3.a")}</p>
           </details>
           <details className="group border rounded-lg p-4 bg-background">
-            <summary className="font-medium text-foreground cursor-pointer flex items-center gap-2 list-none">
+            <summary className="cursor-pointer font-medium text-foreground">
               {t("faq4.q")}
             </summary>
             <p className="mt-3 text-muted-foreground">{t("faq4.a")}</p>
