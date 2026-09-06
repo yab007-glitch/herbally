@@ -5,6 +5,8 @@ import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
 import { SYMPTOM_SLUGS } from "@/app/(main)/symptoms/[symptom]/page";
 import { POPULAR_COMPARISONS } from "@/app/(main)/compare/[slug1]/vs/[slug2]/page";
+import { getInteractionPairs } from "@/lib/interactions/pairs";
+import { pairPath } from "@/lib/interactions/pair-url";
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
@@ -265,7 +267,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // "Alternative page with proper canonical tag" exclusions in Search
     // Console. Let Google discover facets via internal links, not the sitemap.
 
-    return [...staticPages, ...comparePages, ...herbPages];
+    // Herb↔drug pair pages — every curated interaction gets an indexable
+    // permalink. FR URLs only when the row actually has a French translation
+    // (same gating rule as herbs: EN-content-on-FR-URL duplicates get
+    // canonicalized away by Google).
+    const pairPages: MetadataRoute.Sitemap = (
+      await getInteractionPairs()
+    ).flatMap((p) => {
+      const path = pairPath(p.herbSlug, p.drugName);
+      const entries: MetadataRoute.Sitemap = [
+        {
+          url: `${baseUrl}${path}`,
+          lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+          changeFrequency: "monthly" as const,
+          priority: 0.8,
+        },
+      ];
+      if (p.hasFr) {
+        entries.push({
+          url: `${baseUrl}${FR_BASE}${path}`,
+          lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+          changeFrequency: "monthly" as const,
+          priority: 0.8,
+        });
+      }
+      return entries;
+    });
+
+    return [...staticPages, ...comparePages, ...pairPages, ...herbPages];
   } catch (error) {
     logger.error("sitemap_generation_error", {
       error: error instanceof Error ? error.message : String(error),
