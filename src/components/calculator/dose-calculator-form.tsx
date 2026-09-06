@@ -47,18 +47,21 @@ type PrefillData = {
   verified: boolean;
 } | null;
 
+// fried_rule implements Fried's Rule (age in months / 150) — it was
+// previously labeled "Cowling's Rule", a different rule, contradicting the
+// result explanation. Map to the Fried's keys.
 const FORMULA_KEY_MAP: Record<FormulaKey, string> = {
   clarks_rule: "clarkRule",
   youngs_rule: "youngsRule",
   bsa: "salisburyRule",
-  fried_rule: "cowlingRule",
+  fried_rule: "friedRule",
 };
 
 const FORMULA_DESC_MAP: Record<FormulaKey, string> = {
   clarks_rule: "clarkDesc",
   youngs_rule: "youngDesc",
   bsa: "salisburyDesc",
-  fried_rule: "cowlingDesc",
+  fried_rule: "friedDesc",
 };
 
 export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
@@ -181,6 +184,22 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
       setError(t("calculator.errors.calculationError"));
     }
   }
+
+  // Plausibility note: inputs that compute fine but sit outside any
+  // pediatric range (age 200, weight 999 without triggering the clamp)
+  // previously rendered with zero comment. Advisory only (role="status").
+  const parsedAgeYears = useMonths
+    ? parseFloat(ageMonths) / 12
+    : parseFloat(ageYears);
+  const parsedWeightKg =
+    useLbs && parseFloat(weightValue)
+      ? lbsToKg(parseFloat(weightValue))
+      : parseFloat(weightValue);
+  const showPlausibilityNote =
+    !!result &&
+    !result.clamped &&
+    ((Number.isFinite(parsedAgeYears) && parsedAgeYears > 18) ||
+      (Number.isFinite(parsedWeightKg) && parsedWeightKg > 150));
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
@@ -480,6 +499,16 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 >
                   <Info className="mb-0.5 mr-1 inline-block size-3" />
                   {t("calculatorForm.clampedWarning")}
+                </div>
+              )}
+
+              {showPlausibilityNote && (
+                <div
+                  role="status"
+                  className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
+                >
+                  <Info className="mb-0.5 mr-1 inline-block size-3" />
+                  {t("calculatorForm.plausibilityWarning")}
                 </div>
               )}
 

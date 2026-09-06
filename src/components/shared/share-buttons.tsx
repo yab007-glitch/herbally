@@ -71,7 +71,8 @@ export function ShareButtons({ title, url, className }: ShareButtonsProps) {
         variant="outline"
         size="sm"
         onClick={copyLink}
-        aria-label={t("common.copyLinkLabel")}
+        aria-label={copied ? t("common.copied") : t("common.copyLinkLabel")}
+        aria-live="polite"
         className="inline-flex size-8 items-center justify-center p-0"
       >
         {copied ? (
@@ -79,6 +80,11 @@ export function ShareButtons({ title, url, className }: ShareButtonsProps) {
         ) : (
           <Copy className="size-4" />
         )}
+        {/* Screen-reader announcement: the icon swap alone is invisible to
+            AT, so "Copied" was previously never announced. */}
+        <span role="status" className="sr-only">
+          {copied ? t("common.copied") : ""}
+        </span>
       </Button>
     </div>
   );

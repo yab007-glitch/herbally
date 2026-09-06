@@ -109,7 +109,8 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
                   ? "bg-rose-500 text-white"
                   : "bg-background text-muted-foreground hover:text-rose-500"
               )}
-              aria-label={saved ? t("garden.remove") : t("garden.saved")}
+              aria-label={saved ? t("garden.remove") : t("garden.save")}
+              aria-pressed={saved}
             >
               <Heart className={cn("size-4", saved && "fill-white")} />
             </button>

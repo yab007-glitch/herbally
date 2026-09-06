@@ -47,6 +47,8 @@ export default async function HomePage() {
               suggestion4: t("home.suggestion4"),
               trustLine: t("home.trustLine"),
               symptomsLink: t("home.symptomsLink"),
+              emptyCheckError: t("home.emptyCheckError"),
+              sameCheckError: t("home.sameCheckError"),
             }}
           />
 

@@ -246,6 +246,31 @@ async function removeHerbFromServer(slug: string): Promise<void> {
 }
 
 /**
+ * Defensive normalizer for server rows. The API contract is `GardenHerb`
+ * (camelCase), but older/stale payloads may still carry raw DB columns
+ * (`herb_slug`, `herb_name`, `created_at`). Normalize so a shape drift can
+ * never again produce "counted in stats, invisible in the grid" rows.
+ */
+function normalizeServerHerb(
+  row: GardenHerb & {
+    herb_slug?: string;
+    herb_name?: string;
+    created_at?: string;
+  }
+): GardenHerb {
+  const slug = row.slug || row.herb_slug || "";
+  return {
+    id: row.id || slug,
+    slug,
+    name: row.name || row.herb_name || slug,
+    scientific_name: row.scientific_name || "",
+    image_url: row.image_url ?? null,
+    savedAt: row.savedAt || row.created_at || new Date().toISOString(),
+    note: row.note,
+  };
+}
+
+/**
  * Merge server-side garden into localStorage on page load.
  * Call this once on the garden page to pull server data down.
  * Server data is additive — never removes items that only exist locally.
@@ -258,7 +283,9 @@ export async function mergeServerGarden(): Promise<GardenHerb[]> {
     if (!response.ok) return getGarden();
 
     const data = (await response.json()) as { herbs?: GardenHerb[] };
-    const serverHerbs: GardenHerb[] = data.herbs ?? [];
+    const serverHerbs: GardenHerb[] = (data.herbs ?? []).map(
+      normalizeServerHerb
+    );
     const serverSlugs = new Set(serverHerbs.map((h) => h.slug));
 
     const local = getGarden();

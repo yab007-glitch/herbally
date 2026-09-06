@@ -17,6 +17,8 @@ type Labels = {
   suggestion4: string;
   trustLine: string;
   symptomsLink: string;
+  emptyCheckError: string;
+  sameCheckError: string;
 };
 
 interface HerbResult {
@@ -53,6 +55,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   const router = useRouter();
   const [herbInput, setHerbInput] = useState("");
   const [medInput, setMedInput] = useState("");
+  const [checkError, setCheckError] = useState<string | null>(null);
   const [herbResults, setHerbResults] = useState<HerbResult[]>([]);
   const [showHerbResults, setShowHerbResults] = useState(false);
   const [activeHerbIndex, setActiveHerbIndex] = useState(-1);
@@ -130,7 +133,22 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     setShowHerbResults(false);
     const herbName = herbInput.trim();
     const medName = medInput.trim();
-    if (!herbName && !medName) return;
+    // Empty submit used to silently do nothing — surface a hint instead.
+    if (!herbName && !medName) {
+      setCheckError(labels.emptyCheckError);
+      return;
+    }
+    // Same product in both fields ("warfarin" + "warfarin") builds a
+    // nonsense query and burns an AI call — stop it at the form.
+    if (
+      herbName &&
+      medName &&
+      herbName.localeCompare(medName, undefined, { sensitivity: "base" }) === 0
+    ) {
+      setCheckError(labels.sameCheckError);
+      return;
+    }
+    setCheckError(null);
     let query = "";
     if (herbName && medName) {
       query = `Is ${herbName} safe to take with ${medName}?`;
@@ -187,7 +205,10 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
               ref={herbRef}
               type="text"
               value={herbInput}
-              onChange={(e) => setHerbInput(e.target.value)}
+              onChange={(e) => {
+                setHerbInput(e.target.value);
+                setCheckError(null);
+              }}
               onKeyDown={handleKeyDown}
               onFocus={() => herbInput.length >= 2 && setShowHerbResults(true)}
               placeholder={labels.herbPlaceholder}
@@ -232,7 +253,10 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             ref={medRef}
             type="text"
             value={medInput}
-            onChange={(e) => setMedInput(e.target.value)}
+            onChange={(e) => {
+              setMedInput(e.target.value);
+              setCheckError(null);
+            }}
             onKeyDown={(e) => e.key === "Enter" && handleCheck()}
             placeholder={labels.medPlaceholder}
             className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
@@ -246,6 +270,14 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             <ShieldCheck className="size-4" />
             {labels.checkButton}
           </Button>
+          {checkError && (
+            <p
+              role="alert"
+              className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-sm text-destructive"
+            >
+              {checkError}
+            </p>
+          )}
         </div>
 
         {/* Quick suggestions */}
