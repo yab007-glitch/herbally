@@ -182,11 +182,15 @@ export function ChatInterface({
   }, []);
 
   // ── Auto-send on mount ──
-  const autoSent = useRef(false);
+  // Guard on the query STRING, not a boolean: on client-side navigation
+  // between two ?q= URLs the component instance (and its refs) persist, so a
+  // boolean guard silently swallowed the second question with no bubble and
+  // no error.
+  const autoSentFor = useRef<string | null>(null);
   useEffect(() => {
-    if (autoSent.current) return;
-    if (autoQuery && messages.length === 0 && !isLoading) {
-      autoSent.current = true;
+    if (!autoQuery || autoSentFor.current === autoQuery) return;
+    if (messages.length === 0 && !isLoading) {
+      autoSentFor.current = autoQuery;
       sendMessage(autoQuery);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

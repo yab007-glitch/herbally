@@ -103,7 +103,8 @@ function makePmidLink(pmid: string): Link {
       hProperties: {
         [PMID_DATA_ATTR]: pmid,
         target: "_blank",
-        rel: "noopener noreferrer",
+        // mdast types rel as string[]; renders as rel="noopener noreferrer".
+        rel: ["noopener", "noreferrer"],
       },
     },
     children: [{ type: "text", value: `PMID:${pmid}` }],

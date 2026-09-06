@@ -11,6 +11,7 @@ import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { redirect } from "next/navigation";
 import Script from "next/script";
 
 export const generateMetadata = () =>
@@ -28,7 +29,12 @@ export default async function HerbsPage({
   const params = await searchParams;
   const query = params.q || "";
   const category = params.category || "";
-  const page = parseInt(params.page || "1", 10);
+  // Sanitize ?page=: non-integers, negatives, and 0 collapse to 1. Anything
+  // non-canonical (including ?page=1, which duplicates the base URL) is
+  // redirected below so junk/stale pagination URLs never render or index.
+  const parsedPage =
+    params.page === undefined ? 1 : Math.floor(Number(params.page));
+  const page = Number.isFinite(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
   const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale });
   const [herbsResult, categoriesResult] = await Promise.all([
@@ -36,10 +42,56 @@ export default async function HerbsPage({
     getHerbCategories(),
   ]);
 
+  const categories = categoriesResult.success ? categoriesResult.data! : [];
+  const buildCanonical = (opts: {
+    dropPage?: boolean;
+    dropCategory?: boolean;
+  }) => {
+    const sp = new URLSearchParams();
+    if (query) sp.set("q", query);
+    if (category && !opts.dropCategory) sp.set("category", category);
+    if (!opts.dropPage && page > 1) sp.set("page", String(page));
+    const qs = sp.toString();
+    return `/herbs${qs ? `?${qs}` : ""}`;
+  };
+
+  // Unknown ?category= previously rendered the UNFILTERED list with no hint
+  // (looked like the filter was broken). Redirect to the canonical URL
+  // instead — but only when we actually loaded the category list, so a
+  // failed categories fetch can't cause a redirect loop.
+  if (
+    category &&
+    categoriesResult.success &&
+    !categories.some((c: { slug: string }) => c.slug === category)
+  ) {
+    redirect(buildCanonical({ dropPage: true, dropCategory: true }));
+  }
+
   const herbs = herbsResult.success ? herbsResult.data!.herbs : [];
   const total = herbsResult.success ? herbsResult.data!.total : 0;
-  const categories = categoriesResult.success ? categoriesResult.data! : [];
   const totalPages = Math.ceil(total / 20);
+
+  // If the listing query itself failed on a paginated URL (e.g. PostgREST
+  // "range not satisfiable" for ?page=999999 collapses total to 0, which
+  // would otherwise skip the out-of-range check below), fall back to the
+  // canonical first page instead of a dead empty state.
+  if (!herbsResult.success && page > 1) {
+    redirect(buildCanonical({ dropPage: true }));
+  }
+
+  // Out-of-range or non-canonical ?page= (?page=0, ?page=1, ?page=999999)
+  // previously rendered "No herbs found" with no pagination — a dead end for
+  // stale bookmarks. Redirect to the canonical URL instead.
+  const pageParam = params.page;
+  const pageIsCanonical =
+    (pageParam === undefined && page === 1) || pageParam === String(page);
+  if (!pageIsCanonical || (totalPages > 0 && page > totalPages)) {
+    redirect(
+      buildCanonical({
+        dropPage: totalPages > 0 && page > totalPages ? true : page === 1,
+      })
+    );
+  }
 
   return (
     <div>

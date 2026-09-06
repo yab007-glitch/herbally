@@ -143,4 +143,42 @@ describe("mergeServerGarden — cross-device reconciliation (L20)", () => {
     const merged = await mergeServerGarden();
     expect(merged.find((h) => h.slug === "ginger")).toBeUndefined();
   });
+
+  it("normalizes raw DB-shaped server rows (herb_slug/herb_name) into renderable garden entries", async () => {
+    // Regression: GET /api/garden once returned raw snake_case rows. They
+    // were counted in stats but filtered out of the collection grid (no
+    // `slug`), showing "1 Saved Herb" with an empty collection.
+    vi.mocked(fetch).mockImplementation(async (url) => {
+      const u = typeof url === "string" ? url : (url as URL).toString();
+      if (u.includes("/api/garden") && !u.includes("slug=")) {
+        return new Response(
+          JSON.stringify({
+            herbs: [
+              {
+                id: 7,
+                guest_id: "26ff",
+                herb_slug: "turmeric",
+                herb_name: "Turmeric",
+                scientific_name: "Curcuma longa",
+                image_url: null,
+                note: null,
+                created_at: "2026-09-01T00:00:00.000Z",
+              },
+            ],
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
+      return new Response("{}", { status: 200 });
+    });
+    const merged = await mergeServerGarden();
+    expect(merged).toHaveLength(1);
+    const row = merged[0];
+    // Every field the garden grid renders must be populated.
+    expect(row.slug).toBe("turmeric");
+    expect(row.name).toBe("Turmeric");
+    expect(row.scientific_name).toBe("Curcuma longa");
+    expect(row.savedAt).toBe("2026-09-01T00:00:00.000Z");
+    expect(isInGarden("turmeric")).toBe(true);
+  });
 });

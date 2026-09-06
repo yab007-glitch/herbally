@@ -40,7 +40,11 @@ export async function getHerbs(params: {
 }): Promise<ActionResponse<{ herbs: HerbWithCategory[]; total: number }>> {
   try {
     const supabase = await createClient();
-    const page = params.page || 1;
+    // Clamp defensively: a negative/NaN page produces a negative PostgREST
+    // range (from=-40), which errors and surfaces as "no results, no pages".
+    const rawPage = params.page ?? 1;
+    const page =
+      Number.isFinite(rawPage) && rawPage >= 1 ? Math.floor(rawPage) : 1;
     const from = (page - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 

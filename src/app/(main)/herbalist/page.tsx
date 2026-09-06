@@ -24,11 +24,14 @@ export default async function PharmacistPage({
   let herbContext: string | null = null;
   let autoQuery: string | null = null;
 
+  // NOTE: searchParams values arrive pre-decoded from Next.js — do NOT call
+  // decodeURIComponent here. A lone "%" (e.g. ?q=100%) makes
+  // decodeURIComponent throw URIError and 500s the whole page.
   // Direct query from homepage interaction checker
   if (params.q) {
-    autoQuery = decodeURIComponent(params.q);
+    autoQuery = params.q;
   } else if (params.medications) {
-    const meds = decodeURIComponent(params.medications);
+    const meds = params.medications;
     herbContext = `The user is currently taking these medications: ${meds}`;
     autoQuery = t("herbalistPage.medsAutoQuery", { meds });
   } else if (params.herb) {
@@ -57,7 +60,7 @@ export default async function PharmacistPage({
       <ChatInterface
         herbContext={herbContext}
         autoQuery={autoQuery}
-        locale="en"
+        locale={locale}
       />
     </div>
   );
