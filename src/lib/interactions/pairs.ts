@@ -61,6 +61,15 @@ function toPair(row: PairRow): InteractionPair | null {
 const PAIR_SELECT =
   "id,drug_name,severity,description,mechanism,evidence_level,source,source_url,updated_at,translations,herbs!inner(slug,name,scientific_name,is_published)";
 
+// Static generation must never hang the whole build on a slow database —
+// abort stalled queries and degrade to []/null (pages render on demand,
+// sitemap emits static entries). 15s is generous for indexed lookups.
+const QUERY_TIMEOUT_MS = 15_000;
+
+function querySignal(): AbortSignal {
+  return AbortSignal.timeout(QUERY_TIMEOUT_MS);
+}
+
 /**
  * All curated herb↔drug pairs (published herbs only). Single source of truth
  * for the pair route's generateStaticParams and the sitemap.
@@ -74,7 +83,8 @@ export async function getInteractionPairs(): Promise<InteractionPair[]> {
       .select(PAIR_SELECT)
       .eq("herbs.is_published", true)
       .order("drug_name", { ascending: true })
-      .limit(5000);
+      .limit(5000)
+      .abortSignal(querySignal());
     if (error || !data) {
       if (error)
         logger.error("interactions_get_pairs_failed", {
@@ -110,7 +120,8 @@ export async function getInteractionPair(
       .select(PAIR_SELECT)
       .eq("herbs.slug", herbSlug)
       .eq("herbs.is_published", true)
-      .limit(100);
+      .limit(100)
+      .abortSignal(querySignal());
     if (error || !data) return null;
     for (const row of data as unknown as PairRow[]) {
       const pair = toPair(row);
@@ -144,13 +155,15 @@ export async function getRelatedPairs(pair: InteractionPair): Promise<{
         .eq("herbs.slug", pair.herbSlug)
         .eq("herbs.is_published", true)
         .neq("id", pair.id)
-        .limit(20),
+        .limit(20)
+        .abortSignal(querySignal()),
       supabase
         .from("drug_interactions")
         .select(PAIR_SELECT)
         .eq("herbs.is_published", true)
         .neq("id", pair.id)
-        .limit(500),
+        .limit(500)
+        .abortSignal(querySignal()),
     ]);
     const sameHerb: InteractionPair[] = [];
     for (const row of (herbRows ?? []) as unknown as PairRow[]) {

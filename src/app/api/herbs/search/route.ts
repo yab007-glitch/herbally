@@ -6,6 +6,7 @@ import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
+import { rankHerbResults } from "@/lib/search/rank-results";
 import type { Herb } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
@@ -114,7 +115,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json(results);
+    // Rank exact/prefix name matches first. Previously symptom matches
+    // (evidence-sorted) always outranked text matches, so typing an exact
+    // herb name like "Turmeric" surfaced obscure variants while the exact
+    // herb sat below the fold. Stable sort preserves the existing
+    // evidence/DB order within each rank.
+    return NextResponse.json(rankHerbResults(results, term));
   } catch (err) {
     logger.error("herbs_search_error", {
       error: err instanceof Error ? err.message : String(err),

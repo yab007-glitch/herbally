@@ -98,7 +98,7 @@ export function UnifiedNavbar() {
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "text-sm transition-colors",
+                    "px-1 py-2 text-sm transition-colors",
                     isActive
                       ? "font-medium text-foreground"
                       : "text-muted-foreground hover:text-foreground"
