@@ -134,7 +134,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = siteUrl();
   const locale = await getLocaleFromRequest();
   const fr = locale === "fr";
-  const pair = await getInteractionPair(herb, drug);
+  const pair = await getInteractionPair(herb, drug, locale);
 
   if (!pair) {
     return {
@@ -188,11 +188,13 @@ export default async function InteractionPairPage({ params }: Props) {
   const locale = await getLocaleFromRequest();
   const fr = locale === "fr";
   const t = await getTranslations({ locale });
-  const pair = await getInteractionPair(herb, drug);
+  const pair = await getInteractionPair(herb, drug, locale);
 
   if (!pair) notFound();
 
-  const [{ sameHerb, sameDrug }] = await Promise.all([getRelatedPairs(pair)]);
+  const [{ sameHerb, sameDrug }] = await Promise.all([
+    getRelatedPairs(pair, locale),
+  ]);
   const baseUrl = siteUrl();
   const path = `/interactions/${pair.herbSlug}/${pair.drugSlug}`;
   const url = `${baseUrl}${path}`;
