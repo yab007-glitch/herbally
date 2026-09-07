@@ -141,7 +141,7 @@ export function HerbSafetyPanel({
 
       {/* Interactions Table */}
       <InteractionExplainer />
-      <InteractionsTable interactions={interactions} />
+      <InteractionsTable interactions={interactions} herbSlug={herb.slug} />
 
       {/* CTA */}
       <div className="flex justify-center">

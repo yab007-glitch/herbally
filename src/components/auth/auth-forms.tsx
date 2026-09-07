@@ -19,7 +19,13 @@ const initialState: ActionResponse = { success: false, error: "" };
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="mt-1 text-xs text-destructive">{message}</p>;
+  // role="alert" announces server-action errors (e.g. "Invalid login
+  // credentials") to screen readers — previously they appeared silently.
+  return (
+    <p role="alert" className="mt-1 text-xs text-destructive">
+      {message}
+    </p>
+  );
 }
 
 function FormCard({
@@ -142,7 +148,10 @@ export function RegisterForm() {
           />
         </div>
         {state?.success ? (
-          <p className="rounded-lg bg-primary/10 p-3 text-sm text-foreground">
+          <p
+            role="status"
+            className="rounded-lg bg-primary/10 p-3 text-sm text-foreground"
+          >
             {t("register.checkEmail")}
           </p>
         ) : (
@@ -187,7 +196,10 @@ export function ForgotPasswordForm() {
           />
         </div>
         {state?.success ? (
-          <p className="rounded-lg bg-primary/10 p-3 text-sm text-foreground">
+          <p
+            role="status"
+            className="rounded-lg bg-primary/10 p-3 text-sm text-foreground"
+          >
             {t("forgot.checkEmail")}
           </p>
         ) : (
@@ -229,7 +241,10 @@ export function ResetPasswordForm() {
           />
         </div>
         {state?.success ? (
-          <p className="rounded-lg bg-primary/10 p-3 text-sm text-foreground">
+          <p
+            role="status"
+            className="rounded-lg bg-primary/10 p-3 text-sm text-foreground"
+          >
             {t("reset.success")}
           </p>
         ) : (

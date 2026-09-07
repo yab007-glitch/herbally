@@ -1,6 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import {
+  LocalizedLink as Link,
+  isActivePath,
+} from "@/components/i18n/localized-link";
 import { usePathname } from "next/navigation";
 import { MessageCircle, Compass, Sprout } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,18 +20,21 @@ const tabs = [
   { labelKey: "mobileTabs.garden", href: "/garden", icon: Sprout, exact: true },
 ] as const;
 
+import { stripLocalePrefix } from "@/lib/i18n/routing";
+
 function isActive(pathname: string, href: string, exact: boolean): boolean {
-  if (exact) return pathname === href;
+  if (exact) return isActivePath(pathname, href, true);
   if (href === "/herbs") {
+    const canonical = stripLocalePrefix(pathname);
     return (
-      pathname === "/herbs" ||
-      pathname.startsWith("/herbs/") ||
-      pathname.startsWith("/symptoms") ||
-      pathname.startsWith("/calculator") ||
-      pathname.startsWith("/compare")
+      canonical === "/herbs" ||
+      canonical.startsWith("/herbs/") ||
+      canonical.startsWith("/symptoms") ||
+      canonical.startsWith("/calculator") ||
+      canonical.startsWith("/compare")
     );
   }
-  return pathname === href || pathname.startsWith(href + "/");
+  return isActivePath(pathname, href);
 }
 
 export function UnifiedMobileBar() {

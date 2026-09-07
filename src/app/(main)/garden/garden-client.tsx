@@ -66,7 +66,12 @@ export function GardenClient() {
     );
   }
 
-  const hasGarden = garden.length > 0;
+  // Only rows with a slug are renderable. The stat and the grid MUST use
+  // the same filtered list — previously the stat counted every row while the
+  // grid filtered slug-less server rows out, showing "1 Saved Herb" with an
+  // empty collection.
+  const validGarden = garden.filter((herb) => herb && herb.slug);
+  const hasGarden = validGarden.length > 0;
 
   return (
     <div className="space-y-8">
@@ -90,7 +95,7 @@ export function GardenClient() {
             </div>
             <div>
               <p className="text-2xl font-bold text-foreground">
-                {garden.length}
+                {validGarden.length}
               </p>
               <p className="text-sm text-muted-foreground">
                 {t("garden.savedHerbs") || "Saved Herbs"}
@@ -142,45 +147,43 @@ export function GardenClient() {
             {t("garden.yourCollection") || "Your Collection"}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {garden
-              .filter((herb) => herb && herb.slug)
-              .map((herb) => (
-                <div
-                  key={herb.slug}
-                  className="group relative overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg hover:-translate-y-1"
+            {validGarden.map((herb) => (
+              <div
+                key={herb.slug}
+                className="group relative overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg hover:-translate-y-1"
+              >
+                <Link
+                  href={`/herbs/${herb.slug}`}
+                  className="flex items-start gap-4 p-4"
                 >
-                  <Link
-                    href={`/herbs/${herb.slug}`}
-                    className="flex items-start gap-4 p-4"
-                  >
-                    <HerbImage
-                      name={herb.name}
-                      imageUrl={herb.image_url}
-                      className="size-14 shrink-0 rounded-xl shadow-sm transition-transform group-hover:scale-105"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-                        {herb.name}
-                      </h3>
-                      <p className="text-sm italic text-muted-foreground truncate">
-                        {herb.scientific_name}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {new Date(herb.savedAt).toLocaleDateString(
-                          locale === "fr" ? "fr-FR" : "en-US"
-                        )}
-                      </p>
-                    </div>
-                  </Link>
-                  <button
-                    onClick={() => handleRemove(herb.slug)}
-                    className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
-                    aria-label={`${t("garden.remove")} ${herb.name}`}
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
-                </div>
-              ))}
+                  <HerbImage
+                    name={herb.name}
+                    imageUrl={herb.image_url}
+                    className="size-14 shrink-0 rounded-xl shadow-sm transition-transform group-hover:scale-105"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                      {herb.name}
+                    </h3>
+                    <p className="text-sm italic text-muted-foreground truncate">
+                      {herb.scientific_name}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {new Date(herb.savedAt).toLocaleDateString(
+                        locale === "fr" ? "fr-FR" : "en-US"
+                      )}
+                    </p>
+                  </div>
+                </Link>
+                <button
+                  onClick={() => handleRemove(herb.slug)}
+                  className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                  aria-label={`${t("garden.remove")} ${herb.name}`}
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       ) : (

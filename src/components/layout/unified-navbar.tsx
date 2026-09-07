@@ -1,6 +1,9 @@
 "use client";
 
-import Link from "next/link";
+import {
+  LocalizedLink as Link,
+  isActivePath,
+} from "@/components/i18n/localized-link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
@@ -84,9 +87,11 @@ export function UnifiedNavbar() {
             aria-label={t("common.navPrimary")}
           >
             {navLinks.map((link) => {
-              const isActive =
-                pathname === link.href ||
-                (link.href !== "/" && pathname.startsWith(link.href + "/"));
+              const isActive = isActivePath(
+                pathname,
+                link.href,
+                link.href === "/"
+              );
               return (
                 <Link
                   key={link.href}
@@ -133,9 +138,11 @@ export function UnifiedNavbar() {
               >
                 {navLinks.map((link) => {
                   const Icon = link.icon;
-                  const isActive =
-                    pathname === link.href ||
-                    (link.href !== "/" && pathname.startsWith(link.href + "/"));
+                  const isActive = isActivePath(
+                    pathname,
+                    link.href,
+                    link.href === "/"
+                  );
                   return (
                     <Link
                       key={link.href}

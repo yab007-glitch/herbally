@@ -9,7 +9,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale, namespace: "notFound" });
   return {
-    title: `${t("title")} | HerbAlly`,
+    // `absolute` bypasses the root layout's `%s | HerbAlly` title template —
+    // without it the tab reads "Page Not Found | HerbAlly | HerbAlly".
+    title: { absolute: `${t("title")} | HerbAlly` },
     robots: { index: false, follow: false },
   };
 }

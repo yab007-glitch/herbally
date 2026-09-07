@@ -147,8 +147,36 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/garden — fetch server-side garden.
+ * Row shape stored in the `garden_herbs` table (snake_case DB columns).
  */
+interface GardenHerbRow {
+  id?: string | number | null;
+  herb_slug: string;
+  herb_name: string;
+  scientific_name?: string | null;
+  image_url?: string | null;
+  note?: string | null;
+  created_at?: string | null;
+}
+
+/**
+ * Normalize a DB row to the client `GardenHerb` shape (camelCase `slug` /
+ * `name` / `savedAt`). The client renders nothing for rows without `slug`,
+ * so the API must never leak raw snake_case rows — a previous version
+ * returned them verbatim, which made /garden count saved herbs in its stats
+ * while rendering an empty collection grid.
+ */
+function toGardenHerb(row: GardenHerbRow) {
+  return {
+    id: String(row.id ?? row.herb_slug),
+    slug: row.herb_slug,
+    name: row.herb_name,
+    scientific_name: row.scientific_name ?? "",
+    image_url: row.image_url ?? null,
+    savedAt: row.created_at ?? new Date().toISOString(),
+    note: row.note ?? undefined,
+  };
+}
 export async function GET(request: NextRequest) {
   const limited = await rateLimited(request);
   if (limited) return limited;
@@ -162,11 +190,15 @@ export async function GET(request: NextRequest) {
     if (user) {
       const { data, error } = await supabase
         .from("garden_herbs")
-        .select("*")
+        .select(
+          "id,herb_slug,herb_name,scientific_name,image_url,note,created_at"
+        )
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return NextResponse.json({ herbs: data ?? [] });
+      return NextResponse.json({
+        herbs: ((data ?? []) as GardenHerbRow[]).map(toGardenHerb),
+      });
     }
 
     // Guest: derive identity from the cookie, ignore any ?guestId= param.
@@ -174,11 +206,15 @@ export async function GET(request: NextRequest) {
     const adminClient = createAdminClient();
     const { data, error } = await adminClient
       .from("garden_herbs")
-      .select("*")
+      .select(
+        "id,herb_slug,herb_name,scientific_name,image_url,note,created_at"
+      )
       .eq("guest_id", guestId)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return NextResponse.json({ herbs: data ?? [] });
+    return NextResponse.json({
+      herbs: ((data ?? []) as GardenHerbRow[]).map(toGardenHerb),
+    });
   } catch (err) {
     logger.error("garden_fetch_error", {
       error: err instanceof Error ? err.message : String(err),

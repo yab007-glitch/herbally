@@ -16,6 +16,7 @@ import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
 import { siteUrl } from "@/lib/seo/site-url";
+import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
@@ -640,7 +641,7 @@ export default async function HerbDetailPage({ params }: Props) {
       {/* Share buttons */}
       <ShareButtons
         title={`${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence - HerbAlly`}
-        url={`${siteUrl()}/herbs/${slug}`}
+        url={`${siteUrl()}${addLocalePrefix(`/herbs/${slug}`, locale)}`}
         className="pt-4"
       />
 

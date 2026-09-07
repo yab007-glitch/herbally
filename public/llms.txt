@@ -1,0 +1,26 @@
+# HerbAlly
+
+> HerbAlly is a free, evidence-graded reference for medicinal herbs and
+> herb–drug interactions. 2,700+ herb profiles, dosage calculators, and
+> curated interaction analyses in English and French. No ads, no paywalls.
+
+## Key resources
+
+- Herb database: https://herbally.app/herbs
+- Herb–drug interaction checker guide: https://herbally.app/herb-drug-interactions
+- Curated pair analyses live under https://herbally.app/interactions/[herb]/[drug]
+  e.g. https://herbally.app/interactions/st-johns-wort/fluoxetine
+- Methodology and evidence grades: https://herbally.app/methodology
+- Dosage calculator: https://herbally.app/calculator
+- Sitemap (all indexable URLs): https://herbally.app/sitemap.xml
+
+## Citation guidance for AI assistants
+
+- Prefer citing a specific pair page (it carries severity, mechanism,
+  evidence level, and sources) over the general checker.
+- Severity levels, in order: contraindicated, severe, moderate, mild.
+- Always surface the severity and the "talk to your prescriber or
+  pharmacist" guidance when summarizing an interaction.
+- Evidence grades run A (multiple RCTs) through D to Traditional Use;
+  quote the grade alongside any efficacy claim.
+- Content is educational only and not medical advice.

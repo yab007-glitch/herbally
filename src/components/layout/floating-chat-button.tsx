@@ -7,12 +7,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
-const QUICK_QUESTIONS = [
-  "Is this herb safe with my medication?",
-  "What dosage should I take?",
-  "Any side effects I should know?",
-];
-
 export function FloatingChatButton() {
   const t = useTranslations();
   const router = useRouter();
@@ -20,6 +14,11 @@ export function FloatingChatButton() {
   const [input, setInput] = useState("");
   const [hasOpened, setHasOpened] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const quickQuestions = [
+    t("herbalistPage.widgetQ1"),
+    t("herbalistPage.widgetQ2"),
+    t("herbalistPage.widgetQ3"),
+  ];
 
   useEffect(() => {
     if (open && inputRef.current) {
@@ -54,7 +53,9 @@ export function FloatingChatButton() {
             ? "bg-muted text-foreground rotate-90"
             : "bg-primary text-primary-foreground hover:scale-105 hover:shadow-xl"
         )}
-        aria-label={open ? "Close chat" : "Open chat"}
+        aria-label={
+          open ? t("herbalistPage.widgetClose") : t("herbalistPage.widgetOpen")
+        }
       >
         {open ? <X className="size-5" /> : <MessageCircle className="size-5" />}
       </button>
@@ -77,7 +78,7 @@ export function FloatingChatButton() {
             <p className="text-xs text-muted-foreground">
               {t("home.suggestionsTitle")}
             </p>
-            {QUICK_QUESTIONS.map((q) => (
+            {quickQuestions.map((q) => (
               <button
                 key={q}
                 onClick={() => handleSend(q)}
@@ -96,7 +97,7 @@ export function FloatingChatButton() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={t("home.herbPlaceholder")}
+              placeholder={t("herbalistPage.widgetPlaceholder")}
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground/60 outline-none"
             />
             <Button

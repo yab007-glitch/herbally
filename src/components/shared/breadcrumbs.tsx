@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";

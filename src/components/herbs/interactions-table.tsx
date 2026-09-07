@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import type { Interaction } from "@/lib/types/interactions";
+import { pairPath } from "@/lib/interactions/pair-url";
 
 export type { Interaction };
 
@@ -21,8 +23,16 @@ const INITIAL_COUNT = 5;
 
 export function InteractionsTable({
   interactions,
+  herbSlug,
 }: {
   interactions: Interaction[];
+  /**
+   * When provided, each drug name links to its canonical pair page
+   * (/interactions/[herb]/[drug]) — the internal-link mesh that lets
+   * Google discover pair URLs and passes equity from high-traffic
+   * monographs to them.
+   */
+  herbSlug?: string;
 }) {
   const t = useTranslations();
   const [expanded, setExpanded] = useState(false);
@@ -94,7 +104,16 @@ export function InteractionsTable({
             {displayInteractions.map((interaction) => (
               <tr key={interaction.id} className="border-b last:border-0">
                 <td className="px-4 py-3 font-medium text-foreground">
-                  {interaction.drug_name}
+                  {herbSlug ? (
+                    <Link
+                      href={pairPath(herbSlug, interaction.drug_name)}
+                      className="hover:text-primary hover:underline transition-colors"
+                    >
+                      {interaction.drug_name}
+                    </Link>
+                  ) : (
+                    interaction.drug_name
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <span
