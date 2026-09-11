@@ -91,7 +91,7 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
     // Fetch-on-query-change: the traced call performs a synchronous
     // setResults([]) for the <2-char guard. Derived isLoading covers the
     // spinner; the effect body itself is safe. Rule can't see that.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     search(debouncedQuery);
   }, [debouncedQuery, search]);
 
