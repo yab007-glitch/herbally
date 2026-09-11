@@ -4,6 +4,15 @@ import path from "path";
 export default defineConfig({
   test: {
     environment: "jsdom",
+    // Sentry 10.x instrumentation (@sentry/server-utils orchestrion) chokes
+    // in the vitest transform pipeline on non-file URLs
+    // ("The URL must be of scheme file") when it tries to patch test modules.
+    // Keep @sentry packages external to the transform pipeline.
+    server: {
+      deps: {
+        external: [/@sentry\//],
+      },
+    },
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     exclude: [

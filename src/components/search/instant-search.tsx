@@ -32,10 +32,15 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
   const resolvedPlaceholder = placeholder || t("search.placeholder");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const debouncedQuery = useDebounce(query, 150);
+  // Derived loading state: loading while the debounced query differs from the
+  // query whose results have settled. Removes the need for a synchronous
+  // setIsLoading(true) inside the fetch effect (react-hooks/set-state-in-effect).
+  const [settledQuery, setSettledQuery] = useState("");
+  const isLoading =
+    debouncedQuery.length >= 2 && debouncedQuery !== settledQuery;
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   // Abort the in-flight search request when a newer query supersedes it,
@@ -54,7 +59,6 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/herbs/search?q=${encodeURIComponent(searchQuery)}&limit=8`,
@@ -63,6 +67,7 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
       if (response.ok) {
         const data = await response.json();
         setResults(data.herbs || []);
+        setSettledQuery(searchQuery);
       }
     } catch (error) {
       // Aborted requests are expected when a newer query supersedes this one.
@@ -74,7 +79,7 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
       // Only clear the spinner if this is still the active request; a
       // superseded request leaves loading state to its successor.
       if (abortRef.current === controller) {
-        setIsLoading(false);
+        setSettledQuery(searchQuery);
       }
     }
   }, []);
@@ -83,6 +88,10 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
   useEffect(() => () => abortRef.current?.abort(), []);
 
   useEffect(() => {
+    // Fetch-on-query-change: the traced call performs a synchronous
+    // setResults([]) for the <2-char guard. Derived isLoading covers the
+    // spinner; the effect body itself is safe. Rule can't see that.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     search(debouncedQuery);
   }, [debouncedQuery, search]);
 

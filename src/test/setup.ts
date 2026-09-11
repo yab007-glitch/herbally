@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
-import { afterEach } from "vitest";
+import { afterEach, vi } from "vitest";
 
 class LocalStorageMock {
   private store: Record<string, string> = {};
@@ -75,3 +75,28 @@ if (typeof window !== "undefined") {
 afterEach(() => {
   cleanup();
 });
+
+// Mock @sentry/nextjs globally in tests. Importing the real module registers
+// OpenTelemetry instrumentation (module.register) whose @sentry/server-utils
+// orchestrion loader chokes in the vitest transform pipeline with
+// "TypeError: The URL must be of scheme file" when it encounters vitest's
+// virtual/data module URLs. No test asserts on Sentry calls; the stub keeps
+// captureException/captureMessage/captureEvent no-ops.
+vi.mock("@sentry/nextjs", () => ({
+  captureException: () => "stub-event-id",
+  captureMessage: () => "stub-event-id",
+  captureEvent: () => "stub-event-id",
+  withScope: (cb: (scope: unknown) => void) => cb({}),
+  getCurrentScope: () => ({}),
+  configureScope: () => undefined,
+  addBreadcrumb: () => undefined,
+  setContext: () => undefined,
+  setTag: () => undefined,
+  setTags: () => undefined,
+  setUser: () => undefined,
+  setExtra: () => undefined,
+  setExtras: () => undefined,
+  flush: async () => true,
+  close: async () => true,
+  init: () => undefined,
+}));
