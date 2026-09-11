@@ -49,7 +49,9 @@ export function DonationButtons() {
       const data = await res.json();
 
       if (data.url) {
-        window.location.href = data.url;
+        // assign() navigates like an href write but satisfies the
+        // react-hooks/immutability rule (no property mutation).
+        window.location.assign(data.url);
       } else {
         throw new Error("Failed to create checkout session");
       }

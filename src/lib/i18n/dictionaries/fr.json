@@ -206,8 +206,7 @@
       "adultDose": "Dose Adulte",
       "formulaUsed": "Formule Utilisée",
       "explanation": "Explication",
-      "disclaimer": "Ce calcul est fourni à titre indicatif uniquement. Vérifiez toujours les posologies avec un professionnel de santé qualifié.",
-      "unverifiedHerbNotice": "La monographie de cette plante est générée par IA et n'a pas été revue par rapport à des sources faisant autorité. Aucune dose de référence validée n'est disponible, le champ de la dose adulte est donc laissé vide. Saisissez vous-même une dose provenant d'une source fiable et confirmez tout résultat auprès d'un professionnel de santé qualifié."
+      "disclaimer": "Ce calcul est fourni à titre indicatif uniquement. Vérifiez toujours les posologies avec un professionnel de santé qualifié."
     },
     "placeholders": {
       "herb": "ex., Curcuma, Echinacea...",
@@ -1396,7 +1395,8 @@
     "heightCm": "Taille du Patient (cm)",
     "optionalForBsa": "facultatif, pour BSA",
     "toggleAgeUnit": "Basculer l'unité d'âge (années/mois)",
-    "toggleWeightUnit": "Basculer l'unité de poids (kg/lbs)"
+    "toggleWeightUnit": "Basculer l'unité de poids (kg/lbs)",
+    "unverifiedHerbNotice": "La monographie de cette plante est générée par IA et n'a pas été revue par rapport à des sources faisant autorité. Aucune dose de référence validée n'est disponible, le champ de la dose adulte est donc laissé vide. Saisissez vous-même une dose provenant d'une source fiable et confirmez tout résultat auprès d'un professionnel de santé qualifié."
   },
   "symptomMeta": {
     "anxiety": {
@@ -1591,6 +1591,7 @@
     "medicationAdded": "Médicament ajouté",
     "medicationRemoved": "Médicament retiré",
     "calculationSaved": "Calcul enregistré dans l'historique",
-    "saveCalculation": "Enregistrer le calcul dans l'historique"
+    "saveCalculation": "Enregistrer le calcul dans l'historique",
+    "signInToSave": "Connectez-vous pour enregistrer vos calculs sur tous vos appareils."
   }
 }
