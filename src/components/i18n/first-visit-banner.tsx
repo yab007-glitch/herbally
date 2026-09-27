@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useLocale } from "next-intl";
 import { useSetLocale } from "./use-set-locale";
 import { useDetectedLocale } from "./use-detected-locale";
@@ -9,20 +9,50 @@ import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { useTranslations } from "next-intl";
 
+const DISMISS_KEY = "herbally-lang-banner-dismissed";
+
+/**
+ * Read the dismiss flag as an external store (the same idiom as use-theme.ts).
+ *
+ * SSR and the first client render MUST agree, so the server snapshot is `true`
+ * (hidden) and the stored value is only read on the client snapshot, i.e. after
+ * hydration. Reading sessionStorage during render (the previous `useState`
+ * initializer) made the server emit "hidden" while the client's first pass
+ * computed "visible" for first-time visitors, which React reported as
+ * hydration error #418 on every page mounting the navbar (HERBALLY-5).
+ */
+function subscribe(callback: () => void): () => void {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getSnapshot(): boolean {
+  if (typeof window === "undefined") return true;
+  return sessionStorage.getItem(DISMISS_KEY) === "1";
+}
+
+function getServerSnapshot(): boolean {
+  return true;
+}
+
 export function FirstVisitBanner() {
   const locale = useLocale();
   const detected = useDetectedLocale();
   const setLocale = useSetLocale();
   const t = useTranslations();
 
-  // `dismissed` is read once from sessionStorage (client) so we never call
-  // setState inside an effect. SSR renders dismissed=true (banner hidden) to
-  // avoid a flash; the banner can appear after hydration for first-time
-  // visitors whose browser language differs from the current locale.
-  const [dismissed, setDismissed] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return sessionStorage.getItem("herbally-lang-banner-dismissed") === "1";
-  });
+  const dismissed = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
+  );
+
+  function markDismissed() {
+    sessionStorage.setItem(DISMISS_KEY, "1");
+    // The native storage event only fires in OTHER tabs, so dispatch one here
+    // to make this tab's store re-read immediately.
+    window.dispatchEvent(new StorageEvent("storage", { key: DISMISS_KEY }));
+  }
 
   const visible = !dismissed && detected !== null && detected !== locale;
   if (!visible || !detected) return null;
@@ -39,12 +69,11 @@ export function FirstVisitBanner() {
       source: "first_visit_banner",
     });
     setLocale(detected);
-    setDismissed(true);
+    markDismissed();
   }
 
   function handleDismiss() {
-    sessionStorage.setItem("herbally-lang-banner-dismissed", "1");
-    setDismissed(true);
+    markDismissed();
   }
 
   return (

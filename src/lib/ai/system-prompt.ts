@@ -8,6 +8,18 @@ function fmtSafety(v: boolean | null | undefined): string {
 }
 
 /**
+ * Normalise a value the context fetcher hands us as string[] before joining.
+ * These come from unvalidated jsonb (translations overlay), where a field can
+ * be a bare string — `.length > 0` passes but `.join` does not exist.
+ */
+function safeJoin(value: unknown, sep: string): string {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === "string").join(sep);
+  }
+  return typeof value === "string" ? value : "";
+}
+
+/**
  * Build the system prompt for the AI herbalist.
  *
  * When verifiedContext is available (herbs/interactions fetched from our DB),
@@ -58,17 +70,17 @@ export function getSystemPrompt(
       }\n`;
 
       if (herb.traditional_uses.length > 0)
-        verifiedDataSection += `Traditional uses: ${herb.traditional_uses.join("; ")}\n`;
+        verifiedDataSection += `Traditional uses: ${safeJoin(herb.traditional_uses, "; ")}\n`;
       if (herb.modern_uses.length > 0)
-        verifiedDataSection += `Modern uses: ${herb.modern_uses.join("; ")}\n`;
+        verifiedDataSection += `Modern uses: ${safeJoin(herb.modern_uses, "; ")}\n`;
       if (herb.active_compounds.length > 0)
-        verifiedDataSection += `Active compounds: ${herb.active_compounds.join(", ")}\n`;
+        verifiedDataSection += `Active compounds: ${safeJoin(herb.active_compounds, ", ")}\n`;
       if (herb.dosage_adult)
         verifiedDataSection += `Typical adult dosage: ${herb.dosage_adult}\n`;
       if (herb.contraindications.length > 0)
-        verifiedDataSection += `Contraindications: ${herb.contraindications.join("; ")}\n`;
+        verifiedDataSection += `Contraindications: ${safeJoin(herb.contraindications, "; ")}\n`;
       if (herb.side_effects.length > 0)
-        verifiedDataSection += `Side effects: ${herb.side_effects.join("; ")}\n`;
+        verifiedDataSection += `Side effects: ${safeJoin(herb.side_effects, "; ")}\n`;
 
       verifiedDataSection += `Pregnancy safety: ${fmtSafety(herb.pregnancy_safe)}\n`;
       verifiedDataSection += `Nursing safety: ${fmtSafety(herb.nursing_safe)}\n`;
