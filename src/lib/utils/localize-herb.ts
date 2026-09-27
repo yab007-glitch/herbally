@@ -55,10 +55,9 @@ export function localizeHerb<T extends Herb>(herb: T, locale: string): T {
   return {
     ...herb,
     name: t.name || herb.name,
-    common_names:
-      toStringArray(t.common_names)?.length
-        ? (toStringArray(t.common_names) as string[])
-        : herb.common_names,
+    common_names: toStringArray(t.common_names)?.length
+      ? (toStringArray(t.common_names) as string[])
+      : herb.common_names,
     description: t.description || herb.description,
     traditional_uses:
       toStringArray(t.traditional_uses) ?? herb.traditional_uses,

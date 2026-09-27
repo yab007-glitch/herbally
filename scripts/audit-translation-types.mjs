@@ -91,7 +91,10 @@ for (const r of rows) {
         (offenders.fr[f] ??= []).push({
           slug: r.slug,
           type: t,
-          sample: typeof v === "string" ? v.slice(0, 80) : JSON.stringify(v).slice(0, 80),
+          sample:
+            typeof v === "string"
+              ? v.slice(0, 80)
+              : JSON.stringify(v).slice(0, 80),
         });
       }
     }
@@ -99,7 +102,9 @@ for (const r of rows) {
 }
 
 console.log("\n=== BASE COLUMN TYPE VIOLATIONS ===");
-console.log(offenders.base.length ? JSON.stringify(offenders.base, null, 2) : "none");
+console.log(
+  offenders.base.length ? JSON.stringify(offenders.base, null, 2) : "none"
+);
 
 console.log("\n=== FR TRANSLATION TYPE VIOLATIONS ===");
 let frTotal = 0;

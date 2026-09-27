@@ -58,7 +58,9 @@ async function fetchAll() {
 }
 
 const rows = await fetchAll();
-console.log(`Scanned ${rows.length} herbs${APPLY ? "" : " (dry run — pass --apply to write)"}`);
+console.log(
+  `Scanned ${rows.length} herbs${APPLY ? "" : " (dry run — pass --apply to write)"}`
+);
 
 const fixes = [];
 for (const row of rows) {
@@ -86,8 +88,11 @@ for (const row of rows) {
   }
 }
 
-console.log(`\n${fixes.length} field(s) to repair across ${new Set(fixes.map((f) => f.slug)).size} herb(s):`);
-for (const f of fixes) console.log(`  ${f.slug}.fr.${f.field} → ["${f.value}"]`);
+console.log(
+  `\n${fixes.length} field(s) to repair across ${new Set(fixes.map((f) => f.slug)).size} herb(s):`
+);
+for (const f of fixes)
+  console.log(`  ${f.slug}.fr.${f.field} → ["${f.value}"]`);
 
 if (!APPLY) {
   console.log("\nDry run complete. Re-run with --apply to write.");

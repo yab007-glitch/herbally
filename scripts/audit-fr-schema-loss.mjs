@@ -21,7 +21,12 @@ for (let from = 0; ; from += 1000) {
 }
 
 // Fields consumed with .join() in herb-schema.tsx + system-prompt.ts
-const JOINED = ["traditional_uses", "contraindications", "side_effects", "active_compounds"];
+const JOINED = [
+  "traditional_uses",
+  "contraindications",
+  "side_effects",
+  "active_compounds",
+];
 
 const affected = [];
 for (const r of rows) {
@@ -37,6 +42,8 @@ for (const r of rows) {
 }
 
 console.log(`\n${rows.length} herbs scanned`);
-console.log(`${affected.length} herbs crash herb-schema.tsx on /fr/herbs/<slug>:\n`);
+console.log(
+  `${affected.length} herbs crash herb-schema.tsx on /fr/herbs/<slug>:\n`
+);
 for (const a of affected) console.log(`  ${a.slug}  —  ${a.bad.join(", ")}`);
 console.log(`\nTotal affected FR pages: ${affected.length}`);

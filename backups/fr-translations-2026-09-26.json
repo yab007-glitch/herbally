@@ -5,22 +5,13 @@
       "fr": {
         "name": "Aldrovanda vesiculosa",
         "description": "Plante aquatique carnivore ; utilisation traditionnelle en médecine indienne pour troubles digestifs et fièvre.",
-        "modern_uses": [
-          "soutien digestive traditionnel",
-          "antipyretique"
-        ],
+        "modern_uses": ["soutien digestive traditionnel", "antipyretique"],
         "common_names": "[Plante à roues d'eau]",
         "dosage_adult": "3 à 5 g de thé de plante séchée 2 fois par jour",
         "dosage_child": "Non établie",
         "side_effects": "troubles digestifs légers",
-        "traditional_uses": [
-          "troubles digestifs",
-          "fièvre",
-          "problèmes GI"
-        ],
-        "contraindications": [
-          "pregnancy"
-        ],
+        "traditional_uses": ["troubles digestifs", "fièvre", "problèmes GI"],
+        "contraindications": ["pregnancy"],
         "preparation_notes": "Plante aquatique peu étudiée ; utilisée dans la médecine populaire indienne."
       }
     }
@@ -31,16 +22,8 @@
       "fr": {
         "name": "Dasylirion Wheeleri Herb",
         "description": "Plante du désert de Sonora utilisée par les peuples Tohono O'odham et Apache pour l'alimentation, les fibres et le traitement des affections cutanées et digestives.",
-        "modern_uses": [
-          "nutritif",
-          "digestif",
-          "cicatrisation des plaies"
-        ],
-        "common_names": [
-          "Desert Spoon",
-          "Sotol",
-          "Wheeleri Dasylirion"
-        ],
+        "modern_uses": ["nutritif", "digestif", "cicatrisation des plaies"],
+        "common_names": ["Desert Spoon", "Sotol", "Wheeleri Dasylirion"],
         "dosage_adult": "Esprit de sotol en tant que boisson médicamentale traditionnelle ; cœur comestible comme aliment",
         "dosage_child": "Utilisation alimentaire traditionnelle uniquement pour les enfants",
         "side_effects": "aucun effet secondaire lors de l'utilisation alimentaire",
@@ -51,10 +34,7 @@
           "soins",
           "guérison"
         ],
-        "contraindications": [
-          "maladie hépatique",
-          "enfants - esprit distillé"
-        ],
+        "contraindications": ["maladie hépatique", "enfants - esprit distillé"],
         "preparation_notes": "Cœur rôti et consommé ; sotol distillé comme le mezcal."
       }
     }
@@ -65,14 +45,8 @@
       "fr": {
         "name": "Eichhornia crassipes",
         "description": "Plante aquatique flottante utilisée en médecine traditionnelle pour les problèmes cutanés et la fièvre.",
-        "modern_uses": [
-          "Propriétés antioxydantes",
-          "Effets antimicrobiens"
-        ],
-        "common_names": [
-          "Water Hyacinth",
-          "Jacinthe d'eau"
-        ],
+        "modern_uses": ["Propriétés antioxydantes", "Effets antimicrobiens"],
+        "common_names": ["Water Hyacinth", "Jacinthe d'eau"],
         "dosage_adult": "5-10 g de plante séchée en découchettes",
         "side_effects": "Aucun effect documenté avec des spécimens propres",
         "traditional_uses": [
@@ -90,11 +64,7 @@
       "fr": {
         "name": "Ekebergia Capensis",
         "description": "Arbre à feuilles vertes native à l'Afrique de l'Est et à l'Afrique du Sud, utilisé en médecine traditionnelle pour les migraines et fièvre.",
-        "common_names": [
-          "Cape Ash",
-          "Dogplum",
-          "Umnyamathi"
-        ],
+        "common_names": ["Cape Ash", "Dogplum", "Umnyamathi"],
         "dosage_child": "Non établi",
         "side_effects": "Effets bien documentés",
         "traditional_uses": [
@@ -110,11 +80,7 @@
       "fr": {
         "name": "Mentha cervina",
         "description": "Menthe aquatique rare d'Europe aux arômes distinctifs utilisée en médecine traditionnelle portugaise.",
-        "modern_uses": [
-          "carminatif",
-          "antimicrobien",
-          "anti-inflammatoire"
-        ],
+        "modern_uses": ["carminatif", "antimicrobien", "anti-inflammatoire"],
         "common_names": [
           "Menthe cervine",
           "Menthe des cerfs",
@@ -122,9 +88,7 @@
         ],
         "dosage_adult": "3-5g de plante sèche quotidiennement",
         "dosage_child": "Non établi",
-        "side_effects": [
-          "Troubles du tube digestif"
-        ],
+        "side_effects": ["Troubles du tube digestif"],
         "traditional_uses": "Rarefy désordres digestifs, infections respiratoires, antimicrobien",
         "contraindications": "RGO, grossesse en grandes doses",
         "preparation_notes": "Infusion herbale en tisane; menacée au Portugal"
@@ -143,11 +107,7 @@
           "carminatif",
           "anti-inflammatoire"
         ],
-        "common_names": [
-          "Bo He",
-          "Menthe des champs",
-          "Mentha chinoise"
-        ],
+        "common_names": ["Bo He", "Menthe des champs", "Mentha chinoise"],
         "dosage_adult": "3–6g décoction",
         "dosage_child": "1,5–3g pour enfants",
         "side_effects": [
@@ -201,10 +161,7 @@
       "fr": {
         "name": "Mentha requienii",
         "description": "Petite menthe parfumée corse et saurinoise; extrêmement parfumée; destinée à l'usage culinaire et admise pour des applications légères en médecine traditionnelle.",
-        "modern_uses": [
-          "Carminatif",
-          "Aromatique"
-        ],
+        "modern_uses": ["Carminatif", "Aromatique"],
         "common_names": [
           "Menthe corse",
           "Plante de crème menthe",
@@ -212,14 +169,8 @@
         ],
         "dosage_adult": "Petites quantités en assaisonnement",
         "dosage_child": "Non établi",
-        "side_effects": [
-          "Généralement considérée sûre en petites quantités"
-        ],
-        "traditional_uses": [
-          "Digestion",
-          "Parfumage",
-          "Aromatique"
-        ],
+        "side_effects": ["Généralement considérée sûre en petites quantités"],
+        "traditional_uses": ["Digestion", "Parfumage", "Aromatique"],
         "contraindications": "Grossesse en grandes doses",
         "preparation_notes": "Utilisée comme assaisonnement; petite plante couvre-sol; parfummenté à la menthe"
       }
@@ -244,9 +195,7 @@
         ],
         "dosage_adult": "Préparation traditionnelle ; aucune dose établie",
         "dosage_child": "Non établie pour les enfants",
-        "side_effects": [
-          "Effets digestifs légers"
-        ],
+        "side_effects": ["Effets digestifs légers"],
         "traditional_uses": [
           "La médecine traditionnelle des Cochimi et Seri aux troubles digestifs",
           "Les graines et les fruits consommés par les populations désertiques de Baja"
@@ -268,11 +217,7 @@
           "Anti-diarrhéale",
           "Nutritif"
         ],
-        "common_names": [
-          "Saskatoon Berry",
-          "Juneberry",
-          "Shadbush"
-        ],
+        "common_names": ["Saskatoon Berry", "Juneberry", "Shadbush"],
         "dosage_adult": "Jus de baies frais ou séché ; thé de baies 2 verres/jour",
         "dosage_child": "Sécuritaire depuis l'enfance",
         "side_effects": "Globalement sécuritaire lors de l'alimentation",
@@ -282,9 +227,7 @@
           "Problèmes digestifs",
           "Traitement des diarrhydies"
         ],
-        "contraindications": [
-          "Ningue sur les règles alimentaires"
-        ],
+        "contraindications": ["Ningue sur les règles alimentaires"],
         "preparation_notes": "Consommer fraîche ; sécher pour le stockage ; ingrédient traditionnel au pemmican"
       }
     }
@@ -319,10 +262,7 @@
       "fr": {
         "name": "Stachytarpheta jamaicensis",
         "description": "Plante moyenne utilisée des tribus pour ses effets digestifs.",
-        "common_names": [
-          "Verrin Jaune",
-          "Verrin Vert"
-        ],
+        "common_names": ["Verrin Jaune", "Verrin Vert"],
         "dosage_adult": "Infusion moyenne",
         "dosage_child": "Sur greffe",
         "side_effects": "Réactions locales mineures",
@@ -341,10 +281,7 @@
       "fr": {
         "name": "Stemonchona induens",
         "description": "Arbre dont la density est décrite comme 'riche en substances bénéfiques'.",
-        "common_names": [
-          "Yellow Birchberry",
-          "Indian Gooseberry"
-        ],
+        "common_names": ["Yellow Birchberry", "Indian Gooseberry"],
         "dosage_adult": "Dosage variable selon poids corporel",
         "dosage_child": "Non eticulejuste",
         "side_effects": "Effets secondaires rares",
@@ -363,10 +300,7 @@
       "fr": {
         "name": "Steller's Jelly-tongue",
         "description": "Utilisé traditionnellement pour restaurer la sérénité cérébrale",
-        "common_names": [
-          "Chigre de la Mamie",
-          "Truffe Lacet"
-        ],
+        "common_names": ["Chigre de la Mamie", "Truffe Lacet"],
         "dosage_adult": "Variabilité marquée",
         "dosage_child": "Restrictions définies",
         "side_effects": "Effets secondaires limités",

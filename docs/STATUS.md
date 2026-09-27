@@ -6,14 +6,14 @@
 
 ## Build & Tests
 
-| Check            | Status                                                          |
-| ---------------- | --------------------------------------------------------------- |
-| TypeScript       | ✅ 0 errors                                                     |
-| ESLint           | ✅ 0 errors, 0 warnings                                         |
-| Unit tests       | ✅ 460 passing (55 files)                                       |
+| Check            | Status                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| TypeScript       | ✅ 0 errors                                                                                       |
+| ESLint           | ✅ 0 errors, 0 warnings                                                                           |
+| Unit tests       | ✅ 460 passing (55 files)                                                                         |
 | E2E tests        | ⚠️ 81 passed / 6 failed (WebKit-only) / 9 skipped; chromium+firefox green except 2 timeout flakes |
-| Coverage         | ~25% statements, ~18% branches (thresholds still removed)       |
-| Production build | ✅ 464 pages prerendered                                        |
+| Coverage         | ~25% statements, ~18% branches (thresholds still removed)                                         |
+| Production build | ✅ 464 pages prerendered                                                                          |
 
 ### ⚠️ The build output marks EVERY route `ƒ (Dynamic)`
 
@@ -29,20 +29,20 @@ layout (or reading it per-page where a static shell is acceptable).
 
 ## Security
 
-| Check            | Status                                                  |
-| ---------------- | ------------------------------------------------------- |
-| RLS              | ✅ All tables                                           |
-| Security headers | ✅ All 6 present (verified on production)               |
-| npm audit        | ✅ 0 vulnerabilities (prod and dev)                     |
-| Secrets          | ✅ `detect-secrets.sh --all` clean                      |
+| Check            | Status                                                      |
+| ---------------- | ----------------------------------------------------------- |
+| RLS              | ✅ All tables                                               |
+| Security headers | ✅ All 6 present (verified on production)                   |
+| npm audit        | ✅ 0 vulnerabilities (prod and dev)                         |
+| Secrets          | ✅ `detect-secrets.sh --all` clean                          |
 | CSP              | ⚠️ Blocks the Next.js dev blob-worker; `worker-src` not set |
 
 ## i18n
 
-| Check             | Status                                  |
-| ----------------- | --------------------------------------- |
-| EN/FR key parity  | ✅ 1,211/1,211 keys, 0 missing either way |
-| `<html lang>`     | ✅ Correct per locale                    |
+| Check            | Status                                    |
+| ---------------- | ----------------------------------------- |
+| EN/FR key parity | ✅ 1,211/1,211 keys, 0 missing either way |
+| `<html lang>`    | ✅ Correct per locale                     |
 
 ## AI Safety
 
@@ -55,20 +55,20 @@ layout (or reading it per-page where a static shell is acceptable).
 
 ## Content (the real problem)
 
-| Check                    | Status                              |
-| ------------------------ | ----------------------------------- |
-| Herb count               | 2,699                               |
-| Human-reviewed herbs     | **0** — every `verified_by` value is `auto-verification-script` |
+| Check                    | Status                                                            |
+| ------------------------ | ----------------------------------------------------------------- |
+| Herb count               | 2,699                                                             |
+| Human-reviewed herbs     | **0** — every `verified_by` value is `auto-verification-script`   |
 | Provenance split         | 1,146 `ai_summarized` / 1,042 `unverified` / 511 `primary_source` |
-| Green "Verified" badge   | ⚠️ Shown on those 511 auto-verified herbs |
-| Evidence grades on pages | Partly (A/B/C/trad values in DB)    |
+| Green "Verified" badge   | ⚠️ Shown on those 511 auto-verified herbs                         |
+| Evidence grades on pages | Partly (A/B/C/trad values in DB)                                  |
 
 ## SEO
 
-| Check           | Status                          |
-| --------------- | ------------------------------- |
-| Sitemap URLs    | 5,793 (EN + FR)                 |
-| robots.txt      | ✅                              |
+| Check           | Status                                                   |
+| --------------- | -------------------------------------------------------- |
+| Sitemap URLs    | 5,793 (EN + FR)                                          |
+| robots.txt      | ✅                                                       |
 | Structured data | ⚠️ JSON-LD was missing on 14 FR pages (fixed 2026-09-26) |
 
 ## Performance
