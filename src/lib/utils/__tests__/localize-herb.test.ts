@@ -86,6 +86,56 @@ describe("localizeHerb", () => {
     const result = localizeHerb(herbNoTranslations, "fr");
     expect(result.name).toBe("Ginger");
   });
+
+  // Regression: HERBALLY-9 / -A / -7. The translation pipeline emitted bare
+  // strings for array fields (21 entries across 14 herbs). A string passes a
+  // `.length > 0` check but has no `.join`, so herb-schema.tsx threw
+  // "a.contraindications.join is not a function" and silently dropped the
+  // JSON-LD block from those French pages.
+  describe("malformed translation types (string where array expected)", () => {
+    const malformedHerb = {
+      ...baseHerb,
+      translations: {
+        fr: {
+          name: "Menthe",
+          // All four are strings, not arrays — the exact bad-data shape.
+          contraindications: "Grossesse en fortes doses - pulegone",
+          side_effects: "Effets secondaires limités",
+          traditional_uses: "Rét digestifs, Fièvre",
+          common_names: "[Plante à roues d'eau]",
+        },
+      },
+    } as unknown as Herb;
+
+    it("coerces scalar strings into single-element arrays", () => {
+      const result = localizeHerb(malformedHerb, "fr");
+      expect(result.contraindications).toEqual([
+        "Grossesse en fortes doses - pulegone",
+      ]);
+      expect(result.side_effects).toEqual(["Effets secondaires limités"]);
+      expect(result.traditional_uses).toEqual(["Rét digestifs, Fièvre"]);
+      expect(result.common_names).toEqual(["[Plante à roues d'eau]"]);
+    });
+
+    it("never lets a joined field throw", () => {
+      const result = localizeHerb(malformedHerb, "fr");
+      // The exact call that used to crash the render.
+      expect(() => result.contraindications!.join("; ")).not.toThrow();
+      expect(() => result.side_effects!.join("; ")).not.toThrow();
+      expect(() => result.traditional_uses!.join("; ")).not.toThrow();
+      expect(() => result.common_names!.join(", ")).not.toThrow();
+    });
+
+    it("falls back to English for non-string, non-array values", () => {
+      const weirdHerb = {
+        ...baseHerb,
+        translations: { fr: { contraindications: 42, side_effects: null } },
+      } as unknown as Herb;
+      const result = localizeHerb(weirdHerb, "fr");
+      expect(result.contraindications).toEqual(["gallstones"]);
+      expect(result.side_effects).toEqual(["heartburn"]);
+    });
+  });
 });
 
 describe("localizeInteraction", () => {

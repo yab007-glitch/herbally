@@ -28,8 +28,24 @@ interface HerbSchemaProps {
   herb: Herb;
 }
 
+/**
+ * Guard a value that callers assume is string[] before calling .join().
+ * `translations` is unvalidated jsonb, so a field can arrive as a bare string
+ * (which passes a `.length > 0` check but has no .join) — see HERBALLY-9.
+ */
+function asArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === "string");
+  }
+  return typeof value === "string" && value.trim() ? [value.trim()] : [];
+}
+
 export function HerbSchema({ herb }: HerbSchemaProps) {
   const reviewer = getReviewer(herb.reviewed_by);
+  const activeCompounds = asArray(herb.active_compounds);
+  const traditionalUses = asArray(herb.traditional_uses);
+  const contraindications = asArray(herb.contraindications);
+  const sideEffects = asArray(herb.side_effects);
   const schema = {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
@@ -42,14 +58,12 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
       name: herb.name,
       alternateName: herb.scientific_name,
       description: herb.description ?? undefined,
-      ...(herb.active_compounds &&
-        herb.active_compounds.length > 0 && {
-          chemicalComposition: herb.active_compounds.join(", "),
-        }),
-      ...(herb.traditional_uses &&
-        herb.traditional_uses.length > 0 && {
-          medicalUse: herb.traditional_uses.join("; "),
-        }),
+      ...(activeCompounds.length > 0 && {
+        chemicalComposition: activeCompounds.join(", "),
+      }),
+      ...(traditionalUses.length > 0 && {
+        medicalUse: traditionalUses.join("; "),
+      }),
     },
     about: {
       "@type": "HealthTopic",
@@ -73,14 +87,12 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
             ? "Generally safe while nursing"
             : "Not recommended while nursing",
         }),
-      ...(herb.contraindications &&
-        herb.contraindications.length > 0 && {
-          contraindication: herb.contraindications.join("; "),
-        }),
-      ...(herb.side_effects &&
-        herb.side_effects.length > 0 && {
-          adverseEffect: herb.side_effects.join("; "),
-        }),
+      ...(contraindications.length > 0 && {
+        contraindication: contraindications.join("; "),
+      }),
+      ...(sideEffects.length > 0 && {
+        adverseEffect: sideEffects.join("; "),
+      }),
     },
     ...(herb.dosage_adult && {
       dosage: {

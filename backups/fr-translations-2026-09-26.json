@@ -1,0 +1,378 @@
+[
+  {
+    "slug": "aldrovanda-vesiculosa",
+    "translations": {
+      "fr": {
+        "name": "Aldrovanda vesiculosa",
+        "description": "Plante aquatique carnivore ; utilisation traditionnelle en médecine indienne pour troubles digestifs et fièvre.",
+        "modern_uses": [
+          "soutien digestive traditionnel",
+          "antipyretique"
+        ],
+        "common_names": "[Plante à roues d'eau]",
+        "dosage_adult": "3 à 5 g de thé de plante séchée 2 fois par jour",
+        "dosage_child": "Non établie",
+        "side_effects": "troubles digestifs légers",
+        "traditional_uses": [
+          "troubles digestifs",
+          "fièvre",
+          "problèmes GI"
+        ],
+        "contraindications": [
+          "pregnancy"
+        ],
+        "preparation_notes": "Plante aquatique peu étudiée ; utilisée dans la médecine populaire indienne."
+      }
+    }
+  },
+  {
+    "slug": "dasylirion-wheeleri-herb",
+    "translations": {
+      "fr": {
+        "name": "Dasylirion Wheeleri Herb",
+        "description": "Plante du désert de Sonora utilisée par les peuples Tohono O'odham et Apache pour l'alimentation, les fibres et le traitement des affections cutanées et digestives.",
+        "modern_uses": [
+          "nutritif",
+          "digestif",
+          "cicatrisation des plaies"
+        ],
+        "common_names": [
+          "Desert Spoon",
+          "Sotol",
+          "Wheeleri Dasylirion"
+        ],
+        "dosage_adult": "Esprit de sotol en tant que boisson médicamentale traditionnelle ; cœur comestible comme aliment",
+        "dosage_child": "Utilisation alimentaire traditionnelle uniquement pour les enfants",
+        "side_effects": "aucun effet secondaire lors de l'utilisation alimentaire",
+        "traditional_uses": [
+          "alimentation et médecine dans la tradition amérindienne du désert de Sonora",
+          "traitement des affections digestives",
+          "traitement des plaies cutanées",
+          "soins",
+          "guérison"
+        ],
+        "contraindications": [
+          "maladie hépatique",
+          "enfants - esprit distillé"
+        ],
+        "preparation_notes": "Cœur rôti et consommé ; sotol distillé comme le mezcal."
+      }
+    }
+  },
+  {
+    "slug": "eichhornia-crassipes",
+    "translations": {
+      "fr": {
+        "name": "Eichhornia crassipes",
+        "description": "Plante aquatique flottante utilisée en médecine traditionnelle pour les problèmes cutanés et la fièvre.",
+        "modern_uses": [
+          "Propriétés antioxydantes",
+          "Effets antimicrobiens"
+        ],
+        "common_names": [
+          "Water Hyacinth",
+          "Jacinthe d'eau"
+        ],
+        "dosage_adult": "5-10 g de plante séchée en découchettes",
+        "side_effects": "Aucun effect documenté avec des spécimens propres",
+        "traditional_uses": [
+          "Hautes conditions cutanées en Afrique de l'Ouest",
+          "Gestion de la fièvre",
+          "Nettoyage des blessures"
+        ],
+        "preparation_notes": "Plantes cultivées avec de l'eau fraîche; rinçage des plaies avec une découchement glacé."
+      }
+    }
+  },
+  {
+    "slug": "ekebergia-capensis",
+    "translations": {
+      "fr": {
+        "name": "Ekebergia Capensis",
+        "description": "Arbre à feuilles vertes native à l'Afrique de l'Est et à l'Afrique du Sud, utilisé en médecine traditionnelle pour les migraines et fièvre.",
+        "common_names": [
+          "Cape Ash",
+          "Dogplum",
+          "Umnyamathi"
+        ],
+        "dosage_child": "Non établi",
+        "side_effects": "Effets bien documentés",
+        "traditional_uses": [
+          "Médicaments traditionnels africains",
+          "Traitement des mauvaiges"
+        ]
+      }
+    }
+  },
+  {
+    "slug": "mentha-cervina",
+    "translations": {
+      "fr": {
+        "name": "Mentha cervina",
+        "description": "Menthe aquatique rare d'Europe aux arômes distinctifs utilisée en médecine traditionnelle portugaise.",
+        "modern_uses": [
+          "carminatif",
+          "antimicrobien",
+          "anti-inflammatoire"
+        ],
+        "common_names": [
+          "Menthe cervine",
+          "Menthe des cerfs",
+          "Menthe cétivie"
+        ],
+        "dosage_adult": "3-5g de plante sèche quotidiennement",
+        "dosage_child": "Non établi",
+        "side_effects": [
+          "Troubles du tube digestif"
+        ],
+        "traditional_uses": "Rarefy désordres digestifs, infections respiratoires, antimicrobien",
+        "contraindications": "RGO, grossesse en grandes doses",
+        "preparation_notes": "Infusion herbale en tisane; menacée au Portugal"
+      }
+    }
+  },
+  {
+    "slug": "mentha-haplocalyx",
+    "translations": {
+      "fr": {
+        "name": "Mentha Haplocalyx",
+        "description": "Herbe vivace parfumée originaire d'Asie de l'Est utilisée en Médecine traditionnelle chinoise pour « faire senser le vent-chaleur », apaiser le crâne et les yeux, et réguler le courant du foie.",
+        "modern_uses": [
+          "antidéficitaire",
+          "décongestionnant",
+          "carminatif",
+          "anti-inflammatoire"
+        ],
+        "common_names": [
+          "Bo He",
+          "Menthe des champs",
+          "Mentha chinoise"
+        ],
+        "dosage_adult": "3–6g décoction",
+        "dosage_child": "1,5–3g pour enfants",
+        "side_effects": [
+          "Sensation fraîche au niveau du tube digestif",
+          "Photosensibilisation cutanée par l'huile"
+        ],
+        "traditional_uses": "Vient-chaleur froid, céphalée, angines, stase du foie, peau qui tient",
+        "contraindications": "Déficit de yin, application de l'huile sur visage de nourrissons, allergie",
+        "preparation_notes": "Ajoutée en dernier dans les décoctions; conservations des composés aromatiques par une briève macération"
+      }
+    }
+  },
+  {
+    "slug": "mentha-longifolia",
+    "translations": {
+      "fr": {
+        "name": "Mentha longifolia",
+        "description": "Menthe sauvage répandu en Europe, en Asie et en Afrique; utilisée en médecine traditionnelle à travers plusieurs cultures.",
+        "modern_uses": [
+          "Antipyrétique",
+          "Carminatif",
+          "Antibactérien",
+          "Anti-inflammatoire"
+        ],
+        "common_names": [
+          "Menthe chevaline",
+          "Menthe sauvage",
+          "Menthe à longues feuilles",
+          "Menthe cousine du menthe poivrée"
+        ],
+        "dosage_adult": "3-5g de plante sèche ou 2-3ml de tincture quotidiennement",
+        "dosage_child": "Non établi",
+        "side_effects": [
+          "Troubles du tube digestif",
+          "Problèmes hépatiques avec l'utilisation d'infusions riches en pulegone"
+        ],
+        "traditional_uses": [
+          "Rét ут. digestifs",
+          "Fièvre",
+          "Rarefy. infections respiratoires",
+          "Céphalées"
+        ],
+        "contraindications": "Grossesse en fortes doses - pulegone através utérin, RGO",
+        "preparation_notes": "Infusion herbale en tisane; utilisations similaires entre les cultures"
+      }
+    }
+  },
+  {
+    "slug": "mentha-requienii",
+    "translations": {
+      "fr": {
+        "name": "Mentha requienii",
+        "description": "Petite menthe parfumée corse et saurinoise; extrêmement parfumée; destinée à l'usage culinaire et admise pour des applications légères en médecine traditionnelle.",
+        "modern_uses": [
+          "Carminatif",
+          "Aromatique"
+        ],
+        "common_names": [
+          "Menthe corse",
+          "Plante de crème menthe",
+          "Menthe naine"
+        ],
+        "dosage_adult": "Petites quantités en assaisonnement",
+        "dosage_child": "Non établi",
+        "side_effects": [
+          "Généralement considérée sûre en petites quantités"
+        ],
+        "traditional_uses": [
+          "Digestion",
+          "Parfumage",
+          "Aromatique"
+        ],
+        "contraindications": "Grossesse en grandes doses",
+        "preparation_notes": "Utilisée comme assaisonnement; petite plante couvre-sol; parfummenté à la menthe"
+      }
+    }
+  },
+  {
+    "slug": "pachycereus-pringlei",
+    "translations": {
+      "fr": {
+        "name": "Pachycereus pringlei",
+        "description": "La plus grande cactus du Baja California, utilisé par les peuples Cochimi et Seri pour la nutrition et la médecine.",
+        "modern_uses": [
+          "Medicine alimentaire nutritive traditionnelle",
+          "Anti-inflammatoire",
+          "Antimicrobien",
+          "Appui digestif"
+        ],
+        "common_names": [
+          "Cardon Cactus",
+          "Giant Mexican Cardon",
+          "Elephant Cactus"
+        ],
+        "dosage_adult": "Préparation traditionnelle ; aucune dose établie",
+        "dosage_child": "Non établie pour les enfants",
+        "side_effects": [
+          "Effets digestifs légers"
+        ],
+        "traditional_uses": [
+          "La médecine traditionnelle des Cochimi et Seri aux troubles digestifs",
+          "Les graines et les fruits consommés par les populations désertiques de Baja"
+        ],
+        "contraindications": "Aucune contreindication spécifique déterminée",
+        "preparation_notes": "Cactus le plus haut du monde ; sacré pour les Cochimi"
+      }
+    }
+  },
+  {
+    "slug": "serviceberry",
+    "translations": {
+      "fr": {
+        "name": "Serviceberry",
+        "description": "Forêt nord-américaine du Nord-Ouest, utilisée traditionnellement par les peuples Plains dans la médecine indienne et culturelle",
+        "modern_uses": [
+          "Antioxydant",
+          "Anti-inflammatoire",
+          "Anti-diarrhéale",
+          "Nutritif"
+        ],
+        "common_names": [
+          "Saskatoon Berry",
+          "Juneberry",
+          "Shadbush"
+        ],
+        "dosage_adult": "Jus de baies frais ou séché ; thé de baies 2 verres/jour",
+        "dosage_child": "Sécuritaire depuis l'enfance",
+        "side_effects": "Globalement sécuritaire lors de l'alimentation",
+        "traditional_uses": [
+          "Médecine traditionnelle des peuples Plains en boisson",
+          "Ingrédient pour alimentation hivernale",
+          "Problèmes digestifs",
+          "Traitement des diarrhydies"
+        ],
+        "contraindications": [
+          "Ningue sur les règles alimentaires"
+        ],
+        "preparation_notes": "Consommer fraîche ; sécher pour le stockage ; ingrédient traditionnel au pemmican"
+      }
+    }
+  },
+  {
+    "slug": "stachys-officinalis",
+    "translations": {
+      "fr": {
+        "name": "Stachys officinalis",
+        "description": "Perennial plant valued for medicinal purposes, particularly anti-inflammatory applications.",
+        "common_names": [
+          "Betony",
+          "Common Betony",
+          "Wood Betony",
+          "Purple Betony"
+        ],
+        "dosage_adult": "1 à 2 cuillères par tasse jour",
+        "dosage_child": "Recherche incomducte",
+        "side_effects": "Effets secondaires restent négligeables",
+        "traditional_uses": [
+          "Utilisée en médecine traditionnelle anglo-saxonne",
+          "Recours courants pour les courfflements articulaires"
+        ],
+        "contraindications": "Contreindications limitées à patients sensibles à l'alternative",
+        "preparation_notes": "Infusion ou poudre selon contexte"
+      }
+    }
+  },
+  {
+    "slug": "stachys-palustris",
+    "translations": {
+      "fr": {
+        "name": "Stachytarpheta jamaicensis",
+        "description": "Plante moyenne utilisée des tribus pour ses effets digestifs.",
+        "common_names": [
+          "Verrin Jaune",
+          "Verrin Vert"
+        ],
+        "dosage_adult": "Infusion moyenne",
+        "dosage_child": "Sur greffe",
+        "side_effects": "Réactions locales mineures",
+        "traditional_uses": [
+          "Desalennes héritiers des traditions afro-caribènes",
+          "Explorations similaires aux maladies intestinales"
+        ],
+        "contraindications": "Nombre inférieur à consulter avant traitement",
+        "preparation_notes": "Manipulation tranchante requise"
+      }
+    }
+  },
+  {
+    "slug": "stachytarpheta-jamaicensis",
+    "translations": {
+      "fr": {
+        "name": "Stemonchona induens",
+        "description": "Arbre dont la density est décrite comme 'riche en substances bénéfiques'.",
+        "common_names": [
+          "Yellow Birchberry",
+          "Indian Gooseberry"
+        ],
+        "dosage_adult": "Dosage variable selon poids corporel",
+        "dosage_child": "Non eticulejuste",
+        "side_effects": "Effets secondaires rares",
+        "traditional_uses": [
+          "Régula des troubles respiratoires",
+          "Utilisation historique en phytothérapie"
+        ],
+        "contraindications": "Interdépendance avec l'alcool, contraindications rares",
+        "preparation_notes": "Extraction lite"
+      }
+    }
+  },
+  {
+    "slug": "stellaria-media",
+    "translations": {
+      "fr": {
+        "name": "Steller's Jelly-tongue",
+        "description": "Utilisé traditionnellement pour restaurer la sérénité cérébrale",
+        "common_names": [
+          "Chigre de la Mamie",
+          "Truffe Lacet"
+        ],
+        "dosage_adult": "Variabilité marquée",
+        "dosage_child": "Restrictions définies",
+        "side_effects": "Effets secondaires limités",
+        "contraindications": "Interdite en cas d'accouchement",
+        "preparation_notes": "Traitement local frappeuse"
+      }
+    }
+  }
+]
