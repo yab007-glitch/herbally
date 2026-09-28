@@ -3,7 +3,7 @@
  * HerbAlly — French Translation Script (Fast)
  *
  * Translates all herb content, drug interactions, and categories into French
- * using the OpenRouter API, then stores results in the Supabase database.
+ * using the Ollama Cloud API, then stores results in the Supabase database.
  *
  * Speed optimizations:
  *   - Batches 5 herbs per API call (5x fewer requests)
@@ -31,11 +31,11 @@ dotenv.config({
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-const OPENROUTER_KEY = (process.env.OPENROUTER_API_KEY ?? "").trim();
+const OLLAMA_KEY = (process.env.OLLAMA_CLOUD_API_KEY ?? "").trim();
 const BASE_URL = (
-  process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1"
+  process.env.OLLAMA_CLOUD_URL ?? "https://ollama.com/v1"
 ).trim();
-const MODEL = (process.env.OPENROUTER_MODEL ?? "openrouter/auto").trim();
+const MODEL = (process.env.OLLAMA_CLOUD_MODEL ?? "deepseek-v4.1-flash").trim();
 
 // Tuning: 3 concurrent workers × ~3.5s delay = ~51 req/min (under 20/min per-key limit for paid, safe for free)
 const HERBS_PER_CALL = 5; // herbs packed into one API call
@@ -55,8 +55,8 @@ if (!SERVICE_KEY) {
   console.error("Missing SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
-if (!OPENROUTER_KEY) {
-  console.error("Missing OPENROUTER_API_KEY");
+if (!OLLAMA_KEY) {
+  console.error("Missing OLLAMA_CLOUD_API_KEY");
   process.exit(1);
 }
 
@@ -87,7 +87,7 @@ async function translateJSON(input: object, attempt = 1): Promise<object> {
   const response = await fetch(`${BASE_URL}/chat/completions`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${OPENROUTER_KEY}`,
+      Authorization: `Bearer ${OLLAMA_KEY}`,
       "Content-Type": "application/json",
       "HTTP-Referer": "https://herbally.app",
       "X-Title": "HerbAlly Translation",
@@ -96,6 +96,9 @@ async function translateJSON(input: object, attempt = 1): Promise<object> {
       model: MODEL,
       stream: false,
       messages: [{ role: "user", content: prompt }],
+      // deepseek-v4.1-flash is a reasoning model — without this it burns the
+      // whole budget on internal reasoning and returns empty content.
+      reasoning_effort: "none",
     }),
   });
 
@@ -109,7 +112,7 @@ async function translateJSON(input: object, attempt = 1): Promise<object> {
 
   if (!response.ok) {
     const err = await response.text().catch(() => "");
-    throw new Error(`OpenRouter ${response.status}: ${err.slice(0, 200)}`);
+    throw new Error(`Ollama Cloud ${response.status}: ${err.slice(0, 200)}`);
   }
 
   const result = await response.json();

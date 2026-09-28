@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
   const hasRequiredEnv =
     !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
     !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    !!process.env.OPENROUTER_API_KEY;
+    !!process.env.OLLAMA_CLOUD_API_KEY;
 
   checks.environment = {
     status: hasRequiredEnv ? "healthy" : "degraded",
@@ -54,22 +54,22 @@ export async function GET(request: NextRequest) {
       : "One or more required variables are not set",
   };
 
-  // Check OpenRouter API by making a lightweight models request
+  // Check Ollama Cloud by making a lightweight models request
   try {
-    const openrouterKey = process.env.OPENROUTER_API_KEY?.trim();
-    const openrouterBaseUrl = (
-      process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1"
+    const ollamaKey = process.env.OLLAMA_CLOUD_API_KEY?.trim();
+    const ollamaBaseUrl = (
+      process.env.OLLAMA_CLOUD_URL || "https://ollama.com/v1"
     ).trim();
 
-    if (!openrouterKey || openrouterKey.startsWith("sk-or-v1-REPLACE")) {
+    if (!ollamaKey) {
       checks.ai = {
         status: "unconfigured",
         error: "API key not set",
       };
     } else {
       const aiStart = Date.now();
-      const aiResponse = await fetch(`${openrouterBaseUrl}/models`, {
-        headers: { Authorization: `Bearer ${openrouterKey}` },
+      const aiResponse = await fetch(`${ollamaBaseUrl}/models`, {
+        headers: { Authorization: `Bearer ${ollamaKey}` },
         signal: AbortSignal.timeout(5000),
       });
       const aiLatency = Date.now() - aiStart;

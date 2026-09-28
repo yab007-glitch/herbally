@@ -9,8 +9,18 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import {
+  isOllamaCloudConfigured,
+  getOllamaCloudModel,
+  streamChatCompletion,
+} from "@/lib/ai/ollama-cloud-client";
 
 const MAX_BODY_SIZE = 50 * 1024;
+
+// Bound the serverless invocation. Answers are buffered for the safety guard
+// before delivery and realistically complete in <15s on Ollama Cloud; 60s
+// leaves generous headroom under the platform cap.
+export const maxDuration = 60;
 
 /**
  * Run the server-side safety guard over a completed response and return the
@@ -45,8 +55,8 @@ async function persistToCache(
   response: string,
   locale: "en" | "fr"
 ): Promise<void> {
-  // Don't cache empty or suspiciously short/garbage responses (the free pool
-  // occasionally emits things like "User Safety: safe" for trivial inputs).
+  // Don't cache empty or suspiciously short/garbage responses (a past
+  // upstream incident emitted classifier fragments like "User Safety: safe").
   if (!response.trim() || response.trim().length < 40) return;
   const guarded = guardResponse(response, locale);
   try {
@@ -65,39 +75,12 @@ async function persistToCache(
   }
 }
 
-// Fallback chain: capable FREE models (the OpenRouter free tier is now mostly
-// restricted to these). gpt-4o-mini remains the recommended primary when the
-// account has credits; without credits it 402s and we fall back here.
-// Order matters — we try each in turn if the previous 5xx/404s.
-const FALLBACK_MODELS = [
-  "openrouter/free",
-  "meta-llama/llama-3.3-70b-instruct:free",
-];
-
-async function tryOpenRouter(
-  baseUrl: string,
-  apiKey: string,
-  model: string,
-  chatMessages: Array<{ role: string; content: string }>
-): Promise<Response> {
-  return fetch(`${baseUrl}/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://herbally.app",
-      "X-Title": "HerbAlly",
-    },
-    body: JSON.stringify({
-      model,
-      messages: chatMessages,
-      stream: true,
-      max_tokens: 4096,
-      temperature: 0.3, // Lower temperature for more factual responses
-    }),
-    signal: AbortSignal.timeout(20000),
-  });
-}
+// Fallback chain: fast, reasoning-clean Ollama Cloud models. The primary
+// model comes from OLLAMA_CLOUD_MODEL (default deepseek-v4.1-flash). These
+// fallbacks are tried in order when the primary fails with a retryable
+// status. glm-5.3-flash is deliberately NOT in the chain — on this endpoint
+// it leaks raw reasoning text into the response content.
+const FALLBACK_MODELS = ["gemma4:31b", "glm-5.2"];
 
 export async function POST(request: NextRequest) {
   // In-route rate limiting as a defense-in-depth fallback in case the
@@ -124,21 +107,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY?.trim();
-  const baseUrl = (
-    process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1"
-  ).trim();
-  const primaryModel = (
-    process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini"
-  ).trim();
-
-  if (!apiKey) {
+  if (!isOllamaCloudConfigured()) {
     logger.error("api_chat_key_missing");
     return NextResponse.json(
       { error: "AI service is not configured. Please contact support." },
       { status: 503 }
     );
   }
+  const primaryModel = getOllamaCloudModel();
 
   // Body size guard
   const contentLength = parseInt(
@@ -264,7 +240,7 @@ export async function POST(request: NextRequest) {
       });
     }
   }
-  // ── Call OpenRouter with fallback chain ────────────────────────────
+  // ── Call Ollama Cloud with fallback chain ────────────────────────────
   const modelsToTry = [
     primaryModel,
     ...FALLBACK_MODELS.filter((m) => m !== primaryModel),
@@ -278,7 +254,10 @@ export async function POST(request: NextRequest) {
 
   for (const model of modelsToTry) {
     try {
-      response = await tryOpenRouter(baseUrl, apiKey, model, chatMessages);
+      response = await streamChatCompletion({
+        model,
+        messages: chatMessages,
+      });
     } catch (fetchError) {
       logger.error("api_chat_fetch_failed", {
         model,
@@ -350,9 +329,9 @@ export async function POST(request: NextRequest) {
   // guard (post-stream, bypassable) was the only defense. Buffering sacrifices
   // token-by-token streaming UX but is the only way to fully prevent unsafe
   // medical output from being displayed. The guard runs for EVERY model in the
-  // fallback chain — fallback (free) models are the least aligned and most
-  // prompt-injection-vulnerable, so guarding only the primary was an inverted
-  // safety priority. Cache still stores primary-model output only (guarded).
+  // fallback chain — fallback models are the least proven, so guarding only
+  // the primary was an inverted safety priority. Cache still stores
+  // primary-model output only (guarded).
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
@@ -424,6 +403,11 @@ export async function POST(request: NextRequest) {
               finish("done");
               return;
             }
+
+            // Idle-timeout reset: as long as chunks keep arriving the stream
+            // may run as long as it needs. Previously the timeout was armed
+            // once, silently truncating answers that took >30s in total.
+            scheduleTimeout();
 
             buffer += decoder.decode(value, { stream: true });
             const lines = buffer.split("\n");

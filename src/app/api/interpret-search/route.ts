@@ -1,5 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { openai, MODEL } from "@/lib/ai/openai-client";
+import {
+  getOllamaCloudApiKey,
+  getOllamaCloudBaseUrl,
+  getOllamaCloudModel,
+} from "@/lib/ai/ollama-cloud-client";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
@@ -66,36 +70,56 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
     }
 
-    const response = await openai.chat.completions.create(
+    const apiKey = getOllamaCloudApiKey();
+    if (!apiKey) {
+      return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
+    }
+
+    const response = await fetch(
+      `${getOllamaCloudBaseUrl()}/chat/completions`,
       {
-        model: MODEL,
-        stream: false,
-        messages: [
-          {
-            role: "system",
-            content: `Extract 1-3 medical search keywords from the user's description. Return ONLY a JSON array of lowercase strings like ["keyword1","keyword2"]. No other text.`,
-          },
-          {
-            role: "user",
-            content: `Extract search keywords: "${trimmed}"
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: getOllamaCloudModel(),
+          stream: false,
+          messages: [
+            {
+              role: "system",
+              content: `Extract 1-3 medical search keywords from the user's description. Return ONLY a JSON array of lowercase strings like ["keyword1","keyword2"]. No other text.`,
+            },
+            {
+              role: "user",
+              content: `Extract search keywords: "${trimmed}"
 Examples:
 "my stomach hurts after eating" → ["digestive","bloating","stomach pain"]
 "I can't sleep and feel anxious" → ["insomnia","anxiety"]
 "joints are swollen" → ["arthritis","inflammation"]`,
-          },
-        ],
-        max_tokens: 50,
-        temperature: 0,
-      },
-      // M12 (audit 2026-06-22): bound upstream latency. A hung OpenRouter
-      // response previously stalled the serverless invocation until the
-      // platform default timeout. The OpenAI SDK takes the abort signal in
-      // the request-options argument (the second param), NOT in the body.
-      // 8s is generous for a 50-token completion.
-      { signal: AbortSignal.timeout(8000) }
+            },
+          ],
+          max_tokens: 100,
+          temperature: 0,
+          // deepseek-v4.1-flash is a reasoning model; without this it spends
+          // the entire budget on internal reasoning and returns empty content.
+          reasoning_effort: "none",
+        }),
+        // M12 (audit 2026-06-22): bound upstream latency. A hung AI response
+        // previously stalled the serverless invocation until the platform
+        // default timeout. 8s is generous for a ~15-token completion.
+        signal: AbortSignal.timeout(8000),
+      }
     );
 
-    const text = response.choices[0]?.message?.content?.trim() ?? "";
+    if (!response.ok) {
+      throw new Error(`Ollama Cloud HTTP ${response.status}`);
+    }
+    const data = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const text = (data.choices?.[0]?.message?.content ?? "").trim();
 
     try {
       const parsed = JSON.parse(text);
@@ -112,9 +136,10 @@ Examples:
 
     return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
   } catch (error) {
-    // M12: a timeout abort falls through to the validated-query fallback (not
+    // M12: a timeout abort (AbortError/TimeoutError) falls through to the
+    // validated-query fallback (not
     // an empty result) so a slow upstream never blanks the search.
-    if ((error as Error)?.name === "AbortError") {
+    if (["AbortError", "TimeoutError"].includes((error as Error)?.name ?? "")) {
       logger.warn("interpret_search_timeout", {
         query: originalQuery.slice(0, 60),
       });

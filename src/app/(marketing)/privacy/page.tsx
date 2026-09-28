@@ -82,7 +82,7 @@ export default async function PrivacyPage() {
           <p>{t("privacy.thirdParty.text")}</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
             <li>{t("privacy.thirdParty.supabase")}</li>
-            <li>{t("privacy.thirdParty.openrouter")}</li>
+            <li>{t("privacy.thirdParty.ollamaCloud")}</li>
             <li>{t("privacy.thirdParty.vercel")}</li>
             <li>{t("privacy.thirdParty.stripe")}</li>
           </ul>

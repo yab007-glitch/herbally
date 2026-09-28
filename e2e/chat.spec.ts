@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 
 /**
  * E2E for /herbalist — the full chat page. The /api/chat route is mocked
- * so the test doesn't depend on a real OpenRouter key. We assert the
+ * so the test doesn't depend on a real AI key. We assert the
  * markdown enrichment (PMID link, evidence pill) renders correctly and
  * that a safety-guard verdict appends the warning string.
  */

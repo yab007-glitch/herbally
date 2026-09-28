@@ -73,7 +73,7 @@ with no human review. This is the biggest risk — not bugs, not performance.
 - PWA: manifest fixed, service worker functional.
 - E2E tests: 31 passing.
 - AI response caching: guarded, RLS-protected.
-- OpenRouter fallback chain: working with observability logging.
+- AI fallback chain (Ollama Cloud): working with observability logging.
 
 ---
 

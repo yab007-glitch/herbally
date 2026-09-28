@@ -38,7 +38,7 @@ Check system health and service status.
   "version": "0.1.0",
   "services": {
     "supabase": "healthy",
-    "openrouter": "healthy",
+    "ai": "healthy",
     "stripe": "healthy",
     "rateLimit": "healthy"
   }
