@@ -64,7 +64,7 @@ const nextConfig: NextConfig = {
         value: [
           "default-src 'self'",
           "script-src 'self' 'unsafe-inline' *.stripe.com",
-          "connect-src 'self' *.supabase.co *.openrouter.ai *.stripe.com",
+          "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com",
           "img-src 'self' data: blob: https://*.supabase.co",
           "style-src 'self' 'unsafe-inline'",
           "font-src 'self' data:",

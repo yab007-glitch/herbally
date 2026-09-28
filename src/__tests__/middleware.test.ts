@@ -96,7 +96,7 @@ describe("middleware — CSP", () => {
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com",
-    "connect-src 'self' *.supabase.co *.openrouter.ai *.stripe.com",
+    "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com",
     // L16: img-src scoped to the only remote image host we use (Supabase
     // Storage), matching next.config.ts remotePatterns — no longer a bare
     // `https:` that permitted any origin.
@@ -107,9 +107,9 @@ describe("middleware — CSP", () => {
     "frame-ancestors 'none'",
   ].join("; ");
 
-  it("allows connections to Supabase and OpenRouter", () => {
+  it("allows connections to Supabase and Ollama Cloud", () => {
     expect(csp).toContain("*.supabase.co");
-    expect(csp).toContain("*.openrouter.ai");
+    expect(csp).toContain("https://ollama.com");
   });
 
   it("blocks frame ancestors for clickjacking protection", () => {

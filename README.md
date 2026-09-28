@@ -7,14 +7,14 @@ A medical herbs SaaS application featuring a searchable database of 2,700+ medic
 - **Framework**: Next.js 16 (App Router) + React 19
 - **Database**: Supabase (PostgreSQL + Auth)
 - **Styling**: Tailwind CSS 4 + shadcn/ui (base-nova)
-- **AI**: OpenRouter API (free pool by default, paid model via `OPENROUTER_MODEL` env var) for virtual herbalist chat. See `src/app/api/chat/route.ts` for the fallback chain.
+- **AI**: Ollama Cloud (`deepseek-v4.1-flash` by default, override via `OLLAMA_CLOUD_MODEL`) for virtual herbalist chat. See `src/app/api/chat/route.ts` for the fallback chain.
 - **APIs**: RxNorm (drug lookup), OpenFDA (adverse events)
 
 ## Prerequisites
 
 - Node.js 20+
 - Supabase project
-- OpenRouter API key (`OPENROUTER_API_KEY`)
+- Ollama Cloud API key (`OLLAMA_CLOUD_API_KEY`)
 
 ## Setup
 
@@ -69,7 +69,7 @@ src/
     shared/         # Loading skeletons, common UI
   lib/
     actions/        # Server actions (ActionResponse<T> pattern)
-    ai/             # OpenRouter client, system prompt
+    ai/             # Ollama Cloud client, system prompt
     chat/           # Markdown enrichment (remarkHerbAlly) and safety guard
     supabase/       # Database client factories
     types/          # TypeScript types, database schema (incl. provenance.ts)
@@ -91,7 +91,7 @@ src/
 
 ## AI safety
 
-The chat route buffers the OpenRouter response server-side and runs it
+The chat route buffers the AI response server-side and runs it
 through the safety guard (`src/lib/chat/safety-guard.ts`) BEFORE a single
 byte reaches the client. The guard scans for red-flag phrases (e.g. "stop
 taking your insulin") and either appends a localised disclaimer (soft warn)

@@ -736,7 +736,7 @@
       "supabase": "Supabase — Hébergement de base de données (région Canada). Données stockées : profils de plantes, données d'interactions. Aucune donnée utilisateur personnelle.",
       "vercel": "Vercel — Hébergement d'application. Données stockées : aucune (fonctions serverless). Vercel peut collecter des journaux CDN anonymes.",
       "stripe": "Stripe — Traitement des paiements pour les dons. HerbAlly ne voit ni ne stocke jamais vos coordonnées bancaires.",
-      "openrouter": "OpenRouter — Traitement IA. Données envoyées : messages de discussion que vous tapez. Données stockées : aucune (les messages sont traités puis supprimés)."
+      "ollamaCloud": "Ollama Cloud — Traitement IA. Données envoyées : messages de discussion que vous tapez. Données stockées : aucune (les messages sont traités puis supprimés)."
     },
     "cookiesSection": {
       "title": "5. Cookies",
@@ -1035,7 +1035,7 @@
       },
       "ai": {
         "label": "Herboriste IA",
-        "desc": "Coûts de l'API OpenRouter pour le chatbot herboriste virtuel",
+        "desc": "Coûts de l'API Ollama Cloud pour le chatbot herboriste virtuel",
         "monthly": "50$+"
       },
       "domain": {
@@ -1249,7 +1249,7 @@
     "aboutUpdated": "Mises à jour régulières au fur et à mesure des nouvelles recherches",
     "aboutNotFDA": "Non révisé ni approuvé par la FDA",
     "description": "Posez des questions à notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et la posologie. Réponses fondées sur des preuves de l'OMS, du NCCIH et de PubMed. Gratuit, aucun compte requis.",
-    "aboutProvider": "Propulsé par OpenRouter IA (modèle gratuit)",
+    "aboutProvider": "Propulsé par Ollama Cloud IA",
     "medsAutoQuery": "Je prends : {meds}. Vérifiez les interactions connues entre ces médicaments et les compléments phytothérapiques courants. Signalez les associations dangereuses.",
     "herbAutoQuery": "Quelles sont les principales interactions médicamenteuses et précautions de sécurité pour {name} ({scientific}) ? Listez les interactions les plus importantes, leur gravité et les personnes qui doivent l'éviter.",
     "emptyStateTitle": "Posez-moi des questions sur les plantes",

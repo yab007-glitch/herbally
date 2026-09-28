@@ -3,9 +3,9 @@ import { NextRequest } from "next/server";
 
 /**
  * Unit tests for /api/chat. We stub:
- *   - `fetch` to control OpenRouter responses per-model
+ *   - `fetch` to control Ollama Cloud responses per-model
  *   - `rateLimit` to control rate-limit behavior
- *   - env vars for OPENROUTER_API_KEY, OPENROUTER_MODEL
+ *   - env vars for OLLAMA_CLOUD_API_KEY, OLLAMA_CLOUD_MODEL
  *
  * Goal: cover the error paths (auth, rate limit, body size, fallback chain,
  * streaming) without making real network calls.
@@ -73,9 +73,9 @@ function streamResponse(): Response {
 const ORIGINAL_ENV = { ...process.env };
 
 beforeEach(() => {
-  process.env.OPENROUTER_API_KEY = "test-key";
-  process.env.OPENROUTER_MODEL = "openrouter/free";
-  delete process.env.OPENROUTER_BASE_URL;
+  process.env.OLLAMA_CLOUD_API_KEY = "test-key";
+  delete process.env.OLLAMA_CLOUD_MODEL;
+  delete process.env.OLLAMA_CLOUD_URL;
   fetchMock.mockReset();
   rateLimitMock.mockReset();
   rateLimitMock.mockResolvedValue({
@@ -92,8 +92,8 @@ afterEach(() => {
 });
 
 describe("POST /api/chat — error paths", () => {
-  it("returns 503 when OPENROUTER_API_KEY is missing", async () => {
-    delete process.env.OPENROUTER_API_KEY;
+  it("returns 503 when OLLAMA_CLOUD_API_KEY is missing", async () => {
+    delete process.env.OLLAMA_CLOUD_API_KEY;
     const { POST } = await loadRoute();
     const res = await POST(
       makeRequest({ messages: [{ role: "user", content: "hi" }] })
@@ -137,12 +137,15 @@ describe("POST /api/chat — model fallback chain", () => {
     const firstBody = JSON.parse(
       (fetchMock.mock.calls[0][1] as RequestInit).body as string
     );
-    expect(firstBody.model).toBe("openrouter/free");
+    expect(firstBody.model).toBe("deepseek-v4.1-flash");
+    // The reasoning model must run with reasoning disabled or it returns
+    // empty content (see ollama-cloud-client.ts).
+    expect(firstBody.reasoning_effort).toBe("none");
     // Second call falls back to the first non-primary model in FALLBACK_MODELS.
     const secondBody = JSON.parse(
       (fetchMock.mock.calls[1][1] as RequestInit).body as string
     );
-    expect(secondBody.model).not.toBe("openrouter/free");
+    expect(secondBody.model).not.toBe("deepseek-v4.1-flash");
   });
 
   it("falls back on 404 (model not found)", async () => {
@@ -203,7 +206,7 @@ describe("POST /api/chat — happy path", () => {
     expect(res.body).toBeInstanceOf(ReadableStream);
   });
 
-  it("strips unknown / untrusted body fields before forwarding to OpenRouter", async () => {
+  it("strips unknown / untrusted body fields before forwarding upstream", async () => {
     fetchMock.mockResolvedValueOnce(streamResponse());
 
     const { POST } = await loadRoute();
@@ -216,10 +219,10 @@ describe("POST /api/chat — happy path", () => {
     const body = JSON.parse(
       (fetchMock.mock.calls[0][1] as RequestInit).body as string
     );
-    // The route only forwards `model`, `messages`, `stream`, `max_tokens`, `temperature`.
-    expect(body.model).toBe("openrouter/free");
+    // The route only forwards `model`, `messages`, `stream`, `max_tokens`,
+    // `temperature`, `reasoning_effort`.
+    expect(body.model).toBe("deepseek-v4.1-flash");
     expect(body.messages).toHaveLength(2); // system + user
-    expect(body.rogue).toBeUndefined();
     expect(body.rogue).toBeUndefined();
   });
 });

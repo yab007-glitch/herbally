@@ -736,7 +736,7 @@
       "supabase": "Supabase — Database hosting (Canada region). Data stored: herb profiles, interaction data. No personal user data.",
       "vercel": "Vercel — Application hosting. Data stored: none (serverless functions). Vercel may collect anonymous CDN logs.",
       "stripe": "Stripe — Payment processing for donations. HerbAlly never sees or stores your card details.",
-      "openrouter": "OpenRouter — AI processing. Data sent: chat messages you type. Data stored: none (messages are processed and discarded)."
+      "ollamaCloud": "Ollama Cloud — AI processing. Data sent: chat messages you type. Data stored: none (messages are processed and discarded)."
     },
     "cookiesSection": {
       "title": "5. Cookies",
@@ -1035,7 +1035,7 @@
       },
       "ai": {
         "label": "AI Herbalist",
-        "desc": "OpenRouter API costs for the virtual herbalist chatbot",
+        "desc": "Ollama Cloud API costs for the virtual herbalist chatbot",
         "monthly": "$50+"
       },
       "domain": {
@@ -1249,7 +1249,7 @@
     "aboutUpdated": "Regularly updated as new research becomes available",
     "aboutNotFDA": "Not reviewed or approved by FDA",
     "description": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
-    "aboutProvider": "Powered by OpenRouter AI (free model)",
+    "aboutProvider": "Powered by Ollama Cloud AI",
     "medsAutoQuery": "I'm taking: {meds}. Check for any known interactions between these medications and common herbal supplements. Flag any dangerous combinations.",
     "herbAutoQuery": "What are the key drug interactions and safety concerns for {name} ({scientific})? List the most important interactions, severity, and who should avoid it.",
     "emptyStateTitle": "Ask me anything about herbs",

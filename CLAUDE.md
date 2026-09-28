@@ -8,7 +8,7 @@
 - React 19
 - Supabase (PostgreSQL + Auth + Storage)
 - Tailwind CSS 4 + shadcn/ui (base-nova style)
-- OpenRouter API (free or paid models) for Virtual Herbalist — see `src/app/api/chat/route.ts`
+- Ollama Cloud (deepseek-v4.1-flash) for Virtual Herbalist — see `src/app/api/chat/route.ts`
 - External APIs: RxNorm, OpenFDA, PubChem
 
 ## Project Structure
@@ -19,7 +19,7 @@
 - `src/lib/supabase/` - Database client factories
 - Zod v4 schemas (inline in API routes/actions; e.g. /api/chat, /api/donate)
 - `src/lib/types/` - TypeScript types and database schema
-- `src/lib/ai/` - OpenAI client and system prompt
+- `src/lib/ai/` - Ollama Cloud client and system prompt
 - `src/lib/utils/` - Utilities (dosage calculations, RxNorm client)
 - `supabase/migrations/` - SQL migrations
 

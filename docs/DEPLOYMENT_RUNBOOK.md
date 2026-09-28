@@ -34,7 +34,7 @@ git push origin main  # Triggers Vercel deployment
 | `NEXT_PUBLIC_SUPABASE_URL`      | Supabase project URL      | Supabase Dashboard     |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key  | Supabase Dashboard     |
 | `SUPABASE_SERVICE_ROLE_KEY`     | Supabase service role key | Supabase Dashboard     |
-| `OPENROUTER_API_KEY`            | AI provider API key       | OpenRouter             |
+| `OLLAMA_CLOUD_API_KEY`          | AI provider API key       | Ollama Cloud           |
 | `STRIPE_SECRET_KEY`             | Stripe secret key         | Stripe Dashboard       |
 | `STRIPE_WEBHOOK_SECRET`         | Stripe webhook secret     | Stripe CLI / Dashboard |
 | `SENTRY_ORG`                    | Sentry organization       | Sentry Dashboard       |
@@ -43,15 +43,15 @@ git push origin main  # Triggers Vercel deployment
 
 ### Optional
 
-| Variable                   | Description                 | Default                        |
-| -------------------------- | --------------------------- | ------------------------------ |
-| `NEXT_PUBLIC_APP_URL`      | App URL for meta tags       | `https://herbally.app`         |
-| `OPENROUTER_BASE_URL`      | Custom OpenRouter endpoint  | `https://openrouter.ai/api/v1` |
-| `OPENROUTER_MODEL`         | AI model to use             | `openrouter/free`              |
-| `RATE_LIMIT_BACKEND`       | `memory` or `upstash`       | `memory`                       |
-| `UPSTASH_REDIS_REST_URL`   | Redis URL for rate limiting | -                              |
-| `UPSTASH_REDIS_REST_TOKEN` | Redis token                 | -                              |
-| `OPENFDA_BASE_URL`         | Custom FDA API endpoint     | `https://api.fda.gov`          |
+| Variable                   | Description                  | Default                 |
+| -------------------------- | ---------------------------- | ----------------------- |
+| `NEXT_PUBLIC_APP_URL`      | App URL for meta tags        | `https://herbally.app`  |
+| `OLLAMA_CLOUD_URL`         | Custom Ollama Cloud endpoint | `https://ollama.com/v1` |
+| `OLLAMA_CLOUD_MODEL`       | AI model to use              | `deepseek-v4.1-flash`   |
+| `RATE_LIMIT_BACKEND`       | `memory` or `upstash`        | `memory`                |
+| `UPSTASH_REDIS_REST_URL`   | Redis URL for rate limiting  | -                       |
+| `UPSTASH_REDIS_REST_TOKEN` | Redis token                  | -                       |
+| `OPENFDA_BASE_URL`         | Custom FDA API endpoint      | `https://api.fda.gov`   |
 
 ### Setup Instructions
 
@@ -63,12 +63,12 @@ git push origin main  # Triggers Vercel deployment
    # Copy URL and keys from Settings > API
    ```
 
-2. **OpenRouter**
+2. **Ollama Cloud**
 
    ```bash
-   # Create account at https://openrouter.ai
-   # Generate API key from dashboard
-   # Recommended model: anthropic/claude-3-haiku
+   # Create account at https://ollama.com
+   # Generate API key from the dashboard
+   # Recommended model: deepseek-v4.1-flash
    ```
 
 3. **Stripe**
@@ -187,7 +187,7 @@ curl https://herbally.app/api/health
 #   "timestamp": "2026-05-11T...",
 #   "services": {
 #     "supabase": "healthy",
-#     "openrouter": "healthy",
+#     "ai": "healthy",
 #     "stripe": "healthy"
 #   }
 # }
@@ -320,9 +320,9 @@ npm run build
 
 **AI responses slow or failing**
 
-- Check OpenRouter status
-- Verify API key is valid
-- Consider fallback model configuration
+- Check Ollama Cloud status (https://status.ollama.com)
+- Verify `OLLAMA_CLOUD_API_KEY` is valid
+- Consider fallback model configuration (`FALLBACK_MODELS` in chat route)
 
 ---
 
