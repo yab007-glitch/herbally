@@ -26,18 +26,48 @@ import { siteUrl } from "@/lib/seo/site-url";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { cn } from "@/lib/utils";
 
 export const revalidate = 3600;
 
 type Props = { params: Promise<{ herb: string; drug: string }> };
 
-// Pre-render every curated pair for SEO. Pairs added later via admin render
-// on demand (dynamicParams defaults to true) and join the sitemap within
-// the hour via revalidate.
+/**
+ * How many pair pages to pre-render at build time. See the identical constant
+ * in herbs/[slug]: every prerendered page is a burst of Supabase queries, and
+ * the build fires them concurrently at a Free-tier instance. This route is the
+ * more expensive of the two — each render runs getInteractionPair plus
+ * getRelatedPairs, and the latter pulls up to 500 joined rows — and it used to
+ * prerender all 174 pairs, which is where the build's
+ * "canceling statement due to statement timeout" came from.
+ *
+ * Indexability is unaffected: the sitemap lists every curated pair, and the
+ * `revalidate = 3600` above caches each on-demand render, so pairs added later
+ * still get indexed without a rebuild.
+ */
+const PRERENDER_PAIR_LIMIT = 25;
+
+/**
+ * Request-scoped memo around the pair fetch. generateMetadata and the page
+ * component both call it with the same arguments, and neither call is cached,
+ * so every render queried the database twice for the same row. React's cache
+ * dedupes them within one render pass — which is the common case here, since
+ * every prerender and every ISR regeneration starts cold.
+ */
+const loadPair = cache((herb: string, drug: string, locale: string) =>
+  getInteractionPair(herb, drug, locale)
+);
+
+/**
+ * Pre-render the most-visited pairs. The rest render on demand (dynamicParams
+ * defaults to true) and are cached, then join the sitemap within the hour.
+ */
 export async function generateStaticParams() {
   const pairs = await getInteractionPairs();
-  return pairs.map((p) => ({ herb: p.herbSlug, drug: p.drugSlug }));
+  return pairs
+    .slice(0, PRERENDER_PAIR_LIMIT)
+    .map((p) => ({ herb: p.herbSlug, drug: p.drugSlug }));
 }
 
 const SEVERITY_ORDER = [
@@ -134,7 +164,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = siteUrl();
   const locale = await getLocaleFromRequest();
   const fr = locale === "fr";
-  const pair = await getInteractionPair(herb, drug, locale);
+  const pair = await loadPair(herb, drug, locale);
 
   if (!pair) {
     return {
@@ -188,7 +218,7 @@ export default async function InteractionPairPage({ params }: Props) {
   const locale = await getLocaleFromRequest();
   const fr = locale === "fr";
   const t = await getTranslations({ locale });
-  const pair = await getInteractionPair(herb, drug, locale);
+  const pair = await loadPair(herb, drug, locale);
 
   if (!pair) notFound();
 
