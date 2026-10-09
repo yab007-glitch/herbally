@@ -1,0 +1,73 @@
+name: Database backup
+
+# The Supabase project is on the Free plan, which includes no backups. This is
+# the only copy of the database that exists off Supabase's infrastructure.
+#
+# Required repository secrets:
+#   SUPABASE_DB_URL     Postgres connection string — use the SESSION POOLER
+#                       (aws-0-<region>.pooler.supabase.com:5432). The direct
+#                       connection is IPv6-only and GitHub runners have no IPv6.
+#   BACKUP_PASSPHRASE   Encryption passphrase. Not optional in practice: this
+#                       repository is public, and artifacts on a public repo can
+#                       be downloaded by any GitHub user, so an unencrypted dump
+#                       here would publish the database.
+#
+# Both are read-only operations on the database, but SUPABASE_DB_URL grants full
+# access — treat it, and the passphrase, as production credentials.
+
+on:
+  schedule:
+    # 03:17 UTC daily. Off the hour on purpose: scheduled jobs that all fire at
+    # :00 queue behind each other. Also a quiet hour for eu-west-2.
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ubuntu-latest ships postgresql-client 16, but the database is 17.6, and
+      # pg_dump refuses to dump a newer server. Installing the newest client is
+      # the future-proof choice: pg_dump can dump older servers, never newer.
+      - name: Install PostgreSQL client
+        run: |
+          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-17
+          # The PGDG package installs here without shadowing /usr/bin, so put it
+          # on PATH or pg_dump silently resolves back to the 16 from the image.
+          echo "/usr/lib/postgresql/17/bin" >> "$GITHUB_PATH"
+
+      - name: Dump and encrypt
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            echo "::error::SUPABASE_DB_URL secret is not set — see the header of this workflow."
+            exit 1
+          fi
+          ./scripts/backup-db.sh
+          # The plaintext is removed by the script once encrypted; if it is still
+          # here, encryption did not run, and uploading it would publish the
+          # database on a public repository. Fail instead.
+          if compgen -G ".backups/*.dump" > /dev/null; then
+            echo "::error::An unencrypted dump was produced. Refusing to upload it."
+            exit 1
+          fi
+
+      # 7 days of dailies. GitHub Free allows 500 MB of artifact storage and a
+      # compressed dump is ~15-20 MB, so a longer window would exhaust the quota.
+      # A content database changes deliberately; a week is ample to notice.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_number }}
+          path: .backups/*.gpg
+          retention-days: 7
+          if-no-files-found: error
