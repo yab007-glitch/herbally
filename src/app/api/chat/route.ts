@@ -9,6 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import { withTimeout } from "@/lib/utils/with-timeout";
 import {
   isOllamaCloudConfigured,
   getOllamaCloudModel,
@@ -184,11 +185,12 @@ export async function POST(request: NextRequest) {
 
   let verifiedContext = null;
   try {
-    verifiedContext = await fetchVerifiedContext(
-      lastUserMessage,
-      herbContext,
-      medications,
-      locale
+    // Bounded: a HUNG database would otherwise leave this await unsettled
+    // forever — the catch below never fires for a hang, so the route blocked
+    // until Vercel's 60s cap (504) instead of answering without DB grounding.
+    verifiedContext = await withTimeout(
+      fetchVerifiedContext(lastUserMessage, herbContext, medications, locale),
+      "chat_context_fetch"
     );
   } catch (err) {
     logger.error("api_chat_context_fetch_failed", { error: err });
@@ -216,12 +218,25 @@ export async function POST(request: NextRequest) {
     .digest("hex");
   const supabase = getAnonClient();
   if (supabase) {
-    const { data: cached } = await supabase
-      .from("ai_response_cache")
-      .select("response")
-      .eq("prompt_hash", promptHash)
-      .gt("expires_at", new Date().toISOString())
-      .single();
+    // The cache is an optimization, so a hung DB must neither fail the request
+    // nor stall it: bound the lookup and fall through to live generation on
+    // timeout, exactly as a miss would.
+    const cached = await withTimeout(
+      supabase
+        .from("ai_response_cache")
+        .select("response")
+        .eq("prompt_hash", promptHash)
+        .gt("expires_at", new Date().toISOString())
+        .single(),
+      "chat_cache_lookup"
+    )
+      .then((result) => result.data)
+      .catch((err) => {
+        logger.error("api_chat_cache_lookup_failed", {
+          error: err instanceof Error ? err.message : String(err),
+        });
+        return null;
+      });
 
     // Skip empty/whitespace-only cached entries (e.g. from a past failed
     // stream) — treat them as a miss and regenerate live.
@@ -377,8 +392,14 @@ export async function POST(request: NextRequest) {
           // invocation isn't frozen/killed before the DB insert resolves. The
           // guarded text is already enqueued, so the client receives it
           // immediately; only the stream close waits on the cache write.
+          // Bounded too: this write is awaited before the stream closes (M-13),
+          // so a hung DB would hold the stream open instead of letting the
+          // already-delivered answer end.
           if (servedModel === primaryModel)
-            await persistToCache(promptHash, fullContent, locale ?? "en");
+            await withTimeout(
+              persistToCache(promptHash, fullContent, locale ?? "en"),
+              "chat_cache_persist"
+            );
         } catch (err) {
           logger.error("api_chat_finalize_failed", {
             source,
