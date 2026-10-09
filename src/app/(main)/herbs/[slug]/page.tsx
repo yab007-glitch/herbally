@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
@@ -47,32 +48,75 @@ import type {
 import { hasManualMonograph } from "@/lib/data/monographs";
 
 // REMOVED: export const dynamic = "force-dynamic";
-// This enables static generation (SSG) for every herb page at build time.
-// All 1,000+ herb pages are now pre-rendered as static HTML for instant load.
+// A small warm set of herb pages is pre-rendered at build time; every other
+// page renders on demand. See PRERENDER_HERB_LIMIT for why the warm set is
+// small — it is a database-load decision, not an SEO one.
 
 type Props = { params: Promise<{ slug: string }> };
 
 /**
- * Static generation for all published herb pages.
- * Pre-builds top 200 herb pages at deploy time; others render on-demand (cached).
+ * How many herb pages to pre-render at build time. Currently none — see below.
+ *
+ * This route cannot be statically generated while the root layout reads
+ * `headers()` (src/lib/i18n/server-locale.ts): Next classifies any route that
+ * touches a request-time API as dynamic, so the prerendered output is built and
+ * then discarded in favour of a per-request render. The build reports the work
+ * it did — `Generating static pages (464/464)` before this changed — but
+ * .next/prerender-manifest.json registers none of it and the prerender
+ * directories come out empty.
+ *
+ * That made every prerendered page pure cost: ~6 Supabase round trips each, on
+ * 7 build workers at once, against a Free-tier instance of 0.5 GB RAM and 60
+ * connections. At the previous value of 200 that burst is what starved the
+ * instance into "canceling statement due to statement timeout", which took the
+ * database down and /api/chat with it.
+ *
+ * Raise this only once locale comes from route params (an app/[locale]/...
+ * restructure) instead of from headers(). Until then it buys nothing that is
+ * ever served. Indexability never depended on it: the sitemap lists every
+ * published herb, and an on-demand render returns the same HTML a prerendered
+ * one would.
+ */
+const PRERENDER_HERB_LIMIT = 0;
+
+/**
+ * ISR window for this route. Currently inert — a dynamically-rendered route has
+ * nothing to revalidate — but it costs nothing to leave correct, and it becomes
+ * live again the moment PRERENDER_HERB_LIMIT does.
  */
 export const revalidate = 86400; // ISR: regenerate once per day
 
+/**
+ * Request-scoped memo around the herb fetch.
+ *
+ * generateMetadata and the page component both need this row, with identical
+ * arguments. They used to hit the database twice per render — and the heavier
+ * of the two is a `select *` with two nested embeds. Every cold render paid
+ * that twice, and a prerender is always a cold render. React's cache dedupes
+ * the pair within one render pass; unstable_cache below still handles reuse
+ * across requests, and the per-slug tags still drive on-demand revalidation.
+ */
+const loadHerb = cache((slug: string, locale: Locale) =>
+  getHerbBySlug(slug, { locale, skipCookies: true })
+);
+
 export async function generateStaticParams() {
+  // Return before querying: a limit of zero should cost zero database work, and
+  // this build runs against the same 0.5 GB instance that serves production.
+  if (PRERENDER_HERB_LIMIT === 0) return [];
+
   const supabase = getAnonClient();
   if (!supabase) {
     logger.warn("generateStaticParams: Supabase not available at build time");
     return [];
   }
 
-  // Pre-render top 200 most-viewed herbs at build time for fast deploy.
-  // Remaining ~2,500 herbs render on-demand on first visit (cached as static HTML).
   const { data: herbs } = await supabase
     .from("herbs")
     .select("slug")
     .eq("is_published", true)
     .order("view_count", { ascending: false })
-    .limit(200);
+    .limit(PRERENDER_HERB_LIMIT);
 
   return (herbs ?? []).map((h) => ({ slug: h.slug }));
 }
@@ -83,7 +127,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const getHerbMetaCached = unstable_cache(
     async (herbSlug: string, locale: string) => {
-      return getHerbBySlug(herbSlug, { locale, skipCookies: true });
+      return loadHerb(herbSlug, locale as Locale);
     },
     ["herb-meta-" + slug],
     { revalidate: 86400, tags: ["herb-meta-" + slug] }
@@ -222,7 +266,7 @@ export default async function HerbDetailPage({ params }: Props) {
 
   const getHerbCached = unstable_cache(
     async (herbSlug: string, locale: Locale) => {
-      return getHerbBySlug(herbSlug, { locale, skipCookies: true });
+      return loadHerb(herbSlug, locale);
     },
     ["herb-" + slug],
     { revalidate: 86400, tags: ["herb-" + slug] }
@@ -238,6 +282,11 @@ export default async function HerbDetailPage({ params }: Props) {
 
   after(async () => {
     if (!herb.id) return;
+    // Prerendering is not a visit. Without this guard the build wrote a
+    // view-count row for every pre-rendered page — and worse, it counted ISR
+    // regenerations as views, so "most-viewed" drifted toward whichever pages
+    // the cache happened to expire. Tracked visits only.
+    if (process.env.NEXT_PHASE === "phase-production-build") return;
     // L-2 (audit 2026-06-22): increment_herb_view EXECUTE was revoked from
     // anon/authenticated (migration 00046) to close a direct-RPC view-count
     // inflation vector. Call it via the service role; the service key may be
@@ -290,8 +339,12 @@ export default async function HerbDetailPage({ params }: Props) {
     { revalidate: 3600, tags: [`pubmed-sheet-${slug}`] }
   );
 
-  const dbMonograph = await getMonographCached(slug);
-  const pubmedSheet = await getPubmedSheetCached(slug);
+  // Independent reads — firing them together removes a serial round trip from
+  // every cold render (i.e. from every prerender and every ISR regeneration).
+  const [dbMonograph, pubmedSheet] = await Promise.all([
+    getMonographCached(slug),
+    getPubmedSheetCached(slug),
+  ]);
 
   // Parse provenance to determine if this herb's content has been verified
   const provenance = parseProvenance(

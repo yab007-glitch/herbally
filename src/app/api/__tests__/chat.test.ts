@@ -21,8 +21,11 @@ const rateLimitMock = vi.fn();
 vi.mock("@/lib/rate-limit", () => ({
   rateLimit: (...args: unknown[]) => rateLimitMock(...args),
 }));
+// Defaults to null (no DB) so the existing suites exercise the no-cache path;
+// the "hung database" suite swaps in a never-settling client.
+const getAnonClientMock = vi.fn().mockReturnValue(null);
 vi.mock("@/lib/supabase/anonymous", () => ({
-  getAnonClient: vi.fn().mockReturnValue(null),
+  getAnonClient: (...args: unknown[]) => getAnonClientMock(...args),
 }));
 
 async function loadRoute() {
@@ -72,12 +75,63 @@ function streamResponse(): Response {
 
 const ORIGINAL_ENV = { ...process.env };
 
+/**
+ * A Supabase-like client whose query builder NEVER settles.
+ *
+ * This reproduces the 2026-10-08 production outage: the instance accepted
+ * requests (a bad API key was rejected at the edge in ~60ms) but no response
+ * ever came back, so every query hung. supabase-js configures no request
+ * timeout, so `await` waited forever. A thenable whose `then` never calls back
+ * mirrors that exactly — it neither resolves nor rejects.
+ */
+function hangingClient() {
+  const query: Record<string, unknown> = {};
+  const chain = () => query;
+  for (const method of [
+    "from",
+    "select",
+    "eq",
+    "neq",
+    "gt",
+    "gte",
+    "lt",
+    "lte",
+    "or",
+    "and",
+    "ilike",
+    "like",
+    "is",
+    "in",
+    "not",
+    "limit",
+    "order",
+    "range",
+    "single",
+    "maybeSingle",
+    "insert",
+    "update",
+    "upsert",
+    "delete",
+    "match",
+    "filter",
+    "contains",
+    "textSearch",
+    "returns",
+  ]) {
+    query[method] = chain;
+  }
+  query.then = () => new Promise(() => {});
+  return query;
+}
+
 beforeEach(() => {
   process.env.OLLAMA_CLOUD_API_KEY = "test-key";
   delete process.env.OLLAMA_CLOUD_MODEL;
   delete process.env.OLLAMA_CLOUD_URL;
   fetchMock.mockReset();
   rateLimitMock.mockReset();
+  getAnonClientMock.mockReset();
+  getAnonClientMock.mockReturnValue(null);
   rateLimitMock.mockResolvedValue({
     success: true,
     limit: 20,
@@ -224,5 +278,83 @@ describe("POST /api/chat — happy path", () => {
     expect(body.model).toBe("deepseek-v4.1-flash");
     expect(body.messages).toHaveLength(2); // system + user
     expect(body.rogue).toBeUndefined();
+  });
+});
+
+/**
+ * Regression for the 2026-10-08 outage: Supabase accepted requests but never
+ * answered. The route's DB calls had no timeout, so those awaits never
+ * settled — the `try/catch` fallbacks around them never ran (a hang is not an
+ * exception) and the route rode Vercel's maxDuration into a 504 without ever
+ * calling the model. Chat stayed dead for as long as the database did.
+ */
+describe("POST /api/chat — hung database", () => {
+  beforeEach(() => {
+    // Keep the bound small so the test stays fast; production default is 3000ms.
+    process.env.CHAT_DB_TIMEOUT_MS = "30";
+  });
+
+  it("still answers from the model when Supabase never responds", async () => {
+    getAnonClientMock.mockReturnValue(hangingClient());
+    fetchMock.mockResolvedValue(streamResponse());
+
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
+
+    // The request completes instead of hanging, and the model was reached.
+    expect(res.status).toBe(200);
+    expect(res.body).toBeInstanceOf(ReadableStream);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("stays bounded rather than stalling on the unbounded await", async () => {
+    getAnonClientMock.mockReturnValue(hangingClient());
+    fetchMock.mockResolvedValue(streamResponse());
+
+    const started = Date.now();
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
+    await res.text();
+
+    expect(res.status).toBe(200);
+    // Two bounded awaits (context fetch + cache lookup) at 30ms each. Loose
+    // enough not to flake on a slow CI box, tight enough to fail if either
+    // await is left unbounded.
+    expect(Date.now() - started).toBeLessThan(2000);
+  });
+
+  it("still serves a cache hit when the database is healthy", async () => {
+    // Guards the opposite direction — bounding the lookup must not break the
+    // normal cache path.
+    getAnonClientMock.mockReturnValue({
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            gt: () => ({
+              single: () =>
+                Promise.resolve({
+                  data: { response: "A cached answer, long enough to serve." },
+                  error: null,
+                }),
+            }),
+          }),
+        }),
+      }),
+    });
+    fetchMock.mockResolvedValue(streamResponse());
+
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
+
+    expect(res.status).toBe(200);
+    expect((await res.text()).length).toBeGreaterThan(0);
+    // Served from cache — the model was never called.
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
