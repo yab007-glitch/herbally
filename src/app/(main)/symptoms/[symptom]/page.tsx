@@ -10,7 +10,10 @@ import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { notFound } from "next/navigation";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 
-export const revalidate = 3600;
+// Cannot be static: getLocaleFromRequest() reads headers() and the root layout
+// calls it. An ISR window here makes any symptom slug outside SYMPTOM_SLUGS a
+// 500 instead of the notFound() this route intends — see herbs/[slug]/page.tsx.
+export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ symptom: string }> };
 

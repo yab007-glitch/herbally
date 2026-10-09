@@ -47,44 +47,38 @@ import type {
 } from "@/components/herbs/pubmed-monograph-sheet";
 import { hasManualMonograph } from "@/lib/data/monographs";
 
-// REMOVED: export const dynamic = "force-dynamic";
-// A small warm set of herb pages is pre-rendered at build time; every other
-// page renders on demand. See PRERENDER_HERB_LIMIT for why the warm set is
-// small — it is a database-load decision, not an SEO one.
+// This route cannot be statically generated: the root layout reads headers()
+// (via getLocaleFromRequest), so every render is dynamic. Declaring ISR here
+// instead — which 5a8825b did, swapping this line for generateStaticParams +
+// revalidate — is a 500, not a slower page: Next tries to generate slugs that
+// are not in the prerendered set on demand, as static generation, and the
+// headers() call throws inside it. Restored to what it was before that commit.
+export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
 
 /**
- * How many herb pages to pre-render at build time. Currently none — see below.
+ * How many herb pages to pre-render at build time. Zero, and it stays zero —
+ * though not for the reason an earlier revision of this comment gave.
  *
- * This route cannot be statically generated while the root layout reads
- * `headers()` (src/lib/i18n/server-locale.ts): Next classifies any route that
- * touches a request-time API as dynamic, so the prerendered output is built and
- * then discarded in favour of a per-request render. The build reports the work
- * it did — `Generating static pages (464/464)` before this changed — but
- * .next/prerender-manifest.json registers none of it and the prerender
- * directories come out empty.
+ * That revision claimed prerendered output was built and then discarded because
+ * `headers()` in the root layout forces dynamic rendering. That was wrong, and
+ * acting on it caused an outage on 2026-10-08: Next does not discard ISR output,
+ * it serves it from the prerender cache. Those pages were the herb pages that
+ * *worked*. Setting this to 0 removed the working set, so the 500 described
+ * above — previously confined to slugs outside the prerendered set — applied to
+ * every herb page at once.
  *
- * That made every prerendered page pure cost: ~6 Supabase round trips each, on
- * 7 build workers at once, against a Free-tier instance of 0.5 GB RAM and 60
- * connections. At the previous value of 200 that burst is what starved the
- * instance into "canceling statement due to statement timeout", which took the
- * database down and /api/chat with it.
- *
- * Raise this only once locale comes from route params (an app/[locale]/...
- * restructure) instead of from headers(). Until then it buys nothing that is
- * ever served. Indexability never depended on it: the sitemap lists every
- * published herb, and an on-demand render returns the same HTML a prerendered
- * one would.
+ * With `dynamic = "force-dynamic"` in force, generateStaticParams is not used
+ * for prerendering at all, so this is dead code either way. It is kept rather
+ * than deleted to make the intent legible if the route ever becomes static
+ * again — which requires moving locale out of headers() first.
  */
 const PRERENDER_HERB_LIMIT = 0;
 
-/**
- * ISR window for this route. Currently inert — a dynamically-rendered route has
- * nothing to revalidate — but it costs nothing to leave correct, and it becomes
- * live again the moment PRERENDER_HERB_LIMIT does.
- */
-export const revalidate = 86400; // ISR: regenerate once per day
+// No `revalidate`. An ISR window on this route is what made unlisted slugs 500,
+// and it is inert under force-dynamic anyway. Re-adding it means re-introducing
+// the bug unless locale has moved out of headers() by then.
 
 /**
  * Request-scoped memo around the herb fetch.
