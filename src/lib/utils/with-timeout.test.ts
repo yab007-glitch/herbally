@@ -30,9 +30,9 @@ describe("withTimeout", () => {
 
   it("names the label and the bound it exceeded", async () => {
     const hanging = new Promise<never>(() => {});
-    await expect(
-      withTimeout(hanging, "chat_cache_lookup", 20)
-    ).rejects.toThrow("chat_cache_lookup timed out after 20ms");
+    await expect(withTimeout(hanging, "chat_cache_lookup", 20)).rejects.toThrow(
+      "chat_cache_lookup timed out after 20ms"
+    );
   });
 
   it("uses CHAT_DB_TIMEOUT_MS as the default bound", async () => {
@@ -52,9 +52,9 @@ describe("withTimeout", () => {
     const hanging = new Promise<never>(() => {});
 
     const started = Date.now();
-    await expect(
-      withTimeout(hanging, "probe", 20)
-    ).rejects.toBeInstanceOf(TimeoutError);
+    await expect(withTimeout(hanging, "probe", 20)).rejects.toBeInstanceOf(
+      TimeoutError
+    );
     // Explicit bound still wins over the malformed env value.
     expect(Date.now() - started).toBeLessThan(1000);
   });
