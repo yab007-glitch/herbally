@@ -34,35 +34,38 @@ export const revalidate = 3600;
 type Props = { params: Promise<{ herb: string; drug: string }> };
 
 /**
- * How many pair pages to pre-render at build time. See the identical constant
- * in herbs/[slug]: every prerendered page is a burst of Supabase queries, and
- * the build fires them concurrently at a Free-tier instance. This route is the
- * more expensive of the two — each render runs getInteractionPair plus
- * getRelatedPairs, and the latter pulls up to 500 joined rows — and it used to
- * prerender all 174 pairs, which is where the build's
- * "canceling statement due to statement timeout" came from.
+ * How many pair pages to pre-render at build time. Currently none — same reason
+ * as PRERENDER_HERB_LIMIT in herbs/[slug]: the root layout reads `headers()`, so
+ * Next renders this route dynamically and discards anything prerendered.
+ *
+ * This route is the more expensive of the two to prerender. Each render runs
+ * getInteractionPair plus getRelatedPairs, and the latter pulls up to 500 joined
+ * rows, so the previous behaviour of prerendering all 174 pairs is where the
+ * build's "canceling statement due to statement timeout" came from.
  *
  * Indexability is unaffected: the sitemap lists every curated pair, so pairs
  * added later still get indexed without a rebuild.
  */
-const PRERENDER_PAIR_LIMIT = 25;
+const PRERENDER_PAIR_LIMIT = 0;
 
 /**
  * Request-scoped memo around the pair fetch. generateMetadata and the page
  * component both call it with the same arguments, and neither call is cached,
  * so every render queried the database twice for the same row. React's cache
- * dedupes them within one render pass — which is the common case here, since
- * every prerender and every ISR regeneration starts cold.
+ * dedupes them within one render pass — which is every render here, since this
+ * route is never served from a prerender.
  */
 const loadPair = cache((herb: string, drug: string, locale: string) =>
   getInteractionPair(herb, drug, locale)
 );
 
 /**
- * Pre-render the most-visited pairs. The rest render on demand (dynamicParams
- * defaults to true) and are cached, then join the sitemap within the hour.
+ * No prerendering for now — see PRERENDER_PAIR_LIMIT. Every URL renders on
+ * demand (dynamicParams defaults to true).
  */
 export async function generateStaticParams() {
+  if (PRERENDER_PAIR_LIMIT === 0) return [];
+
   const pairs = await getInteractionPairs();
   return pairs
     .slice(0, PRERENDER_PAIR_LIMIT)

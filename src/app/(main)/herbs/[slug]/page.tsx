@@ -55,26 +55,34 @@ import { hasManualMonograph } from "@/lib/data/monographs";
 type Props = { params: Promise<{ slug: string }> };
 
 /**
- * How many herb pages to pre-render at build time.
+ * How many herb pages to pre-render at build time. Currently none — see below.
  *
- * Deliberately small. Each prerendered page costs ~6 Supabase round trips (see
- * the cached fetchers below) and the build renders pages concurrently, so N
- * prerendered pages means roughly N x 6 queries landing in the same few
- * seconds. At the previous value of 200 that was ~1,200 queries fired at a
- * Free-tier instance (0.5 GB RAM, 60 connections) — enough to starve it into
- * "canceling statement due to statement timeout", which is what took the
- * database down, and with it /api/chat, on deploys.
+ * This route cannot be statically generated while the root layout reads
+ * `headers()` (src/lib/i18n/server-locale.ts): Next classifies any route that
+ * touches a request-time API as dynamic, so the prerendered output is built and
+ * then discarded in favour of a per-request render. The build reports the work
+ * it did — `Generating static pages (464/464)` before this changed — but
+ * .next/prerender-manifest.json registers none of it and the prerender
+ * directories come out empty.
  *
- * This is not what makes the pages indexable: the sitemap lists every published
- * herb, and a pre-rendered page and an on-demand one return identical HTML. So
- * lowering this changes WHEN a page is first rendered, never whether a crawler
- * can reach it. Raise it if the instance ever gets more headroom.
+ * That made every prerendered page pure cost: ~6 Supabase round trips each, on
+ * 7 build workers at once, against a Free-tier instance of 0.5 GB RAM and 60
+ * connections. At the previous value of 200 that burst is what starved the
+ * instance into "canceling statement due to statement timeout", which took the
+ * database down and /api/chat with it.
+ *
+ * Raise this only once locale comes from route params (an app/[locale]/...
+ * restructure) instead of from headers(). Until then it buys nothing that is
+ * ever served. Indexability never depended on it: the sitemap lists every
+ * published herb, and an on-demand render returns the same HTML a prerendered
+ * one would.
  */
-const PRERENDER_HERB_LIMIT = 25;
+const PRERENDER_HERB_LIMIT = 0;
 
 /**
- * Static generation for the most-viewed herb pages only; every other herb
- * renders on demand and is cached. See PRERENDER_HERB_LIMIT.
+ * ISR window for this route. Currently inert — a dynamically-rendered route has
+ * nothing to revalidate — but it costs nothing to leave correct, and it becomes
+ * live again the moment PRERENDER_HERB_LIMIT does.
  */
 export const revalidate = 86400; // ISR: regenerate once per day
 
@@ -93,6 +101,10 @@ const loadHerb = cache((slug: string, locale: Locale) =>
 );
 
 export async function generateStaticParams() {
+  // Return before querying: a limit of zero should cost zero database work, and
+  // this build runs against the same 0.5 GB instance that serves production.
+  if (PRERENDER_HERB_LIMIT === 0) return [];
+
   const supabase = getAnonClient();
   if (!supabase) {
     logger.warn("generateStaticParams: Supabase not available at build time");
