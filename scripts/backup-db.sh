@@ -12,7 +12,7 @@
 #   SUPABASE_DB_URL     Postgres connection string. Use the SESSION POOLER —
 #                       GitHub runners have no IPv6, and Supabase's direct
 #                       connection is IPv6-only. It looks like:
-#                         postgresql://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres
+#                         postgresql://postgres.<project-ref>:<password>@aws-1-<region>.pooler.supabase.com:5432/postgres
 #                       Dashboard -> Project Settings -> Database -> Connection string
 #   BACKUP_PASSPHRASE   Optional; if set, the dump is gpg-encrypted and the
 #                       plaintext is removed. REQUIRED in CI: this repository is

@@ -4,9 +4,11 @@ name: Database backup
 # the only copy of the database that exists off Supabase's infrastructure.
 #
 # Required repository secrets:
-#   SUPABASE_DB_URL     Postgres connection string — use the SESSION POOLER
-#                       (aws-0-<region>.pooler.supabase.com:5432). The direct
-#                       connection is IPv6-only and GitHub runners have no IPv6.
+#   SUPABASE_DB_URL     Postgres connection string — use the SESSION POOLER,
+#                       port 5432 (aws-1-eu-west-2.pooler.supabase.com:5432).
+#                       Two traps: the dashboard shows the TRANSACTION pooler
+#                       on 6543 first, which pg_dump cannot use, and the direct
+#                       connection is IPv6-only, which GitHub runners lack.
 #   BACKUP_PASSPHRASE   Encryption passphrase. Not optional in practice: this
 #                       repository is public, and artifacts on a public repo can
 #                       be downloaded by any GitHub user, so an unencrypted dump
@@ -69,5 +71,11 @@ jobs:
         with:
           name: db-backup-${{ github.run_number }}
           path: .backups/*.gpg
+          # The script writes to `.backups`, and upload-artifact silently skips
+          # hidden paths by default — it reports "No files were found" and the
+          # step then fails on if-no-files-found, which looks like a broken dump
+          # when the dump in fact succeeded. Without this the workflow can never
+          # upload anything.
+          include-hidden-files: true
           retention-days: 7
           if-no-files-found: error
