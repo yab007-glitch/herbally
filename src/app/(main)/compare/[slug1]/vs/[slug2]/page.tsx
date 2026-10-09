@@ -16,7 +16,10 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 
-export const revalidate = 3600;
+// Cannot be static: getLocaleFromRequest() reads headers() and the root layout
+// calls it. An ISR window here makes any comparison outside POPULAR_COMPARISONS
+// a 500 instead of a render — see the note in herbs/[slug]/page.tsx.
+export const dynamic = "force-dynamic";
 
 /**
  * Canonical list of popular comparisons. Exported so the sitemap derives its

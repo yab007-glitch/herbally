@@ -29,22 +29,25 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { cn } from "@/lib/utils";
 
-export const revalidate = 3600;
+// Same constraint as herbs/[slug]: the root layout reads headers(), so this
+// route can never be statically generated. An ISR window here turns any pair
+// outside the prerendered set into a 500 rather than a render.
+export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ herb: string; drug: string }> };
 
 /**
- * How many pair pages to pre-render at build time. Currently none — same reason
- * as PRERENDER_HERB_LIMIT in herbs/[slug]: the root layout reads `headers()`, so
- * Next renders this route dynamically and discards anything prerendered.
+ * How many pair pages to pre-render at build time. Zero — dead code under
+ * force-dynamic, kept so the intent survives.
  *
- * This route is the more expensive of the two to prerender. Each render runs
- * getInteractionPair plus getRelatedPairs, and the latter pulls up to 500 joined
- * rows, so the previous behaviour of prerendering all 174 pairs is where the
- * build's "canceling statement due to statement timeout" came from.
+ * An earlier revision of this comment claimed prerendering was built and then
+ * discarded because the root layout reads headers(). That was wrong and acting
+ * on it caused the 2026-10-08 outage; see PRERENDER_HERB_LIMIT in herbs/[slug]
+ * for the full correction. This route is the more expensive of the two to
+ * generate — getInteractionPair plus getRelatedPairs, the latter pulling up to
+ * 500 joined rows — so it is also the one that starved the Free-tier instance.
  *
- * Indexability is unaffected: the sitemap lists every curated pair, so pairs
- * added later still get indexed without a rebuild.
+ * Indexability never depended on this: the sitemap lists every curated pair.
  */
 const PRERENDER_PAIR_LIMIT = 0;
 
