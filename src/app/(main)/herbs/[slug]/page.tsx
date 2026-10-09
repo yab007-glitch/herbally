@@ -48,9 +48,8 @@ import type {
 import { hasManualMonograph } from "@/lib/data/monographs";
 
 // REMOVED: export const dynamic = "force-dynamic";
-// This enables static generation (SSG) with ISR for herb pages: a small warm
-// set is pre-rendered at build time and every other page renders on demand,
-// then caches as static HTML. See PRERENDER_HERB_LIMIT for why the warm set is
+// A small warm set of herb pages is pre-rendered at build time; every other
+// page renders on demand. See PRERENDER_HERB_LIMIT for why the warm set is
 // small — it is a database-load decision, not an SEO one.
 
 type Props = { params: Promise<{ slug: string }> };
@@ -66,11 +65,10 @@ type Props = { params: Promise<{ slug: string }> };
  * "canceling statement due to statement timeout", which is what took the
  * database down, and with it /api/chat, on deploys.
  *
- * This is not what makes the pages indexable. The sitemap lists every published
- * herb, and `revalidate = 86400` below means each on-demand render is cached as
- * static HTML and served from the CDN from then on. Lowering this changes WHEN
- * a page is first rendered, never whether a crawler can reach it. Raise it if
- * the instance ever gets more headroom.
+ * This is not what makes the pages indexable: the sitemap lists every published
+ * herb, and a pre-rendered page and an on-demand one return identical HTML. So
+ * lowering this changes WHEN a page is first rendered, never whether a crawler
+ * can reach it. Raise it if the instance ever gets more headroom.
  */
 const PRERENDER_HERB_LIMIT = 25;
 

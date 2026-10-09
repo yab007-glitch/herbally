@@ -42,9 +42,8 @@ type Props = { params: Promise<{ herb: string; drug: string }> };
  * prerender all 174 pairs, which is where the build's
  * "canceling statement due to statement timeout" came from.
  *
- * Indexability is unaffected: the sitemap lists every curated pair, and the
- * `revalidate = 3600` above caches each on-demand render, so pairs added later
- * still get indexed without a rebuild.
+ * Indexability is unaffected: the sitemap lists every curated pair, so pairs
+ * added later still get indexed without a rebuild.
  */
 const PRERENDER_PAIR_LIMIT = 25;
 
