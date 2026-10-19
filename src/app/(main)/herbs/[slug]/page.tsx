@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { after } from "next/server";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
@@ -23,7 +22,6 @@ import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
@@ -38,6 +36,7 @@ import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
+import { ViewTracker } from "@/components/herbs/view-tracker";
 import { GovSources } from "@/components/herbs/gov-sources";
 import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
 import { PubmedMonographSheet } from "@/components/herbs/pubmed-monograph-sheet";
@@ -274,25 +273,11 @@ export default async function HerbDetailPage({ params }: Props) {
 
   const herb = result.data;
 
-  after(async () => {
-    if (!herb.id) return;
-    // Prerendering is not a visit. Without this guard the build wrote a
-    // view-count row for every pre-rendered page — and worse, it counted ISR
-    // regenerations as views, so "most-viewed" drifted toward whichever pages
-    // the cache happened to expire. Tracked visits only.
-    if (process.env.NEXT_PHASE === "phase-production-build") return;
-    // L-2 (audit 2026-06-22): increment_herb_view EXECUTE was revoked from
-    // anon/authenticated (migration 00046) to close a direct-RPC view-count
-    // inflation vector. Call it via the service role; the service key may be
-    // absent in local dev, in which case we silently skip — view tracking is
-    // non-critical and must never break the page render.
-    try {
-      const admin = createAdminClient();
-      await admin.rpc("increment_herb_view", { herb_id: herb.id });
-    } catch {
-      /* service role unavailable — skip view-count increment */
-    }
-  });
+  // View tracking runs from a client beacon (ViewTracker) instead of a
+  // server-side `after()` hook. The old hook fired once per dynamic render —
+  // including crawlers, prefetches and repeat views — and drove ~79k UPDATEs
+  // against a Nano instance's Disk IO budget. The beacon dedupes per
+  // visitor/slug/day and writes through a slug-addressed RPC.
 
   // Define cached fetcher
   const getMonographCached = unstable_cache(
@@ -536,6 +521,7 @@ export default async function HerbDetailPage({ params }: Props) {
 
   return (
     <div className="space-y-8">
+      <ViewTracker slug={slug} />
       <WebPageSchema
         title={`${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`}
         description={herb.description ?? `Learn about ${herb.name}`}

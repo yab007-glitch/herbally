@@ -48,9 +48,12 @@ export async function getHerbs(params: {
     const from = (page - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
+    // `estimated` avoids a full COUNT(*) on every paginated request. The list
+    // page only needs a page count, and exact counts were a measurable share of
+    // DB time on the Nano instance.
     let query = supabase
       .from("herbs")
-      .select("*, herb_categories(*)", { count: "exact" })
+      .select("*, herb_categories(*)", { count: "estimated" })
       .eq("is_published", true)
       .range(from, to);
 
