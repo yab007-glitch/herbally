@@ -21,6 +21,25 @@ export async function updateSession(request: NextRequest) {
     };
   }
 
+  // Fast path: without a Supabase auth cookie there is no session to refresh.
+  // Calling auth.getUser() anyway costs an outbound request and CPU on every
+  // anonymous page view (the overwhelming majority of traffic, including
+  // crawlers) and can never change the response. Supabase SSR names its
+  // cookies `sb-<project-ref>-auth-token`, chunked as `.0`, `.1`, …
+  const hasAuthCookie = request.cookies
+    .getAll()
+    .some(
+      (cookie) =>
+        cookie.name.startsWith("sb-") && cookie.name.includes("-auth-token")
+    );
+  if (!hasAuthCookie) {
+    return {
+      supabaseResponse: NextResponse.next({ request }),
+      user: null,
+      supabase: null,
+    };
+  }
+
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     // Match admin/server clients: a hung Supabase instance must fail this
     // request fast instead of stalling the proxy invocation until the

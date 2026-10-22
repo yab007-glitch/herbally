@@ -4,13 +4,22 @@ import { logger } from "@/lib/utils/logger";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 
+// The health check is consumed by uptime monitors and must never be cached:
+// a stale "healthy" body would hide an outage, and a cached 503 would outlive
+// the recovery. This is an explicit contract, not an accident of dynamic
+// rendering.
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   // Rate limit health endpoint to prevent abuse
   const { success } = await rateLimit(getClientIP(request), 30, 60_000);
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests" },
-      { status: 429, headers: { "Retry-After": "60" } }
+      {
+        status: 429,
+        headers: { "Retry-After": "60", "Cache-Control": "no-store" },
+      }
     );
   }
   const checks: Record<
@@ -132,6 +141,9 @@ export async function GET(request: NextRequest) {
       version: process.env.npm_package_version || "0.1.0",
       timestamp: new Date().toISOString(),
     },
-    { status: status === "unhealthy" ? 503 : 200 }
+    {
+      status: status === "unhealthy" ? 503 : 200,
+      headers: { "Cache-Control": "no-store, max-age=0" },
+    }
   );
 }

@@ -38,8 +38,8 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   // Health app: never send default PII (IP, cookies, user agent fingerprint).
   sendDefaultPii: false,
-  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
-  replaysSessionSampleRate: 0.1,
+  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.05,
+  replaysSessionSampleRate: 0.05,
   replaysOnErrorSampleRate: 1.0,
   enabled: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
   beforeSend: scrubEvent,
