@@ -20,24 +20,30 @@ import type {
 } from "@/lib/types";
 
 /**
- * Read the locale from the x-locale request header (set by the proxy from
- * the URL). This is the single source of truth — the cookie can drift from
- * the URL, causing French-URL visitors to get English herb data.
+ * Resolve the locale for a data read.
+ *
+ * Callers rendering a page pass the locale explicitly (read from the
+ * `[locale]` root param). Server actions invoked from Client Components
+ * cannot read root params, so they fall back to the `x-locale` header that
+ * the proxy sets from the URL.
  */
-async function getLocale(): Promise<string> {
-  return getLocaleFromRequest();
+async function resolveLocale(locale?: string): Promise<string> {
+  return locale ?? getLocaleFromRequest();
 }
 
 const ITEMS_PER_PAGE = 20;
 const MAX_QUERY_LENGTH = 200;
 
-export async function getHerbs(params: {
-  query?: string;
-  category?: string;
-  pregnancySafe?: boolean;
-  nursingSafe?: boolean;
-  page?: number;
-}): Promise<ActionResponse<{ herbs: HerbWithCategory[]; total: number }>> {
+export async function getHerbs(
+  params: {
+    query?: string;
+    category?: string;
+    pregnancySafe?: boolean;
+    nursingSafe?: boolean;
+    page?: number;
+  },
+  locale?: string
+): Promise<ActionResponse<{ herbs: HerbWithCategory[]; total: number }>> {
   try {
     const supabase = await createClient();
     // Clamp defensively: a negative/NaN page produces a negative PostgREST
@@ -150,9 +156,9 @@ export async function getHerbs(params: {
       return { success: false, error: error.message };
     }
 
-    const locale = await getLocale();
+    const resolvedLocale = await resolveLocale(locale);
     const localizedHerbs = (data || []).map((h) =>
-      localizeHerb(h as HerbWithCategory, locale)
+      localizeHerb(h as HerbWithCategory, resolvedLocale)
     );
     return {
       success: true,
@@ -205,7 +211,7 @@ export async function getHerbBySlug(
     }
 
     const locale =
-      opts?.locale ?? (opts?.skipCookies ? "en" : await getLocale());
+      opts?.locale ?? (opts?.skipCookies ? "en" : await resolveLocale());
     const herb = localizeHerb(data as HerbWithInteractions, locale);
     const interactions = (herb.drug_interactions || []).map((ix) =>
       localizeInteraction(ix, locale)
@@ -223,7 +229,7 @@ export async function getHerbBySlug(
   }
 }
 
-export async function getHerbCategories() {
+export async function getHerbCategories(locale?: string) {
   try {
     const supabase = await createClient();
 
@@ -239,12 +245,12 @@ export async function getHerbCategories() {
       return { success: false, error: error.message };
     }
 
-    const locale = await getLocale();
+    const resolvedLocale = await resolveLocale(locale);
     const localized = (data || []).map((cat) => ({
       ...cat,
       name: localizeCategoryName(
         cat as HerbCategory & { name_fr?: string | null },
-        locale
+        resolvedLocale
       ),
     }));
     return { success: true, data: localized };
@@ -261,9 +267,9 @@ export async function getHerbCategories() {
  * `.order("name")` offset so the index is stable. Replaces the old client-side
  * localStorage approach where the banner was never populated and never showed.
  */
-export async function getDailyHerb(): Promise<
-  ActionResponse<{ slug: string; name: string; benefit: string }>
-> {
+export async function getDailyHerb(
+  locale?: string
+): Promise<ActionResponse<{ slug: string; name: string; benefit: string }>> {
   try {
     const supabase = await createClient();
 
@@ -301,8 +307,8 @@ export async function getDailyHerb(): Promise<
       return { success: false, error: "Failed to fetch daily herb" };
     }
 
-    const locale = await getLocale();
-    const localized = localizeHerb(data as Herb, locale);
+    const resolvedLocale = await resolveLocale(locale);
+    const localized = localizeHerb(data as Herb, resolvedLocale);
     const uses = localized.traditional_uses ?? [];
     const benefit =
       uses[0] ||
@@ -408,7 +414,7 @@ export async function searchHerbs(
       .overlaps("symptom_keywords", expandedKeywords)
       .limit(10);
 
-    const locale = await getLocale();
+    const locale = await resolveLocale();
     if (keywordResults && keywordResults.length > 0) {
       const evidenceOrder: Record<string, number> = {
         A: 0,

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Sun, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { getDailyHerb } from "@/lib/actions/herbs";
 
 /**
@@ -11,11 +11,11 @@ import { getDailyHerb } from "@/lib/actions/herbs";
  * value that was never written and therefore never displayed anything.
  */
 export async function DailyHerbBanner() {
-  const result = await getDailyHerb();
+  const locale = await getLocale();
+  const result = await getDailyHerb(locale);
   if (!result.success || !result.data) return null;
 
   const { slug, name, benefit } = result.data;
-  const locale = await getLocaleFromRequest();
   const t = await getTranslations({ locale, namespace: "herbs" });
 
   return (

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getLocaleFromRequest } from "./server-locale";
+import { getLocale } from "./page-locale";
 import { getTranslations } from "next-intl/server";
 import { buildAlternateUrls } from "./routing";
 import type { Locale } from "./config";
@@ -19,15 +19,15 @@ export interface PageMetaOptions {
 
 /**
  * Build locale-aware page metadata. Title/description come from the `meta`
- * dictionary in the current locale (derived from the URL via the proxy
- * header), and canonical/hreflang alternates are generated from the path.
+ * dictionary in the current locale (read from the `[locale]` root param), and
+ * canonical/hreflang alternates are generated from the public path.
  */
 export async function buildPageMetadata({
   titleKey,
   descKey,
   path,
 }: PageMetaOptions): Promise<Metadata> {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "meta" });
   const title = t(titleKey);
   const description = descKey ? t(descKey) : t("appDescription");

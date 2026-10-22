@@ -10,6 +10,71 @@ import { getClientIP } from "@/lib/utils/client-ip";
 // rendering.
 export const dynamic = "force-dynamic";
 
+const OLLAMA_PROBE_TTL_MS = 5 * 60_000;
+
+type Check = {
+  status: string;
+  latency?: number;
+  error?: string;
+};
+
+/**
+ * Cached AI-provider probe.
+ *
+ * Two properties matter here:
+ *
+ * 1. The result is reused for five minutes. The uptime monitor hits this
+ *    endpoint ~1.4k times/day; without caching, every one of those requests
+ *    also made an outbound `ollama.com/v1/models` call, which is both slow and
+ *    a wasted external dependency in the hot path of a health check.
+ * 2. A failure is reported as `degraded`, never `unhealthy`. The AI feature
+ *    being unavailable is not site downtime: pages, the herb database and the
+ *    calculator all still work, so the endpoint must keep returning 200. It
+ *    used to page on an Ollama outage, which is exactly backwards.
+ */
+let aiProbeCache: { result: Check; expiresAt: number } | null = null;
+
+async function probeAi(): Promise<Check> {
+  if (aiProbeCache && aiProbeCache.expiresAt > Date.now()) {
+    return aiProbeCache.result;
+  }
+
+  let result: Check;
+  try {
+    const ollamaKey = process.env.OLLAMA_CLOUD_API_KEY?.trim();
+    const ollamaBaseUrl = (
+      process.env.OLLAMA_CLOUD_URL || "https://ollama.com/v1"
+    ).trim();
+
+    if (!ollamaKey) {
+      result = { status: "unconfigured", error: "API key not set" };
+    } else {
+      const aiStart = Date.now();
+      const aiResponse = await fetch(`${ollamaBaseUrl}/models`, {
+        headers: { Authorization: `Bearer ${ollamaKey}` },
+        signal: AbortSignal.timeout(5000),
+        cache: "no-store",
+      });
+      const aiLatency = Date.now() - aiStart;
+
+      if (aiResponse.ok) {
+        result = { status: "healthy", latency: aiLatency };
+      } else {
+        result = {
+          status: "degraded",
+          latency: aiLatency,
+          error: `API returned ${aiResponse.status}`,
+        };
+      }
+    }
+  } catch {
+    result = { status: "degraded", error: "Connection failed" };
+  }
+
+  aiProbeCache = { result, expiresAt: Date.now() + OLLAMA_PROBE_TTL_MS };
+  return result;
+}
+
 export async function GET(request: NextRequest) {
   // Rate limit health endpoint to prevent abuse
   const { success } = await rateLimit(getClientIP(request), 30, 60_000);
@@ -22,14 +87,7 @@ export async function GET(request: NextRequest) {
       }
     );
   }
-  const checks: Record<
-    string,
-    {
-      status: string;
-      latency?: number;
-      error?: string;
-    }
-  > = {};
+  const checks: Record<string, Check> = {};
 
   // Check database connection
   try {
@@ -50,55 +108,20 @@ export async function GET(request: NextRequest) {
     };
   }
 
-  // Check environment variables (don't leak names publicly)
-  const hasRequiredEnv =
+  // Core environment variables gate the endpoint: without Supabase the site
+  // cannot render DB-backed pages at all. The AI key is reported through
+  // `checks.ai` instead — an unconfigured AI feature is not site downtime.
+  const hasCoreEnv =
     !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    !!process.env.OLLAMA_CLOUD_API_KEY;
+    !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   checks.environment = {
-    status: hasRequiredEnv ? "healthy" : "degraded",
-    error: hasRequiredEnv
-      ? undefined
-      : "One or more required variables are not set",
+    status: hasCoreEnv ? "healthy" : "unhealthy",
+    error: hasCoreEnv ? undefined : "Required variables are not set",
   };
 
-  // Check Ollama Cloud by making a lightweight models request
-  try {
-    const ollamaKey = process.env.OLLAMA_CLOUD_API_KEY?.trim();
-    const ollamaBaseUrl = (
-      process.env.OLLAMA_CLOUD_URL || "https://ollama.com/v1"
-    ).trim();
-
-    if (!ollamaKey) {
-      checks.ai = {
-        status: "unconfigured",
-        error: "API key not set",
-      };
-    } else {
-      const aiStart = Date.now();
-      const aiResponse = await fetch(`${ollamaBaseUrl}/models`, {
-        headers: { Authorization: `Bearer ${ollamaKey}` },
-        signal: AbortSignal.timeout(5000),
-      });
-      const aiLatency = Date.now() - aiStart;
-
-      if (aiResponse.ok) {
-        checks.ai = { status: "healthy", latency: aiLatency };
-      } else {
-        checks.ai = {
-          status: "unhealthy",
-          latency: aiLatency,
-          error: `API returned ${aiResponse.status}`,
-        };
-      }
-    }
-  } catch {
-    checks.ai = {
-      status: "unhealthy",
-      error: "Connection failed",
-    };
-  }
+  // Informational only — cached for five minutes, never gates the status code.
+  checks.ai = await probeAi();
 
   // Check Stripe configuration
   checks.stripe = {
