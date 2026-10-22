@@ -209,6 +209,17 @@ export default async function proxy(request: NextRequest) {
           secure: process.env.NODE_ENV === "production",
         });
       }
+
+      // Refresh the Supabase session on French pages too. This branch used to
+      // return before updateSession() ran, so /fr visitors never had expired
+      // tokens rotated and were effectively signed out mid-session. The helper
+      // short-circuits when no auth cookie is present, so anonymous traffic
+      // still pays nothing.
+      const { supabaseResponse } = await updateSession(request);
+      supabaseResponse.cookies.getAll().forEach((cookie) => {
+        rewrite.cookies.set(cookie.name, cookie.value, cookie);
+      });
+
       return applySecurityHeaders(rewrite, frameOpts);
     }
 

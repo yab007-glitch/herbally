@@ -32,7 +32,9 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
   // Health app: never send default PII.
   sendDefaultPii: false,
-  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.1,
+  // Hobby Fluid CPU is a hard limit: 5% of transactions still gives us
+  // latency distributions without paying tracing overhead on every request.
+  tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.05,
   enabled: !!process.env.SENTRY_DSN,
   enableLogs: true,
   beforeSend: scrubEvent,
