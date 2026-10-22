@@ -16,8 +16,12 @@ vi.mock("@supabase/ssr", () => ({
 import { updateSession } from "@/lib/supabase/middleware";
 import { boundedFetch } from "@/lib/supabase/fetch-with-timeout";
 
-function request() {
-  return new NextRequest("https://herbally.app/herbs/ginger");
+function request(authenticated = true) {
+  return new NextRequest("https://herbally.app/herbs/ginger", {
+    headers: authenticated
+      ? { cookie: "sb-abcdefghijklmnop-auth-token=test-token" }
+      : undefined,
+  });
 }
 
 describe("updateSession", () => {
@@ -36,6 +40,14 @@ describe("updateSession", () => {
     expect(createServerClientMock).toHaveBeenCalledTimes(1);
     const options = createServerClientMock.mock.calls[0][2];
     expect(options.global?.fetch).toBe(boundedFetch);
+  });
+
+  it("skips the client when there is no auth cookie", async () => {
+    const result = await updateSession(request(false));
+
+    expect(createServerClientMock).not.toHaveBeenCalled();
+    expect(result.supabase).toBeNull();
+    expect(result.user).toBeNull();
   });
 
   it("does not construct a client when Supabase env is missing", async () => {
