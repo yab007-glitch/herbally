@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { boundedFetch } from "@/lib/supabase/fetch-with-timeout";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -21,6 +22,10 @@ export async function updateSession(request: NextRequest) {
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    // Match admin/server clients: a hung Supabase instance must fail this
+    // request fast instead of stalling the proxy invocation until the
+    // platform timeout.
+    global: { fetch: boundedFetch },
     cookies: {
       getAll() {
         return request.cookies.getAll();

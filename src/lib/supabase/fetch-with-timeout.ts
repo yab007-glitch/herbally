@@ -31,6 +31,22 @@ export function getSupabaseFetchTimeoutMs(): number {
 }
 
 /**
+ * Fail-fast breaker.
+ *
+ * A single outage used to make every request in every warm Fluid instance wait
+ * out the full 15s timeout, which is what burned the Vercel provisioned-memory
+ * allowance. After three consecutive timeouts this instance rejects Supabase
+ * requests immediately for 30s. The next success closes it again.
+ *
+ * This is deliberately per-instance and in-memory: it is a cost/latency guard,
+ * not a shared health system, and it must never add its own network call.
+ */
+const FAILURE_THRESHOLD = 3;
+const CIRCUIT_OPEN_MS = 30_000;
+let consecutiveTimeouts = 0;
+let circuitOpenUntil = 0;
+
+/**
  * `fetch` with a hard ceiling. Callers that supply their own signal keep it —
  * whichever fires first aborts the request.
  */
@@ -38,9 +54,34 @@ export function boundedFetch(
   input: RequestInfo | URL,
   init?: RequestInit
 ): Promise<Response> {
+  if (Date.now() < circuitOpenUntil) {
+    return Promise.reject(new Error("Supabase circuit breaker is open"));
+  }
+
   const timeout = AbortSignal.timeout(getSupabaseFetchTimeoutMs());
+  let timedOut = false;
+  timeout.addEventListener("abort", () => {
+    timedOut = true;
+  });
+
   const signal = init?.signal
     ? AbortSignal.any([init.signal, timeout])
     : timeout;
-  return fetch(input, { ...init, signal });
+
+  return fetch(input, { ...init, signal }).then(
+    (response) => {
+      consecutiveTimeouts = 0;
+      return response;
+    },
+    (error: unknown) => {
+      if (timedOut) {
+        consecutiveTimeouts += 1;
+        if (consecutiveTimeouts >= FAILURE_THRESHOLD) {
+          circuitOpenUntil = Date.now() + CIRCUIT_OPEN_MS;
+          consecutiveTimeouts = 0;
+        }
+      }
+      throw error;
+    }
+  );
 }

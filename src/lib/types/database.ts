@@ -1068,7 +1068,10 @@ export type Database = {
           isSetofReturn: true;
         };
       };
-      increment_herb_view: { Args: { herb_id: string }; Returns: undefined };
+      increment_herb_view_by_slug: {
+        Args: { p_slug: string };
+        Returns: undefined;
+      };
       is_admin: { Args: never; Returns: boolean };
       search_herbs_by_symptom: {
         Args: { search_term: string };
