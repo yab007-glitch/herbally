@@ -29,9 +29,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const parsed = bodySchema.safeParse(
-    await request.json().catch(() => null)
-  );
+  const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return new NextResponse(null, { status: 400 });
   }
