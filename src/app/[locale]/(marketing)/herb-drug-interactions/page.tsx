@@ -2,7 +2,7 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
@@ -29,7 +29,7 @@ const COMMON_HERBS = [
 ] as const;
 
 export default async function HerbDrugInteractionsPage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({
     locale,
     namespace: "herbDrugInteractionsPage",

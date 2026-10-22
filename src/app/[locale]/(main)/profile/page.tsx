@@ -1,5 +1,5 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileClient } from "./profile-client";
@@ -12,7 +12,7 @@ export const generateMetadata = () =>
   });
 
 export default async function ProfilePage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
 
   const supabase = await createClient();

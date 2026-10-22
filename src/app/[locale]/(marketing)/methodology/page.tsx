@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const generateMetadata = () =>
@@ -26,7 +26,7 @@ const sectionKeys = [
 ] as const;
 
 export default async function MethodologyPage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
 
   const methodologySections = sectionKeys.map(({ key, icon }) => ({

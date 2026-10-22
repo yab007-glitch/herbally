@@ -24,7 +24,7 @@ import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { type Locale } from "@/lib/i18n/config";
 
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
@@ -46,38 +46,27 @@ import type {
 } from "@/components/herbs/pubmed-monograph-sheet";
 import { hasManualMonograph } from "@/lib/data/monographs";
 
-// This route cannot be statically generated: the root layout reads headers()
-// (via getLocaleFromRequest), so every render is dynamic. Declaring ISR here
-// instead — which 5a8825b did, swapping this line for generateStaticParams +
-// revalidate — is a 500, not a slower page: Next tries to generate slugs that
-// are not in the prerendered set on demand, as static generation, and the
-// headers() call throws inside it. Restored to what it was before that commit.
-export const dynamic = "force-dynamic";
+// ISR. This route was force-dynamic because the locale used to come from
+// headers(): the root layout's `headers()` call threw during on-demand static
+// generation, which is what turned unlisted slugs into 500s on 2026-10-08.
+// The locale is now a root param and no page-level code reads a request API,
+// so on-demand generation is safe. Revalidate aligns with the unstable_cache
+// TTLs below (24 h).
+export const revalidate = 86400;
 
 type Props = { params: Promise<{ slug: string }> };
 
 /**
- * How many herb pages to pre-render at build time. Zero, and it stays zero —
- * though not for the reason an earlier revision of this comment gave.
+ * How many herb pages to pre-render at build time.
  *
- * That revision claimed prerendered output was built and then discarded because
- * `headers()` in the root layout forces dynamic rendering. That was wrong, and
- * acting on it caused an outage on 2026-10-08: Next does not discard ISR output,
- * it serves it from the prerender cache. Those pages were the herb pages that
- * *worked*. Setting this to 0 removed the working set, so the 500 described
- * above — previously confined to slugs outside the prerendered set — applied to
- * every herb page at once.
- *
- * With `dynamic = "force-dynamic"` in force, generateStaticParams is not used
- * for prerendering at all, so this is dead code either way. It is kept rather
- * than deleted to make the intent legible if the route ever becomes static
- * again — which requires moving locale out of headers() first.
+ * Kept at zero deliberately: the build runs against the same 0.5 GB Supabase
+ * instance that serves production, so prerendering every herb would trade a
+ * runtime problem for a build-time one. `dynamicParams` defaults to true and
+ * revalidate is set above, so any published slug outside this set is generated
+ * on demand and cached. Raise this in a follow-up while watching build time
+ * and DB load.
  */
 const PRERENDER_HERB_LIMIT = 0;
-
-// No `revalidate`. An ISR window on this route is what made unlisted slugs 500,
-// and it is inert under force-dynamic anyway. Re-adding it means re-introducing
-// the bug unless locale has moved out of headers() by then.
 
 /**
  * Request-scoped memo around the herb fetch.
@@ -116,7 +105,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const metaLocale = await getLocaleFromRequest();
+  const metaLocale = await getLocale();
 
   const getHerbMetaCached = unstable_cache(
     async (herbSlug: string, locale: string) => {
@@ -127,6 +116,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   );
 
   const result = await getHerbMetaCached(slug, metaLocale);
+  // The page body turns this into a 404 (see notFound() below). There is no
+  // loading.tsx above this route precisely so that the status can still be set
+  // to 404; a Suspense fallback would flush a 200 shell first.
   if (!result.success || !result.data) {
     return { title: "Herb Not Found | HerbAlly", robots: { index: false } };
   }
@@ -255,7 +247,7 @@ function formatCitations(
 
 export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
-  const pageLocale = await getLocaleFromRequest();
+  const pageLocale = await getLocale();
 
   const getHerbCached = unstable_cache(
     async (herbSlug: string, locale: Locale) => {
@@ -425,10 +417,7 @@ export default async function HerbDetailPage({ params }: Props) {
     { revalidate: 86400, tags: [`herb-faqs-${slug}`] }
   );
 
-  const preGeneratedFaqs = await getFaqsCached(
-    herb.id,
-    await getLocaleFromRequest()
-  );
+  const preGeneratedFaqs = await getFaqsCached(herb.id, await getLocale());
 
   const severityCounts = {
     contraindicated: interactions.filter(
@@ -442,7 +431,7 @@ export default async function HerbDetailPage({ params }: Props) {
   const evidenceLevel = getEvidenceLevel(herb.evidence_level);
 
   // Default locale for static generation; client-side locale switching handles user prefs
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
   const tFaq = await getTranslations({ locale, namespace: "herbFaq" });
 

@@ -2,12 +2,13 @@ import { headers } from "next/headers";
 import { DEFAULT_LOCALE, type Locale } from "./config";
 
 /**
- * Read the locale from the `x-locale` header set by the proxy during rewrites.
- * This is the server-side mirror of the URL: `/fr/*` → "fr", everything else →
- * "en". Used by server components (including the root layout) so that SSR and
- * the client provider always agree on the active locale.
+ * Read the locale from the `x-locale` header set by the proxy from the URL.
  *
- * Plain server helper (not a Server Action) — safe to call during render.
+ * This is the header-based helper and it is only for code that cannot read
+ * route params: Route Handlers (`/api/*`) and Server Actions invoked from
+ * Client Components. Server Components must use `getLocale()` from
+ * `page-locale.ts` instead — calling `headers()` during render forces the
+ * whole route into dynamic rendering and defeats ISR.
  */
 export async function getLocaleFromRequest(): Promise<Locale> {
   try {

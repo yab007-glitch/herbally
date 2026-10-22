@@ -8,11 +8,14 @@ import { type Locale, LOCALES, DEFAULT_LOCALE } from "./config";
  * for non-default locales (e.g. `/fr/herbs`) while the default locale (`en`)
  * is served unprefixed at `/herbs`. Locale is resolved per-request:
  *
- *   - On the server: `getLocaleFromRequest` (server-locale.ts) reads the
- *     `x-locale` request header.
- *   - The header is set by `proxy.ts` (Next.js 16 middleware replacement),
- *     which inspects the pathname and injects `x-locale` before the request
- *     reaches the route handler / server component.
+ *   - Server Components: `getLocale()` (page-locale.ts) reads the `[locale]`
+ *     root param. The public path is mapped onto that segment by `proxy.ts`:
+ *     English is rewritten to the internal `/en` prefix, `/fr/*` passes
+ *     through. Pages therefore never read a request API, which keeps them
+ *     cacheable.
+ *   - Route Handlers and Server Actions: `getLocaleFromRequest`
+ *     (server-locale.ts) reads the `x-locale` request header that the same
+ *     proxy sets, because `next/root-params` is unavailable there.
  *   - On the client: `next-intl`'s `useLocale()` is wired via the
  *     `NextIntlClientProvider` in the root layout, fed from the same source.
  *

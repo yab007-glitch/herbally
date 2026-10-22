@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { HomeSearchClient } from "./home-search-client";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
@@ -14,7 +14,7 @@ export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "homeTitle", path: "/" });
 
 export default async function HomePage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
 
   return (

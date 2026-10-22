@@ -1,5 +1,4 @@
 import { getRequestConfig } from "next-intl/server";
-import { headers } from "next/headers";
 import enDict from "@/lib/i18n/dictionaries/en.json";
 import frDict from "@/lib/i18n/dictionaries/fr.json";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
@@ -9,23 +8,25 @@ const messages: Record<string, Record<string, unknown>> = {
   fr: frDict as Record<string, unknown>,
 };
 
-async function getLocaleFromHeaders(): Promise<Locale> {
-  try {
-    const h = await headers();
-    const locale = h.get("x-locale");
-    if (locale === "fr" || locale === "en") return locale;
-  } catch {
-    // headers() not available during static generation
-  }
-  return DEFAULT_LOCALE;
+function isLocale(value: unknown): value is Locale {
+  return value === "en" || value === "fr";
 }
 
-export default getRequestConfig(async ({ locale: pathLocale }) => {
-  const headerLocale = await getLocaleFromHeaders();
-  const resolvedLocale = headerLocale || pathLocale || DEFAULT_LOCALE;
+/**
+ * Resolve messages from the locale Next passes down for the current route.
+ *
+ * The locale now comes from the `[locale]` route segment (via
+ * `setRequestLocale` in the root layout), never from request headers. The old
+ * `headers()` fallback made every page that called `getTranslations` dynamic;
+ * removing it is a precondition for ISR.
+ */
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale;
+  const locale: Locale = isLocale(requested) ? requested : DEFAULT_LOCALE;
+
   return {
-    locale: resolvedLocale,
-    messages: messages[resolvedLocale] ?? messages.en,
+    locale,
+    messages: messages[locale] ?? messages.en,
     timeZone: "America/Toronto",
   };
 });

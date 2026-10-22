@@ -10,7 +10,7 @@ const DoseCalculatorForm = dynamic(() =>
 );
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 
 export const generateMetadata = () =>
@@ -53,7 +53,7 @@ export default async function CalculatorPage({
   searchParams: Promise<{ herb?: string }>;
 }) {
   const params = await searchParams;
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
   const herbSlug = params.herb;
 

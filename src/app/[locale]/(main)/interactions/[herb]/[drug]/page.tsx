@@ -23,31 +23,27 @@ import {
 } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { siteUrl } from "@/lib/seo/site-url";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { cn } from "@/lib/utils";
 
-// Same constraint as herbs/[slug]: the root layout reads headers(), so this
-// route can never be statically generated. An ISR window here turns any pair
-// outside the prerendered set into a 500 rather than a render.
-export const dynamic = "force-dynamic";
+// ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
+// on-demand static generation no longer throws. Pairs outside the prerendered
+// set are generated on demand and cached.
+export const revalidate = 86400;
 
 type Props = { params: Promise<{ herb: string; drug: string }> };
 
 /**
- * How many pair pages to pre-render at build time. Zero — dead code under
- * force-dynamic, kept so the intent survives.
+ * How many pair pages to pre-render at build time.
  *
- * An earlier revision of this comment claimed prerendering was built and then
- * discarded because the root layout reads headers(). That was wrong and acting
- * on it caused the 2026-10-08 outage; see PRERENDER_HERB_LIMIT in herbs/[slug]
- * for the full correction. This route is the more expensive of the two to
- * generate — getInteractionPair plus getRelatedPairs, the latter pulling up to
- * 500 joined rows — so it is also the one that starved the Free-tier instance.
- *
- * Indexability never depended on this: the sitemap lists every curated pair.
+ * Zero, deliberately: this is the most expensive route to generate
+ * (getInteractionPair plus getRelatedPairs, the latter pulling up to 500
+ * joined rows), and the build shares the 0.5 GB production database. Pairs are
+ * generated on demand and cached instead. Indexability never depended on
+ * prerendering — the sitemap lists every curated pair.
  */
 const PRERENDER_PAIR_LIMIT = 0;
 
@@ -167,7 +163,7 @@ function severityLabel(
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { herb, drug } = await params;
   const baseUrl = siteUrl();
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const fr = locale === "fr";
   const pair = await loadPair(herb, drug, locale);
 
@@ -220,7 +216,7 @@ function SeverityIcon({ severity }: { severity: InteractionPair["severity"] }) {
 
 export default async function InteractionPairPage({ params }: Props) {
   const { herb, drug } = await params;
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const fr = locale === "fr";
   const t = await getTranslations({ locale });
   const pair = await loadPair(herb, drug, locale);

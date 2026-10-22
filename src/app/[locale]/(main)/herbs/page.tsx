@@ -1,4 +1,5 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
+import { Suspense } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,7 @@ import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { redirect } from "next/navigation";
 import Script from "next/script";
 
@@ -35,11 +36,11 @@ export default async function HerbsPage({
   const parsedPage =
     params.page === undefined ? 1 : Math.floor(Number(params.page));
   const page = Number.isFinite(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
   const [herbsResult, categoriesResult] = await Promise.all([
-    getHerbs({ query, category, page }),
-    getHerbCategories(),
+    getHerbs({ query, category, page }, locale),
+    getHerbCategories(locale),
   ]);
 
   const categories = categoriesResult.success ? categoriesResult.data! : [];
@@ -127,9 +128,15 @@ export default async function HerbsPage({
         </p>
       </div>
 
-      {/* Search */}
+      {/* Search. SmartSearch reads `useSearchParams()`, which needs an ancestor
+          Suspense boundary during prerendering. The boundary used to come from
+          the (main) loading.tsx; that file is gone so unknown slugs can return a
+          real 404 instead of a 200 soft 404 (a streamed shell cannot change
+          status). Keep the requirement satisfied locally. */}
       <div className="mb-6">
-        <SmartSearch defaultValue={query} category={category} />
+        <Suspense fallback={null}>
+          <SmartSearch defaultValue={query} category={category} />
+        </Suspense>
       </div>
 
       {/* Recently viewed */}

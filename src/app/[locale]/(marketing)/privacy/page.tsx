@@ -1,12 +1,12 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "privacyPolicy", path: "/privacy" });
 
 export default async function PrivacyPage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
 
   const howWeUseItems = [

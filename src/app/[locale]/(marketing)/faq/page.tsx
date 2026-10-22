@@ -2,7 +2,7 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { Stethoscope, MessageCircle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { FaqSearch } from "./faq-search";
 
 export const generateMetadata = () =>
@@ -37,7 +37,7 @@ const categorySubKey: Record<string, string> = {
 };
 
 export default async function FAQPage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
 
   const faqCategories = categoryKeys.map((catKey) => ({

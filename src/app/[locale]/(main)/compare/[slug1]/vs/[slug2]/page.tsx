@@ -14,12 +14,11 @@ import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 
-// Cannot be static: getLocaleFromRequest() reads headers() and the root layout
-// calls it. An ISR window here makes any comparison outside POPULAR_COMPARISONS
-// a 500 instead of a render — see the note in herbs/[slug]/page.tsx.
-export const dynamic = "force-dynamic";
+// ISR. The locale is a root param now, so on-demand generation is safe and
+// comparisons outside the prerendered set still render (not 500).
+export const revalidate = 86400;
 
 /**
  * Canonical list of popular comparisons. Exported so the sitemap derives its
@@ -55,9 +54,16 @@ export const POPULAR_COMPARISONS = [
   { slug1: "kelp", slug2: "ascophyllum-nodosum" },
 ] as const;
 
-// Pre-render popular comparisons for SEO
+/**
+ * How many comparisons to pre-render at build time. Small on purpose: the
+ * build shares the 0.5 GB production database, and each pair costs two herb
+ * queries (plus related pairs on render). The rest — including every pair the
+ * sitemap lists — is generated on demand and cached for 24 h.
+ */
+const PRERENDER_COMPARE_LIMIT = 6;
+
 export async function generateStaticParams() {
-  return [...POPULAR_COMPARISONS];
+  return [...POPULAR_COMPARISONS].slice(0, PRERENDER_COMPARE_LIMIT);
 }
 
 type Props = { params: Promise<{ slug1: string; slug2: string }> };
@@ -65,7 +71,7 @@ type Props = { params: Promise<{ slug1: string; slug2: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug1, slug2 } = await params;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
-  const metaLocale = await getLocaleFromRequest();
+  const metaLocale = await getLocale();
 
   // Use the request locale (not hardcoded "en") so the title/description
   // show localized herb names on /fr pages.
@@ -107,11 +113,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ComparePage({ params }: Props) {
   const { slug1, slug2 } = await params;
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
   const [resultA, resultB] = await Promise.all([
-    getHerbBySlug(slug1, { skipCookies: true }),
-    getHerbBySlug(slug2, { skipCookies: true }),
+    getHerbBySlug(slug1, { locale, skipCookies: true }),
+    getHerbBySlug(slug2, { locale, skipCookies: true }),
   ]);
 
   if (!resultA.success || !resultB.success || !resultA.data || !resultB.data) {

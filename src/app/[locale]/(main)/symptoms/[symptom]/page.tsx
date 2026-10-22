@@ -6,14 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 import { notFound } from "next/navigation";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 
-// Cannot be static: getLocaleFromRequest() reads headers() and the root layout
-// calls it. An ISR window here makes any symptom slug outside SYMPTOM_SLUGS a
-// 500 instead of the notFound() this route intends — see herbs/[slug]/page.tsx.
-export const dynamic = "force-dynamic";
+// ISR. The locale is a root param, so static generation no longer throws; the
+// slug set is finite (SYMPTOM_SLUGS), and unknown slugs still render notFound.
+export const revalidate = 86400;
 
 type Props = { params: Promise<{ symptom: string }> };
 
@@ -349,7 +348,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { symptom } = await params;
   const meta = symptomMeta[symptom];
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
-  const metaLocale = await getLocaleFromRequest();
+  const metaLocale = await getLocale();
   if (!meta) {
     return { title: "Not Found | HerbAlly", robots: { index: false } };
   }
@@ -403,7 +402,7 @@ export default async function SymptomDetailPage({ params }: Props) {
   const { symptom } = await params;
   const meta = symptomMeta[symptom];
 
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
   if (!meta) {
     notFound();

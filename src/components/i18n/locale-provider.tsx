@@ -13,12 +13,12 @@ const allMessages: Record<Locale, typeof enMessages> = {
 /**
  * Provides next-intl messages to all client components.
  *
- * The active `locale` is passed in from the server root layout, which reads it
- * from the `x-locale` request header set by the proxy. Because the locale is
- * derived from the URL (the single source of truth) and the language toggle
- * performs a hard navigation, this prop is always correct and never drifts
- * from what the server rendered — eliminating the partial-translation bug
- * where the cookie and the URL disagreed.
+ * The active `locale` is passed in from the server root layout, which reads
+ * the `[locale]` root param. Because the locale is derived from the URL (the
+ * single source of truth) and the language toggle performs a hard navigation,
+ * this prop is always correct and never drifts from what the server rendered —
+ * eliminating the partial-translation bug where the cookie and the URL
+ * disagreed.
  */
 export function LocaleProvider({
   locale,

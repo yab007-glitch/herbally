@@ -1,6 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -10,7 +10,7 @@ export const generateMetadata = () =>
   });
 
 export default async function TermsPage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
 
   return (

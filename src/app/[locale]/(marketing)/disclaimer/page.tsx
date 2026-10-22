@@ -1,7 +1,7 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { AlertTriangle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
+import { getLocale } from "@/lib/i18n/page-locale";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -11,7 +11,7 @@ export const generateMetadata = () =>
   });
 
 export default async function DisclaimerPage() {
-  const locale = await getLocaleFromRequest();
+  const locale = await getLocale();
   const t = await getTranslations({ locale });
 
   return (
