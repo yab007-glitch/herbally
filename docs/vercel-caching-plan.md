@@ -43,21 +43,21 @@ Locale becomes a route parameter. The URL remains the single source of truth, an
 
 ## What moves where
 
-| Current | New | Notes |
-| --- | --- | --- |
-| `src/app/layout.tsx` | `src/app/[locale]/layout.tsx` | Becomes the root layout. `<html lang>`, providers, `generateMetadata`, Analytics/WebVitals all move unchanged. Locale from `await locale()`. |
-| `src/app/(main)/**` | `src/app/[locale]/(main)/**` | Mechanical move. |
-| `src/app/(marketing)/**` | `src/app/[locale]/(marketing)/**` | Mechanical move. |
-| `src/app/(auth)/**` | `src/app/[locale]/(auth)/**` | Mechanical move. |
-| `src/app/admin/**` | `src/app/[locale]/admin/**` | Decide whether admin is localized; it may stay English-only but still needs the segment. |
-| `src/app/embed/**` | `src/app/[locale]/embed/**` | `/embed/*` and `/fr/embed/*` must stay frameable. Proxy `frameable` logic must keep matching both. |
-| `src/app/not-found.tsx` | `src/app/[locale]/not-found.tsx` | Localized 404. Verify whether a root-level fallback is needed for paths that match no `[locale]` segment. |
-| `src/app/error.tsx`, `global-error.tsx` | unchanged | `global-error` replaces the root layout; keep at `app/` and test it still compiles with the moved tree. |
-| `src/app/api/**` | unchanged | Route handlers stay outside `[locale]`; keep `x-locale` from the proxy for these. |
-| `robots.ts`, `sitemap.ts`, `manifest.ts`, icons, OG/Twitter images | unchanged | Do not use the root layout. Verify sitemap output still has both locales. |
-| `src/lib/i18n/server-locale.ts` | split | `getLocaleFromRequest()` for pages becomes a root-param read; keep a header-based helper for route handlers/actions, named so the boundary is obvious. |
-| `src/proxy.ts` | rework locale block | Rewrite English to `/en/*`, pass `/fr/*` through, redirect public `/en/*`, keep exclusions and security headers. Keep `x-locale` for `/api/*`. |
-| `i18n/request.ts` | rework | Remove `headers()`; use `requestLocale` + `setRequestLocale`. |
+| Current                                                            | New                               | Notes                                                                                                                                                  |
+| ------------------------------------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/app/layout.tsx`                                               | `src/app/[locale]/layout.tsx`     | Becomes the root layout. `<html lang>`, providers, `generateMetadata`, Analytics/WebVitals all move unchanged. Locale from `await locale()`.           |
+| `src/app/(main)/**`                                                | `src/app/[locale]/(main)/**`      | Mechanical move.                                                                                                                                       |
+| `src/app/(marketing)/**`                                           | `src/app/[locale]/(marketing)/**` | Mechanical move.                                                                                                                                       |
+| `src/app/(auth)/**`                                                | `src/app/[locale]/(auth)/**`      | Mechanical move.                                                                                                                                       |
+| `src/app/admin/**`                                                 | `src/app/[locale]/admin/**`       | Decide whether admin is localized; it may stay English-only but still needs the segment.                                                               |
+| `src/app/embed/**`                                                 | `src/app/[locale]/embed/**`       | `/embed/*` and `/fr/embed/*` must stay frameable. Proxy `frameable` logic must keep matching both.                                                     |
+| `src/app/not-found.tsx`                                            | `src/app/[locale]/not-found.tsx`  | Localized 404. Verify whether a root-level fallback is needed for paths that match no `[locale]` segment.                                              |
+| `src/app/error.tsx`, `global-error.tsx`                            | unchanged                         | `global-error` replaces the root layout; keep at `app/` and test it still compiles with the moved tree.                                                |
+| `src/app/api/**`                                                   | unchanged                         | Route handlers stay outside `[locale]`; keep `x-locale` from the proxy for these.                                                                      |
+| `robots.ts`, `sitemap.ts`, `manifest.ts`, icons, OG/Twitter images | unchanged                         | Do not use the root layout. Verify sitemap output still has both locales.                                                                              |
+| `src/lib/i18n/server-locale.ts`                                    | split                             | `getLocaleFromRequest()` for pages becomes a root-param read; keep a header-based helper for route handlers/actions, named so the boundary is obvious. |
+| `src/proxy.ts`                                                     | rework locale block               | Rewrite English to `/en/*`, pass `/fr/*` through, redirect public `/en/*`, keep exclusions and security headers. Keep `x-locale` for `/api/*`.         |
+| `i18n/request.ts`                                                  | rework                            | Remove `headers()`; use `requestLocale` + `setRequestLocale`.                                                                                          |
 
 ## What breaks, and how to keep it from breaking
 
@@ -167,22 +167,26 @@ Then the regression cases that caused the 2026-10-08 outage:
 Each phase is independently deployable and revertible. Do not combine phase 1 and phase 3.
 
 **Phase 0 — inventory and guardrails (no behavior change)**
+
 - Enumerate every `headers()`, `cookies()`, `searchParams` and `dynamic` usage per route; classify each helper call site as render / action / route handler.
 - Add the proxy tests and the runtime smoke checklist. Record the current build output as the baseline.
 
 **Phase 1 — introduce `[locale]` and move the tree (behavior-preserving)**
+
 - Create `app/[locale]/layout.tsx` and move the route groups under it.
 - Proxy rewrites English to `/en/*`; French passes through; public `/en/*` redirects.
 - Keep `force-dynamic` everywhere and keep reading locale from `x-locale` for now.
 - Goal: byte-for-byte behavioral parity, no caching change. This is the riskiest structural PR; exercise it on a preview URL before merging.
 
 **Phase 2 — change the locale source**
+
 - Pages and server utilities read `next/root-params`; `i18n/request.ts` uses `requestLocale` + `setRequestLocale`.
 - Stop setting `x-locale` for page routes; keep it for `/api/*`.
 - Update tests; keep `force-dynamic`. Verify EN/FR parity again.
 - After this phase, the root layout no longer reads a request API.
 
 **Phase 3 — enable ISR one route family at a time**
+
 - Remove `force-dynamic` and add `generateStaticParams` + `revalidate` per route family, in this order:
   1. marketing pages (lowest risk, no DB),
   2. symptoms and compare,
@@ -191,10 +195,12 @@ Each phase is independently deployable and revertible. Do not combine phase 1 an
 - Fix any remaining cookie/header reads exposed by the build output one route at a time.
 
 **Phase 4 — raise the prerender cap**
+
 - 0 → 25 → 100 → all (or on-demand only), watching build time, build memory, and Supabase load.
 - Keep `revalidate` windows aligned with the existing `unstable_cache` TTLs (24 h for herb data, 1 h for PubMed sheets).
 
 **Phase 5 — verify and document**
+
 - Confirm CDN HIT/STALE on the smoke matrix; confirm headers no longer say `no-store` for public pages.
 - Update this document and `docs/performance-monitoring.md` with the new expectations and the rollback steps.
 
