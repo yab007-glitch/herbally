@@ -54,9 +54,11 @@ export function SymptomSearchClient() {
 
       // Search herbs by keywords
       const searchTerm = keywords.join(" ");
-      const res = await fetch(
-        `/api/herbs/search?q=${encodeURIComponent(searchTerm)}`
-      );
+      const res = await fetch("/api/herbs/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q: searchTerm }),
+      });
       const data = await res.json();
       setResults(Array.isArray(data) ? data.slice(0, 12) : []);
     } catch {
