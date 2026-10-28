@@ -17,6 +17,10 @@ import { pairPath } from "@/lib/interactions/pair-url";
 // page content actually changes.
 const STATIC_PAGE_MODIFIED = new Date("2026-06-22T00:00:00Z");
 
+// New static pages get their own timestamp so adding them does not bump the
+// lastModified of every unrelated marketing page.
+const SPONSORSHIP_PAGE_MODIFIED = new Date("2026-10-28T00:00:00Z");
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
 
@@ -149,6 +153,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/sponsors`,
+      lastModified: SPONSORSHIP_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/sponsors`,
+      lastModified: SPONSORSHIP_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.4,
     },
     {
       url: `${baseUrl}/herb-drug-interactions`,

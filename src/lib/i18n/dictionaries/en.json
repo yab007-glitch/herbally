@@ -421,6 +421,7 @@
     "followUs": "Follow Us",
     "faq": "FAQ",
     "methodology": "Methodology",
+    "sponsorship": "Sponsorship",
     "herbDrugInteractions": "Herb–Drug Interactions",
     "symptoms": "Symptoms"
   },
@@ -1307,6 +1308,105 @@
       "bestFor": "Not applicable to adults 18+"
     }
   },
+  "sponsorship": {
+    "eyebrow": "Sponsorship & partnerships",
+    "status": "No sponsors confirmed",
+    "title": "Support the infrastructure behind HerbAlly",
+    "subtitle": "We are exploring monthly or annual sponsorship for hosting, AI, database, and domain costs. No sponsors are confirmed today, and no sponsor influences what we publish.",
+    "heroEmail": "Email about sponsorship",
+    "heroDonate": "Support with a donation",
+    "heroNote": "This page describes our policy and current status. It is not an offer, quote, or payment page.",
+    "current": {
+      "title": "Current sponsors",
+      "description": "Confirmed sponsorships appear here. Nothing is listed until an agreement is confirmed.",
+      "emptyTitle": "No sponsors confirmed yet",
+      "emptyDescription": "We have no confirmed paid sponsorship to disclose at this time. When an agreement is confirmed, it will appear here with a clear sponsorship label — never as an unnamed logo or a hidden placement.",
+      "emptyNote": "An empty list is the honest current status, not a placeholder."
+    },
+    "costs": {
+      "title": "What support can cover",
+      "description": "Sponsorship would help pay for the infrastructure that serves every visitor. We are open to monthly or annual support toward:",
+      "items": {
+        "hosting": {
+          "label": "Hosting",
+          "description": "Servers and delivery that keep pages and tools available."
+        },
+        "ai": {
+          "label": "AI costs",
+          "description": "Virtual Herbalist inference and search interpretation."
+        },
+        "database": {
+          "label": "Database",
+          "description": "Storage, queries, and backups for herb monographs."
+        },
+        "domain": {
+          "label": "Domain",
+          "description": "The herbally.app name and essential related services."
+        }
+      },
+      "terms": "We do not publish prices or payment terms on this page. Any discussion is exploratory: nothing here is an offer, quote, or promise that a sponsorship will be accepted."
+    },
+    "independence": {
+      "title": "Independence is not negotiable",
+      "description": "Sponsorship pays operating costs. It does not buy reader trust.",
+      "items": {
+        "labelled": {
+          "title": "Clear labels",
+          "description": "Every confirmed sponsorship will be identified in plain language near the sponsor's name and on any page where it is mentioned."
+        },
+        "medical": {
+          "title": "No medical influence",
+          "description": "Sponsors have no influence over herb information, rankings, evidence grades, safety warnings, interaction results, or the Virtual Herbalist."
+        },
+        "safety": {
+          "title": "Safety comes first",
+          "description": "We will not accept sponsorship conditioned on changing, softening, or hiding safety information."
+        },
+        "privacy": {
+          "title": "No health or visitor data",
+          "description": "We will not share individual health information, chat messages, search terms, or visitor-level analytics with sponsors."
+        },
+        "traffic": {
+          "title": "No guaranteed traffic",
+          "description": "We do not sell or guarantee impressions, traffic, clicks, conversions, or search rankings."
+        }
+      }
+    },
+    "types": {
+      "title": "Donations, in-kind credits, and sponsorship",
+      "description": "These are different forms of support, and we label them differently.",
+      "donation": {
+        "label": "Donation",
+        "title": "Voluntary donation",
+        "description": "A gift supports HerbAlly's general operations. It comes with no reciprocal benefit, no sponsorship label, and no editorial influence."
+      },
+      "inKind": {
+        "label": "In-kind",
+        "title": "In-kind credit",
+        "description": "A service or credit provided free or at a reduced price, such as hosting credits. We would disclose it separately and label it as in-kind."
+      },
+      "sponsorship": {
+        "label": "Sponsorship",
+        "title": "Paid sponsorship",
+        "description": "A paid monthly or annual arrangement tied to infrastructure support. It would be clearly labelled and carry no influence over medical content or guarantee of traffic."
+      }
+    },
+    "contact": {
+      "title": "Talk to us about sponsorship",
+      "description": "If your organisation is interested in supporting HerbAlly, email us at info@herbally.app.",
+      "emailLabel": "Email info@herbally.app",
+      "emailSubject": "Sponsorship inquiry",
+      "prompt": "Tell us the kind of support you have in mind (monthly or annual), which costs interest you, and the name of your organisation.",
+      "privacy": "Please do not send personal health information. This page does not accept payments.",
+      "noOffer": "We will review messages, but sending one does not create an agreement or guarantee a response."
+    },
+    "links": {
+      "methodology": "Read our methodology",
+      "privacy": "Read our privacy policy",
+      "donate": "Make a voluntary donation"
+    },
+    "pageNote": "HerbAlly provides educational information, not medical advice. Sponsorship does not change that."
+  },
   "meta": {
     "herbsDatabase": "Medicinal Herbs Database",
     "herbsDatabaseDesc": "Browse our comprehensive database of 2,700+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
@@ -1325,6 +1425,8 @@
     "termsDesc": "HerbAlly terms of service and conditions of use.",
     "supportUs": "Support Us - Keep Herbal Medicine Free",
     "supportUsDesc": "Help us keep HerbAlly 100% free. Your donation supports hosting, AI costs, and free access for everyone.",
+    "sponsorship": "Sponsorship & Partnerships",
+    "sponsorshipDesc": "How HerbAlly handles sponsorship, editorial independence, privacy, and support for hosting, AI, database, and domain costs. No sponsors are confirmed.",
     "herbNotFound": "Herb Not Found",
     "herbComparisonNotFound": "Herb Comparison Not Found",
     "about": "About",
