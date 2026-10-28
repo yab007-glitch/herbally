@@ -9,13 +9,9 @@ export default async function PrivacyPage() {
   const locale = await getLocale();
   const t = await getTranslations({ locale });
 
-  const howWeUseItems = [
-    t("privacy.howWeUse.items.0"),
-    t("privacy.howWeUse.items.1"),
-    t("privacy.howWeUse.items.2"),
-    t("privacy.howWeUse.items.3"),
-    t("privacy.howWeUse.items.4"),
-  ];
+  const howWeUseItems = [0, 1, 2, 3, 4, 5, 6].map((i) =>
+    t(`privacy.howWeUse.items.${i}`)
+  );
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
@@ -85,6 +81,7 @@ export default async function PrivacyPage() {
             <li>{t("privacy.thirdParty.ollamaCloud")}</li>
             <li>{t("privacy.thirdParty.vercel")}</li>
             <li>{t("privacy.thirdParty.stripe")}</li>
+            <li>{t("privacy.thirdParty.adsense")}</li>
           </ul>
         </section>
 
@@ -95,6 +92,9 @@ export default async function PrivacyPage() {
           <p>{t("privacy.cookiesSection.onlyOne")}</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
             <li>{t("privacy.cookiesSection.localeCookie")}</li>
+            <li>{t("privacy.cookiesSection.guestCookie")}</li>
+            <li>{t("privacy.cookiesSection.authCookies")}</li>
+            <li>{t("privacy.cookiesSection.adCookies")}</li>
           </ul>
           <p className="mt-3">{t("privacy.cookiesSection.noTracking")}</p>
         </section>

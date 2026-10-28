@@ -12,17 +12,27 @@ import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
 
 function buildCSP(): string {
+  // Google AdSense domains are allowlisted only because the public herb pages
+  // may carry a clearly labelled, non-personalised ad unit. Private tools
+  // (chat, checker, calculator) never render an ad slot.
+  const ads = [
+    "https://pagead2.googlesyndication.com",
+    "https://*.googlesyndication.com",
+    "https://*.doubleclick.net",
+    "https://adservice.google.com",
+    "https://www.google.com",
+  ].join(" ");
   const directives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' *.stripe.com",
-    "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com",
+    `script-src 'self' 'unsafe-inline' *.stripe.com ${ads}`,
+    `connect-src 'self' *.supabase.co https://ollama.com *.stripe.com ${ads}`,
     // L16 (audit 2026-06-22): scope img-src to the only remote image host we
     // actually use (Supabase Storage), matching next.config.ts remotePatterns.
     // A bare `https:` allowed any origin to be a CSP-permitted image source.
-    "img-src 'self' data: blob: https://*.supabase.co",
+    "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
-    "frame-src *.stripe.com",
+    `frame-src *.stripe.com ${ads}`,
     "frame-ancestors 'none'",
     "object-src 'none'",
     "base-uri 'self'",
@@ -30,8 +40,7 @@ function buildCSP(): string {
     "upgrade-insecure-requests",
   ];
   if (process.env.NODE_ENV !== "production") {
-    directives[1] =
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com";
+    directives[1] = `script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com ${ads}`;
   }
   return directives.join("; ");
 }

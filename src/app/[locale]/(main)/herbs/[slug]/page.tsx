@@ -35,6 +35,7 @@ import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
 import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { ViewTracker } from "@/components/herbs/view-tracker";
 import { GovSources } from "@/components/herbs/gov-sources";
@@ -642,6 +643,16 @@ export default async function HerbDetailPage({ params }: Props) {
           )}
         </>
       )}
+
+      {/* Clearly labelled advertising on public herb reference pages only.
+          No ad unit is shown unless NEXT_PUBLIC_ADSENSE_CLIENT and
+          NEXT_PUBLIC_ADSENSE_SLOT_HERB are configured. Private tools (chat,
+          interaction checker, calculator) never render this component. */}
+      <AdSlot
+        slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
+        format="auto"
+        className="my-8 min-h-[100px]"
+      />
 
       {/* Citations */}
       <section className="pt-4">
