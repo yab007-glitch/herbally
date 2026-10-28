@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/nextjs";
 /**
  * Scrub PII / health data from a server-side event before upload.
  * - Redacts URL query strings and fragments (search terms, herb/symptom slugs).
- * - Truncates breadcrumb data and request bodies that may echo user health
+ * - Removes request bodies and breadcrumb data that may echo user health
  *   input from the chat API or chat-persist server actions.
  */
 function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
@@ -18,9 +18,9 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
         event.request.url = "[redacted]";
       }
     }
-    if (event.request?.data && typeof event.request.data === "string") {
-      event.request.data =
-        event.request.data.length > 200 ? "[redacted]" : event.request.data;
+    if (event.request) {
+      delete event.request.data;
+      delete event.request.query_string;
     }
     if (event.breadcrumbs) {
       // Breadcrumb `data` is an object map — redact it wholesale so user
@@ -31,7 +31,8 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
       }));
     }
   } catch {
-    // Never let scrubbing itself throw.
+    // Drop events we cannot safely scrub.
+    return null;
   }
   return event;
 }

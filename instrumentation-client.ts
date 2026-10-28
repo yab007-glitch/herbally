@@ -4,8 +4,9 @@ import * as Sentry from "@sentry/nextjs";
  * Scrub PII / health data from an event before it leaves the browser.
  * - Redacts query strings and URL fragments (may contain search terms /
  *   herb/symptom slugs that are health-related).
- * - Masks long breadcrumb/request bodies that could echo user health input.
- * Returns null to drop the event if no usable payload remains.
+ * - Removes request bodies, query-string fields, and breadcrumb data that
+ *   could echo user health input.
+ * Drops the event if it cannot be scrubbed safely.
  */
 function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
   try {
@@ -19,6 +20,10 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
         event.request.url = "[redacted]";
       }
     }
+    if (event.request) {
+      delete event.request.data;
+      delete event.request.query_string;
+    }
     if (event.breadcrumbs) {
       event.breadcrumbs = event.breadcrumbs.map((b) => ({
         ...b,
@@ -26,7 +31,8 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
       }));
     }
   } catch {
-    // Never let scrubbing itself throw away the event silently.
+    // Drop events we cannot safely scrub.
+    return null;
   }
   return event;
 }

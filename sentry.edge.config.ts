@@ -16,6 +16,10 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
         event.request.url = "[redacted]";
       }
     }
+    if (event.request) {
+      delete event.request.data;
+      delete event.request.query_string;
+    }
     if (event.breadcrumbs) {
       event.breadcrumbs = event.breadcrumbs.map((b) => ({
         ...b,
@@ -23,7 +27,8 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
       }));
     }
   } catch {
-    // Never let scrubbing itself throw.
+    // Drop events we cannot safely scrub.
+    return null;
   }
   return event;
 }
