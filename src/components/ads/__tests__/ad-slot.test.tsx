@@ -27,13 +27,14 @@ describe("AdSlot", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("renders a labelled, non-personalized ad when both values exist", () => {
+  it("fails closed even if both ad identifiers are configured", () => {
     vi.stubEnv("NEXT_PUBLIC_ADSENSE_CLIENT", "ca-pub-1901058826905247");
+    const { container } = render(<AdSlot slot="1234567890" />);
 
-    render(<AdSlot slot="1234567890" />);
-
-    expect(screen.getByLabelText("Advertisement")).toBeInTheDocument();
-    expect(screen.getByText("Advertisement")).toBeInTheDocument();
-    expect(window.adsbygoogle?.requestNonPersonalizedAds).toBe(1);
+    expect(container).toBeEmptyDOMElement();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
+    expect(window.adsbygoogle).toBeUndefined();
   });
 });

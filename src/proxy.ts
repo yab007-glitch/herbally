@@ -98,6 +98,7 @@ const LOCALE_EXCLUDED_PATHS = [
   "/favicon.ico",
   "/robots.txt",
   "/ads.txt",
+  "/llms.txt",
   "/sitemap.xml",
   "/manifest",
   "/opengraph-image",
