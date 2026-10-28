@@ -183,13 +183,13 @@
     "calculating": "Calculating...",
     "formulas": {
       "clarks": "Clark's Rule",
-      "clarksDesc": "Weight-based calculation for children",
+      "clarksDesc": "Weight-based reference calculation",
       "youngs": "Young's Rule",
-      "youngsDesc": "Age-based calculation for children",
+      "youngsDesc": "Age-based reference calculation",
       "bsa": "Body Surface Area",
-      "bsaDesc": "Most accurate weight/height method",
+      "bsaDesc": "Reference calculation using weight and height",
       "frieds": "Fried's Rule",
-      "friedsDesc": "For infants under 2 years"
+      "friedsDesc": "Not used for adults 18 and over"
     },
     "errors": {
       "invalidDose": "Please enter a valid adult dose.",
@@ -392,7 +392,7 @@
     "sideEffects": "What are the side effects of {name}?",
     "sideEffectsFallback": "Side effects of {name} are generally mild at recommended doses. Use our free dose calculator to stay within the evidence-based range, and consult your healthcare provider for personalized advice.",
     "doseQuestion": "How do I calculate a safe dose of {name}?",
-    "doseAnswer": "Use HerbAlly's free herbal dosage calculator — enter the adult reference dose for {name}, plus age and weight, to get a Clark's / Young's rule pediatric estimate. Never exceed the adult dose.",
+    "doseAnswer": "Use HerbAlly's free adult dosage calculator — enter the adult reference dose for {name}, plus age and weight, to get a Clark's / Young's rule reference estimate for an adult 18 or older. Never exceed the adult dose.",
     "pregQuestion": "Is {name} safe during pregnancy?",
     "interactQuestion": "Does {name} interact with medications?"
   },
@@ -1289,23 +1289,23 @@
   "dosageFormulas": {
     "clarks_rule": {
       "name": "Clark's Rule",
-      "description": "Based on patient weight. Best for children and adults of varying sizes.",
-      "bestFor": "Children 2+ years, weight-based dosing"
+      "description": "Weight-based reference calculation.",
+      "bestFor": "Adults, weight-based reference"
     },
     "youngs_rule": {
       "name": "Young's Rule",
-      "description": "Based on patient age. Simple but less accurate than weight-based methods.",
-      "bestFor": "Children 2-12 years when weight is unknown"
+      "description": "Age-based reference calculation, less accurate than weight-based methods.",
+      "bestFor": "Adults, age-based reference"
     },
     "bsa": {
       "name": "BSA Method (Mosteller)",
-      "description": "Based on body surface area. Most accurate method for dosage calculation.",
-      "bestFor": "Most accurate for all ages when height and weight are known"
+      "description": "Body surface area reference calculation.",
+      "bestFor": "Adults when height and weight are known"
     },
     "fried_rule": {
       "name": "Fried's Rule",
-      "description": "Specifically designed for infants under 2 years of age.",
-      "bestFor": "Infants under 2 years"
+      "description": "Age-in-months reference method.",
+      "bestFor": "Not applicable to adults 18+"
     }
   },
   "meta": {
@@ -1313,8 +1313,8 @@
     "herbsDatabaseDesc": "Browse our comprehensive database of 2,700+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
     "virtualHerbalist": "Virtual Herbalist",
     "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
-    "doseCalculator": "Herbal Dosage Calculator: Safe Adult & Child Doses by Weight",
-    "doseCalculatorDesc": "Free herbal dosage calculator: safe adult & pediatric doses by weight and age (Clark's & Young's rules). 2,700+ herbs, evidence-based, no account required.",
+    "doseCalculator": "Herbal Dosage Calculator: Adult Reference Doses by Weight",
+    "doseCalculatorDesc": "Free adult herbal dosage calculator: reference doses by weight and age (Clark's & Young's rules) for adults 18 and over. 2,700+ herbs, no account required.",
     "herbsBySymptom": "Herbs by Symptom",
     "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
     "privacyPolicy": "Privacy Policy",
@@ -1372,11 +1372,11 @@
     "salisburyRule": "Salisbury's Rule",
     "cowlingRule": "Cowling's Rule",
     "friedRule": "Fried's Rule",
-    "clarkDesc": "Dose based on weight ratio",
-    "youngDesc": "Dose based on age ratio",
-    "salisburyDesc": "Dose based on weight for children",
-    "cowlingDesc": "Dose based on age in months",
-    "friedDesc": "Dose based on age in months (infants under 2)",
+    "clarkDesc": "Reference dose based on weight ratio",
+    "youngDesc": "Reference dose based on age ratio",
+    "salisburyDesc": "Reference dose based on weight and height",
+    "cowlingDesc": "Reference dose based on age in months",
+    "friedDesc": "Not used for adults 18 and over",
     "standardDose": "Standard",
     "weightBased": "Weight-based",
     "ageBased": "Age-based",
