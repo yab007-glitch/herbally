@@ -67,6 +67,7 @@ export const monographs: Record<string, Monograph> = {
     ],
     safetyNotes: [
       "GI upset common at doses >1,000mg/day",
+      "Rare liver injury has been reported with some enhanced-bioavailability curcumin/turmeric supplements. Stop use and seek medical advice for jaundice, dark urine, nausea, unusual fatigue or abdominal pain. This risk has not been associated with typical dietary amounts of turmeric.",
       "Piperine-enhanced formulations may increase drug levels of many medications",
       "May increase bleeding risk; discontinue 2 weeks before surgery",
       "Gallbladder contraction — avoid with gallstones",
