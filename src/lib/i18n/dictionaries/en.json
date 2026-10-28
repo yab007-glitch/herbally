@@ -735,7 +735,7 @@
     "thirdParty": {
       "title": "4. Third-Party Services",
       "text": "HerbAlly uses the following third-party services:",
-      "supabase": "Supabase — database and authentication hosting. The live database is currently hosted in the European Union (eu-west-2, London). It may store account email/name, saved chats, garden and dosage history, and donation records. Herb content itself contains no personal data.",
+      "supabase": "Supabase — database and authentication hosting. The live database is currently hosted in the United Kingdom (eu-west-2, London). It may store account email/name, saved chats, garden and dosage history, and donation records. Herb content itself contains no personal data.",
       "vercel": "Vercel — application hosting and aggregate web analytics. Vercel may process request logs and approximate location data.",
       "stripe": "Stripe — payment processing for donations. HerbAlly never sees or stores your card details. Stripe provides us the donor name, email and payment status so the donation can be recorded.",
       "ollamaCloud": "Ollama Cloud — AI processing. Chat messages you send are transmitted there to generate replies. We do not control Ollama's own retention practices; please review Ollama's privacy policy.",
@@ -863,9 +863,9 @@
       "step3Title": "Consult the Virtual Herbalist",
       "step3Desc": "Ask our AI-powered herbalist about herb safety, drug interactions, and get personalized guidance for your situation."
     },
-    "freeTitle": "Free to Use, Supported by Donations and Limited Ads",
-    "freeText1": "HerbAlly is free to use: no paywalls and no premium tiers. To cover hosting, database and AI costs, we are introducing a small number of clearly labelled ads on public herb reference pages. Ads do not appear in the Virtual Herbalist, the interaction checker or the dosage calculator, and we do not use your chat or personal health details to choose them.",
-    "freeText2": "Donations remain important and go toward infrastructure, AI usage and development. Advertising is a supplement, not a replacement for community support.",
+    "freeTitle": "Free to Use, Supported by Donations",
+    "freeText1": "HerbAlly is free to use: no paywalls and no premium tiers. To cover hosting, database and AI costs, we plan to introduce a small number of clearly labelled ads on public herb reference pages; ads are not live yet. Ads do not appear in the Virtual Herbalist, the interaction checker or the dosage calculator, and we do not use your chat or personal health details to choose them.",
+    "freeText2": "Donations remain important and go toward infrastructure, AI usage and development. If approved, advertising will supplement, not replace, community support.",
     "freeText3": "If HerbAlly has been helpful to you, please consider making a donation to help us keep this resource available for everyone.",
     "freeLink": "making a donation",
     "team": {
@@ -889,7 +889,7 @@
     "general": {
       "free": {
         "q": "Is HerbAlly free to use?",
-        "a": "Yes, HerbAlly is completely free to use. No account is required for most features and there is no premium tier. We are introducing limited, clearly labelled advertising on public herb pages to help cover costs; the chat and calculator stay ad-free. We believe safe herbal information should be accessible to everyone."
+        "a": "Yes, HerbAlly is completely free to use. No account is required for most features and there is no premium tier. We plan to introduce limited, clearly labelled advertising on public herb pages to help cover costs; ads are not live yet. The chat and calculator will remain ad-free. We believe safe herbal information should be accessible to everyone."
       },
       "herbCount": {
         "q": "How many herbs does HerbAlly cover?",
@@ -1002,7 +1002,7 @@
   },
   "donateContent": {
     "title": "Keep HerbAlly 100% Free",
-    "subtitle": "No paywalls. No premium tiers. Just free herbal knowledge for everyone — supported by donations and limited, clearly labelled advertising.",
+    "subtitle": "No paywalls. No premium tiers. Just free herbal knowledge for everyone — supported by donations, with limited, clearly labelled advertising planned but not yet live.",
     "herbsStat": "2,700+ herbs",
     "freeAI": "Free AI herbalist",
     "freeForever": "100% free forever",
@@ -1015,7 +1015,7 @@
     "loveHerbAlly": "Why People Love HerbAlly",
     "promiseTitle": "Our Promise to You",
     "noAds": "Limited ads, never in private tools.",
-    "noAdsDesc": "We are introducing clearly labelled ads on public herb pages only. The Virtual Herbalist, interaction checker and calculator stay ad-free, and we never use your chat or health details to target ads.",
+    "noAdsDesc": "We plan to introduce clearly labelled ads on public herb pages only; ads are not live yet. The Virtual Herbalist, interaction checker and calculator stay ad-free, and we never use your chat or health details to target ads.",
     "noPremium": "No premium tiers.",
     "noPremiumDesc": "Every feature is free for everyone.",
     "noDataSelling": "No data selling.",

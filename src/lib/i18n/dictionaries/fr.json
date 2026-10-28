@@ -735,7 +735,7 @@
     "thirdParty": {
       "title": "4. Services Tiers",
       "text": "HerbAlly utilise les services tiers suivants :",
-      "supabase": "Supabase — hébergement de la base de données et de l'authentification. La base de données de production est actuellement hébergée dans l'Union européenne (eu-west-2, Londres). Elle peut contenir le nom et l'e-mail du compte, les conversations enregistrées, l'historique du jardin et des posologies, et les dons. Le contenu sur les plantes ne contient aucune donnée personnelle.",
+      "supabase": "Supabase — hébergement de la base de données et de l'authentification. La base de données de production est actuellement hébergée au Royaume-Uni (eu-west-2, Londres). Elle peut contenir le nom et l'e-mail du compte, les conversations enregistrées, l'historique du jardin et des posologies, et les dons. Le contenu sur les plantes ne contient aucune donnée personnelle.",
       "vercel": "Vercel — hébergement de l'application et analyse web agrégée. Vercel peut traiter des journaux de requêtes et des données de localisation approximative.",
       "stripe": "Stripe — traitement des paiements pour les dons. HerbAlly ne voit ni ne stocke jamais vos coordonnées bancaires. Stripe nous transmet le nom, l'e-mail et le statut de paiement du donateur afin d'enregistrer le don.",
       "ollamaCloud": "Ollama Cloud — traitement IA. Les messages que vous envoyez y sont transmis pour générer des réponses. Nous ne contrôlons pas les pratiques de conservation d'Ollama ; consultez sa politique de confidentialité.",
@@ -863,9 +863,9 @@
       "step3Title": "Consulter l'Herboriste Virtuel",
       "step3Desc": "Posez des questions à notre herboriste alimenté par l'IA sur la sécurité des herbes, les interactions médicamenteuses et obtenez des conseils personnalisés."
     },
-    "freeTitle": "Gratuit, financé par les dons et une publicité limitée",
-    "freeText1": "HerbAlly est gratuit : pas de barrières de paiement, pas d'offres premium. Pour couvrir les coûts d'hébergement, de base de données et d'IA, nous introduisons un petit nombre d'annonces clairement identifiées sur les pages publiques de référence sur les plantes. Les annonces n'apparaissent pas dans l'Herboriste Virtuel, le vérificateur d'interactions ni le calculateur de posologie, et nous n'utilisons pas vos discussions ni vos renseignements de santé personnels pour les choisir.",
-    "freeText2": "Les dons restent importants et financent l'infrastructure, l'usage de l'IA et le développement. La publicité complète le soutien de la communauté, elle ne le remplace pas.",
+    "freeTitle": "Gratuit, financé par les dons",
+    "freeText1": "HerbAlly est gratuit : pas de barrières de paiement, pas d'offres premium. Pour couvrir les coûts d'hébergement, de base de données et d'IA, nous prévoyons d'introduire un petit nombre d'annonces clairement identifiées sur les pages publiques de référence sur les plantes ; la publicité n'est pas encore active. Les annonces n'apparaissent pas dans l'Herboriste Virtuel, le vérificateur d'interactions ni le calculateur de posologie, et nous n'utilisons pas vos discussions ni vos renseignements de santé personnels pour les choisir.",
+    "freeText2": "Les dons restent importants et financent l'infrastructure, l'usage de l'IA et le développement. Si elle est approuvée, la publicité complétera le soutien de la communauté sans le remplacer.",
     "freeText3": "Si HerbAlly vous a été utile, veuillez envisager de faire un don pour nous aider à garder cette ressource disponible pour tous.",
     "freeLink": "faire un don",
     "team": {
@@ -889,7 +889,7 @@
     "general": {
       "free": {
         "q": "HerbAlly est-il gratuit ?",
-        "a": "Oui, HerbAlly est complètement gratuit. Aucun compte n'est requis pour la plupart des fonctions et il n'y a pas de version premium. Nous introduisons une publicité limitée et clairement identifiée sur les pages publiques de plantes pour aider à couvrir les coûts ; la discussion et le calculateur restent sans publicité. Nous croyons que l'information sûre sur les plantes devrait être accessible à tous."
+        "a": "Oui, HerbAlly est complètement gratuit. Aucun compte n'est requis pour la plupart des fonctions et il n'y a pas de version premium. Nous prévoyons une publicité limitée et clairement identifiée sur les pages publiques de plantes pour aider à couvrir les coûts ; elle n'est pas encore active. La discussion et le calculateur resteront sans publicité. Nous croyons que l'information sûre sur les plantes devrait être accessible à tous."
       },
       "herbCount": {
         "q": "Combien de plantes HerbAlly couvre-t-il ?",
@@ -1002,7 +1002,7 @@
   },
   "donateContent": {
     "title": "Gardez HerbAlly 100% Gratuit",
-    "subtitle": "Pas de barrières de paiement. Pas d'offres premium. Juste des connaissances gratuites sur les plantes pour tous — financées par les dons et une publicité limitée, clairement identifiée.",
+    "subtitle": "Pas de barrières de paiement. Pas d'offres premium. Juste des connaissances gratuites sur les plantes pour tous — financées par les dons, avec une publicité limitée et clairement identifiée prévue mais pas encore active.",
     "herbsStat": "2 700+ herbes",
     "freeAI": "Herboriste IA gratuit",
     "freeForever": "100% gratuit pour toujours",
@@ -1015,7 +1015,7 @@
     "loveHerbAlly": "Pourquoi les Gens Aiment HerbAlly",
     "promiseTitle": "Notre Promesse envers Vous",
     "noAds": "Une publicité limitée, jamais dans les outils privés.",
-    "noAdsDesc": "Nous introduisons des annonces clairement identifiées uniquement sur les pages publiques de plantes. L'Herboriste Virtuel, le vérificateur d'interactions et le calculateur restent sans publicité, et nous n'utilisons jamais vos discussions ou données de santé pour cibler les annonces.",
+    "noAdsDesc": "Nous prévoyons des annonces clairement identifiées uniquement sur les pages publiques de plantes ; elles ne sont pas encore actives. L'Herboriste Virtuel, le vérificateur d'interactions et le calculateur restent sans publicité, et nous n'utilisons jamais vos discussions ou données de santé pour cibler les annonces.",
     "noPremium": "Pas de versions premium.",
     "noPremiumDesc": "Chaque fonctionnalité est gratuite pour tous.",
     "noDataSelling": "Pas de vente de données.",
