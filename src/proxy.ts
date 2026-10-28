@@ -97,6 +97,7 @@ const LOCALE_EXCLUDED_PATHS = [
   "/static",
   "/favicon.ico",
   "/robots.txt",
+  "/ads.txt",
   "/sitemap.xml",
   "/manifest",
   "/opengraph-image",
@@ -366,6 +367,6 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!monitoring|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!monitoring|_next/static|_next/image|favicon.ico|robots.txt|ads.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
