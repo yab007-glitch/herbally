@@ -33,7 +33,7 @@ function clampToAdult(
 
 /**
  * Clark's Rule: (weight_kg / 68) x adult_dose
- * Best for weight-based dosing for children 2+ years
+ * Weight-based reference calculation.
  */
 export function clarksRule(
   weightKg: number,
@@ -53,7 +53,7 @@ export function clarksRule(
 
 /**
  * Young's Rule: (age / (age + 12)) x adult_dose
- * Age-based dosing for children 2-12 years. `ageYears` MUST be in years.
+ * Age-based reference calculation. `ageYears` MUST be in years.
  */
 export function youngsRule(
   ageYears: number,
@@ -67,7 +67,7 @@ export function youngsRule(
     clamped,
     unit,
     formula: `(${ageYears} / (${ageYears} + 12)) x ${adultDoseMg} ${unit}`,
-    explanation: `Based on Young's Rule using patient age of ${ageYears} years. This formula is best for children aged 2-12 when weight is unknown.`,
+    explanation: `Based on Young's Rule using patient age of ${ageYears} years. This is an age-based reference calculation, less accurate than weight-based methods.`,
   };
 }
 
@@ -90,13 +90,13 @@ export function bsaMethod(
     clamped,
     unit,
     formula: `(${bsa.toFixed(3)} m² / 1.73) x ${adultDoseMg} ${unit}`,
-    explanation: `Based on BSA method using body surface area of ${bsa.toFixed(3)} m² (height: ${heightCm} cm, weight: ${weightKg} kg). The standard adult BSA is 1.73 m². This is the most accurate dosing method.`,
+    explanation: `Based on BSA method using body surface area of ${bsa.toFixed(3)} m² (height: ${heightCm} cm, weight: ${weightKg} kg). The standard adult BSA is 1.73 m².`,
   };
 }
 
 /**
  * Fried's Rule: (age_months / 150) x adult_dose
- * For infants under 2 years
+ * Age-in-months reference method; not applicable to adults 18+.
  */
 export function friedsRule(
   ageMonths: number,
@@ -110,7 +110,7 @@ export function friedsRule(
     clamped,
     unit,
     formula: `(${ageMonths} months / 150) x ${adultDoseMg} ${unit}`,
-    explanation: `Based on Fried's Rule using infant age of ${ageMonths} months. This formula is specifically designed for infants under 2 years of age.`,
+    explanation: `Based on Fried's Rule using age of ${ageMonths} months. This method is not applicable to adults 18 and over.`,
   };
 }
 

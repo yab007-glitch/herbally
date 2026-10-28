@@ -183,13 +183,13 @@
     "calculating": "Calcul en cours...",
     "formulas": {
       "clarks": "Règle de Clark",
-      "clarksDesc": "Calcul basé sur le poids pour enfants",
+      "clarksDesc": "Calcul de référence basé sur le poids",
       "youngs": "Règle de Young",
-      "youngsDesc": "Calcul basé sur l'âge pour enfants",
+      "youngsDesc": "Calcul de référence basé sur l'âge",
       "bsa": "Surface Corporelle",
-      "bsaDesc": "Méthode poids/taille la plus précise",
+      "bsaDesc": "Calcul de référence utilisant le poids et la taille",
       "frieds": "Règle de Fried",
-      "friedsDesc": "Pour les nourrissons de moins de 2 ans"
+      "friedsDesc": "Non utilisée pour les adultes de 18 ans et plus"
     },
     "errors": {
       "invalidDose": "Veuillez entrer une dose adulte valide.",
@@ -392,7 +392,7 @@
     "sideEffects": "Quels sont les effets secondaires de {name} ?",
     "sideEffectsFallback": "Les effets secondaires de {name} sont généralement légers aux doses recommandées. Utilisez notre calculateur de dose gratuit pour rester dans les plages fondées sur des preuves, et consultez votre professionnel de santé pour un avis personnalisé.",
     "doseQuestion": "Comment calculer une dose sûre de {name} ?",
-    "doseAnswer": "Utilisez le calculateur de posologie gratuit d'HerbAlly — saisissez la dose adulte de référence pour {name}, plus l'âge et le poids, pour obtenir une estimation pédiatrique selon Clark / Young. Ne dépassez jamais la dose adulte.",
+    "doseAnswer": "Utilisez le calculateur de posologie adulte gratuit d'HerbAlly — saisissez la dose de référence adulte pour {name}, ainsi que l'âge et le poids, pour obtenir une estimation de référence selon les règles de Clark / Young pour un adulte de 18 ans ou plus. Ne dépassez jamais la dose adulte.",
     "pregQuestion": "{name} est-il sûr pendant la grossesse ?",
     "interactQuestion": "{name} interagit-il avec les médicaments ?"
   },
@@ -1289,23 +1289,23 @@
   "dosageFormulas": {
     "clarks_rule": {
       "name": "Règle de Clark",
-      "description": "Basée sur le poids du patient. Recommandée pour les enfants et les adultes de tailles variées.",
-      "bestFor": "Enfants de 2+ ans, posologie basée sur le poids"
+      "description": "Calcul de référence basé sur le poids.",
+      "bestFor": "Adultes, référence basée sur le poids"
     },
     "youngs_rule": {
       "name": "Règle de Young",
-      "description": "Basée sur l'âge du patient. Simple mais moins précise que les méthodes basées sur le poids.",
-      "bestFor": "Enfants de 2-12 ans quand le poids est inconnu"
+      "description": "Calcul de référence basé sur l'âge, moins précis que les méthodes basées sur le poids.",
+      "bestFor": "Adultes, référence basée sur l'âge"
     },
     "bsa": {
       "name": "Méthode BSA (Mosteller)",
-      "description": "Basée sur la surface corporelle. Méthode la plus précise pour le calcul de posologie.",
-      "bestFor": "La plus précise pour tous les âges quand la taille et le poids sont connus"
+      "description": "Calcul de référence basé sur la surface corporelle.",
+      "bestFor": "Adultes lorsque la taille et le poids sont connus"
     },
     "fried_rule": {
       "name": "Règle de Fried",
-      "description": "Conçue spécifiquement pour les nourrissons de moins de 2 ans.",
-      "bestFor": "Nourrissons de moins de 2 ans"
+      "description": "Méthode de référence basée sur l'âge en mois.",
+      "bestFor": "Non applicable aux adultes de 18 ans et plus"
     }
   },
   "meta": {
@@ -1313,8 +1313,8 @@
     "herbsDatabaseDesc": "Parcourez notre base de données complète de plus de 2 700 plantes médicinales avec des profils détaillés, composants actifs et interactions médicamenteuses.",
     "virtualHerbalist": "Herboriste Virtuel",
     "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et la posologie. Réponses fondées sur les sources OMS, NCCIH et PubMed. Gratuit, sans compte requis.",
-    "doseCalculator": "Calculateur de Posologie: Doses Sûres Adulte & Enfant",
-    "doseCalculatorDesc": "Calculateur de posologie gratuit : doses sûres adulte et enfant par poids et âge (règles de Clark & Young). 2 700+ plantes, fondé sur les preuves, sans compte.",
+    "doseCalculator": "Calculateur de Posologie : Doses de Référence pour Adultes",
+    "doseCalculatorDesc": "Calculateur de posologie adulte gratuit : doses de référence par poids et âge (règles de Clark & Young) pour les adultes de 18 ans et plus. 2 700+ plantes, sans compte.",
     "herbsBySymptom": "Plantes par Symptôme",
     "herbsBySymptomDesc": "Trouvez les bonnes plantes pour vos symptômes. Parcourez les recommandations phytothérapiques fondées sur les preuves pour l'anxiété, le sommeil, l'inflammation, la digestion et plus encore.",
     "privacyPolicy": "Politique de Confidentialité",
@@ -1372,11 +1372,11 @@
     "salisburyRule": "Règle de Salisbury",
     "cowlingRule": "Règle de Cowling",
     "friedRule": "Règle de Fried",
-    "clarkDesc": "Posologie basée sur le rapport de poids",
-    "youngDesc": "Posologie basée sur le rapport d'âge",
-    "salisburyDesc": "Posologie basée sur le poids pour enfants",
-    "cowlingDesc": "Posologie basée sur l'âge en mois",
-    "friedDesc": "Posologie basée sur l'âge en mois (nourrissons de moins de 2 ans)",
+    "clarkDesc": "Dose de référence basée sur le rapport de poids",
+    "youngDesc": "Dose de référence basée sur le rapport d'âge",
+    "salisburyDesc": "Dose de référence basée sur le poids et la taille",
+    "cowlingDesc": "Dose de référence basée sur l'âge en mois",
+    "friedDesc": "Non utilisée pour les adultes de 18 ans et plus",
     "standardDose": "Standard",
     "weightBased": "Basé sur le poids",
     "ageBased": "Basé sur l'âge",

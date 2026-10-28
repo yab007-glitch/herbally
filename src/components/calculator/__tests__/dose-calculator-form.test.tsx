@@ -102,29 +102,27 @@ describe("DoseCalculatorForm pediatric gate", () => {
     ).toBeInTheDocument();
   });
 
-  it("blocks a 17-year-old on Fried's rule instead of a formula error", () => {
+  it("blocks a 17-year-old before any formula error", () => {
     const { container } = render(<DoseCalculatorForm />);
     setValue(/calculatorForm.adultDose/, "500");
     setValue(/calculatorForm.childWeight/, "60");
     setValue(/calculatorForm.childAge/, "17");
-    fireEvent.click(screen.getByRole("radio", { name: /friedRule/i }));
     calculate();
 
-    // Previously a 17-year-old hitting Fried's rule showed "under 24 months"
-    // validation churn; the safety message must take priority.
+    // Previously a 17-year-old hitting a formula limit showed validation
+    // churn; the safety message must take priority.
     expect(renderedDose(container)).toBeNull();
     expect(
       screen.getByText("calculatorForm.pediatricDoseBlocked")
     ).toBeInTheDocument();
   });
 
-  it("blocks a 6-month-old on Fried's rule when the months toggle is on", () => {
+  it("blocks a 6-month-old when the months toggle is on", () => {
     const { container } = render(<DoseCalculatorForm />);
     setValue(/calculatorForm.adultDose/, "500");
     setValue(/calculatorForm.childWeight/, "7");
     fireEvent.click(screen.getByRole("switch", { name: /toggleAgeUnit/i }));
     setValue(/calculatorForm.childAge/, "6");
-    fireEvent.click(screen.getByRole("radio", { name: /friedRule/i }));
     calculate();
 
     expect(renderedDose(container)).toBeNull();

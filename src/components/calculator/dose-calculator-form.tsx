@@ -459,28 +459,33 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   FormulaKey,
                   (typeof DOSAGE_FORMULAS)[FormulaKey],
                 ][]
-              ).map(([key]) => (
-                <button
-                  key={key}
-                  type="button"
-                  role="radio"
-                  aria-checked={selectedFormula === key}
-                  onClick={() => setSelectedFormula(key)}
-                  className={cn(
-                    "rounded-lg border p-3 text-left transition-all",
-                    selectedFormula === key
-                      ? "border-primary bg-primary/5 ring-1 ring-primary"
-                      : "border-border hover:border-primary/50 hover:bg-muted/50"
-                  )}
-                >
-                  <div className="text-sm font-medium text-foreground">
-                    {t(`calculatorForm.${FORMULA_KEY_MAP[key]}`)}
-                  </div>
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    {t(`calculatorForm.${FORMULA_DESC_MAP[key]}`)}
-                  </div>
-                </button>
-              ))}
+              )
+                // Fried's Rule only applies under 24 months, and this
+                // calculator refuses everyone under 18, so it can never be a
+                // valid choice here.
+                .filter(([key]) => key !== "fried_rule")
+                .map(([key]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    role="radio"
+                    aria-checked={selectedFormula === key}
+                    onClick={() => setSelectedFormula(key)}
+                    className={cn(
+                      "rounded-lg border p-3 text-left transition-all",
+                      selectedFormula === key
+                        ? "border-primary bg-primary/5 ring-1 ring-primary"
+                        : "border-border hover:border-primary/50 hover:bg-muted/50"
+                    )}
+                  >
+                    <div className="text-sm font-medium text-foreground">
+                      {t(`calculatorForm.${FORMULA_KEY_MAP[key]}`)}
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      {t(`calculatorForm.${FORMULA_DESC_MAP[key]}`)}
+                    </div>
+                  </button>
+                ))}
             </div>
           </div>
 
