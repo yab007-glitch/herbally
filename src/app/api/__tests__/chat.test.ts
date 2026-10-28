@@ -21,11 +21,22 @@ const rateLimitMock = vi.fn();
 vi.mock("@/lib/rate-limit", () => ({
   rateLimit: (...args: unknown[]) => rateLimitMock(...args),
 }));
-// Defaults to null (no DB) so the existing suites exercise the no-cache path;
-// the "hung database" suite swaps in a never-settling client.
+// The cache is server-only data: reads AND writes must go through the
+// service-role client. The anon client is kept mockable so the cache suites can
+// prove the route never reaches for it.
 const getAnonClientMock = vi.fn().mockReturnValue(null);
 vi.mock("@/lib/supabase/anonymous", () => ({
   getAnonClient: (...args: unknown[]) => getAnonClientMock(...args),
+}));
+
+// Defaults to throwing (service key not configured) so the ordinary suites
+// exercise the cache-miss path without touching a database; cache-specific
+// suites swap in a real (fake) client or a never-settling one.
+const createAdminClientMock = vi.fn().mockImplementation(() => {
+  throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for admin operations");
+});
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: (...args: unknown[]) => createAdminClientMock(...args),
 }));
 
 async function loadRoute() {
@@ -132,6 +143,12 @@ beforeEach(() => {
   rateLimitMock.mockReset();
   getAnonClientMock.mockReset();
   getAnonClientMock.mockReturnValue(null);
+  createAdminClientMock.mockReset();
+  createAdminClientMock.mockImplementation(() => {
+    throw new Error(
+      "SUPABASE_SERVICE_ROLE_KEY is required for admin operations"
+    );
+  });
   rateLimitMock.mockResolvedValue({
     success: true,
     limit: 20,
@@ -295,7 +312,7 @@ describe("POST /api/chat — hung database", () => {
   });
 
   it("still answers from the model when Supabase never responds", async () => {
-    getAnonClientMock.mockReturnValue(hangingClient());
+    createAdminClientMock.mockReturnValue(hangingClient());
     fetchMock.mockResolvedValue(streamResponse());
 
     const { POST } = await loadRoute();
@@ -303,14 +320,16 @@ describe("POST /api/chat — hung database", () => {
       makeRequest({ messages: [{ role: "user", content: "hi" }] })
     );
 
-    // The request completes instead of hanging, and the model was reached.
+    // The cache lookup is attempted through the service-role client, then the
+    // request completes instead of hanging and the model is reached.
+    expect(createAdminClientMock).toHaveBeenCalled();
     expect(res.status).toBe(200);
     expect(res.body).toBeInstanceOf(ReadableStream);
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it("stays bounded rather than stalling on the unbounded await", async () => {
-    getAnonClientMock.mockReturnValue(hangingClient());
+    createAdminClientMock.mockReturnValue(hangingClient());
     fetchMock.mockResolvedValue(streamResponse());
 
     const started = Date.now();
@@ -330,7 +349,7 @@ describe("POST /api/chat — hung database", () => {
   it("still serves a cache hit when the database is healthy", async () => {
     // Guards the opposite direction — bounding the lookup must not break the
     // normal cache path.
-    getAnonClientMock.mockReturnValue({
+    createAdminClientMock.mockReturnValue({
       from: () => ({
         select: () => ({
           eq: () => ({
@@ -356,5 +375,142 @@ describe("POST /api/chat — hung database", () => {
     expect((await res.text()).length).toBeGreaterThan(0);
     // Served from cache — the model was never called.
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * ai_response_cache holds shared, prompt-hash-keyed answers. Once the public
+ * SELECT policy is removed, an anon/authenticated read fails; cache access must
+ * therefore use the service-role client only. Both directions matter: a read
+ * must succeed with the admin client, and an unavailable service key must
+ * degrade to a cache MISS (live generation), never to an error.
+ */
+describe("POST /api/chat — service-role-only cache access", () => {
+  function cacheHitClient(response: string) {
+    return {
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            gt: () => ({
+              single: () =>
+                Promise.resolve({ data: { response }, error: null }),
+            }),
+          }),
+        }),
+      }),
+    };
+  }
+
+  it("reads the cache with the service-role client, never the anon client", async () => {
+    createAdminClientMock.mockReturnValue(
+      cacheHitClient("A cached answer from the service-role client.")
+    );
+    fetchMock.mockResolvedValue(streamResponse());
+
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
+
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe(
+      "A cached answer from the service-role client."
+    );
+    expect(createAdminClientMock).toHaveBeenCalled();
+    // The context fetcher may independently use the anonymous client for public
+    // herb data; it is mocked to null here and cannot access the response cache.
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("writes a long generated response via the admin client and serves the next identical request from that cache", async () => {
+    const answer =
+      "Peppermint is an aromatic plant traditionally used in teas and other preparations.";
+    let stored: {
+      prompt_hash: string;
+      response: string;
+      expires_at: string;
+    } | null = null;
+    const insert = vi.fn(async (row: typeof stored) => {
+      stored = row;
+      return { error: null };
+    });
+    const from = vi.fn((table: string) => {
+      expect(table).toBe("ai_response_cache");
+      return {
+        select: () => ({
+          eq: () => ({
+            gt: () => ({ single: async () => ({ data: stored, error: null }) }),
+          }),
+        }),
+        insert,
+      };
+    });
+    createAdminClientMock.mockReturnValue({ from });
+    fetchMock.mockResolvedValue(
+      new Response(
+        `data: ${JSON.stringify({ choices: [{ delta: { content: answer } }] })}\n\ndata: [DONE]\n\n`,
+        { status: 200, headers: { "content-type": "text/event-stream" } }
+      )
+    );
+    const { POST } = await loadRoute();
+    const body = {
+      messages: [{ role: "user", content: "What is peppermint?" }],
+    };
+    const first = await POST(makeRequest(body));
+    expect(await first.text()).toBe(answer);
+    expect(insert).toHaveBeenCalledOnce();
+    expect(insert.mock.calls[0][0]).toMatchObject({ response: answer });
+    const second = await POST(makeRequest(body));
+    expect(await second.text()).toBe(answer);
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(from).toHaveBeenCalledWith("ai_response_cache");
+  });
+
+  it("returns the live answer when the admin cache write fails", async () => {
+    const answer =
+      "Peppermint is an aromatic plant traditionally used in teas and other preparations.";
+    const insert = vi
+      .fn()
+      .mockRejectedValue(new Error("synthetic write failure"));
+    createAdminClientMock.mockReturnValue({
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            gt: () => ({ single: async () => ({ data: null, error: null }) }),
+          }),
+        }),
+        insert,
+      }),
+    });
+    fetchMock.mockResolvedValue(
+      new Response(
+        `data: ${JSON.stringify({ choices: [{ delta: { content: answer } }] })}\n\ndata: [DONE]\n\n`,
+        { status: 200, headers: { "content-type": "text/event-stream" } }
+      )
+    );
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({
+        messages: [{ role: "user", content: "What is peppermint?" }],
+      })
+    );
+    expect(await res.text()).toBe(answer);
+    expect(insert).toHaveBeenCalledOnce();
+  });
+
+  it("treats an unavailable service-role client as a cache miss and answers live", async () => {
+    fetchMock.mockResolvedValue(streamResponse());
+
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({ messages: [{ role: "user", content: "hi" }] })
+    );
+
+    // createAdminClient() throws when SUPABASE_SERVICE_ROLE_KEY is absent.
+    // That must be swallowed as a miss rather than failing the chat request.
+    expect(createAdminClientMock).toHaveBeenCalled();
+    expect(res.status).toBe(200);
+    expect(res.body).toBeInstanceOf(ReadableStream);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
