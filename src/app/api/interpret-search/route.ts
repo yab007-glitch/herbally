@@ -140,16 +140,13 @@ Examples:
     // validated-query fallback (not
     // an empty result) so a slow upstream never blanks the search.
     if (["AbortError", "TimeoutError"].includes((error as Error)?.name ?? "")) {
-      logger.warn("interpret_search_timeout", {
-        query: originalQuery.slice(0, 60),
-      });
+      logger.warn("interpret_search_timeout");
       return NextResponse.json({
         keywords: [originalQuery.trim().slice(0, 200).toLowerCase() || ""],
       });
     }
-    logger.error("interpret_search_failed", {
-      error: error instanceof Error ? error.message : String(error),
-    });
+    // Error messages can contain user input; log the event, not raw details.
+    logger.error("interpret_search_failed");
     return NextResponse.json({
       keywords: [originalQuery.toLowerCase() || ""],
     });

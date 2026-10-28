@@ -10,6 +10,11 @@ declare global {
   }
 }
 
+// Fail closed even when identifiers are configured. Before changing this flag,
+// implement and independently verify consent before any ad request and a
+// document isolation boundary for navigation to sensitive health tools.
+const ADS_APPROVED_FOR_LAUNCH = false;
+
 type AdSlotProps = {
   /** AdSense ad unit slot id, e.g. "1234567890". */
   slot?: string;
@@ -21,13 +26,9 @@ type AdSlotProps = {
 /**
  * Render one clearly labelled AdSense display unit.
  *
- * Renders nothing at all unless BOTH the publisher client and an ad-unit slot
- * are configured. That keeps the component inert until the account is approved
- * and a real ad unit exists, and it guarantees no ad script runs on pages that
- * were not meant to carry ads.
- *
- * The script is injected here rather than in the root layout so private tools
- * (chat, interaction checker, calculator) never load an advertising script.
+ * Ads are disabled pending a verified consent flow and isolation from private
+ * tools. The script, once executed, can persist during client-side navigation;
+ * unmounting a component is not a privacy boundary.
  *
  * `requestNonPersonalizedAds` is set before the first push: HerbAlly pages are
  * health-related, so ads are deliberately contextual rather than based on the
@@ -39,7 +40,7 @@ export function AdSlot({ slot, format = "auto", className }: AdSlotProps) {
   const pushedRef = useRef(false);
 
   useEffect(() => {
-    if (!client || !slot) return;
+    if (!ADS_APPROVED_FOR_LAUNCH || !client || !slot) return;
     if (pushedRef.current) return;
     const adElement = adRef.current;
     if (!adElement) return;
@@ -66,7 +67,7 @@ export function AdSlot({ slot, format = "auto", className }: AdSlotProps) {
     }
   }, [client, slot]);
 
-  if (!client || !slot) return null;
+  if (!ADS_APPROVED_FOR_LAUNCH || !client || !slot) return null;
 
   return (
     <aside
