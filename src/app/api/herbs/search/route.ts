@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { localizeHerb } from "@/lib/utils/localize-herb";
@@ -9,24 +10,23 @@ import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import { rankHerbResults } from "@/lib/search/rank-results";
 import type { Herb } from "@/lib/types";
 
-export async function GET(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
-  if (!success) {
-    return NextResponse.json([], {
-      status: 429,
-      headers: { "Retry-After": "60" },
-    });
-  }
-  const searchParams = request.nextUrl.searchParams;
-  const term = searchParams.get("q");
+const searchBodySchema = z.object({
+  q: z.string().trim().min(2).max(200),
+});
 
-  if (!term || term.length < 2 || term.length > 200) {
-    return NextResponse.json([]);
-  }
+function rateLimitedResponse() {
+  return NextResponse.json([], {
+    status: 429,
+    headers: { "Retry-After": "60" },
+  });
+}
 
-  // Determine locale from the x-locale header (set by proxy from URL)
-  const locale = request.headers.get("x-locale") === "fr" ? "fr" : "en";
+function getLocale(request: NextRequest): "en" | "fr" {
+  // Locale from the x-locale header (set by proxy from URL)
+  return request.headers.get("x-locale") === "fr" ? "fr" : "en";
+}
 
+async function searchHerbs(term: string, locale: "en" | "fr") {
   try {
     const supabase = await createClient();
     const expandedKeywords = expandQueryToKeywords(term);
@@ -121,10 +121,49 @@ export async function GET(request: NextRequest) {
     // herb sat below the fold. Stable sort preserves the existing
     // evidence/DB order within each rank.
     return NextResponse.json(rankHerbResults(results, term));
-  } catch (err) {
-    logger.error("herbs_search_error", {
-      error: err instanceof Error ? err.message : String(err),
-    });
+  } catch {
+    // Upstream errors may include search terms; never log their raw text.
+    logger.error("herbs_search_error");
     return NextResponse.json([]);
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  if (!success) return rateLimitedResponse();
+  const term = request.nextUrl.searchParams.get("q");
+  if (!term || term.length < 2 || term.length > 200) {
+    return NextResponse.json([]);
+  }
+  return searchHerbs(term, getLocale(request));
+}
+
+export async function POST(request: NextRequest) {
+  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  if (!success) return rateLimitedResponse();
+  try {
+    const contentLength = Number(request.headers.get("content-length") || "0");
+    if (contentLength > 10_240) return NextResponse.json([], { status: 413 });
+    if (!request.body) return NextResponse.json([], { status: 400 });
+    const reader = request.body.getReader();
+    const decoder = new TextDecoder();
+    let text = "";
+    let bytes = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.byteLength;
+      if (bytes > 10_240) {
+        await reader.cancel();
+        return NextResponse.json([], { status: 413 });
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+    text += decoder.decode();
+    const parsed = searchBodySchema.safeParse(JSON.parse(text));
+    if (!parsed.success) return NextResponse.json([], { status: 400 });
+    return searchHerbs(parsed.data.q, getLocale(request));
+  } catch {
+    return NextResponse.json([], { status: 400 });
   }
 }
