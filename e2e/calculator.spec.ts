@@ -22,20 +22,20 @@ test.describe("Dosage Calculator", () => {
 
     await expect(page.getByLabel(/Herb Name/i)).toBeVisible();
     await expect(page.getByLabel(/Adult Dose/i)).toBeVisible();
-    await expect(page.getByLabel(/Child's Weight/i)).toBeVisible();
+    await expect(page.getByLabel(/Patient Weight/i)).toBeVisible();
+    await expect(page.getByLabel(/Patient Age/i)).toBeVisible();
   });
 
-  test("should calculate a child dose from weight (Clark's rule)", async ({
-    page,
-  }) => {
+  test("should calculate a reference dose for an adult", async ({ page }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
     const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
     await expect(calculateBtn).toBeVisible();
 
-    // Clark's rule is the default and needs adult dose + weight.
+    // Clark's rule is the default and needs adult dose, weight and age.
     await page.getByLabel(/Herb Name/i).fill("Ginger");
     await page.getByLabel(/Adult Dose/i).fill("500");
-    await page.getByLabel(/Child's Weight/i).fill("30");
+    await page.getByLabel(/Patient Weight/i).fill("70");
+    await page.getByLabel(/Patient Age/i).fill("30");
     await calculateBtn.click();
 
     // The result renders a numeric dose in the large dose-value container
@@ -44,6 +44,25 @@ test.describe("Dosage Calculator", () => {
     const doseValue = page.locator(".text-4xl").first();
     await expect(doseValue).toBeVisible();
     await expect(doseValue).toHaveText(/\d+(\.\d+)?\s*(mg|ml|g|drops)/);
+  });
+
+  test("refuses to calculate a dose for a minor", async ({ page }) => {
+    await page.goto("/calculator", { waitUntil: "networkidle" });
+    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    await expect(calculateBtn).toBeVisible();
+
+    // Regression: 500 mg adult dose, 60 kg, age 8 previously produced
+    // "441.2 mg" despite the under-12 warning panel.
+    await page.getByLabel(/Herb Name/i).fill("Turmeric");
+    await page.getByLabel(/Adult Dose/i).fill("500");
+    await page.getByLabel(/Patient Weight/i).fill("60");
+    await page.getByLabel(/Patient Age/i).fill("8");
+    await calculateBtn.click();
+
+    await expect(
+      page.getByText(/does not calculate herbal doses for anyone under 18/i)
+    ).toBeVisible();
+    await expect(page.locator(".text-4xl")).toHaveCount(0);
   });
 
   test("should show a validation error when calculating with no dose", async ({

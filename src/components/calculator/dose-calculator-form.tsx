@@ -28,6 +28,10 @@ import {
   lbsToKg,
   type DoseResult,
 } from "@/lib/utils/dosage-calculations";
+import {
+  assessDoseEligibility,
+  MINIMUM_DOSE_AGE_YEARS,
+} from "@/lib/utils/dosage-safety";
 import { useTranslations } from "next-intl";
 import {
   useDefaultPatientProfile,
@@ -81,6 +85,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     useState<FormulaKey>("clarks_rule");
   const [result, setResult] = useState<DoseResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /** Set when the age gate prevents any numeric dose from being shown. */
+  const [safetyBlock, setSafetyBlock] = useState<
+    "minor" | "age_required" | null
+  >(null);
   const [autoFilled, setAutoFilled] = useState(false);
   const { profile, loaded: profileLoaded } = useDefaultPatientProfile();
 
@@ -107,6 +115,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   function handleCalculate() {
     setError(null);
     setResult(null);
+    setSafetyBlock(null);
 
     const dose = parseFloat(adultDose);
     if (!dose || dose <= 0) {
@@ -120,6 +129,32 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     // treated as an 18-year-old (≈5.5x overdose). Named ageInYears to avoid
     // shadowing the ageYears state variable.
     const ageInYears = useMonths && Number.isFinite(age) ? age / 12 : age;
+
+    // ── Age gate (clinical safety) ──────────────────────────────────
+    // No numerical dose is produced without a confirmed adult age. This runs
+    // BEFORE the per-formula validation so a 17-year-old who picks Fried's
+    // rule gets the safety message rather than an "under 24 months" error.
+    //
+    // This is the root-cause fix for the production incident: an 8-year-old,
+    // 60 kg, 500 mg adult dose previously produced "441.2 mg" via Clark's
+    // rule. Pediatric herbal dosing is not validated for botanical products,
+    // so we refuse to compute it and direct the caregiver to a professional.
+    if (!Number.isFinite(ageInYears) || ageInYears <= 0) {
+      setSafetyBlock("age_required");
+      return;
+    }
+    const eligibility = assessDoseEligibility(ageInYears);
+    if (eligibility.status === "minor") {
+      setSafetyBlock("minor");
+      return;
+    }
+    if (eligibility.status === "invalid_age") {
+      // Implausibly old (e.g. 200) or otherwise out of range: this is bad
+      // input, not a pediatric case. Keep the distinct age error.
+      setError(t("calculator.errors.ageRequired"));
+      return;
+    }
+
     const rawWeight = parseFloat(weightValue);
     const weight = useLbs && rawWeight ? lbsToKg(rawWeight) : rawWeight;
     const height = parseFloat(heightCm);
@@ -470,7 +505,35 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
 
       {/* Results Panel */}
       <div className="space-y-6">
-        {result ? (
+        {safetyBlock ? (
+          <Card className="border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
+                <AlertTriangle className="size-5 shrink-0" />
+                {t("calculatorForm.pediatricDoseBlockedTitle")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div
+                role="alert"
+                aria-live="polite"
+                className="text-sm leading-relaxed text-amber-900 dark:text-amber-100"
+              >
+                {safetyBlock === "minor"
+                  ? t("calculatorForm.pediatricDoseBlocked", {
+                      age: MINIMUM_DOSE_AGE_YEARS,
+                    })
+                  : t("calculatorForm.ageRequiredForAdultDose", {
+                      age: MINIMUM_DOSE_AGE_YEARS,
+                    })}
+              </div>
+              <div className="rounded-lg bg-background/80 px-3 py-2 text-xs text-muted-foreground">
+                <Info className="mb-0.5 mr-1 inline-block size-3" />
+                {t("calculatorForm.pediatricDoseBlockedRationale")}
+              </div>
+            </CardContent>
+          </Card>
+        ) : result ? (
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-green-50 dark:to-green-950/20 animate-message-in">
             <CardHeader>
               <CardTitle className="text-primary">
@@ -583,7 +646,9 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 adultDose={adultDose}
                 doseUnit={doseUnit}
                 weightValue={weightValue}
-                ageYears={ageYears}
+                ageYears={
+                  Number.isFinite(parsedAgeYears) ? String(parsedAgeYears) : ""
+                }
                 heightCm={heightCm}
                 selectedFormula={selectedFormula}
               />

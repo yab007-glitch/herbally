@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/utils/logger";
 import { matchesDrugInteraction } from "@/lib/utils/drug-match";
+import { assessDoseEligibility } from "@/lib/utils/dosage-safety";
 import { z } from "zod";
 import type { ActionResponse } from "@/lib/types";
 import type { Database } from "@/lib/types/database";
@@ -403,6 +404,25 @@ export async function saveDosageCalculation(
     const parsed = dosageCalculationSchema.safeParse(calc);
     if (!parsed.success)
       return { success: false, error: "Invalid calculation data" };
+
+    // ── Pediatric gate (server-side, non-bypassable via the UI) ────────
+    // The calculator UI refuses to produce a number for anyone under 18.
+    // A server action can still be invoked directly with arbitrary JSON, so
+    // re-check here with the same shared rule. A calculation with no age at
+    // all is also rejected: without a confirmed adult age we cannot rule out
+    // a minor, and `dosage_calculations.patient_age` is nullable at the DB
+    // level (see 00034_health_profiles_and_ratings.sql).
+    const eligibility = assessDoseEligibility(parsed.data.patient_age);
+    if (eligibility.status !== "eligible") {
+      logger.warn("saveDosageCalculation_age_gate_rejected", {
+        status: eligibility.status,
+      });
+      return {
+        success: false,
+        error:
+          "Dosage calculations are not available for patients under 18. Please consult a qualified pediatric healthcare professional.",
+      };
+    }
 
     const { error } = await supabase
       .from("dosage_calculations")

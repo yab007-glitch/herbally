@@ -915,7 +915,7 @@
       },
       "children": {
         "q": "Can children take herbal supplements?",
-        "a": "Children's dosages differ significantly from adult dosages. Use our dosage calculator with Clark's Rule (weight-based), Young's Rule (age-based), or BSA method. Always consult a pediatrician before giving herbs to children."
+        "a": "HerbAlly does not calculate herbal doses for anyone under 18. Herbal products vary widely in concentration and the classic pediatric formulas were designed for prescription drugs, not botanical extracts. Speak with a paediatrician, pharmacist or the child's doctor before giving any herbal product to a child or adolescent."
       },
       "grades": {
         "q": "What does the evidence grade (A/B/C/D) mean?",
@@ -935,7 +935,7 @@
     "dosage": {
       "calculator": {
         "q": "How does the dosage calculator work?",
-        "a": "HerbAlly supports four dosage calculation methods: Clark's Rule (weight-based for children), Young's Rule (age-based for children), Body Surface Area (BSA) method, and Fried's Rule (for infants). Select the method appropriate for your situation and input the relevant measurements."
+        "a": "HerbAlly's dosage calculator is for adults aged 18 and older. It supports Clark's Rule (weight-based), Young's Rule (age-based), Body Surface Area (BSA), and Fried's Rule (infants) as reference methods. It does not calculate doses for children or adolescents; consult a qualified paediatric healthcare professional instead."
       },
       "multiple": {
         "q": "Can I take multiple herbs at the same time?",
@@ -1349,24 +1349,24 @@
     "months": "Months",
     "calculationFormula": "Calculation Formula",
     "calculatedDose": "Calculated Dose",
-    "childAge": "Child's Age",
-    "childWeight": "Child's Weight",
-    "childDoseResult": "Child Dose",
+    "childAge": "Patient Age",
+    "childWeight": "Patient Weight",
+    "childDoseResult": "Reference Dose",
     "selectHerb": "Select an herb...",
     "selectUnit": "Select unit",
     "selectFormula": "Select formula",
     "calculate": "Calculate",
     "reset": "Reset",
     "adultDoseMg": "Adult dose (mg)",
-    "childWeightKg": "Weight (kg)",
+    "childWeightKg": "Patient weight (kg)",
     "adultWeightKg": "Adult weight (kg)",
-    "childAgeYears": "Child age (years)",
-    "childAgeMonths": "Child age (months)",
+    "childAgeYears": "Patient age (years)",
+    "childAgeMonths": "Patient age (months)",
     "safeRange": "Safe range",
     "result": "Result",
-    "disclaimer": "This calculator provides estimates only. Always consult a healthcare provider.",
-    "clampedWarning": "The calculated dose exceeded the adult reference dose and was capped at the adult dose. Please double-check the inputs (weight, age, height) — they may be implausible for a pediatric patient.",
-    "plausibilityWarning": "These inputs look unusual for a pediatric dose (age or weight outside the typical child range). Please double-check them.",
+    "disclaimer": "This reference calculator is for adults aged 18 and older. It provides estimates only and is not medical advice. Always consult a healthcare provider.",
+    "clampedWarning": "The calculated dose exceeded the adult reference dose and was capped at the adult dose. Please double-check the inputs (weight, age, height) — they may be implausible for this patient.",
+    "plausibilityWarning": "These inputs look unusual for a reference dose (age or weight outside the typical adult range). Please double-check them.",
     "clarkRule": "Clark's Rule",
     "youngsRule": "Young's Rule",
     "salisburyRule": "Salisbury's Rule",
@@ -1392,7 +1392,7 @@
     "doseNote": "Dose note",
     "prefillContext": "Calculating dose for {name}",
     "standardAdultDose": "Standard adult dose",
-    "referenceChildDose": "Reference child dose",
+    "referenceChildDose": "Reference dose",
     "forHerb": "for {name}",
     "doseComparison": "Dose Comparison",
     "formulaUsed": "Formula Used",
@@ -1402,7 +1402,11 @@
     "optionalForBsa": "optional, for BSA",
     "toggleAgeUnit": "Toggle age unit (years/months)",
     "toggleWeightUnit": "Toggle weight unit (kg/lbs)",
-    "unverifiedHerbNotice": "This herb's monograph is AI-generated and has not been reviewed against authoritative sources. No validated reference dose is available, so the adult dose field is left blank. Enter a dose from a trusted source yourself, and confirm any result with a qualified healthcare provider."
+    "unverifiedHerbNotice": "This herb's monograph is AI-generated and has not been reviewed against authoritative sources. No validated reference dose is available, so the adult dose field is left blank. Enter a dose from a trusted source yourself, and confirm any result with a qualified healthcare provider.",
+    "pediatricDoseBlockedTitle": "No dose calculated for this age",
+    "pediatricDoseBlocked": "HerbAlly does not calculate herbal doses for anyone under {age}. Herbal products vary widely in concentration and are not validated for dosing in children or adolescents. Please speak with a qualified pediatric healthcare professional (for example, a paediatrician, pharmacist or the child's doctor) before giving any herbal product to a person under {age}.",
+    "ageRequiredForAdultDose": "Enter the patient's age before calculating. HerbAlly only calculates doses for people aged {age} or older, and it must be able to confirm that age.",
+    "pediatricDoseBlockedRationale": "Why this limit exists: the classic pediatric formulas (Clark's, Young's, Fried's) were designed to scale prescription-drug doses and have never been validated for herbal extracts. HerbAlly therefore does not show a number for minors rather than present an unverified pediatric dose that could be mistaken for medical advice."
   },
   "symptomMeta": {
     "anxiety": {
