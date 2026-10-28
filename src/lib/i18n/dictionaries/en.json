@@ -315,7 +315,7 @@
     "subtitle": "Keep Herbal Knowledge Free",
     "mission": {
       "title": "Our Mission",
-      "description": "Free herbal knowledge for everyone. No ads, no paywalls, no premium tiers.",
+      "description": "Free herbal knowledge for everyone. No paywalls, no premium tiers.",
       "how": "How Your Donation Helps",
       "hosting": "Hosting & Servers",
       "ai": "AI Costs",
@@ -663,7 +663,7 @@
   "mission": {
     "title": "Our Mission",
     "description": "Free herbal knowledge for everyone. We believe access to health information is a fundamental right, not a privilege. HerbAlly is built to democratize access to evidence-based herbal medicine knowledge.",
-    "freeAccess": "No ads, no paywalls, no premium tiers. All 2,700+ herbs are available to everyone, completely free.",
+    "freeAccess": "No paywalls, no premium tiers. All 2,700+ herbs are available to everyone, completely free.",
     "herbsCount": "2,700+ Herbs",
     "herbsDesc": "Comprehensive database with detailed profiles",
     "aiHerbalist": "AI Herbalist",
@@ -707,25 +707,27 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "lastUpdated": "Last updated: April 2026",
+    "lastUpdated": "Last updated: October 2026",
     "overview": {
       "title": "1. Overview",
-      "text": "HerbAlly is a free, public resource — no account, registration, or login is required. We are committed to protecting your privacy and being transparent about what data we collect and how we use it."
+      "text": "HerbAlly is free to use and most of the site works without an account. Some features, such as saving a garden, saving calculations or keeping chat history, need an account or create an anonymous session. This policy explains what is stored, where it is stored, and the choices you have."
     },
     "infoWeCollect": {
       "title": "2. Information We Collect",
-      "text": "Because HerbAlly does not require accounts, we collect minimal data:",
-      "chatMessages": "Chat messages: Questions you type in the Virtual Herbalist are sent to our AI providers to generate responses. We do not store these messages on our servers.",
-      "analytics": "Usage analytics: We collect anonymous, aggregate analytics (page views, popular herbs, general region) to improve the service. No personally identifiable information is collected.",
-      "cookies": "Cookies: A single cookie (herbally-locale) stores your language preference (English or French). No tracking cookies are used.",
-      "notCollect": "We do not collect names, email addresses, or any other personal information. We have no accounts, passwords, or user profiles."
+      "text": "Depending on how you use HerbAlly, we may collect:",
+      "chatMessages": "Virtual Herbalist messages: the questions you type and the AI replies are sent to Ollama Cloud for processing. If you are signed in, conversations can be saved to your account. Guest conversations may be saved to an anonymous session linked to the herbally-guest-id cookie. Chat content is not used to target advertising.",
+      "analytics": "Usage analytics: aggregate page views, popular pages and general region, collected through Vercel Web Analytics, to understand how the service is used. We do not use it to identify you.",
+      "cookies": "Cookies: herbally-locale stores your language preference; herbally-guest-id links an anonymous guest chat session; Supabase auth cookies keep you signed in. If advertising is enabled, Google may set advertising and measurement cookies as described in section 5.",
+      "notCollect": "We do not ask for your name or email unless you create an account or make a donation. We do not sell personal information."
     },
     "howWeUse": {
       "title": "3. How We Use Your Information",
       "items": [
         "Provide and maintain our services",
-        "Generate AI responses in the Virtual Herbalist (messages are not stored)",
-        "Improve our herb database and AI responses using anonymous analytics",
+        "Generate AI responses in the Virtual Herbalist",
+        "Save optional account data, including your garden, saved calculations and chat history",
+        "Process donations through Stripe and keep the necessary accounting record",
+        "Improve our herb database and AI responses using aggregate analytics",
         "Remember your language preference across visits",
         "Ensure the security and integrity of our platform"
       ]
@@ -733,31 +735,35 @@
     "thirdParty": {
       "title": "4. Third-Party Services",
       "text": "HerbAlly uses the following third-party services:",
-      "supabase": "Supabase — Database hosting (Canada region). Data stored: herb profiles, interaction data. No personal user data.",
-      "vercel": "Vercel — Application hosting. Data stored: none (serverless functions). Vercel may collect anonymous CDN logs.",
-      "stripe": "Stripe — Payment processing for donations. HerbAlly never sees or stores your card details.",
-      "ollamaCloud": "Ollama Cloud — AI processing. Data sent: chat messages you type. Data stored: none (messages are processed and discarded)."
+      "supabase": "Supabase — database and authentication hosting. The live database is currently hosted in the European Union (eu-west-2, London). It may store account email/name, saved chats, garden and dosage history, and donation records. Herb content itself contains no personal data.",
+      "vercel": "Vercel — application hosting and aggregate web analytics. Vercel may process request logs and approximate location data.",
+      "stripe": "Stripe — payment processing for donations. HerbAlly never sees or stores your card details. Stripe provides us the donor name, email and payment status so the donation can be recorded.",
+      "ollamaCloud": "Ollama Cloud — AI processing. Chat messages you send are transmitted there to generate replies. We do not control Ollama's own retention practices; please review Ollama's privacy policy.",
+      "adsense": "Google AdSense (only when advertising is enabled) — Google and its partners may use cookies or device identifiers to serve and measure ads. HerbAlly does not send your chat messages, dosage calculations or interaction-checker entries to ad providers."
     },
     "cookiesSection": {
       "title": "5. Cookies",
-      "onlyOne": "HerbAlly uses a single cookie:",
-      "localeCookie": "herbally-locale — Stores your language preference (en or fr). Expires after 1 year.",
-      "noTracking": "We do not use Google Analytics, Facebook Pixel, or any third-party tracking cookies."
+      "onlyOne": "HerbAlly uses the following cookies:",
+      "localeCookie": "herbally-locale — stores your language preference (en or fr) for up to 1 year.",
+      "guestCookie": "herbally-guest-id — an HttpOnly cookie that links your browser to an anonymous guest chat session so you can return to it.",
+      "authCookies": "Supabase authentication cookies — set only if you choose to sign in, so your session stays active.",
+      "adCookies": "Advertising cookies — if ads are enabled, Google and its partners may set cookies or use identifiers to serve and measure ads. You can control these through your browser and Google's ad settings.",
+      "noTracking": "We do not use Facebook Pixel. Aggregate Vercel analytics is used for page counts. Advertising providers are used only as described above."
     },
     "dataRetention": {
       "title": "6. Data Retention",
-      "text": "Since we do not collect personal data, there is no personal data to retain. Chat messages are processed in real-time and not stored. Anonymous analytics are aggregated and cannot be traced to individuals."
+      "text": "Account, garden and saved-calculation data are kept while your account exists. Guest chat sessions may be kept until the anonymous session is deleted or expires. Donation records are kept as required for accounting. Chat requests sent to Ollama are subject to Ollama's retention practices, not ours."
     },
     "yourRights": {
-      "title": "7. Your Rights (GDPR)",
-      "text": "Even though we collect minimal data, we respect your rights under GDPR and other privacy laws:",
-      "access": "Right of Access: You can request information about any data we process.",
-      "deletion": "Right of Deletion: Since we do not store personal data, there is nothing to delete. Chat messages are never stored.",
-      "complaint": "Right to Complain: Contact our Data Protection Officer at privacy@herbally.app."
+      "title": "7. Your Rights",
+      "text": "You can access, correct or delete the data you control in HerbAlly:",
+      "access": "Access: You can see your saved profile, garden, calculations and chat history in your account.",
+      "deletion": "Deletion: You can delete saved calculations, garden entries and chat sessions in the app, or email privacy@herbally.app to request account deletion.",
+      "complaint": "Complaint: You can contact us at privacy@herbally.app. You may also contact your local privacy regulator."
     },
     "security": {
       "title": "8. Security",
-      "text": "We implement appropriate technical measures to protect our platform, including HTTPS encryption, Row-Level Security on our database, and regular security reviews."
+      "text": "We implement appropriate technical measures to protect the service, including HTTPS encryption, Row-Level Security on our database, and regular dependency and security reviews."
     },
     "changes": {
       "title": "9. Changes to This Policy",
@@ -852,19 +858,19 @@
       "title": "How It Works",
       "step1Title": "Search Our Database",
       "step1Desc": "Browse 2,700+ medicinal herbs with detailed profiles including active compounds, traditional uses, and modern research.",
-      "step2Title": "Calculate Safe Doses",
-      "step2Desc": "Use our dose calculator with medically recognized formulas to determine appropriate dosages for different ages and weights.",
+      "step2Title": "Calculate Reference Doses",
+      "step2Desc": "Use our reference calculator for adults aged 18 and older. It does not provide pediatric doses; consult a qualified pediatric professional for a child or adolescent.",
       "step3Title": "Consult the Virtual Herbalist",
       "step3Desc": "Ask our AI-powered herbalist about herb safety, drug interactions, and get personalized guidance for your situation."
     },
-    "freeTitle": "Free Forever, Powered by Donations",
-    "freeText1": "HerbAlly is completely free to use with no limits, no paywalls, and no advertising. We believe access to herbal medicine knowledge is a right, not a privilege.",
-    "freeText2": "We sustain our operations entirely through voluntary donations from our community. Your contributions cover server hosting, database costs, AI API usage, and ongoing development.",
+    "freeTitle": "Free to Use, Supported by Donations and Limited Ads",
+    "freeText1": "HerbAlly is free to use: no paywalls and no premium tiers. To cover hosting, database and AI costs, we are introducing a small number of clearly labelled ads on public herb reference pages. Ads do not appear in the Virtual Herbalist, the interaction checker or the dosage calculator, and we do not use your chat or personal health details to choose them.",
+    "freeText2": "Donations remain important and go toward infrastructure, AI usage and development. Advertising is a supplement, not a replacement for community support.",
     "freeText3": "If HerbAlly has been helpful to you, please consider making a donation to help us keep this resource available for everyone.",
     "freeLink": "making a donation",
     "team": {
       "title": "Our Team",
-      "text": "HerbAlly is developed by a dedicated team of software engineers, herbalists, and healthcare professionals passionate about making herbal medicine information accessible and safe. Our content is reviewed by qualified practitioners to ensure accuracy and reliability."
+      "text": "HerbAlly is built by a small team of software engineers and herbal-medicine contributors. Hand-written monographs list their cited sources and review status. AI-generated material is labelled as such and is not presented as clinically reviewed."
     }
   },
   "faqContent": {
@@ -883,7 +889,7 @@
     "general": {
       "free": {
         "q": "Is HerbAlly free to use?",
-        "a": "Yes, HerbAlly is completely free forever. No ads, no account required, no premium tier. We believe safe herbal information should be accessible to everyone."
+        "a": "Yes, HerbAlly is completely free to use. No account is required for most features and there is no premium tier. We are introducing limited, clearly labelled advertising on public herb pages to help cover costs; the chat and calculator stay ad-free. We believe safe herbal information should be accessible to everyone."
       },
       "herbCount": {
         "q": "How many herbs does HerbAlly cover?",
@@ -891,7 +897,7 @@
       },
       "reviewed": {
         "q": "Is the information on HerbAlly medically reviewed?",
-        "a": "Every herb profile is reviewed by our editorial team of medical herbalists and healthcare professionals. Evidence levels (A through D) indicate the strength of scientific support, and we cite sources from WHO monographs, NCCIH, PubMed, and Commission E."
+        "a": "Hand-written monographs list their cited sources and review status. Some herb profiles are generated from structured data and are labelled as AI-generated and not clinically reviewed. Evidence grades (A through D) describe the strength of the cited research, not a guarantee of safety or effectiveness."
       },
       "trustAI": {
         "q": "Can I trust the AI Virtual Herbalist?",
@@ -996,7 +1002,7 @@
   },
   "donateContent": {
     "title": "Keep HerbAlly 100% Free",
-    "subtitle": "No ads. No paywalls. No premium tiers. Just free herbal knowledge for everyone — powered by people like you.",
+    "subtitle": "No paywalls. No premium tiers. Just free herbal knowledge for everyone — supported by donations and limited, clearly labelled advertising.",
     "herbsStat": "2,700+ herbs",
     "freeAI": "Free AI herbalist",
     "freeForever": "100% free forever",
@@ -1008,8 +1014,8 @@
     "monthlyCost": "$100+/month",
     "loveHerbAlly": "Why People Love HerbAlly",
     "promiseTitle": "Our Promise to You",
-    "noAds": "No ads ever.",
-    "noAdsDesc": "We don't sell your attention to advertisers.",
+    "noAds": "Limited ads, never in private tools.",
+    "noAdsDesc": "We are introducing clearly labelled ads on public herb pages only. The Virtual Herbalist, interaction checker and calculator stay ad-free, and we never use your chat or health details to target ads.",
     "noPremium": "No premium tiers.",
     "noPremiumDesc": "Every feature is free for everyone.",
     "noDataSelling": "No data selling.",

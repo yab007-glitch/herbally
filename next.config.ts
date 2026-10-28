@@ -63,12 +63,12 @@ const nextConfig: NextConfig = {
         key: "Content-Security-Policy",
         value: [
           "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' *.stripe.com",
-          "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com",
-          "img-src 'self' data: blob: https://*.supabase.co",
+          "script-src 'self' 'unsafe-inline' *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
+          "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
+          "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
           "style-src 'self' 'unsafe-inline'",
           "font-src 'self' data:",
-          "frame-src *.stripe.com",
+          "frame-src *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
           // No frame-ancestors here — owned by the proxy (see note above).
           "object-src 'none'",
           "base-uri 'self'",
