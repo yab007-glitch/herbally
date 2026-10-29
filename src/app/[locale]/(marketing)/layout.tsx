@@ -3,6 +3,7 @@ import { FDADisclaimerBanner } from "@/components/layout/fda-disclaimer-banner";
 import { UnifiedMobileBar } from "@/components/layout/unified-mobile-bar";
 import { MarketingFooter } from "@/components/layout/marketing-footer";
 import { FloatingChatButton } from "@/components/layout/floating-chat-button";
+import { AdConsent } from "@/components/ads/ad-consent";
 
 export default function MarketingLayout({
   children,
@@ -17,6 +18,7 @@ export default function MarketingLayout({
         {children}
       </main>
       <MarketingFooter />
+      <AdConsent />
       <UnifiedMobileBar />
       <FloatingChatButton />
     </div>

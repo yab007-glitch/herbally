@@ -3,6 +3,7 @@ import { FDADisclaimerBanner } from "@/components/layout/fda-disclaimer-banner";
 import { UnifiedMobileBar } from "@/components/layout/unified-mobile-bar";
 import { MarketingFooter } from "@/components/layout/marketing-footer";
 import { FloatingChatButton } from "@/components/layout/floating-chat-button";
+import { AdConsent } from "@/components/ads/ad-consent";
 import { BackToTop } from "@/components/shared/back-to-top";
 
 export default function MainLayout({
@@ -20,6 +21,9 @@ export default function MainLayout({
         </div>
       </main>
       <MarketingFooter />
+      {/* Ad choice control. Renders nothing at all while the hard launch gate
+          is off, so it costs no markup, no request and no banner today. */}
+      <AdConsent />
       <UnifiedMobileBar />
       <FloatingChatButton />
       <BackToTop />
