@@ -12,9 +12,31 @@ vi.mock("next-intl", () => ({
 
 // Guest persistence is a server action; keep this suite in-memory.
 vi.mock("@/lib/actions/chat-persist", () => ({
-  createGuestSession: vi.fn().mockResolvedValue(null),
-  addGuestMessage: vi.fn().mockResolvedValue(undefined),
-  deleteGuestSession: vi.fn().mockResolvedValue(undefined),
+  createChatSession: vi.fn().mockResolvedValue({
+    ok: true,
+    data: {
+      id: "s1",
+      title: "New Chat",
+      herbContext: null,
+      createdAt: "2026-01-01T00:00:00Z",
+      updatedAt: "2026-01-01T00:00:00Z",
+      messages: [],
+    },
+  }),
+  addChatMessage: vi.fn().mockImplementation(async (_id, role, content) => ({
+    ok: true,
+    data: {
+      id: "m1",
+      role,
+      content,
+      createdAt: "2026-01-01T00:00:00Z",
+    },
+  })),
+  deleteChatSession: vi.fn().mockResolvedValue({
+    ok: true,
+    data: { deleted: true },
+  }),
+  getChatSession: vi.fn().mockResolvedValue({ ok: false, code: "not_found" }),
 }));
 
 vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn() }));
@@ -23,6 +45,7 @@ vi.mock("@/lib/analytics", () => ({ trackEvent: vi.fn() }));
 // following the conversation.
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
   Element.prototype.scrollTo = vi.fn();
 });
 
