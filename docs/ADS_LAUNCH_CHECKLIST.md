@@ -12,16 +12,16 @@ prerequisite for flipping the gate, and each one is either **verified**,
 
 ## 1. What the code now guarantees (locally verified, gate OFF)
 
-| Guarantee | Where it lives | How it is enforced |
-| --- | --- | --- |
-| No ad markup, no provider script, no ad-network request | `ad-slot.tsx` | Gate is checked before anything else; the `<script>` is created only after gate + identifiers + page class + document origin + consent + region all pass. |
-| No ad origin in any sensitive document's CSP | `src/lib/ads/csp.ts`, `src/proxy.ts` | `adsCspHosts()` returns `[]` unless `gate && isAdEligiblePath(path)`. Chat, checker, calculator, symptoms, compare, garden, profile, admin, auth, API never receive an ad origin. |
-| One CSP per response (no silent intersection) | `next.config.ts` | Config-level `headers()` no longer sets `Content-Security-Policy`; the proxy is the single owner. Two policies on one response are intersected by the browser, which would have blocked ads even with the gate on. |
-| No ad script can survive navigation into a health tool | `document-state.ts`, `ad-slot.tsx`, `ad-document-guard.tsx` | Ads require the document to have been *born* at an ad-eligible path. Once a provider script is active, internal link clicks are upgraded to real document navigations, and a programmatic route change to a non-ad-eligible path forces one reload. |
-| No document holds an ad unit and a health-query input | `floating-chat-button.tsx` | The floating chat launcher is not rendered on ad-eligible paths while the gate is on. Ads and the chat only ever meet across a document navigation. |
-| No ad request before an explicit opt-in | `consent.ts`, `ad-consent.tsx` | Cookie holds `v1:granted` / `v1:denied` only. Reject is offered next to Allow; revoke is always reachable from the footer control. A revoke after a script loaded reloads the document, because unmounting cannot unload third-party code. |
-| EEA / UK / CH are excluded | `policy.ts`, `src/app/api/ads/region/route.ts` | Coarse region (`row` / `eea` / `unknown`) from `x-vercel-ip-country` / `cf-ipcountry`. `eea` and `unknown` block ads and render no consent banner (a custom banner is not a certified CMP). The endpoint returns no country code and is `no-store`. |
-| Launch gate cannot be switched by deploy config | `policy.ts` | The gate is a hard-coded `boolean` constant, deliberately not an environment variable. A production build with `NEXT_PUBLIC_ADSENSE_CLIENT` and `NEXT_PUBLIC_ADSENSE_SLOT_HERB` set still renders nothing. |
+| Guarantee                                               | Where it lives                                              | How it is enforced                                                                                                                                                                                                                                  |
+| ------------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No ad markup, no provider script, no ad-network request | `ad-slot.tsx`                                               | Gate is checked before anything else; the `<script>` is created only after gate + identifiers + page class + document origin + consent + region all pass.                                                                                           |
+| No ad origin in any sensitive document's CSP            | `src/lib/ads/csp.ts`, `src/proxy.ts`                        | `adsCspHosts()` returns `[]` unless `gate && isAdEligiblePath(path)`. Chat, checker, calculator, symptoms, compare, garden, profile, admin, auth, API never receive an ad origin.                                                                   |
+| One CSP per response (no silent intersection)           | `next.config.ts`                                            | Config-level `headers()` no longer sets `Content-Security-Policy`; the proxy is the single owner. Two policies on one response are intersected by the browser, which would have blocked ads even with the gate on.                                  |
+| No ad script can survive navigation into a health tool  | `document-state.ts`, `ad-slot.tsx`, `ad-document-guard.tsx` | Ads require the document to have been _born_ at an ad-eligible path. Once a provider script is active, internal link clicks are upgraded to real document navigations, and a programmatic route change to a non-ad-eligible path forces one reload. |
+| No document holds an ad unit and a health-query input   | `floating-chat-button.tsx`                                  | The floating chat launcher is not rendered on ad-eligible paths while the gate is on. Ads and the chat only ever meet across a document navigation.                                                                                                 |
+| No ad request before an explicit opt-in                 | `consent.ts`, `ad-consent.tsx`                              | Cookie holds `v1:granted` / `v1:denied` only. Reject is offered next to Allow; revoke is always reachable from the footer control. A revoke after a script loaded reloads the document, because unmounting cannot unload third-party code.          |
+| EEA / UK / CH are excluded                              | `policy.ts`, `src/app/api/ads/region/route.ts`              | Coarse region (`row` / `eea` / `unknown`) from `x-vercel-ip-country` / `cf-ipcountry`. `eea` and `unknown` block ads and render no consent banner (a custom banner is not a certified CMP). The endpoint returns no country code and is `no-store`. |
+| Launch gate cannot be switched by deploy config         | `policy.ts`                                                 | The gate is a hard-coded `boolean` constant, deliberately not an environment variable. A production build with `NEXT_PUBLIC_ADSENSE_CLIENT` and `NEXT_PUBLIC_ADSENSE_SLOT_HERB` set still renders nothing.                                          |
 
 Tests covering these guarantees live in `src/lib/ads/__tests__/`,
 `src/components/ads/__tests__/`, `src/app/api/ads/__tests__/`,
@@ -33,17 +33,20 @@ Tests covering these guarantees live in `src/lib/ads/__tests__/`,
 ## 2. Blockers that code cannot clear
 
 ### 2.1 AdSense approval is not verified — **OPEN**
+
 Last observed console state was “Getting ready”. Ads must not be enabled on an
 unapproved account. Action: confirm approval in the AdSense console and record
 the date and the approving account.
 
 ### 2.2 ads.txt — **VERIFIED (file), re-verify after approval**
+
 `public/ads.txt` contains
 `google.com, pub-1901058826905247, DIRECT, f08c47fec0942fa0`. It is served at
 `/ads.txt` and is excluded from locale routing. Re-verify against the live
 domain after any publisher-ID change.
 
 ### 2.3 EEA / UK / CH consent — **BLOCKED on a Google-certified CMP**
+
 Google's EU user consent policy requires a Google-certified CMP for ads served
 to those regions. HerbAlly's own banner is not one, and must not be described
 as one. Until a certified CMP is integrated, the region gate keeps ads off for
@@ -51,6 +54,7 @@ EEA/UK/CH, and the consent UI renders nothing there. Do not "fix" this by
 softening `regionForCountry`.
 
 ### 2.4 Origin-storage isolation — **OPEN, owner decision required**
+
 A third-party script running in a document on `herbally.app` executes with the
 app origin's privileges. While ads are off this is moot. Before launch the
 owner must choose one of:
@@ -66,6 +70,7 @@ Document isolation does **not** isolate origin storage. This is the single
 largest remaining privacy question.
 
 ### 2.5 Google policy review of the content — **OPEN**
+
 Health content is a sensitive category. Ad serving may be limited or refused on
 medical pages, and personalized ads on health topics carry additional
 restrictions. The implementation already requests non-personalized ads
@@ -74,8 +79,9 @@ reference pages. Action: confirm the site passes AdSense program policies and
 that no unit sits next to symptom/dosage interaction controls.
 
 ### 2.6 Consent record and legal review — **OPEN**
+
 The cookie stores only the choice (`v1:granted` / `v1:denied`), with no
-identifier and no timestamp, so it is not a consent *record* in the
+identifier and no timestamp, so it is not a consent _record_ in the
 GDPR/Quebec Law 25 evidentiary sense. If the owner needs an audit trail, that is
 a separate, deliberate design change (and a privacy trade-off).
 

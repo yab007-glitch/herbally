@@ -14,7 +14,9 @@ describe("GET /api/ads/region", () => {
 
   it("returns eea for an EU member state, the UK and Switzerland", async () => {
     for (const country of ["FR", "DE", "GB", "CH"]) {
-      const response = await GET(requestWith({ "x-vercel-ip-country": country }));
+      const response = await GET(
+        requestWith({ "x-vercel-ip-country": country })
+      );
       expect(await response.json(), country).toEqual({ region: "eea" });
     }
   });

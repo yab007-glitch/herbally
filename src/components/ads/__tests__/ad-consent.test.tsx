@@ -7,9 +7,13 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/components/i18n/localized-link", () => ({
-  LocalizedLink: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
+  LocalizedLink: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>,
 }));
 
 /** Production shape: the launch gate is closed. Nothing may render or fetch. */

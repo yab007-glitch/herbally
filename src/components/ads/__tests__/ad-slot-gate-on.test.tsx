@@ -99,7 +99,9 @@ describe("AdSlot — launch gate on", () => {
 
     expect(container).toBeEmptyDOMElement();
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(document.querySelector('script[src*="googlesyndication"]')).toBeNull();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
   });
 
   it("makes no request after an explicit reject", async () => {
@@ -110,7 +112,9 @@ describe("AdSlot — launch gate on", () => {
 
     expect(container).toBeEmptyDOMElement();
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(document.querySelector('script[src*="googlesyndication"]')).toBeNull();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
   });
 
   it("loads one labelled provider script after opt-in in a known region", async () => {
@@ -146,7 +150,9 @@ describe("AdSlot — launch gate on", () => {
     await waitFor(() => expect(fetch).toHaveBeenCalled());
 
     expect(container).toBeEmptyDOMElement();
-    expect(document.querySelector('script[src*="googlesyndication"]')).toBeNull();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
     expect(window.adsbygoogle).toBeUndefined();
   });
 
@@ -160,7 +166,9 @@ describe("AdSlot — launch gate on", () => {
     await Promise.resolve();
 
     expect(container).toBeEmptyDOMElement();
-    expect(document.querySelector('script[src*="googlesyndication"]')).toBeNull();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
   });
 
   it("blocks ads in an EEA/UK/CH region even with consent", async () => {
@@ -170,7 +178,9 @@ describe("AdSlot — launch gate on", () => {
 
     await waitFor(() => expect(fetch).toHaveBeenCalled());
     expect(container).toBeEmptyDOMElement();
-    expect(document.querySelector('script[src*="googlesyndication"]')).toBeNull();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
   });
 
   it("blocks ads when the region cannot be established", async () => {

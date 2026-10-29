@@ -21,7 +21,10 @@ describe("AdSlot — launch gate off (production)", () => {
     document.head.innerHTML = "";
     document.cookie = "herbally-ads-consent=; Max-Age=0; Path=/";
     nav.pathname = "/herbs/ginger";
-    __setAdDocumentStateForTests({ bootPathname: "/herbs/ginger", adScriptActive: false });
+    __setAdDocumentStateForTests({
+      bootPathname: "/herbs/ginger",
+      adScriptActive: false,
+    });
     vi.stubGlobal("fetch", vi.fn());
   });
 
@@ -73,6 +76,8 @@ describe("AdSlot — launch gate off (production)", () => {
     const { container } = render(<AdSlot slot="1234567890" />);
 
     expect(container).toBeEmptyDOMElement();
-    expect(document.querySelector('script[src*="googlesyndication"]')).toBeNull();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
   });
 });

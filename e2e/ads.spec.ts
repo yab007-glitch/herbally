@@ -26,7 +26,7 @@ async function expectNoAdSurface(page: Page) {
   await expect(page.locator('script[src*="adsbygoogle"]')).toHaveCount(0);
   await expect(page.locator("ins.adsbygoogle")).toHaveCount(0);
   await expect(page.locator('[data-ad-container="herbally"]')).toHaveCount(0);
-  await expect(page.locator('[data-ad-container]')).toHaveCount(0);
+  await expect(page.locator("[data-ad-container]")).toHaveCount(0);
 }
 
 test.describe("advertising safety — launch gate off", () => {
@@ -67,10 +67,14 @@ test.describe("advertising safety — launch gate off", () => {
     page,
   }) => {
     await page.goto("/herbalist");
-    await expect(page.getByRole("dialog", { name: /advertising|publicité/i }))
-      .toHaveCount(0);
-    await expect(page.getByRole("button", { name: /ad settings|paramètres publicitaires/i }))
-      .toHaveCount(0);
+    await expect(
+      page.getByRole("dialog", { name: /advertising|publicité/i })
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("button", {
+        name: /ad settings|paramètres publicitaires/i,
+      })
+    ).toHaveCount(0);
   });
 
   test("navigation from a tool into a herb page and back contacts no ad network", async ({

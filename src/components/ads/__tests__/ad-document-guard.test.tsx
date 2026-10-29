@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { AdDocumentGuard } from "../ad-document-guard";
-import { markAdScriptActive, __setAdDocumentStateForTests } from "@/lib/ads/document-state";
+import {
+  markAdScriptActive,
+  __setAdDocumentStateForTests,
+} from "@/lib/ads/document-state";
 
 const nav = vi.hoisted(() => ({ pathname: "/herbs/ginger" }));
 
@@ -47,7 +50,10 @@ function suppressJsdomNavigation() {
 describe("AdDocumentGuard — launch gate off (production)", () => {
   beforeEach(() => {
     nav.pathname = "/herbs/ginger";
-    __setAdDocumentStateForTests({ bootPathname: "/herbs/ginger", adScriptActive: false });
+    __setAdDocumentStateForTests({
+      bootPathname: "/herbs/ginger",
+      adScriptActive: false,
+    });
   });
 
   afterEach(() => {

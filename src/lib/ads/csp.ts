@@ -14,10 +14,7 @@
  * request.
  */
 
-import {
-  AD_PROVIDER_HOSTS,
-  isAdEligiblePath,
-} from "./policy";
+import { AD_PROVIDER_HOSTS, isAdEligiblePath } from "./policy";
 
 /** Ad origins for this request, or an empty list when ads are not allowed. */
 export function adsCspHosts(

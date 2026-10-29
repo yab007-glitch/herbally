@@ -9,11 +9,7 @@
  */
 
 export type DocumentNavigationReason =
-  | "inactive"
-  | "external"
-  | "same-document-hash"
-  | "same-url"
-  | "internal";
+  "inactive" | "external" | "same-document-hash" | "same-url" | "internal";
 
 export type DocumentNavigationDecision = {
   force: boolean;

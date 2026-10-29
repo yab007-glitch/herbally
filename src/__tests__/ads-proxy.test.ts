@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
 import proxy from "@/proxy";
 
-const AD_ORIGINS = [/googlesyndication/, /doubleclick/, /adservice/, /google\.com/];
+const AD_ORIGINS = [
+  /googlesyndication/,
+  /doubleclick/,
+  /adservice/,
+  /google\.com/,
+];
 
 function cspOf(response: Response): string {
   return response.headers.get("content-security-policy") ?? "";

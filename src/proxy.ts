@@ -11,10 +11,7 @@ import {
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
 import { ADS_LAUNCH_GATE } from "@/lib/ads/policy";
-import {
-  adsCspHosts,
-  buildContentSecurityPolicy,
-} from "@/lib/ads/csp";
+import { adsCspHosts, buildContentSecurityPolicy } from "@/lib/ads/csp";
 
 function securityHeaders(opts?: {
   frameable?: boolean;

@@ -7,7 +7,12 @@ vi.mock("@/lib/ads/policy", async (importOriginal) => {
   return { ...actual, ADS_LAUNCH_GATE: true };
 });
 
-const AD_ORIGINS = [/googlesyndication/, /doubleclick/, /adservice/, /google\.com/];
+const AD_ORIGINS = [
+  /googlesyndication/,
+  /doubleclick/,
+  /adservice/,
+  /google\.com/,
+];
 
 function cspOf(response: Response): string {
   return response.headers.get("content-security-policy") ?? "";
@@ -67,7 +72,9 @@ describe("proxy — CSP with the launch gate on", () => {
     // renders itself carries the same strict policy.
     let response: Response | null = null;
     for (let i = 0; i < 25; i += 1) {
-      response = await fetchPath("/api/chat", { "x-vercel-forwarded-for": "9.9.9.9" });
+      response = await fetchPath("/api/chat", {
+        "x-vercel-forwarded-for": "9.9.9.9",
+      });
       if (response.status === 429) break;
     }
     expect(response?.status).toBe(429);

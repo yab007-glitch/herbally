@@ -15,14 +15,11 @@ vi.mock("next-intl", () => ({
 
 /** Production shape: gate closed, so the launcher behaves exactly as before. */
 describe("FloatingChatButton — launch gate off (production)", () => {
-  it.each(["/herbs/ginger", "/herbalist", "/"])(
-    "renders on %s",
-    (pathname) => {
-      nav.pathname = pathname;
-      render(<FloatingChatButton />);
-      expect(
-        screen.getByRole("button", { name: "herbalistPage.widgetOpen" })
-      ).toBeInTheDocument();
-    }
-  );
+  it.each(["/herbs/ginger", "/herbalist", "/"])("renders on %s", (pathname) => {
+    nav.pathname = pathname;
+    render(<FloatingChatButton />);
+    expect(
+      screen.getByRole("button", { name: "herbalistPage.widgetOpen" })
+    ).toBeInTheDocument();
+  });
 });

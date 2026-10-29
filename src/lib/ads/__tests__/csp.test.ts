@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
-import {
-  adsCspHosts,
-  buildContentSecurityPolicy,
-} from "@/lib/ads/csp";
+import { adsCspHosts, buildContentSecurityPolicy } from "@/lib/ads/csp";
 import { AD_PROVIDER_HOSTS } from "@/lib/ads/policy";
 
-const AD_HOST_PATTERNS = [/googlesyndication/, /doubleclick/, /adservice/, /google\.com/];
+const AD_HOST_PATTERNS = [
+  /googlesyndication/,
+  /doubleclick/,
+  /adservice/,
+  /google\.com/,
+];
 
 function expectNoAdHosts(policy: string) {
   for (const pattern of AD_HOST_PATTERNS) {
@@ -17,7 +19,12 @@ function expectNoAdHosts(policy: string) {
 
 describe("adsCspHosts", () => {
   it("grants nothing while the gate is off, on every path", () => {
-    for (const path of ["/herbs/ginger", "/fr/herbs/ginger", "/", "/herbalist"]) {
+    for (const path of [
+      "/herbs/ginger",
+      "/fr/herbs/ginger",
+      "/",
+      "/herbalist",
+    ]) {
       expect(adsCspHosts(false, path), path).toEqual([]);
     }
   });
@@ -60,7 +67,12 @@ describe("buildContentSecurityPolicy", () => {
     const policy = buildContentSecurityPolicy({
       adHosts: AD_PROVIDER_HOSTS,
     });
-    for (const directive of ["script-src", "connect-src", "img-src", "frame-src"]) {
+    for (const directive of [
+      "script-src",
+      "connect-src",
+      "img-src",
+      "frame-src",
+    ]) {
       const value = policy
         .split("; ")
         .find((part) => part.startsWith(`${directive} `));
@@ -85,7 +97,10 @@ describe("buildContentSecurityPolicy", () => {
 
   it("never grants an ad origin to the embed policy", () => {
     expectNoAdHosts(
-      buildContentSecurityPolicy({ frameable: true, adHosts: adsCspHosts(true, "/embed/checker") })
+      buildContentSecurityPolicy({
+        frameable: true,
+        adHosts: adsCspHosts(true, "/embed/checker"),
+      })
     );
   });
 });

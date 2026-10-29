@@ -8,9 +8,13 @@ vi.mock("next-intl", () => ({
 }));
 
 vi.mock("@/components/i18n/localized-link", () => ({
-  LocalizedLink: ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  ),
+  LocalizedLink: ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>,
 }));
 
 vi.mock("@/lib/ads/policy", async (importOriginal) => {
@@ -68,7 +72,9 @@ describe("AdConsent — launch gate on", () => {
 
     expect(readConsentCookie()).toBe("v1:denied");
     expect(reload).not.toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: "settings" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "settings" })
+    ).toBeInTheDocument();
   });
 
   it("records an allow and closes without reloading", async () => {

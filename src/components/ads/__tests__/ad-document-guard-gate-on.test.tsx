@@ -33,7 +33,10 @@ function stubLocation() {
   return { assign, reload };
 }
 
-async function clickLink(attributes: Record<string, string>, init?: MouseEventInit) {
+async function clickLink(
+  attributes: Record<string, string>,
+  init?: MouseEventInit
+) {
   const link = document.createElement("a");
   for (const [key, value] of Object.entries(attributes)) {
     link.setAttribute(key, value);

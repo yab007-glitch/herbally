@@ -138,9 +138,7 @@ const CONSENT_RESTRICTED_COUNTRIES = new Set([
 export function normalizePublicPath(pathname: string): string {
   const withoutQuery = (pathname || "/").split("?")[0].split("#")[0];
   if (!withoutQuery || withoutQuery === "/") return "/";
-  const path = withoutQuery.startsWith("/")
-    ? withoutQuery
-    : `/${withoutQuery}`;
+  const path = withoutQuery.startsWith("/") ? withoutQuery : `/${withoutQuery}`;
 
   if (path === "/fr" || path === "/en") return "/";
   if (path.startsWith("/fr/")) return path.slice(3) || "/";
@@ -225,9 +223,7 @@ const RESTRICTED_PSEUDO_CODES = new Set(["EU"]);
  * That is the fail-closed default for local development and for any host that
  * does not forward geo headers.
  */
-export function regionForCountry(
-  country: string | null | undefined
-): AdRegion {
+export function regionForCountry(country: string | null | undefined): AdRegion {
   const code = (country ?? "").trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(code)) return "unknown";
   if (UNDETERMINED_COUNTRY_CODES.has(code)) return "unknown";

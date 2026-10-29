@@ -242,9 +242,10 @@ describe("evaluateAdGate", () => {
       })
     ).toEqual({ allowed: false, reason: "document-not-ad-eligible" });
 
-    expect(
-      evaluateAdGate({ ...allowedInput, bootPathname: null })
-    ).toEqual({ allowed: false, reason: "document-not-ad-eligible" });
+    expect(evaluateAdGate({ ...allowedInput, bootPathname: null })).toEqual({
+      allowed: false,
+      reason: "document-not-ad-eligible",
+    });
   });
 
   it("requires explicit consent, never implied consent", () => {
