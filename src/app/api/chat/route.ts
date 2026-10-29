@@ -5,7 +5,10 @@ import { getSystemPrompt } from "@/lib/ai/system-prompt";
 import { z } from "zod";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { evaluateAssistantContent } from "@/lib/chat/safety-guard";
+import {
+  evaluateAssistantContent,
+  getSafetyRefusal,
+} from "@/lib/chat/safety-guard";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { withTimeout } from "@/lib/utils/with-timeout";
@@ -24,16 +27,47 @@ export const maxDuration = 60;
 
 /**
  * Run the server-side safety guard over a completed response and return the
- * text that should be cached. Blocked responses are replaced with the localized
- * refusal; warned responses get the localized warning appended; clean responses
- * pass through unchanged. This guarantees nothing unsafe is served from the
- * shared cache, even if the model emitted a bad line during streaming.
+ * text that should be delivered/cached, plus the verdict. Blocked responses are
+ * replaced with the localized refusal; warned responses get the localized
+ * warning appended; clean responses pass through unchanged. This guarantees
+ * nothing unsafe is served from the shared cache, even if the model emitted a
+ * bad line during streaming.
+ *
+ * Fail closed: if the guard itself throws (a malformed verdict, an unexpected
+ * regex failure), the model text is discarded and the refusal is returned.
+ * Delivering unguarded medical text on a guard error is never acceptable.
  */
+function applyGuard(
+  response: string,
+  locale: "en" | "fr"
+): { text: string; verdict: "ok" | "warn" | "block"; failed: boolean } {
+  try {
+    const verdict = evaluateAssistantContent(response, locale);
+    if (verdict.verdict === "block") {
+      return {
+        text: verdict.appended ?? getSafetyRefusal(locale),
+        verdict: "block",
+        failed: false,
+      };
+    }
+    if (verdict.verdict === "warn") {
+      return {
+        text: response + (verdict.appended ?? ""),
+        verdict: "warn",
+        failed: false,
+      };
+    }
+    return { text: response, verdict: "ok", failed: false };
+  } catch (err) {
+    logger.error("api_chat_guard_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return { text: getSafetyRefusal(locale), verdict: "block", failed: true };
+  }
+}
+
 function guardResponse(response: string, locale: "en" | "fr"): string {
-  const verdict = evaluateAssistantContent(response, locale);
-  if (verdict.verdict === "block") return verdict.appended ?? response;
-  if (verdict.verdict === "warn") return response + (verdict.appended ?? "");
-  return response;
+  return applyGuard(response, locale).text;
 }
 
 /**
@@ -97,6 +131,177 @@ async function persistToCache(
 // status. glm-5.3-flash is deliberately NOT in the chain — on this endpoint
 // it leaks raw reasoning text into the response content.
 const FALLBACK_MODELS = ["gemma4:31b", "glm-5.2"];
+
+// ── Stream completeness ────────────────────────────────────────────────
+// The upstream is an OpenAI-compatible SSE stream. Some endings are genuine
+// completions; everything else is a truncation that must never be shown or
+// cached as a finished medical answer.
+
+/** Per-chunk idle allowance. A long but active answer is never cut off. */
+const DEFAULT_STREAM_IDLE_TIMEOUT_MS = 30_000;
+
+/** Override for tests/ops: CHAT_STREAM_IDLE_TIMEOUT_MS. */
+function getStreamIdleTimeoutMs(): number {
+  const raw = Number(process.env.CHAT_STREAM_IDLE_TIMEOUT_MS);
+  return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_STREAM_IDLE_TIMEOUT_MS;
+}
+
+/**
+ * finish_reason values that mean the model stopped on its own. Anything else
+ * (`length`, `content_filter`, …) means the text we hold is not the whole
+ * answer. Values from OpenAI-compatible and a few adjacent providers.
+ */
+const COMPLETE_FINISH_REASONS = new Set([
+  "stop",
+  "end_turn",
+  "eos",
+  "stop_sequence",
+]);
+
+type AnswerStatus = "complete" | "incomplete" | "blocked";
+
+interface CollectedAnswer {
+  text: string;
+  complete: boolean;
+  /** Machine-readable ending; logged (never the answer text itself). */
+  reason: string;
+}
+
+/**
+ * Appended to a truncated answer. The client renders plain text, so the label
+ * has to travel with the answer: without it a fragment that stops mid-sentence
+ * is indistinguishable from a finished reply.
+ */
+const INCOMPLETE_NOTICE: Record<"en" | "fr", string> = {
+  en: "\n\n⚠️ This answer was interrupted before it finished and may be incomplete. Please ask again.",
+  fr: "\n\n⚠️ Cette réponse a été interrompue avant la fin et peut être incomplète. Veuillez reposer la question.",
+};
+
+/** Shown when the upstream produced nothing usable at all. */
+const EMPTY_ANSWER_ERROR: Record<"en" | "fr", string> = {
+  en: "The AI response could not be completed. Please try again.",
+  fr: "La réponse de l'IA n'a pas pu être terminée. Veuillez réessayer.",
+};
+
+/**
+ * Read an upstream SSE answer to its end and report whether it actually
+ * finished.
+ *
+ * Completion must come from the stream itself: `data: [DONE]` or a terminal
+ * `finish_reason`. A socket that merely closes — an upstream error, a proxy
+ * cut, an idle hang — leaves a partial answer, and the old code treated every
+ * close as success: it labelled the fragment as a finished answer and wrote it
+ * to the shared response cache for 7 days. Nothing here throws; the caller gets
+ * the text collected so far plus an honest completeness verdict.
+ */
+async function collectAnswer(
+  upstream: Response,
+  idleTimeoutMs: number
+): Promise<CollectedAnswer> {
+  const body = upstream.body;
+  if (!body) return { text: "", complete: false, reason: "no-body" };
+
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let text = "";
+  let finishReason: string | null = null;
+  let sawSentinel = false;
+
+  const consumeLine = (line: string) => {
+    const trimmed = line.trim();
+    // Blank separators, `event:` lines, and `: keep-alive` comments.
+    if (!trimmed.startsWith("data:")) return;
+    const payload = trimmed.slice(5).trim();
+    if (!payload) return;
+    if (payload === "[DONE]") {
+      sawSentinel = true;
+      return;
+    }
+    try {
+      const data = JSON.parse(payload) as {
+        choices?: Array<{
+          delta?: { content?: unknown; finish_reason?: unknown };
+          message?: { content?: unknown };
+          finish_reason?: unknown;
+        }>;
+      };
+      const choice = data.choices?.[0];
+      if (!choice) return;
+      const content = choice.delta?.content ?? choice.message?.content;
+      if (typeof content === "string" && content) text += content;
+      const reason = choice.finish_reason ?? choice.delta?.finish_reason;
+      if (typeof reason === "string" && reason) finishReason = reason;
+    } catch {
+      // Non-JSON payload (provider chatter, keep-alive text): not answer text.
+    }
+  };
+
+  try {
+    for (;;) {
+      let timedOut = false;
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const idle = new Promise<"idle">((resolve) => {
+        timer = setTimeout(() => {
+          // Flag first: cancelling resolves the pending read too, and the race
+          // may then settle on `{ done: true }` — which must not be mistaken
+          // for a clean end of stream.
+          timedOut = true;
+          void reader.cancel().catch(() => {});
+          resolve("idle");
+        }, idleTimeoutMs);
+      });
+
+      const result = await Promise.race([reader.read(), idle]);
+      if (timer !== null) clearTimeout(timer);
+
+      if (timedOut || result === "idle") {
+        return { text, complete: false, reason: "idle-timeout" };
+      }
+      if (result.done) break;
+
+      buffer += decoder.decode(result.value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+      for (const line of lines) consumeLine(line);
+      // Some servers keep the socket open after [DONE]; don't wait for close.
+      if (sawSentinel) {
+        void reader.cancel().catch(() => {});
+        break;
+      }
+    }
+
+    // Flush the decoder and a final line that arrived without a trailing
+    // newline (e.g. `data: [DONE]` immediately followed by EOF) — the old
+    // parser dropped it and saw a normal close instead of the sentinel.
+    buffer += decoder.decode();
+    if (buffer.trim()) consumeLine(buffer);
+  } catch (err) {
+    logger.error("api_chat_stream_error", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return { text, complete: false, reason: "upstream-error" };
+  }
+
+  if (finishReason !== null && !COMPLETE_FINISH_REASONS.has(finishReason)) {
+    return {
+      text,
+      complete: false,
+      reason:
+        finishReason === "length"
+          ? "truncated-max-tokens"
+          : `finish-reason:${finishReason}`,
+    };
+  }
+  if (finishReason !== null || sawSentinel) {
+    return {
+      text,
+      complete: true,
+      reason: finishReason !== null ? "finish-reason" : "done-sentinel",
+    };
+  }
+  return { text, complete: false, reason: "no-completion-signal" };
+}
 
 export async function POST(request: NextRequest) {
   // In-route rate limiting as a defense-in-depth fallback in case the
@@ -228,7 +433,14 @@ export async function POST(request: NextRequest) {
   ];
 
   // ── AI Response Caching ──────────────────────────────────────────
+  // Cache-key version. Entries written before answer completeness was verified
+  // were keyed without this prefix, so they can never be served again: a
+  // partial answer cached by the old code must not come back labelled as a
+  // finished one. Those rows simply expire (7 days); the cache re-warms with
+  // verified-complete answers only.
+  const CACHE_KEY_VERSION = "herbally-chat-cache-v2-complete";
   const promptHash = createHash("sha256")
+    .update(CACHE_KEY_VERSION)
     .update(JSON.stringify(chatMessages))
     .digest("hex");
   const supabase = getCacheClient();
@@ -265,9 +477,15 @@ export async function POST(request: NextRequest) {
       // The cached body is the fully-assembled assistant text (not SSE
       // chunks), so mirror the live stream's content-type — a mismatch here
       // breaks clients that sniff the header to decide how to decode.
+      // Only answers proven complete at write time live under this key
+      // version, so the answer status is honest for cache hits too.
       return new NextResponse(guardResponse(cached.response, locale ?? "en"), {
         status: 200,
-        headers: { "content-type": "text/plain; charset=utf-8" },
+        headers: {
+          "content-type": "text/plain; charset=utf-8",
+          "X-HerbAlly-Answer-Status": "complete",
+          "X-HerbAlly-Answer-Reason": "cache",
+        },
       });
     }
   }
@@ -352,137 +570,99 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // ── Stream the response ───────────────────────────────────────────
-  // C3 + H2 (audit 2026-06-22 v2): the response is BUFFERED server-side and run
-  // through guardResponse before a single byte reaches the client. Previously
-  // chunks were enqueued verbatim, so a dangerous line ("stop taking your
-  // insulin") streamed to the user's screen unfiltered and the client-side
-  // guard (post-stream, bypassable) was the only defense. Buffering sacrifices
-  // token-by-token streaming UX but is the only way to fully prevent unsafe
-  // medical output from being displayed. The guard runs for EVERY model in the
-  // fallback chain — fallback models are the least proven, so guarding only
-  // the primary was an inverted safety priority. Cache still stores
-  // primary-model output only (guarded).
+  // ── Collect, verify completeness, then deliver ─────────────────────
+  // C3 + H2 (audit 2026-06-22 v2): the answer is BUFFERED server-side and run
+  // through the safety guard before a single byte reaches the client, so a
+  // dangerous line can never stream to the screen.
+  //
+  // Buffering also makes this route the only party that can tell whether the
+  // upstream actually finished. Previously every ending — error, idle hang,
+  // socket close — took the same path: the fragment was guarded, delivered as
+  // if it were the whole answer, and (for the primary model) cached for 7
+  // days, so a truncated medical answer could be served again as finished.
+  // Now completion must be proven by an end-of-stream signal (see
+  // collectAnswer); anything else is labelled incomplete in-band, keeps its
+  // partial text for context, and is NEVER written to the shared cache. The
+  // guard still runs for EVERY model in the fallback chain. Cache stores
+  // primary-model output only, and only when proven complete.
+  const answerLocale: "en" | "fr" = locale ?? "en";
+  const collected = await collectAnswer(response, getStreamIdleTimeoutMs());
+
+  if (!collected.text.trim()) {
+    // Fail closed: an empty upstream answer is a failure, not a blank "success"
+    // the client would render as a finished reply.
+    logger.error("api_chat_empty_answer", {
+      reason: collected.reason,
+      model: servedModel,
+    });
+    return NextResponse.json(
+      { error: EMPTY_ANSWER_ERROR[answerLocale] },
+      { status: 502 }
+    );
+  }
+
+  if (!collected.complete) {
+    // Ops signal: the user gets a labelled partial answer, not an error page,
+    // so this warning is the only place a truncated answer is visible to
+    // monitoring. Reason is machine-readable; answer text is never logged.
+    logger.warn("api_chat_incomplete_answer", {
+      reason: collected.reason,
+      model: servedModel,
+    });
+  }
+
+  const guarded = applyGuard(collected.text, answerLocale);
+  const answerStatus: AnswerStatus =
+    guarded.verdict === "block"
+      ? "blocked"
+      : collected.complete
+        ? "complete"
+        : "incomplete";
+
+  // A truncated answer carries its own label in-band: the client renders plain
+  // text, and a fragment that stops mid-sentence otherwise reads as finished.
+  const delivered =
+    answerStatus === "incomplete"
+      ? guarded.text + INCOMPLETE_NOTICE[answerLocale]
+      : guarded.text;
+
   const encoder = new TextEncoder();
-  const stream = new ReadableStream({
+  const stream = new ReadableStream<Uint8Array>({
     start(controller) {
-      const rawReader = response?.body?.getReader();
-      if (!rawReader) {
-        controller.close();
-        return;
+      try {
+        controller.enqueue(encoder.encode(delivered));
+      } catch {
+        // Client already disconnected; the cache write below is still valid.
       }
-      const reader = rawReader;
-
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-      const scheduleTimeout = () => {
-        if (timeoutId !== null) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          reader.cancel();
-          finish("timeout");
-        }, 30_000);
-      };
-      const cancelTimeout = () => {
-        if (timeoutId !== null) {
-          clearTimeout(timeoutId);
-          timeoutId = null;
-        }
-      };
-
-      let fullContent = "";
-      // M-23: a single finalize guard so the timeout, done, and error paths
-      // can't double-close the controller (which throws TypeError). `finalized`
-      // is set synchronously so concurrent entries (e.g. timeout firing while
-      // the done promise is mid-await) no-op.
-      let finalized = false;
-      const finish = async (source: string) => {
-        if (finalized) return;
-        finalized = true;
-        cancelTimeout();
-        try {
-          // Guard the buffered content and send the safe text to the client.
-          const guarded = guardResponse(fullContent, locale ?? "en");
-          controller.enqueue(encoder.encode(guarded));
-          // M-13: await the cache write before closing so the serverless
-          // invocation isn't frozen/killed before the DB insert resolves. The
-          // guarded text is already enqueued, so the client receives it
-          // immediately; only the stream close waits on the cache write.
-          // Bounded too: this write is awaited before the stream closes (M-13),
-          // so a hung DB would hold the stream open instead of letting the
-          // already-delivered answer end.
-          if (servedModel === primaryModel)
-            await withTimeout(
-              persistToCache(promptHash, fullContent, locale ?? "en"),
-              "chat_cache_persist"
-            );
-        } catch (err) {
-          logger.error("api_chat_finalize_failed", {
-            source,
-            error: err instanceof Error ? err.message : String(err),
-          });
-        } finally {
-          try {
-            controller.close();
-          } catch {
-            // Already closed — safe to ignore.
-          }
-        }
-      };
-
-      scheduleTimeout();
-
-      function pump() {
-        reader
-          .read()
-          .then(({ done, value }) => {
-            if (done) {
-              finish("done");
-              return;
-            }
-
-            // Idle-timeout reset: as long as chunks keep arriving the stream
-            // may run as long as it needs. Previously the timeout was armed
-            // once, silently truncating answers that took >30s in total.
-            scheduleTimeout();
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split("\n");
-            buffer = lines.pop() || "";
-
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed) continue;
-              if (trimmed === "data: [DONE]") {
-                finish("done");
-                return;
-              }
-              if (!trimmed.startsWith("data: ")) continue;
-              try {
-                const data = JSON.parse(trimmed.slice(6));
-                const content = data.choices?.[0]?.delta?.content;
-                if (content) {
-                  // Buffer only — do NOT enqueue per-chunk (see C3+H2 above).
-                  fullContent += content;
-                }
-              } catch {
-                // Skip invalid JSON lines
-              }
-            }
-            pump();
-          })
-          .catch((error) => {
-            // reader.cancel() from the timeout/done path rejects the pending
-            // read — that's not an error, finalization already happened.
-            if (finalized) return;
-            logger.error("api_chat_stream_error", {
-              error: error instanceof Error ? error.message : String(error),
+      // M-13: keep the invocation alive until the cache insert settles, so a
+      // serverless freeze can't drop it. The guarded text is already enqueued,
+      // so the client receives it immediately; only the close waits. Bounding
+      // the write keeps a hung DB from holding the finished stream open.
+      void (async () => {
+        // Cache only answers proven complete and produced with a working
+        // guard. A guard failure is never cached: storing its refusal for 7
+        // days would outlive a transient fault. A genuine block keeps the
+        // prior behaviour (the refusal, not the model text, is cached).
+        if (
+          collected.complete &&
+          servedModel === primaryModel &&
+          !guarded.failed
+        ) {
+          await withTimeout(
+            persistToCache(promptHash, collected.text, answerLocale),
+            "chat_cache_persist"
+          ).catch((err) => {
+            logger.error("api_chat_cache_persist_timeout", {
+              error: err instanceof Error ? err.message : String(err),
             });
-            finish("error");
           });
-      }
-
-      pump();
+        }
+        try {
+          controller.close();
+        } catch {
+          // Already closed — safe to ignore.
+        }
+      })();
     },
   });
 
@@ -494,6 +674,10 @@ export async function POST(request: NextRequest) {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
+      // Truthful because the answer was collected before the response was
+      // constructed: "complete" means the upstream proved it finished.
+      "X-HerbAlly-Answer-Status": answerStatus,
+      "X-HerbAlly-Answer-Reason": collected.reason,
       "X-HerbAlly-Data-Source": dataSource,
       "X-HerbAlly-Herbs-Found": String(herbsFound),
       "X-HerbAlly-Interactions-Found": String(interactionsFound),
