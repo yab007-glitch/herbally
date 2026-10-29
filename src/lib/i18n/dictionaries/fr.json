@@ -39,7 +39,6 @@
     "saved": "✓ Sauvegardé",
     "copy": "Copier",
     "verifyCitation": "vérifier",
-    "verifiedData": "Données vérifiées",
     "citationsDisclaimer": "Les citations peuvent être générées par IA — vérifiez indépendamment.",
     "toggleLanguage": "Changer de langue",
     "navPrimary": "Navigation principale",
@@ -422,6 +421,7 @@
     "followUs": "Suivez-nous",
     "faq": "FAQ",
     "methodology": "Méthodologie",
+    "sponsorship": "Parrainage",
     "herbDrugInteractions": "Interactions Plante-Médicament",
     "symptoms": "Symptômes"
   },
@@ -1308,6 +1308,105 @@
       "bestFor": "Non applicable aux adultes de 18 ans et plus"
     }
   },
+  "sponsorship": {
+    "eyebrow": "Parrainage et partenariats",
+    "status": "Aucun parrain confirmé",
+    "title": "Soutenir l’infrastructure derrière HerbAlly",
+    "subtitle": "Nous explorons un parrainage mensuel ou annuel pour couvrir l’hébergement, l’IA, la base de données et le domaine. Aucun parrain n’est confirmé à ce jour, et aucun parrain n’influence ce que nous publions.",
+    "heroEmail": "Écrire au sujet du parrainage",
+    "heroDonate": "Soutenir par un don",
+    "heroNote": "Cette page décrit notre politique et la situation actuelle. Elle ne constitue pas une offre, un devis ni une page de paiement.",
+    "current": {
+      "title": "Parrains actuels",
+      "description": "Les parrainages confirmés apparaîtront ici. Rien n’est affiché tant qu’une entente n’est pas confirmée.",
+      "emptyTitle": "Aucun parrain confirmé pour le moment",
+      "emptyDescription": "Nous n’avons aucun parrainage payant confirmé à divulguer pour l’instant. Lorsqu’une entente sera confirmée, elle apparaîtra ici avec une mention claire de parrainage — jamais sous forme de logo anonyme ou de placement caché.",
+      "emptyNote": "Cette liste vide reflète la situation actuelle ; ce n’est pas un espace réservé."
+    },
+    "costs": {
+      "title": "Ce que le soutien peut couvrir",
+      "description": "Le parrainage aiderait à payer l’infrastructure qui sert chaque visiteur. Nous sommes ouverts à un soutien mensuel ou annuel pour :",
+      "items": {
+        "hosting": {
+          "label": "Hébergement",
+          "description": "Les serveurs et la diffusion qui gardent les pages et les outils accessibles."
+        },
+        "ai": {
+          "label": "Coûts d’IA",
+          "description": "L’inférence du Herboriste virtuel et l’interprétation des recherches."
+        },
+        "database": {
+          "label": "Base de données",
+          "description": "Le stockage, les requêtes et les sauvegardes des monographies de plantes."
+        },
+        "domain": {
+          "label": "Domaine",
+          "description": "Le nom herbally.app et les services essentiels qui s’y rattachent."
+        }
+      },
+      "terms": "Nous n’affichons aucun prix ni modalité de paiement sur cette page. Toute discussion est exploratoire : rien ici ne constitue une offre, un devis ou une promesse qu’un parrainage sera accepté."
+    },
+    "independence": {
+      "title": "L’indépendance n’est pas négociable",
+      "description": "Le parrainage paie des coûts d’exploitation. Il n’achète pas la confiance des lecteurs.",
+      "items": {
+        "labelled": {
+          "title": "Des mentions claires",
+          "description": "Tout parrainage confirmé sera identifié en toutes lettres près du nom du parrain et sur toute page où il est mentionné."
+        },
+        "medical": {
+          "title": "Aucune influence médicale",
+          "description": "Les parrains n’ont aucune influence sur les renseignements sur les plantes, les classements, les niveaux de preuve, les avertissements de sécurité, les résultats d’interactions ou le Herboriste virtuel."
+        },
+        "safety": {
+          "title": "La sécurité d’abord",
+          "description": "Nous n’accepterons jamais un parrainage conditionné à la modification, à l’atténuation ou à la dissimulation d’une information de sécurité."
+        },
+        "privacy": {
+          "title": "Aucune donnée de santé ou de visiteur",
+          "description": "Nous ne partagerons pas avec les parrains les renseignements de santé individuels, les messages de clavardage, les termes de recherche ni les données analytiques au niveau du visiteur."
+        },
+        "traffic": {
+          "title": "Aucun trafic garanti",
+          "description": "Nous ne vendons ni ne garantissons d’impressions, de trafic, de clics, de conversions ou de positionnement dans les résultats de recherche."
+        }
+      }
+    },
+    "types": {
+      "title": "Dons, crédits en nature et parrainage",
+      "description": "Ce sont des formes de soutien différentes, et nous les identifions différemment.",
+      "donation": {
+        "label": "Don",
+        "title": "Don volontaire",
+        "description": "Un don soutient le fonctionnement général de HerbAlly. Il n’entraîne aucun avantage réciproque, aucune mention de parrainage et aucune influence éditoriale."
+      },
+      "inKind": {
+        "label": "En nature",
+        "title": "Crédit en nature",
+        "description": "Un service ou un crédit fourni gratuitement ou à prix réduit, comme des crédits d’hébergement. Nous le divulguerions séparément et le libellerions « En nature »."
+      },
+      "sponsorship": {
+        "label": "Parrainage",
+        "title": "Parrainage payant",
+        "description": "Une entente payante, mensuelle ou annuelle, liée au soutien de l’infrastructure. Elle serait clairement libellée et n’aurait aucune influence sur le contenu médical ni aucun effet garanti sur le trafic."
+      }
+    },
+    "contact": {
+      "title": "Discuter d’un parrainage",
+      "description": "Si votre organisation souhaite soutenir HerbAlly, écrivez-nous à info@herbally.app.",
+      "emailLabel": "Écrire à info@herbally.app",
+      "emailSubject": "Demande de parrainage",
+      "prompt": "Précisez le type de soutien envisagé (mensuel ou annuel), les coûts qui vous intéressent et le nom de votre organisation.",
+      "privacy": "N’envoyez pas de renseignements de santé personnels. Cette page n’accepte aucun paiement.",
+      "noOffer": "Nous examinerons les messages, mais l’envoi d’un message ne crée aucune entente et ne garantit pas de réponse."
+    },
+    "links": {
+      "methodology": "Lire notre méthodologie",
+      "privacy": "Lire notre politique de confidentialité",
+      "donate": "Faire un don volontaire"
+    },
+    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela."
+  },
   "meta": {
     "herbsDatabase": "Base de Données de Plantes Médicinales",
     "herbsDatabaseDesc": "Parcourez notre base de données complète de plus de 2 700 plantes médicinales avec des profils détaillés, composants actifs et interactions médicamenteuses.",
@@ -1326,6 +1425,8 @@
     "termsDesc": "Conditions d'utilisation et d'utilisation de HerbAlly.",
     "supportUs": "Soutenez-nous - Gardez la Médecine par les Plantes Gratuite",
     "supportUsDesc": "Aidez-nous à garder HerbAlly 100% gratuit. Votre don soutient l'hébergement, les coûts IA et l'accès gratuit pour tous.",
+    "sponsorship": "Parrainage et partenariats",
+    "sponsorshipDesc": "Comment HerbAlly aborde le parrainage, l’indépendance éditoriale, la confidentialité et le soutien à l’hébergement, à l’IA, à la base de données et au domaine. Aucun parrain n’est confirmé.",
     "herbNotFound": "Plante Non Trouvée",
     "herbComparisonNotFound": "Comparaison de Plantes Non Trouvée",
     "about": "À Propos",

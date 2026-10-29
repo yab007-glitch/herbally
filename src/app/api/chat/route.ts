@@ -1,7 +1,6 @@
 import { logger } from "@/lib/utils/logger";
 import { createHash } from "crypto";
 import { NextResponse, type NextRequest } from "next/server";
-import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getSystemPrompt } from "@/lib/ai/system-prompt";
 import { z } from "zod";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
@@ -38,8 +37,25 @@ function guardResponse(response: string, locale: "en" | "fr"): string {
 }
 
 /**
+ * Service-role client for the shared response cache, or null when the service
+ * key is not configured (e.g. CI/local).
+ *
+ * The cache is server-only: ai_response_cache has no public RLS policy and its
+ * anon/authenticated privileges are revoked, so every read and write must use
+ * the service role. An unavailable client is a cache MISS — it must never fail
+ * the chat request, which can always regenerate the answer from the model.
+ */
+function getCacheClient() {
+  try {
+    return createAdminClient();
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Persist an AI response to the shared cache. Writes go through the
- * service-role client because ai_response_cache RLS allows anon reads only
+ * service-role client because ai_response_cache has no public write policy
  * (prevents cache poisoning via the public anon key). Returns a promise the
  * stream awaits before closing (M-13) so the serverless invocation isn't
  * frozen/killed before the fire-and-forget DB insert resolves.
@@ -60,19 +76,18 @@ async function persistToCache(
   // upstream incident emitted classifier fragments like "User Safety: safe").
   if (!response.trim() || response.trim().length < 40) return;
   const guarded = guardResponse(response, locale);
+  const supabase = getCacheClient();
+  // Service key not configured (e.g. CI) -> skip caching.
+  if (!supabase) return;
   try {
-    const { error } = await createAdminClient()
-      .from("ai_response_cache")
-      .insert({
-        prompt_hash: promptHash,
-        response: guarded,
-        expires_at: new Date(
-          Date.now() + 7 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-      });
+    const { error } = await supabase.from("ai_response_cache").insert({
+      prompt_hash: promptHash,
+      response: guarded,
+      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    });
     if (error) logger.error("api_chat_cache_failed", { error: error.message });
   } catch {
-    // Service key not configured (e.g. CI) -> skip caching.
+    // Cache writes are best-effort; the answer was already delivered.
   }
 }
 
@@ -216,9 +231,10 @@ export async function POST(request: NextRequest) {
   const promptHash = createHash("sha256")
     .update(JSON.stringify(chatMessages))
     .digest("hex");
-  const supabase = getAnonClient();
+  const supabase = getCacheClient();
   if (supabase) {
-    // The cache is an optimization, so a hung DB must neither fail the request
+    // Service-role read: the cache has no public SELECT policy. The cache is an
+    // optimization, so a hung DB must neither fail the request
     // nor stall it: bound the lookup and fall through to live generation on
     // timeout, exactly as a miss would.
     const cached = await withTimeout(
