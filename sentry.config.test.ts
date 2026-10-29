@@ -54,8 +54,10 @@ describe.each([
       },
     };
     const result = await beforeSend(event, {});
+    // Path is redacted too: with no route template available, only the origin
+    // survives. Health slugs live in the path (/herbs/[slug], /symptoms/[x]).
     expect(result?.request).toEqual({
-      url: "https://example.com/path",
+      url: "https://example.com/[redacted-path]",
       method: "POST",
     });
   });
@@ -101,5 +103,108 @@ describe.each([
       request: { url: "/path?q=sensitive#private" },
     };
     expect((await beforeSend(event, {}))?.request?.url).toBe("[redacted]");
+  });
+
+  it("removes request headers, cookies and env", async () => {
+    const beforeSend = vi.mocked(Sentry.init).mock.calls[0][0]!.beforeSend!;
+    const event = {
+      type: undefined,
+      request: {
+        url: "https://example.com/api?q=sensitive",
+        headers: { authorization: "Bearer sensitive", cookie: "sb=sensitive" },
+        cookies: { sb: "sensitive" },
+        env: { REMOTE_ADDR: "sensitive" },
+      },
+    } as unknown as Sentry.ErrorEvent;
+    const result = await beforeSend(event, {});
+    expect(
+      (result?.request as Record<string, unknown>).headers
+    ).toBeUndefined();
+    expect(
+      (result?.request as Record<string, unknown>).cookies
+    ).toBeUndefined();
+    expect((result?.request as Record<string, unknown>).env).toBeUndefined();
+  });
+
+  it("replaces the concrete path with the route template", async () => {
+    const beforeSend = vi.mocked(Sentry.init).mock.calls[0][0]!.beforeSend!;
+    const event = {
+      type: undefined,
+      request: {
+        url: "https://example.com/en/interactions/warfarin/ashwagandha?q=x#y",
+      },
+      contexts: {
+        nextjs: { router_path: "/[locale]/(main)/interactions/[herb]/[drug]" },
+      },
+    } as unknown as Sentry.ErrorEvent;
+    const result = await beforeSend(event, {});
+    expect(result?.request?.url).toBe(
+      "https://example.com/[locale]/(main)/interactions/[herb]/[drug]"
+    );
+    expect(JSON.stringify(result)).not.toContain("warfarin");
+    expect(JSON.stringify(result)).not.toContain("ashwagandha");
+  });
+
+  it("redacts contexts.nextjs.request_path but keeps router_path", async () => {
+    const beforeSend = vi.mocked(Sentry.init).mock.calls[0][0]!.beforeSend!;
+    const event = {
+      type: undefined,
+      contexts: {
+        nextjs: {
+          request_path: "/en/interactions/warfarin/ashwagandha",
+          router_path: "/[locale]/(main)/interactions/[herb]/[drug]",
+        },
+      },
+    } as unknown as Sentry.ErrorEvent;
+    const result = await beforeSend(event, {});
+    expect(
+      (result?.contexts?.nextjs as Record<string, unknown>).request_path
+    ).toBe("[redacted]");
+    expect(
+      (result?.contexts?.nextjs as Record<string, unknown>).router_path
+    ).toBe("/[locale]/(main)/interactions/[herb]/[drug]");
+    expect(JSON.stringify(result)).not.toContain("ashwagandha");
+  });
+
+  it("registers a transaction hook so sampled transactions are scrubbed", async () => {
+    const opts = vi.mocked(Sentry.init).mock.calls[0][0]!;
+    expect(typeof (opts as Record<string, unknown>).beforeSendTransaction).toBe(
+      "function"
+    );
+  });
+
+  it("lets no sentinel survive a kitchen-sink event", async () => {
+    const SENTINEL = "CANARY_9f3a2b7c5d";
+    const beforeSend = vi.mocked(Sentry.init).mock.calls[0][0]!.beforeSend!;
+    const event = {
+      type: undefined,
+      // Free-text message is app-authored (no user input interpolated). A generic
+      // scrubber cannot judge it; it is a documented residual, not a field leak.
+      message: "boom",
+      request: {
+        url: `https://example.com/en/interactions/${SENTINEL}-herb/${SENTINEL}-drug?q=${SENTINEL}#${SENTINEL}`,
+        method: "POST",
+        data: { message: SENTINEL },
+        query_string: `q=${SENTINEL}`,
+        cookies: { sb: SENTINEL },
+        headers: {
+          cookie: `sb=${SENTINEL}`,
+          authorization: `Bearer ${SENTINEL}`,
+        },
+        env: { REMOTE_ADDR: SENTINEL },
+      },
+      breadcrumbs: [
+        { category: "fetch", data: { url: `https://x/?q=${SENTINEL}` } },
+      ],
+      contexts: {
+        nextjs: {
+          request_path: `/en/interactions/${SENTINEL}-herb/${SENTINEL}-drug`,
+          router_path: "/[locale]/(main)/interactions/[herb]/[drug]",
+        },
+      },
+    } as unknown as Sentry.ErrorEvent;
+    const result = await beforeSend(event, {});
+    expect(result).not.toBeNull();
+    expect(JSON.stringify(result)).not.toContain(SENTINEL);
   });
 });
