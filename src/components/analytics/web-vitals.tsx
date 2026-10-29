@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from "web-vitals";
+import { analyticsAllowed } from "@/lib/analytics";
 
 // Core Web Vitals tracking component
 // Sends real user metrics to analytics endpoint
@@ -11,6 +12,12 @@ const VITALS_ENDPOINT = "/api/analytics/vitals";
 function sendToAnalytics(metric: Metric) {
   // Only send in production
   if (process.env.NODE_ENV !== "production") {
+    return;
+  }
+
+  // Same consent decision as page views and custom events: a browser that has
+  // signalled Do Not Track / Global Privacy Control is not measured at all.
+  if (!analyticsAllowed()) {
     return;
   }
 

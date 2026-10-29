@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Analytics } from "@vercel/analytics/next";
+import { VercelAnalytics } from "@/components/analytics/vercel-analytics";
+import { OutboundLinkTracker } from "@/components/analytics/outbound-link-tracker";
 import { OrganizationSchema } from "@/components/seo/organization-schema";
 import { SWRegistration } from "@/components/shared/service-worker-registration";
 import { SkipToContent } from "@/components/shared/skip-to-content";
@@ -146,7 +147,8 @@ export default async function RootLayout({
         </LocaleProvider>
         <SWRegistration />
         <WebVitals />
-        <Analytics />
+        <OutboundLinkTracker />
+        <VercelAnalytics />
       </body>
     </html>
   );

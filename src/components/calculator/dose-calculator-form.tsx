@@ -16,6 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
 import {
   DOSAGE_FORMULAS,
   type FormulaKey,
@@ -145,11 +146,19 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     // so we refuse to compute it and direct the caregiver to a professional.
     if (!Number.isFinite(ageInYears) || ageInYears <= 0) {
       setSafetyBlock("age_required");
+      trackEvent("calculator_used", {
+        formula: selectedFormula,
+        outcome: "blocked",
+      });
       return;
     }
     const eligibility = assessDoseEligibility(ageInYears);
     if (eligibility.status === "minor") {
       setSafetyBlock("minor");
+      trackEvent("calculator_used", {
+        formula: selectedFormula,
+        outcome: "blocked",
+      });
       return;
     }
     if (eligibility.status === "invalid_age") {
@@ -219,6 +228,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
 
       calcResult.unit = doseUnit;
       setResult(calcResult);
+      // Funnel step only: which formula ran, never the age, weight or dose.
+      trackEvent("calculator_used", {
+        formula: selectedFormula,
+        outcome: "computed",
+      });
     } catch {
       setError(t("calculator.errors.calculationError"));
     }

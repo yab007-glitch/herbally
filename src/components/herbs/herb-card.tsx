@@ -2,7 +2,6 @@
 
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
-import { trackEvent } from "@/lib/analytics";
 import { ArrowRight, Heart, ShieldCheck, ShieldX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -115,7 +114,6 @@ export function HerbCard({ herb, className }: HerbCardProps) {
         <div className="flex items-start gap-3">
           <Link
             href={`/herbs/${herb.slug}`}
-            onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
             className="flex min-w-0 flex-1 items-start gap-3"
           >
             {/* HerbImage already renders the photo when image_url exists

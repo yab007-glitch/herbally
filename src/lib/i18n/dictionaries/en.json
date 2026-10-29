@@ -765,7 +765,7 @@
       "title": "2. Information We Collect",
       "text": "Depending on how you use HerbAlly, we may collect:",
       "chatMessages": "Questions sent to the Virtual Herbalist may be processed by Ollama Cloud to generate replies. Signed-in conversations can be saved to your account; guest conversations may be saved to a session linked to the herbally-guest-id cookie.",
-      "analytics": "Vercel Web Analytics collects usage information such as page views and general region. The site also collects performance metrics to monitor its operation.",
+      "analytics": "Vercel Web Analytics collects usage information such as page views, popular pages, general region and anonymous feature counts (calculator used, interaction pages opened, chat questions started, outgoing link type). Feature events carry no health details, search text, message content or free text. The site also collects performance metrics to monitor its operation. Analytics do not identify you, and we honour Global Privacy Control and Do Not Track.",
       "cookies": "HerbAlly uses cookies for language preference, guest sessions and authentication. Your browser may also store garden entries and notes and recent searches. If advertising is enabled in the future, Google and its partners may use cookies or device identifiers.",
       "notCollect": "We do not ask for your name or email unless you create an account or make a donation. We do not sell personal information."
     },

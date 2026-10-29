@@ -73,7 +73,8 @@ export function DonationButtons() {
           const Icon = tier.icon;
           const isLoading = loading === tier.amount;
           const trigger = () => {
-            trackEvent("donation_clicked", { amount: tier.amount });
+            // Monetisation funnel step; the amount is not a measurement input.
+            trackEvent("outbound_click", { target: "donation" });
             handleDonate(tier.amount);
           };
           return (
@@ -151,7 +152,7 @@ export function DonationButtons() {
               size="lg"
               className="gap-2 bg-gradient-to-r from-pink-500 to-rose-600 hover:opacity-90 shadow-lg shadow-pink-500/20"
               onClick={() => {
-                trackEvent("donation_clicked", { amount: customAmount });
+                trackEvent("outbound_click", { target: "donation" });
                 handleDonate(customAmount);
               }}
               disabled={loading === customAmount}

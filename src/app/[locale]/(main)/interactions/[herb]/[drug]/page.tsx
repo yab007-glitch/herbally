@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
+import { InteractionCheckTracker } from "@/components/analytics/interaction-check-tracker";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
@@ -263,6 +264,9 @@ export default async function InteractionPairPage({ params }: Props) {
 
   return (
     <div className="space-y-8">
+      {/* Funnel step: the visitor reached real interaction data. Sends the
+          trigger only — not the herb, the drug or the severity. */}
+      <InteractionCheckTracker trigger="pair_page" />
       <WebPageSchema
         title={`${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`}
         description={pair.description}
