@@ -12,10 +12,7 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
-import {
-  HerbDataUnavailableError,
-  resolveHerbOr404,
-} from "@/lib/herbs/resolve-herb";
+import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
@@ -84,10 +81,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   ]);
 
   if (!resultA.success && resultA.reason === "unavailable") {
-    throw new HerbDataUnavailableError(resultA.error);
+    herbUnavailable(resultA.error);
   }
   if (!resultB.success && resultB.reason === "unavailable") {
-    throw new HerbDataUnavailableError(resultB.error);
+    herbUnavailable(resultB.error);
   }
 
   const herbA = resultA.success ? resultA.data : null;

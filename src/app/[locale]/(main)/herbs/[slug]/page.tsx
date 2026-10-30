@@ -20,10 +20,7 @@ import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
-import {
-  HerbDataUnavailableError,
-  resolveHerbOr404,
-} from "@/lib/herbs/resolve-herb";
+import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
@@ -93,7 +90,7 @@ async function fetchHerb(
   // 404. Throwing aborts the cache write, so the route returns a retryable 500
   // and the next request retries the database.
   if (!result.success && result.reason === "unavailable") {
-    throw new HerbDataUnavailableError(result.error);
+    herbUnavailable(result.error);
   }
   return result;
 }
@@ -141,7 +138,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // retryable 500 rather than teaching crawlers a 404.
   if (!result.success || !result.data) {
     if (!result.success && result.reason === "unavailable") {
-      throw new HerbDataUnavailableError(result.error);
+      herbUnavailable(result.error);
     }
     // The page body turns this into a 404 (see resolveHerbOr404 below). There
     // is no loading.tsx above this route precisely so that the status can still

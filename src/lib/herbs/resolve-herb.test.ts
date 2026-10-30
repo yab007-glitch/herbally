@@ -28,6 +28,10 @@ describe("resolveHerbOr404", () => {
   });
 
   it("throws (instead of 404ing) when the data source is unavailable", () => {
+    vi.stubEnv(
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "https://pnvltmyixympgammxvoo.supabase.co"
+    );
     expect(() =>
       resolveHerbOr404({
         success: false,
@@ -36,6 +40,7 @@ describe("resolveHerbOr404", () => {
       })
     ).toThrow(HerbDataUnavailableError);
     expect(notFound).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
   });
 
   it("calls notFound for a genuine miss", () => {
@@ -57,5 +62,38 @@ describe("resolveHerbOr404", () => {
       })
     ).toThrow("NEXT_NOT_FOUND");
     expect(notFound).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders a 404 instead of throwing when the CI placeholder database is configured", () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://placeholder.supabase.co");
+
+    expect(() =>
+      resolveHerbOr404({
+        success: false,
+        error: "TypeError: fetch failed",
+        reason: "unavailable",
+      })
+    ).toThrow("NEXT_NOT_FOUND");
+
+    expect(notFound).toHaveBeenCalledTimes(1);
+    vi.unstubAllEnvs();
+  });
+
+  it("keeps failing loud on a real database even when NODE_ENV is production", () => {
+    vi.stubEnv(
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "https://pnvltmyixympgammxvoo.supabase.co"
+    );
+
+    expect(() =>
+      resolveHerbOr404({
+        success: false,
+        error: "db timeout",
+        reason: "unavailable",
+      })
+    ).toThrow(HerbDataUnavailableError);
+
+    expect(notFound).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
   });
 });
