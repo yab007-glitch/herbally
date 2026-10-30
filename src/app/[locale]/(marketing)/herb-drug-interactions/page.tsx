@@ -69,6 +69,23 @@ export default async function HerbDrugInteractionsPage() {
         <p className="text-lg text-muted-foreground">{t("intro")}</p>
       </header>
 
+      {/* Phase 2 — the checker itself lives on the homepage; point
+          at it explicitly instead of saying "check below". */}
+      <section className="mt-8 rounded-2xl border bg-card p-6">
+        <h2 className="text-xl font-semibold text-foreground">
+          {t("checkerCtaTitle")}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t("checkerCtaBody")}
+        </p>
+        <div className="mt-4">
+          <Button render={<Link href="/" />}>
+            {t("checkerCtaButton")}
+            <ArrowRight className="ml-1 size-4" />
+          </Button>
+        </div>
+      </section>
+
       <div className="mt-8">
         <InteractionExplainer />
       </div>
