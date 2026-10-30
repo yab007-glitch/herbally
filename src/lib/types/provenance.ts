@@ -47,11 +47,37 @@ export function parseProvenance(raw: unknown): Provenance {
 
 /**
  * True if the entry has been reviewed by a human against a primary source.
- * Drives the "Verified" badge.
+ * Drives the "Verified" badge — and the pregnancy/nursing verdicts in the
+ * herb hero, which are only shown for verified entries.
+ *
+ * Two data shapes used to slip through as "Verified" even though no human
+ * had reviewed them:
+ * - `primary_source` with no reviewer: citing a primary source is not the
+ *   same as a human checking the entry against it. The badge's own fallback
+ *   comment said exactly this, but it was unreachable because isVerified()
+ *   returned true for every `primary_source` record.
+ * - a reviewer that is plainly automated (e.g. "auto-verification-script"
+ *   in production data): a script is not a human reviewer, even when the
+ *   method is recorded as "manual".
+ *
+ * `manual` with no named reviewer still counts: the method itself records
+ * a human review process, just without an attributed name.
  */
+function isNamedHumanReviewer(name: string | null): boolean {
+  if (!name) return false;
+  const trimmed = name.trim();
+  if (trimmed.length === 0) return false;
+  // Automated reviewer names seen in production data. A real person's name
+  // does not contain these tokens.
+  return !/auto|script|bot/i.test(trimmed);
+}
+
 export function isVerified(p: Provenance): boolean {
-  return (
-    p.verification_method === "manual" ||
-    p.verification_method === "primary_source"
-  );
+  if (p.verification_method === "manual") {
+    return p.verified_by == null || isNamedHumanReviewer(p.verified_by);
+  }
+  if (p.verification_method === "primary_source") {
+    return isNamedHumanReviewer(p.verified_by);
+  }
+  return false;
 }

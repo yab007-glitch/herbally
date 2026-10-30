@@ -66,10 +66,47 @@ describe("isVerified", () => {
     );
   });
 
-  it("returns true for primary_source", () => {
+  it("returns true for primary_source with a named human reviewer", () => {
+    expect(
+      isVerified({
+        ...UNVERIFIED,
+        verification_method: "primary_source",
+        verified_by: "Dr. Smith",
+      })
+    ).toBe(true);
+  });
+
+  it("returns false for primary_source without a reviewer", () => {
+    // Citing a primary source is not a human review of the entry.
     expect(
       isVerified({ ...UNVERIFIED, verification_method: "primary_source" })
-    ).toBe(true);
+    ).toBe(false);
+    expect(
+      isVerified({
+        ...UNVERIFIED,
+        verification_method: "primary_source",
+        verified_by: "   ",
+      })
+    ).toBe(false);
+  });
+
+  it("returns false when the recorded reviewer is automated", () => {
+    // "auto-verification-script" was recorded as a reviewer in production
+    // data; a script is not a human reviewer, whatever the method says.
+    expect(
+      isVerified({
+        ...UNVERIFIED,
+        verification_method: "manual",
+        verified_by: "auto-verification-script",
+      })
+    ).toBe(false);
+    expect(
+      isVerified({
+        ...UNVERIFIED,
+        verification_method: "primary_source",
+        verified_by: "auto-verification-script",
+      })
+    ).toBe(false);
   });
 
   it("returns false for ai_summarized", () => {

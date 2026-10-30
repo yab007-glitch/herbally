@@ -55,6 +55,23 @@ export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
     );
   }
 
+  // Manual / primary-source records that fail isVerified() (no reviewer,
+  // or an automated reviewer name) must never render "Verified". Label them
+  // plainly instead of falling back to a "Source-backed" pill that could
+  // still read as an endorsement.
+  if (method === "manual" || method === "primary_source") {
+    return (
+      <Badge
+        variant="outline"
+        className="border-amber-400 bg-amber-50 text-amber-800 dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-300"
+        title={t("notHumanReviewedTooltip")}
+      >
+        <AlertTriangle className="mr-1 size-3" aria-hidden="true" />
+        {t("notHumanReviewed")}
+      </Badge>
+    );
+  }
+
   if (method === "ai_summarized") {
     return (
       <Badge

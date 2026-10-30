@@ -15,7 +15,7 @@ interface HerbOverviewPanelProps {
   };
   monograph: Monograph | null;
   lastReviewed?: string;
-  reviewedBy: string;
+  reviewedBy?: string;
 }
 
 export function HerbOverviewPanel({
@@ -65,9 +65,11 @@ export function HerbOverviewPanel({
             {t("herbDetail.lastReviewedPrefix")} {lastReviewed}
           </span>
         )}
-        <span>
-          {t("herbDetailContent.reviewedBy")}: {reviewedBy}
-        </span>
+        {reviewedBy && (
+          <span>
+            {t("herbDetailContent.reviewedBy")} {reviewedBy}
+          </span>
+        )}
         <ProvenanceBadge provenance={parseProvenance(herb.provenance)} />
       </div>
     </div>

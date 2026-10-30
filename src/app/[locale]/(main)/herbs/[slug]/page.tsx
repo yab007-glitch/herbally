@@ -19,7 +19,7 @@ import { getComparisonHerbs } from "@/lib/data/comparisons";
 import { siteUrl } from "@/lib/seo/site-url";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
-import { parseProvenance } from "@/lib/types/provenance";
+import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
@@ -336,6 +336,16 @@ export default async function HerbDetailPage({ params }: Props) {
   // the rich narrative. Every other herb renders the government-sourced view
   // (government sources + PubMed citations) instead of AI-generated text.
   const isManualMonograph = hasManualMonograph(slug);
+  // Effective human-review status for this render. The hero badge and the
+  // "Reviewed by" attribution below must agree with what is actually shown:
+  // an unreviewed PubMed sheet vetoes a "Verified" claim from the herb row,
+  // and an unverified entry must not borrow the editorial-team fallback as
+  // its reviewer. No production data is changed — this is a rendering gate.
+  const sheetNotReviewed =
+    !isManualMonograph &&
+    !!pubmedSheet?.content &&
+    pubmedSheet.status !== "reviewed";
+  const humanReviewed = isVerified(provenance) && !sheetNotReviewed;
   if (dbMonograph) {
     // Option B: the rich narrative is only RENDERED for herbs with a
     // hand-written monograph (see the tabs gate). The monograph object is
@@ -456,20 +466,28 @@ export default async function HerbDetailPage({ params }: Props) {
     herb.citations as unknown as CitationData[] | null,
     t
   );
-  const lastReviewed = herb.last_reviewed
-    ? new Date(herb.last_reviewed).toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      })
-    : herb.updated_at
-      ? new Date(herb.updated_at).toLocaleDateString("en-US", {
+  // Only a human-reviewed entry gets a reviewer attribution or a review
+  // date. For unverified entries, `lastReviewed` must not fall back to
+  // `updated_at` — an update date is not a review.
+  const lastReviewed = humanReviewed
+    ? herb.last_reviewed
+      ? new Date(herb.last_reviewed).toLocaleDateString("en-US", {
           month: "long",
           year: "numeric",
         })
-      : undefined;
-  const reviewedBy = herb.reviewed_by || t("herbDetailContent.editorialTeam");
-  const reviewerCredentials =
-    herb.reviewer_credentials || t("herbDetailContent.editorialCredentials");
+      : herb.updated_at
+        ? new Date(herb.updated_at).toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          })
+        : undefined
+    : undefined;
+  const reviewedBy = humanReviewed
+    ? herb.reviewed_by || t("herbDetailContent.editorialTeam")
+    : undefined;
+  const reviewerCredentials = humanReviewed
+    ? herb.reviewer_credentials || t("herbDetailContent.editorialCredentials")
+    : undefined;
 
   // Related herbs: the category query is the only un-cached Supabase fetch on
   // this page (every other query uses tagged `fetch`/`unstable_cache`). Wrap
@@ -575,6 +593,8 @@ export default async function HerbDetailPage({ params }: Props) {
       <HerbHeroV2
         herb={{ ...herb, evidence_level: evidenceLevel }}
         provenance={herb.provenance as Record<string, unknown> | null}
+        pubmedSheetStatus={pubmedSheet?.content ? pubmedSheet.status : null}
+        isManualMonograph={isManualMonograph}
       />
 
       {/* Personalized interaction warning (H1). Client component so the ISR

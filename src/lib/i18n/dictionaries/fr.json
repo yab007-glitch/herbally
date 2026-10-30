@@ -307,6 +307,8 @@
     "verifiedTooltip": "Cette fiche a été revue par un humain à partir d'une source primaire.",
     "aiSummarizedTooltip": "Résumée par IA. Consultez les sources pour les références originales.",
     "primarySourceTooltip": "Cite une source primaire. Pas encore de revue manuelle.",
+    "notHumanReviewed": "Non révisé par un humain",
+    "notHumanReviewedTooltip": "Cette fiche n'a pas été révisée par un humain. Ne la considérez pas comme une monographie vérifiée.",
     "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations."
   },
   "donate": {
@@ -408,12 +410,24 @@
       "text": "HerbAlly fournit des informations éducatives uniquement. Ce n'est pas un avis médical. Consultez toujours un professionnel de santé qualifié avant d'utiliser tout remède à base de plantes."
     }
   },
+  "contact": {
+    "title": "Nous contacter",
+    "intro": "Le courriel est le moyen de nous joindre — HerbAlly n'a pas de formulaire d'assistance. Veuillez ne pas envoyer de renseignements de santé personnels par courriel; pour les questions médicales, adressez-vous à un professionnel de santé qualifié.",
+    "generalTitle": "Questions générales et parrainage",
+    "generalText": "Pour les questions générales, les corrections et les demandes de parrainage, écrivez à :",
+    "privacyTitle": "Questions relatives à la confidentialité",
+    "privacyText": "Pour les questions relatives à la confidentialité, les demandes de suppression de compte et les demandes de données, écrivez à :",
+    "termsTitle": "Questions relatives aux conditions",
+    "termsText": "Pour les questions relatives aux conditions d'utilisation, écrivez à :",
+    "linksTitle": "Pages utiles"
+  },
   "footer": {
     "product": "Produit",
     "resources": "Ressources",
     "company": "Entreprise",
     "legal": "Légal",
     "privacy": "Politique de Confidentialité",
+    "contact": "Contact",
     "terms": "Conditions d'Utilisation",
     "disclaimer": "Avertissement Médical",
     "copyright": "À des fins éducatives uniquement. Pas un avis médical.",
@@ -1431,6 +1445,8 @@
     "herbComparisonNotFound": "Comparaison de Plantes Non Trouvée",
     "about": "À Propos",
     "aboutDesc": "Découvrez HerbAlly, notre mission et comment nous vous aidons à prendre des décisions éclairées sur les plantes médicinales.",
+    "contact": "Nous contacter",
+    "contactDesc": "Comment contacter HerbAlly : adresses courriel générales, de confidentialité et des conditions.",
     "herbDrugInteractions": "Interactions Plante-Médicament",
     "herbDrugInteractionsDesc": "Ce que sont les interactions plante-médicament, pourquoi elles comptent et comment les vérifier. Exemples à risque (millepertuis, ail, ginkgo, curcuma, kava, warfarine) et comment rester prudent.",
     "appDescription": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses avec notre herboriste virtuel alimenté par l'IA.",

@@ -219,6 +219,37 @@ export default async function AboutPage() {
         </h2>
         <p className="text-muted-foreground">{t("aboutContent.team.text")}</p>
       </section>
+
+      {/* Contact Section */}
+      <section className="mt-16">
+        <h2 className="mb-4 text-2xl font-bold text-foreground">
+          {t("contact.title")}
+        </h2>
+        <p className="text-muted-foreground">{t("contact.intro")}</p>
+        <p className="mt-4 text-muted-foreground">
+          <a
+            href="mailto:info@herbally.app"
+            className="font-medium text-primary underline hover:no-underline"
+          >
+            info@herbally.app
+          </a>{" "}
+          ·{" "}
+          <a
+            href="mailto:privacy@herbally.app"
+            className="font-medium text-primary underline hover:no-underline"
+          >
+            privacy@herbally.app
+          </a>
+        </p>
+        <p className="mt-2">
+          <a
+            href="/contact"
+            className="font-medium text-primary underline hover:no-underline"
+          >
+            {t("contact.title")}
+          </a>
+        </p>
+      </section>
     </div>
   );
 }
