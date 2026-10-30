@@ -136,7 +136,9 @@ export function SaveCalcButton({
       }
     >
       <Save className="size-4 mr-1" />
-      {saved ? "✓" : t("profile.calculationSaved")}
+      {saved
+        ? `✓ ${t("profile.calculationSaved")}`
+        : t("profile.saveCalculation")}
     </Button>
   );
 }

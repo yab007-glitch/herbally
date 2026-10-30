@@ -46,7 +46,11 @@ type PrefillData = {
   adultDose: string;
   doseUnit: "mg" | "ml" | "g" | "drops";
   dosageAdultRaw: string | null;
-  dosageChildRaw: string | null;
+  dosageRange: {
+    low: number;
+    high: number;
+    unit: "mg" | "ml" | "g" | "drops";
+  } | null;
   dosageForms: string[];
   verified: boolean;
 } | null;
@@ -248,6 +252,15 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
           <CardDescription>{t("calculator.description")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Adult-only notice — shown before any field is filled, so the
+              under-18 block is never a surprise after the user has done
+              the work. The calculator refuses anyone under 18. */}
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+            <p className="text-sm font-medium text-foreground">
+              {t("calculatorForm.adultOnlyNotice")}
+            </p>
+          </div>
+
           {/* Prefill Context Banner */}
           {prefill && (
             <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-950/30">
@@ -265,12 +278,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       {prefill.dosageAdultRaw}
                     </p>
                   )}
-                  {prefill.verified && prefill.dosageChildRaw && (
-                    <p className="text-green-700 dark:text-green-300">
-                      {t("calculatorForm.referenceChildDose")}:{" "}
-                      {prefill.dosageChildRaw}
-                    </p>
-                  )}
+
                   {prefill.dosageForms.length > 0 && (
                     <div className="flex flex-wrap gap-1 pt-1">
                       {prefill.dosageForms.map((form) => (
@@ -286,6 +294,53 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Standard adult range picker — a range is never silently
+              collapsed to a single dose. The user explicitly picks low,
+              middle, or high, which fills the adult dose field. */}
+          {prefill?.dosageRange && (
+            <div className="rounded-lg border p-4">
+              <p className="text-sm font-medium text-foreground">
+                {t("calculatorForm.rangePickerTitle")}
+              </p>
+              {prefill.dosageAdultRaw && (
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t("calculatorForm.standardAdultDose")}:{" "}
+                  {prefill.dosageAdultRaw}
+                </p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {(
+                  [
+                    ["low", prefill.dosageRange.low],
+                    [
+                      "middle",
+                      (prefill.dosageRange.low + prefill.dosageRange.high) /
+                        2,
+                    ],
+                    ["high", prefill.dosageRange.high],
+                  ] as const
+                ).map(([key, value]) => (
+                  <Button
+                    key={key}
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setAdultDose(String(value));
+                      setDoseUnit(prefill.dosageRange!.unit);
+                    }}
+                  >
+                    {t(`calculatorForm.range${key === "low" ? "Low" : key === "middle" ? "Middle" : "High"}`)}{" "}
+                    {value} {prefill.dosageRange!.unit}
+                  </Button>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {t("calculatorForm.rangePickerNote")}
+              </p>
             </div>
           )}
 
@@ -323,7 +378,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 type="number"
                 min="0"
                 step="any"
-                placeholder={t("calculatorForm.selectHerb")}
+                placeholder={t("calculatorForm.adultDosePlaceholder")}
                 value={adultDose}
                 onChange={(e) => setAdultDose(e.target.value)}
               />
@@ -387,7 +442,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               type="number"
               min="0"
               step="any"
-              placeholder={useMonths ? "18" : "8"}
+              placeholder={useMonths ? "e.g. 360" : "e.g. 30"}
               value={useMonths ? ageMonths : ageYears}
               onChange={(e) =>
                 useMonths
@@ -418,7 +473,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               type="number"
               min="0"
               step="any"
-              placeholder="30"
+              placeholder={useLbs ? "e.g. 155" : "e.g. 70"}
               value={weightValue}
               onChange={(e) => setWeightValue(e.target.value)}
             />
@@ -438,7 +493,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               type="number"
               min="0"
               step="any"
-              placeholder="130"
+              placeholder="e.g. 170"
               value={heightCm}
               onChange={(e) => setHeightCm(e.target.value)}
             />

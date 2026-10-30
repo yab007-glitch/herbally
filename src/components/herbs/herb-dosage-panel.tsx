@@ -15,7 +15,6 @@ interface HerbDosagePanelProps {
     slug: string;
     dosage_forms?: string[] | null;
     dosage_adult?: string | null;
-    dosage_child?: string | null;
     preparation_notes?: string | null;
   };
 }
@@ -57,16 +56,6 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
                 </dd>
               </div>
             )}
-            {herb.dosage_child && (
-              <div>
-                <dt className="text-sm font-medium text-foreground">
-                  {t("herbDetail.childDosage")}
-                </dt>
-                <dd className="mt-1 text-sm text-muted-foreground">
-                  {herb.dosage_child}
-                </dd>
-              </div>
-            )}
             {herb.preparation_notes && (
               <div className="sm:col-span-2">
                 <dt className="text-sm font-medium text-foreground">
@@ -78,6 +67,9 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
               </div>
             )}
           </dl>
+          <p className="mt-4 text-xs text-muted-foreground">
+            {t("herbDetail.adultOnlyNote")}
+          </p>
         </CardContent>
       </Card>
 
