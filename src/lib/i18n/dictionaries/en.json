@@ -1135,7 +1135,12 @@
       "I keep getting colds and my immune system feels weak",
       "I have brain fog and trouble concentrating"
     ],
-    "evidenceLabel": "Evidence"
+    "evidenceLabel": "Evidence",
+    "matchReasonSymptom": "Matched: {symptoms}",
+    "matchReasonSymptomGeneral": "Matched your symptoms",
+    "matchReasonName": "Matched by name or description",
+    "alsoListedAs": "Also listed as: {names}",
+    "orderingNote": "Results are ordered by how many of your symptoms match, then by evidence grade."
   },
   "herbDetailContent": {
     "herbNotFound": "Herb Not Found",

@@ -9,6 +9,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { notFound } from "next/navigation";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { dedupeSymptomResults } from "@/lib/search/symptom-results";
 
 // ISR. The locale is a root param, so static generation no longer throws; the
 // slug set is finite (SYMPTOM_SLUGS), and unknown slugs still render notFound.
@@ -418,6 +419,7 @@ export default async function SymptomDetailPage({ params }: Props) {
     nursing_safe: boolean | null;
     traditional_uses: string[] | null;
     modern_uses: string[] | null;
+    aliases?: string[];
   }> = [];
 
   if (supabase) {
@@ -431,7 +433,11 @@ export default async function SymptomDetailPage({ params }: Props) {
         .overlaps("symptom_keywords", [meta.dbKeyword])
         .order("evidence_level", { ascending: true })
         .limit(20);
-      herbs = data || [];
+      // One result per plant: distinct rows sharing a scientific name
+      // (e.g. two common names for one plant) collapse into one card.
+      // The match itself is unchanged — this page's query already
+      // requires the symptom keyword overlap.
+      herbs = dedupeSymptomResults(data || []);
     } catch {
       // Show empty state on error
     }
@@ -486,6 +492,7 @@ export default async function SymptomDetailPage({ params }: Props) {
                 nursing_safe: boolean | null;
                 traditional_uses: string[] | null;
                 modern_uses: string[] | null;
+                aliases?: string[];
               }) => (
                 <Link
                   key={herb.slug}
@@ -502,6 +509,18 @@ export default async function SymptomDetailPage({ params }: Props) {
                           <p className="text-sm italic text-muted-foreground">
                             {herb.scientific_name}
                           </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {t("symptomsPage.matchReasonSymptom", {
+                              symptoms: meta.dbKeyword,
+                            })}
+                          </p>
+                          {herb.aliases && herb.aliases.length > 0 && (
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                              {t("symptomsPage.alsoListedAs", {
+                                names: herb.aliases.join(", "),
+                              })}
+                            </p>
+                          )}
                         </div>
                         <EvidenceGrade
                           level={

@@ -8,6 +8,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import { rankHerbResults } from "@/lib/search/rank-results";
+import { dedupeSymptomResults } from "@/lib/search/symptom-results";
 import type { Herb } from "@/lib/types";
 
 const searchBodySchema = z.object({
@@ -33,7 +34,9 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
 
     const { data: symptomResults, error: symptomError } = await supabase
       .from("herbs")
-      .select("id, name, slug, scientific_name, evidence_level, translations")
+      .select(
+        "id, name, slug, scientific_name, evidence_level, translations, symptom_keywords"
+      )
       .eq("is_published", true)
       .overlaps("symptom_keywords", expandedKeywords)
       .limit(30);
@@ -65,6 +68,25 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
       return NextResponse.json([]);
     }
 
+    // Per-input-word expansions, so a result can say WHICH of the user's
+    // search terms it matched (e.g. "sleep" and "anxiety"), not just that
+    // some expanded synonym overlapped. Match criteria are unchanged:
+    // the same expanded-keyword overlap query as before.
+    const inputWords = term.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const expandedSet = new Set(
+      expandedKeywords.map((k) => k.toLowerCase())
+    );
+    const matchedInputsFor = (keywords: string[] | null): string[] => {
+      const keywordSet = new Set(
+        (keywords ?? []).map((k) => k.toLowerCase())
+      );
+      return inputWords.filter((word) =>
+        expandQueryToKeywords(word).some((k) =>
+          keywordSet.has(k.toLowerCase())
+        )
+      );
+    };
+
     const seen = new Set<string>();
     const results: Array<{
       id: string;
@@ -73,6 +95,8 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
       scientific_name: string;
       evidence_level: string | null;
       matchedBy: string;
+      matchedKeywords: string[];
+      matchedInputs: string[];
     }> = [];
     const evidenceOrder: Record<string, number> = {
       A: 0,
@@ -82,10 +106,25 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
       trad: 4,
     };
 
-    // Localize symptom results
-    const localizedSymptomResults = (symptomResults || []).map((h) =>
-      localizeHerb(h as Herb, locale)
-    );
+    // Localize symptom results, attaching which keywords/inputs matched.
+    // symptom_keywords is only used to explain the match; it is not
+    // returned as a new filter and does not change which rows qualify.
+    const localizedSymptomResults = (symptomResults || []).map((h) => {
+      const localized = localizeHerb(h as Herb, locale);
+      const keywords =
+        ((h as { symptom_keywords?: unknown }).symptom_keywords as
+          | string[]
+          | null) ?? null;
+      const matchedKeywords = (keywords ?? []).filter((k) =>
+        expandedSet.has(k.toLowerCase())
+      );
+      return {
+        ...localized,
+        matchedBy: "symptom",
+        matchedKeywords,
+        matchedInputs: matchedInputsFor(keywords),
+      };
+    });
     const sortedSymptomResults = localizedSymptomResults.sort(
       (
         a: { evidence_level: string | null },
@@ -100,7 +139,7 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     for (const herb of sortedSymptomResults) {
       if (!seen.has(herb.id)) {
         seen.add(herb.id);
-        results.push({ ...herb, matchedBy: "symptom" });
+        results.push(herb);
       }
     }
 
@@ -111,7 +150,12 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     for (const herb of localizedTextResults) {
       if (!seen.has(herb.id)) {
         seen.add(herb.id);
-        results.push({ ...herb, matchedBy: "name" });
+        results.push({
+          ...herb,
+          matchedBy: "name",
+          matchedKeywords: [],
+          matchedInputs: [],
+        });
       }
     }
 
@@ -120,7 +164,10 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     // herb name like "Turmeric" surfaced obscure variants while the exact
     // herb sat below the fold. Stable sort preserves the existing
     // evidence/DB order within each rank.
-    return NextResponse.json(rankHerbResults(results, term));
+    // Collapse distinct rows for the same plant (e.g. two common names
+    // for one scientific name) into one result, keeping the first row's
+    // slug/link. General name ranking is unchanged for other consumers.
+    return NextResponse.json(rankHerbResults(dedupeSymptomResults(results), term));
   } catch {
     // Upstream errors may include search terms; never log their raw text.
     logger.error("herbs_search_error");
