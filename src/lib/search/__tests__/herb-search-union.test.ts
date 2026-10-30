@@ -5,9 +5,7 @@ describe("rankHerbSearchResults", () => {
   it("unions keyword and name matches instead of hiding names behind keywords", () => {
     const ids = rankHerbSearchResults({
       query: "Turmeric",
-      keywordMatches: [
-        { id: "k1", name: "Some Herb", evidence_level: "A" },
-      ],
+      keywordMatches: [{ id: "k1", name: "Some Herb", evidence_level: "A" }],
       nameMatches: [{ id: "t1", name: "Turmeric" }],
       sort: "evidence",
     });

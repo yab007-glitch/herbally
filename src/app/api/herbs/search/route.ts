@@ -73,17 +73,11 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     // some expanded synonym overlapped. Match criteria are unchanged:
     // the same expanded-keyword overlap query as before.
     const inputWords = term.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    const expandedSet = new Set(
-      expandedKeywords.map((k) => k.toLowerCase())
-    );
+    const expandedSet = new Set(expandedKeywords.map((k) => k.toLowerCase()));
     const matchedInputsFor = (keywords: string[] | null): string[] => {
-      const keywordSet = new Set(
-        (keywords ?? []).map((k) => k.toLowerCase())
-      );
+      const keywordSet = new Set((keywords ?? []).map((k) => k.toLowerCase()));
       return inputWords.filter((word) =>
-        expandQueryToKeywords(word).some((k) =>
-          keywordSet.has(k.toLowerCase())
-        )
+        expandQueryToKeywords(word).some((k) => keywordSet.has(k.toLowerCase()))
       );
     };
 
@@ -113,8 +107,7 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
       const localized = localizeHerb(h as Herb, locale);
       const keywords =
         ((h as { symptom_keywords?: unknown }).symptom_keywords as
-          | string[]
-          | null) ?? null;
+          string[] | null) ?? null;
       const matchedKeywords = (keywords ?? []).filter((k) =>
         expandedSet.has(k.toLowerCase())
       );
@@ -167,7 +160,9 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     // Collapse distinct rows for the same plant (e.g. two common names
     // for one scientific name) into one result, keeping the first row's
     // slug/link. General name ranking is unchanged for other consumers.
-    return NextResponse.json(rankHerbResults(dedupeSymptomResults(results), term));
+    return NextResponse.json(
+      rankHerbResults(dedupeSymptomResults(results), term)
+    );
   } catch {
     // Upstream errors may include search terms; never log their raw text.
     logger.error("herbs_search_error");

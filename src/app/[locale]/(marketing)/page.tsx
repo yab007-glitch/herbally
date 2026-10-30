@@ -109,8 +109,9 @@ export default async function HomePage() {
               severityMild: t("interactions.severity.mild"),
               severityModerate: t("interactions.severity.moderate"),
               severitySevere: t("interactions.severity.severe"),
-              severityContraindicated:
-                t("interactions.severity.contraindicated"),
+              severityContraindicated: t(
+                "interactions.severity.contraindicated"
+              ),
             }}
           />
 
@@ -146,10 +147,7 @@ export default async function HomePage() {
               href={f.href}
               className="rounded-2xl border bg-card p-4 text-left transition-colors hover:border-primary/40"
             >
-              <f.icon
-                className="size-5 text-primary"
-                aria-hidden="true"
-              />
+              <f.icon className="size-5 text-primary" aria-hidden="true" />
               <p className="mt-2 font-semibold text-foreground">
                 {t(f.titleKey)}
               </p>

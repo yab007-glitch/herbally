@@ -44,12 +44,27 @@ describe("HerbPagination navigation feedback", () => {
 
   it("clamps the page-jump form to the last page", () => {
     const { container } = render(<HerbPagination page={3} totalPages={10} />);
-    fireEvent.change(
-      screen.getByLabelText("herbs.pagination.pageInputLabel"),
-      { target: { value: "99" } }
-    );
+    fireEvent.change(screen.getByLabelText("herbs.pagination.pageInputLabel"), {
+      target: { value: "99" },
+    });
     fireEvent.submit(container.querySelector("form") as HTMLFormElement);
     expect(pushMock).toHaveBeenCalledTimes(1);
     expect(pushMock.mock.calls[0][0] as string).toContain("page=10");
+  });
+
+  it("resets the page-jump field when the page prop changes", () => {
+    // Guards the jump field against drifting from the current page: it is
+    // adjusted during render now, not resynced from an effect.
+    const { rerender } = render(<HerbPagination page={3} totalPages={10} />);
+    const input = screen.getByLabelText(
+      "herbs.pagination.pageInputLabel"
+    ) as HTMLInputElement;
+    expect(input.value).toBe("3");
+
+    fireEvent.change(input, { target: { value: "7" } });
+    expect(input.value).toBe("7");
+
+    rerender(<HerbPagination page={4} totalPages={10} />);
+    expect(input.value).toBe("4");
   });
 });

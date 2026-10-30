@@ -110,9 +110,7 @@ describe("SymptomSearchClient match reasons and de-duplication", () => {
   it("shows one card per plant with its matched symptoms, merging duplicates", async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce(
-        jsonResponse({ keywords: ["sleep", "anxiety"] })
-      )
+      .mockResolvedValueOnce(jsonResponse({ keywords: ["sleep", "anxiety"] }))
       .mockResolvedValueOnce(
         jsonResponse([
           {
@@ -158,9 +156,7 @@ describe("SymptomSearchClient match reasons and de-duplication", () => {
     fireEvent.submit(form as HTMLFormElement);
 
     await waitFor(() =>
-      expect(
-        container.querySelectorAll('a[href^="/herbs/"]').length
-      ).toBe(2)
+      expect(container.querySelectorAll('a[href^="/herbs/"]').length).toBe(2)
     );
     // The merged plant keeps the first row's link and shows the alias.
     expect(
@@ -170,7 +166,9 @@ describe("SymptomSearchClient match reasons and de-duplication", () => {
       container.querySelector('a[href="/herbs/lamiaceae-betony"]')
     ).toBeNull();
     // One reason line per card (merged plant + valerian).
-    expect(screen.getAllByText("symptomsPage.matchReasonSymptom")).toHaveLength(2);
+    expect(screen.getAllByText("symptomsPage.matchReasonSymptom")).toHaveLength(
+      2
+    );
     expect(screen.getByText("symptomsPage.alsoListedAs")).toBeTruthy();
     expect(screen.getByText("symptomsPage.orderingNote")).toBeTruthy();
   });

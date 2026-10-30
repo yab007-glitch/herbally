@@ -24,9 +24,7 @@ interface HerbCandidate {
  * a prefix match, then the first ILIKE candidate — the same ranking
  * discipline as the herb search route, without inventing a herb.
  */
-async function resolveHerb(
-  term: string
-): Promise<HerbCandidate | null> {
+async function resolveHerb(term: string): Promise<HerbCandidate | null> {
   const supabase = getAnonClient();
   if (!supabase) return null;
   const safe = escapeForIlike(term.trim());

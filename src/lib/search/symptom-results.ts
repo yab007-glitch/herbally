@@ -71,12 +71,13 @@ function dedupeKey(herb: DedupeableHerbResult): string {
   if (normalized) {
     return LATIN_SYNONYM_CANONICAL[normalized] ?? normalized;
   }
-  return herb.slug
-    ? `slug:${herb.slug.toLowerCase()}`
-    : `id:${herb.id ?? ""}`;
+  return herb.slug ? `slug:${herb.slug.toLowerCase()}` : `id:${herb.id ?? ""}`;
 }
 
-function unionInOrder(existing: string[] | undefined, next: string[]): string[] {
+function unionInOrder(
+  existing: string[] | undefined,
+  next: string[]
+): string[] {
   const seen = new Set((existing ?? []).map((v) => v.toLowerCase()));
   const out = [...(existing ?? [])];
   for (const value of next) {
@@ -109,16 +110,14 @@ export function dedupeSymptomResults<T extends DedupeableHerbResult>(
     }
     const mergedAliases = unionInOrder(
       existing.aliases,
-      existing.name.toLowerCase() === herb.name.toLowerCase()
-        ? []
-        : [herb.name]
+      existing.name.toLowerCase() === herb.name.toLowerCase() ? [] : [herb.name]
     );
     byKey.set(key, {
       ...existing,
       matchedBy:
         existing.matchedBy === "symptom" || herb.matchedBy === "symptom"
           ? "symptom"
-          : existing.matchedBy ?? herb.matchedBy,
+          : (existing.matchedBy ?? herb.matchedBy),
       matchedKeywords: unionInOrder(
         existing.matchedKeywords,
         herb.matchedKeywords ?? []
@@ -149,8 +148,7 @@ export function sortSymptomResultsByRelevance<T extends DedupeableHerbResult>(
   return results
     .map((herb, index) => ({ herb, index }))
     .sort((a, b) => {
-      const countDiff =
-        matchedInputCount(b.herb) - matchedInputCount(a.herb);
+      const countDiff = matchedInputCount(b.herb) - matchedInputCount(a.herb);
       if (countDiff !== 0) return countDiff;
       const evidenceDiff =
         evidenceRank(a.herb.evidence_level) -

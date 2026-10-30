@@ -16,7 +16,7 @@ test.describe("Marketing landing page (/)", () => {
       page.getByRole("heading", { name: /Check herb-drug interactions/i })
     ).toBeVisible();
     await expect(
-      page.getByText(/Type any herb and medication to see if they/i)
+      page.getByText(/Type any herb and medication to check the HerbAlly/i)
     ).toBeVisible();
 
     // Interaction-checker inputs + button

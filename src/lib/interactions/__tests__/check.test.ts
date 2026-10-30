@@ -31,15 +31,15 @@ describe("matchInteractionPair", () => {
     expect(
       matchInteractionPair("blood thinners like warfarin", pairs)?.drugName
     ).toBe("Warfarin (Coumadin)");
-    expect(
-      matchInteractionPair("SSRI antidepressants", pairs)?.drugName
-    ).toBe("Antidepressants (SSRIs)");
+    expect(matchInteractionPair("SSRI antidepressants", pairs)?.drugName).toBe(
+      "Antidepressants (SSRIs)"
+    );
   });
 
   it("matches a class name typed with extra words", () => {
-    expect(
-      matchInteractionPair("ssri-antidepressants", pairs)?.drugName
-    ).toBe("Antidepressants (SSRIs)");
+    expect(matchInteractionPair("ssri-antidepressants", pairs)?.drugName).toBe(
+      "Antidepressants (SSRIs)"
+    );
   });
 
   it("returns null for an unknown drug — never a guess", () => {

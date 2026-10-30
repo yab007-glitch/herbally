@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/analytics";
 import { ArrowRight, Heart, ShieldCheck, ShieldX } from "lucide-react";
@@ -14,6 +14,7 @@ import {
   addToGarden,
   removeFromGarden,
   isInGarden,
+  subscribeGarden,
 } from "@/lib/garden/local-garden";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -42,17 +43,21 @@ const EVIDENCE_LEVELS = ["A", "B", "C", "D", "trad"] as const;
 
 export function HerbCard({ herb, className }: HerbCardProps) {
   const t = useTranslations();
-  // Start unsaved and sync after mount so server and client markup match
-  // (localStorage is not available during server rendering).
-  const [saved, setSaved] = useState(false);
-  useEffect(() => {
-    setSaved(isInGarden(herb.slug));
-  }, [herb.slug]);
+  // Garden membership lives in localStorage, so it is read as an external
+  // store: the server snapshot is "not saved" and the client snapshot is the
+  // real value. A mount effect + setState would render twice for every card
+  // (and is what react-hooks/set-state-in-effect rejects); subscribing keeps
+  // this card in sync when the same herb is toggled elsewhere on the page or
+  // in another tab.
+  const saved = useSyncExternalStore(
+    subscribeGarden,
+    () => isInGarden(herb.slug),
+    () => false
+  );
 
   const handleSave = () => {
     if (saved) {
       removeFromGarden(herb.slug);
-      setSaved(false);
     } else {
       addToGarden({
         id: herb.id,
@@ -61,7 +66,6 @@ export function HerbCard({ herb, className }: HerbCardProps) {
         scientific_name: herb.scientific_name,
         image_url: herb.image_url,
       });
-      setSaved(true);
     }
   };
 
@@ -153,9 +157,7 @@ export function HerbCard({ herb, className }: HerbCardProps) {
                     {herb.herb_categories.name}
                   </Badge>
                 )}
-                {evidenceLevel && (
-                  <EvidenceGradeBadge level={evidenceLevel} />
-                )}
+                {evidenceLevel && <EvidenceGradeBadge level={evidenceLevel} />}
                 {herb.provenance !== undefined && (
                   <ProvenanceBadge
                     provenance={parseProvenance(herb.provenance)}

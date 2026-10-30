@@ -10,27 +10,27 @@ describe("buildHerbListUrl", () => {
   });
 
   it("keeps search and category together (search AND category)", () => {
-    expect(
-      buildHerbListUrl({ q: "Turmeric", category: "digestive" })
-    ).toBe("/herbs?q=Turmeric&category=digestive#herb-results");
+    expect(buildHerbListUrl({ q: "Turmeric", category: "digestive" })).toBe(
+      "/herbs?q=Turmeric&category=digestive#herb-results"
+    );
   });
 
   it("drops page 1 and the default sort, keeping the URL canonical", () => {
-    expect(
-      buildHerbListUrl({ q: "ginger", sort: "name", page: 1 })
-    ).toBe("/herbs?q=ginger#herb-results");
+    expect(buildHerbListUrl({ q: "ginger", sort: "name", page: 1 })).toBe(
+      "/herbs?q=ginger#herb-results"
+    );
   });
 
   it("keeps a non-default sort and a page above 1", () => {
-    expect(
-      buildHerbListUrl({ sort: "evidence", page: 3 })
-    ).toBe("/herbs?sort=evidence&page=3#herb-results");
+    expect(buildHerbListUrl({ sort: "evidence", page: 3 })).toBe(
+      "/herbs?sort=evidence&page=3#herb-results"
+    );
   });
 
   it("trims values and drops empties", () => {
-    expect(
-      buildHerbListUrl({ q: "  ", category: "", page: 0 })
-    ).toBe("/herbs#herb-results");
+    expect(buildHerbListUrl({ q: "  ", category: "", page: 0 })).toBe(
+      "/herbs#herb-results"
+    );
   });
 
   it("omits the anchor when explicitly null (e.g. category pills)", () => {

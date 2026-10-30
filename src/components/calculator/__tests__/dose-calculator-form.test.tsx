@@ -173,9 +173,7 @@ describe("DoseCalculatorForm adult-only wording and range picker", () => {
     // No silent midpoint prefill: the field starts empty.
     expect(doseInput.value).toBe("");
     // The numeric dose field no longer uses the herb-select placeholder.
-    expect(doseInput.placeholder).toBe(
-      "calculatorForm.adultDosePlaceholder"
-    );
+    expect(doseInput.placeholder).toBe("calculatorForm.adultDosePlaceholder");
     fireEvent.click(screen.getByRole("button", { name: /rangeLow/ }));
     expect(doseInput.value).toBe("500");
   });

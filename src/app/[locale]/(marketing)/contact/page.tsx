@@ -44,9 +44,7 @@ export default async function ContactPage() {
       <h1 className="text-4xl font-bold tracking-tight text-foreground">
         {t("contact.title")}
       </h1>
-      <p className="mt-4 text-lg text-muted-foreground">
-        {t("contact.intro")}
-      </p>
+      <p className="mt-4 text-lg text-muted-foreground">{t("contact.intro")}</p>
 
       <div className="mt-10 space-y-6">
         {entries.map(({ icon: Icon, title, text, email }) => (
