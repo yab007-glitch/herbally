@@ -1135,7 +1135,12 @@
       "Je attrape constamment des rhumes et mon système immunitaire me semble faible",
       "J'ai du brouillard cérébral et du mal à me concentrer"
     ],
-    "evidenceLabel": "Preuve"
+    "evidenceLabel": "Preuve",
+    "matchReasonSymptom": "Correspondance : {symptoms}",
+    "matchReasonSymptomGeneral": "Correspond à vos symptômes",
+    "matchReasonName": "Correspondance par nom ou description",
+    "alsoListedAs": "Aussi répertorié sous : {names}",
+    "orderingNote": "Les résultats sont classés selon le nombre de vos symptômes correspondants, puis selon le niveau de preuve."
   },
   "herbDetailContent": {
     "herbNotFound": "Herbe Non Trouvée",
