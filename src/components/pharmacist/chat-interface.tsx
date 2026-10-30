@@ -8,6 +8,7 @@ import {
   useMemo,
   useDeferredValue,
 } from "react";
+import Link from "next/link";
 import {
   Send,
   AlertCircle,
@@ -23,9 +24,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 import {
-  createGuestSession,
-  addGuestMessage,
-  deleteGuestSession,
+  createChatSession,
+  addChatMessage,
+  deleteChatSession,
+  getChatSession,
 } from "@/lib/actions/chat-persist";
 import type { ChatMessage } from "@/lib/actions/chat";
 import { useTranslations, useLocale } from "next-intl";
@@ -33,8 +35,35 @@ import { trackEvent } from "@/lib/analytics";
 
 type Message = ChatMessage;
 
+// The persisted session id is remembered locally (an opaque UUID, never message
+// content) so a reload can restore the conversation. Server-side the row is
+// still scoped to the HttpOnly guest cookie / signed-in account — this key is
+// only a pointer, and a stale or foreign id resolves to "not found".
+const SESSION_STORAGE_KEY = "herbally-chat-session-id";
+const SAVE_DEBOUNCE_MS = 1500;
+
 function makeId() {
   return Math.random().toString(36).slice(2);
+}
+
+function readStoredSessionId(): string | null {
+  try {
+    if (typeof window === "undefined") return null;
+    return window.localStorage.getItem(SESSION_STORAGE_KEY);
+  } catch {
+    return null; // storage disabled (private mode / blocked): restore unavailable
+  }
+}
+
+function writeStoredSessionId(id: string | null) {
+  try {
+    if (typeof window === "undefined") return;
+    if (id) window.localStorage.setItem(SESSION_STORAGE_KEY, id);
+    else window.localStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch {
+    // Non-fatal: the conversation is still saved server-side; only the reload
+    // pointer is lost.
+  }
 }
 
 // ─── Smart Command Parser ───────────────────────────────────────────
@@ -114,26 +143,66 @@ export function ChatInterface({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [streamingContent, setStreamingContent] = useState("");
-  const [sessionIdState, setSessionIdState] = useState<string | null>(
-    sessionId ?? null
+  const [sessionHerbContext, setSessionHerbContext] = useState<string | null>(
+    null
   );
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [justSaved, setJustSaved] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "failed"
+  >("idle");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+  const [restoreError, setRestoreError] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [hasSentMessage, setHasSentMessage] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
-  // M15 (audit 2026-06-22): index of the first message not yet persisted to
-  // the guest session. The persistence effect debounces 1500ms on messages.length;
-  // a user send + assistant reply within that window used to clear the timer
-  // before the user message was saved, and the surviving timer saved only the
-  // last (assistant) message — the user message was lost. Tracking the saved
-  // index and persisting every message since it fixes the race without losing
-  // anything, regardless of how many messages land within one debounce window.
-  const lastSavedIndex = useRef(0);
+
+  // ── Persistence bookkeeping ──
+  // M15 (audit 2026-06-22) kept only an index and advanced it even when a write
+  // failed, so failed messages were never retried and the UI still said
+  // "Saved". We track the ids that actually landed instead, serialise every
+  // write through one promise chain (no overlapping saves -> no duplicates),
+  // and bump a generation on clear so an in-flight save cannot re-attach a
+  // deleted conversation.
+  const messagesRef = useRef<Message[]>([]);
+  const persistedIdsRef = useRef<Set<string>>(new Set());
+  const sessionIdRef = useRef<string | null>(sessionId ?? null);
+  const herbContextRef = useRef<string | null>(null);
+  const generationRef = useRef(0);
+  const saveChainRef = useRef<Promise<void>>(Promise.resolve());
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedFlashRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deletingRef = useRef(false);
+  const restoringRef = useRef(false);
+  const restoreRetryIdRef = useRef<string | null>(null);
+  const mountedRef = useRef(true);
+
+  const errorTextRef = useRef(t("pharmacist.error"));
+  useEffect(() => {
+    errorTextRef.current = t("pharmacist.error");
+  }, [t]);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  const activeHerbContext = herbContext ?? sessionHerbContext;
+  useEffect(() => {
+    herbContextRef.current = activeHerbContext ?? null;
+  }, [activeHerbContext]);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      if (savedFlashRef.current) clearTimeout(savedFlashRef.current);
+    };
+  }, []);
 
   const lastAssistantMessage = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -149,8 +218,8 @@ export function ChatInterface({
 
   const followUpQuestions = useMemo(() => {
     if (!showFollowUps || !lastAssistantMessage) return [];
-    return generateFollowUpKeys(herbContext).map((key) => t(key));
-  }, [showFollowUps, lastAssistantMessage, herbContext, t]);
+    return generateFollowUpKeys(activeHerbContext).map((key) => t(key));
+  }, [showFollowUps, lastAssistantMessage, activeHerbContext, t]);
 
   const isEmpty = messages.length === 0 && !isLoading;
 
@@ -178,6 +247,166 @@ export function ChatInterface({
     return () => el.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // ── Persist pending messages ──
+  // Writes are serialised and only acknowledged individually. On failure the
+  // unsaved ids stay pending (so the next attempt retries exactly them) and the
+  // status reads "Not saved — retry" instead of a false "Saved".
+  const persistMessages = useCallback(async () => {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+    const generation = generationRef.current;
+
+    const run = async () => {
+      try {
+        const pending = messagesRef.current.filter(
+          (m) =>
+            !persistedIdsRef.current.has(m.id) &&
+            m.content !== errorTextRef.current
+        );
+        if (pending.length === 0) return;
+        if (generationRef.current !== generation) return;
+
+        setSaveStatus("saving");
+        let sid = sessionIdRef.current;
+
+        if (!sid) {
+          const created = await createChatSession(herbContextRef.current);
+          if (generationRef.current !== generation) {
+            // The user cleared while the create was in flight. Delete the
+            // orphan instead of adopting it, otherwise a cleared conversation
+            // would silently become the active session again.
+            if (created.ok) await deleteChatSession(created.data.id);
+            return;
+          }
+          if (!created.ok) {
+            setSaveStatus("failed");
+            return;
+          }
+          sid = created.data.id;
+          sessionIdRef.current = sid;
+          writeStoredSessionId(sid);
+        }
+
+        for (const message of pending) {
+          if (generationRef.current !== generation) return;
+          const saved = await addChatMessage(
+            sid,
+            message.role,
+            message.content
+          );
+          if (!saved.ok) {
+            setSaveStatus("failed");
+            return;
+          }
+          persistedIdsRef.current.add(message.id);
+        }
+
+        if (generationRef.current !== generation) return;
+        setSaveStatus("saved");
+        if (savedFlashRef.current) clearTimeout(savedFlashRef.current);
+        savedFlashRef.current = setTimeout(() => {
+          if (mountedRef.current) {
+            setSaveStatus((current) =>
+              current === "saved" ? "idle" : current
+            );
+          }
+        }, 2000);
+      } catch {
+        if (mountedRef.current) setSaveStatus("failed");
+      }
+    };
+
+    const queued = saveChainRef.current.then(run, run);
+    saveChainRef.current = queued.catch(() => {});
+    await queued;
+  }, []);
+
+  useEffect(() => {
+    if (isRestoring || messages.length === 0) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveTimerRef.current = null;
+      void persistMessages();
+    }, SAVE_DEBOUNCE_MS);
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+    };
+  }, [messages.length, isRestoring, persistMessages]);
+
+  // ── Restore the last conversation ──
+  // The reload-empty report was real: a session id prop existed but nothing
+  // ever loaded it, and the read actions collapsed errors into null/[]. Now the
+  // saved conversation is fetched on mount (unless this is a fresh quick-ask
+  // navigation, which intentionally starts a new conversation).
+  const restoreSession = useCallback(async (id: string) => {
+    restoreRetryIdRef.current = id;
+    restoringRef.current = true;
+    setIsRestoring(true);
+    setRestoreError(false);
+    const generation = generationRef.current;
+
+    try {
+      const result = await getChatSession(id);
+      if (!mountedRef.current || generationRef.current !== generation) return;
+
+      if (result.ok) {
+        const restored: Message[] = result.data.messages
+          .filter((m) => m.role !== "system")
+          .map((m) => ({
+            id: m.id,
+            role: m.role as "user" | "assistant",
+            content: m.content,
+            timestamp: m.createdAt,
+          }));
+        // Restored rows are already stored — never write them again.
+        persistedIdsRef.current = new Set(restored.map((m) => m.id));
+        sessionIdRef.current = id;
+        setSessionHerbContext(result.data.herbContext ?? null);
+        setMessages(restored);
+        setHasSentMessage(restored.length > 0);
+        writeStoredSessionId(id);
+        restoreRetryIdRef.current = null;
+      } else if (result.code === "not_found") {
+        // Nothing stored under this id for this identity (deleted elsewhere,
+        // or the account changed). Forget the pointer rather than retrying a
+        // session that no longer exists.
+        writeStoredSessionId(null);
+        sessionIdRef.current = null;
+        restoreRetryIdRef.current = null;
+      } else {
+        setRestoreError(true);
+      }
+    } catch {
+      if (mountedRef.current) setRestoreError(true);
+    } finally {
+      restoringRef.current = false;
+      if (mountedRef.current) setIsRestoring(false);
+    }
+  }, []);
+
+  const restoredOnMount = useRef(false);
+  useEffect(() => {
+    if (restoredOnMount.current) return;
+    restoredOnMount.current = true;
+    // Quick-ask (?q= / ?herb= / ?medications=) starts a new conversation with
+    // page-provided context; restoring old history there would drop the new
+    // question into the middle of an unrelated thread.
+    if (autoQuery) return;
+    const stored = sessionId ?? readStoredSessionId();
+    if (!stored) return;
+    // Mount-time fetch: the synchronous setIsRestoring(true) inside this call is
+    // the loading state for the restore, which cannot be derived before the
+    // first client render without a hydration mismatch (the stored id lives in
+    // localStorage). Same deliberate pattern as instant-search.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void restoreSession(stored);
+  }, [autoQuery, sessionId, restoreSession]);
+
   // ── Auto-send on mount ──
   // Guard on the query STRING, not a boolean: on client-side navigation
   // between two ?q= URLs the component instance (and its refs) persist, so a
@@ -186,64 +415,12 @@ export function ChatInterface({
   const autoSentFor = useRef<string | null>(null);
   useEffect(() => {
     if (!autoQuery || autoSentFor.current === autoQuery) return;
-    if (messages.length === 0 && !isLoading) {
+    if (messages.length === 0 && !isLoading && !isRestoring) {
       autoSentFor.current = autoQuery;
       sendMessage(autoQuery);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoQuery]);
-
-  // ── Session persistence ──
-  // M2: the guest identity is derived server-side inside chat-persist (from
-  // the HttpOnly cookie) — the client no longer passes a guestId, so a tampered
-  // client can't address another guest's session/messages. The server action
-  // mints the cookie on first call when one is absent.
-  // M15: persist every message since `lastSavedIndex` (not just the last one),
-  // so the debounce race can no longer drop the user message.
-  useEffect(() => {
-    if (messages.length <= 1) return;
-    const save = async () => {
-      setIsSaving(true);
-      try {
-        if (!sessionIdState) {
-          const session = await createGuestSession(
-            messages[0]?.content.slice(0, 60) ?? "Chat"
-          );
-          if (session) {
-            const sid = session.id;
-            setSessionIdState(sid);
-            for (const msg of messages) {
-              await addGuestMessage(
-                sid,
-                msg.role as "user" | "assistant",
-                msg.content
-              );
-            }
-            lastSavedIndex.current = messages.length;
-          }
-        } else {
-          // Persist only messages added since the last successful save.
-          for (let i = lastSavedIndex.current; i < messages.length; i++) {
-            await addGuestMessage(
-              sessionIdState,
-              messages[i].role as "user" | "assistant",
-              messages[i].content
-            );
-          }
-          lastSavedIndex.current = messages.length;
-        }
-      } catch {
-        // Silent fail
-      } finally {
-        setIsSaving(false);
-        setJustSaved(true);
-        setTimeout(() => setJustSaved(false), 2000);
-      }
-    };
-    const timer = setTimeout(save, 1500);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages.length]);
+  }, [autoQuery, isRestoring]);
 
   // ── Send message ──
   // M16 (audit 2026-06-22): accept an optional history override + retry flag so
@@ -257,8 +434,9 @@ export function ChatInterface({
     opts?: { history?: Message[]; isRetry?: boolean }
   ) {
     const content = (text ?? input).trim();
-    if (!content || isLoading) return;
+    if (!content || isLoading || isRestoring || deletingRef.current) return;
 
+    const generation = generationRef.current;
     setHasSentMessage(true);
 
     const isRetry = !!opts?.isRetry;
@@ -297,8 +475,9 @@ export function ChatInterface({
         messages: msgs.map((m) => ({ role: m.role, content: m.content })),
         locale: locale || localeProp,
       };
-      if (overrideContext || herbContext) {
-        body.herbContext = overrideContext || herbContext;
+      const requestContext = overrideContext || activeHerbContext;
+      if (requestContext) {
+        body.herbContext = requestContext;
       }
 
       const response = await fetch("/api/chat", {
@@ -312,6 +491,7 @@ export function ChatInterface({
         const err = await response
           .json()
           .catch(() => ({ error: "Unknown error" }));
+        if (generationRef.current !== generation) return;
         setMessages((prev) => [
           ...prev,
           {
@@ -338,6 +518,10 @@ export function ChatInterface({
         scrollToBottom();
       }
 
+      // The conversation may have been cleared while this stream was in flight;
+      // a late reply must not reappear in a cleared thread.
+      if (generationRef.current !== generation) return;
+
       // The server already runs the safety guard on the full response before
       // sending it (see /api/chat/route.ts — response is buffered and run
       // through guardResponse). The client no longer re-evaluates — that was
@@ -353,9 +537,10 @@ export function ChatInterface({
         },
       ]);
 
-      trackEvent("chat_message_sent", { hasHerbContext: !!herbContext });
+      trackEvent("chat_message_sent", { hasHerbContext: !!activeHerbContext });
     } catch (err) {
       if ((err as Error).name === "AbortError") return;
+      if (generationRef.current !== generation) return;
       setStreamingContent("");
       setMessages((prev) => [
         ...prev,
@@ -413,15 +598,54 @@ export function ChatInterface({
     }
   }
 
-  function clearChat() {
-    if (sessionIdState) {
-      deleteGuestSession(sessionIdState).catch(() => {});
+  // Clear is a deletion, not just a visual reset. It waits for any in-flight
+  // save to settle, deletes the stored session, and only then empties the UI —
+  // so a failure leaves the conversation visible with an honest error instead
+  // of a cleared screen over rows that still exist. (ai_response_cache entries
+  // are prompt-keyed with no session link, so this cannot and does not claim to
+  // delete cached answers.)
+  async function clearChat() {
+    if (deletingRef.current || isRestoring) return;
+    deletingRef.current = true;
+    setIsDeleting(true);
+    setDeleteError(false);
+    generationRef.current += 1;
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
     }
-    setMessages([]);
-    setSessionIdState(null);
+    abortRef.current?.abort();
     setStreamingContent("");
-    setHasSentMessage(false);
-    lastSavedIndex.current = 0;
+    setIsLoading(false);
+
+    try {
+      await saveChainRef.current;
+      const sid = sessionIdRef.current;
+      if (sid) {
+        const result = await deleteChatSession(sid);
+        if (!result.ok) {
+          setDeleteError(true);
+          return;
+        }
+      }
+
+      persistedIdsRef.current.clear();
+      sessionIdRef.current = null;
+      setMessages([]);
+      setStreamingContent("");
+      setHasSentMessage(false);
+      setSessionHerbContext(null);
+      setSaveStatus("idle");
+      // Only forget the reload pointer if it addressed the conversation just
+      // deleted. An unsaved conversation has no server row, so clearing must
+      // not silently unlink an older conversation that still exists.
+      if (sid && readStoredSessionId() === sid) writeStoredSessionId(null);
+    } catch {
+      setDeleteError(true);
+    } finally {
+      deletingRef.current = false;
+      setIsDeleting(false);
+    }
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -446,10 +670,10 @@ export function ChatInterface({
 
   // Focus input on mount
   useEffect(() => {
-    if (isEmpty && inputRef.current && !autoQuery) {
+    if (isEmpty && inputRef.current && !autoQuery && !isRestoring) {
       inputRef.current.focus();
     }
-  }, [isEmpty, autoQuery]);
+  }, [isEmpty, autoQuery, isRestoring]);
 
   // ── Render ──
   return (
@@ -461,7 +685,30 @@ export function ChatInterface({
         role="log"
         aria-label={t("common.chatMessagesLabel")}
       >
-        {isEmpty ? (
+        {isRestoring ? (
+          <div className="flex h-full items-center justify-center p-6">
+            <p role="status" className="text-sm text-muted-foreground">
+              {t("common.loadingConversation")}
+            </p>
+          </div>
+        ) : restoreError && messages.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
+            <p role="alert" className="text-sm text-muted-foreground">
+              {t("common.restoreFailed")}
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const id = restoreRetryIdRef.current;
+                if (id) void restoreSession(id);
+              }}
+            >
+              <RotateCcw className="size-3" />
+              {t("common.retry")}
+            </Button>
+          </div>
+        ) : isEmpty ? (
           <div className="flex h-full items-center justify-center p-6">
             <ChatEmptyStateV2 onSendMessage={sendMessage} />
           </div>
@@ -619,7 +866,7 @@ export function ChatInterface({
               placeholder={t("pharmacist.placeholder")}
               className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-colors"
               rows={1}
-              disabled={isLoading}
+              disabled={isLoading || isRestoring || isDeleting}
               aria-label={t("common.chatInputlabel")}
             />
           </div>
@@ -635,7 +882,7 @@ export function ChatInterface({
           ) : (
             <button
               type="submit"
-              disabled={!input.trim()}
+              disabled={!input.trim() || isRestoring || isDeleting}
               className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 transition-all"
               aria-label={t("common.sendMessageLabel")}
             >
@@ -646,20 +893,43 @@ export function ChatInterface({
 
         {/* Footer row: clear + save status */}
         {hasSentMessage && (
-          <div className="mt-2 flex items-center justify-between mx-auto max-w-2xl">
-            <button
-              onClick={clearChat}
-              className="text-[10px] text-muted-foreground hover:text-muted-foreground transition-colors"
-            >
-              {t("common.clearConversation")}
-            </button>
-            <span className="text-[10px] text-muted-foreground">
-              {isSaving
-                ? t("common.saving")
-                : justSaved
-                  ? t("common.saved")
-                  : ""}
-            </span>
+          <div className="mt-2 mx-auto max-w-2xl">
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => void clearChat()}
+                disabled={isDeleting || isRestoring}
+                className="text-[10px] text-muted-foreground hover:text-muted-foreground transition-colors disabled:opacity-50"
+              >
+                {isDeleting
+                  ? t("common.clearing")
+                  : t("common.clearConversation")}
+              </button>
+              <span className="text-[10px] text-muted-foreground">
+                {saveStatus === "saving" ? (
+                  t("common.saving")
+                ) : saveStatus === "saved" ? (
+                  t("common.saved")
+                ) : saveStatus === "failed" ? (
+                  <button
+                    type="button"
+                    onClick={() => void persistMessages()}
+                    className="underline underline-offset-2 hover:text-foreground"
+                  >
+                    {t("common.saveFailed")}
+                  </button>
+                ) : (
+                  ""
+                )}
+              </span>
+            </div>
+            {deleteError && (
+              <p
+                role="alert"
+                className="mt-1 text-[10px] text-destructive text-right"
+              >
+                {t("common.deleteFailed")}
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -669,12 +939,12 @@ export function ChatInterface({
         <div className="shrink-0 border-t border-primary/10 bg-primary/5 px-4 py-1.5 text-center">
           <p className="text-[10px] text-muted-foreground">
             {t("donate.promptAfterUse")}{" "}
-            <a
+            <Link
               href="/donate"
               className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
             >
               {t("donate.promptLink")}
-            </a>
+            </Link>
           </p>
         </div>
       )}
