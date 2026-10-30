@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { HomeSearchClient } from "./home-search-client";
-import { HeroVideo } from "./hero-video";
+import { HeroVisual } from "./hero-visual";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
 import {
   Leaf,
@@ -101,7 +101,10 @@ export default async function HomePage() {
               checkerViewHerb: t("home.checkerViewHerb"),
               checkerDisclaimer: t("home.checkerDisclaimer"),
               checkerNotFoundTitle: t("home.checkerNotFoundTitle"),
-              checkerNotFoundBody: t("home.checkerNotFoundBody"),
+              // Raw: the client substitutes {herb}/{drug} itself, and passing the
+              // message through ICU formatting here throws FORMATTING_ERROR for
+              // the variables it never receives.
+              checkerNotFoundBody: t.raw("home.checkerNotFoundBody"),
               checkerAiNote: t("home.checkerAiNote"),
               checkerError: t("home.checkerError"),
               checkerSource: t("home.checkerSource"),
@@ -128,7 +131,7 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <HeroVideo />
+      <HeroVisual />
 
       {/* Phase 2 explainer — previously the page ended at the checker,
           leaving a first-time visitor with no picture of the library. */}
