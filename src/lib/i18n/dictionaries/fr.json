@@ -86,7 +86,7 @@
   },
   "home": {
     "heroTitle": "Vérifiez les interactions plante-médicament",
-    "heroSubtitle": "Tapez une plante et un médicament pour savoir s'ils sont compatibles. Réponses basées sur des preuves.",
+    "heroSubtitle": "Tapez une plante et un médicament pour vérifier d'abord la base de données HerbAlly. Si une association n'est pas enregistrée, l'Herboriste Virtuel peut expliquer davantage.",
     "heroButton": "Explorer les plantes",
     "herbPlaceholder": "Nom de la plante (ex. Curcuma, Millepertuis)",
     "medPlaceholder": "Médicament (ex. warfarine, sertraline)",
@@ -108,7 +108,24 @@
     "featureInteractionsTitle": "Vérificateur d'interactions",
     "featureInteractionsDescription": "Vérifiez les interactions avant de combiner suppléments et médicaments.",
     "featureAiTitle": "Herboriste virtuel",
-    "featureAiDescription": "Posez des questions. Réponses basées sur des preuves avec citations."
+    "featureAiDescription": "Posez des questions. Réponses basées sur des preuves avec citations.",
+    "checkerChecking": "Vérification dans la base de données…",
+    "checkerFoundTitle": "Résultat de la base de données",
+    "checkerAskHerbalist": "Demander à l'Herboriste Virtuel",
+    "checkerViewPair": "Voir l'interaction complète",
+    "checkerViewHerb": "Voir la page de la plante",
+    "checkerDisclaimer": "Informations éducatives uniquement, pas un avis médical. Confirmez auprès de votre médecin ou pharmacien avant de modifier un médicament.",
+    "checkerNotFoundTitle": "Aucun enregistrement structuré trouvé",
+    "checkerNotFoundBody": "Aucun enregistrement structuré d'interaction trouvé pour {herb} + {drug} dans la base de données HerbAlly.",
+    "checkerAiNote": "L'Herboriste Virtuel peut expliquer davantage, mais sa réponse est une information éducative générée par IA — pas un résultat de la base de données — et doit être vérifiée indépendamment.",
+    "checkerError": "La vérification dans la base de données n'a pas pu s'exécuter. Réessayez ou demandez à l'Herboriste Virtuel.",
+    "checkerSource": "Source",
+    "checkerEvidence": "Preuves",
+    "checkerMechanism": "Fonctionnement",
+    "explainerTitle": "Votre guide de confiance des plantes médicinales",
+    "explainerBody": "HerbAlly est une base de données gratuite de plantes médicinales avec plus de 2 700 plantes. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, trouver des plantes par symptôme et calculer une dose adulte — le tout sans compte. L'Herboriste Virtuel est là pour expliquer, pas pour remplacer la base de données ou votre pharmacien.",
+    "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
+    "popularTitle": "Plantes populaires"
   },
   "embed": {
     "title": "Vérifier une association plante + médicament",
@@ -598,7 +615,7 @@
     "ex3Name": "Kava",
     "ex3Effect": "peut amplifier la sédation avec les médicaments contre l'anxiété ou le sommeil (aussi la valériane).",
     "riskLine": "Le risque est plus élevé chez les personnes âgées, ceux qui prennent plusieurs médicaments et les personnes atteintes de maladies chroniques.",
-    "actionLine": "Indiquez toujours à votre médecin et à votre pharmacien toutes les plantes et compléments que vous prenez — et vérifiez ci-dessous avant toute association."
+    "actionLine": "Indiquez toujours à votre médecin et à votre pharmacien toutes les plantes et compléments que vous prenez — et vérifiez une association avant de la prendre."
   },
   "herbDrugInteractionsPage": {
     "heading": "Interactions Plante-Médicament",
@@ -618,7 +635,10 @@
     "embedTitle": "Intégrez ce vérificateur à votre site",
     "embedBody": "Gratuit pour cliniques, écoles et blogs santé. Collez le snippet ci-dessous — inclut un lien d'attribution HerbAlly.",
     "embedCopy": "Copier le snippet",
-    "embedCopied": "Copié !"
+    "embedCopied": "Copié !",
+    "checkerCtaTitle": "Vérifier une association",
+    "checkerCtaBody": "Utilisez le vérificateur d'interactions sur la page d'accueil — il vérifie d'abord la base de données HerbAlly et affiche un résultat structuré lorsqu'une association est enregistrée.",
+    "checkerCtaButton": "Utiliser le vérificateur d'accueil"
   },
   "auth": {
     "login": {

@@ -178,6 +178,42 @@ export async function getInteractionPair(
 }
 
 /**
+ * All curated pairs for one herb, for the homepage checker.
+ * The checker matches the user's free-text medication against these
+ * rows (see lib/interactions/check.ts) instead of jumping straight
+ * to the AI chat, so a known pair is answered from the database first.
+ */
+export async function getHerbPairs(
+  herbSlug: string,
+  locale: string = "en"
+): Promise<InteractionPair[]> {
+  const supabase = getAnonClient();
+  if (!supabase) return [];
+  try {
+    const { data, error } = await supabase
+      .from("drug_interactions")
+      .select(PAIR_SELECT)
+      .eq("herbs.slug", herbSlug)
+      .eq("herbs.is_published", true)
+      .limit(100)
+      .abortSignal(querySignal());
+    if (error || !data) return [];
+    const pairs: InteractionPair[] = [];
+    for (const row of data as unknown as PairRow[]) {
+      const pair = toPair(row, locale);
+      if (pair) pairs.push(pair);
+    }
+    return pairs;
+  } catch (error) {
+    logger.error("interactions.getHerbPairs_failed", {
+      herbSlug,
+      error: String(error),
+    });
+    return [];
+  }
+}
+
+/**
  * Related pairs for cross-linking: other drugs for the same herb, and other
  * herbs for the same drug (matched on slugified generic name).
  */

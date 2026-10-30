@@ -86,7 +86,7 @@
   },
   "home": {
     "heroTitle": "Check herb-drug interactions",
-    "heroSubtitle": "Type any herb and medication to see if they're safe together. Evidence-based answers in seconds.",
+    "heroSubtitle": "Type any herb and medication to check the HerbAlly database first. If a pair isn't recorded, the Virtual Herbalist can explain more.",
     "heroButton": "Browse all herbs",
     "herbPlaceholder": "Herb name (e.g. Turmeric, St. John's Wort)",
     "medPlaceholder": "Medication (e.g. warfarin, sertraline)",
@@ -108,7 +108,24 @@
     "featureInteractionsTitle": "Interaction checker",
     "featureInteractionsDescription": "Check for herb-drug interactions before combining supplements with medications.",
     "featureAiTitle": "Virtual herbalist",
-    "featureAiDescription": "Ask questions about herbs, remedies, and safety. Evidence-based answers with citations."
+    "featureAiDescription": "Ask questions about herbs, remedies, and safety. Evidence-based answers with citations.",
+    "checkerChecking": "Checking the database…",
+    "checkerFoundTitle": "Database result",
+    "checkerAskHerbalist": "Ask the Virtual Herbalist",
+    "checkerViewPair": "View full interaction",
+    "checkerViewHerb": "View herb page",
+    "checkerDisclaimer": "Educational information only, not medical advice. Confirm with your doctor or pharmacist before changing any medication.",
+    "checkerNotFoundTitle": "No structured record found",
+    "checkerNotFoundBody": "No structured interaction record found for {herb} + {drug} in the HerbAlly database.",
+    "checkerAiNote": "The Virtual Herbalist can explain more, but its answer is AI-generated educational information — not a database result — and should be verified independently.",
+    "checkerError": "The database check could not run. Try again, or ask the Virtual Herbalist.",
+    "checkerSource": "Source",
+    "checkerEvidence": "Evidence",
+    "checkerMechanism": "How it works",
+    "explainerTitle": "Your trusted guide to medicinal herbs",
+    "explainerBody": "HerbAlly is a free medicinal-herb database with 2,700+ herbs. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
+    "explainerNote": "Educational purposes only. Not medical advice. Always confirm with your doctor or pharmacist before combining a herb with a medication.",
+    "popularTitle": "Popular herbs"
   },
   "embed": {
     "title": "Check an herb + drug combo",
@@ -598,7 +615,7 @@
     "ex3Name": "Kava",
     "ex3Effect": "can amplify sedation when taken with anxiety or sleep medications (also valerian).",
     "riskLine": "The risk is highest for older adults, anyone taking several medications, and people with chronic conditions.",
-    "actionLine": "Always tell your doctor and pharmacist about every herb and supplement you take — and check below before combining."
+    "actionLine": "Always tell your doctor and pharmacist about every herb and supplement you take — and check a combination before you take it."
   },
   "herbDrugInteractionsPage": {
     "heading": "Herb–Drug Interactions",
@@ -618,7 +635,10 @@
     "embedTitle": "Embed this checker on your site",
     "embedBody": "Free for clinics, schools, and health blogs. Paste the snippet below — includes a HerbAlly attribution link.",
     "embedCopy": "Copy snippet",
-    "embedCopied": "Copied!"
+    "embedCopied": "Copied!",
+    "checkerCtaTitle": "Check a combination",
+    "checkerCtaBody": "Use the interaction checker on the homepage — it checks the HerbAlly database first and shows a structured result when a pair is recorded.",
+    "checkerCtaButton": "Use the homepage checker"
   },
   "auth": {
     "login": {
