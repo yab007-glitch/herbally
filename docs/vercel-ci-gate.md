@@ -18,10 +18,10 @@ the step is set in the dashboard or via the API.
 it before the build, and the exit code decides what happens. **The codes are
 inverted relative to a normal script:**
 
-| exit | Vercel behaviour                            |
-| ---- | ------------------------------------------- |
-| 0    | **cancel** the build (state `CANCELED`)     |
-| 1    | **continue** with the build                 |
+| exit | Vercel behaviour                        |
+| ---- | --------------------------------------- |
+| 0    | **cancel** the build (state `CANCELED`) |
+| 1    | **continue** with the build             |
 
 Everything the script cannot verify exits 0, i.e. cancels. A commit is never
 deployed on a check that could not be read.
@@ -71,10 +71,10 @@ before giving up.
 
 Verified examples on this repo:
 
-| merge commit                               | PR      | PR head (tested commit)                    | `ci.yml` run on the head       |
-| ------------------------------------------ | ------- | ------------------------------------------ | ------------------------------ |
-| `bf3d1e9ffaa87c6bb457706814dbae749bc1f6da` | #175    | `f41d6116b2680e7a9302832fc5675e73acbc9145` | `completed:success`            |
-| `b2040b7777af6185af987b7ded9ada0e6e4288f7` | #174    | `8b25758e335c73c43876ceab80fb2ee0d5195337` | `completed:failure`            |
+| merge commit                               | PR   | PR head (tested commit)                    | `ci.yml` run on the head |
+| ------------------------------------------ | ---- | ------------------------------------------ | ------------------------ |
+| `bf3d1e9ffaa87c6bb457706814dbae749bc1f6da` | #175 | `f41d6116b2680e7a9302832fc5675e73acbc9145` | `completed:success`      |
+| `b2040b7777af6185af987b7ded9ada0e6e4288f7` | #174 | `8b25758e335c73c43876ceab80fb2ee0d5195337` | `completed:failure`      |
 
 In both cases the merge commit's **own** push run was still `queued` when the
 gate would have been evaluated.
