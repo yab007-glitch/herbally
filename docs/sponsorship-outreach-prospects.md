@@ -212,10 +212,11 @@ info@herbally.app | herbally.app
 ## Prospect 6: Traditional Medicinals (USA / Canada)
 - **Company:** Traditional Medicinals
 - **Location:** Sebastopol, California, USA
-- **Contact Email:** NONE PUBLISHED — use their web form: https://www.traditionalmedicinals.com/pages/contact
+- **Contact Email:** traditionalmedicinals@worldpantry.com (the address published on their own contact page)
+  They also take the message by web form: https://www.traditionalmedicinals.com/pages/contact
   (media@tradmed.com was rejected by Microsoft on 2026-10-30 with 550 5.4.1 "Access denied" — no such
-  mailbox. They publish no email address anywhere on their site; their staff use first-initial+lastname@tradmed.com.
-  Do not guess another address — the web form is the only correct channel.)
+  mailbox. Their staff use first-initial+lastname@tradmed.com. The web form POSTs return HTTP 400 to
+  anything that is not a real browser click, so the published address is the reliable route.)
 - **Source:** `https://www.traditionalmedicinals.com/pages/contact-us`
 - **Fit:** Certified B Corp herbal tea leader formulating pharmacopoeial quality herbal teas for over 45 years.
 
