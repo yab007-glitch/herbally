@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { HomeSearchClient } from "./home-search-client";
+import { HeroVideo } from "./hero-video";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
 import {
   Leaf,
@@ -126,6 +127,8 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+
+      <HeroVideo />
 
       {/* Phase 2 explainer — previously the page ended at the checker,
           leaving a first-time visitor with no picture of the library. */}
