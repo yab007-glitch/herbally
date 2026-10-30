@@ -130,18 +130,26 @@ export async function getHerbs(
           error: nameRes.error.message,
         });
       }
+      // Supabase string selects type `data` as GenericStringError, so cast
+      // the rows to their known shapes before mapping (the queries above
+      // select exactly these columns).
+      const keywordRows = (keywordRes.data as Array<{
+        id: string;
+        name: string;
+        evidence_level: string | null;
+      }> | null) || [];
+      const nameRows = (nameRes.data as Array<{
+        id: string;
+        name: string;
+      }> | null) || [];
       const rankedIds = rankHerbSearchResults({
         query: trimmedQuery,
-        keywordMatches: (keywordRes.data || []).map(
-          (h: { id: string; name: string; evidence_level: string | null }) => ({
-            id: h.id,
-            name: h.name,
-            evidence_level: h.evidence_level,
-          })
-        ),
-        nameMatches: (nameRes.data || []).map(
-          (h: { id: string; name: string }) => ({ id: h.id, name: h.name })
-        ),
+        keywordMatches: keywordRows.map((h) => ({
+          id: h.id,
+          name: h.name,
+          evidence_level: h.evidence_level,
+        })),
+        nameMatches: nameRows.map((h) => ({ id: h.id, name: h.name })),
         sort: params.sort === "evidence" ? "evidence" : "name",
       });
       const pageIds = rankedIds.slice(from, to + 1);
@@ -158,12 +166,15 @@ export async function getHerbs(
           });
           return { success: false, error: error.message };
         }
-        const byId = new Map(
-          (data || []).map((h: { id: string }) => [h.id, h])
-        );
+        const rows = (data as Array<
+          Record<string, unknown> & { id: string }
+        > | null) || [];
+        const byId = new Map(rows.map((h) => [h.id, h]));
         pageRows = pageIds
           .map((id) => byId.get(id))
-          .filter((h): h is Record<string, unknown> => Boolean(h));
+          .filter(
+            (h): h is Record<string, unknown> & { id: string } => Boolean(h)
+          );
       }
       const resolvedLocale = await resolveLocale(locale);
       const localizedHerbs = pageRows.map((h) =>
