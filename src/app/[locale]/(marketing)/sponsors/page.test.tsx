@@ -20,8 +20,8 @@ vi.mock("next-intl/server", () => ({
   getTranslations: async ({ locale }: { locale?: "en" | "fr" } = {}) => {
     const dictionary = locale === "fr" ? fr : en;
 
-    return (key: string) => {
-      const value = key
+    const resolve = (key: string) =>
+      key
         .split(".")
         .reduce<unknown>(
           (node, segment) =>
@@ -31,8 +31,16 @@ vi.mock("next-intl/server", () => ({
           dictionary
         );
 
+    const translate = (key: string) => {
+      const value = resolve(key);
       return typeof value === "string" ? value : key;
     };
+
+    // next-intl's translator also exposes `.raw` for non-string messages
+    // (arrays/objects); the page uses it for the package feature lists.
+    translate.raw = (key: string) => resolve(key);
+
+    return translate;
   },
 }));
 
