@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 import createNextIntlPlugin from "next-intl/plugin";
+import { buildSecurityHeaders } from "./src/lib/security/csp";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -46,36 +47,15 @@ const nextConfig: NextConfig = {
   // and could be framed/fetched without the same protections. Apply the same
   // baseline security headers to static assets here at the config level so the
   // protection is uniform regardless of the proxy matcher.
-  // NOTE (embed framing): X-Frame-Options and the CSP frame-ancestors
-  // directive are deliberately ABSENT here — they are owned exclusively by
-  // src/proxy.ts, which must exempt /embed/* (partner iframes). Config-level
-  // headers merge over middleware deletions, so allowlisting there is the
-  // only way to un-frame a route.
+  // NOTE (embed framing): the framing directive and X-Frame-Options are
+  // deliberately ABSENT here — they are owned exclusively by src/proxy.ts,
+  // which must exempt /embed/* (partner iframes). Config-level headers are
+  // applied after the proxy, so emitting them here would re-block embeds.
   async headers() {
     const securityHeaders = [
-      { key: "X-Content-Type-Options", value: "nosniff" },
-      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-      {
-        key: "Permissions-Policy",
-        value: "camera=(), microphone=(), geolocation=()",
-      },
-      {
-        key: "Content-Security-Policy",
-        value: [
-          "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
-          "style-src 'self' 'unsafe-inline'",
-          "font-src 'self' data:",
-          "frame-src *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          // No frame-ancestors here — owned by the proxy (see note above).
-          "object-src 'none'",
-          "base-uri 'self'",
-          "form-action 'self'",
-          "upgrade-insecure-requests",
-        ].join("; "),
-      },
+      ...Object.entries(buildSecurityHeaders({ framing: "omit" })).map(
+        ([key, value]) => ({ key, value })
+      ),
       ...(process.env.NODE_ENV === "production"
         ? [
             {

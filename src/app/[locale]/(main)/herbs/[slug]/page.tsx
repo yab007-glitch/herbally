@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
 import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
@@ -21,6 +20,8 @@ import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
+import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
+import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
@@ -79,8 +80,23 @@ const PRERENDER_HERB_LIMIT = 0;
  * the pair within one render pass; unstable_cache below still handles reuse
  * across requests, and the per-slug tags still drive on-demand revalidation.
  */
+async function fetchHerb(
+  slug: string,
+  locale: Locale
+): Promise<ActionResponse<HerbWithInteractions>> {
+  const result = await getHerbBySlug(slug, { locale, skipCookies: true });
+  // A failed query must never be cached. unstable_cache below would otherwise
+  // persist the failure for 24 h and ISR would re-serve it as a prerendered
+  // 404. Throwing aborts the cache write, so the route returns a retryable 500
+  // and the next request retries the database.
+  if (!result.success && result.reason === "unavailable") {
+    herbUnavailable(result.error);
+  }
+  return result;
+}
+
 const loadHerb = cache((slug: string, locale: Locale) =>
-  getHerbBySlug(slug, { locale, skipCookies: true })
+  fetchHerb(slug, locale)
 );
 
 export async function generateStaticParams() {
@@ -117,10 +133,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   );
 
   const result = await getHerbMetaCached(slug, metaLocale);
-  // The page body turns this into a 404 (see notFound() below). There is no
-  // loading.tsx above this route precisely so that the status can still be set
-  // to 404; a Suspense fallback would flush a 200 shell first.
+  // Only a genuine miss becomes "Herb Not Found" metadata. A failed query is
+  // not evidence the herb doesn't exist: propagate it so the route renders a
+  // retryable 500 rather than teaching crawlers a 404.
   if (!result.success || !result.data) {
+    if (!result.success && result.reason === "unavailable") {
+      herbUnavailable(result.error);
+    }
+    // The page body turns this into a 404 (see resolveHerbOr404 below). There
+    // is no loading.tsx above this route precisely so that the status can still
+    // be set to 404; a Suspense fallback would flush a 200 shell first.
     return { title: "Herb Not Found | HerbAlly", robots: { index: false } };
   }
   const herb = result.data;
@@ -188,6 +210,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           : `${baseUrl}/herbs/${slug}`,
       type: "article",
       siteName: "HerbAlly",
+      locale: metaLocale === "fr" ? "fr_FR" : "en_US",
       images: [`${baseUrl}/opengraph-image`],
     },
     twitter: {
@@ -260,11 +283,7 @@ export default async function HerbDetailPage({ params }: Props) {
 
   const result = await getHerbCached(slug, pageLocale as Locale);
 
-  if (!result.success || !result.data) {
-    notFound();
-  }
-
-  const herb = result.data;
+  const herb = resolveHerbOr404(result);
 
   // View tracking runs from a client beacon (ViewTracker) instead of a
   // server-side `after()` hook. The old hook fired once per dynamic render —

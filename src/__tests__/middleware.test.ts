@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
+import { AD_SOURCES, buildCsp, buildSecurityHeaders } from "@/lib/security/csp";
+
+/** Return the full `name value` entry for a directive, or undefined. */
+function directive(csp: string, name: string): string | undefined {
+  return csp
+    .split("; ")
+    .find((entry) => entry === name || entry.startsWith(`${name} `));
+}
 
 /**
  * Unit tests for middleware.ts — covers locale detection from
@@ -68,14 +76,7 @@ describe("middleware — admin route guard", () => {
 });
 
 describe("middleware — security headers", () => {
-  const securityHeaders: Record<string, string> = {
-    "X-Frame-Options": "DENY",
-    "X-Content-Type-Options": "nosniff",
-    "X-XSS-Protection": "1; mode=block",
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-    "X-DNS-Prefetch-Control": "on",
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-  };
+  const securityHeaders = buildSecurityHeaders({ isProduction: true });
 
   it("sets X-Frame-Options to DENY", () => {
     expect(securityHeaders["X-Frame-Options"]).toBe("DENY");
@@ -85,38 +86,99 @@ describe("middleware — security headers", () => {
     expect(securityHeaders["X-Content-Type-Options"]).toBe("nosniff");
   });
 
+  it("sets Referrer-Policy and X-DNS-Prefetch-Control", () => {
+    expect(securityHeaders["Referrer-Policy"]).toBe(
+      "strict-origin-when-cross-origin"
+    );
+    expect(securityHeaders["X-DNS-Prefetch-Control"]).toBe("on");
+  });
+
   it("disables camera, microphone, and geolocation", () => {
     expect(securityHeaders["Permissions-Policy"]).toContain("camera=()");
     expect(securityHeaders["Permissions-Policy"]).toContain("microphone=()");
     expect(securityHeaders["Permissions-Policy"]).toContain("geolocation=()");
   });
+
+  it("allows framing without X-Frame-Options for embed responses", () => {
+    const embed = buildSecurityHeaders({ framing: "allow" });
+
+    expect(embed["X-Frame-Options"]).toBeUndefined();
+    expect(directive(embed["Content-Security-Policy"], "frame-ancestors")).toBe(
+      "frame-ancestors *"
+    );
+  });
+
+  it("omits all framing headers for config-level headers", () => {
+    const config = buildSecurityHeaders({ framing: "omit" });
+
+    expect(config["X-Frame-Options"]).toBeUndefined();
+    expect(
+      directive(config["Content-Security-Policy"], "frame-ancestors")
+    ).toBeUndefined();
+  });
 });
 
 describe("middleware — CSP", () => {
-  const csp = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com",
-    "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com",
-    // L16: img-src scoped to the only remote image host we use (Supabase
-    // Storage), matching next.config.ts remotePatterns — no longer a bare
-    // `https:` that permitted any origin.
-    "img-src 'self' data: blob: https://*.supabase.co",
-    "style-src 'self' 'unsafe-inline'",
-    "font-src 'self' data:",
-    "frame-src *.stripe.com",
-    "frame-ancestors 'none'",
-  ].join("; ");
+  const devCsp = buildCsp({ isProduction: false });
+  const prodCsp = buildCsp({ isProduction: true });
 
-  it("allows connections to Supabase and Ollama Cloud", () => {
-    expect(csp).toContain("*.supabase.co");
-    expect(csp).toContain("https://ollama.com");
+  it("allowlists the AdSense sources in script, connect and frame sources", () => {
+    for (const source of AD_SOURCES) {
+      expect(directive(devCsp, "script-src")).toContain(source);
+      expect(directive(devCsp, "connect-src")).toContain(source);
+      expect(directive(devCsp, "frame-src")).toContain(source);
+    }
   });
 
-  it("blocks frame ancestors for clickjacking protection", () => {
-    expect(csp).toContain("frame-ancestors 'none'");
+  it("allows connections to Supabase but not to the Ollama server", () => {
+    expect(directive(devCsp, "connect-src")).toContain("*.supabase.co");
+    expect(directive(devCsp, "connect-src")).not.toContain("ollama.com");
+    expect(devCsp).not.toContain("ollama.com");
+  });
+
+  it("allows blob scripts and blob workers", () => {
+    expect(directive(devCsp, "script-src")).toContain("blob:");
+    expect(directive(devCsp, "worker-src")).toBe("worker-src 'self' blob:");
+    expect(directive(prodCsp, "worker-src")).toBe("worker-src 'self' blob:");
+  });
+
+  it("blocks frame ancestors by default", () => {
+    expect(directive(devCsp, "frame-ancestors")).toBe("frame-ancestors 'none'");
+    expect(directive(prodCsp, "frame-ancestors")).toBe(
+      "frame-ancestors 'none'"
+    );
+  });
+
+  it("allows frame ancestors for embed responses", () => {
+    const embedCsp = buildCsp({ framing: "allow", isProduction: true });
+
+    expect(directive(embedCsp, "frame-ancestors")).toBe("frame-ancestors *");
   });
 
   it("allows Stripe scripts for checkout", () => {
-    expect(csp).toContain("*.stripe.com");
+    expect(directive(devCsp, "script-src")).toContain("*.stripe.com");
+    expect(directive(devCsp, "connect-src")).toContain("*.stripe.com");
+    expect(directive(devCsp, "frame-src")).toContain("*.stripe.com");
+  });
+
+  it("allows 'unsafe-eval' only outside production", () => {
+    expect(directive(devCsp, "script-src")).toContain("'unsafe-eval'");
+    expect(directive(prodCsp, "script-src")).not.toContain("'unsafe-eval'");
+  });
+
+  it("keeps every other baseline directive", () => {
+    for (const name of [
+      "default-src",
+      "img-src",
+      "style-src",
+      "font-src",
+      "frame-src",
+      "object-src",
+      "base-uri",
+      "form-action",
+      "upgrade-insecure-requests",
+    ]) {
+      expect(directive(prodCsp, name)).toBeDefined();
+    }
   });
 });

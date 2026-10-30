@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
@@ -50,7 +51,7 @@ const POPULAR_HERBS = [
   { slug: "turmeric", nameKey: "herbDrugInteractionsPage.cTurmeric" },
   { slug: "garlic", nameKey: "herbDrugInteractionsPage.cGarlic" },
   { slug: "ginger", nameKey: "herbDrugInteractionsPage.cGinger" },
-  { slug: "ginkgo", nameKey: "herbDrugInteractionsPage.cGinkgo" },
+  { slug: "ginkgo-biloba", nameKey: "herbDrugInteractionsPage.cGinkgo" },
   { slug: "st-johns-wort", nameKey: "herbDrugInteractionsPage.cStJohnsWort" },
   { slug: "kava", nameKey: "herbDrugInteractionsPage.cKava" },
   { slug: "milk-thistle", nameKey: "herbDrugInteractionsPage.cMilkThistle" },
@@ -63,7 +64,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <WelcomeToast />
+      <Suspense fallback={null}>
+        <WelcomeToast />
+      </Suspense>
       <div className="flex flex-col items-center px-4 pt-10 pb-4">
         <div className="w-full max-w-lg text-center">
           {/* Logo mark */}
