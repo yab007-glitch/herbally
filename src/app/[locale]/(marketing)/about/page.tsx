@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 export const generateMetadata = () =>
@@ -168,23 +169,23 @@ export default async function AboutPage() {
                 {locale === "en" ? (
                   <>
                     If HerbAlly has been helpful to you, please consider{" "}
-                    <a
+                    <Link
                       href="/donate"
                       className="font-medium text-primary underline hover:no-underline"
                     >
                       making a donation
-                    </a>{" "}
+                    </Link>{" "}
                     to help us keep this resource available for everyone.
                   </>
                 ) : (
                   <>
                     {t("aboutContent.freeText3")}{" "}
-                    <a
+                    <Link
                       href="/donate"
                       className="font-medium text-primary underline hover:no-underline"
                     >
                       {t("aboutContent.freeLink")}
-                    </a>
+                    </Link>
                   </>
                 )}
               </>
@@ -195,12 +196,12 @@ export default async function AboutPage() {
                     t("aboutContent.freeLink")
                   )[0]
                 }
-                <a
+                <Link
                   href="/donate"
                   className="font-medium text-primary underline hover:no-underline"
                 >
                   {t("aboutContent.freeLink")}
-                </a>
+                </Link>
                 {
                   t("aboutContent.freeText3").split(
                     t("aboutContent.freeLink")
@@ -242,12 +243,12 @@ export default async function AboutPage() {
           </a>
         </p>
         <p className="mt-2">
-          <a
+          <Link
             href="/contact"
             className="font-medium text-primary underline hover:no-underline"
           >
             {t("contact.title")}
-          </a>
+          </Link>
         </p>
       </section>
     </div>

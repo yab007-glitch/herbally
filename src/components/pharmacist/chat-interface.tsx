@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   useState,
   useRef,
@@ -669,12 +670,12 @@ export function ChatInterface({
         <div className="shrink-0 border-t border-primary/10 bg-primary/5 px-4 py-1.5 text-center">
           <p className="text-[10px] text-muted-foreground">
             {t("donate.promptAfterUse")}{" "}
-            <a
+            <Link
               href="/donate"
               className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
             >
               {t("donate.promptLink")}
-            </a>
+            </Link>
           </p>
         </div>
       )}
