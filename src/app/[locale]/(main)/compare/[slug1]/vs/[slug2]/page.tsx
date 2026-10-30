@@ -12,7 +12,10 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
-import { notFound } from "next/navigation";
+import {
+  HerbDataUnavailableError,
+  resolveHerbOr404,
+} from "@/lib/herbs/resolve-herb";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
@@ -80,6 +83,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     getHerbBySlug(slug2, { locale: metaLocale, skipCookies: true }),
   ]);
 
+  if (!resultA.success && resultA.reason === "unavailable") {
+    throw new HerbDataUnavailableError(resultA.error);
+  }
+  if (!resultB.success && resultB.reason === "unavailable") {
+    throw new HerbDataUnavailableError(resultB.error);
+  }
+
   const herbA = resultA.success ? resultA.data : null;
   const herbB = resultB.success ? resultB.data : null;
 
@@ -120,12 +130,8 @@ export default async function ComparePage({ params }: Props) {
     getHerbBySlug(slug2, { locale, skipCookies: true }),
   ]);
 
-  if (!resultA.success || !resultB.success || !resultA.data || !resultB.data) {
-    notFound();
-  }
-
-  const herbA = resultA.data;
-  const herbB = resultB.data;
+  const herbA = resolveHerbOr404(resultA);
+  const herbB = resolveHerbOr404(resultB);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
   const compareUrl = `${baseUrl}/compare/${slug1}/vs/${slug2}`;
