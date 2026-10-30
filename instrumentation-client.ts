@@ -36,6 +36,14 @@ Sentry.init({
   // is NOT inlined into the client bundle, so the old gate disabled client-side
   // Sentry entirely in production.
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  // Tag by deployment. NEXT_PUBLIC_VERCEL_ENV is inlined at build time, so a
+  // local production build is reported as "local" rather than "production".
+  environment:
+    process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT ??
+    process.env.NEXT_PUBLIC_VERCEL_ENV ??
+    (typeof window !== "undefined" && window.location.hostname === "localhost"
+      ? "local"
+      : "production"),
   // Health app: never send default PII (IP, cookies, user agent fingerprint).
   sendDefaultPii: false,
   tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.05,

@@ -38,6 +38,10 @@ function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
+  // Tag by deployment, not by NODE_ENV. A local `next build && next start`
+  // runs with NODE_ENV=production, so relying on the default made dev-server
+  // test runs land in the production environment and mask real incidents.
+  environment: process.env.SENTRY_ENVIRONMENT ?? process.env.VERCEL_ENV ?? "local",
   // Health app: never send default PII (IP, cookies, user body).
   sendDefaultPii: false,
   // Hobby Fluid CPU is a hard limit: 5% of transactions still gives us
