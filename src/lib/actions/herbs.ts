@@ -265,7 +265,11 @@ export async function getHerbBySlug(
     const supabase = opts?.skipCookies ? getAnonClient() : await createClient();
 
     if (!supabase) {
-      return { success: false, error: "Supabase client not configured" };
+      return {
+        success: false,
+        error: "Supabase client not configured",
+        reason: "unavailable",
+      };
     }
 
     const { data, error } = await supabase
@@ -291,6 +295,7 @@ export async function getHerbBySlug(
       return {
         success: false,
         error: isNotFound ? "Herb not found" : error.message,
+        reason: isNotFound ? "not_found" : "unavailable",
       };
     }
 
@@ -309,7 +314,11 @@ export async function getHerbBySlug(
     };
   } catch (error) {
     logger.error("herbs.getHerbBySlug_failed", { error: String(error) });
-    return { success: false, error: "Failed to fetch herb" };
+    return {
+      success: false,
+      error: "Failed to fetch herb",
+      reason: "unavailable",
+    };
   }
 }
 
