@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { buildHerbListUrl } from "@/lib/search/herb-list-url";
@@ -22,6 +22,12 @@ interface HerbPaginationProps {
  * the bottom of the page, forcing a manual "Back to top". The scroll runs
  * in an effect on `page` (skipping the first render) rather than relying
  * on Link's default scroll, so it also fires for the page-jump form.
+ *
+ * Navigation now runs inside a transition (previously plain Link clicks
+ * and a bare router.push for the jump form, neither giving any feedback
+ * while the next page resolved). While pending, all controls are
+ * disabled, the nav reports aria-busy, and the page indicator shows a
+ * spinner with the shared "Loading..." label.
  */
 export function HerbPagination({
   page,
@@ -33,6 +39,7 @@ export function HerbPagination({
   const t = useTranslations();
   const router = useRouter();
   const [jump, setJump] = useState(String(page));
+  const [isPending, startTransition] = useTransition();
   const firstRender = useRef(true);
 
   useEffect(() => {
@@ -52,71 +59,71 @@ export function HerbPagination({
   const urlFor = (target: number) =>
     buildHerbListUrl({ q: query, category, sort, page: target });
 
-  const handleJump = (e: React.FormEvent) => {
-    e.preventDefault();
-    const parsed = Math.floor(Number(jump));
-    if (!Number.isFinite(parsed)) return;
-    const target = Math.min(Math.max(parsed, 1), totalPages);
+  const navigate = (target: number) => {
     if (target === page) {
       document
         .getElementById("herb-results")
         ?.scrollIntoView({ block: "start" });
       return;
     }
-    router.push(urlFor(target));
+    startTransition(() => {
+      router.push(urlFor(target), { scroll: false });
+    });
+  };
+
+  const handleJump = (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsed = Math.floor(Number(jump));
+    if (!Number.isFinite(parsed)) return;
+    const target = Math.min(Math.max(parsed, 1), totalPages);
+    navigate(target);
   };
 
   return (
     <nav
       aria-label={t("herbs.pagination.page")}
+      aria-busy={isPending}
       className="mt-8 flex flex-wrap items-center justify-center gap-3"
     >
       <Button
         variant="outline"
         size="sm"
-        disabled={page <= 1}
-        render={
-          page > 1 ? <Link href={urlFor(1)} scroll={false} /> : undefined
-        }
+        disabled={isPending || page <= 1}
+        onClick={() => navigate(1)}
       >
         {t("herbs.pagination.first")}
       </Button>
       <Button
         variant="outline"
         size="sm"
-        disabled={page <= 1}
-        render={
-          page > 1 ? (
-            <Link href={urlFor(page - 1)} scroll={false} />
-          ) : undefined
-        }
+        disabled={isPending || page <= 1}
+        onClick={() => navigate(page - 1)}
       >
         {t("herbs.pagination.previous")}
       </Button>
-      <span className="text-sm text-muted-foreground">
-        {page} {t("herbs.pagination.of")} {totalPages}
-      </span>
+      {isPending ? (
+        <span className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin" />
+          {t("common.loading")}
+        </span>
+      ) : (
+        <span className="text-sm text-muted-foreground">
+          {page} {t("herbs.pagination.of")} {totalPages}
+        </span>
+      )}
       <Button
         variant="outline"
         size="sm"
-        disabled={page >= totalPages}
-        render={
-          page < totalPages ? (
-            <Link href={urlFor(page + 1)} scroll={false} />
-          ) : undefined
-        }
+        disabled={isPending || page >= totalPages}
+        onClick={() => navigate(page + 1)}
       >
         {t("herbs.pagination.next")}
       </Button>
       <Button
         variant="outline"
         size="sm"
-        disabled={page >= totalPages}
-        render={
-          page < totalPages ? (
-            <Link href={urlFor(totalPages)} scroll={false} />
-          ) : undefined
-        }
+        disabled={isPending || page >= totalPages}
+        onClick={() => navigate(totalPages)}
       >
         {t("herbs.pagination.last")}
       </Button>
@@ -135,9 +142,15 @@ export function HerbPagination({
           max={totalPages}
           value={jump}
           onChange={(e) => setJump(e.target.value)}
+          disabled={isPending}
           className="h-8 w-20"
         />
-        <Button type="submit" variant="outline" size="sm">
+        <Button
+          type="submit"
+          variant="outline"
+          size="sm"
+          disabled={isPending}
+        >
           {t("herbs.pagination.goToPage")}
         </Button>
       </form>
