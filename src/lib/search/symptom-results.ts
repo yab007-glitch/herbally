@@ -13,10 +13,14 @@
  * them into one result. This is a presentation merge only — no database
  * rows are deleted or rewritten, and match criteria are unchanged.
  *
- * Rows that share a scientific name but differ only in a Latin synonym
- * (e.g. Betonica officinalis vs Stachys betonica) are NOT merged here:
- * without a curated synonym table that merge would risk collapsing
- * genuinely different plants.
+ * One hand-curated Latin-synonym exception: betony. Betonica
+ * officinalis, Stachys betonica and Stachys officinalis are synonyms for
+ * the same plant (RHS lists Stachys betonica as a synonym of Betonica
+ * officinalis; PFAF lists both as synonyms of Stachys officinalis), so
+ * rows under any of those names collapse into one result. This map is
+ * deliberately tiny and hand-verified: do NOT extend it by guessing, and
+ * do NOT merge on common-name similarity — without a verified synonym
+ * entry, different scientific names stay separate.
  */
 
 export interface DedupeableHerbResult {
@@ -56,11 +60,20 @@ export function normalizeScientificName(
   return normalized || null;
 }
 
+const LATIN_SYNONYM_CANONICAL: Record<string, string> = {
+  "betonica officinalis": "betonica officinalis",
+  "stachys betonica": "betonica officinalis",
+  "stachys officinalis": "betonica officinalis",
+};
+
 function dedupeKey(herb: DedupeableHerbResult): string {
-  return (
-    normalizeScientificName(herb.scientific_name) ??
-    (herb.slug ? `slug:${herb.slug.toLowerCase()}` : `id:${herb.id ?? ""}`)
-  );
+  const normalized = normalizeScientificName(herb.scientific_name);
+  if (normalized) {
+    return LATIN_SYNONYM_CANONICAL[normalized] ?? normalized;
+  }
+  return herb.slug
+    ? `slug:${herb.slug.toLowerCase()}`
+    : `id:${herb.id ?? ""}`;
 }
 
 function unionInOrder(existing: string[] | undefined, next: string[]): string[] {

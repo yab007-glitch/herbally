@@ -156,6 +156,7 @@
     "sortEvidence": "Preuves les plus solides",
     "noHerbsQuery": "Aucune herbe trouvée pour \"{query}\"",
     "trySearching": "Essayez de rechercher un symptôme comme maux de tête, anxiété ou inflammation.",
+    "loadError": "Impossible de charger la liste des plantes. Veuillez réessayer.",
     "browseAll": "Parcourir Toutes les Herbes",
     "pagination": {
       "previous": "Précédent",
@@ -574,7 +575,8 @@
     "placeholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
     "searching": "Recherche...",
     "search": "Rechercher",
-    "surpriseMe": "Surprenez-moi"
+    "surpriseMe": "Surprenez-moi",
+    "randomError": "Impossible de charger une plante au hasard. Veuillez réessayer."
   },
   "commandPalette": {
     "placeholder": "Rechercher des herbes, pages ou actions...",
@@ -1554,6 +1556,7 @@
     "toggleAgeUnit": "Basculer l'unité d'âge (années/mois)",
     "toggleWeightUnit": "Basculer l'unité de poids (kg/lbs)",
     "unverifiedHerbNotice": "La monographie de cette plante est générée par IA et n'a pas été revue par rapport à des sources faisant autorité. Aucune dose de référence validée n'est disponible, le champ de la dose adulte est donc laissé vide. Saisissez vous-même une dose provenant d'une source fiable et confirmez tout résultat auprès d'un professionnel de santé qualifié.",
+    "unverifiedStatedRange": "Dose adulte indiquée sur la page de la plante — pas une dose de référence validée : {dose}",
     "pediatricDoseBlockedTitle": "Aucune dose calculée pour cet âge",
     "pediatricDoseBlocked": "HerbAlly ne calcule pas de posologie de plantes pour les personnes de moins de {age} ans. La concentration des produits à base de plantes varie considérablement et elle n'est pas validée pour la posologie chez les enfants ou les adolescents. Veuillez consulter un professionnel de santé pédiatrique qualifié (par exemple un pédiatre, un pharmacien ou le médecin de l'enfant) avant de donner un produit à base de plantes à une personne de moins de {age} ans.",
     "ageRequiredForAdultDose": "Saisissez l'âge du patient avant de calculer. HerbAlly ne calcule des doses que pour les personnes de {age} ans ou plus, et doit pouvoir confirmer cet âge.",

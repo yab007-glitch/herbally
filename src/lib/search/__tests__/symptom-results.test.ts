@@ -86,9 +86,42 @@ describe("dedupeSymptomResults", () => {
     expect(results.map((h) => h.id)).toEqual(["a", "c"]);
   });
 
-  it("keeps genuinely different plants, including Latin synonyms", () => {
+  it("collapses the hand-curated betony Latin synonyms into one plant", () => {
     const results = dedupeSymptomResults([
-      herb({ id: "a", slug: "a", name: "A", scientific_name: "Stachys betonica" }),
+      herb({
+        id: "a",
+        slug: "stachys-betonica",
+        name: "Stachys Betonica",
+        scientific_name: "Betonica officinalis",
+        matchedBy: "symptom",
+        matchedInputs: ["anxiety"],
+      }),
+      herb({
+        id: "b",
+        slug: "lamiaceae-betony",
+        name: "Lamiaceae Betony",
+        scientific_name: "Stachys betonica",
+        matchedBy: "symptom",
+        matchedInputs: ["sleep"],
+      }),
+      herb({
+        id: "c",
+        slug: "betony-third",
+        name: "Betony",
+        scientific_name: "Stachys officinalis",
+        matchedBy: "symptom",
+        matchedInputs: ["anxiety"],
+      }),
+    ]);
+    expect(results).toHaveLength(1);
+    expect(results[0].slug).toBe("stachys-betonica");
+    expect(results[0].matchedInputs).toEqual(["anxiety", "sleep"]);
+    expect(results[0].aliases).toEqual(["Lamiaceae Betony", "Betony"]);
+  });
+
+  it("keeps genuinely different plants separate", () => {
+    const results = dedupeSymptomResults([
+      herb({ id: "a", slug: "a", name: "A", scientific_name: "Stachys sylvatica" }),
       herb({ id: "b", slug: "b", name: "B", scientific_name: "Betonica officinalis" }),
     ]);
     expect(results).toHaveLength(2);

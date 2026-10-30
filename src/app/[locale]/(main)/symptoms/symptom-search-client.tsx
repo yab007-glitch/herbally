@@ -40,8 +40,13 @@ export function SymptomSearchClient() {
     setHasSearched(true);
 
     try {
-      // First try AI-powered keyword extraction
-      let keywords: string[] = [q.trim().toLowerCase()];
+      // First try AI-powered keyword extraction. The AI keywords are
+      // UNIONED with the user's own words, never used to replace them:
+      // replacing dropped user terms (e.g. the AI returning "insomnia"
+      // for a user who typed "sleep"), and with the one-way synonym map
+      // that silently lost the sleep match entirely.
+      const originalWords = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      let keywords: string[] = originalWords;
 
       try {
         const aiRes = await fetch("/api/interpret-search", {
@@ -52,11 +57,14 @@ export function SymptomSearchClient() {
         if (aiRes.ok) {
           const data = await aiRes.json();
           if (data.keywords?.length > 0) {
-            keywords = data.keywords;
+            const aiKeywords = (data.keywords as string[]).map((k) =>
+              k.toLowerCase()
+            );
+            keywords = Array.from(new Set([...originalWords, ...aiKeywords]));
           }
         }
       } catch {
-        // Fall back to raw query
+        // Fall back to raw query words
       }
 
       // Search herbs by keywords

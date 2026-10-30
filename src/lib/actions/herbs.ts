@@ -11,6 +11,7 @@ import {
 } from "@/lib/utils/localize-herb";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
+import { rankHerbSearchResults } from "@/lib/search/herb-search-union";
 import type {
   ActionResponse,
   Herb,
@@ -64,64 +65,121 @@ export async function getHerbs(
       .eq("is_published", true)
       .range(from, to);
 
+    // Search path (union): keyword matches and name/description matches are
+    // combined, de-duplicated, and ranked with exact name matches first
+    // (see src/lib/search/herb-search-union.ts). Previously this was
+    // keyword-first: any keyword match hid the name fallback entirely, so
+    // an exact herb name could vanish from the list. Pagination is applied
+    // to the ranked id list, so an exact match is always on page 1.
+    const trimmedQuery = params.query?.trim().slice(0, MAX_QUERY_LENGTH);
+    if (trimmedQuery) {
+      const qWords = trimmedQuery.split(/\s+/).filter(Boolean);
+      // Resolve the category first so both match queries honour it, the
+      // same way the main query below does.
+      let categoryId: string | null = null;
+      if (params.category) {
+        const { data: cat } = await supabase
+          .from("herb_categories")
+          .select("id")
+          .eq("slug", params.category)
+          .single();
+        if (cat) categoryId = cat.id;
+      }
+      const buildMatchQuery = (select: string) => {
+        let qb = supabase.from("herbs").select(select).eq("is_published", true);
+        if (categoryId) qb = qb.eq("category_id", categoryId);
+        if (params.pregnancySafe) qb = qb.eq("pregnancy_safe", true);
+        if (params.nursingSafe) qb = qb.eq("nursing_safe", true);
+        return qb;
+      };
+      const expandedKeywords = expandQueryToKeywords(trimmedQuery);
+      const keywordQuery = buildMatchQuery("id, name, evidence_level")
+        .overlaps("symptom_keywords", expandedKeywords)
+        .limit(500);
+      const nameConditions = qWords
+        .flatMap((w) => {
+          const safe = sanitizeFilterValue(w);
+          return [
+            `name.ilike.%${safe}%`,
+            `scientific_name.ilike.%${safe}%`,
+            `description.ilike.%${safe}%`,
+          ];
+        })
+        .join(",");
+      const nameQuery = buildMatchQuery("id, name").or(nameConditions).limit(500);
+      const [keywordRes, nameRes] = await Promise.all([
+        keywordQuery,
+        nameQuery,
+      ]);
+      if (keywordRes.error && nameRes.error) {
+        logger.error("herbs_get_herbs_search_failed", {
+          error: keywordRes.error.message,
+        });
+        return {
+          success: false,
+          error: keywordRes.error.message || "Failed to fetch herbs",
+        };
+      }
+      if (keywordRes.error) {
+        logger.error("herbs_get_herbs_keyword_failed", {
+          error: keywordRes.error.message,
+        });
+      }
+      if (nameRes.error) {
+        logger.error("herbs_get_herbs_name_failed", {
+          error: nameRes.error.message,
+        });
+      }
+      const rankedIds = rankHerbSearchResults({
+        query: trimmedQuery,
+        keywordMatches: (keywordRes.data || []).map(
+          (h: { id: string; name: string; evidence_level: string | null }) => ({
+            id: h.id,
+            name: h.name,
+            evidence_level: h.evidence_level,
+          })
+        ),
+        nameMatches: (nameRes.data || []).map(
+          (h: { id: string; name: string }) => ({ id: h.id, name: h.name })
+        ),
+        sort: params.sort === "evidence" ? "evidence" : "name",
+      });
+      const pageIds = rankedIds.slice(from, to + 1);
+      let pageRows: Array<Record<string, unknown>> = [];
+      if (pageIds.length > 0) {
+        const { data, error } = await supabase
+          .from("herbs")
+          .select("*, herb_categories(*)")
+          .eq("is_published", true)
+          .in("id", pageIds);
+        if (error) {
+          logger.error("herbs_get_herbs_failed", {
+            error: error instanceof Error ? error.message : JSON.stringify(error),
+          });
+          return { success: false, error: error.message };
+        }
+        const byId = new Map(
+          (data || []).map((h: { id: string }) => [h.id, h])
+        );
+        pageRows = pageIds
+          .map((id) => byId.get(id))
+          .filter((h): h is Record<string, unknown> => Boolean(h));
+      }
+      const resolvedLocale = await resolveLocale(locale);
+      const localizedHerbs = pageRows.map((h) =>
+        localizeHerb(h as HerbWithCategory, resolvedLocale)
+      );
+      return {
+        success: true,
+        data: { herbs: localizedHerbs as HerbWithCategory[], total: rankedIds.length },
+      };
+    }
+
     // When keyword matches are found we order by evidence level (A→B→C→D→trad)
     // instead of name, so the strongest-evidence herbs surface first. The flag
     // is applied AFTER filters below (Supabase accumulates all modifiers into
     // one query, so call order doesn't affect the final SQL).
     let orderByEvidence = false;
-
-    if (params.query) {
-      const q = params.query.trim().slice(0, MAX_QUERY_LENGTH);
-      const words = q.split(/\s+/).filter(Boolean);
-      if (words.length > 0) {
-        const expandedKeywords = expandQueryToKeywords(q);
-
-        const { data: keywordResults } = await supabase
-          .from("herbs")
-          .select("id, evidence_level")
-          .eq("is_published", true)
-          .overlaps("symptom_keywords", expandedKeywords)
-          .limit(500);
-
-        let matchedIds: string[] = (keywordResults || []).map(
-          (h: { id: string }) => h.id
-        );
-        if (matchedIds.length > 0) {
-          const evidenceOrder: Record<string, number> = {
-            A: 0,
-            B: 1,
-            C: 2,
-            D: 3,
-            trad: 4,
-          };
-          const sortedResults = (keywordResults || []).sort(
-            (
-              a: { evidence_level: string | null },
-              b: { evidence_level: string | null }
-            ) => {
-              const ea = evidenceOrder[a.evidence_level || "C"] ?? 2;
-              const eb = evidenceOrder[b.evidence_level || "C"] ?? 2;
-              return ea - eb;
-            }
-          );
-          matchedIds = sortedResults.map((h: { id: string }) => h.id);
-          query = query.in("id", matchedIds);
-          orderByEvidence = true;
-        } else {
-          const conditions = words
-            .flatMap((w) => {
-              const safe = sanitizeFilterValue(w);
-              return [
-                `name.ilike.%${safe}%`,
-                `scientific_name.ilike.%${safe}%`,
-                `description.ilike.%${safe}%`,
-              ];
-            })
-            .join(",");
-          query = query.or(conditions);
-        }
-      }
-    }
 
     if (params.category) {
       const { data: cat } = await supabase

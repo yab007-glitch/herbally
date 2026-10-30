@@ -266,6 +266,18 @@ export default async function HerbsPage({
         </div>
       )}
 
+      {/* A failed listing query must never look like "no results": show
+          the failure explicitly instead of the empty state. (Page > 1
+          failures already redirect to page 1 above.) */}
+      {!herbsResult.success && (
+        <div
+          role="alert"
+          className="mb-6 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-foreground"
+        >
+          {t("herbs.loadError")}
+        </div>
+      )}
+
       {/* Grid — id is the pagination scroll target. */}
       <div id="herb-results" className="scroll-mt-24">
         {herbs.length > 0 ? (
