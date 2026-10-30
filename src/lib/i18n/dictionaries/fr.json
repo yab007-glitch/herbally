@@ -767,7 +767,15 @@
       "chatMessages": "Les questions envoyées à l'Herboriste Virtuel peuvent être traitées par Ollama Cloud pour générer des réponses. Les conversations des utilisateurs connectés peuvent être enregistrées dans leur compte ; celles des invités peuvent être enregistrées dans une session liée au cookie herbally-guest-id.",
       "analytics": "Vercel Web Analytics collecte des données d'utilisation, notamment les vues de pages, les pages populaires, la région approximative et des comptages anonymes de fonctions (calculatrice utilisée, pages d'interaction ouvertes, questions posées au chat, type de lien sortant). Ces événements ne contiennent aucun détail de santé, texte de recherche, contenu de message ni texte libre. Le site collecte aussi des mesures de performance pour surveiller son fonctionnement. Ces données ne servent pas à vous identifier et nous respectons Global Privacy Control et Do Not Track.",
       "cookies": "HerbAlly utilise des cookies pour la langue, les sessions invitées et l'authentification. Votre navigateur peut aussi conserver des entrées et notes de jardin ainsi que les recherches récentes. Si la publicité est activée ultérieurement, Google et ses partenaires peuvent utiliser des cookies ou des identifiants d'appareil.",
-      "notCollect": "Nous ne demandons ni nom ni adresse e-mail, sauf si vous créez un compte ou faites un don. Nous ne vendons pas de renseignements personnels."
+      "notCollect": "Nous ne demandons ni nom ni adresse e-mail, sauf si vous créez un compte ou faites un don. Nous ne vendons pas de renseignements personnels.",
+      "optOut": {
+        "label": "Votre choix d'analytique",
+        "statusOn": "L'analytique est activée pour ce navigateur. Elle est anonyme et ne contient aucun détail de santé.",
+        "statusOff": "L'analytique est désactivée pour ce navigateur. Rien n'est enregistré.",
+        "actionOff": "Désactiver l'analytique",
+        "actionOn": "Réactiver l'analytique",
+        "note": "Ce choix ne s'applique qu'à ce navigateur. Global Privacy Control et Do Not Track désactivent aussi l'analytique."
+      }
     },
     "howWeUse": {
       "title": "3. Comment Nous Utilisons Vos Informations",

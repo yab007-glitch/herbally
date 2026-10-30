@@ -286,6 +286,11 @@ export function ChatInterface({
     setStreamingContent("");
     setShowScrollButton(false);
 
+    // Funnel step: a question was actually asked. Recorded on submit, not on a
+    // successful reply, so a failed request still proves the visitor tried the
+    // herbalist. Only the presence of herb context is sent — never the text.
+    trackEvent("chat_message_sent", { hasHerbContext: !!herbContext });
+
     // Parse commands
     const command = parseCommand(content);
     const overrideContext = command.systemContext;
@@ -374,8 +379,6 @@ export function ChatInterface({
           timestamp: new Date().toISOString(),
         },
       ]);
-
-      trackEvent("chat_message_sent", { hasHerbContext: !!herbContext });
     } catch (err) {
       if ((err as Error).name === "AbortError") return;
       setStreamingContent("");

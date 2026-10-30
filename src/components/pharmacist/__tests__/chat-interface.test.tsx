@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { ChatInterface } from "../chat-interface";
+import { trackEvent } from "@/lib/analytics";
 import en from "@/lib/i18n/dictionaries/en.json";
 import fr from "@/lib/i18n/dictionaries/fr.json";
 
@@ -95,6 +96,28 @@ describe("ChatInterface provenance labels", () => {
     // not relabel messages that were rendered earlier.
     expect(screen.queryByText("common.verifiedData")).not.toBeInTheDocument();
     expect(screen.queryByText("Verified data")).not.toBeInTheDocument();
+  });
+});
+
+describe("chat funnel event", () => {
+  const trackEventMock = trackEvent as unknown as ReturnType<typeof vi.fn>;
+
+  it("records chat_message_sent on submit even when the request fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new Error("network down"))
+    );
+
+    render(<ChatInterface locale="en" />);
+    await send("Is ginger safe with warfarin?");
+
+    await waitFor(() =>
+      expect(trackEventMock).toHaveBeenCalledWith("chat_message_sent", {
+        hasHerbContext: false,
+      })
+    );
+    // The question text must never be part of the payload.
+    expect(JSON.stringify(trackEventMock.mock.calls)).not.toContain("ginger");
   });
 });
 

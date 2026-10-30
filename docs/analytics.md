@@ -9,13 +9,13 @@ the ads slot stays fail-closed (`src/components/ads/ad-slot.tsx`).
 Page views come from the SDK's automatic tracking. Four custom events measure
 the funnel, plus one language event that already existed:
 
-| Event | Fires when | Properties |
-|---|---|---|
-| `calculator_used` | the dose calculator returns a number, or the age gate blocks one | `formula` (closed set), `outcome` = `computed` \| `blocked` |
-| `interaction_checked` | a herb–drug pair page is opened and hydrated | `trigger` = `pair_page` \| `expand_table` |
-| `chat_message_sent` | a question is sent to the virtual herbalist | `hasHerbContext` (boolean) |
-| `outbound_click` | a click leaves the site (delegated listener) | `target` = `donation` \| `sponsor` \| `affiliate` \| `external`, `host` (hostname only) |
-| `language_changed` | the visitor switches language | `locale`, `source` (both closed sets) |
+| Event                 | Fires when                                                       | Properties                                                                              |
+| --------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `calculator_used`     | the dose calculator returns a number, or the age gate blocks one | `formula` (closed set), `outcome` = `computed` \| `blocked`                             |
+| `interaction_checked` | a herb–drug pair page is opened and hydrated                     | `trigger` = `pair_page` \| `expand_table`                                               |
+| `chat_message_sent`   | a question is sent to the virtual herbalist                      | `hasHerbContext` (boolean)                                                              |
+| `outbound_click`      | a click leaves the site (delegated listener)                     | `target` = `donation` \| `sponsor` \| `affiliate` \| `external`, `host` (hostname only) |
+| `language_changed`    | the visitor switches language                                    | `locale`, `source` (both closed sets)                                                   |
 
 **Nothing else is sent.** `src/lib/analytics.ts` enforces an event allowlist and
 a per-event property allowlist; closed-domain values are rejected if they are
@@ -32,7 +32,9 @@ The same consent decision gates both page views and events:
 
 - `navigator.globalPrivacyControl === true` → nothing is sent.
 - `navigator.doNotTrack` of `1`/`yes` → nothing is sent.
-- `localStorage["herbally:analytics-opt-out"] = "1"` → nothing is sent.
+- `localStorage["herbally:analytics-opt-out"] = "1"` → nothing is sent. A
+  visitor sets this from the control on `/privacy` ("Your analytics choice"),
+  which is the only UI that writes the key.
 - Storage is unreadable (throttled/blocked) → fail closed, nothing is sent.
 
 Page views are gated in `src/components/analytics/vercel-analytics.tsx` through
@@ -45,7 +47,7 @@ these feature counts and says GPC/DNT are honoured. Keep the two in sync.
 
 ## Why the dashboard used to show zero events
 
-`window.va` is the SDK's *function* queue stub — `window.va.track` never
+`window.va` is the SDK's _function_ queue stub — `window.va.track` never
 existed, so the old helper's call was swallowed by its own try/catch and no
 custom event ever left the browser. Use `track()` from `@vercel/analytics`;
 never hand-roll `window.va` calls.

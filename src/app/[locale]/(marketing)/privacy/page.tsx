@@ -1,6 +1,7 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { AnalyticsOptOut } from "@/components/analytics/analytics-opt-out";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "privacyPolicy", path: "/privacy" });
@@ -57,6 +58,16 @@ export default async function PrivacyPage() {
               {t("privacy.infoWeCollect.cookies")}
             </li>
           </ul>
+          <AnalyticsOptOut
+            labels={{
+              label: t("privacy.infoWeCollect.optOut.label"),
+              statusOn: t("privacy.infoWeCollect.optOut.statusOn"),
+              statusOff: t("privacy.infoWeCollect.optOut.statusOff"),
+              actionOn: t("privacy.infoWeCollect.optOut.actionOn"),
+              actionOff: t("privacy.infoWeCollect.optOut.actionOff"),
+              note: t("privacy.infoWeCollect.optOut.note"),
+            }}
+          />
           <p className="mt-3">{t("privacy.infoWeCollect.notCollect")}</p>
         </section>
 

@@ -44,7 +44,8 @@ import { mkdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 
-const PROJECT_ID = process.env.HERBALLY_VERCEL_PROJECT_ID ?? "prj_aGIptlSsD7vwSUwppdWJrL8mIe59";
+const PROJECT_ID =
+  process.env.HERBALLY_VERCEL_PROJECT_ID ?? "prj_aGIptlSsD7vwSUwppdWJrL8mIe59";
 const DEFAULT_OUT_DIR = path.join(homedir(), "HerbAlly-Outreach", "analytics");
 const LAST_GSC_FILE = path.join(DEFAULT_OUT_DIR, "data", "gsc-latest.json");
 
@@ -61,6 +62,13 @@ const FUNNEL_EVENTS = [
   "chat_message_sent",
   "outbound_click",
 ];
+
+/**
+ * Events that exist to prove the pipeline, not to measure readers. They are
+ * excluded from the funnel and from the product-event headline so a probe can
+ * never be mistaken for a visitor action.
+ */
+const NON_PRODUCT_EVENTS = new Set(["hermes_pipeline_probe"]);
 
 function parseArgs(argv) {
   const args = {
@@ -119,8 +127,14 @@ function isoDay(date) {
 /** Window is expressed in whole UTC days so runs are reproducible. */
 function resolveWindow(args) {
   const now = new Date();
-  const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-  const until = args.until ? new Date(`${args.until}T00:00:00.000Z`) : new Date(todayUtc);
+  const todayUtc = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate()
+  );
+  const until = args.until
+    ? new Date(`${args.until}T00:00:00.000Z`)
+    : new Date(todayUtc);
   const since = args.since
     ? new Date(`${args.since}T00:00:00.000Z`)
     : new Date(until.getTime() - args.days * 86_400_000);
@@ -139,7 +153,13 @@ function vercelApi(endpoint, params) {
   const search = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
-    search.append(key, Array.isArray(value) ? value.join(",") : String(value));
+    // The query API validates each `by` item separately, so an array must be
+    // repeated (`by=eventName&by=environment`), never comma-joined.
+    if (Array.isArray(value)) {
+      for (const item of value) search.append(key, String(item));
+    } else {
+      search.append(key, String(value));
+    }
   }
   const url = `/v1/query/web-analytics/${endpoint}?${search.toString()}`;
   const raw = execFileSync("vercel", ["api", url], {
@@ -198,8 +218,12 @@ function readGsc(file) {
       clicks: totals.clicks,
       impressions: totals.impressions,
       ctr: totals.impressions ? totals.ctrWeighted / totals.impressions : 0,
-      position: totals.impressions ? totals.positionWeighted / totals.impressions : 0,
+      position: totals.impressions
+        ? totals.positionWeighted / totals.impressions
+        : 0,
       capturedAt: parsed.capturedAt ?? null,
+      window: parsed.window ?? null,
+      note: parsed.note ?? null,
       source: file,
     };
   } catch {
@@ -283,16 +307,27 @@ function main() {
 
   const countryRows = Array.isArray(countries) ? countries : [];
   const eventRows = Array.isArray(events) ? events : [];
+  const productEventRows = eventRows.filter(
+    (row) => !NON_PRODUCT_EVENTS.has(row.eventName)
+  );
+  const probeRows = eventRows.filter((row) =>
+    NON_PRODUCT_EVENTS.has(row.eventName)
+  );
   const eventCount = (name) =>
-    eventRows
+    productEventRows
       .filter((row) => row.eventName === name)
       .reduce((sum, row) => sum + Number(row.count ?? row.visitors ?? 0), 0);
 
   const visitors = Number(totals?.visitors ?? 0);
   const pageviews = Number(totals?.pageviews ?? 0);
 
-  const nonHuman = countryRows.filter((row) => LIKELY_NON_HUMAN.has(row.country));
-  const nonHumanVisitors = nonHuman.reduce((sum, row) => sum + Number(row.visitors ?? 0), 0);
+  const nonHuman = countryRows.filter((row) =>
+    LIKELY_NON_HUMAN.has(row.country)
+  );
+  const nonHumanVisitors = nonHuman.reduce(
+    (sum, row) => sum + Number(row.visitors ?? 0),
+    0
+  );
   const humanVisitors = visitors - nonHumanVisitors;
   const ca = countryRows.find((row) => row.country === "CA");
   const fr = countryRows.find((row) => row.country === "FR");
@@ -314,15 +349,30 @@ function main() {
       [
         ["Page views", `**${num(pageviews)}**`],
         ["Visitors (recorded)", `**${num(visitors)}**`],
-        ["Page views / visitor", visitors ? (pageviews / visitors).toFixed(2) : "—"],
+        [
+          "Page views / visitor",
+          visitors ? (pageviews / visitors).toFixed(2) : "—",
+        ],
         [
           "Visitors in likely-bot countries (CN, SG, HK)",
           `${num(nonHumanVisitors)} (${pct(nonHumanVisitors, visitors)})`,
         ],
-        ["Visitors outside those countries", `${num(humanVisitors)} (${pct(humanVisitors, visitors)})`],
-        ["Canada visitors", ca ? `**${num(ca.visitors)}** (${pct(ca.visitors, visitors)})` : "0"],
-        ["France visitors", fr ? `**${num(fr.visitors)}** (${pct(fr.visitors, visitors)})` : "0"],
-        ["Custom events recorded", `**${num(eventRows.reduce((sum, row) => sum + Number(row.count ?? 0), 0))}**`],
+        [
+          "Visitors outside those countries",
+          `${num(humanVisitors)} (${pct(humanVisitors, visitors)})`,
+        ],
+        [
+          "Canada visitors",
+          ca ? `**${num(ca.visitors)}** (${pct(ca.visitors, visitors)})` : "0",
+        ],
+        [
+          "France visitors",
+          fr ? `**${num(fr.visitors)}** (${pct(fr.visitors, visitors)})` : "0",
+        ],
+        [
+          "Custom events recorded",
+          `**${num(productEventRows.reduce((sum, row) => sum + Number(row.count ?? 0), 0))}**`,
+        ],
         [
           "Bounce rate",
           Number.isFinite(args.bounce) && args.bounce !== null
@@ -379,7 +429,11 @@ function main() {
       lines.push(
         table(
           ["Page (Canada)", "Visitors", "Page views"],
-          caPaths.map((row) => [row.requestPath, num(row.visitors), num(row.pageviews)])
+          caPaths.map((row) => [
+            row.requestPath,
+            num(row.visitors),
+            num(row.pageviews),
+          ])
         )
       );
       lines.push("");
@@ -403,7 +457,9 @@ function main() {
       table(
         ["Page", "Page views", "Visitors"],
         orderedPaths.map((row) => [
-          row.requestPath === "Others" ? "All other pages" : `\`${row.requestPath}\``,
+          row.requestPath === "Others"
+            ? "All other pages"
+            : `\`${row.requestPath}\``,
           num(row.pageviews),
           num(row.visitors),
         ])
@@ -420,7 +476,9 @@ function main() {
       table(
         ["Referrer", "Visitors", "Page views"],
         referrers.map((row) => [
-          row.referrerHostname === "" ? "Direct / unknown" : row.referrerHostname,
+          row.referrerHostname === ""
+            ? "Direct / unknown"
+            : row.referrerHostname,
           num(row.visitors),
           num(row.pageviews),
         ])
@@ -428,18 +486,22 @@ function main() {
     );
     const searches = referrers
       .filter((row) =>
-        /google|bing|duckduckgo|yahoo|ecosia|yandex|baidu|brave/.test(row.referrerHostname ?? "")
+        /google|bing|duckduckgo|yahoo|ecosia|yandex|baidu|brave/.test(
+          row.referrerHostname ?? ""
+        )
       )
       .reduce((sum, row) => sum + Number(row.pageviews ?? 0), 0);
     lines.push("");
-    lines.push(`Search referrals: **${num(searches)} page views (${pct(searches, pageviews)})**.`);
+    lines.push(
+      `Search referrals: **${num(searches)} page views (${pct(searches, pageviews)})**.`
+    );
   } else {
     lines.push("_No referrer data returned._");
   }
   lines.push("");
   lines.push("## 5. Funnel");
   lines.push("");
-  if (!eventRows.length) {
+  if (!productEventRows.length) {
     lines.push(
       "**No custom events in this window.** Either the analytics build is not deployed yet, or every visitor has been below the event thresholds. Event counts only exist after the deploy that ships `src/lib/analytics.ts`."
     );
@@ -471,13 +533,27 @@ function main() {
         })
       )
     );
-    const extra = eventRows
+    const extra = productEventRows
       .map((row) => row.eventName)
       .filter((name) => name && !FUNNEL_EVENTS.includes(name));
     if (extra.length) {
       lines.push("");
-      lines.push(`Other events recorded: ${extra.map((name) => `\`${name}\``).join(", ")}.`);
+      lines.push(
+        `Other events recorded: ${extra.map((name) => `\`${name}\``).join(", ")}.`
+      );
     }
+  }
+  if (probeRows.length) {
+    const probeCount = probeRows.reduce(
+      (sum, row) => sum + Number(row.count ?? 0),
+      0
+    );
+    lines.push("");
+    lines.push(
+      `> Excluded from the counts above: ${probeRows
+        .map((row) => `\`${row.eventName}\``)
+        .join(", ")} (${num(probeCount)}). It is a synthetic pipeline probe, not a visitor action.`
+    );
   }
   lines.push("");
   lines.push("## 6. Search Console");
@@ -496,8 +572,18 @@ function main() {
     );
     if (gsc.capturedAt) {
       lines.push("");
-      lines.push(`GSC snapshot captured ${gsc.capturedAt} from ${gsc.source}.`);
+      lines.push(
+        `GSC snapshot captured ${gsc.capturedAt}${gsc.window ? `, covering ${gsc.window}` : ""}, from ${gsc.source}.`
+      );
     }
+    if (gsc.note) {
+      lines.push("");
+      lines.push(`> ${gsc.note}`);
+    }
+    lines.push("");
+    lines.push(
+      "> Search Console lags 2–3 days, so its window rarely matches the analytics window. Treat this section as context, not as a like-for-like comparison."
+    );
   } else {
     lines.push(
       "No GSC export supplied. Search Console has no unattended credential on this machine; run with `--gsc-json <export>` (rows of `[clicks, impressions, ctr, position]` or an API response with a `rows` array) to fill this section. It is left blank rather than estimated."
