@@ -260,14 +260,14 @@
       "consult": "Always consult a healthcare provider before starting any herbal regimen."
     },
     "cardTitle": "Dose Calculator",
-    "cardDesc": "Enter the herb information and patient details to calculate an age-appropriate dose.",
+    "cardDesc": "Enter the herb information and adult details to calculate an adult reference dose.",
     "calculatingFor": "Calculating dose for {name}",
     "standardAdultDose": "Standard adult dose: {dose}",
     "referenceChildDose": "Reference child dose: {dose}",
     "forHerb": "for {name}",
     "enterPrompt": "Enter details and click \"Calculate Dose\" to see results",
     "patientHeightCm": "Patient Height (cm)",
-    "description": "Enter the herb information and patient details to calculate an age-appropriate dose."
+    "description": "Enter the herb information and adult details to calculate an adult reference dose."
   },
   "pharmacist": {
     "title": "AI Herbalist",
@@ -567,7 +567,8 @@
     "herbsAtAGlance": "Herbs at a Glance",
     "askHerbalist": "Ask Herbalist",
     "calculatorCtaTitle": "Calculate a safe dose of {name}",
-    "calculatorCtaBody": "Free herbal dosage calculator — adult & child doses by weight."
+    "calculatorCtaBody": "Free herbal dosage calculator — adult reference doses by weight.",
+    "adultOnlyNote": "Dose calculator: adults aged 18 and older only."
   },
   "search": {
     "placeholder": "Search herbs by name, symptom, or use...",
@@ -977,7 +978,7 @@
     "dosage": {
       "calculator": {
         "q": "How does the dosage calculator work?",
-        "a": "HerbAlly's dosage calculator is for adults aged 18 and older. It supports Clark's Rule (weight-based), Young's Rule (age-based), Body Surface Area (BSA), and Fried's Rule (infants) as reference methods. It does not calculate doses for children or adolescents; consult a qualified paediatric healthcare professional instead."
+        "a": "HerbAlly's dosage calculator is for adults aged 18 and older. It supports Clark's Rule (weight-based), Young's Rule (age-based), and Body Surface Area (BSA) as reference methods. It does not calculate doses for children or adolescents; consult a qualified paediatric healthcare professional instead."
       },
       "multiple": {
         "q": "Can I take multiple herbs at the same time?",
@@ -1494,8 +1495,8 @@
     "months": "Months",
     "calculationFormula": "Calculation Formula",
     "calculatedDose": "Calculated Dose",
-    "childAge": "Patient Age",
-    "childWeight": "Patient Weight",
+    "childAge": "Adult age",
+    "childWeight": "Adult weight",
     "childDoseResult": "Reference Dose",
     "selectHerb": "Select an herb...",
     "selectUnit": "Select unit",
@@ -1551,7 +1552,14 @@
     "pediatricDoseBlockedTitle": "No dose calculated for this age",
     "pediatricDoseBlocked": "HerbAlly does not calculate herbal doses for anyone under {age}. Herbal products vary widely in concentration and are not validated for dosing in children or adolescents. Please speak with a qualified pediatric healthcare professional (for example, a paediatrician, pharmacist or the child's doctor) before giving any herbal product to a person under {age}.",
     "ageRequiredForAdultDose": "Enter the patient's age before calculating. HerbAlly only calculates doses for people aged {age} or older, and it must be able to confirm that age.",
-    "pediatricDoseBlockedRationale": "Why this limit exists: the classic pediatric formulas (Clark's, Young's, Fried's) were designed to scale prescription-drug doses and have never been validated for herbal extracts. HerbAlly therefore does not show a number for minors rather than present an unverified pediatric dose that could be mistaken for medical advice."
+    "pediatricDoseBlockedRationale": "Why this limit exists: the classic pediatric formulas (Clark's, Young's, Fried's) were designed to scale prescription-drug doses and have never been validated for herbal extracts. HerbAlly therefore does not show a number for minors rather than present an unverified pediatric dose that could be mistaken for medical advice.",
+    "adultDosePlaceholder": "e.g. 500",
+    "adultOnlyNotice": "This calculator is for adults aged 18 and older only. It does not calculate doses for anyone under 18.",
+    "rangePickerTitle": "Choose a dose from the standard adult range",
+    "rangePickerNote": "Choosing a value fills the adult dose field — it is not a personal recommendation. Confirm with a qualified healthcare provider.",
+    "rangeLow": "Low",
+    "rangeMiddle": "Middle",
+    "rangeHigh": "High"
   },
   "symptomMeta": {
     "anxiety": {

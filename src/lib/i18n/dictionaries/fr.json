@@ -260,14 +260,14 @@
       "consult": "Consultez toujours un professionnel de santé avant de commencer toute cure phytothérapique."
     },
     "cardTitle": "Calculateur de dose",
-    "cardDesc": "Entrez les informations sur la plante et les détails du patient pour calculer une dose adaptée à l'âge.",
+    "cardDesc": "Entrez les informations sur la plante et les détails de l'adulte pour calculer une dose de référence adulte.",
     "calculatingFor": "Calcul de la dose pour {name}",
     "standardAdultDose": "Dose adulte standard : {dose}",
     "referenceChildDose": "Dose enfant de référence : {dose}",
     "forHerb": "pour {name}",
     "enterPrompt": "Entrez les détails et cliquez sur « Calculer la dose » pour voir les résultats",
     "patientHeightCm": "Taille du patient (cm)",
-    "description": "Entrez les informations sur la plante et les détails du patient pour calculer une posologie adaptée à l'âge."
+    "description": "Entrez les informations sur la plante et les détails de l'adulte pour calculer une dose de référence adulte."
   },
   "pharmacist": {
     "title": "Herboriste IA",
@@ -567,7 +567,8 @@
     "herbsAtAGlance": "Plantes en Bref",
     "askHerbalist": "Demander à l'herboriste",
     "calculatorCtaTitle": "Calculer une dose sûre de {name}",
-    "calculatorCtaBody": "Calculateur gratuit de posologie — doses adultes et enfants selon le poids."
+    "calculatorCtaBody": "Calculateur gratuit de posologie — doses de référence adultes selon le poids.",
+    "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement."
   },
   "search": {
     "placeholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
@@ -977,7 +978,7 @@
     "dosage": {
       "calculator": {
         "q": "Comment fonctionne le calculateur de posologie ?",
-        "a": "Le calculateur de posologie d'HerbAlly est destiné aux adultes de 18 ans et plus. Il propose la Règle de Clark (basée sur le poids), la Règle de Young (basée sur l'âge), la Surface Corporelle (BSA) et la Règle de Fried (nourrissons) comme méthodes de référence. Il ne calcule pas de posologie pour les enfants ou les adolescents ; consultez plutôt un professionnel de santé pédiatrique qualifié."
+        "a": "Le calculateur de posologie d'HerbAlly est destiné aux adultes de 18 ans et plus. Il propose la Règle de Clark (basée sur le poids), la Règle de Young (basée sur l'âge) et la Surface Corporelle (BSA) comme méthodes de référence. Il ne calcule pas de posologie pour les enfants ou les adolescents ; consultez plutôt un professionnel de santé pédiatrique qualifié."
       },
       "multiple": {
         "q": "Puis-je prendre plusieurs plantes en même temps ?",
@@ -1494,8 +1495,8 @@
     "months": "Mois",
     "calculationFormula": "Formule de Calcul",
     "calculatedDose": "Posologie Calculée",
-    "childAge": "Âge du patient",
-    "childWeight": "Poids du patient",
+    "childAge": "Âge adulte",
+    "childWeight": "Poids adulte",
     "childDoseResult": "Dose de référence",
     "selectHerb": "Sélectionnez une plante...",
     "selectUnit": "Sélectionnez l'unité",
@@ -1551,7 +1552,14 @@
     "pediatricDoseBlockedTitle": "Aucune dose calculée pour cet âge",
     "pediatricDoseBlocked": "HerbAlly ne calcule pas de posologie de plantes pour les personnes de moins de {age} ans. La concentration des produits à base de plantes varie considérablement et elle n'est pas validée pour la posologie chez les enfants ou les adolescents. Veuillez consulter un professionnel de santé pédiatrique qualifié (par exemple un pédiatre, un pharmacien ou le médecin de l'enfant) avant de donner un produit à base de plantes à une personne de moins de {age} ans.",
     "ageRequiredForAdultDose": "Saisissez l'âge du patient avant de calculer. HerbAlly ne calcule des doses que pour les personnes de {age} ans ou plus, et doit pouvoir confirmer cet âge.",
-    "pediatricDoseBlockedRationale": "Pourquoi cette limite : les formules pédiatriques classiques (Clark, Young, Fried) ont été conçues pour ajuster des doses de médicaments et n'ont jamais été validées pour les extraits de plantes. HerbAlly refuse donc d'afficher un chiffre pour les mineurs plutôt que de présenter une posologie pédiatrique non vérifiée qui pourrait être prise pour un avis médical."
+    "pediatricDoseBlockedRationale": "Pourquoi cette limite : les formules pédiatriques classiques (Clark, Young, Fried) ont été conçues pour ajuster des doses de médicaments et n'ont jamais été validées pour les extraits de plantes. HerbAlly refuse donc d'afficher un chiffre pour les mineurs plutôt que de présenter une posologie pédiatrique non vérifiée qui pourrait être prise pour un avis médical.",
+    "adultDosePlaceholder": "ex. 500",
+    "adultOnlyNotice": "Ce calculateur est réservé aux adultes de 18 ans et plus. Il ne calcule aucune dose pour les personnes de moins de 18 ans.",
+    "rangePickerTitle": "Choisissez une dose dans la plage adulte standard",
+    "rangePickerNote": "Choisir une valeur remplit le champ de la dose adulte — ce n'est pas une recommandation personnelle. Confirmez auprès d'un professionnel de santé qualifié.",
+    "rangeLow": "Faible",
+    "rangeMiddle": "Milieu",
+    "rangeHigh": "Élevée"
   },
   "symptomMeta": {
     "anxiety": {

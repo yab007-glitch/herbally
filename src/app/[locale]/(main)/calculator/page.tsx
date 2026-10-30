@@ -22,27 +22,33 @@ export const generateMetadata = () =>
 
 function parseDosage(dosageStr: string | null): {
   dose: number | null;
+  low: number | null;
+  high: number | null;
   unit: "mg" | "ml" | "g" | "drops";
 } {
-  if (!dosageStr) return { dose: null, unit: "mg" };
+  if (!dosageStr) return { dose: null, low: null, high: null, unit: "mg" };
   // Match patterns like "500 mg", "500-1000 mg", "1-3 g", "30 drops", "2-4 ml"
-  // Capture both bounds of an optional range so we can use the midpoint
-  // rather than the low end — dosing off the floor of a range underdoses.
+  // A range is returned as low/high, never collapsed to a midpoint: silently
+  // prefilling a midpoint would present an invented single dose as if it
+  // were the herb's reference dose. The form shows the range and lets the
+  // user explicitly pick a value inside it (or leave the field blank).
   const match = dosageStr.match(
     /(\d+(?:\.\d+)?)\s*(?:[-–]\s*(\d+(?:\.\d+)?)\s*)?(mg|ml|g|drops)/i
   );
-  if (!match) return { dose: null, unit: "mg" };
+  if (!match) return { dose: null, low: null, high: null, unit: "mg" };
   const low = parseFloat(match[1]);
   const high = match[2] ? parseFloat(match[2]) : null;
-  // L22: reject malformed multi-bound ranges like "500-1000-2000 mg". The
-  // regex would backtrack to "1000-2000" and silently discard the low bound,
-  // biasing the computed pediatric dose HIGH (toward overdose). More than one
-  // range separator means malformed input — leave the prefill empty rather
-  // than surface a silently-truncated value.
+  // Reject malformed multi-bound ranges like "500-1000-2000 mg". The
+  // regex would backtrack to "1000-2000" and silently discard the low bound.
+  // More than one range separator means malformed input — leave the prefill
+  // empty rather than surface a silently-truncated value.
   const separatorCount = (dosageStr.match(/[-–]/g) || []).length;
-  if (separatorCount > 1) return { dose: null, unit: "mg" };
+  if (separatorCount > 1)
+    return { dose: null, low: null, high: null, unit: "mg" };
   return {
-    dose: high !== null ? (low + high) / 2 : low,
+    dose: high === null ? low : null,
+    low,
+    high,
     unit: match[3].toLowerCase() as "mg" | "ml" | "g" | "drops",
   };
 }
@@ -62,7 +68,11 @@ export default async function CalculatorPage({
     adultDose: string;
     doseUnit: "mg" | "ml" | "g" | "drops";
     dosageAdultRaw: string | null;
-    dosageChildRaw: string | null;
+    dosageRange: {
+      low: number;
+      high: number;
+      unit: "mg" | "ml" | "g" | "drops";
+    } | null;
     dosageForms: string[];
     verified: boolean;
   } | null = null;
@@ -75,17 +85,23 @@ export default async function CalculatorPage({
       // human-reviewed against a primary source (manual / primary_source).
       // AI-generated dosages are unverified — prefilling them would present
       // an authoritative-looking number from unchecked data, which is
-      // especially dangerous feeding a pediatric calculator.
+      // especially dangerous feeding a dose calculator.
       const verified = isVerified(
         parseProvenance(herb.provenance as Record<string, unknown> | null)
       );
       const parsed = parseDosage(herb.dosage_adult);
+      // Only prefill a single, verified reference dose. A range is never
+      // collapsed to one number here; the form offers explicit low/middle/
+      // high picks from the range instead. Unverified herbs get no prefill.
       prefill = {
         herbName: herb.name,
         adultDose: verified && parsed.dose ? String(parsed.dose) : "",
         doseUnit: parsed.unit,
         dosageAdultRaw: herb.dosage_adult,
-        dosageChildRaw: herb.dosage_child,
+        dosageRange:
+          verified && parsed.low !== null && parsed.high !== null
+            ? { low: parsed.low, high: parsed.high, unit: parsed.unit }
+            : null,
         dosageForms: herb.dosage_forms || [],
         verified,
       };
