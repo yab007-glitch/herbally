@@ -1,10 +1,21 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/analytics";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Heart, ShieldCheck, ShieldX } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { HerbImage } from "@/components/herbs/HerbImage";
+import { EvidenceGradeBadge } from "@/components/herbs/evidence-grade";
+import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
+import { parseProvenance, isVerified } from "@/lib/types/provenance";
+import {
+  addToGarden,
+  removeFromGarden,
+  isInGarden,
+} from "@/lib/garden/local-garden";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface HerbCardProps {
@@ -21,11 +32,74 @@ interface HerbCardProps {
     herb_categories?: { name: string } | null;
     updated_at?: string;
     image_url?: string | null;
+    evidence_level?: string | null;
+    provenance?: unknown;
   };
   className?: string;
 }
 
+const EVIDENCE_LEVELS = ["A", "B", "C", "D", "trad"] as const;
+
 export function HerbCard({ herb, className }: HerbCardProps) {
+  const t = useTranslations();
+  // Start unsaved and sync after mount so server and client markup match
+  // (localStorage is not available during server rendering).
+  const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    setSaved(isInGarden(herb.slug));
+  }, [herb.slug]);
+
+  const handleSave = () => {
+    if (saved) {
+      removeFromGarden(herb.slug);
+      setSaved(false);
+    } else {
+      addToGarden({
+        id: herb.id,
+        slug: herb.slug,
+        name: herb.name,
+        scientific_name: herb.scientific_name,
+        image_url: herb.image_url,
+      });
+      setSaved(true);
+    }
+  };
+
+  // Phase 1 gate: pregnancy/nursing verdicts are only shown for
+  // human-verified entries. For unverified entries the verdict is Unknown,
+  // never a fabricated "Generally safe" from AI data.
+  const verified = isVerified(parseProvenance(herb.provenance ?? null));
+  const safety = (
+    label: string,
+    value: boolean | null
+  ): { text: string; tone: string; Icon: typeof ShieldCheck } => {
+    if (!verified || value === null) {
+      return {
+        text: `${label}: ${t("herbHero.unknown")}`,
+        tone: "text-muted-foreground",
+        Icon: ShieldX,
+      };
+    }
+    return value
+      ? {
+          text: `${label}: ${t("herbHero.generallySafe")}`,
+          tone: "text-green-600",
+          Icon: ShieldCheck,
+        }
+      : {
+          text: `${label}: ${t("herbHero.notSafe")}`,
+          tone: "text-destructive",
+          Icon: ShieldX,
+        };
+  };
+  const pregnancy = safety(t("herbBadges.pregnancy"), herb.pregnancy_safe);
+  const nursing = safety(t("herbBadges.nursing"), herb.nursing_safe);
+  const evidenceLevel = EVIDENCE_LEVELS.includes(
+    herb.evidence_level as (typeof EVIDENCE_LEVELS)[number]
+  )
+    ? (herb.evidence_level as (typeof EVIDENCE_LEVELS)[number])
+    : null;
+
   return (
     <Card
       className={cn(
@@ -33,35 +107,100 @@ export function HerbCard({ herb, className }: HerbCardProps) {
         className
       )}
     >
-      <Link
-        href={`/herbs/${herb.slug}`}
-        onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
-        className="block"
-      >
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <Link
+            href={`/herbs/${herb.slug}`}
+            onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
+            className="flex min-w-0 flex-1 items-start gap-3"
+          >
+            {/* HerbImage already renders the photo when image_url exists
+                and only falls back to the coloured initial tile otherwise. */}
             <HerbImage
               name={herb.name}
               imageUrl={herb.image_url}
               className="size-12 shrink-0 rounded-lg"
             />
             <div className="min-w-0 flex-1">
-              <h3 className="font-medium text-foreground truncate">
+              {/* Names wrap instead of truncating mid-word: the full name
+                  is always visible (up to two lines) and also in title. */}
+              <h3
+                title={herb.name}
+                className="font-medium text-foreground break-words line-clamp-2"
+              >
                 {herb.name}
               </h3>
-              <p className="text-xs italic text-muted-foreground truncate">
+              <p
+                title={herb.scientific_name}
+                className="text-xs italic text-muted-foreground line-clamp-1"
+              >
                 {herb.scientific_name}
               </p>
               {herb.traditional_uses?.[0] && (
-                <p className="mt-1 text-xs text-muted-foreground line-clamp-1">
+                <p
+                  title={herb.traditional_uses[0]}
+                  className="mt-1 text-xs text-muted-foreground line-clamp-2"
+                >
                   {herb.traditional_uses[0]}
                 </p>
               )}
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                {/* The category badge explains why a herb appears under a
+                    filter: the card's one-line use is the first traditional
+                    use, which need not match the category name. */}
+                {herb.herb_categories?.name && (
+                  <Badge variant="secondary" className="text-xs">
+                    {herb.herb_categories.name}
+                  </Badge>
+                )}
+                {evidenceLevel && (
+                  <EvidenceGradeBadge level={evidenceLevel} />
+                )}
+                {herb.provenance !== undefined && (
+                  <ProvenanceBadge
+                    provenance={parseProvenance(herb.provenance)}
+                  />
+                )}
+              </div>
+              <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
+                {[
+                  { key: "pregnancy", ...pregnancy },
+                  { key: "nursing", ...nursing },
+                ].map(({ key, text, tone, Icon }) => (
+                  <span
+                    key={key}
+                    className={cn(
+                      "inline-flex items-center gap-1 text-[11px]",
+                      tone
+                    )}
+                  >
+                    <Icon className="size-3" aria-hidden="true" />
+                    {text}
+                  </span>
+                ))}
+              </div>
             </div>
             <ArrowRight className="size-4 shrink-0 self-center text-muted-foreground/40 group-hover:text-primary transition-colors" />
-          </div>
-        </CardContent>
-      </Link>
+          </Link>
+          {/* Save heart on the card itself, so the garden empty state's
+              "tap the heart icon on any herb card" instruction is true.
+              It sits outside the Link so it is not nested interactivity. */}
+          <button
+            type="button"
+            onClick={handleSave}
+            aria-label={saved ? t("garden.remove") : t("garden.save")}
+            aria-pressed={saved}
+            className={cn(
+              "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
+              saved
+                ? "bg-rose-500 text-white"
+                : "text-muted-foreground hover:text-rose-500"
+            )}
+          >
+            <Heart className={cn("size-4", saved && "fill-white")} />
+          </button>
+        </div>
+      </CardContent>
     </Card>
   );
 }

@@ -2,8 +2,9 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { HerbCard } from "@/components/herbs/herb-card";
+import { HerbPagination } from "@/components/herbs/herb-pagination";
+import { buildHerbListUrl } from "@/lib/search/herb-list-url";
 import { SmartSearch } from "@/components/herbs/smart-search";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
@@ -25,11 +26,14 @@ export const generateMetadata = () =>
 export default async function HerbsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; category?: string; page?: string; sort?: string }>;
 }) {
   const params = await searchParams;
   const query = params.q || "";
   const category = params.category || "";
+  // Sort: only "evidence" is a non-default value. Anything else (including
+  // an explicit ?sort=name, which the canonical URL drops) redirects below.
+  const sort = params.sort === "evidence" ? "evidence" : "name";
   // Sanitize ?page=: non-integers, negatives, and 0 collapse to 1. Anything
   // non-canonical (including ?page=1, which duplicates the base URL) is
   // redirected below so junk/stale pagination URLs never render or index.
@@ -39,7 +43,7 @@ export default async function HerbsPage({
   const locale = await getLocale();
   const t = await getTranslations({ locale });
   const [herbsResult, categoriesResult] = await Promise.all([
-    getHerbs({ query, category, page }, locale),
+    getHerbs({ query, category, page, sort }, locale),
     getHerbCategories(locale),
   ]);
 
@@ -47,13 +51,15 @@ export default async function HerbsPage({
   const buildCanonical = (opts: {
     dropPage?: boolean;
     dropCategory?: boolean;
+    dropSort?: boolean;
   }) => {
-    const sp = new URLSearchParams();
-    if (query) sp.set("q", query);
-    if (category && !opts.dropCategory) sp.set("category", category);
-    if (!opts.dropPage && page > 1) sp.set("page", String(page));
-    const qs = sp.toString();
-    return `/herbs${qs ? `?${qs}` : ""}`;
+    return buildHerbListUrl({
+      q: query || undefined,
+      category: category && !opts.dropCategory ? category : undefined,
+      sort: sort === "evidence" && !opts.dropSort ? sort : undefined,
+      page: !opts.dropPage ? page : undefined,
+      anchor: null,
+    });
   };
 
   // Unknown ?category= previously rendered the UNFILTERED list with no hint
@@ -86,13 +92,25 @@ export default async function HerbsPage({
   const pageParam = params.page;
   const pageIsCanonical =
     (pageParam === undefined && page === 1) || pageParam === String(page);
-  if (!pageIsCanonical || (totalPages > 0 && page > totalPages)) {
+  const sortParam = params.sort;
+  const sortIsCanonical =
+    sortParam === undefined || sortParam === "evidence";
+  if (
+    !pageIsCanonical ||
+    !sortIsCanonical ||
+    (totalPages > 0 && page > totalPages)
+  ) {
     redirect(
       buildCanonical({
         dropPage: totalPages > 0 && page > totalPages ? true : page === 1,
+        dropSort: !sortIsCanonical,
       })
     );
   }
+
+  const activeCategoryName = categories.find(
+    (c: { slug: string; name: string }) => c.slug === category
+  )?.name;
 
   return (
     <div>
@@ -135,7 +153,7 @@ export default async function HerbsPage({
           status). Keep the requirement satisfied locally. */}
       <div className="mb-6">
         <Suspense fallback={null}>
-          <SmartSearch defaultValue={query} category={category} />
+          <SmartSearch defaultValue={query} category={category} sort={sort} />
         </Suspense>
       </div>
 
@@ -149,9 +167,16 @@ export default async function HerbsPage({
         </div>
       )}
 
-      {/* Categories */}
+      {/* Categories — search AND category combine: a category pill keeps
+          the current search (and sort) and only resets the page. */}
       <div className="mb-6 flex flex-wrap gap-2">
-        <Link href="/herbs">
+        <Link
+          href={buildHerbListUrl({
+            q: query || undefined,
+            sort: sort === "evidence" ? sort : undefined,
+            anchor: null,
+          })}
+        >
           <Badge
             variant={!category ? "default" : "outline"}
             className="cursor-pointer"
@@ -162,7 +187,12 @@ export default async function HerbsPage({
         {categories.slice(0, 8).map((cat: { slug: string; name: string }) => (
           <Link
             key={cat.slug}
-            href={`/herbs?category=${cat.slug}${query ? `&q=${encodeURIComponent(query)}` : ""}`}
+            href={buildHerbListUrl({
+              q: query || undefined,
+              category: cat.slug,
+              sort: sort === "evidence" ? sort : undefined,
+              anchor: null,
+            })}
           >
             <Badge
               variant={category === cat.slug ? "default" : "outline"}
@@ -174,66 +204,97 @@ export default async function HerbsPage({
         ))}
       </div>
 
-      {/* Results info */}
-      {query && herbs.length > 0 && (
-        <p className="mb-4 text-sm text-muted-foreground">
-          {t("herbs.resultsFound", { count: total, query })}
-        </p>
+      {/* Sort — the data already supports both keys: name (default) and
+          evidence level (used for keyword matches). No other sort is offered. */}
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <span className="text-sm text-muted-foreground">
+          {t("herbs.sortLabel")}:
+        </span>
+        <Link
+          href={buildHerbListUrl({
+            q: query || undefined,
+            category: category || undefined,
+            anchor: null,
+          })}
+        >
+          <Badge
+            variant={sort === "name" ? "default" : "outline"}
+            className="cursor-pointer"
+          >
+            {t("herbs.sortName")}
+          </Badge>
+        </Link>
+        <Link
+          href={buildHerbListUrl({
+            q: query || undefined,
+            category: category || undefined,
+            sort: "evidence",
+            anchor: null,
+          })}
+        >
+          <Badge
+            variant={sort === "evidence" ? "default" : "outline"}
+            className="cursor-pointer"
+          >
+            {t("herbs.sortEvidence")}
+          </Badge>
+        </Link>
+      </div>
+
+      {/* Results info — the total is the count for the current
+          search+category+sort combination, not the whole database. */}
+      {(query || category || sort === "evidence") && (
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          {herbs.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {query
+                ? t("herbs.resultsFound", { count: total, query })
+                : activeCategoryName
+                  ? t("herbs.resultsInCategory", {
+                      count: total,
+                      category: activeCategoryName,
+                    })
+                  : t("herbs.results", { count: total })}
+            </p>
+          )}
+          <Link
+            href="/herbs"
+            className="text-sm text-primary hover:underline"
+          >
+            {t("herbs.clearAll")}
+          </Link>
+        </div>
       )}
 
-      {/* Grid */}
-      {herbs.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {herbs.map((herb) => (
-            <HerbCard key={herb.id} herb={herb} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState
-          variant="search"
-          title={
-            query ? t("herbs.noHerbsQuery", { query }) : t("herbs.noResults")
-          }
-          description={t("herbs.trySearching")}
-          action={{ label: t("herbs.browseAll"), href: "/herbs" }}
-        />
-      )}
+      {/* Grid — id is the pagination scroll target. */}
+      <div id="herb-results" className="scroll-mt-24">
+        {herbs.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {herbs.map((herb) => (
+              <HerbCard key={herb.id} herb={herb} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            variant="search"
+            title={
+              query ? t("herbs.noHerbsQuery", { query }) : t("herbs.noResults")
+            }
+            description={t("herbs.trySearching")}
+            action={{ label: t("herbs.browseAll"), href: "/herbs" }}
+          />
+        )}
+      </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page <= 1}
-            render={
-              page > 1 ? (
-                <Link
-                  href={`/herbs?page=${page - 1}${query ? `&q=${encodeURIComponent(query)}` : ""}${category ? `&category=${category}` : ""}`}
-                />
-              ) : undefined
-            }
-          >
-            {t("herbs.pagination.previous")}
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            {page} / {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={page >= totalPages}
-            render={
-              page < totalPages ? (
-                <Link
-                  href={`/herbs?page=${page + 1}${query ? `&q=${encodeURIComponent(query)}` : ""}${category ? `&category=${category}` : ""}`}
-                />
-              ) : undefined
-            }
-          >
-            {t("herbs.pagination.next")}
-          </Button>
-        </div>
+        <HerbPagination
+          page={page}
+          totalPages={totalPages}
+          query={query}
+          category={category}
+          sort={sort}
+        />
       )}
     </div>
   );

@@ -41,6 +41,7 @@ export async function getHerbs(
     pregnancySafe?: boolean;
     nursingSafe?: boolean;
     page?: number;
+    sort?: "name" | "evidence";
   },
   locale?: string
 ): Promise<ActionResponse<{ herbs: HerbWithCategory[]; total: number }>> {
@@ -140,6 +141,12 @@ export async function getHerbs(
     if (params.nursingSafe) {
       query = query.eq("nursing_safe", true);
     }
+
+    // Explicit sort (Phase 3) overrides the implicit keyword behaviour:
+    // "evidence" always orders strongest-evidence first, "name" always
+    // orders A-Z even when the query matched symptom keywords.
+    if (params.sort === "evidence") orderByEvidence = true;
+    if (params.sort === "name") orderByEvidence = false;
 
     // Apply ordering now that all filters are known. evidence_level asc gives
     // A,B,C,D,trad (uppercase before lowercase) — the desired evidence rank.
