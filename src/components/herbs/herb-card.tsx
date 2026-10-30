@@ -33,7 +33,7 @@ interface HerbCardProps {
     updated_at?: string;
     image_url?: string | null;
     evidence_level?: string | null;
-    provenance?: Record<string, unknown> | null;
+    provenance?: unknown;
   };
   className?: string;
 }
