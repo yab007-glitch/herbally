@@ -46,4 +46,34 @@ describe("buildPageMetadata", () => {
     expect(result.openGraph?.locale).toBe("fr_FR");
     expect(result.alternates?.canonical).toBe(`${BASE_URL}/fr/herbs`);
   });
+
+  it("keeps og:image and og:locale when a page passes its own openGraph", async () => {
+    const result = await buildPageMetadata({
+      titleKey: "herbsDatabase",
+      path: "/herbs",
+      openGraph: {
+        title: "Custom OG title",
+        description: "Custom OG description",
+        alternateLocale: ["fr_FR"],
+      },
+    });
+
+    const images = result.openGraph?.images as OgImage[];
+    expect(result.openGraph?.title).toBe("Custom OG title");
+    expect(result.openGraph?.description).toBe("Custom OG description");
+    expect(images[0].url.endsWith("/opengraph-image")).toBe(true);
+    expect(result.openGraph?.locale).toBe("en_US");
+    expect(result.openGraph?.alternateLocale).toEqual(["fr_FR"]);
+  });
+
+  it("lets a page replace the shared image only by overriding it explicitly", async () => {
+    const result = await buildPageMetadata({
+      titleKey: "herbsDatabase",
+      path: "/herbs",
+      openGraph: { images: ["/custom-og.png"] },
+    });
+
+    expect(result.openGraph?.images).toEqual(["/custom-og.png"]);
+    expect(result.openGraph?.locale).toBe("en_US");
+  });
 });
