@@ -106,6 +106,12 @@ export function MarketingFooter() {
               {t("footer.privacy")}
             </Link>
             <Link
+              href="/contact"
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.contact")}
+            </Link>
+            <Link
               href="/donate"
               className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
             >

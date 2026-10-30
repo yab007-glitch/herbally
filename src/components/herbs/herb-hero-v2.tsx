@@ -44,9 +44,18 @@ interface HerbHeroV2Props {
     traditional_uses?: string[] | null;
   };
   provenance?: Record<string, unknown> | null;
+  /** Status of the PubMed sheet rendered below the hero, if one is shown. */
+  pubmedSheetStatus?: string | null;
+  /** True when the page renders a hand-written monograph (tabbed view). */
+  isManualMonograph?: boolean;
 }
 
-export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
+export function HerbHeroV2({
+  herb,
+  provenance = null,
+  pubmedSheetStatus = null,
+  isManualMonograph,
+}: HerbHeroV2Props) {
   const t = useTranslations();
   const [saved, setSaved] = useState(() => isInGarden(herb.slug));
 
@@ -77,7 +86,23 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
   // primary source (manual / primary_source). Otherwise render "unknown" so a
   // fabricated AI boolean can never display as "Generally Safe" for an
   // unreviewed herb.
-  const verified = isVerified(parseProvenance(provenance));
+  const parsedProvenance = parseProvenance(provenance);
+  // Cross-check against the PubMed sheet: a herb rendered with an
+  // unreviewed sheet must not show "Verified" from the herb row alone, even
+  // if its provenance record claims a review. Manual monographs render the
+  // tabbed view, not the sheet, so the sheet cannot veto them.
+  const sheetNotReviewed =
+    isManualMonograph === false &&
+    pubmedSheetStatus != null &&
+    pubmedSheetStatus !== "reviewed";
+  const verified = isVerified(parsedProvenance) && !sheetNotReviewed;
+  // When the sheet vetoes a "Verified" claim, show the AI-summarized badge
+  // instead so the hero agrees with the sheet's own "not yet human-reviewed"
+  // label below it.
+  const badgeProvenance =
+    sheetNotReviewed && isVerified(parsedProvenance)
+      ? { ...parsedProvenance, verification_method: "ai_summarized" as const }
+      : parsedProvenance;
   const pregnancySafe = verified ? herb.pregnancy_safe : null;
   const nursingSafe = verified ? herb.nursing_safe : null;
   const pregnancySafeOral = verified
@@ -132,7 +157,7 @@ export function HerbHeroV2({ herb, provenance = null }: HerbHeroV2Props) {
                   : "trad"
               }
             />
-            <ProvenanceBadge provenance={parseProvenance(provenance)} />
+            <ProvenanceBadge provenance={badgeProvenance} />
           </div>
 
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">

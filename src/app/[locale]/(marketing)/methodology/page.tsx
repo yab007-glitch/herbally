@@ -140,12 +140,12 @@ export default async function MethodologyPage() {
           >
             {t("methodologyContent.viewFaq")}
           </Link>
-          <a
-            href="mailto:yab007@gmail.com"
+          <Link
+            href="/contact"
             className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
           >
             {t("methodologyContent.contactUs")}
-          </a>
+          </Link>
         </div>
       </div>
     </div>
