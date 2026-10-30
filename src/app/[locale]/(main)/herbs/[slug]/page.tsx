@@ -188,6 +188,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           : `${baseUrl}/herbs/${slug}`,
       type: "article",
       siteName: "HerbAlly",
+      locale: metaLocale === "fr" ? "fr_FR" : "en_US",
       images: [`${baseUrl}/opengraph-image`],
     },
     twitter: {

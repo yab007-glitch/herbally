@@ -50,6 +50,15 @@ export async function buildPageMetadata({
       url: alternates[locale],
       type: "website",
       siteName: "HerbAlly",
+      locale: locale === "fr" ? "fr_FR" : "en_US",
+      images: [
+        {
+          url: `${BASE_URL}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
