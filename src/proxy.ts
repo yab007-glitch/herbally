@@ -10,73 +10,26 @@ import {
 } from "@/lib/i18n/routing";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
-
-function buildCSP(): string {
-  // Google AdSense domains are allowlisted only because the public herb pages
-  // may carry a clearly labelled, non-personalised ad unit. Private tools
-  // (chat, checker, calculator) never render an ad slot.
-  const ads = [
-    "https://pagead2.googlesyndication.com",
-    "https://*.googlesyndication.com",
-    "https://*.doubleclick.net",
-    "https://adservice.google.com",
-    "https://www.google.com",
-  ].join(" ");
-  const directives = [
-    "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' *.stripe.com ${ads}`,
-    `connect-src 'self' *.supabase.co https://ollama.com *.stripe.com ${ads}`,
-    // L16 (audit 2026-06-22): scope img-src to the only remote image host we
-    // actually use (Supabase Storage), matching next.config.ts remotePatterns.
-    // A bare `https:` allowed any origin to be a CSP-permitted image source.
-    "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
-    "style-src 'self' 'unsafe-inline'",
-    "font-src 'self' data:",
-    `frame-src *.stripe.com ${ads}`,
-    "frame-ancestors 'none'",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "upgrade-insecure-requests",
-  ];
-  if (process.env.NODE_ENV !== "production") {
-    directives[1] = `script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com ${ads}`;
-  }
-  return directives.join("; ");
-}
-
-const baseSecurityHeaders: Record<string, string> = {
-  "X-Frame-Options": "DENY",
-  "X-Content-Type-Options": "nosniff",
-  "Referrer-Policy": "strict-origin-when-cross-origin",
-  "X-DNS-Prefetch-Control": "on",
-  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-  "Content-Security-Policy": buildCSP(),
-};
+import { buildSecurityHeaders } from "@/lib/security/csp";
 
 function applySecurityHeaders(
   response: NextResponse,
   opts?: { frameable?: boolean }
 ): NextResponse {
-  for (const [key, value] of Object.entries(baseSecurityHeaders)) {
-    // /embed/* tools are designed to run inside third-party iframes: allow
-    // framing and drop X-Frame-Options there. The embeds contain no auth or
-    // state-changing actions (search inputs + outbound links only), so the
-    // clickjacking exposure is minimal. Everything else keeps DENY.
-    // NOTE: next.config.ts headers() also sets X-Frame-Options: DENY, and
-    // skipping .set() here does NOT remove it — delete explicitly.
-    if (key === "X-Frame-Options" && opts?.frameable) {
-      response.headers.delete("X-Frame-Options");
-      continue;
-    }
-    if (key === "Content-Security-Policy" && opts?.frameable) {
-      response.headers.set(
-        key,
-        value.replace("frame-ancestors 'none'", "frame-ancestors *")
-      );
-      continue;
-    }
+  const securityHeaders = buildSecurityHeaders({
+    framing: opts?.frameable ? "allow" : "deny",
+  });
+  for (const [key, value] of Object.entries(securityHeaders)) {
     response.headers.set(key, value);
+  }
+  // /embed/* tools are designed to run inside third-party iframes: allow
+  // framing and drop X-Frame-Options there. buildSecurityHeaders already
+  // omits it for the "allow" mode; delete defensively in case another layer
+  // added it. The embeds contain no auth or state-changing actions (search
+  // inputs + outbound links only), so the clickjacking exposure is minimal.
+  // Everything else keeps DENY.
+  if (opts?.frameable) {
+    response.headers.delete("X-Frame-Options");
   }
   if (process.env.NODE_ENV === "production") {
     response.headers.set(
