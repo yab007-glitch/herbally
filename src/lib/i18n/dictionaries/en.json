@@ -150,6 +150,10 @@
     "tryDifferent": "Try a different search term",
     "popularSearches": "Popular Searches",
     "resultsFound": "{count, plural, one {Found # herb matching \"{query}\"} other {Found # herbs matching \"{query}\"}}",
+    "resultsInCategory": "{count} herbs in {category}",
+    "sortLabel": "Sort",
+    "sortName": "Name A-Z",
+    "sortEvidence": "Strongest evidence",
     "noHerbsQuery": "No herbs found for \"{query}\"",
     "trySearching": "Try a single keyword like \"anxiety\", \"inflammation\", or \"sleep\". You can also browse by symptom category.",
     "browseAll": "Browse All Herbs",
@@ -158,7 +162,11 @@
       "previous": "Previous",
       "next": "Next",
       "page": "Page",
-      "of": "of"
+      "of": "of",
+      "first": "First",
+      "last": "Last",
+      "goToPage": "Go to page",
+      "pageInputLabel": "Page number"
     },
     "safety": {
       "safe": "Generally Safe",

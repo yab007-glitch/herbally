@@ -150,6 +150,10 @@
     "tryDifferent": "Essayez un autre terme de recherche",
     "popularSearches": "Recherches Populaires",
     "resultsFound": "{count, plural, one {Trouvé # herbe correspondant à \"{query}\"} other {Trouvé # herbes correspondant à \"{query}\"}}",
+    "resultsInCategory": "{count} herbes dans {category}",
+    "sortLabel": "Trier",
+    "sortName": "Nom A-Z",
+    "sortEvidence": "Preuves les plus solides",
     "noHerbsQuery": "Aucune herbe trouvée pour \"{query}\"",
     "trySearching": "Essayez de rechercher un symptôme comme maux de tête, anxiété ou inflammation.",
     "browseAll": "Parcourir Toutes les Herbes",
@@ -157,7 +161,11 @@
       "previous": "Précédent",
       "next": "Suivant",
       "page": "Page",
-      "of": "sur"
+      "of": "sur",
+      "first": "Première",
+      "last": "Dernière",
+      "goToPage": "Aller à la page",
+      "pageInputLabel": "Numéro de page"
     },
     "safety": {
       "safe": "Généralement Sûr",
