@@ -1764,5 +1764,15 @@
     "calculationSaved": "Calculation saved to history",
     "saveCalculation": "Save calculation to history",
     "signInToSave": "Sign in to save your calculations across devices."
+  },
+  "ads": {
+    "settings": "Ad settings",
+    "consentTitle": "Advertising",
+    "consentBody": "HerbAlly is free. We would like to show clearly labelled Google ads on public herb reference pages to help cover costs. Nothing loads until you allow it, and health tools stay ad-free.",
+    "statusOn": "Ads are on for public herb pages. You can turn them off at any time.",
+    "allow": "Allow ads",
+    "reject": "No ads",
+    "revoke": "Turn off ads",
+    "privacyLink": "Privacy policy"
   }
 }

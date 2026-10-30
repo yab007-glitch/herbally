@@ -1,6 +1,20 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import {
+  ADS_LAUNCH_GATE,
+  evaluateAdGate,
+  type AdGateDecision,
+} from "@/lib/ads/policy";
+import { readAdConsent, subscribeAdConsent } from "@/lib/ads/consent";
+import {
+  getDocumentBootPathname,
+  isAdScriptActive,
+  markAdScriptActive,
+} from "@/lib/ads/document-state";
+import { getAdRegion } from "@/lib/ads/region-client";
+import { reloadDocumentOnce } from "@/lib/ads/reload";
 
 declare global {
   interface Window {
@@ -10,45 +24,112 @@ declare global {
   }
 }
 
-// Fail closed even when identifiers are configured. Before changing this flag,
-// implement and independently verify consent before any ad request and a
-// document isolation boundary for navigation to sensitive health tools.
-const ADS_APPROVED_FOR_LAUNCH = false;
-
 type AdSlotProps = {
   /** AdSense ad unit slot id, e.g. "1234567890". */
   slot?: string;
   /** AdSense layout format. "auto" is responsive. */
   format?: "auto" | "rectangle" | "horizontal";
+  /** Visible label (policy allows "Advertisements" / "Sponsored Links"). */
+  label?: string;
   className?: string;
 };
 
+const SCRIPT_ID = "adsbygoogle-js";
+
 /**
- * Render one clearly labelled AdSense display unit.
+ * Render one clearly labelled AdSense unit, or nothing.
  *
- * Ads are disabled pending a verified consent flow and isolation from private
- * tools. The script, once executed, can persist during client-side navigation;
- * unmounting a component is not a privacy boundary.
+ * Fails closed at every step:
+ *   - hard launch gate (hard-coded false today);
+ *   - publisher id + slot configured;
+ *   - current URL is a public herb detail page;
+ *   - the *document* was loaded at such a page — an ad script must never be
+ *     injected into a document that also rendered a health tool;
+ *   - explicit opt-in consent;
+ *   - positively-known non-EEA/UK/CH region.
  *
- * `requestNonPersonalizedAds` is set before the first push: HerbAlly pages are
- * health-related, so ads are deliberately contextual rather than based on the
- * reader's inferred health interests.
+ * The provider script is only created after all of those pass, so there is no
+ * ad-network request before consent. Non-personalised ads are requested
+ * because the surrounding content is health-related.
  */
-export function AdSlot({ slot, format = "auto", className }: AdSlotProps) {
+export function AdSlot({
+  slot,
+  format = "auto",
+  label = "Advertisements",
+  className,
+}: AdSlotProps) {
+  const pathname = usePathname();
   const client = process.env.NEXT_PUBLIC_ADSENSE_CLIENT;
+  const [decision, setDecision] = useState<AdGateDecision | null>(null);
   const adRef = useRef<HTMLModElement>(null);
   const pushedRef = useRef(false);
 
   useEffect(() => {
-    if (!ADS_APPROVED_FOR_LAUNCH || !client || !slot) return;
-    if (pushedRef.current) return;
+    // Nothing to evaluate while the gate is closed or the ids are missing.
+    // The initial decision state is already "no ad", so this branch must not
+    // call setState: it would trigger a cascading render for no change.
+    if (!ADS_LAUNCH_GATE || !client || !slot) return;
+
+    let cancelled = false;
+
+    const evaluate = async () => {
+      const consent = readAdConsent();
+
+      // Nothing below this point may create a provider request. A revoke in
+      // another tab also lands here: if a script is already live, replace the
+      // document so it cannot keep running.
+      if (consent !== "granted") {
+        if (isAdScriptActive()) {
+          reloadDocumentOnce("herbally:ads-consent-reload");
+        }
+        setDecision({
+          allowed: false,
+          reason: consent === "denied" ? "consent-denied" : "consent-missing",
+        });
+        return;
+      }
+
+      const region = await getAdRegion();
+      if (cancelled) return;
+
+      setDecision(
+        evaluateAdGate({
+          gate: ADS_LAUNCH_GATE,
+          client,
+          slot,
+          pathname,
+          bootPathname: getDocumentBootPathname(),
+          consent,
+          region,
+        })
+      );
+    };
+
+    void evaluate();
+    const unsubscribe = subscribeAdConsent(() => void evaluate());
+    const onPageShow = (event: PageTransitionEvent) => {
+      // bfcache restore: re-check a choice that may have changed elsewhere.
+      if (event.persisted) void evaluate();
+    };
+    window.addEventListener("pageshow", onPageShow);
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, [pathname, client, slot]);
+
+  useEffect(() => {
+    if (!decision?.allowed || !client) return;
     const adElement = adRef.current;
     if (!adElement) return;
 
-    const scriptId = "adsbygoogle-js";
-    if (!document.getElementById(scriptId)) {
+    markAdScriptActive();
+
+    if (!document.getElementById(SCRIPT_ID)) {
       const script = document.createElement("script");
-      script.id = scriptId;
+      script.id = SCRIPT_ID;
       script.async = true;
       script.crossOrigin = "anonymous";
       script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(
@@ -60,23 +141,25 @@ export function AdSlot({ slot, format = "auto", className }: AdSlotProps) {
     try {
       window.adsbygoogle = window.adsbygoogle || [];
       window.adsbygoogle.requestNonPersonalizedAds = 1;
-      window.adsbygoogle.push({});
-      pushedRef.current = true;
+      if (!pushedRef.current) {
+        pushedRef.current = true;
+        window.adsbygoogle.push({});
+      }
     } catch {
       // Ad blockers and script failures must never break the page.
     }
-  }, [client, slot]);
+  }, [decision, client]);
 
-  if (!ADS_APPROVED_FOR_LAUNCH || !client || !slot) return null;
+  if (!decision?.allowed) return null;
 
   return (
     <aside
-      aria-label="Advertisement"
+      aria-label={label}
       className={className}
       data-ad-container="herbally"
     >
       <p className="mb-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-        Advertisement
+        {label}
       </p>
       <ins
         ref={adRef}

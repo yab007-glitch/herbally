@@ -10,54 +10,32 @@ import {
 } from "@/lib/i18n/routing";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
+import { ADS_LAUNCH_GATE } from "@/lib/ads/policy";
+import { adsCspHosts, buildContentSecurityPolicy } from "@/lib/ads/csp";
 
-function buildCSP(): string {
-  // Google AdSense domains are allowlisted only because the public herb pages
-  // may carry a clearly labelled, non-personalised ad unit. Private tools
-  // (chat, checker, calculator) never render an ad slot.
-  const ads = [
-    "https://pagead2.googlesyndication.com",
-    "https://*.googlesyndication.com",
-    "https://*.doubleclick.net",
-    "https://adservice.google.com",
-    "https://www.google.com",
-  ].join(" ");
-  const directives = [
-    "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' *.stripe.com ${ads}`,
-    `connect-src 'self' *.supabase.co https://ollama.com *.stripe.com ${ads}`,
-    // L16 (audit 2026-06-22): scope img-src to the only remote image host we
-    // actually use (Supabase Storage), matching next.config.ts remotePatterns.
-    // A bare `https:` allowed any origin to be a CSP-permitted image source.
-    "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
-    "style-src 'self' 'unsafe-inline'",
-    "font-src 'self' data:",
-    `frame-src *.stripe.com ${ads}`,
-    "frame-ancestors 'none'",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "upgrade-insecure-requests",
-  ];
-  if (process.env.NODE_ENV !== "production") {
-    directives[1] = `script-src 'self' 'unsafe-inline' 'unsafe-eval' *.stripe.com ${ads}`;
-  }
-  return directives.join("; ");
+function securityHeaders(opts?: {
+  frameable?: boolean;
+  adHosts?: readonly string[];
+}): Record<string, string> {
+  return {
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-DNS-Prefetch-Control": "on",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Content-Security-Policy": buildContentSecurityPolicy({
+      adHosts: opts?.adHosts ?? [],
+      frameable: opts?.frameable,
+      dev: process.env.NODE_ENV !== "production",
+    }),
+  };
 }
-
-const baseSecurityHeaders: Record<string, string> = {
-  "X-Frame-Options": "DENY",
-  "X-Content-Type-Options": "nosniff",
-  "Referrer-Policy": "strict-origin-when-cross-origin",
-  "X-DNS-Prefetch-Control": "on",
-  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
-  "Content-Security-Policy": buildCSP(),
-};
 
 function applySecurityHeaders(
   response: NextResponse,
-  opts?: { frameable?: boolean }
+  opts?: { frameable?: boolean; adHosts?: readonly string[] }
 ): NextResponse {
+  const baseSecurityHeaders = securityHeaders(opts);
   for (const [key, value] of Object.entries(baseSecurityHeaders)) {
     // /embed/* tools are designed to run inside third-party iframes: allow
     // framing and drop X-Frame-Options there. The embeds contain no auth or
@@ -67,13 +45,6 @@ function applySecurityHeaders(
     // skipping .set() here does NOT remove it — delete explicitly.
     if (key === "X-Frame-Options" && opts?.frameable) {
       response.headers.delete("X-Frame-Options");
-      continue;
-    }
-    if (key === "Content-Security-Policy" && opts?.frameable) {
-      response.headers.set(
-        key,
-        value.replace("frame-ancestors 'none'", "frame-ancestors *")
-      );
       continue;
     }
     response.headers.set(key, value);
@@ -153,7 +124,13 @@ export default async function proxy(request: NextRequest) {
         ? pathname.slice(3)
         : stripLocalePrefix(pathname);
   const frameable = publicPath === "/embed" || publicPath.startsWith("/embed/");
-  const frameOpts = frameable ? { frameable: true } : undefined;
+  // CSP-wide ad permission is granted ONLY to an ad-eligible public herb
+  // document and only when the hard launch gate is on. Sensitive documents
+  // (chat, checker, calculator, garden, auth, API) never list an ad origin.
+  const securityOpts = {
+    frameable,
+    adHosts: adsCspHosts(ADS_LAUNCH_GATE, publicPath),
+  };
 
   // Internal pass guard. Next re-enters the proxy with the rewritten path
   // (`/en/...`), and without this marker the "public /en/* redirects" rule
@@ -170,7 +147,7 @@ export default async function proxy(request: NextRequest) {
     requestHeaders.set("x-pathname", stripLocalePrefix(pathname));
     return applySecurityHeaders(
       NextResponse.next({ request: { headers: requestHeaders } }),
-      frameOpts
+      securityOpts
     );
   }
 
@@ -277,7 +254,7 @@ export default async function proxy(request: NextRequest) {
         response.cookies.set(cookie.name, cookie.value, cookie);
       });
 
-      return applySecurityHeaders(response, frameOpts);
+      return applySecurityHeaders(response, securityOpts);
     }
 
     // Unprefixed path — redirect to /fr/* only if the user prefers French
@@ -329,7 +306,7 @@ export default async function proxy(request: NextRequest) {
       response.cookies.set(cookie.name, cookie.value, cookie);
     });
 
-    return applySecurityHeaders(response, frameOpts);
+    return applySecurityHeaders(response, securityOpts);
   }
 
   // Excluded paths (API, auth callback, static metadata) — no locale rewrite.
@@ -363,7 +340,7 @@ export default async function proxy(request: NextRequest) {
   // metadata, which can be tampered with). No middleware-level check here
   // to avoid relying on client-controllable JWT claims.
 
-  return applySecurityHeaders(response, frameOpts);
+  return applySecurityHeaders(response, securityOpts);
 }
 
 export const config = {

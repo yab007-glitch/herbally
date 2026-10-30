@@ -42,15 +42,25 @@ const nextConfig: NextConfig = {
   compress: true,
   trailingSlash: false,
   // L15 (audit 2026-06-22): the proxy (middleware) matcher excludes static
-  // asset extensions, so those responses never received CSP/HSTS/X-Frame-Options
+  // asset extensions, so those responses never received HSTS/X-Frame-Options
   // and could be framed/fetched without the same protections. Apply the same
   // baseline security headers to static assets here at the config level so the
   // protection is uniform regardless of the proxy matcher.
-  // NOTE (embed framing): X-Frame-Options and the CSP frame-ancestors
-  // directive are deliberately ABSENT here — they are owned exclusively by
-  // src/proxy.ts, which must exempt /embed/* (partner iframes). Config-level
-  // headers merge over middleware deletions, so allowlisting there is the
-  // only way to un-frame a route.
+  //
+  // Content-Security-Policy is deliberately NOT set here. Two policies on one
+  // response are enforced as an intersection, so a config-level policy would
+  // silently veto any directive the proxy widens for an ad-eligible document
+  // (see src/lib/ads/csp.ts) — ads would fail to load even with the gate on,
+  // while every sensitive page still looked correctly locked down. The proxy
+  // is the only layer that can decide per request, so it owns the document
+  // CSP outright; it covers every document route (its matcher only skips
+  // non-document asset paths). CSP is not enforced on non-document responses,
+  // so nothing is lost for statics.
+  //
+  // NOTE (embed framing): X-Frame-Options and CSP frame-ancestors are
+  // likewise owned exclusively by src/proxy.ts, which must exempt /embed/*
+  // (partner iframes). Config-level headers merge over middleware deletions,
+  // so allowlisting there is the only way to un-frame a route.
   async headers() {
     const securityHeaders = [
       { key: "X-Content-Type-Options", value: "nosniff" },
@@ -58,23 +68,6 @@ const nextConfig: NextConfig = {
       {
         key: "Permissions-Policy",
         value: "camera=(), microphone=(), geolocation=()",
-      },
-      {
-        key: "Content-Security-Policy",
-        value: [
-          "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
-          "style-src 'self' 'unsafe-inline'",
-          "font-src 'self' data:",
-          "frame-src *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          // No frame-ancestors here — owned by the proxy (see note above).
-          "object-src 'none'",
-          "base-uri 'self'",
-          "form-action 'self'",
-          "upgrade-insecure-requests",
-        ].join("; "),
       },
       ...(process.env.NODE_ENV === "production"
         ? [

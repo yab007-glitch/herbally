@@ -8,6 +8,7 @@ import { SWRegistration } from "@/components/shared/service-worker-registration"
 import { SkipToContent } from "@/components/shared/skip-to-content";
 import { WebVitals } from "@/components/analytics/web-vitals";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
+import { AdDocumentGuard } from "@/components/ads/ad-document-guard";
 import { isLocale } from "@/lib/i18n/page-locale";
 import { locale as rootLocale } from "next/root-params";
 import { notFound } from "next/navigation";
@@ -131,6 +132,10 @@ export default async function RootLayout({
           <SkipToContent />
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
+          {/* Document boundary for ad-bearing pages. Mounted for every
+              document so a provider script can never ride a client-side route
+              change into a health tool. Inert while the launch gate is off. */}
+          <AdDocumentGuard />
         </LocaleProvider>
         <SWRegistration />
         <WebVitals />

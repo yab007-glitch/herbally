@@ -1764,5 +1764,15 @@
     "calculationSaved": "Calcul enregistré dans l'historique",
     "saveCalculation": "Enregistrer le calcul dans l'historique",
     "signInToSave": "Connectez-vous pour enregistrer vos calculs sur tous vos appareils."
+  },
+  "ads": {
+    "settings": "Paramètres publicitaires",
+    "consentTitle": "Publicité",
+    "consentBody": "HerbAlly est gratuit. Nous aimerions afficher des annonces Google clairement identifiées sur les pages publiques de référence sur les plantes pour aider à couvrir les coûts. Rien ne se charge tant que vous n'avez pas accepté, et les outils de santé restent sans publicité.",
+    "statusOn": "Les annonces sont activées sur les pages publiques des plantes. Vous pouvez les désactiver à tout moment.",
+    "allow": "Autoriser les annonces",
+    "reject": "Sans annonces",
+    "revoke": "Désactiver les annonces",
+    "privacyLink": "Politique de confidentialité"
   }
 }
