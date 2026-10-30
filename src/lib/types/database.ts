@@ -967,7 +967,13 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      herb_popularity: {
+        Row: {
+          slug: string;
+          views: number | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       add_guest_chat_message: {

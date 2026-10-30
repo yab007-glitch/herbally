@@ -95,10 +95,9 @@ export async function generateStaticParams() {
   }
 
   const { data: herbs } = await supabase
-    .from("herbs")
+    .from("herb_popularity")
     .select("slug")
-    .eq("is_published", true)
-    .order("view_count", { ascending: false })
+    .order("views", { ascending: false })
     .limit(PRERENDER_HERB_LIMIT);
 
   return (herbs ?? []).map((h) => ({ slug: h.slug }));
