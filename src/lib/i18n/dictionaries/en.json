@@ -156,6 +156,7 @@
     "sortEvidence": "Strongest evidence",
     "noHerbsQuery": "No herbs found for \"{query}\"",
     "trySearching": "Try a single keyword like \"anxiety\", \"inflammation\", or \"sleep\". You can also browse by symptom category.",
+    "loadError": "We couldn't load the herb list. Please try again.",
     "browseAll": "Browse All Herbs",
     "browseSymptoms": "Browse by Symptom",
     "pagination": {
@@ -574,7 +575,8 @@
     "placeholder": "Search herbs by name, symptom, or use...",
     "searching": "Searching...",
     "search": "Search",
-    "surpriseMe": "Surprise Me"
+    "surpriseMe": "Surprise Me",
+    "randomError": "Couldn't load a random herb. Please try again."
   },
   "commandPalette": {
     "placeholder": "Search herbs, pages, or actions...",
@@ -1554,6 +1556,7 @@
     "toggleAgeUnit": "Toggle age unit (years/months)",
     "toggleWeightUnit": "Toggle weight unit (kg/lbs)",
     "unverifiedHerbNotice": "This herb's monograph is AI-generated and has not been reviewed against authoritative sources. No validated reference dose is available, so the adult dose field is left blank. Enter a dose from a trusted source yourself, and confirm any result with a qualified healthcare provider.",
+    "unverifiedStatedRange": "Herb page's stated adult dose — not a validated reference dose: {dose}",
     "pediatricDoseBlockedTitle": "No dose calculated for this age",
     "pediatricDoseBlocked": "HerbAlly does not calculate herbal doses for anyone under {age}. Herbal products vary widely in concentration and are not validated for dosing in children or adolescents. Please speak with a qualified pediatric healthcare professional (for example, a paediatrician, pharmacist or the child's doctor) before giving any herbal product to a person under {age}.",
     "ageRequiredForAdultDose": "Enter the patient's age before calculating. HerbAlly only calculates doses for people aged {age} or older, and it must be able to confirm that age.",

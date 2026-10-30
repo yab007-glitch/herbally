@@ -34,6 +34,7 @@ export function SmartSearch({
   // gave no feedback at all while the fetch resolved (the same "appeared
   // dead" symptom as the old Surprise Me button).
   const [randomLoading, setRandomLoading] = useState(false);
+  const [randomError, setRandomError] = useState(false);
   const saveSearch = useSaveSearch();
   const lastNavigatedQ = useRef<string | null>(null);
 
@@ -107,6 +108,38 @@ export function SmartSearch({
     });
   };
 
+  const handleRandom = async () => {
+
+            setRandomLoading(true);
+            setRandomError(false);
+            try {
+              const res = await fetch("/api/herbs/random");
+              if (res.ok) {
+                const data = await res.json();
+                if (data?.slug) {
+                  router.push(`/herbs/${data.slug}`);
+                } else {
+                  setRandomError(true);
+                }
+              } else {
+                // Previously there was no else branch here: a non-OK response
+                // (e.g. 429 rate limit, 500) silently reset the button to
+                // enabled with no navigation and no message. Surface it.
+                logger.error("smart_search_random_herb_failed", {
+                  status: res.status,
+                });
+                setRandomError(true);
+              }
+            } catch (error) {
+              logger.error("smart_search_random_herb", {
+                error: error instanceof Error ? error.message : String(error),
+              });
+              setRandomError(true);
+            } finally {
+              setRandomLoading(false);
+            }
+  };
+
   return (
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
@@ -141,25 +174,7 @@ export function SmartSearch({
           className="h-12 gap-2"
           disabled={isPending || randomLoading}
           aria-busy={randomLoading}
-          onClick={async () => {
-            setRandomLoading(true);
-            try {
-              const res = await fetch("/api/herbs/random");
-              if (res.ok) {
-                const data = await res.json();
-                if (data?.slug) {
-                  router.push(`/herbs/${data.slug}`);
-                }
-              }
-            } catch (error) {
-              logger.error("smart_search_random_herb", {
-                error: error instanceof Error ? error.message : String(error),
-              });
-              router.push("/herbs");
-            } finally {
-              setRandomLoading(false);
-            }
-          }}
+          onClick={handleRandom}
         >
           {randomLoading ? (
             <Loader2 className="size-4 animate-spin" />
@@ -169,6 +184,18 @@ export function SmartSearch({
           {t("search.surpriseMe")}
         </Button>
       </form>
+      {randomError && (
+        <p role="alert" className="text-sm text-destructive">
+          {t("search.randomError")}{" "}
+          <button
+            type="button"
+            className="font-medium underline"
+            onClick={handleRandom}
+          >
+            {t("common.retry")}
+          </button>
+        </p>
+      )}
       <RecentSearches />
     </div>
   );

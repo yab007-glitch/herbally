@@ -75,7 +75,10 @@ describe("SymptomSearchClient request privacy", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
     });
-    expect(JSON.parse(searchInit.body)).toEqual({ q: "insomnia anxiety" });
+    // AI keywords are unioned with the user's own words, not a replacement.
+    expect(JSON.parse(searchInit.body)).toEqual({
+      q: "i cannot sleep at all insomnia anxiety",
+    });
 
     for (const [, init] of fetchMock.mock.calls) {
       expect(init.method).toBe("POST");
@@ -170,5 +173,23 @@ describe("SymptomSearchClient match reasons and de-duplication", () => {
     expect(screen.getAllByText("symptomsPage.matchReasonSymptom")).toHaveLength(2);
     expect(screen.getByText("symptomsPage.alsoListedAs")).toBeTruthy();
     expect(screen.getByText("symptomsPage.orderingNote")).toBeTruthy();
+  });
+});
+
+describe("SymptomSearchClient AI keyword union", () => {
+  it("keeps a user-typed sleep term when the AI returns only insomnia", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ keywords: ["insomnia"] }))
+      .mockResolvedValueOnce(jsonResponse([]));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await submitQuery("I need sleep help");
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    const [, searchInit] = fetchMock.mock.calls[1];
+    expect(JSON.parse(searchInit.body)).toEqual({
+      q: "i need sleep help insomnia",
+    });
   });
 });

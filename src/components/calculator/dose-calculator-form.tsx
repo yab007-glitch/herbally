@@ -349,9 +349,21 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
             <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-950/30">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
-                <p className="text-sm text-amber-900 dark:text-amber-100">
-                  {t("calculatorForm.unverifiedHerbNotice")}
-                </p>
+                <div className="space-y-1 text-sm text-amber-900 dark:text-amber-100">
+                  <p>{t("calculatorForm.unverifiedHerbNotice")}</p>
+                  {/* Unverified stated range, shown as information only:
+                      the dose field stays blank and no range picker is
+                      offered for unverified herbs, so nothing here is
+                      presented as a validated reference dose or a
+                      recommendation. The user must enter a dose explicitly. */}
+                  {prefill.dosageAdultRaw && (
+                    <p>
+                      {t("calculatorForm.unverifiedStatedRange", {
+                        dose: prefill.dosageAdultRaw,
+                      })}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -195,3 +195,31 @@ describe("DoseCalculatorForm adult-only wording and range picker", () => {
     expect(weightInput.value).toBe("");
   });
 });
+
+describe("DoseCalculatorForm unverified stated range", () => {
+  it("shows the herb page's stated range as information only, with a blank dose field and no range picker", () => {
+    render(
+      <DoseCalculatorForm
+        prefill={{
+          herbName: "Turmeric",
+          adultDose: "",
+          doseUnit: "mg",
+          dosageAdultRaw: "500-2000 mg",
+          dosageRange: null,
+          dosageForms: [],
+          verified: false,
+        }}
+      />
+    );
+    const doseInput = screen.getByLabelText(
+      /calculatorForm.adultDose/
+    ) as HTMLInputElement;
+    expect(doseInput.value).toBe("");
+    // Informational text only — not a picker button that fills the field.
+    expect(
+      screen.getByText("calculatorForm.unverifiedStatedRange")
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /rangeLow/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /rangeHigh/ })).toBeNull();
+  });
+});
