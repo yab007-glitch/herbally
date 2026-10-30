@@ -402,7 +402,10 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                 )}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <Button size="sm" render={<Link href={checkResult.pair.pairUrl} />}>
+                <Button
+                  size="sm"
+                  render={<Link href={checkResult.pair.pairUrl} />}
+                >
                   {labels.checkerViewPair}
                 </Button>
                 <Button

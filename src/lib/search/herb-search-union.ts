@@ -54,7 +54,10 @@ export function rankHerbSearchResults({
   const norm = query.trim().toLowerCase();
   if (!norm) return [];
 
-  const byId = new Map<string, { id: string; name: string; evidence: string | null }>();
+  const byId = new Map<
+    string,
+    { id: string; name: string; evidence: string | null }
+  >();
   for (const herb of keywordMatches) {
     if (!byId.has(herb.id)) {
       byId.set(herb.id, {

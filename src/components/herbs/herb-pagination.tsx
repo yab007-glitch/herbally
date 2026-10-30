@@ -42,18 +42,22 @@ export function HerbPagination({
   const [isPending, startTransition] = useTransition();
   const firstRender = useRef(true);
 
-  useEffect(() => {
+  // Keep the jump field in step with the current page. This is React's
+  // documented "adjust some state when a prop changes" pattern: the old
+  // version did it in an effect, which painted one frame with the stale page
+  // number and then re-rendered (react-hooks/set-state-in-effect).
+  const [syncedPage, setSyncedPage] = useState(page);
+  if (page !== syncedPage) {
+    setSyncedPage(page);
     setJump(String(page));
-  }, [page]);
+  }
 
   useEffect(() => {
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
-    document
-      .getElementById("herb-results")
-      ?.scrollIntoView({ block: "start" });
+    document.getElementById("herb-results")?.scrollIntoView({ block: "start" });
   }, [page]);
 
   const urlFor = (target: number) =>
@@ -145,12 +149,7 @@ export function HerbPagination({
           disabled={isPending}
           className="h-8 w-20"
         />
-        <Button
-          type="submit"
-          variant="outline"
-          size="sm"
-          disabled={isPending}
-        >
+        <Button type="submit" variant="outline" size="sm" disabled={isPending}>
           {t("herbs.pagination.goToPage")}
         </Button>
       </form>

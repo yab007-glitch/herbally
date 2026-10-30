@@ -106,7 +106,9 @@ export async function getHerbs(
           ];
         })
         .join(",");
-      const nameQuery = buildMatchQuery("id, name").or(nameConditions).limit(500);
+      const nameQuery = buildMatchQuery("id, name")
+        .or(nameConditions)
+        .limit(500);
       const [keywordRes, nameRes] = await Promise.all([
         keywordQuery,
         nameQuery,
@@ -133,15 +135,17 @@ export async function getHerbs(
       // Supabase string selects type `data` as GenericStringError, so cast
       // the rows to their known shapes before mapping (the queries above
       // select exactly these columns).
-      const keywordRows = (keywordRes.data as Array<{
-        id: string;
-        name: string;
-        evidence_level: string | null;
-      }> | null) || [];
-      const nameRows = (nameRes.data as Array<{
-        id: string;
-        name: string;
-      }> | null) || [];
+      const keywordRows =
+        (keywordRes.data as Array<{
+          id: string;
+          name: string;
+          evidence_level: string | null;
+        }> | null) || [];
+      const nameRows =
+        (nameRes.data as Array<{
+          id: string;
+          name: string;
+        }> | null) || [];
       const rankedIds = rankHerbSearchResults({
         query: trimmedQuery,
         keywordMatches: keywordRows.map((h) => ({
@@ -162,18 +166,19 @@ export async function getHerbs(
           .in("id", pageIds);
         if (error) {
           logger.error("herbs_get_herbs_failed", {
-            error: error instanceof Error ? error.message : JSON.stringify(error),
+            error:
+              error instanceof Error ? error.message : JSON.stringify(error),
           });
           return { success: false, error: error.message };
         }
-        const rows = (data as Array<
-          Record<string, unknown> & { id: string }
-        > | null) || [];
+        const rows =
+          (data as Array<Record<string, unknown> & { id: string }> | null) ||
+          [];
         const byId = new Map(rows.map((h) => [h.id, h]));
         pageRows = pageIds
           .map((id) => byId.get(id))
-          .filter(
-            (h): h is Record<string, unknown> & { id: string } => Boolean(h)
+          .filter((h): h is Record<string, unknown> & { id: string } =>
+            Boolean(h)
           );
       }
       const resolvedLocale = await resolveLocale(locale);
@@ -182,7 +187,10 @@ export async function getHerbs(
       );
       return {
         success: true,
-        data: { herbs: localizedHerbs as HerbWithCategory[], total: rankedIds.length },
+        data: {
+          herbs: localizedHerbs as HerbWithCategory[],
+          total: rankedIds.length,
+        },
       };
     }
 

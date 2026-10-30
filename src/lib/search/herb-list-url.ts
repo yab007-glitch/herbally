@@ -32,7 +32,8 @@ export function buildHerbListUrl(params: HerbListParams = {}): string {
     sp.set("page", String(Math.floor(page)));
   }
   const qs = sp.toString();
-  const anchor = params.anchor === null ? "" : `#${params.anchor ?? "herb-results"}`;
+  const anchor =
+    params.anchor === null ? "" : `#${params.anchor ?? "herb-results"}`;
   return `/herbs${qs ? `?${qs}` : ""}${anchor}`;
 }
 

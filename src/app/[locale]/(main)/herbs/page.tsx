@@ -26,7 +26,12 @@ export const generateMetadata = () =>
 export default async function HerbsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; page?: string; sort?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+    page?: string;
+    sort?: string;
+  }>;
 }) {
   const params = await searchParams;
   const query = params.q || "";
@@ -93,8 +98,7 @@ export default async function HerbsPage({
   const pageIsCanonical =
     (pageParam === undefined && page === 1) || pageParam === String(page);
   const sortParam = params.sort;
-  const sortIsCanonical =
-    sortParam === undefined || sortParam === "evidence";
+  const sortIsCanonical = sortParam === undefined || sortParam === "evidence";
   if (
     !pageIsCanonical ||
     !sortIsCanonical ||
@@ -257,10 +261,7 @@ export default async function HerbsPage({
                   : t("herbs.results", { count: total })}
             </p>
           )}
-          <Link
-            href="/herbs"
-            className="text-sm text-primary hover:underline"
-          >
+          <Link href="/herbs" className="text-sm text-primary hover:underline">
             {t("herbs.clearAll")}
           </Link>
         </div>

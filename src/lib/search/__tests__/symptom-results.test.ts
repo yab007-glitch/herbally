@@ -121,8 +121,18 @@ describe("dedupeSymptomResults", () => {
 
   it("keeps genuinely different plants separate", () => {
     const results = dedupeSymptomResults([
-      herb({ id: "a", slug: "a", name: "A", scientific_name: "Stachys sylvatica" }),
-      herb({ id: "b", slug: "b", name: "B", scientific_name: "Betonica officinalis" }),
+      herb({
+        id: "a",
+        slug: "a",
+        name: "A",
+        scientific_name: "Stachys sylvatica",
+      }),
+      herb({
+        id: "b",
+        slug: "b",
+        name: "B",
+        scientific_name: "Betonica officinalis",
+      }),
     ]);
     expect(results).toHaveLength(2);
   });
@@ -131,7 +141,12 @@ describe("dedupeSymptomResults", () => {
 describe("sortSymptomResultsByRelevance", () => {
   it("orders by matched inputs first, then evidence grade", () => {
     const sorted = sortSymptomResultsByRelevance([
-      herb({ id: "a", name: "A", evidence_level: "A", matchedInputs: ["sleep"] }),
+      herb({
+        id: "a",
+        name: "A",
+        evidence_level: "A",
+        matchedInputs: ["sleep"],
+      }),
       herb({
         id: "b",
         name: "B",

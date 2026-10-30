@@ -47,8 +47,23 @@ export function SmartSearch({
   // stale defaultValue — the combination that made the first search on a
   // fresh page look like it did nothing.
   const urlQuery = searchParams.get("q") ?? "";
-  useEffect(() => {
+
+  // Mirror an externally-driven URL change (back/forward, a category link,
+  // the X-free clear) back into the input. Adjusting during render is React's
+  // documented pattern for state that depends on a prop; doing it in an effect
+  // added a cascading render and is rejected by
+  // react-hooks/set-state-in-effect.
+  const [syncedUrlQuery, setSyncedUrlQuery] = useState(urlQuery);
+  if (urlQuery !== syncedUrlQuery) {
+    setSyncedUrlQuery(urlQuery);
     setQuery(urlQuery);
+  }
+
+  // Keep the value the debounced effect compares against aligned with the URL
+  // after any navigation, so an externally-driven change does not trigger a
+  // redundant router.replace once the debounce settles. Writing a ref is not
+  // state, so it cannot cascade a render.
+  useEffect(() => {
     lastNavigatedQ.current = urlQuery;
   }, [urlQuery]);
 
@@ -109,35 +124,34 @@ export function SmartSearch({
   };
 
   const handleRandom = async () => {
-
-            setRandomLoading(true);
-            setRandomError(false);
-            try {
-              const res = await fetch("/api/herbs/random");
-              if (res.ok) {
-                const data = await res.json();
-                if (data?.slug) {
-                  router.push(`/herbs/${data.slug}`);
-                } else {
-                  setRandomError(true);
-                }
-              } else {
-                // Previously there was no else branch here: a non-OK response
-                // (e.g. 429 rate limit, 500) silently reset the button to
-                // enabled with no navigation and no message. Surface it.
-                logger.error("smart_search_random_herb_failed", {
-                  status: res.status,
-                });
-                setRandomError(true);
-              }
-            } catch (error) {
-              logger.error("smart_search_random_herb", {
-                error: error instanceof Error ? error.message : String(error),
-              });
-              setRandomError(true);
-            } finally {
-              setRandomLoading(false);
-            }
+    setRandomLoading(true);
+    setRandomError(false);
+    try {
+      const res = await fetch("/api/herbs/random");
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.slug) {
+          router.push(`/herbs/${data.slug}`);
+        } else {
+          setRandomError(true);
+        }
+      } else {
+        // Previously there was no else branch here: a non-OK response
+        // (e.g. 429 rate limit, 500) silently reset the button to
+        // enabled with no navigation and no message. Surface it.
+        logger.error("smart_search_random_herb_failed", {
+          status: res.status,
+        });
+        setRandomError(true);
+      }
+    } catch (error) {
+      logger.error("smart_search_random_herb", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      setRandomError(true);
+    } finally {
+      setRandomLoading(false);
+    }
   };
 
   return (

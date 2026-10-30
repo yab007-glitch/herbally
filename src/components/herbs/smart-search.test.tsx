@@ -1,13 +1,17 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
+
+const searchState = vi.hoisted(() => ({ q: "" }));
 
 const pushMock = vi.fn();
 const replaceMock = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock, replace: replaceMock }),
-  useSearchParams: () => ({ get: () => "" }),
+  useSearchParams: () => ({
+    get: (key: string) => (key === "q" ? searchState.q : null),
+  }),
 }));
 
 vi.mock("next-intl", () => ({
@@ -51,6 +55,34 @@ import { SmartSearch } from "./smart-search";
 afterEach(() => {
   vi.clearAllMocks();
   vi.unstubAllGlobals();
+});
+
+describe("SmartSearch URL sync", () => {
+  beforeEach(() => {
+    searchState.q = "";
+    replaceMock.mockClear();
+  });
+
+  it("mirrors an externally driven URL change into the input without re-navigating", () => {
+    // Guards the URL -> input direction: the value is adjusted during render
+    // now, and the last-navigated ref stays in step so the debounced effect
+    // does not bounce a redundant router.replace.
+    const { rerender } = render(<SmartSearch defaultValue="" />);
+    const input = screen.getByLabelText(
+      "search.placeholder"
+    ) as HTMLInputElement;
+    expect(input.value).toBe("");
+
+    searchState.q = "ginger";
+    rerender(<SmartSearch defaultValue="" />);
+    expect(input.value).toBe("ginger");
+
+    searchState.q = "";
+    rerender(<SmartSearch defaultValue="" />);
+    expect(input.value).toBe("");
+
+    expect(replaceMock).not.toHaveBeenCalled();
+  });
 });
 
 describe("SmartSearch Surprise Me failure", () => {

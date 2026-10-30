@@ -17,11 +17,12 @@ import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import { useState, useEffect } from "react";
+import { useSyncExternalStore, useEffect } from "react";
 import {
   addToGarden,
   removeFromGarden,
   isInGarden,
+  subscribeGarden,
 } from "@/lib/garden/local-garden";
 import { recordHerbExplored } from "@/lib/garden/streaks";
 
@@ -57,7 +58,16 @@ export function HerbHeroV2({
   isManualMonograph,
 }: HerbHeroV2Props) {
   const t = useTranslations();
-  const [saved, setSaved] = useState(() => isInGarden(herb.slug));
+  // Same external-store read as HerbCard: a lazy useState initializer ran
+  // against localStorage during the first client render, which disagrees with
+  // the server-rendered "not saved" markup (hydration mismatch). The server
+  // snapshot keeps that false, and the client snapshot picks up the real value
+  // without a second render.
+  const saved = useSyncExternalStore(
+    subscribeGarden,
+    () => isInGarden(herb.slug),
+    () => false
+  );
 
   useEffect(() => {
     recordHerbExplored(herb.slug);
@@ -66,7 +76,6 @@ export function HerbHeroV2({
   const handleSave = () => {
     if (saved) {
       removeFromGarden(herb.slug);
-      setSaved(false);
     } else {
       addToGarden({
         id: herb.id,
@@ -75,7 +84,6 @@ export function HerbHeroV2({
         scientific_name: herb.scientific_name,
         image_url: herb.image_url,
       });
-      setSaved(true);
     }
   };
 

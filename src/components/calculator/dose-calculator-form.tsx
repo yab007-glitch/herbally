@@ -317,8 +317,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     ["low", prefill.dosageRange.low],
                     [
                       "middle",
-                      (prefill.dosageRange.low + prefill.dosageRange.high) /
-                        2,
+                      (prefill.dosageRange.low + prefill.dosageRange.high) / 2,
                     ],
                     ["high", prefill.dosageRange.high],
                   ] as const
@@ -333,7 +332,9 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       setDoseUnit(prefill.dosageRange!.unit);
                     }}
                   >
-                    {t(`calculatorForm.range${key === "low" ? "Low" : key === "middle" ? "Middle" : "High"}`)}{" "}
+                    {t(
+                      `calculatorForm.range${key === "low" ? "Low" : key === "middle" ? "Middle" : "High"}`
+                    )}{" "}
                     {value} {prefill.dosageRange!.unit}
                   </Button>
                 ))}
