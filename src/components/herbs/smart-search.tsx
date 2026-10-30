@@ -30,6 +30,10 @@ export function SmartSearch({
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(defaultValue);
   const [isPending, startTransition] = useTransition();
+  // The random-herb button fetches before navigating; without this it
+  // gave no feedback at all while the fetch resolved (the same "appeared
+  // dead" symptom as the old Surprise Me button).
+  const [randomLoading, setRandomLoading] = useState(false);
   const saveSearch = useSaveSearch();
   const lastNavigatedQ = useRef<string | null>(null);
 
@@ -135,8 +139,10 @@ export function SmartSearch({
           type="button"
           variant="outline"
           className="h-12 gap-2"
-          disabled={isPending}
+          disabled={isPending || randomLoading}
+          aria-busy={randomLoading}
           onClick={async () => {
+            setRandomLoading(true);
             try {
               const res = await fetch("/api/herbs/random");
               if (res.ok) {
@@ -150,10 +156,16 @@ export function SmartSearch({
                 error: error instanceof Error ? error.message : String(error),
               });
               router.push("/herbs");
+            } finally {
+              setRandomLoading(false);
             }
           }}
         >
-          <Shuffle className="size-4" />
+          {randomLoading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Shuffle className="size-4" />
+          )}
           {t("search.surpriseMe")}
         </Button>
       </form>
