@@ -35,6 +35,15 @@ async function resolveLocale(locale?: string): Promise<string> {
 const ITEMS_PER_PAGE = 20;
 const MAX_QUERY_LENGTH = 200;
 
+/** True while Next prerenders the route table at build time. */
+const IS_PRODUCTION_BUILD = process.env.NEXT_PHASE === "phase-production-build";
+
+/**
+ * How many times a build-time herb lookup may retry a database failure.
+ * Runtime lookups get exactly one attempt — see the comment in getHerbBySlug.
+ */
+const BUILD_LOOKUP_ATTEMPTS = 3;
+
 export async function getHerbs(
   params: {
     query?: string;
@@ -272,46 +281,66 @@ export async function getHerbBySlug(
       };
     }
 
-    const { data, error } = await supabase
-      .from("herbs")
-      .select("*, herb_categories(*), drug_interactions(*)")
-      .eq("slug", slug)
-      .eq("is_published", true)
-      .single();
+    // At build time a single slow minute on the database used to fail the
+    // whole deploy. Retry there — nobody is waiting, and a blip deserves a
+    // second look. At runtime the first failure still surfaces immediately:
+    // a user is waiting and the breaker exists precisely to fail fast.
+    const attempts = IS_PRODUCTION_BUILD ? BUILD_LOOKUP_ATTEMPTS : 1;
 
-    if (error) {
-      // PGRST116 (0 rows) means the slug simply doesn't exist (or isn't
-      // published). That's an expected "not found" -> the caller renders a
-      // 404 via notFound(). Only log genuine server/DB errors, not misses,
-      // so build-time prerendering of a stale slug doesn't spam error logs.
-      const code = (error as { code?: string }).code;
-      const isNotFound =
-        code === "PGRST116" || /0 rows|contains 0 rows/i.test(error.message);
-      if (!isNotFound) {
-        logger.error("herbs_get_herb_by_slug_failed", {
-          error: error instanceof Error ? error.message : JSON.stringify(error),
-        });
+    for (let attempt = 1; ; attempt++) {
+      const { data, error } = await supabase
+        .from("herbs")
+        .select("*, herb_categories(*), drug_interactions(*)")
+        .eq("slug", slug)
+        .eq("is_published", true)
+        .single();
+
+      if (error) {
+        // PGRST116 (0 rows) means the slug simply doesn't exist (or isn't
+        // published). That's an expected "not found" -> the caller renders a
+        // 404 via notFound(). Only log genuine server/DB errors, not misses,
+        // so build-time prerendering of a stale slug doesn't spam error logs.
+        const code = (error as { code?: string }).code;
+        const isNotFound =
+          code === "PGRST116" || /0 rows|contains 0 rows/i.test(error.message);
+
+        if (!isNotFound && attempt < attempts) {
+          logger.warn("herbs_get_herb_by_slug_retry", {
+            slug,
+            attempt,
+            error: error.message,
+          });
+          await new Promise((resolve) => setTimeout(resolve, 1_000 * attempt));
+          continue;
+        }
+
+        if (!isNotFound) {
+          logger.error("herbs_get_herb_by_slug_failed", {
+            error:
+              error instanceof Error ? error.message : JSON.stringify(error),
+          });
+        }
+        return {
+          success: false,
+          error: isNotFound ? "Herb not found" : error.message,
+          reason: isNotFound ? "not_found" : "unavailable",
+        };
       }
+
+      const locale =
+        opts?.locale ?? (opts?.skipCookies ? "en" : await resolveLocale());
+      const herb = localizeHerb(data as HerbWithInteractions, locale);
+      const interactions = (herb.drug_interactions || []).map((ix) =>
+        localizeInteraction(ix, locale)
+      );
       return {
-        success: false,
-        error: isNotFound ? "Herb not found" : error.message,
-        reason: isNotFound ? "not_found" : "unavailable",
+        success: true,
+        data: {
+          ...herb,
+          drug_interactions: interactions,
+        } as HerbWithInteractions,
       };
     }
-
-    const locale =
-      opts?.locale ?? (opts?.skipCookies ? "en" : await resolveLocale());
-    const herb = localizeHerb(data as HerbWithInteractions, locale);
-    const interactions = (herb.drug_interactions || []).map((ix) =>
-      localizeInteraction(ix, locale)
-    );
-    return {
-      success: true,
-      data: {
-        ...herb,
-        drug_interactions: interactions,
-      } as HerbWithInteractions,
-    };
   } catch (error) {
     logger.error("herbs.getHerbBySlug_failed", { error: String(error) });
     return {

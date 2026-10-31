@@ -23,10 +23,32 @@
  */
 export const DEFAULT_SUPABASE_FETCH_TIMEOUT_MS = 15_000;
 
+/**
+ * Prerendering at build time is not the same workload as serving a request.
+ * A build has no user waiting, no platform timeout to ride into, and it fans
+ * out over the whole route table at once — so a 15s ceiling that protects a
+ * request just trips over itself here. The longer ceiling gives one slow query
+ * room to land instead of failing the deploy.
+ */
+export const DEFAULT_BUILD_FETCH_TIMEOUT_MS = 30_000;
+
+/**
+ * True while Next prerenders the route table at build time. Read once: the
+ * phase cannot change inside a process.
+ *
+ * The build must not inherit the runtime breaker. The breaker exists to stop a
+ * warm instance burning memory while a user waits; a build that trips it turns
+ * one slow minute on the database into a failed deploy of every unrelated
+ * change behind it. Guarding here also means the retry in getHerbBySlug gets a
+ * real attempt instead of an instant rejection.
+ */
+const IS_PRODUCTION_BUILD = process.env.NEXT_PHASE === "phase-production-build";
+
 export function getSupabaseFetchTimeoutMs(): number {
   const raw = Number(process.env.SUPABASE_FETCH_TIMEOUT_MS);
-  return Number.isFinite(raw) && raw > 0
-    ? raw
+  if (Number.isFinite(raw) && raw > 0) return raw;
+  return IS_PRODUCTION_BUILD
+    ? DEFAULT_BUILD_FETCH_TIMEOUT_MS
     : DEFAULT_SUPABASE_FETCH_TIMEOUT_MS;
 }
 
@@ -54,7 +76,7 @@ export function boundedFetch(
   input: RequestInfo | URL,
   init?: RequestInit
 ): Promise<Response> {
-  if (Date.now() < circuitOpenUntil) {
+  if (!IS_PRODUCTION_BUILD && Date.now() < circuitOpenUntil) {
     return Promise.reject(new Error("Supabase circuit breaker is open"));
   }
 
@@ -74,7 +96,9 @@ export function boundedFetch(
       return response;
     },
     (error: unknown) => {
-      if (timedOut) {
+      // Counting timeouts at build time would let three slow pages shut the
+      // gate on every remaining prerender in the worker.
+      if (timedOut && !IS_PRODUCTION_BUILD) {
         consecutiveTimeouts += 1;
         if (consecutiveTimeouts >= FAILURE_THRESHOLD) {
           circuitOpenUntil = Date.now() + CIRCUIT_OPEN_MS;

@@ -12,6 +12,7 @@ mail records.
 ---
 
 ## Prospect 1: St. Francis Herb Farm (Canada)
+
 - **Company:** St. Francis Herb Farm Inc.
 - **Location:** Barry's Bay, Ontario, Canada
 - **Contact Email:** info@stfrancisherbfarm.com
@@ -19,6 +20,7 @@ mail records.
 - **Fit:** Leading Canadian herbal medicine farm (organic tinctures, Canadian-grown herbs, CHFA Brand Excellence winner). HerbAlly's Canadian users frequently search for St. Francis formulas and individual herb safety profiles.
 
 ### Email Draft
+
 ```text
 Subject: Partnering with HerbAlly — plant safety & education for Canadian herbalists
 
@@ -53,6 +55,7 @@ info@herbally.app | herbally.app
 ---
 
 ## Prospect 2: Clef des Champs (Quebec / Canada)
+
 - **Company:** Clef des Champs Inc.
 - **Location:** Val-David, Québec, Canada
 - **Contact Email:** info@clefdeschamps.net (alt: jardin@clefdeschamps.net)
@@ -60,6 +63,7 @@ info@herbally.app | herbally.app
 - **Fit:** Pioneer of organic herbalism in Quebec for over 45 years. HerbAlly is fully bilingual (FR/EN) and serves a substantial Quebec readership looking up French-language plant monographs and interactions.
 
 ### Email Draft (French)
+
 ```text
 Objet : Partenariat HerbAlly — soutien à l'herboristerie québécoise indépendante
 
@@ -95,6 +99,7 @@ info@herbally.app | herbally.app
 ---
 
 ## Prospect 3: Gaia Herbs (USA / Global)
+
 - **Company:** Gaia Herbs, Inc.
 - **Location:** Brevard, North Carolina, USA
 - **Contact Email:** marketing@gaiaherbs.com (alt: gaiapro@gaiaherbs.com)
@@ -102,6 +107,7 @@ info@herbally.app | herbally.app
 - **Fit:** Certified B Corp with an industry-leading transparency platform ("Meet Your Herbs"). HerbAlly's mission of transparent, evidence-based herbal safety directly mirrors Gaia's botanical integrity.
 
 ### Email Draft
+
 ```text
 Subject: Supporting transparent herbal safety on HerbAlly (herbally.app)
 
@@ -132,6 +138,7 @@ info@herbally.app | herbally.app
 ---
 
 ## Prospect 4: Herb Pharm (USA / Global)
+
 - **Company:** Herb Pharm LLC
 - **Location:** Williams / Central Point, Oregon, USA
 - **Contact Email:** partnerships@herb-pharm.com (alt: info@herb-pharm.com)
@@ -139,6 +146,7 @@ info@herbally.app | herbally.app
 - **Fit:** B-Corp and pioneer of certified organic liquid herbal extracts and regenerative agriculture. HerbAlly's interaction checker frequently highlights liquid extracts and tinctures.
 
 ### Email Draft
+
 ```text
 Subject: Herb Pharm & HerbAlly — Educational partnership for botanical safety
 
@@ -169,6 +177,7 @@ info@herbally.app | herbally.app
 ---
 
 ## Prospect 5: Bioforce Canada / A.Vogel (Canada / International)
+
 - **Company:** Bioforce Canada Inc. (A.Vogel)
 - **Location:** Dollard-des-Ormeaux, Québec, Canada
 - **Contact Email:** info@bioforce.ca
@@ -177,6 +186,7 @@ info@herbally.app | herbally.app
 - **Fit:** Founded by Swiss pioneer Alfred Vogel, producing fresh organic plant remedies with major distribution across Canada and Europe. Local Quebec presence in Dollard-des-Ormeaux.
 
 ### Email Draft
+
 ```text
 Subject: Collaboration éducative HerbAlly & A.Vogel / Bioforce Canada
 
@@ -210,6 +220,7 @@ info@herbally.app | herbally.app
 ---
 
 ## Prospect 6: Traditional Medicinals (USA / Canada)
+
 - **Company:** Traditional Medicinals
 - **Location:** Sebastopol, California, USA
 - **Contact Email:** traditionalmedicinals@worldpantry.com (the address published on their own contact page)
@@ -221,6 +232,7 @@ info@herbally.app | herbally.app
 - **Fit:** Certified B Corp herbal tea leader formulating pharmacopoeial quality herbal teas for over 45 years.
 
 ### Email Draft
+
 ```text
 Subject: Partnering with HerbAlly on evidence-based plant medicine education
 
@@ -251,6 +263,7 @@ info@herbally.app | herbally.app
 ---
 
 ## Prospect 7: Mountain Rose Herbs (USA / Global)
+
 - **Company:** Mountain Rose Herbs
 - **Location:** Eugene, Oregon, USA
 - **Contact Email:** support@mountainroseherbs.com
@@ -258,6 +271,7 @@ info@herbally.app | herbally.app
 - **Fit:** The premier independent supplier of organic dried botanicals, bulk herbs, and herbal education resources.
 
 ### Email Draft
+
 ```text
 Subject: Supporting independent herbal education on HerbAlly
 
@@ -286,6 +300,7 @@ info@herbally.app | herbally.app
 ---
 
 ## Prospect 8: Pukka Herbs (UK / Global)
+
 - **Company:** Pukka Herbs
 - **Location:** Bristol, United Kingdom
 - **Contact Email:** enquiries@pukkaherbs.com (alt: press@pukkaherbs.com)
@@ -293,6 +308,7 @@ info@herbally.app | herbally.app
 - **Fit:** Certified B Corp, 1% for the Planet organic herbal teas and botanical supplements, with worldwide distribution and deep focus on Ayurvedic and traditional herbs.
 
 ### Email Draft
+
 ```text
 Subject: Partnering with HerbAlly — global plant education & interaction safety
 

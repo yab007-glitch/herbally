@@ -55,12 +55,17 @@ export const POPULAR_COMPARISONS = [
 ] as const;
 
 /**
- * How many comparisons to pre-render at build time. Small on purpose: the
- * build shares the 0.5 GB production database, and each pair costs two herb
- * queries (plus related pairs on render). The rest — including every pair the
- * sitemap lists — is generated on demand and cached for 24 h.
+ * How many comparisons to pre-render at build time.
+ *
+ * Zero on purpose, and the same choice herbs/[slug] and interactions/[herb]/[drug]
+ * already make. A build must not depend on the production database's mood: on
+ * 2026-10-30 a slow minute there tripped the fetch breaker mid-build and the
+ * deploy died on /en/compare/ashwagandha/vs/rhodiola, taking every unrelated
+ * change behind it down with it. These pages render on demand and cache for
+ * 24 h (see `revalidate`), so the only cost is that the first visitor — or
+ * the first crawl — pays the render instead of the deploy.
  */
-const PRERENDER_COMPARE_LIMIT = 6;
+const PRERENDER_COMPARE_LIMIT = 0;
 
 export async function generateStaticParams() {
   return [...POPULAR_COMPARISONS].slice(0, PRERENDER_COMPARE_LIMIT);
