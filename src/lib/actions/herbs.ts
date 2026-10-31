@@ -36,8 +36,7 @@ const ITEMS_PER_PAGE = 20;
 const MAX_QUERY_LENGTH = 200;
 
 /** True while Next prerenders the route table at build time. */
-const IS_PRODUCTION_BUILD =
-  process.env.NEXT_PHASE === "phase-production-build";
+const IS_PRODUCTION_BUILD = process.env.NEXT_PHASE === "phase-production-build";
 
 /**
  * How many times a build-time herb lookup may retry a database failure.

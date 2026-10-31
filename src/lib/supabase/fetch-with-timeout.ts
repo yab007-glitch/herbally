@@ -42,8 +42,7 @@ export const DEFAULT_BUILD_FETCH_TIMEOUT_MS = 30_000;
  * change behind it. Guarding here also means the retry in getHerbBySlug gets a
  * real attempt instead of an instant rejection.
  */
-const IS_PRODUCTION_BUILD =
-  process.env.NEXT_PHASE === "phase-production-build";
+const IS_PRODUCTION_BUILD = process.env.NEXT_PHASE === "phase-production-build";
 
 export function getSupabaseFetchTimeoutMs(): number {
   const raw = Number(process.env.SUPABASE_FETCH_TIMEOUT_MS);
