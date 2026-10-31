@@ -7,6 +7,7 @@ import { SYMPTOM_SLUGS } from "@/app/[locale]/(main)/symptoms/[symptom]/page";
 import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page";
 import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
+import { withTimeout } from "@/lib/utils/with-timeout";
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
@@ -216,6 +217,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  // One total database budget for the whole route. Next prerenders this file
+  // with a 60s ceiling; a slow or unreachable Supabase must degrade to the
+  // static list, never run past that ceiling and fail the entire build.
+  // `next build` sets NEXT_PHASE, and a one-off build can afford more time
+  // than an on-demand ISR revalidation. The runtime budget is deliberately
+  // generous: three herb batches plus one pair query take a few seconds on a
+  // healthy database, and cutting them off early would cache a sitemap with
+  // every herb URL missing for an hour — a silent SEO loss that costs more
+  // than a slow response. Computed per invocation, not at module scope, so
+  // tests and the build phase see their own value.
+  const dbBudgetMs =
+    process.env.NEXT_PHASE === "phase-production-build" ? 40_000 : 20_000;
+  const deadline = Date.now() + dbBudgetMs;
+  const remainingBudgetMs = () => deadline - Date.now();
+  const budgetExhausted = () => {
+    logger.error("sitemap_generation_error", {
+      error: `sitemap database budget of ${dbBudgetMs}ms exhausted`,
+    });
+    return staticPages;
+  };
+
   try {
     const supabase = getAnonClient();
 
@@ -234,12 +256,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     let from = 0;
     const batchSize = 1000;
     while (true) {
-      const { data: herbsBatch } = await supabase
-        .from("herbs")
-        .select("slug, updated_at, translations")
-        .eq("is_published", true)
-        .order("name", { ascending: true })
-        .range(from, from + batchSize - 1);
+      const herbsRemainingMs = remainingBudgetMs();
+      if (herbsRemainingMs <= 0) return budgetExhausted();
+
+      const { data: herbsBatch } = await withTimeout(
+        supabase
+          .from("herbs")
+          .select("slug, updated_at, translations")
+          .eq("is_published", true)
+          .order("name", { ascending: true })
+          .range(from, from + batchSize - 1),
+        "sitemap_herbs_batch",
+        herbsRemainingMs
+      );
 
       if (!herbsBatch || herbsBatch.length === 0) break;
 
@@ -299,8 +328,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // permalink. FR URLs only when the row actually has a French translation
     // (same gating rule as herbs: EN-content-on-FR-URL duplicates get
     // canonicalized away by Google).
+    const pairsRemainingMs = remainingBudgetMs();
+    if (pairsRemainingMs <= 0) return budgetExhausted();
+
     const pairPages: MetadataRoute.Sitemap = (
-      await getInteractionPairs()
+      await withTimeout(
+        getInteractionPairs(),
+        "sitemap_interaction_pairs",
+        pairsRemainingMs
+      )
     ).flatMap((p) => {
       const path = pairPath(p.herbSlug, p.drugName);
       const entries: MetadataRoute.Sitemap = [
