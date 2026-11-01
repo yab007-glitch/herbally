@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Analytics } from "@vercel/analytics/next";
@@ -26,8 +26,20 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+/**
+ * Editorial serif for headings only. Fraunces carries a little old-style
+ * character without tipping into novelty, which is what makes the pages
+ * read as a printed herbal. `opsz` lets it thicken at display sizes.
+ */
+const fraunces = Fraunces({
+  variable: "--font-display",
+  subsets: ["latin"],
+  display: "swap",
+  axes: ["SOFT", "WONK", "opsz"],
+});
+
 export const viewport: Viewport = {
-  themeColor: "#16a34a",
+  themeColor: "#3f5c46",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -113,7 +125,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
     >
       <head>
         <link

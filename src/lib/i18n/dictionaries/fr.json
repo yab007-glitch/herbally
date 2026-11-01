@@ -85,11 +85,11 @@
     "calc": "Calc"
   },
   "home": {
-    "heroTitle": "Vérifiez les interactions plante-médicament",
+    "heroTitle": "Vérifiez les interactions plante‑médicament",
     "heroSubtitle": "Tapez une plante et un médicament pour vérifier d'abord la base de données HerbAlly. Si une association n'est pas enregistrée, l'Herboriste Virtuel peut expliquer davantage.",
     "heroButton": "Explorer les plantes",
-    "herbPlaceholder": "Nom de la plante (ex. Curcuma, Millepertuis)",
-    "medPlaceholder": "Médicament (ex. warfarine, sertraline)",
+    "herbPlaceholder": "Curcuma, millepertuis…",
+    "medPlaceholder": "warfarine, sertraline…",
     "checkButton": "Vérifier l'interaction",
     "suggestionsTitle": "Vérifications courantes",
     "suggestion1": "Millepertuis + antidépresseurs",
@@ -125,7 +125,10 @@
     "explainerTitle": "Votre guide de confiance des plantes médicinales",
     "explainerBody": "HerbAlly est une base de données gratuite de plantes médicinales avec plus de 2 700 plantes. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, trouver des plantes par symptôme et calculer une dose adulte — le tout sans compte. L'Herboriste Virtuel est là pour expliquer, pas pour remplacer la base de données ou votre pharmacien.",
     "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
-    "popularTitle": "Plantes populaires"
+    "popularTitle": "Plantes populaires",
+    "herbLabel": "Plante",
+    "medLabel": "Médicament",
+    "eyebrow": "Un ouvrage de référence sur ce que vous prenez ensemble"
   },
   "embed": {
     "title": "Vérifier une association plante + médicament",
