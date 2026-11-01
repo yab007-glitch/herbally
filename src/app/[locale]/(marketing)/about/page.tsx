@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import {
   Leaf,

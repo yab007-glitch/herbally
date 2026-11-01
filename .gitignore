@@ -59,6 +59,10 @@ AUDIT_REPORT_*.md
 playwright-report/
 test-results/
 
+# Hermes and local worktrees
+.hermes/
+.worktrees/
+
 .env*
 .env.sentry-build-plugin
 .playwright-mcp/

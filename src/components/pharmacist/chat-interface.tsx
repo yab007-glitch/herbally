@@ -18,6 +18,7 @@ import {
   Leaf,
   ArrowDown,
 } from "lucide-react";
+import Link from "next/link";
 import { ChatMarkdown } from "./markdown-renderer";
 import { ChatEmptyStateV2 } from "./chat-empty-state-v2";
 import { Button } from "@/components/ui/button";
