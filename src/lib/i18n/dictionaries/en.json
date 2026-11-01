@@ -1221,7 +1221,39 @@
     "reviewedBy": "Reviewed by: ",
     "lastUpdated": "Last updated: ",
     "sources": "Sources: ",
-    "researchProfile": "Research profile"
+    "researchProfile": "Research profile",
+    "viewSource": "Source",
+    "viewSourceLabel": "Open source: {source}"
+  },
+  "safetyGlance": {
+    "title": "Safety at a glance",
+    "pregnancy": "Pregnancy",
+    "nursing": "Nursing",
+    "safe": "Generally considered safe",
+    "unsafe": "Not recommended",
+    "unknown": "Unknown — not enough data",
+    "interactions": "Drug interactions",
+    "interactionCount": "{count, plural, one {# known interaction} other {# known interactions}}",
+    "interactionCountNone": "No known interactions listed",
+    "mostSerious": "Most serious: {drug} — {severity}",
+    "seeList": "See the full list",
+    "avoidIf": "Not recommended in these cases",
+    "footnote": "A summary, not a complete list — check every medication you take with your pharmacist.",
+    "severityCount": {
+      "contraindicated": "{count, plural, one {# contraindicated} other {# contraindicated}}",
+      "severe": "{count, plural, one {# severe} other {# severe}}",
+      "moderate": "{count, plural, one {# moderate} other {# moderate}}",
+      "mild": "{count, plural, one {# mild} other {# mild}}"
+    }
+  },
+  "chipLegend": {
+    "title": "How to read the evidence and review labels",
+    "evidence": "Evidence strength",
+    "review": "Review status",
+    "verifiedDesc": "A person checked this entry against a primary source.",
+    "aiSummarizedDesc": "An AI summarized the cited sources; no person has reviewed it yet.",
+    "notHumanReviewedDesc": "Cites a source, but no person has checked this entry against it.",
+    "unverifiedDesc": "Written by AI and not checked against primary sources."
   },
   "govSources": {
     "title": "Government sources",

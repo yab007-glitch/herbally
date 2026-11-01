@@ -50,10 +50,11 @@ function toStringArray(value: unknown): string[] | null {
 /** Overlay French translations onto an herb when locale is "fr". Falls back to English fields when a translation is missing. */
 export function localizeHerb<T extends Herb>(herb: T, locale: string): T {
   if (locale !== "fr") return herb;
+  const localized = localizeHerbCategory(herb, locale);
   const t = fr<HerbFr>(herb.translations);
-  if (!t) return herb;
+  if (!t) return localized;
   return {
-    ...herb,
+    ...localized,
     name: t.name || herb.name,
     common_names: toStringArray(t.common_names)?.length
       ? (toStringArray(t.common_names) as string[])
@@ -93,4 +94,24 @@ export function localizeCategoryName(
 ): string {
   if (locale !== "fr") return cat.name;
   return cat.name_fr || cat.name;
+}
+
+/**
+ * Localize the nested category name on an herb row.
+ *
+ * `getHerbCategories` already served French category names to the catalogue's
+ * filter pills, but the join embedded on each herb row (`herb_categories(*)`)
+ * was never localized — so the French herb page showed "Anti-inflammatory" and
+ * the French catalogue cards showed English category chips right next to
+ * French filter pills. Splitting this out means it applies even when the herb
+ * has no `translations` block of its own.
+ */
+function localizeHerbCategory<T extends Herb>(herb: T, locale: string): T {
+  if (locale !== "fr") return herb;
+  const cat = (herb as { herb_categories?: unknown }).herb_categories;
+  if (!cat || typeof cat !== "object") return herb;
+  const typed = cat as HerbCategory & { name_fr?: string | null };
+  const name = localizeCategoryName(typed, locale);
+  if (name === typed.name) return herb;
+  return { ...herb, herb_categories: { ...typed, name } };
 }

@@ -1221,7 +1221,39 @@
     "reviewedBy": "Révisé par : ",
     "lastUpdated": "Dernière mise à jour : ",
     "sources": "Sources : ",
-    "researchProfile": "Profil de recherche"
+    "researchProfile": "Profil de recherche",
+    "viewSource": "Source",
+    "viewSourceLabel": "Ouvrir la source : {source}"
+  },
+  "safetyGlance": {
+    "title": "Sécurité en un coup d'œil",
+    "pregnancy": "Grossesse",
+    "nursing": "Allaitement",
+    "safe": "Généralement considéré comme sûr",
+    "unsafe": "Déconseillé",
+    "unknown": "Statut inconnu — données insuffisantes",
+    "interactions": "Interactions médicamenteuses",
+    "interactionCount": "{count, plural, one {# interaction connue} other {# interactions connues}}",
+    "interactionCountNone": "Aucune interaction connue répertoriée",
+    "mostSerious": "La plus grave : {drug} — {severity}",
+    "seeList": "Voir la liste complète",
+    "avoidIf": "Déconseillé dans ces cas",
+    "footnote": "Un résumé, pas une liste complète — vérifiez chaque médicament avec votre pharmacien.",
+    "severityCount": {
+      "contraindicated": "{count, plural, one {# contre-indiquée} other {# contre-indiquées}}",
+      "severe": "{count, plural, one {# sévère} other {# sévères}}",
+      "moderate": "{count, plural, one {# modérée} other {# modérées}}",
+      "mild": "{count, plural, one {# légère} other {# légères}}"
+    }
+  },
+  "chipLegend": {
+    "title": "Comment lire les étiquettes de preuve et de révision",
+    "evidence": "Niveau de preuve",
+    "review": "Statut de révision",
+    "verifiedDesc": "Une personne a vérifié cette fiche à partir d'une source primaire.",
+    "aiSummarizedDesc": "Une IA a résumé les sources citées ; aucune personne ne l'a encore révisée.",
+    "notHumanReviewedDesc": "Cite une source, mais personne n'a vérifié cette fiche à partir de celle-ci.",
+    "unverifiedDesc": "Rédigé par IA et non vérifié auprès de sources primaires."
   },
   "govSources": {
     "title": "Sources gouvernementales",

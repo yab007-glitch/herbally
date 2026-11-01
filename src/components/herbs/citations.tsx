@@ -69,9 +69,17 @@ export function CitationsList({ citations, className }: CitationsListProps) {
                   href={linkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-1 inline-flex items-center gap-0.5 text-primary hover:underline"
+                  aria-label={t("citations.viewSourceLabel", {
+                    source: citation.source,
+                  })}
+                  className="ml-1 inline-flex items-center gap-0.5 text-primary underline-offset-4 hover:underline"
                 >
-                  <ExternalLink className="size-3" />
+                  {/* Visible text, not an icon alone: three icon-only links in
+                      this list were the page's only axe `link-name` failures,
+                      and "Source" also tells a sighted reader what the arrow
+                      opens. */}
+                  <span className="text-xs">{t("citations.viewSource")}</span>
+                  <ExternalLink className="size-3" aria-hidden="true" />
                 </a>
               )}
             </div>

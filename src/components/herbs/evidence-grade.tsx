@@ -117,15 +117,20 @@ export function EvidenceGrade({
 }
 
 export function EvidenceGradeBadge({ level }: { level: EvidenceLevel }) {
+  const t = useTranslations();
   const config = evidenceConfig[level] || evidenceConfig.C;
 
   return (
     <Badge
       variant="outline"
+      title={`${t("evidence.prefix")} ${t(config.labelKey)}`}
       className={cn("gap-1 font-medium", config.bgColor, config.color)}
     >
       {config.icon}
       {level}
+      {/* The bare letter is all a screen reader used to get ("C", "trad").
+          Spell out the grade so the chip means something out of context. */}
+      <span className="sr-only"> — {t(config.labelKey)}</span>
     </Badge>
   );
 }
