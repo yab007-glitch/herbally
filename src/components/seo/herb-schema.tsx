@@ -135,6 +135,27 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
             },
       }),
     },
+    // The accountable author. This is a real, credentialed person and the
+    // single strongest honest trust signal the page can carry; "HerbAlly
+    // Editorial Team" told a rater nothing.
+    author: {
+      "@type": "Person",
+      name: "Yasser Bheekun",
+      jobTitle: "Medical Laboratory Technologist",
+      hasCredential: [
+        {
+          "@type": "EducationalOccupationalCredential",
+          credentialCategory: "certification",
+          name: "OPTMQ — Ordre professionnel des technologistes médicaux du Québec",
+        },
+        {
+          "@type": "EducationalOccupationalCredential",
+          credentialCategory: "certification",
+          name: "CSMLS — Canadian Society for Medical Laboratory Science",
+        },
+      ],
+      url: `${siteUrl()}/editorial-policy`,
+    },
     ...(herb.last_reviewed && {
       dateModified: herb.last_reviewed,
     }),

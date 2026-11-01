@@ -466,7 +466,8 @@
     "methodology": "Methodology",
     "sponsorship": "Sponsorship",
     "herbDrugInteractions": "Herb–Drug Interactions",
-    "symptoms": "Symptoms"
+    "symptoms": "Symptoms",
+    "editorialPolicy": "Editorial policy"
   },
   "errors": {
     "404": {

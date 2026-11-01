@@ -13,6 +13,12 @@ import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
 import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
 import { ChipLegend } from "@/components/herbs/chip-legend";
+import { AuthorByline } from "@/components/herbs/author-byline";
+import { InternalLinkRail } from "@/components/herbs/internal-link-rail";
+import {
+  getAlphabeticalNeighbours,
+  getSymptomPeers,
+} from "@/lib/data/internal-links";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
@@ -546,6 +552,14 @@ export default async function HerbDetailPage({ params }: Props) {
     // swallow — related herbs are non-critical
   }
 
+  // Structure rails. The A–Z neighbours are guaranteed and turn 2,700
+  // otherwise-isolated pages into a crawlable chain; the symptom peers are the
+  // relevance signal that actually varies across the library.
+  const [{ prev, next }, symptomPeers] = await Promise.all([
+    getAlphabeticalNeighbours(herb.name, slug),
+    getSymptomPeers(slug, (herb.symptom_keywords as string[] | null) ?? null),
+  ]);
+
   return (
     <div className="space-y-8">
       <ViewTracker slug={slug} />
@@ -625,6 +639,13 @@ export default async function HerbDetailPage({ params }: Props) {
           they measure different things. This is the explanation, collapsed so
           it costs one line on a page where safety leads. */}
       <ChipLegend className="-mt-4" />
+
+      {/* Accountable author. Health pages are judged on who stands behind
+          them, and this site's byline previously read "Editorial Team". */}
+      <AuthorByline
+        locale={locale === "fr" ? "fr" : "en"}
+        lastReviewed={herb.last_reviewed ?? herb.updated_at ?? null}
+      />
 
       {/* Personalized interaction warning (H1). Client component so the ISR
           page stays static for anonymous traffic; signed-in users get a
@@ -775,6 +796,23 @@ export default async function HerbDetailPage({ params }: Props) {
         url={`${siteUrl()}${addLocalePrefix(`/herbs/${slug}`, locale)}`}
         className="pt-4"
       />
+
+      <section aria-labelledby="internal-links-heading" className="pt-4">
+        <h2 id="internal-links-heading" className="sr-only">
+          {t("herbDetail.relatedHerbs")}
+        </h2>
+        <InternalLinkRail
+          locale={locale === "fr" ? "fr" : "en"}
+          herbSlug={slug}
+          interactions={interactions.map((i) => ({
+            drug_name: i.drug_name,
+            severity: i.severity,
+          }))}
+          prev={prev}
+          next={next}
+          peers={symptomPeers}
+        />
+      </section>
 
       {/* Related Herbs */}
       {relatedHerbs.length > 0 && (
