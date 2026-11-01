@@ -73,6 +73,13 @@ export function MarketingFooter() {
               {t("footer.methodology")}
             </Link>
             <Link
+              href="/editorial-policy"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.editorialPolicy")}
+            </Link>
+            <Link
               href="/sponsors"
               prefetch={true}
               className="hover:text-foreground transition-colors"
