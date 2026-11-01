@@ -11,17 +11,21 @@ test.describe("Marketing landing page (/)", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/HerbAlly/i);
 
-    // Server-rendered hero (LCP)
+    // Server-rendered hero (LCP). The copy uses a non-breaking hyphen
+    // (U+2011) so "herb-drug" can never split across two lines at display
+    // sizes, so match any dash rather than the ASCII hyphen.
     await expect(
-      page.getByRole("heading", { name: /Check herb-drug interactions/i })
+      page.getByRole("heading", { name: /Check herb.drug interactions/i })
     ).toBeVisible();
     await expect(
       page.getByText(/Type any herb and medication to check the HerbAlly/i)
     ).toBeVisible();
 
-    // Interaction-checker inputs + button
-    await expect(page.getByPlaceholder(/Herb name/i)).toBeVisible();
-    await expect(page.getByPlaceholder(/Medication/i)).toBeVisible();
+    // Interaction-checker inputs + button. Assert the persistent labels, not
+    // placeholder text: the inputs now carry real <label>s, which is the
+    // accessible pattern and what a user actually reads while typing.
+    await expect(page.getByLabel("Herb", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Medication", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: /Check interaction/i })
     ).toBeVisible();
