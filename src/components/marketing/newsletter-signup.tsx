@@ -47,6 +47,7 @@ type Status =
 export function NewsletterSignup({ locale }: { locale: "en" | "fr" }) {
   const c = COPY[locale];
   const [email, setEmail] = useState("");
+  const [hp, setHp] = useState("");
   const [status, setStatus] = useState<Status>("idle");
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -61,6 +62,7 @@ export function NewsletterSignup({ locale }: { locale: "en" | "fr" }) {
           locale,
           sourcePath:
             typeof window !== "undefined" ? window.location.pathname : null,
+          hp: hp || undefined,
         }),
       });
       if (response.ok) {
@@ -109,6 +111,19 @@ export function NewsletterSignup({ locale }: { locale: "en" | "fr" }) {
         onSubmit={onSubmit}
         className="mt-4 flex flex-col gap-2 sm:flex-row"
       >
+        {/* Honeypot field for bot protection — hidden from humans */}
+        <div className="hidden" aria-hidden="true" style={{ display: "none" }}>
+          <label htmlFor="newsletter-hp">Company</label>
+          <input
+            id="newsletter-hp"
+            type="text"
+            name="hp"
+            tabIndex={-1}
+            value={hp}
+            onChange={(event) => setHp(event.target.value)}
+            autoComplete="off"
+          />
+        </div>
         <label htmlFor="newsletter-email" className="sr-only">
           {c.placeholder}
         </label>

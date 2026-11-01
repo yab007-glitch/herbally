@@ -28,6 +28,12 @@ describe("normalizeEmail", () => {
   it("rejects absurdly long input rather than passing it downstream", () => {
     expect(normalizeEmail(`${"a".repeat(250)}@example.com`)).toBeNull();
   });
+
+  it("rejects herbally.app domain addresses to prevent MTA bounces", () => {
+    expect(normalizeEmail("user@herbally.app")).toBeNull();
+    expect(normalizeEmail("yasser.verification.test@herbally.app")).toBeNull();
+    expect(normalizeEmail("sub@test.herbally.app")).toBeNull();
+  });
 });
 
 describe("consent wording", () => {
@@ -69,5 +75,14 @@ describe("subscribe without a configured mailbox", () => {
   it("still rejects malformed addresses before checking mail", async () => {
     const outcome = await subscribe({ email: "nope", locale: "en" });
     expect(outcome).toEqual({ ok: false, reason: "invalid-email" });
+  });
+
+  it("silently drops honeypot submissions", async () => {
+    const outcome = await subscribe({
+      email: "bot@example.com",
+      locale: "en",
+      hp: "spambot-filled-this",
+    });
+    expect(outcome).toEqual({ ok: true, status: "pending" });
   });
 });
