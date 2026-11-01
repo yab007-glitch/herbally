@@ -165,6 +165,10 @@ export function ChatInterface({
   }, []);
 
   useEffect(() => {
+    // With no messages the panel shows the greeting, and the greeting belongs
+    // at the top. Scrolling to "bottom" on mount pushed it out of view whenever
+    // the copy was taller than the panel — which the French text always is.
+    if (messages.length === 0) return;
     if (!showScrollButton) scrollToBottom();
   }, [messages, streamingContent, showScrollButton, scrollToBottom]);
 
@@ -290,7 +294,24 @@ export function ChatInterface({
     abortRef.current = controller;
 
     try {
+      // The visitor has just been greeted by the empty state, so the model
+      // must see that introduction as part of the conversation. Without it the
+      // first reply opens cold — re-introducing itself, or asking what the
+      // person needs after they already said it.
+      const greetingTurn =
+        history.length === 0
+          ? [
+              {
+                role: "assistant" as const,
+                content: `${t("herbalistPage.greeting.intro")} ${t(
+                  "herbalistPage.greeting.question"
+                )}`,
+              },
+            ]
+          : [];
+
       const msgs = [
+        ...greetingTurn,
         ...history.filter((m) => m.role !== ("system" as never)),
         ...(userMessage ? [userMessage] : []),
       ];
@@ -448,7 +469,10 @@ export function ChatInterface({
   // Focus input on mount
   useEffect(() => {
     if (isEmpty && inputRef.current && !autoQuery) {
-      inputRef.current.focus();
+      // preventScroll matters: the composer sits at the bottom of a scrollable
+      // panel, so a bare focus() scrolls the greeting out of view on shorter
+      // viewports before the visitor has read a word of it.
+      inputRef.current.focus({ preventScroll: true });
     }
   }, [isEmpty, autoQuery]);
 
@@ -463,7 +487,10 @@ export function ChatInterface({
         aria-label={t("common.chatMessagesLabel")}
       >
         {isEmpty ? (
-          <div className="flex h-full items-center justify-center p-6">
+          // Top-aligned, at the same width as the message list: the greeting is
+          // the first message of the conversation, not a splash screen. Centring
+          // it left a void above and made the panel look empty.
+          <div className="mx-auto w-full max-w-2xl px-2 py-4">
             <ChatEmptyStateV2 onSendMessage={sendMessage} />
           </div>
         ) : (
