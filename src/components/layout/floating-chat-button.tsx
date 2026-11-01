@@ -67,6 +67,16 @@ export function FloatingChatButton() {
   useEffect(() => {
     if (!isHome || open || hasOpened) return;
 
+    // On a phone there is no free corner: the bubble lands on the primary
+    // "check interactions" button, and the bottom navigation already has a
+    // Chat tab. An invitation that covers the thing the visitor came to do is
+    // worse than no invitation.
+    const wideEnough =
+      typeof window.matchMedia === "function"
+        ? window.matchMedia("(min-width: 768px)").matches
+        : true;
+    if (!wideEnough) return;
+
     const dismissedAt = Number(
       readStorage(() => window.localStorage.getItem(TEASER_DISMISSED_KEY))
     );
