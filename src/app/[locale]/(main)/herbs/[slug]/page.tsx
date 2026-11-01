@@ -15,6 +15,7 @@ import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
 import { ChipLegend } from "@/components/herbs/chip-legend";
 import { AuthorByline } from "@/components/herbs/author-byline";
 import { InternalLinkRail } from "@/components/herbs/internal-link-rail";
+import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 import {
   getAlphabeticalNeighbours,
   getSymptomPeers,
@@ -841,6 +842,11 @@ export default async function HerbDetailPage({ params }: Props) {
           </div>
         </section>
       )}
+
+      {/* The one place on the site that asks for something back. A visitor who
+          has just read an interaction wants to know when it changes; without
+          this, every one of them leaves and is never reachable again. */}
+      <NewsletterSignup locale={locale === "fr" ? "fr" : "en"} />
     </div>
   );
 }
