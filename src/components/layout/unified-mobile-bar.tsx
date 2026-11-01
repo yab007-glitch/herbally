@@ -46,7 +46,7 @@ export function UnifiedMobileBar() {
       aria-label={t("common.navQuick")}
       className={cn(
         "fixed bottom-0 left-0 right-0 z-50 md:hidden",
-        "bg-background/90 backdrop-blur-xl border-t",
+        "paper-surface border-t",
         "pb-[env(safe-area-inset-bottom)]"
       )}
     >

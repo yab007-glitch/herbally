@@ -106,6 +106,54 @@ body {
 }
 
 /*
+ * ─── Paper grain ──────────────────────────────────────────────────
+ *
+ * One generated cold-press scan, 36 KB at 1024², blended into the paper
+ * colour rather than laid over it: `background-blend-mode` keeps the token
+ * colour authoritative, so changing --background still changes the page and
+ * the texture only adds tooth. Multiply in light mode (grain darkens the
+ * paper slightly); in dark mode the same image is screened at low opacity,
+ * where it reads as the tooth of a blackened page instead of dirt.
+ *
+ * `background-attachment: fixed` keeps the sheet still while the page
+ * scrolls, which is what paper does — and it avoids the seam that any tiled
+ * generated texture shows.
+ */
+body {
+  background-color: var(--background);
+  background-image: url("/media/paper-grain.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: multiply;
+}
+
+.dark body {
+  background-blend-mode: soft-light;
+}
+
+/*
+ * Chrome bars (sticky header, bottom tab bar) sit on their own opaque
+ * surface. Without the same grain they read as flat bands pasted over the
+ * paper — visible as a hard seam where they meet the page. Same stack, so
+ * `background-attachment: fixed` keeps the grain continuous across all three.
+ */
+.paper-surface {
+  background-color: var(--background);
+  background-image: url("/media/paper-grain.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: multiply;
+}
+
+.dark .paper-surface {
+  background-blend-mode: soft-light;
+}
+
+/*
  * Headings are set in the display serif. This is the load-bearing decision
  * of the reskin: it is what makes these pages read as a printed herbal
  * rather than an app with rounded corners.

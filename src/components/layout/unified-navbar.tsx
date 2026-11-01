@@ -65,7 +65,7 @@ export function UnifiedNavbar() {
     <>
       <LanguageAnnouncement />
       <FirstVisitBanner />
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
+      <header className="paper-surface sticky top-0 z-50 w-full border-b border-border">
         <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4 sm:px-6">
           {/* Logo */}
           <Link
