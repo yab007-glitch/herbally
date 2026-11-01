@@ -132,3 +132,56 @@ Warmly,
 
 Yasser Bheekun, MLT
 https://herbally.app
+
+---
+
+## 6. Supabase — Open Source & Startup Sponsorship
+
+* **Program:** Supabase for Startups & Open Source Support Program
+* **Goal:** Supabase Pro tier waiver and $10,000 in platform/compute credits.
+* **Official Channels:**
+  * Web portal: https://supabase.com/startups
+  * Direct Contact: partnerships@supabase.com / support@supabase.com
+* **The Ask:** Database and compute sponsorship for HerbAlly's PostgreSQL storage, pgvector semantic search for interaction queries, and double opt-in email subscriber verification.
+* **Draft Message:**
+
+Subject: Open Source / Public Health Sponsorship: HerbAlly.app (Powered by Supabase)
+
+Hi Supabase Team,
+
+I'm Yasser Bheekun, a certified medical laboratory technologist (OPTMQ, CSMLS) and creator of HerbAlly (https://herbally.app) — a free, bilingual evidence-based platform designed to prevent adverse herb-drug interactions.
+
+HerbAlly's entire database architecture runs on Supabase (PostgreSQL, row-level security, service role administration, and upcoming pgvector embeddings for botanical semantic search). We also power our double opt-in subscriber verification via Supabase.
+
+As a bootstrapped open health initiative operating without commercial ads, our infrastructure costs are funded out-of-pocket. Does Supabase offer open source sponsorships, Pro plan waivers, or startup credits for public health initiatives like HerbAlly? We would be thrilled to feature Supabase prominently on our upcoming sponsors/partners page.
+
+Thank you for building such an incredible developer platform.
+
+Best regards,
+
+Yasser Bheekun, MLT
+Founder, HerbAlly
+https://herbally.app
+Montreal, QC, Canada
+
+---
+
+## 7. Google Cloud & Gemini — Google for Startups Cloud Program
+
+* **Program:** Google for Startups Cloud Program / Gemini API Developer Grant
+* **Goal:** Up to $200,000 in Google Cloud and Gemini API credits over 2 years.
+* **Official Channels:**
+  * Web Portal: https://cloud.google.com/startup
+  * Google AI Studio / Gemini Grants: https://ai.google.dev/
+* **Project Details for Form:**
+  * **Application Track:** Startups / Public Health Innovation
+  * **The Ask:** Cloud and Gemini model credits to scale automated clinical monograph ingestion (EMA, Health Canada, WHO monographs) and bilingual English/French patient safety verification.
+
+---
+
+## 8. Microsoft for Startups Founders Hub — Azure OpenAI Credits
+
+* **Program:** Microsoft for Startups Founders Hub
+* **Goal:** $2,500 – $25,000 in instant Azure & Azure OpenAI credits (no pitch deck or funding required for initial tier).
+* **Official Channel:** https://startups.microsoft.com/
+* **Key Benefits:** Direct access to GPT-4o / Whisper / embedding endpoints on Azure with enterprise compliance and zero out-of-pocket compute expense.
