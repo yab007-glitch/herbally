@@ -8,6 +8,7 @@ import { buildHerbListUrl } from "@/lib/search/herb-list-url";
 import { SmartSearch } from "@/components/herbs/smart-search";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
+import { ChipLegend } from "@/components/herbs/chip-legend";
 import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { siteUrl } from "@/lib/seo/site-url";
@@ -278,6 +279,12 @@ export default async function HerbsPage({
           {t("herbs.loadError")}
         </div>
       )}
+
+      {/* Legend — the cards show bare chips ("A", "trad", "AI-Generated");
+          this is the one place that explains them. */}
+      <div className="mb-4">
+        <ChipLegend />
+      </div>
 
       {/* Grid — id is the pagination scroll target. */}
       <div id="herb-results" className="scroll-mt-24">

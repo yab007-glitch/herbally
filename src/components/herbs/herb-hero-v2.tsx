@@ -1,19 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import {
-  MessageCircle,
-  Calculator,
-  Heart,
-  ShieldCheck,
-  ShieldX,
-  Check,
-} from "lucide-react";
+import { MessageCircle, Calculator, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { HerbImage } from "@/components/herbs/HerbImage";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
+import {
+  SafetyGlance,
+  type GlanceInteraction,
+} from "@/components/herbs/herb-safety-glance";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -43,12 +40,17 @@ interface HerbHeroV2Props {
     herb_categories?: { name: string } | null;
     evidence_level?: string | null;
     traditional_uses?: string[] | null;
+    contraindications?: string[] | null;
   };
   provenance?: Record<string, unknown> | null;
   /** Status of the PubMed sheet rendered below the hero, if one is shown. */
   pubmedSheetStatus?: string | null;
   /** True when the page renders a hand-written monograph (tabbed view). */
   isManualMonograph?: boolean;
+  /** Drug interactions, summarized in the safety panel above the CTA. */
+  interactions?: GlanceInteraction[];
+  /** Anchor that opens the full interaction list. */
+  safetyHref?: string;
 }
 
 export function HerbHeroV2({
@@ -56,6 +58,8 @@ export function HerbHeroV2({
   provenance = null,
   pubmedSheetStatus = null,
   isManualMonograph,
+  interactions = [],
+  safetyHref = "#safety",
 }: HerbHeroV2Props) {
   const t = useTranslations();
   // Same external-store read as HerbCard: a lazy useState initializer ran
@@ -87,13 +91,6 @@ export function HerbHeroV2({
     }
   };
 
-  const firstBenefit = herb.traditional_uses?.[0];
-
-  // AI-generated pregnancy/nursing flags are not authoritative — only show a
-  // safe/unsafe verdict when the monograph has been human-reviewed against a
-  // primary source (manual / primary_source). Otherwise render "unknown" so a
-  // fabricated AI boolean can never display as "Generally Safe" for an
-  // unreviewed herb.
   const parsedProvenance = parseProvenance(provenance);
   // Cross-check against the PubMed sheet: a herb rendered with an
   // unreviewed sheet must not show "Verified" from the herb row alone, even
@@ -111,8 +108,16 @@ export function HerbHeroV2({
     sheetNotReviewed && isVerified(parsedProvenance)
       ? { ...parsedProvenance, verification_method: "ai_summarized" as const }
       : parsedProvenance;
+  // AI-generated pregnancy/nursing flags are not authoritative — only show a
+  // safe/unsafe verdict when the monograph has been human-reviewed against a
+  // primary source (manual / primary_source). Otherwise the safety panel says
+  // "Unknown — not enough data", so a fabricated AI boolean can never read as
+  // advice.
   const pregnancySafe = verified ? herb.pregnancy_safe : null;
   const nursingSafe = verified ? herb.nursing_safe : null;
+  // Route of administration matters: an essential oil can be unsafe to swallow
+  // and fine on the skin. Dropping these four flags lost that distinction, so
+  // they are passed through to the safety panel.
   const pregnancySafeOral = verified
     ? (herb.pregnancy_safe_oral ?? null)
     : null;
@@ -126,18 +131,20 @@ export function HerbHeroV2({
 
   return (
     <div className="relative overflow-hidden rounded-2xl border bg-card">
-      <div className="relative flex flex-col gap-5 p-5 sm:flex-row sm:items-start sm:gap-6 sm:p-6">
-        <div className="shrink-0 mx-auto sm:mx-0">
-          <div className="relative">
+      <div className="relative flex flex-col gap-5 p-5 sm:gap-6 sm:p-6">
+        {/* Identity block: monogram, chips, title. The safety panel below is
+            full width on purpose — it is the point of the card. */}
+        <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:gap-5 sm:text-left">
+          <div className="relative shrink-0">
             <HerbImage
               name={herb.name}
               imageUrl={herb.image_url}
-              className="size-24 rounded-xl shadow-sm sm:size-28 object-cover"
+              className="size-20 rounded-lg sm:size-24"
             />
             <button
               onClick={handleSave}
               className={cn(
-                "absolute -right-2 -top-2 flex size-8 items-center justify-center rounded-full shadow-md transition-transform hover:scale-110",
+                "absolute -right-2 -top-2 flex size-8 items-center justify-center rounded-full shadow-md ring-2 ring-card transition-transform hover:scale-110",
                 saved
                   ? "bg-rose-500 text-white"
                   : "bg-background text-muted-foreground hover:text-rose-500"
@@ -148,147 +155,69 @@ export function HerbHeroV2({
               <Heart className={cn("size-4", saved && "fill-white")} />
             </button>
           </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+              {herb.herb_categories?.name && (
+                <Badge variant="secondary" className="text-xs">
+                  {herb.herb_categories.name}
+                </Badge>
+              )}
+              <EvidenceGrade
+                level={
+                  herb.evidence_level &&
+                  ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
+                    ? (herb.evidence_level as "A" | "B" | "C" | "D" | "trad")
+                    : "trad"
+                }
+              />
+              <ProvenanceBadge provenance={badgeProvenance} />
+            </div>
+
+            <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {herb.name}
+            </h1>
+            <p className="mt-1 text-sm italic text-muted-foreground">
+              {herb.scientific_name}
+            </p>
+          </div>
         </div>
 
-        <div className="flex-1 text-center sm:text-left">
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            {herb.herb_categories?.name && (
-              <Badge variant="secondary" className="text-xs">
-                {herb.herb_categories.name}
-              </Badge>
-            )}
-            <EvidenceGrade
-              level={
-                herb.evidence_level &&
-                ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
-                  ? (herb.evidence_level as "A" | "B" | "C" | "D" | "trad")
-                  : "trad"
-              }
-            />
-            <ProvenanceBadge provenance={badgeProvenance} />
-          </div>
+        {/* One efficacy signal only: the category badge above already says
+            what this herb is for. The old "Anti-inflammatory remedy" chip
+            repeated it a second time and diluted the evidence chip. */}
+        <SafetyGlance
+          pregnancySafe={pregnancySafe}
+          nursingSafe={nursingSafe}
+          pregnancySafeOral={pregnancySafeOral}
+          pregnancySafeTopical={pregnancySafeTopical}
+          nursingSafeOral={nursingSafeOral}
+          nursingSafeTopical={nursingSafeTopical}
+          contraindications={herb.contraindications}
+          interactions={interactions}
+          href={safetyHref}
+        />
 
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {herb.name}
-          </h1>
-          <p className="mt-1 text-sm italic text-muted-foreground">
-            {herb.scientific_name}
-          </p>
-
-          {firstBenefit && (
-            <div className="mt-2 inline-flex items-center rounded-full bg-primary/5 px-3 py-1 text-xs text-primary">
-              <Check className="mr-1 size-3" />
-              {firstBenefit}
-            </div>
-          )}
-
-          <div className="mt-3 flex flex-col gap-2">
-            {/* Pregnancy safety */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                {t("herbHero.pregnancy")}
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs">
-                {pregnancySafeOral === false &&
-                pregnancySafeTopical === true ? (
-                  <>
-                    <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">
-                      {t("herbHero.unsafeOrally")}
-                    </span>
-                    <span className="text-muted-foreground">·</span>
-                    <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">
-                      {t("herbHero.safeTopically")}
-                    </span>
-                  </>
-                ) : pregnancySafe ? (
-                  <>
-                    <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">
-                      {t("herbHero.generallySafe")}
-                    </span>
-                  </>
-                ) : pregnancySafe === false ? (
-                  <>
-                    <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">
-                      {t("herbHero.notSafe")}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <ShieldX className="size-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">
-                      {t("herbHero.unknown")}
-                    </span>
-                  </>
-                )}
-              </span>
-            </div>
-            {/* Nursing safety */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                {t("herbHero.nursing")}
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs">
-                {nursingSafeOral === false && nursingSafeTopical === true ? (
-                  <>
-                    <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">
-                      {t("herbHero.unsafeOrally")}
-                    </span>
-                    <span className="text-muted-foreground">·</span>
-                    <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">
-                      {t("herbHero.safeTopically")}
-                    </span>
-                  </>
-                ) : nursingSafe ? (
-                  <>
-                    <ShieldCheck className="size-3 text-green-600" />
-                    <span className="text-green-600">
-                      {t("herbHero.generallySafe")}
-                    </span>
-                  </>
-                ) : nursingSafe === false ? (
-                  <>
-                    <ShieldX className="size-3 text-destructive" />
-                    <span className="text-destructive">
-                      {t("herbHero.notSafe")}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <ShieldX className="size-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">
-                      {t("herbHero.unknown")}
-                    </span>
-                  </>
-                )}
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            <Button
-              size="sm"
-              render={<Link href={`/herbalist?herb=${herb.slug}`} />}
-              className="rounded-full"
-            >
-              <MessageCircle className="mr-1 size-3" />
-              {t("herbDetail.askHerbalist")}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              render={<Link href={`/calculator?herb=${herb.slug}`} />}
-              className="rounded-full"
-            >
-              <Calculator className="mr-1 size-3" />
-              {t("herbDetail.calculateDose")}
-            </Button>
-          </div>
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+          <Button
+            size="sm"
+            render={<Link href={`/herbalist?herb=${herb.slug}`} />}
+            className="rounded-full"
+          >
+            <MessageCircle className="mr-1 size-3" aria-hidden="true" />
+            {t("herbDetail.askHerbalist")}
+          </Button>
+          {/* Demoted on purpose: still a real button, but it now comes after
+              the safety summary instead of being the first thing offered. */}
+          <Button
+            size="sm"
+            variant="outline"
+            render={<Link href={`/calculator?herb=${herb.slug}`} />}
+            className="rounded-full"
+          >
+            <Calculator className="mr-1 size-3" aria-hidden="true" />
+            {t("herbDetail.calculateDose")}
+          </Button>
         </div>
       </div>
     </div>

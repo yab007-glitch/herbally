@@ -12,6 +12,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
 import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
+import { ChipLegend } from "@/components/herbs/chip-legend";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
@@ -613,7 +614,17 @@ export default async function HerbDetailPage({ params }: Props) {
         provenance={herb.provenance as Record<string, unknown> | null}
         pubmedSheetStatus={pubmedSheet?.content ? pubmedSheet.status : null}
         isManualMonograph={isManualMonograph}
+        interactions={interactions.map((i) => ({
+          drug_name: i.drug_name,
+          severity: i.severity,
+        }))}
+        safetyHref="#safety"
       />
+
+      {/* The hero's chips read "Evidence: A" next to "Not human-reviewed";
+          they measure different things. This is the explanation, collapsed so
+          it costs one line on a page where safety leads. */}
+      <ChipLegend className="-mt-4" />
 
       {/* Personalized interaction warning (H1). Client component so the ISR
           page stays static for anonymous traffic; signed-in users get a
@@ -673,11 +684,14 @@ export default async function HerbDetailPage({ params }: Props) {
             <GovSourcedBanner />
           )}
           {interactions.length > 0 && (
-            <HerbSafetyPanel
-              herb={herb}
-              interactions={interactions}
-              severityCounts={severityCounts}
-            />
+            /* Anchor for the hero's "See the full list" link. */
+            <div id="safety" className="scroll-mt-24">
+              <HerbSafetyPanel
+                herb={herb}
+                interactions={interactions}
+                severityCounts={severityCounts}
+              />
+            </div>
           )}
         </>
       )}
@@ -746,7 +760,10 @@ export default async function HerbDetailPage({ params }: Props) {
               {t("herbDetail.calculatorCtaBody")}
             </p>
           </div>
-          <Button render={<Link href={`/calculator?herb=${slug}`} />}>
+          <Button
+            variant="outline"
+            render={<Link href={`/calculator?herb=${slug}`} />}
+          >
             {t("herbDetail.calculateDose")}
           </Button>
         </div>
