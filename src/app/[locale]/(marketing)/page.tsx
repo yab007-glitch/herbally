@@ -5,12 +5,7 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { HomeSearchClient } from "./home-search-client";
 import { HeroVisual } from "./hero-visual";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
-import {
-  BookOpen,
-  Calculator,
-  ShieldAlert,
-  MessageCircle,
-} from "lucide-react";
+import { BookOpen, Calculator, ShieldAlert, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
 // M10 (audit 2026-06-22): the homepage previously had no generateMetadata, so
