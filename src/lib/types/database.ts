@@ -767,6 +767,14 @@ export type Database = {
           id: string;
           locale: string | null;
           subscribed: boolean | null;
+          status: string;
+          consent_text: string | null;
+          confirm_token: string;
+          unsubscribe_token: string;
+          consented_at: string;
+          unsubscribed_at: string | null;
+          last_sent_at: string | null;
+          source_path: string | null;
         };
         Insert: {
           confirmed_at?: string | null;
@@ -775,6 +783,14 @@ export type Database = {
           id?: string;
           locale?: string | null;
           subscribed?: boolean | null;
+          status?: string;
+          consent_text?: string | null;
+          confirm_token?: string;
+          unsubscribe_token?: string;
+          consented_at?: string;
+          unsubscribed_at?: string | null;
+          last_sent_at?: string | null;
+          source_path?: string | null;
         };
         Update: {
           confirmed_at?: string | null;
@@ -783,6 +799,14 @@ export type Database = {
           id?: string;
           locale?: string | null;
           subscribed?: boolean | null;
+          status?: string;
+          consent_text?: string | null;
+          confirm_token?: string;
+          unsubscribe_token?: string;
+          consented_at?: string;
+          unsubscribed_at?: string | null;
+          last_sent_at?: string | null;
+          source_path?: string | null;
         };
         Relationships: [];
       };
