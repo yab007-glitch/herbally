@@ -177,7 +177,9 @@ export function FloatingChatButton() {
         </div>
       )}
 
-      {/* Toggle button */}
+      {/* Toggle button. Hidden while the greeting bubble is up: the bubble has
+          its own "Start chat", and stacking both put a button on the primary
+          "Check interaction" CTA on a phone. */}
       <button
         onClick={() => {
           setOpen(!open);
@@ -186,6 +188,9 @@ export function FloatingChatButton() {
         }}
         className={cn(
           "fixed bottom-20 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition-all md:bottom-6",
+          // `hidden` here is a Tailwind class, not the HTML attribute: the
+          // utility's `display:flex` would beat the UA `[hidden]` rule.
+          teaser && !open && "hidden",
           open
             ? "bg-muted text-foreground rotate-90"
             : "bg-primary text-primary-foreground hover:scale-105 hover:shadow-xl"

@@ -65,7 +65,7 @@ export function UnifiedNavbar() {
     <>
       <LanguageAnnouncement />
       <FirstVisitBanner />
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-background">
         <div className="mx-auto flex h-12 max-w-5xl items-center justify-between px-4 sm:px-6">
           {/* Logo */}
           <Link
@@ -76,7 +76,7 @@ export function UnifiedNavbar() {
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Leaf className="size-3.5" />
             </div>
-            <span className="text-sm font-semibold text-foreground">
+            <span className="font-display text-[1.05rem] font-semibold tracking-tight text-foreground">
               Herb<span className="gradient-text">Ally</span>
             </span>
           </Link>

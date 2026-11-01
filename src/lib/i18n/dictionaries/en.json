@@ -85,11 +85,11 @@
     "calc": "Calc"
   },
   "home": {
-    "heroTitle": "Check herb-drug interactions",
+    "heroTitle": "Check herb‑drug interactions",
     "heroSubtitle": "Type any herb and medication to check the HerbAlly database first. If a pair isn't recorded, the Virtual Herbalist can explain more.",
     "heroButton": "Browse all herbs",
-    "herbPlaceholder": "Herb name (e.g. Turmeric, St. John's Wort)",
-    "medPlaceholder": "Medication (e.g. warfarin, sertraline)",
+    "herbPlaceholder": "Turmeric, St. John's Wort…",
+    "medPlaceholder": "warfarin, sertraline…",
     "checkButton": "Check interaction",
     "suggestionsTitle": "Common checks",
     "suggestion1": "St. John's Wort + antidepressants",
@@ -125,7 +125,10 @@
     "explainerTitle": "Your trusted guide to medicinal herbs",
     "explainerBody": "HerbAlly is a free medicinal-herb database with 2,700+ herbs. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
     "explainerNote": "Educational purposes only. Not medical advice. Always confirm with your doctor or pharmacist before combining a herb with a medication.",
-    "popularTitle": "Popular herbs"
+    "popularTitle": "Popular herbs",
+    "herbLabel": "Herb",
+    "medLabel": "Medication",
+    "eyebrow": "A reference for what you take together"
   },
   "embed": {
     "title": "Check an herb + drug combo",

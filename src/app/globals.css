@@ -9,6 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -33,64 +34,116 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 }
 
-/* ─── Light Theme — calm, minimal ─────────────────────────────────── */
+/*
+ * ─── Palette: Editorial Herbarium ─────────────────────────────────
+ *
+ * Paper and ink, one botanical green for action, one dried-clay for
+ * caution. The palette is deliberately warm and low-chroma: this should
+ * read as a reference book you can trust, not a dashboard.
+ *
+ * Contrast, measured against --background:
+ *   foreground 0.245 on 0.973  ≈ 15:1
+ *   muted-fg   0.470 on 0.973  ≈  7:1
+ *   primary    0.420 + paper   ≈  8:1
+ */
 :root {
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.18 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0 0);
-  --primary: oklch(0.5 0.16 145);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.25 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.94 0.02 145);
-  --accent-foreground: oklch(0.22 0.05 145);
-  --destructive: oklch(0.5 0.18 20);
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.92 0 0);
-  --ring: oklch(0.5 0.16 145);
-  --radius: 0.625rem;
+  --background: oklch(0.973 0.011 85); /* warm paper stock */
+  --foreground: oklch(0.245 0.014 60); /* ink */
+  --card: oklch(0.988 0.008 85);
+  --card-foreground: oklch(0.245 0.014 60);
+  --popover: oklch(0.988 0.008 85);
+  --popover-foreground: oklch(0.245 0.014 60);
+  --primary: oklch(0.42 0.075 150); /* pressed botanical green */
+  --primary-foreground: oklch(0.985 0.008 85);
+  --secondary: oklch(0.945 0.014 85);
+  --secondary-foreground: oklch(0.3 0.02 60);
+  --muted: oklch(0.945 0.012 85);
+  --muted-foreground: oklch(0.47 0.015 70);
+  --accent: oklch(0.935 0.022 75); /* dried herb wash */
+  --accent-foreground: oklch(0.32 0.03 60);
+  --destructive: oklch(0.5 0.15 30); /* terracotta, never crimson */
+  --border: oklch(0.885 0.014 80);
+  --input: oklch(0.885 0.014 80);
+  --ring: oklch(0.42 0.075 150);
+
+  /* Print, not SaaS: 4px reads as a rule on paper; 10px reads as a
+     floating card. */
+  --radius: 0.25rem;
 }
 
-/* ─── Dark Theme — calm, minimal ──────────────────────────────────── */
+/*
+ * ─── Dark theme: night herbarium ───────────────────────────────────
+ *
+ * Warm ink rather than neutral black — a lampshade, not a void. The green
+ * lifts to sage so it stays legible without glowing.
+ */
 .dark {
-  --background: oklch(0.13 0 0);
-  --foreground: oklch(0.94 0 0);
-  --card: oklch(0.16 0 0);
-  --card-foreground: oklch(0.94 0 0);
-  --popover: oklch(0.16 0 0);
-  --popover-foreground: oklch(0.94 0 0);
-  --primary: oklch(0.65 0.14 145);
-  --primary-foreground: oklch(0.13 0 0);
-  --secondary: oklch(0.2 0 0);
-  --secondary-foreground: oklch(0.94 0 0);
-  --muted: oklch(0.2 0 0);
-  --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.22 0.02 145);
-  --accent-foreground: oklch(0.9 0 0);
-  --destructive: oklch(0.55 0.18 20);
-  --border: oklch(0.25 0 0);
-  --input: oklch(0.25 0 0);
-  --ring: oklch(0.65 0.14 145);
+  --background: oklch(0.185 0.012 60);
+  --foreground: oklch(0.93 0.012 85);
+  --card: oklch(0.215 0.012 60);
+  --card-foreground: oklch(0.93 0.012 85);
+  --popover: oklch(0.215 0.012 60);
+  --popover-foreground: oklch(0.93 0.012 85);
+  --primary: oklch(0.72 0.08 148);
+  --primary-foreground: oklch(0.17 0.012 60);
+  --secondary: oklch(0.255 0.012 60);
+  --secondary-foreground: oklch(0.92 0.012 85);
+  --muted: oklch(0.255 0.012 60);
+  --muted-foreground: oklch(0.7 0.013 80);
+  --accent: oklch(0.28 0.015 70);
+  --accent-foreground: oklch(0.9 0.015 85);
+  --destructive: oklch(0.62 0.14 30);
+  --border: oklch(0.31 0.012 60);
+  --input: oklch(0.31 0.012 60);
+  --ring: oklch(0.72 0.08 148);
 }
 
 /* ─── Base Elements ───────────────────────────────────────────────── */
 body {
   font-family: var(--font-sans);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Headings are set in the display serif. This is the load-bearing decision
+ * of the reskin: it is what makes these pages read as a printed herbal
+ * rather than an app with rounded corners.
+ *
+ * Sizes are left to the components; only the face, weight and tracking
+ * change, so nothing reflows unexpectedly.
+ */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+}
+
+/* Editorial utility: the small label that sits above a heading. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* A hairline rule, as on a specimen sheet. */
+.rule {
+  height: 1px;
+  background: var(--border);
 }
 
 /* ─── Gradient text (logo only) ──────────────────────────────────── */
 .gradient-text {
   background: linear-gradient(
     135deg,
-    oklch(0.5 0.16 145),
-    oklch(0.55 0.12 180)
+    oklch(0.42 0.075 150),
+    oklch(0.46 0.05 175)
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -98,7 +151,11 @@ body {
 }
 
 .dark .gradient-text {
-  background: linear-gradient(135deg, oklch(0.7 0.14 145), oklch(0.7 0.12 180));
+  background: linear-gradient(
+    135deg,
+    oklch(0.76 0.08 148),
+    oklch(0.74 0.05 175)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { ShieldCheck, Sparkles, MessageCircle } from "lucide-react";
 
 type Labels = {
+  herbLabel: string;
+  medLabel: string;
   herbPlaceholder: string;
   medPlaceholder: string;
   checkButton: string;
@@ -266,10 +268,14 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
 
   return (
     <div className="w-full">
-      <div className="w-full max-w-lg text-center">
-        <div className="mt-8 space-y-3">
-          <div className="relative">
+      <div className="w-full text-center lg:text-left">
+        <div className="mt-6 space-y-3 lg:mt-0">
+          <div className="relative text-left">
+            <label htmlFor="home-herb" className="eyebrow mb-1.5 block">
+              {labels.herbLabel}
+            </label>
             <input
+              id="home-herb"
               ref={herbRef}
               type="text"
               value={herbInput}
@@ -280,7 +286,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
               onKeyDown={handleKeyDown}
               onFocus={() => herbInput.length >= 2 && setShowHerbResults(true)}
               placeholder={labels.herbPlaceholder}
-              className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+              className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
               autoComplete="off"
             />
             {showHerbResults && herbResults.length > 0 && (
@@ -311,30 +317,30 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             )}
           </div>
 
-          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-            <span className="block h-px flex-1 bg-border" />
-            <span className="px-2">+</span>
-            <span className="block h-px flex-1 bg-border" />
+          <div className="relative text-left">
+            <label htmlFor="home-med" className="eyebrow mb-1.5 block">
+              {labels.medLabel}
+            </label>
+            <input
+              id="home-med"
+              ref={medRef}
+              type="text"
+              value={medInput}
+              onChange={(e) => {
+                setMedInput(e.target.value);
+                setCheckError(null);
+              }}
+              onKeyDown={(e) => e.key === "Enter" && void handleCheck()}
+              placeholder={labels.medPlaceholder}
+              className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+            />
           </div>
-
-          <input
-            ref={medRef}
-            type="text"
-            value={medInput}
-            onChange={(e) => {
-              setMedInput(e.target.value);
-              setCheckError(null);
-            }}
-            onKeyDown={(e) => e.key === "Enter" && void handleCheck()}
-            placeholder={labels.medPlaceholder}
-            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
-          />
 
           <Button
             onClick={() => void handleCheck()}
             disabled={checking}
             aria-busy={checking}
-            className="w-full rounded-xl py-3 text-sm font-medium"
+            className="w-full rounded-md py-3 text-sm font-medium"
             size="lg"
           >
             <ShieldCheck className="size-4" />
@@ -469,9 +475,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
         </div>
 
         <div className="mt-8">
-          <p className="mb-3 text-xs font-medium text-muted-foreground">
-            {labels.suggestionsTitle}
-          </p>
+          <p className="eyebrow mb-3">{labels.suggestionsTitle}</p>
           <div className="flex flex-wrap justify-center gap-2">
             {SUGGESTIONS.map((s, i) => (
               <button
@@ -482,7 +486,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                   setMedInput(s.med);
                   void handleCheck(s.herb, s.med);
                 }}
-                className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors disabled:opacity-50"
+                className="rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-primary hover:bg-accent disabled:opacity-50"
               >
                 {labels[`suggestion${i + 1}` as keyof Labels] || s.query}
               </button>
