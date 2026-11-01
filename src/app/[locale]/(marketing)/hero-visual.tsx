@@ -18,10 +18,13 @@ import Image from "next/image";
  */
 export function HeroVisual() {
   return (
-    <section className="mx-auto w-full max-w-3xl px-4 pt-8 sm:px-6">
+    <section className="mx-auto w-full max-w-5xl px-4 pt-10 sm:px-6">
+      {/* A plate on the page, not a floating card: square corners, a hairline
+          rule and a paper matte, so it sits inside the editorial grid instead
+          of hovering above it. */}
       <div
         aria-hidden="true"
-        className="relative overflow-hidden rounded-3xl border bg-muted"
+        className="relative overflow-hidden rounded-sm border border-border bg-accent p-1.5 sm:p-2"
       >
         <div className="hero-kenburns">
           <Image
@@ -30,7 +33,7 @@ export function HeroVisual() {
             width={1280}
             height={720}
             sizes="(max-width: 768px) 100vw, 768px"
-            className="aspect-video w-full object-cover"
+            className="aspect-[16/9] w-full rounded-[1px] object-cover"
           />
         </div>
       </div>
