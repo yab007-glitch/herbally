@@ -1244,7 +1244,9 @@
       "severe": "{count, plural, one {# severe} other {# severe}}",
       "moderate": "{count, plural, one {# moderate} other {# moderate}}",
       "mild": "{count, plural, one {# mild} other {# mild}}"
-    }
+    },
+    "orally": "Orally",
+    "topically": "Topically"
   },
   "chipLegend": {
     "title": "How to read the evidence and review labels",

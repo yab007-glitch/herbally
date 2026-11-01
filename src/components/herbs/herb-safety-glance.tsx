@@ -28,6 +28,15 @@ export interface GlanceInteraction {
 interface SafetyGlanceProps {
   pregnancySafe: boolean | null;
   nursingSafe: boolean | null;
+  /**
+   * Route-specific flags. When oral and topical disagree, the single verdict
+   * is misleading — "unsafe orally, fine on the skin" is the clinically useful
+   * sentence, so it is printed underneath instead of a bare "unsafe".
+   */
+  pregnancySafeOral?: boolean | null;
+  pregnancySafeTopical?: boolean | null;
+  nursingSafeOral?: boolean | null;
+  nursingSafeTopical?: boolean | null;
   contraindications?: string[] | null;
   interactions: GlanceInteraction[];
   /** Anchor of the full interaction list (a tab or an inline section). */
@@ -51,6 +60,32 @@ const severityTone: Record<GlanceSeverity, string> = {
   mild: "border-border bg-muted text-foreground",
 };
 
+/** "Orally: unsafe · Topically: safe", only when the routes actually differ. */
+function RouteSplit({
+  oral,
+  topical,
+  orallyLabel,
+  topicallyLabel,
+  safeLabel,
+  unsafeLabel,
+}: {
+  oral: boolean | null;
+  topical: boolean | null;
+  orallyLabel: string;
+  topicallyLabel: string;
+  safeLabel: string;
+  unsafeLabel: string;
+}) {
+  if (oral === null || topical === null || oral === topical) return null;
+  return (
+    <span className="mt-0.5 block text-[11px] text-muted-foreground">
+      {orallyLabel}: {oral ? safeLabel : unsafeLabel}
+      {" \u00b7 "}
+      {topicallyLabel}: {topical ? safeLabel : unsafeLabel}
+    </span>
+  );
+}
+
 function Verdict({ value, label }: { value: boolean | null; label: string }) {
   const Icon =
     value === true ? ShieldCheck : value === false ? ShieldX : CircleHelp;
@@ -72,6 +107,10 @@ function Verdict({ value, label }: { value: boolean | null; label: string }) {
 export function SafetyGlance({
   pregnancySafe,
   nursingSafe,
+  pregnancySafeOral = null,
+  pregnancySafeTopical = null,
+  nursingSafeOral = null,
+  nursingSafeTopical = null,
   contraindications,
   interactions,
   href = "#safety",
@@ -123,6 +162,14 @@ export function SafetyGlance({
                     : t("unknown")
               }
             />
+            <RouteSplit
+              oral={pregnancySafeOral}
+              topical={pregnancySafeTopical}
+              orallyLabel={t("orally")}
+              topicallyLabel={t("topically")}
+              safeLabel={t("safe")}
+              unsafeLabel={t("unsafe")}
+            />
           </dd>
         </div>
 
@@ -140,6 +187,14 @@ export function SafetyGlance({
                     ? t("unsafe")
                     : t("unknown")
               }
+            />
+            <RouteSplit
+              oral={nursingSafeOral}
+              topical={nursingSafeTopical}
+              orallyLabel={t("orally")}
+              topicallyLabel={t("topically")}
+              safeLabel={t("safe")}
+              unsafeLabel={t("unsafe")}
             />
           </dd>
         </div>

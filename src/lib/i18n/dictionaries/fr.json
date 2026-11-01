@@ -1244,7 +1244,9 @@
       "severe": "{count, plural, one {# sévère} other {# sévères}}",
       "moderate": "{count, plural, one {# modérée} other {# modérées}}",
       "mild": "{count, plural, one {# légère} other {# légères}}"
-    }
+    },
+    "orally": "Par voie orale",
+    "topically": "En usage local"
   },
   "chipLegend": {
     "title": "Comment lire les étiquettes de preuve et de révision",

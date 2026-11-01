@@ -115,6 +115,19 @@ export function HerbHeroV2({
   // advice.
   const pregnancySafe = verified ? herb.pregnancy_safe : null;
   const nursingSafe = verified ? herb.nursing_safe : null;
+  // Route of administration matters: an essential oil can be unsafe to swallow
+  // and fine on the skin. Dropping these four flags lost that distinction, so
+  // they are passed through to the safety panel.
+  const pregnancySafeOral = verified
+    ? (herb.pregnancy_safe_oral ?? null)
+    : null;
+  const pregnancySafeTopical = verified
+    ? (herb.pregnancy_safe_topical ?? null)
+    : null;
+  const nursingSafeOral = verified ? (herb.nursing_safe_oral ?? null) : null;
+  const nursingSafeTopical = verified
+    ? (herb.nursing_safe_topical ?? null)
+    : null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl border bg-card">
@@ -176,6 +189,10 @@ export function HerbHeroV2({
         <SafetyGlance
           pregnancySafe={pregnancySafe}
           nursingSafe={nursingSafe}
+          pregnancySafeOral={pregnancySafeOral}
+          pregnancySafeTopical={pregnancySafeTopical}
+          nursingSafeOral={nursingSafeOral}
+          nursingSafeTopical={nursingSafeTopical}
           contraindications={herb.contraindications}
           interactions={interactions}
           href={safetyHref}
