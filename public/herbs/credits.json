@@ -1,122 +1,122 @@
 {
- "turmeric": {
-  "scientific_name": "Curcuma longa",
-  "src": "/herbs/turmeric.jpg",
-  "bytes": 403539,
-  "commons_file": "File:Curcuma longa, Nativeplants Botanical Garden.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Curcuma_longa,_Nativeplants_Botanical_Garden.jpg",
-  "licence": "CC BY-SA 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "artist": "Nativeplants garden"
- },
- "ginger": {
-  "scientific_name": "Zingiber officinale",
-  "src": "/herbs/ginger.jpg",
-  "bytes": 510657,
-  "commons_file": "File:Ingwer (Zingiber officinale) Anbau Pflanze-1-Josef Schlaghecken.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Ingwer_(Zingiber_officinale)_Anbau_Pflanze-1-Josef_Schlaghecken.jpg",
-  "licence": "CC BY-SA 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "artist": "Schlaghecken Josef"
- },
- "garlic": {
-  "scientific_name": "Allium sativum",
-  "src": "/herbs/garlic.jpg",
-  "bytes": 90630,
-  "commons_file": "File:Allium sativum. Restra de allos de Oroso- Galiza.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Allium_sativum._Restra_de_allos_de_Oroso-_Galiza.jpg",
-  "licence": "CC BY-SA 3.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
-  "artist": "Luis Miguel Bugallo Sánchez (Lmbuga)"
- },
- "st-johns-wort": {
-  "scientific_name": "Hypericum perforatum",
-  "src": "/herbs/st-johns-wort.jpg",
-  "bytes": 243327,
-  "commons_file": "File:(MHNT) Hypericum perforatum flower and buttons.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:(MHNT)_Hypericum_perforatum_flower_and_buttons.jpg",
-  "licence": "CC BY-SA 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "artist": "Didier Descouens"
- },
- "chamomile": {
-  "scientific_name": "Matricaria chamomilla",
-  "src": "/herbs/chamomile.jpg",
-  "bytes": 381599,
-  "commons_file": "File:Camomille sauvage (Matricaria chamomilla), coquelicots (Papaver rhoeas) au bord d'un champ d'orge (Hordeum vulgare).jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Camomille_sauvage_(Matricaria_chamomilla),_coquelicots_(Papaver_rhoeas)_au_bord_d%27un_champ_d%27orge_(Hordeum_vulgare).jpg",
-  "licence": "CC BY-SA 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "artist": "JackyM59"
- },
- "ashwagandha": {
-  "scientific_name": "Withania somnifera",
-  "src": "/herbs/ashwagandha.jpg",
-  "bytes": 418936,
-  "commons_file": "File:Ashwagandha (Withania somnifera).jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Ashwagandha_(Withania_somnifera).jpg",
-  "licence": "CC BY 2.0",
-  "licence_url": "https://creativecommons.org/licenses/by/2.0",
-  "artist": "Cliff from I now live in Arlington, VA (Outside Washington DC), USA"
- },
- "ginkgo-biloba": {
-  "scientific_name": "Ginkgo biloba",
-  "src": "/herbs/ginkgo-biloba.jpg",
-  "bytes": 95795,
-  "commons_file": "File:Ginkgo biloba.004 - Ponferrada.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Ginkgo_biloba.004_-_Ponferrada.jpg",
-  "licence": "CC BY-SA 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "artist": "Fernando Losada Rodríguez"
- },
- "milk-thistle": {
-  "scientific_name": "Silybum marianum",
-  "src": "/herbs/milk-thistle.jpg",
-  "bytes": 221354,
-  "commons_file": "File:Mediterranean Milk Thistle 02.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Mediterranean_Milk_Thistle_02.jpg",
-  "licence": "CC BY-SA 3.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
-  "artist": "SuperJew"
- },
- "echinacea": {
-  "scientific_name": "Echinacea purpurea",
-  "src": "/herbs/echinacea.jpg",
-  "bytes": 128259,
-  "commons_file": "File:American lady on purple coneflower (74770).jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:American_lady_on_purple_coneflower_(74770).jpg",
-  "licence": "CC BY-SA 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "artist": "Rhododendrites"
- },
- "valerian": {
-  "scientific_name": "Valeriana officinalis",
-  "src": "/herbs/valerian.jpg",
-  "bytes": 102415,
-  "commons_file": "File:20220702 Araschnia levana 02.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:20220702_Araschnia_levana_02.jpg",
-  "licence": "CC BY 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by/4.0",
-  "artist": "Flocci Nivis"
- },
- "hawthorn": {
-  "scientific_name": "Crataegus monogyna",
-  "src": "/herbs/hawthorn.jpg",
-  "bytes": 184651,
-  "commons_file": "File:(MHNT) Crataegus monogyna - Fruits.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:(MHNT)_Crataegus_monogyna_-_Fruits.jpg",
-  "licence": "CC BY-SA 4.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "artist": "Didier Descouens"
- },
- "peppermint": {
-  "scientific_name": "Mentha x piperita",
-  "src": "/herbs/peppermint.jpg",
-  "bytes": 334292,
-  "commons_file": "File:Field of Mentha x piperita 03.jpg",
-  "commons_page": "https://commons.wikimedia.org/wiki/File:Field_of_Mentha_x_piperita_03.jpg",
-  "licence": "CC BY-SA 3.0",
-  "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
-  "artist": "Rillke"
- }
+  "turmeric": {
+    "scientific_name": "Curcuma longa",
+    "src": "/herbs/turmeric.jpg",
+    "bytes": 403539,
+    "commons_file": "File:Curcuma longa, Nativeplants Botanical Garden.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Curcuma_longa,_Nativeplants_Botanical_Garden.jpg",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "artist": "Nativeplants garden"
+  },
+  "ginger": {
+    "scientific_name": "Zingiber officinale",
+    "src": "/herbs/ginger.jpg",
+    "bytes": 510657,
+    "commons_file": "File:Ingwer (Zingiber officinale) Anbau Pflanze-1-Josef Schlaghecken.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Ingwer_(Zingiber_officinale)_Anbau_Pflanze-1-Josef_Schlaghecken.jpg",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "artist": "Schlaghecken Josef"
+  },
+  "garlic": {
+    "scientific_name": "Allium sativum",
+    "src": "/herbs/garlic.jpg",
+    "bytes": 90630,
+    "commons_file": "File:Allium sativum. Restra de allos de Oroso- Galiza.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Allium_sativum._Restra_de_allos_de_Oroso-_Galiza.jpg",
+    "licence": "CC BY-SA 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "artist": "Luis Miguel Bugallo Sánchez (Lmbuga)"
+  },
+  "st-johns-wort": {
+    "scientific_name": "Hypericum perforatum",
+    "src": "/herbs/st-johns-wort.jpg",
+    "bytes": 243327,
+    "commons_file": "File:(MHNT) Hypericum perforatum flower and buttons.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:(MHNT)_Hypericum_perforatum_flower_and_buttons.jpg",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "artist": "Didier Descouens"
+  },
+  "chamomile": {
+    "scientific_name": "Matricaria chamomilla",
+    "src": "/herbs/chamomile.jpg",
+    "bytes": 381599,
+    "commons_file": "File:Camomille sauvage (Matricaria chamomilla), coquelicots (Papaver rhoeas) au bord d'un champ d'orge (Hordeum vulgare).jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Camomille_sauvage_(Matricaria_chamomilla),_coquelicots_(Papaver_rhoeas)_au_bord_d%27un_champ_d%27orge_(Hordeum_vulgare).jpg",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "artist": "JackyM59"
+  },
+  "ashwagandha": {
+    "scientific_name": "Withania somnifera",
+    "src": "/herbs/ashwagandha.jpg",
+    "bytes": 418936,
+    "commons_file": "File:Ashwagandha (Withania somnifera).jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Ashwagandha_(Withania_somnifera).jpg",
+    "licence": "CC BY 2.0",
+    "licence_url": "https://creativecommons.org/licenses/by/2.0",
+    "artist": "Cliff from I now live in Arlington, VA (Outside Washington DC), USA"
+  },
+  "ginkgo-biloba": {
+    "scientific_name": "Ginkgo biloba",
+    "src": "/herbs/ginkgo-biloba.jpg",
+    "bytes": 95795,
+    "commons_file": "File:Ginkgo biloba.004 - Ponferrada.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Ginkgo_biloba.004_-_Ponferrada.jpg",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "artist": "Fernando Losada Rodríguez"
+  },
+  "milk-thistle": {
+    "scientific_name": "Silybum marianum",
+    "src": "/herbs/milk-thistle.jpg",
+    "bytes": 221354,
+    "commons_file": "File:Mediterranean Milk Thistle 02.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Mediterranean_Milk_Thistle_02.jpg",
+    "licence": "CC BY-SA 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "artist": "SuperJew"
+  },
+  "echinacea": {
+    "scientific_name": "Echinacea purpurea",
+    "src": "/herbs/echinacea.jpg",
+    "bytes": 128259,
+    "commons_file": "File:American lady on purple coneflower (74770).jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:American_lady_on_purple_coneflower_(74770).jpg",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "artist": "Rhododendrites"
+  },
+  "valerian": {
+    "scientific_name": "Valeriana officinalis",
+    "src": "/herbs/valerian.jpg",
+    "bytes": 102415,
+    "commons_file": "File:20220702 Araschnia levana 02.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:20220702_Araschnia_levana_02.jpg",
+    "licence": "CC BY 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by/4.0",
+    "artist": "Flocci Nivis"
+  },
+  "hawthorn": {
+    "scientific_name": "Crataegus monogyna",
+    "src": "/herbs/hawthorn.jpg",
+    "bytes": 184651,
+    "commons_file": "File:(MHNT) Crataegus monogyna - Fruits.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:(MHNT)_Crataegus_monogyna_-_Fruits.jpg",
+    "licence": "CC BY-SA 4.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "artist": "Didier Descouens"
+  },
+  "peppermint": {
+    "scientific_name": "Mentha x piperita",
+    "src": "/herbs/peppermint.jpg",
+    "bytes": 334292,
+    "commons_file": "File:Field of Mentha x piperita 03.jpg",
+    "commons_page": "https://commons.wikimedia.org/wiki/File:Field_of_Mentha_x_piperita_03.jpg",
+    "licence": "CC BY-SA 3.0",
+    "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+    "artist": "Rillke"
+  }
 }
