@@ -79,6 +79,18 @@ export interface MonographSampleItem {
   };
 }
 
+export interface BatchProgressEntry {
+  id: string;
+  slug: string;
+  name: string;
+  word_count_before: number;
+  word_count_after: number;
+  word_count_delta: number;
+  needs_source_flags: NeedsSourceFlags;
+  updated_in_db: boolean;
+  processed_at: string;
+}
+
 /* ─── Word count utility ─── */
 export function countWords(s: string | null | undefined): number {
   if (!s) return 0;
@@ -116,6 +128,87 @@ export function countHerbRecordWords(fields: Partial<ProposedFields>): number {
   }
 
   return total;
+}
+
+/* ─── Dosage forms enum normalizer ─── */
+export const VALID_DOSAGE_FORMS = [
+  "capsule",
+  "tablet",
+  "tincture",
+  "tea",
+  "powder",
+  "essential_oil",
+  "extract",
+  "topical",
+  "other",
+] as const;
+
+export function normalizeDosageForms(
+  rawForms: string[] | null | undefined,
+  existingForms: string[] | null | undefined
+): string[] {
+  const validSet = new Set(VALID_DOSAGE_FORMS as unknown as string[]);
+  const result = new Set<string>();
+
+  if (Array.isArray(rawForms)) {
+    for (const item of rawForms) {
+      const lower = item.toLowerCase().trim();
+      if (validSet.has(lower)) {
+        result.add(lower);
+      } else if (lower.includes("capsule")) {
+        result.add("capsule");
+      } else if (lower.includes("tablet")) {
+        result.add("tablet");
+      } else if (
+        lower.includes("tincture") ||
+        lower.includes("liquid") ||
+        lower.includes("syrup") ||
+        lower.includes("fluid")
+      ) {
+        result.add("tincture");
+      } else if (
+        lower.includes("tea") ||
+        lower.includes("infusion") ||
+        lower.includes("decoction")
+      ) {
+        result.add("tea");
+      } else if (lower.includes("powder")) {
+        result.add("powder");
+      } else if (
+        lower.includes("essential oil") ||
+        lower.includes("volatile oil") ||
+        lower.includes("oil")
+      ) {
+        result.add("essential_oil");
+      } else if (lower.includes("extract")) {
+        result.add("extract");
+      } else if (
+        lower.includes("topical") ||
+        lower.includes("cream") ||
+        lower.includes("salve") ||
+        lower.includes("ointment") ||
+        lower.includes("macerate")
+      ) {
+        result.add("topical");
+      } else {
+        result.add("other");
+      }
+    }
+  }
+
+  if (result.size === 0 && Array.isArray(existingForms)) {
+    for (const f of existingForms) {
+      if (validSet.has(f.toLowerCase().trim())) {
+        result.add(f.toLowerCase().trim());
+      }
+    }
+  }
+
+  if (result.size === 0) {
+    result.add("other");
+  }
+
+  return Array.from(result);
 }
 
 /* ─── Prompt v3 Builder ─── */
@@ -339,8 +432,17 @@ async function main() {
     `\n🌿 HerbAlly Monograph Deepening Pipeline (Prompt ${PROMPT_VERSION})`
   );
 
+  const args = process.argv.slice(2);
+  const isBatch = args.includes("--all") || args.includes("--batch");
+  const writeDb = args.includes("--write-db");
+  const resume = !args.includes("--no-resume");
+  const limitArg = args.find((a) => a.startsWith("--limit="));
+  const limit = limitArg ? parseInt(limitArg.split("=")[1], 10) : 0;
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
   if (!supabaseUrl || !supabaseKey) {
     console.error("Missing Supabase credentials in environment");
@@ -364,45 +466,269 @@ async function main() {
   }
   console.log("   ✅ Target set count confirmed: exactly 254.");
 
-  // 2. Sample Selection (5 herbs)
-  // Note: 'ginkgo-biloba' and 'milk-thistle' in the database have citations: [] (0 citations),
-  // so per task specification ('all in the target set; adjust only if one is not'),
-  // they are adjusted to verified primary-source herbs with citations: 'ginger' and 'rhodiola'.
-  console.log(
-    "\n2. Phase 1 sample selection (turmeric, ashwagandha, st-johns-wort, plus ginger & rhodiola)..."
-  );
-  const sampleSlugs = [
-    { slug: "turmeric", adjustedFrom: undefined },
-    { slug: "ashwagandha", adjustedFrom: undefined },
-    { slug: "st-johns-wort", adjustedFrom: undefined },
-    { slug: "ginger", adjustedFrom: "ginkgo (citations: 0 in DB)" },
-    { slug: "rhodiola", adjustedFrom: "milk-thistle (citations: 0 in DB)" },
-  ];
+  if (!isBatch) {
+    // 2. Sample Selection (5 herbs)
+    // Note: 'ginkgo-biloba' and 'milk-thistle' in the database have citations: [] (0 citations),
+    // so per task specification ('all in the target set; adjust only if one is not'),
+    // they are adjusted to verified primary-source herbs with citations: 'ginger' and 'rhodiola'.
+    console.log(
+      "\n2. Phase 1 sample selection (turmeric, ashwagandha, st-johns-wort, plus ginger & rhodiola)..."
+    );
+    const sampleSlugs = [
+      { slug: "turmeric", adjustedFrom: undefined },
+      { slug: "ashwagandha", adjustedFrom: undefined },
+      { slug: "st-johns-wort", adjustedFrom: undefined },
+      { slug: "ginger", adjustedFrom: "ginkgo (citations: 0 in DB)" },
+      { slug: "rhodiola", adjustedFrom: "milk-thistle (citations: 0 in DB)" },
+    ];
 
-  const sampleHerbs: Array<{ herb: HerbRecord; adjustedFrom?: string }> = [];
-  for (const { slug, adjustedFrom } of sampleSlugs) {
-    const found = targetHerbs.find((h) => h.slug === slug);
-    if (!found) {
-      console.error(`Herb slug ${slug} not found in target set!`);
-      process.exit(1);
+    const sampleHerbs: Array<{ herb: HerbRecord; adjustedFrom?: string }> = [];
+    for (const { slug, adjustedFrom } of sampleSlugs) {
+      const found = targetHerbs.find((h) => h.slug === slug);
+      if (!found) {
+        console.error(`Herb slug ${slug} not found in target set!`);
+        process.exit(1);
+      }
+      sampleHerbs.push({ herb: found, adjustedFrom });
     }
-    sampleHerbs.push({ herb: found, adjustedFrom });
+
+    console.log(
+      `   Sample cohort: ${sampleHerbs.map((s) => s.herb.name).join(", ")}`
+    );
+
+    // 3. Run Prompt v3
+    console.log(
+      "\n3. Running Prompt v3 on the 5 herbs (generating review artifact)..."
+    );
+    const sampleResults: MonographSampleItem[] = [];
+    let totalNeedsSourceFlags = 0;
+
+    for (let i = 0; i < sampleHerbs.length; i++) {
+      const { herb, adjustedFrom } = sampleHerbs[i];
+      console.log(`   [${i + 1}/5] Deepening ${herb.name} (${herb.slug})...`);
+
+      const beforeFields: ProposedFields = {
+        description: herb.description || "",
+        active_compounds: herb.active_compounds || [],
+        traditional_uses: herb.traditional_uses || [],
+        modern_uses: herb.modern_uses || [],
+        dosage_forms: herb.dosage_forms || [],
+        preparation_notes: herb.preparation_notes || "",
+        symptom_keywords: herb.symptom_keywords || [],
+        dosage_adult: herb.dosage_adult,
+        contraindications: herb.contraindications || [],
+        side_effects: herb.side_effects || [],
+        citations: herb.citations,
+      };
+
+      const beforeWordCount = countHerbRecordWords(beforeFields);
+
+      const prompt = buildPromptV3(herb);
+      const rawResponse = await callModel(prompt);
+      const afterParsed = parseV3Response(rawResponse, herb);
+
+      const afterFields: ProposedFields = {
+        description: afterParsed.description,
+        active_compounds: afterParsed.active_compounds,
+        traditional_uses: afterParsed.traditional_uses,
+        modern_uses: afterParsed.modern_uses,
+        dosage_forms: afterParsed.dosage_forms,
+        preparation_notes: afterParsed.preparation_notes,
+        symptom_keywords: afterParsed.symptom_keywords,
+        dosage_adult: afterParsed.dosage_adult,
+        contraindications: afterParsed.contraindications,
+        side_effects: afterParsed.side_effects,
+        citations: herb.citations,
+      };
+
+      const afterWordCount = countHerbRecordWords(afterFields);
+      const delta = afterWordCount - beforeWordCount;
+
+      if (afterParsed.needs_source_flags.dosage_adult) totalNeedsSourceFlags++;
+      if (afterParsed.needs_source_flags.contraindications)
+        totalNeedsSourceFlags++;
+      if (afterParsed.needs_source_flags.side_effects) totalNeedsSourceFlags++;
+
+      let weakestField = {
+        field: "traditional_uses[0]",
+        value: afterFields.traditional_uses[0] || "",
+        critique:
+          "Ethnobotanical tradition summary without citing specific classical codex volume.",
+      };
+
+      if (herb.slug === "st-johns-wort") {
+        weakestField = {
+          field: "preparation_notes",
+          value: afterFields.preparation_notes,
+          critique:
+            "Accurately highlights hypericin photo-reactivity and standard hydroethanolic extracts, but omits hyperforin degradation half-life in aqueous preparations.",
+        };
+      } else if (herb.slug === "rhodiola") {
+        weakestField = {
+          field: "modern_uses (negative boundary)",
+          value:
+            afterFields.modern_uses.find((m) =>
+              m.toLowerCase().includes("not supported")
+            ) || afterFields.modern_uses[afterFields.modern_uses.length - 1],
+          critique:
+            "Correctly notes absence of clinical trial support for major disease indications, but could cite specific negative trial endpoints.",
+        };
+      } else if (herb.slug === "ginger") {
+        weakestField = {
+          field: "preparation_notes",
+          value: afterFields.preparation_notes,
+          critique:
+            "Covers culinary vs medicinal powder distinctions, but does not quantify shogaol formation kinetics during heat processing.",
+        };
+      }
+
+      sampleResults.push({
+        slug: herb.slug,
+        name: herb.name,
+        scientific_name: herb.scientific_name,
+        adjusted_from: adjustedFrom,
+        before: { ...beforeFields, word_count: beforeWordCount },
+        after: { ...afterFields, word_count: afterWordCount },
+        word_count_before: beforeWordCount,
+        word_count_after: afterWordCount,
+        word_count_delta: delta,
+        needs_source_flags: afterParsed.needs_source_flags,
+        weakest_field: weakestField,
+      });
+
+      console.log(
+        `       Before: ${beforeWordCount} words -> After: ${afterWordCount} words (+${delta})`
+      );
+    }
+
+    // 4. Save review artifact
+    const artifactPath = path.resolve(
+      __dirname,
+      "../artifacts/monograph-v3-sample.json"
+    );
+    const artifactData = {
+      meta: {
+        prompt_version: PROMPT_VERSION,
+        generated_at: new Date().toISOString(),
+        target_set_total: targetHerbs.length,
+        sample_count: sampleResults.length,
+        total_needs_source_flags: totalNeedsSourceFlags,
+      },
+      herbs: sampleResults,
+    };
+
+    fs.mkdirSync(path.dirname(artifactPath), { recursive: true });
+    fs.writeFileSync(artifactPath, JSON.stringify(artifactData, null, 2));
+    console.log(`\n💾 Review artifact saved: ${artifactPath}`);
+
+    // 5. Comparison Table
+    console.log(
+      "\n═══════════════════════════════════════════════════════════════════════════════════════"
+    );
+    console.log(
+      "                 PHASE 1 MONOGRAPH V3 SAMPLE — WORD COUNT COMPARISON                  "
+    );
+    console.log(
+      "═══════════════════════════════════════════════════════════════════════════════════════"
+    );
+    console.log(
+      "Herb                 | Scientific Name         | Before | After | Delta | needs_source flags"
+    );
+    console.log(
+      "---------------------+-------------------------+--------+-------+-------+-------------------"
+    );
+    for (const item of sampleResults) {
+      const herbCol = item.name.padEnd(21);
+      const sciCol = item.scientific_name.padEnd(24);
+      const bCol = String(item.word_count_before).padStart(6);
+      const aCol = String(item.word_count_after).padStart(5);
+      const dCol = `+${item.word_count_delta}`.padStart(5);
+      const flags = `[dosage: ${item.needs_source_flags.dosage_adult ? "Y" : "N"}, contra: ${item.needs_source_flags.contraindications ? "Y" : "N"}, side: ${item.needs_source_flags.side_effects ? "Y" : "N"}]`;
+      console.log(
+        `${herbCol}| ${sciCol}| ${bCol} | ${aCol} | ${dCol} | ${flags}`
+      );
+    }
+    console.log(
+      "═══════════════════════════════════════════════════════════════════════════════════════"
+    );
+    console.log(
+      `Total needs_source flags raised across 5 herbs: ${totalNeedsSourceFlags} / 15`
+    );
+    console.log(
+      "Database writes: 0 (dry-run review artifact only, database intact)\n"
+    );
+    return;
   }
 
+  // --- Phase 2: Batch Processing Mode (--all / --batch) ---
   console.log(
-    `   Sample cohort: ${sampleHerbs.map((s) => s.herb.name).join(", ")}`
+    `\n🚀 Running Batch Monograph Deepening (DB Write: ${writeDb ? "ENABLED ✅" : "DRY-RUN ❌"})`
   );
 
-  // 3. Run Prompt v3
-  console.log(
-    "\n3. Running Prompt v3 on the 5 herbs (generating review artifact)..."
+  const progressFilePath = path.resolve(
+    __dirname,
+    "../artifacts/monograph-batch-progress.json"
   );
-  const sampleResults: MonographSampleItem[] = [];
-  let totalNeedsSourceFlags = 0;
+  const completedMap = new Map<string, BatchProgressEntry>();
 
-  for (let i = 0; i < sampleHerbs.length; i++) {
-    const { herb, adjustedFrom } = sampleHerbs[i];
-    console.log(`   [${i + 1}/5] Deepening ${herb.name} (${herb.slug})...`);
+  if (resume && fs.existsSync(progressFilePath)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(progressFilePath, "utf8"));
+      if (Array.isArray(parsed.entries)) {
+        for (const entry of parsed.entries) {
+          completedMap.set(entry.slug, entry);
+        }
+        console.log(
+          `   ♻️ Resumed from progress file: ${completedMap.size} herbs already completed.`
+        );
+      }
+    } catch {
+      console.warn("   ⚠️ Could not read progress file, starting fresh.");
+    }
+  }
+
+  // Load 5-herb sample artifact if present to reuse pre-validated outputs
+  const sampleArtifactPath = path.resolve(
+    __dirname,
+    "../artifacts/monograph-v3-sample.json"
+  );
+  const sampleMap = new Map<string, MonographSampleItem>();
+  if (fs.existsSync(sampleArtifactPath)) {
+    try {
+      const sampleData = JSON.parse(
+        fs.readFileSync(sampleArtifactPath, "utf8")
+      );
+      if (Array.isArray(sampleData.herbs)) {
+        for (const item of sampleData.herbs) {
+          sampleMap.set(item.slug, item);
+        }
+        console.log(
+          `   📚 Loaded ${sampleMap.size} pre-validated monographs from Phase 1 sample artifact.`
+        );
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  const herbsToProcess = limit > 0 ? targetHerbs.slice(0, limit) : targetHerbs;
+  console.log(
+    `   Processing target list of ${herbsToProcess.length} herbs...\n`
+  );
+
+  let successCount = 0;
+  let skippedCount = 0;
+  let errorCount = 0;
+
+  for (let idx = 0; idx < herbsToProcess.length; idx++) {
+    const herb = herbsToProcess[idx];
+    const prefix = `[${idx + 1}/${herbsToProcess.length}] ${herb.name} (${herb.slug})`;
+
+    if (completedMap.has(herb.slug)) {
+      console.log(`   ${prefix} ✅ Already processed, skipping.`);
+      skippedCount++;
+      continue;
+    }
 
     const beforeFields: ProposedFields = {
       description: herb.description || "",
@@ -417,143 +743,139 @@ async function main() {
       side_effects: herb.side_effects || [],
       citations: herb.citations,
     };
-
     const beforeWordCount = countHerbRecordWords(beforeFields);
 
-    const prompt = buildPromptV3(herb);
-    const rawResponse = await callModel(prompt);
-    const afterParsed = parseV3Response(rawResponse, herb);
+    let afterFields: ProposedFields;
+    let needsSourceFlags: NeedsSourceFlags;
 
-    const afterFields: ProposedFields = {
-      description: afterParsed.description,
-      active_compounds: afterParsed.active_compounds,
-      traditional_uses: afterParsed.traditional_uses,
-      modern_uses: afterParsed.modern_uses,
-      dosage_forms: afterParsed.dosage_forms,
-      preparation_notes: afterParsed.preparation_notes,
-      symptom_keywords: afterParsed.symptom_keywords,
-      dosage_adult: afterParsed.dosage_adult,
-      contraindications: afterParsed.contraindications,
-      side_effects: afterParsed.side_effects,
-      citations: herb.citations,
-    };
+    // Check if we can reuse the sample cohort
+    if (sampleMap.has(herb.slug)) {
+      const pre = sampleMap.get(herb.slug)!;
+      afterFields = pre.after;
+      needsSourceFlags = pre.needs_source_flags;
+      console.log(`   ${prefix} ⚡ Using pre-validated Phase 1 output...`);
+    } else {
+      try {
+        const prompt = buildPromptV3(herb);
+        const raw = await callModel(prompt);
+        const parsed = parseV3Response(raw, herb);
+        afterFields = {
+          description: parsed.description,
+          active_compounds: parsed.active_compounds,
+          traditional_uses: parsed.traditional_uses,
+          modern_uses: parsed.modern_uses,
+          dosage_forms: parsed.dosage_forms,
+          preparation_notes: parsed.preparation_notes,
+          symptom_keywords: parsed.symptom_keywords,
+          dosage_adult: parsed.dosage_adult,
+          contraindications: parsed.contraindications,
+          side_effects: parsed.side_effects,
+          citations: herb.citations,
+        };
+        needsSourceFlags = parsed.needs_source_flags;
+      } catch (err) {
+        console.error(
+          `   ${prefix} ❌ Error generating monograph:`,
+          (err as Error).message
+        );
+        errorCount++;
+        continue;
+      }
+    }
 
     const afterWordCount = countHerbRecordWords(afterFields);
     const delta = afterWordCount - beforeWordCount;
 
-    if (afterParsed.needs_source_flags.dosage_adult) totalNeedsSourceFlags++;
-    if (afterParsed.needs_source_flags.contraindications)
-      totalNeedsSourceFlags++;
-    if (afterParsed.needs_source_flags.side_effects) totalNeedsSourceFlags++;
+    let dbUpdated = false;
+    if (writeDb) {
+      try {
+        const { error: updateErr } = await supabase
+          .from("herbs")
+          .update({
+            description: afterFields.description,
+            active_compounds: afterFields.active_compounds,
+            traditional_uses: afterFields.traditional_uses,
+            modern_uses: afterFields.modern_uses,
+            dosage_forms: normalizeDosageForms(
+              afterFields.dosage_forms,
+              herb.dosage_forms
+            ),
+            preparation_notes: afterFields.preparation_notes,
+            symptom_keywords: afterFields.symptom_keywords,
+            dosage_adult: afterFields.dosage_adult,
+            contraindications: afterFields.contraindications,
+            side_effects: afterFields.side_effects,
+            provenance: {
+              ...(herb.provenance || {}),
+              verification_method: "primary_source",
+              prompt_version: PROMPT_VERSION,
+              deepened_at: new Date().toISOString(),
+              model: process.env.OLLAMA_CLOUD_MODEL || "glm-5.3-flash:cloud",
+              needs_source: needsSourceFlags,
+            },
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", herb.id);
 
-    let weakestField = {
-      field: "traditional_uses[0]",
-      value: afterFields.traditional_uses[0] || "",
-      critique:
-        "Ethnobotanical tradition summary without citing specific classical codex volume.",
-    };
-
-    if (herb.slug === "st-johns-wort") {
-      weakestField = {
-        field: "preparation_notes",
-        value: afterFields.preparation_notes,
-        critique:
-          "Accurately highlights hypericin photo-reactivity and standard hydroethanolic extracts, but omits hyperforin degradation half-life in aqueous preparations.",
-      };
-    } else if (herb.slug === "rhodiola") {
-      weakestField = {
-        field: "modern_uses (negative boundary)",
-        value:
-          afterFields.modern_uses.find((m) =>
-            m.toLowerCase().includes("not supported")
-          ) || afterFields.modern_uses[afterFields.modern_uses.length - 1],
-        critique:
-          "Correctly notes absence of clinical trial support for major disease indications, but could cite specific negative trial endpoints.",
-      };
-    } else if (herb.slug === "ginger") {
-      weakestField = {
-        field: "preparation_notes",
-        value: afterFields.preparation_notes,
-        critique:
-          "Covers culinary vs medicinal powder distinctions, but does not quantify shogaol formation kinetics during heat processing.",
-      };
+        if (updateErr) {
+          console.error(
+            `   ${prefix} ❌ Supabase update error:`,
+            updateErr.message
+          );
+          errorCount++;
+          continue;
+        }
+        dbUpdated = true;
+      } catch (dbErr) {
+        console.error(
+          `   ${prefix} ❌ Supabase exception:`,
+          (dbErr as Error).message
+        );
+        errorCount++;
+        continue;
+      }
     }
 
-    sampleResults.push({
+    const progressEntry: BatchProgressEntry = {
+      id: herb.id,
       slug: herb.slug,
       name: herb.name,
-      scientific_name: herb.scientific_name,
-      adjusted_from: adjustedFrom,
-      before: { ...beforeFields, word_count: beforeWordCount },
-      after: { ...afterFields, word_count: afterWordCount },
       word_count_before: beforeWordCount,
       word_count_after: afterWordCount,
       word_count_delta: delta,
-      needs_source_flags: afterParsed.needs_source_flags,
-      weakest_field: weakestField,
-    });
+      needs_source_flags: needsSourceFlags,
+      updated_in_db: dbUpdated,
+      processed_at: new Date().toISOString(),
+    };
+
+    completedMap.set(herb.slug, progressEntry);
+    successCount++;
 
     console.log(
-      `       Before: ${beforeWordCount} words -> After: ${afterWordCount} words (+${delta})`
+      `   ${prefix} ${beforeWordCount}w -> ${afterWordCount}w (+${delta}) ${writeDb ? "-> DB updated ✅" : "(dry-run)"}`
     );
+
+    // Save checkpoint after every herb
+    const progressData = {
+      meta: {
+        prompt_version: PROMPT_VERSION,
+        total_targets: targetHerbs.length,
+        processed_count: completedMap.size,
+        write_db: writeDb,
+        last_updated: new Date().toISOString(),
+      },
+      entries: Array.from(completedMap.values()),
+    };
+    fs.writeFileSync(progressFilePath, JSON.stringify(progressData, null, 2));
+
+    // Cooperative yield to manage host governor pressure
+    await new Promise((r) => setTimeout(r, 150));
   }
 
-  // 4. Save review artifact
-  const artifactPath = path.resolve(
-    __dirname,
-    "../artifacts/monograph-v3-sample.json"
-  );
-  const artifactData = {
-    meta: {
-      prompt_version: PROMPT_VERSION,
-      generated_at: new Date().toISOString(),
-      target_set_total: targetHerbs.length,
-      sample_count: sampleResults.length,
-      total_needs_source_flags: totalNeedsSourceFlags,
-    },
-    herbs: sampleResults,
-  };
-
-  fs.mkdirSync(path.dirname(artifactPath), { recursive: true });
-  fs.writeFileSync(artifactPath, JSON.stringify(artifactData, null, 2));
-  console.log(`\n💾 Review artifact saved: ${artifactPath}`);
-
-  // 5. Comparison Table
   console.log(
-    "\n═══════════════════════════════════════════════════════════════════════════════════════"
+    `\n✅ Batch run complete: ${successCount} processed, ${skippedCount} skipped, ${errorCount} errors.`
   );
-  console.log(
-    "                 PHASE 1 MONOGRAPH V3 SAMPLE — WORD COUNT COMPARISON                  "
-  );
-  console.log(
-    "═══════════════════════════════════════════════════════════════════════════════════════"
-  );
-  console.log(
-    "Herb                 | Scientific Name         | Before | After | Delta | needs_source flags"
-  );
-  console.log(
-    "---------------------+-------------------------+--------+-------+-------+-------------------"
-  );
-  for (const item of sampleResults) {
-    const herbCol = item.name.padEnd(21);
-    const sciCol = item.scientific_name.padEnd(24);
-    const bCol = String(item.word_count_before).padStart(6);
-    const aCol = String(item.word_count_after).padStart(5);
-    const dCol = `+${item.word_count_delta}`.padStart(5);
-    const flags = `[dosage: ${item.needs_source_flags.dosage_adult ? "Y" : "N"}, contra: ${item.needs_source_flags.contraindications ? "Y" : "N"}, side: ${item.needs_source_flags.side_effects ? "Y" : "N"}]`;
-    console.log(
-      `${herbCol}| ${sciCol}| ${bCol} | ${aCol} | ${dCol} | ${flags}`
-    );
-  }
-  console.log(
-    "═══════════════════════════════════════════════════════════════════════════════════════"
-  );
-  console.log(
-    `Total needs_source flags raised across 5 herbs: ${totalNeedsSourceFlags} / 15`
-  );
-  console.log(
-    "Database writes: 0 (dry-run review artifact only, database intact)\n"
-  );
+  console.log(`   Progress file saved to: ${progressFilePath}`);
 }
 
 if (
