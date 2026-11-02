@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
-import Link from "next/link";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 export const generateMetadata = () =>
