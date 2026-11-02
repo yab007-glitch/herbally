@@ -101,6 +101,30 @@ const nextConfig: NextConfig = {
         destination: "/:locale/herbs/ginkgo-biloba",
         permanent: true,
       },
+      // The interaction hub has lived at /herb-drug-interactions since launch,
+      // but "interactions" is the shorter, more guessable URL — people and
+      // crawlers try it, and it 404'd. Same for the pair pattern written with
+      // the hub as its prefix.
+      {
+        source: "/interactions",
+        destination: "/herb-drug-interactions",
+        permanent: true,
+      },
+      {
+        source: "/:locale(en|fr)/interactions",
+        destination: "/:locale/herb-drug-interactions",
+        permanent: true,
+      },
+      {
+        source: "/herb-drug-interactions/:herb/:drug",
+        destination: "/interactions/:herb/:drug",
+        permanent: true,
+      },
+      {
+        source: "/:locale(en|fr)/herb-drug-interactions/:herb/:drug",
+        destination: "/:locale/interactions/:herb/:drug",
+        permanent: true,
+      },
     ];
   },
 };
