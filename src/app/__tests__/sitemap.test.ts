@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import sitemap from "../sitemap";
+import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
 
 const rangeMock = vi.fn();
 const fromMock = vi.fn();
@@ -13,19 +14,21 @@ vi.mock("@/lib/interactions/pairs", () => ({
   getInteractionPairs: () => getInteractionPairsMock(),
 }));
 
-// The route borrows these lists from the symptom/compare page modules. Those
-// pages pull in next-intl/server -> next/root-params, a compiler-only
-// placeholder that cannot be imported under Vitest. The sitemap only needs
-// the exported lists, so stub them.
-vi.mock("@/app/[locale]/(main)/symptoms/[symptom]/page", () => ({
-  SYMPTOM_SLUGS: ["anxiety"],
-}));
+// The route borrows the compare list from its page module, which pulls in
+// next-intl/server -> next/root-params, a compiler-only placeholder that cannot
+// be imported under Vitest. The sitemap only needs the exported list, so stub
+// it. Symptom slugs now come from src/lib/symptoms/symptom-meta, a plain
+// module, so they are imported for real.
 
 vi.mock("@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page", () => ({
   POPULAR_COMPARISONS: [{ slug1: "turmeric", slug2: "ginger" }],
 }));
 
 const BASE_URL = "https://herbally.test";
+
+// A hub whose keyword no fixture herb carries, so "listed only when populated"
+// can be asserted as a pair.
+const UNPOPULATED_HUB = SYMPTOM_SLUGS.find((slug) => slug !== "anxiety")!;
 
 describe("sitemap", () => {
   beforeEach(() => {
@@ -56,11 +59,13 @@ describe("sitemap", () => {
           slug: "ginger",
           updated_at: "2026-01-02T00:00:00.000Z",
           translations: { fr: { name: "Gingembre" } },
+          symptom_keywords: ["anxiety"],
         },
         {
           slug: "turmeric",
           updated_at: null,
           translations: null,
+          symptom_keywords: null,
         },
       ],
       error: null,
@@ -98,6 +103,11 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/interactions/ginger/warfarin`);
     expect(urls).toContain(`${BASE_URL}/fr/interactions/ginger/warfarin`);
 
+    // A hub is emitted only when a published herb carries its keyword.
+    expect(urls).toContain(`${BASE_URL}/symptoms/anxiety`);
+    expect(urls).toContain(`${BASE_URL}/fr/symptoms/anxiety`);
+    expect(urls).not.toContain(`${BASE_URL}/symptoms/${UNPOPULATED_HUB}`);
+
     // Static pages still lead, and herbs remain last (output order unchanged).
     expect(urls[0]).toBe(BASE_URL);
     expect(urls.slice(-3)).toEqual([
@@ -105,6 +115,21 @@ describe("sitemap", () => {
       `${BASE_URL}/fr/herbs/ginger`,
       `${BASE_URL}/herbs/turmeric`,
     ]);
+  });
+
+  it("stamps static pages with a build date, not a frozen one", async () => {
+    rangeMock.mockResolvedValue({ data: [], error: null });
+    getInteractionPairsMock.mockResolvedValue([]);
+
+    const result = await sitemap();
+    const home = result.find((entry) => entry.url === BASE_URL);
+
+    // This shipped 2026-06-22 as the lastmod for every static page for five
+    // months. Anything older than the last real content change is a lie.
+    expect(home?.lastModified).toBeInstanceOf(Date);
+    expect(new Date(home!.lastModified as Date).getTime()).toBeGreaterThan(
+      new Date("2026-11-01T00:00:00Z").getTime()
+    );
   });
 
   it("returns only static pages when a query never settles", async () => {
@@ -123,5 +148,9 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/herbs`);
     expect(urls).toContain(BASE_URL);
     expect(getInteractionPairsMock).not.toHaveBeenCalled();
+
+    // Fail open: with no herb rows to check against, every hub stays listed.
+    // Dropping real URLs from a sitemap is worse than listing a thin page.
+    expect(urls).toContain(`${BASE_URL}/symptoms/${UNPOPULATED_HUB}`);
   });
 });

@@ -1177,7 +1177,10 @@
     "title": "Page Not Found",
     "message": "The page you are looking for does not exist or may have been moved.",
     "goHome": "Go home",
-    "browseHerbs": "Browse herbs"
+    "browseHerbs": "Browse herbs",
+    "checkInteractions": "Check herb–drug interactions",
+    "browseSymptoms": "Browse herbs by symptom",
+    "askHerbalist": "Ask the virtual herbalist"
   },
   "evidence": {
     "prefix": "Evidence:",
@@ -1750,9 +1753,9 @@
   "herbMeta": {
     "title": "{name} ({scientific}): Benefits, Dosage, Safety & Evidence",
     "titleBinomial": "{scientific}: Benefits, Dosage, Safety & Evidence",
-    "descWithNames": "What is {name} in English ({common})? Uses for {uses}, dosage, pregnancy safety & drug interactions. Evidence-based guide with PubMed sources. Free dose calculator included.",
+    "descWithNames": "{name}, also called {common}: uses, dosage, pregnancy safety and drug interactions, with PubMed-cited evidence, safety ratings and a free dosage calculator.",
     "descFromBody": "{body} Uses, dosage, pregnancy safety & interactions. Free calculator included.",
-    "descFallback": "Learn about {name} ({scientific}): uses for {uses}, dosage, pregnancy safety, side effects & drug interactions. Free calculator included.",
+    "descFallback": "{name} ({scientific}): uses, dosage, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and a free dosage calculator.",
     "usesFallback": "traditional wellness"
   },
   "compareMeta": {

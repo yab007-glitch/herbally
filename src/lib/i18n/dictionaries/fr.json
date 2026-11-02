@@ -1177,7 +1177,10 @@
     "title": "Page Non Trouvée",
     "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "goHome": "Retour à l'accueil",
-    "browseHerbs": "Parcourir les plantes"
+    "browseHerbs": "Parcourir les plantes",
+    "checkInteractions": "Vérifier les interactions plante-médicament",
+    "browseSymptoms": "Parcourir les plantes par symptôme",
+    "askHerbalist": "Demander à l'herboriste virtuel"
   },
   "evidence": {
     "prefix": "Preuves :",

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 const FR_BASE = "/fr";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { execSync } from "node:child_process";
 import { logger } from "@/lib/utils/logger";
 import { SYMPTOM_SLUGS, symptomMeta } from "@/lib/symptoms/symptom-meta";
 import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page";
@@ -17,7 +18,35 @@ import { publishedGuides } from "@/lib/guides/guides";
 // lastModified each time — Google re-crawled wastefully (M18, audit
 // 2026-06-22). This is now a fixed literal; bump it deliberately when static
 // page content actually changes.
-const STATIC_PAGE_MODIFIED = new Date("2026-06-22T00:00:00Z");
+// Static marketing pages change when the repo changes, not on a fixed date. A
+// hard-coded value shipped 2026-06-22 as the lastmod for the homepage, /herbs
+// and every hub on every deploy for five months — a sitemap that never updates
+// is one Google learns to ignore.
+const FALLBACK_STATIC_MODIFIED = new Date("2026-11-02T00:00:00Z");
+
+function staticPageModified(): Date {
+  // Vercel sets this per deployment (unix seconds).
+  const fromEnv = process.env.VERCEL_GIT_COMMIT_TIMESTAMP;
+  if (fromEnv) {
+    const ms = Number(fromEnv) * 1000;
+    if (Number.isFinite(ms) && ms > 0) return new Date(ms);
+  }
+  try {
+    // `stdio: ignore` on stderr: a build sandbox without git must not spray
+    // "not a git repository" into the build log before falling back.
+    const iso = execSync("git log -1 --format=%cI", {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+    const parsed = new Date(iso);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  } catch {
+    // No git in the build sandbox — fall through.
+  }
+  return FALLBACK_STATIC_MODIFIED;
+}
+
+const STATIC_PAGE_MODIFIED = staticPageModified();
 
 // New static pages get their own timestamp so adding them does not bump the
 // lastModified of every unrelated marketing page.
@@ -80,6 +109,34 @@ async function fetchHerbBatch(
     });
     return null;
   }
+}
+
+/**
+ * EN + FR entry for each symptom hub slug.
+ *
+ * Also used by the degraded path: before these were split out of `staticPages`,
+ * a database failure still listed every hub because they were unconditional. If
+ * the herb query dies, the caller passes all slugs back in — the sitemap should
+ * never shrink itself just because Supabase was unreachable.
+ */
+function symptomPagesFor(
+  slugs: string[],
+  baseUrl: string
+): MetadataRoute.Sitemap {
+  return slugs.flatMap((slug) => [
+    {
+      url: `${baseUrl}/symptoms/${slug}`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/symptoms/${slug}`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
+  ]);
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -339,11 +396,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     process.env.NEXT_PHASE === "phase-production-build" ? 40_000 : 20_000;
   const deadline = Date.now() + dbBudgetMs;
   const remainingBudgetMs = () => deadline - Date.now();
+  // Degraded paths list every symptom hub: nothing here can tell which hubs are
+  // empty, and losing 52 live URLs because a query timed out is worse than
+  // listing a thin page. Only the healthy path filters them.
+  const degradedPages = () => [
+    ...staticPages,
+    ...symptomPagesFor(SYMPTOM_SLUGS, baseUrl),
+  ];
   const budgetExhausted = () => {
     logger.error("sitemap_generation_error", {
       error: `sitemap database budget of ${dbBudgetMs}ms exhausted`,
     });
-    return staticPages;
+    return degradedPages();
   };
 
   try {
@@ -351,7 +415,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     if (!supabase) {
       logger.error("sitemap_supabase_not_configured");
-      return staticPages;
+      return degradedPages();
     }
 
     // Fetch all published herbs in batches (Supabase default limit = 1000).
@@ -451,20 +515,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         omitted: SYMPTOM_SLUGS.filter((s) => !symptomSlugs.includes(s)),
       });
     }
-    const symptomPages: MetadataRoute.Sitemap = symptomSlugs.flatMap((slug) => [
-      {
-        url: `${baseUrl}/symptoms/${slug}`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      },
-      {
-        url: `${baseUrl}${FR_BASE}/symptoms/${slug}`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      },
-    ]);
+    const symptomPages = symptomPagesFor(symptomSlugs, baseUrl);
 
     // Compare pages — pairs come from the SAME source of truth as the
     // compare route's generateStaticParams (POPULAR_COMPARISONS). Both locales.
@@ -536,8 +587,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     logger.error("sitemap_generation_error", {
       error: error instanceof Error ? error.message : String(error),
     });
-    // Return static pages only on error
-    return staticPages;
+    return degradedPages();
   }
 }
 
