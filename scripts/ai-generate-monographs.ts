@@ -374,9 +374,7 @@ export function parseV3Response(
     modern_uses: Array.isArray(parsed.modern_uses)
       ? parsed.modern_uses
       : herb.modern_uses || [],
-    dosage_forms: Array.isArray(parsed.dosage_forms)
-      ? parsed.dosage_forms
-      : herb.dosage_forms || [],
+    dosage_forms: normalizeDosageForms(parsed.dosage_forms, herb.dosage_forms),
     preparation_notes: String(
       parsed.preparation_notes || herb.preparation_notes || ""
     ).trim(),
@@ -412,7 +410,8 @@ export async function getTargetHerbs(
       `id, slug, name, scientific_name, description, traditional_uses, modern_uses, active_compounds, evidence_level, contraindications, side_effects, dosage_adult, dosage_forms, preparation_notes, symptom_keywords, pregnancy_safe, nursing_safe, citations, provenance, is_published`
     )
     .eq("is_published", true)
-    .filter("provenance->>verification_method", "eq", "primary_source");
+    .filter("provenance->>verification_method", "eq", "primary_source")
+    .order("slug", { ascending: true });
 
   if (error) {
     throw new Error(`Supabase query error: ${error.message}`);
@@ -751,7 +750,13 @@ async function main() {
     // Check if we can reuse the sample cohort
     if (sampleMap.has(herb.slug)) {
       const pre = sampleMap.get(herb.slug)!;
-      afterFields = pre.after;
+      afterFields = {
+        ...pre.after,
+        dosage_forms: normalizeDosageForms(
+          pre.after.dosage_forms,
+          herb.dosage_forms
+        ),
+      };
       needsSourceFlags = pre.needs_source_flags;
       console.log(`   ${prefix} ⚡ Using pre-validated Phase 1 output...`);
     } else {
