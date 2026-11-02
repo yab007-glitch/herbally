@@ -6,7 +6,11 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { type Provenance, isVerified } from "@/lib/types/provenance";
+import {
+  type Provenance,
+  isVerified,
+  getReviewState,
+} from "@/lib/types/provenance";
 
 /**
  * ProvenanceBadge — renders a pill indicating how a herb/monograph was
@@ -18,6 +22,39 @@ import { type Provenance, isVerified } from "@/lib/types/provenance";
 export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
   const t = useTranslations("provenance");
   const method = provenance.verification_method;
+  const review = getReviewState(provenance);
+
+  // An explicit review state is the site's strongest claim, so it is checked
+  // before anything derived from verification_method. `human_reviewed` only
+  // exists when a named person and a date were recorded.
+  if (review?.kind === "human_reviewed") {
+    return (
+      <Badge
+        variant="secondary"
+        className="border-green-300 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-300"
+        title={t("humanReviewedTooltip", {
+          reviewer: review.reviewer,
+          date: review.date,
+        })}
+      >
+        <CheckCircle2 className="mr-1 size-3" aria-hidden="true" />
+        {t("humanReviewed")}
+      </Badge>
+    );
+  }
+
+  if (review?.kind === "needs_re_review") {
+    return (
+      <Badge
+        variant="outline"
+        className="border-amber-400 bg-amber-50 text-amber-800 dark:border-amber-600 dark:bg-amber-950/40 dark:text-amber-300"
+        title={t("needsReReviewTooltip")}
+      >
+        <AlertTriangle className="mr-1 size-3" aria-hidden="true" />
+        {t("needsReReview")}
+      </Badge>
+    );
+  }
 
   if (method === "unverified") {
     return (

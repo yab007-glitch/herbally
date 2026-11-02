@@ -17,6 +17,14 @@ export const VerificationMethodSchema = z.enum([
 ]);
 export type VerificationMethod = z.infer<typeof VerificationMethodSchema>;
 
+export const ReviewStatusSchema = z.enum([
+  "ai_generated",
+  "not_reviewed",
+  "human_reviewed",
+  "needs_re_review",
+]);
+export type ReviewStatus = z.infer<typeof ReviewStatusSchema>;
+
 export const ProvenanceSchema = z.object({
   sources: z.array(z.string()).default([]),
   primary_url: z.string().url().nullable().default(null),
@@ -24,6 +32,28 @@ export const ProvenanceSchema = z.object({
   verified_by: z.string().nullable().default(null),
   verification_method: VerificationMethodSchema.default("unverified"),
   notes: z.string().optional(),
+  /**
+   * Explicit human-review state (SEO brief, Workstream E).
+   *
+   * `verification_method` says how the text was produced; it is not the same
+   * question as "did a named person read it". These fields answer the second
+   * question and stay `null` on every row that has not been reviewed, so the
+   * legacy derivation below keeps deciding what those pages show.
+   */
+  review_status: z
+    .union([ReviewStatusSchema, z.null()])
+    .catch(null)
+    .default(null),
+  /** A real person's name. Never a script, a bot, or the editorial team. */
+  reviewed_by_name: z.string().nullable().default(null),
+  /** ISO date (YYYY-MM-DD) of the review itself. */
+  reviewed_on: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable()
+    .catch(null)
+    .default(null),
+  review_notes: z.string().optional(),
 });
 export type Provenance = z.infer<typeof ProvenanceSchema>;
 
@@ -33,6 +63,9 @@ export const UNVERIFIED: Provenance = {
   last_verified_at: null,
   verified_by: null,
   verification_method: "unverified",
+  review_status: null,
+  reviewed_by_name: null,
+  reviewed_on: null,
 };
 
 /**
@@ -73,6 +106,12 @@ function isNamedHumanReviewer(name: string | null): boolean {
 }
 
 export function isVerified(p: Provenance): boolean {
+  // An explicit review state wins over the legacy derivation: it is the only
+  // field that can say "a named person read this", and the only one that can
+  // take the badge away again when a page needs re-reviewing.
+  const explicit = getReviewState(p);
+  if (explicit) return explicit.kind === "human_reviewed";
+
   if (p.verification_method === "manual") {
     return p.verified_by == null || isNamedHumanReviewer(p.verified_by);
   }
@@ -80,4 +119,47 @@ export function isVerified(p: Provenance): boolean {
     return isNamedHumanReviewer(p.verified_by);
   }
   return false;
+}
+
+/**
+ * What the page is allowed to claim about human review.
+ *
+ * `human_reviewed` requires all three: the status, a named reviewer that is not
+ * a script, and the date the review happened. Anything less is `not_reviewed` —
+ * a badge that says "reviewed" without a person and a date is a fabricated
+ * credential, which is worse than no badge at all.
+ *
+ * Returns null for rows that predate these fields, so callers fall back to the
+ * `verification_method` label they already render.
+ */
+export type ReviewState =
+  | { kind: "human_reviewed"; reviewer: string; date: string }
+  | { kind: "needs_re_review"; reviewer: string | null }
+  | { kind: "ai_generated" }
+  | { kind: "not_reviewed" };
+
+export function getReviewState(p: Provenance): ReviewState | null {
+  switch (p.review_status) {
+    case "human_reviewed":
+      if (
+        p.reviewed_by_name &&
+        p.reviewed_on &&
+        isNamedHumanReviewer(p.reviewed_by_name)
+      ) {
+        return {
+          kind: "human_reviewed",
+          reviewer: p.reviewed_by_name,
+          date: p.reviewed_on,
+        };
+      }
+      return { kind: "not_reviewed" };
+    case "needs_re_review":
+      return { kind: "needs_re_review", reviewer: p.reviewed_by_name };
+    case "ai_generated":
+      return { kind: "ai_generated" };
+    case "not_reviewed":
+      return { kind: "not_reviewed" };
+    default:
+      return null;
+  }
 }

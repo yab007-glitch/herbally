@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   UNVERIFIED,
+  getReviewState,
   isVerified,
   parseProvenance,
   ProvenanceSchema,
@@ -138,5 +139,71 @@ describe("ProvenanceSchema", () => {
         ProvenanceSchema.safeParse({ verification_method: m }).success
       ).toBe(true);
     }
+  });
+});
+
+describe("explicit review status", () => {
+  const reviewed = {
+    ...UNVERIFIED,
+    review_status: "human_reviewed" as const,
+    reviewed_by_name: "Dr Ada Lovelace",
+    reviewed_on: "2026-11-02",
+  };
+
+  it("accepts a review only when a name and a date are both present", () => {
+    expect(getReviewState(reviewed)).toEqual({
+      kind: "human_reviewed",
+      reviewer: "Dr Ada Lovelace",
+      date: "2026-11-02",
+    });
+    expect(isVerified(reviewed)).toBe(true);
+  });
+
+  it("refuses a review with no date", () => {
+    const noDate = { ...reviewed, reviewed_on: null };
+    expect(getReviewState(noDate)).toEqual({ kind: "not_reviewed" });
+    expect(isVerified(noDate)).toBe(false);
+  });
+
+  it("refuses a review attributed to a script", () => {
+    const scripted = {
+      ...reviewed,
+      reviewed_by_name: "auto-verification-script",
+    };
+    expect(getReviewState(scripted)).toEqual({ kind: "not_reviewed" });
+    expect(isVerified(scripted)).toBe(false);
+  });
+
+  it("takes the badge away when a page needs re-reviewing", () => {
+    const stale = { ...reviewed, review_status: "needs_re_review" as const };
+    expect(getReviewState(stale)).toEqual({
+      kind: "needs_re_review",
+      reviewer: "Dr Ada Lovelace",
+    });
+    expect(isVerified(stale)).toBe(false);
+  });
+
+  it("overrides a legacy primary_source verdict that has no reviewer", () => {
+    const legacyShape = {
+      ...UNVERIFIED,
+      verification_method: "primary_source" as const,
+      verified_by: "Someone",
+      review_status: "not_reviewed" as const,
+    };
+    // The old derivation would call this verified; the explicit state wins.
+    expect(isVerified(legacyShape)).toBe(false);
+  });
+
+  it("returns null for rows that predate the fields, so callers fall back", () => {
+    expect(getReviewState(UNVERIFIED)).toBeNull();
+  });
+
+  it("survives a malformed status instead of losing the whole record", () => {
+    const parsed = parseProvenance({
+      verification_method: "primary_source",
+      review_status: "probably-fine",
+    });
+    expect(parsed.verification_method).toBe("primary_source");
+    expect(parsed.review_status).toBeNull();
   });
 });
