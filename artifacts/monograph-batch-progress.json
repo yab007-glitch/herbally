@@ -1,0 +1,3161 @@
+{
+  "meta": {
+    "prompt_version": "v3",
+    "total_targets": 254,
+    "processed_count": 210,
+    "write_db": true,
+    "last_updated": "2026-11-02T12:22:07.098Z"
+  },
+  "entries": [
+    {
+      "id": "ee487dfa-72e9-46f8-8256-bef0e1b99ed2",
+      "slug": "sambucol",
+      "name": "Elderberry Syrup",
+      "word_count_before": 132,
+      "word_count_after": 584,
+      "word_count_delta": 452,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:52:00.393Z"
+    },
+    {
+      "id": "7aa12e30-d788-4f60-832a-0b08286d20e2",
+      "slug": "silverweed",
+      "name": "Silverweed",
+      "word_count_before": 114,
+      "word_count_after": 533,
+      "word_count_delta": 419,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:14.506Z"
+    },
+    {
+      "id": "7083315e-b97a-408b-b0bb-8aca691abb93",
+      "slug": "shatavari-tonic",
+      "name": "Shatavari Tonic",
+      "word_count_before": 101,
+      "word_count_after": 592,
+      "word_count_delta": 491,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:19.737Z"
+    },
+    {
+      "id": "9542e30e-3bce-4dba-a355-43dfc8defe6c",
+      "slug": "ashwagandha",
+      "name": "Ashwagandha",
+      "word_count_before": 154,
+      "word_count_after": 610,
+      "word_count_delta": 456,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:20.262Z"
+    },
+    {
+      "id": "af42fb3c-6d3b-4ea5-a827-7e23861433c8",
+      "slug": "ginger",
+      "name": "Ginger",
+      "word_count_before": 166,
+      "word_count_after": 673,
+      "word_count_delta": 507,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:20.703Z"
+    },
+    {
+      "id": "86f3298c-e6c7-43f1-8bbe-995f9e2307b6",
+      "slug": "curcuma-mangga",
+      "name": "Curcuma mangga",
+      "word_count_before": 93,
+      "word_count_after": 571,
+      "word_count_delta": 478,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:25.657Z"
+    },
+    {
+      "id": "28dd8492-a465-4dda-9c8f-bbe239999106",
+      "slug": "nettle-root",
+      "name": "Stinging Nettle Root",
+      "word_count_before": 160,
+      "word_count_after": 436,
+      "word_count_delta": 276,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:30.096Z"
+    },
+    {
+      "id": "4af2d700-0857-4681-a72a-b837d6803094",
+      "slug": "crataegus-azarolus",
+      "name": "Crataegus azarolus",
+      "word_count_before": 111,
+      "word_count_after": 531,
+      "word_count_delta": 420,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:35.346Z"
+    },
+    {
+      "id": "2844ac29-7456-46bb-bfd9-ba2e5339e52e",
+      "slug": "citrullus-colocynthis",
+      "name": "Citrullus colocynthis",
+      "word_count_before": 103,
+      "word_count_after": 508,
+      "word_count_delta": 405,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:41.173Z"
+    },
+    {
+      "id": "b24a8e65-040a-408d-b364-7011156463ff",
+      "slug": "wu-jia-pi",
+      "name": "Wu Jia Pi",
+      "word_count_before": 80,
+      "word_count_after": 537,
+      "word_count_delta": 457,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:45.249Z"
+    },
+    {
+      "id": "b8629ff9-7b23-4862-adeb-0063f8a09bcf",
+      "slug": "chinese-skullcap",
+      "name": "Chinese Skullcap",
+      "word_count_before": 116,
+      "word_count_after": 492,
+      "word_count_delta": 376,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:49.969Z"
+    },
+    {
+      "id": "8aa1aab4-2494-48fa-9983-8806bf98734a",
+      "slug": "aloe-arborescens-herb",
+      "name": "Aloe Arborescens Herb",
+      "word_count_before": 90,
+      "word_count_after": 444,
+      "word_count_delta": 354,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:53:56.448Z"
+    },
+    {
+      "id": "ac3b8e4a-7c65-4919-964b-fc3753ef5f5a",
+      "slug": "spotted-bee-balm",
+      "name": "Spotted Bee Balm",
+      "word_count_before": 131,
+      "word_count_after": 494,
+      "word_count_delta": 363,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:00.774Z"
+    },
+    {
+      "id": "d086ca76-314f-4f83-8011-a33d988e180b",
+      "slug": "aloe-vera",
+      "name": "Aloe Vera",
+      "word_count_before": 187,
+      "word_count_after": 634,
+      "word_count_delta": 447,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:05.697Z"
+    },
+    {
+      "id": "ddd29c9e-6214-40b3-be43-e0cccb6a26f9",
+      "slug": "hypericum-patulum",
+      "name": "Hypericum patulum",
+      "word_count_before": 66,
+      "word_count_after": 599,
+      "word_count_delta": 533,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:10.235Z"
+    },
+    {
+      "id": "833322dd-e671-4959-b208-325b323a3dfa",
+      "slug": "cuban-oregano",
+      "name": "Cuban Oregano",
+      "word_count_before": 109,
+      "word_count_after": 614,
+      "word_count_delta": 505,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:15.658Z"
+    },
+    {
+      "id": "f1829e2c-71c8-4aee-bb72-930ef80c1396",
+      "slug": "dioscorea-rotundata",
+      "name": "Dioscorea Rotundata",
+      "word_count_before": 96,
+      "word_count_after": 553,
+      "word_count_delta": 457,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:19.741Z"
+    },
+    {
+      "id": "862326e1-ced8-472f-9f6c-b85ad2a3ad52",
+      "slug": "black-pepper",
+      "name": "Black Pepper",
+      "word_count_before": 97,
+      "word_count_after": 594,
+      "word_count_delta": 497,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:25.245Z"
+    },
+    {
+      "id": "ef85409d-2e61-4082-90c8-0e28ab9f8989",
+      "slug": "bach-ma-truong-son",
+      "name": "Bach Ma Truong Son",
+      "word_count_before": 78,
+      "word_count_after": 529,
+      "word_count_delta": 451,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:29.523Z"
+    },
+    {
+      "id": "2af1b37b-1474-42bd-976f-04b09156c5d8",
+      "slug": "arnica-chamissonis",
+      "name": "Arnica chamissonis",
+      "word_count_before": 76,
+      "word_count_after": 556,
+      "word_count_delta": 480,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:34.594Z"
+    },
+    {
+      "id": "672ee6ad-ffe1-418b-afe1-08aa46008967",
+      "slug": "tea-tree",
+      "name": "Tea Tree",
+      "word_count_before": 178,
+      "word_count_after": 561,
+      "word_count_delta": 383,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:42.180Z"
+    },
+    {
+      "id": "462f221a-7a88-4c94-8dd3-072636763397",
+      "slug": "hypericum-olympicum",
+      "name": "Hypericum olympicum",
+      "word_count_before": 90,
+      "word_count_after": 575,
+      "word_count_delta": 485,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:46.382Z"
+    },
+    {
+      "id": "2de85fc6-5f8f-4ac3-b019-417d965d9b55",
+      "slug": "torch-ginger",
+      "name": "Torch Ginger",
+      "word_count_before": 116,
+      "word_count_after": 649,
+      "word_count_delta": 533,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:51.693Z"
+    },
+    {
+      "id": "b70e9b0f-c818-4645-b470-bc3d153691e1",
+      "slug": "rhodiola",
+      "name": "Rhodiola",
+      "word_count_before": 164,
+      "word_count_after": 496,
+      "word_count_delta": 332,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:52.380Z"
+    },
+    {
+      "id": "e52a1029-134b-4f91-8825-82a6327b1060",
+      "slug": "lemon-balm-toronjil",
+      "name": "Lemon Balm Toronjil",
+      "word_count_before": 102,
+      "word_count_after": 593,
+      "word_count_delta": 491,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:54:57.077Z"
+    },
+    {
+      "id": "341f881c-9e66-4613-9379-51f4f2a75a35",
+      "slug": "lungwort-herb",
+      "name": "Lungwort Herb",
+      "word_count_before": 105,
+      "word_count_after": 502,
+      "word_count_delta": 397,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:00.819Z"
+    },
+    {
+      "id": "587c8c70-f7cc-4fc6-9fe6-23948f89d2c9",
+      "slug": "bitter-melon-metabolic",
+      "name": "Bitter Melon Metabolic",
+      "word_count_before": 112,
+      "word_count_after": 638,
+      "word_count_delta": 526,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:06.422Z"
+    },
+    {
+      "id": "14ea3f88-7b9b-4be5-81f6-ddc2ed7aae9f",
+      "slug": "goldenrod-solidago",
+      "name": "Goldenrod Solidago",
+      "word_count_before": 115,
+      "word_count_after": 531,
+      "word_count_delta": 416,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:10.714Z"
+    },
+    {
+      "id": "abddcb7f-0dae-4169-9399-9dbaf11ba4f7",
+      "slug": "hyssop-herb",
+      "name": "Hyssop Herb",
+      "word_count_before": 114,
+      "word_count_after": 530,
+      "word_count_delta": 416,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:16.362Z"
+    },
+    {
+      "id": "4664e3c0-24aa-4845-a953-667842e5399d",
+      "slug": "nettle-leaf",
+      "name": "Nettle Leaf",
+      "word_count_before": 157,
+      "word_count_after": 520,
+      "word_count_delta": 363,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:19.858Z"
+    },
+    {
+      "id": "ec49c786-e13f-4fdb-8cf1-5259d26ef685",
+      "slug": "mugwort-european",
+      "name": "Mugwort European",
+      "word_count_before": 129,
+      "word_count_after": 554,
+      "word_count_delta": 425,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:25.131Z"
+    },
+    {
+      "id": "3fa84c50-6f91-4be3-b163-ab6eef76f727",
+      "slug": "raspberry-ketone",
+      "name": "Raspberry Ketone",
+      "word_count_before": 128,
+      "word_count_after": 577,
+      "word_count_delta": 449,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:29.115Z"
+    },
+    {
+      "id": "7227624b-5640-498b-9344-808d941a7b45",
+      "slug": "curcuma-amada",
+      "name": "Curcuma amada",
+      "word_count_before": 84,
+      "word_count_after": 501,
+      "word_count_delta": 417,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:32.900Z"
+    },
+    {
+      "id": "4d3fa6ae-4f11-4cc9-9a24-0fdde49b2b23",
+      "slug": "gua-lou-pi-resp",
+      "name": "Gua Lou Pi Respiratory",
+      "word_count_before": 73,
+      "word_count_after": 447,
+      "word_count_delta": 374,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:36.297Z"
+    },
+    {
+      "id": "8bb898cd-b618-4a10-a797-f7f7a355bbc4",
+      "slug": "java-turmeric",
+      "name": "Turmeric (Javanese)",
+      "word_count_before": 155,
+      "word_count_after": 500,
+      "word_count_delta": 345,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:42.698Z"
+    },
+    {
+      "id": "8cb15b5b-04fe-497f-accb-c55e983bef9a",
+      "slug": "fenugreek-leaf",
+      "name": "Fenugreek Leaf",
+      "word_count_before": 100,
+      "word_count_after": 510,
+      "word_count_delta": 410,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:46.358Z"
+    },
+    {
+      "id": "839f299e-58d4-4510-9882-213c2887624d",
+      "slug": "gentiana-acaulis",
+      "name": "Gentiana acaulis",
+      "word_count_before": 103,
+      "word_count_after": 513,
+      "word_count_delta": 410,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:52.420Z"
+    },
+    {
+      "id": "f4f479a2-8193-4629-8a8e-be3124a6c2c5",
+      "slug": "angelica-pubescens",
+      "name": "Angelica pubescens",
+      "word_count_before": 69,
+      "word_count_after": 560,
+      "word_count_delta": 491,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:55:58.531Z"
+    },
+    {
+      "id": "40ddf505-03d9-4d6a-bbad-737e84457e6e",
+      "slug": "calendula-arvensis",
+      "name": "Calendula arvensis",
+      "word_count_before": 83,
+      "word_count_after": 533,
+      "word_count_delta": 450,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:03.766Z"
+    },
+    {
+      "id": "bf71eab2-c3fb-424b-8c4c-af84c71188d2",
+      "slug": "eucalyptus-polybractea",
+      "name": "Eucalyptus Polybractea",
+      "word_count_before": 100,
+      "word_count_after": 556,
+      "word_count_delta": 456,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:09.705Z"
+    },
+    {
+      "id": "be326d94-2fd1-46f8-aed6-e0fd5c4d3bc9",
+      "slug": "vernonia-amygdalina",
+      "name": "Vernonia Amygdalina",
+      "word_count_before": 131,
+      "word_count_after": 531,
+      "word_count_delta": 400,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:14.822Z"
+    },
+    {
+      "id": "795b876d-40d1-4b48-81b7-52b4d76e0060",
+      "slug": "panax-notoginseng",
+      "name": "Panax Notoginseng",
+      "word_count_before": 117,
+      "word_count_after": 644,
+      "word_count_delta": 527,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:20.434Z"
+    },
+    {
+      "id": "b55148eb-9db4-4818-9cf3-b465f212c9be",
+      "slug": "licorice-dgl",
+      "name": "Licorice DGL",
+      "word_count_before": 85,
+      "word_count_after": 632,
+      "word_count_delta": 547,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:29.735Z"
+    },
+    {
+      "id": "53e75b74-5707-4e2f-8c11-6eabd17d3248",
+      "slug": "flaxseed-oil-herb",
+      "name": "Flaxseed Oil Herb",
+      "word_count_before": 114,
+      "word_count_after": 601,
+      "word_count_delta": 487,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:37.217Z"
+    },
+    {
+      "id": "f9a4c9a2-5ff5-42cb-98aa-5704f9a4fcc5",
+      "slug": "noni-tahitian",
+      "name": "Noni Tahitian",
+      "word_count_before": 121,
+      "word_count_after": 603,
+      "word_count_delta": 482,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:42.796Z"
+    },
+    {
+      "id": "400a97a6-e0c6-42f4-8621-6b8e5fb5126c",
+      "slug": "bitter-aloe",
+      "name": "Bitter Aloe",
+      "word_count_before": 149,
+      "word_count_after": 689,
+      "word_count_delta": 540,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:52.843Z"
+    },
+    {
+      "id": "7244c840-6d13-4a17-909e-5d6dcc9337d6",
+      "slug": "juniper-leaf",
+      "name": "Juniper Leaf",
+      "word_count_before": 85,
+      "word_count_after": 600,
+      "word_count_delta": 515,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:56:57.944Z"
+    },
+    {
+      "id": "72a6f355-b6f5-4ca5-84e7-698daad9f7cb",
+      "slug": "cassia-auriculata",
+      "name": "Cassia auriculata",
+      "word_count_before": 86,
+      "word_count_after": 630,
+      "word_count_delta": 544,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:10.647Z"
+    },
+    {
+      "id": "ac6aac8c-a753-4a42-a4c9-fb8536b078a7",
+      "slug": "field-garlic",
+      "name": "Field Garlic",
+      "word_count_before": 88,
+      "word_count_after": 584,
+      "word_count_delta": 496,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:16.280Z"
+    },
+    {
+      "id": "38bb4cde-fa72-4514-b701-532630b975d0",
+      "slug": "astragalus-complanatus",
+      "name": "Astragalus Complanatus",
+      "word_count_before": 103,
+      "word_count_after": 556,
+      "word_count_delta": 453,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:21.789Z"
+    },
+    {
+      "id": "82321996-8f10-4f10-ab95-5384941c4612",
+      "slug": "valeriana-jatamansi",
+      "name": "Valeriana jatamansi",
+      "word_count_before": 79,
+      "word_count_after": 579,
+      "word_count_delta": 500,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:28.130Z"
+    },
+    {
+      "id": "c4b10ed1-a8d3-4198-ba27-50d53487cac3",
+      "slug": "milk-vetch",
+      "name": "Milk Vetch",
+      "word_count_before": 160,
+      "word_count_after": 691,
+      "word_count_delta": 531,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:34.889Z"
+    },
+    {
+      "id": "a56b32e8-1398-415c-b274-76f5bf5e9eec",
+      "slug": "artemisia-lactiflora",
+      "name": "Artemisia lactiflora",
+      "word_count_before": 93,
+      "word_count_after": 466,
+      "word_count_delta": 373,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:39.472Z"
+    },
+    {
+      "id": "b4b5494f-02a4-49c6-b555-3f975abe1d83",
+      "slug": "dioscorea-nipponica",
+      "name": "Dioscorea nipponica",
+      "word_count_before": 98,
+      "word_count_after": 563,
+      "word_count_delta": 465,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:44.849Z"
+    },
+    {
+      "id": "08fccb51-bcfc-49a0-92ac-3b0522406ab4",
+      "slug": "red-clover-iso",
+      "name": "Red Clover Isoflavone",
+      "word_count_before": 119,
+      "word_count_after": 628,
+      "word_count_delta": 509,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:53.540Z"
+    },
+    {
+      "id": "9b4d9ccc-005d-43b6-a25a-dbe79f828f2f",
+      "slug": "andrographis-echioides",
+      "name": "Andrographis Echioides",
+      "word_count_before": 98,
+      "word_count_after": 513,
+      "word_count_delta": 415,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:57:58.530Z"
+    },
+    {
+      "id": "e1e26dbc-4946-40c4-9f98-ed1ac109bace",
+      "slug": "tibetan-juniper",
+      "name": "Tibetan Juniper",
+      "word_count_before": 76,
+      "word_count_after": 478,
+      "word_count_delta": 402,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:02.862Z"
+    },
+    {
+      "id": "fe501d24-ef12-4007-9f42-6235d7adea7c",
+      "slug": "hypericum-androsaemum",
+      "name": "Hypericum Androsaemum",
+      "word_count_before": 101,
+      "word_count_after": 574,
+      "word_count_delta": 473,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:07.677Z"
+    },
+    {
+      "id": "57914ae1-ae9a-4f8f-8fa3-1a7cb5b5ce78",
+      "slug": "lemon-balm",
+      "name": "Lemon Balm",
+      "word_count_before": 157,
+      "word_count_after": 539,
+      "word_count_delta": 382,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:11.423Z"
+    },
+    {
+      "id": "0fc97214-cb81-4f04-8064-6e3687e0c8b1",
+      "slug": "cassia-sieberiana",
+      "name": "Cassia sieberiana",
+      "word_count_before": 82,
+      "word_count_after": 449,
+      "word_count_delta": 367,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:14.772Z"
+    },
+    {
+      "id": "26e7e150-fbd7-48e0-b674-46f40160f09f",
+      "slug": "acapulco",
+      "name": "Acapulco",
+      "word_count_before": 116,
+      "word_count_after": 569,
+      "word_count_delta": 453,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:27.318Z"
+    },
+    {
+      "id": "c6f067a4-054c-494f-8036-e948c5c890a2",
+      "slug": "aloe-maculata",
+      "name": "Aloe maculata",
+      "word_count_before": 108,
+      "word_count_after": 610,
+      "word_count_delta": 502,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:32.194Z"
+    },
+    {
+      "id": "04641450-ae7e-4447-b3ac-f59f488ac100",
+      "slug": "aloe-secundiflora-ea",
+      "name": "Aloe Secundiflora East African",
+      "word_count_before": 79,
+      "word_count_after": 641,
+      "word_count_delta": 562,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:41.197Z"
+    },
+    {
+      "id": "63a84846-7f9e-43ae-869a-a3b6bfda7e87",
+      "slug": "aloe-spicata",
+      "name": "Aloe spicata",
+      "word_count_before": 70,
+      "word_count_after": 557,
+      "word_count_delta": 487,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:46.901Z"
+    },
+    {
+      "id": "d4ddd4fc-9483-4381-8d12-57067294dca8",
+      "slug": "aloe-succotrina",
+      "name": "Aloe succotrina",
+      "word_count_before": 84,
+      "word_count_after": 596,
+      "word_count_delta": 512,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:58:56.529Z"
+    },
+    {
+      "id": "078d88eb-9b5c-4cf4-9e15-a08aa3a8019d",
+      "slug": "aloe-vera-chinensis",
+      "name": "Aloe vera-chinensis",
+      "word_count_before": 57,
+      "word_count_after": 586,
+      "word_count_delta": 529,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:02.289Z"
+    },
+    {
+      "id": "96386e22-28a8-4dfc-9722-81c332afa17c",
+      "slug": "aloe-vera-leaf",
+      "name": "Aloe Vera Leaf",
+      "word_count_before": 116,
+      "word_count_after": 688,
+      "word_count_delta": 572,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:08.949Z"
+    },
+    {
+      "id": "e0c9d440-2056-4953-9450-6bf4220a7ac8",
+      "slug": "american-ginseng",
+      "name": "American Ginseng",
+      "word_count_before": 180,
+      "word_count_after": 612,
+      "word_count_delta": 432,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:15.858Z"
+    },
+    {
+      "id": "33e8e453-bc90-4537-b539-4738952cd4ab",
+      "slug": "amla-powder",
+      "name": "Amla Powder",
+      "word_count_before": 102,
+      "word_count_after": 567,
+      "word_count_delta": 465,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:22.694Z"
+    },
+    {
+      "id": "95034a0d-5da8-4ad3-af0b-1c0ecc8911cd",
+      "slug": "anatolian-sage",
+      "name": "Anatolian Sage",
+      "word_count_before": 72,
+      "word_count_after": 444,
+      "word_count_delta": 372,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:29.569Z"
+    },
+    {
+      "id": "7665271a-af38-4695-9faf-0b2281b4b304",
+      "slug": "angelica-dahurica",
+      "name": "Angelica dahurica",
+      "word_count_before": 86,
+      "word_count_after": 518,
+      "word_count_delta": 432,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:37.048Z"
+    },
+    {
+      "id": "dc84e232-d46c-4e74-ae3c-de7c039d67e8",
+      "slug": "anise-green",
+      "name": "Anise Green",
+      "word_count_before": 118,
+      "word_count_after": 607,
+      "word_count_delta": 489,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:45.735Z"
+    },
+    {
+      "id": "bff3944e-fcd0-4bc7-b54b-ee236f4c0049",
+      "slug": "artemisia-afra",
+      "name": "Artemisia afra",
+      "word_count_before": 99,
+      "word_count_after": 605,
+      "word_count_delta": 506,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T11:59:54.507Z"
+    },
+    {
+      "id": "836f3ebe-635a-4869-adb0-0d8fb2b9e2e9",
+      "slug": "artemisia-californica",
+      "name": "Artemisia californica",
+      "word_count_before": 89,
+      "word_count_after": 538,
+      "word_count_delta": 449,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:00:08.374Z"
+    },
+    {
+      "id": "89c22d15-ff20-4036-82de-bb4b7e8e5c4c",
+      "slug": "artemisia-cina",
+      "name": "Artemisia cina",
+      "word_count_before": 85,
+      "word_count_after": 573,
+      "word_count_delta": 488,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:00:16.737Z"
+    },
+    {
+      "id": "7caea3bb-cbbb-4c9a-b319-516e0f01c97b",
+      "slug": "artemisia-genepi",
+      "name": "Artemisia genepi",
+      "word_count_before": 101,
+      "word_count_after": 577,
+      "word_count_delta": 476,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:00:26.583Z"
+    },
+    {
+      "id": "7b8ef833-2098-4937-9dc4-7e02e05e9674",
+      "slug": "artemisia-herba-alba",
+      "name": "Artemisia herba-alba",
+      "word_count_before": 92,
+      "word_count_after": 632,
+      "word_count_delta": 540,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:00:34.579Z"
+    },
+    {
+      "id": "6c1952de-997c-4055-8866-426d807383fe",
+      "slug": "artemisia-moxa",
+      "name": "Artemisia moxa",
+      "word_count_before": 93,
+      "word_count_after": 622,
+      "word_count_delta": 529,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:00:43.109Z"
+    },
+    {
+      "id": "63fd8a9f-e647-4f16-88b1-26b1fdac20cd",
+      "slug": "artemisia-pallens",
+      "name": "Artemisia pallens",
+      "word_count_before": 97,
+      "word_count_after": 461,
+      "word_count_delta": 364,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:00:49.081Z"
+    },
+    {
+      "id": "8a61e3ad-9abc-44fb-b216-8a415f34d098",
+      "slug": "artemisia-roxburghiana",
+      "name": "Artemisia roxburghiana",
+      "word_count_before": 68,
+      "word_count_after": 517,
+      "word_count_delta": 449,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:00:56.406Z"
+    },
+    {
+      "id": "9ce01d25-cb36-46bc-b64f-a098bb5004b9",
+      "slug": "artemisia-tilesii",
+      "name": "Artemisia tilesii",
+      "word_count_before": 84,
+      "word_count_after": 534,
+      "word_count_delta": 450,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:01:03.962Z"
+    },
+    {
+      "id": "225f1de6-7ff8-41a9-9e79-433d92c0615b",
+      "slug": "artemisia-verlotiorum",
+      "name": "Artemisia verlotiorum",
+      "word_count_before": 86,
+      "word_count_after": 540,
+      "word_count_delta": 454,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:01:11.088Z"
+    },
+    {
+      "id": "abd70516-42af-4ef5-8612-af8f508787dd",
+      "slug": "ashwagandha-ksm66",
+      "name": "Ashwagandha KSM-66",
+      "word_count_before": 92,
+      "word_count_after": 579,
+      "word_count_delta": 487,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:01:18.556Z"
+    },
+    {
+      "id": "b7001a07-24f4-4b9c-bc9f-b4a9b17d352f",
+      "slug": "asteraceae-blessed-thistle",
+      "name": "Asteraceae Blessed Thistle",
+      "word_count_before": 110,
+      "word_count_after": 521,
+      "word_count_delta": 411,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:01:25.573Z"
+    },
+    {
+      "id": "509ad9e6-f7fe-47a3-858e-974abfa58fb1",
+      "slug": "astragalus-gummifer",
+      "name": "Astragalus gummifer",
+      "word_count_before": 109,
+      "word_count_after": 612,
+      "word_count_delta": 503,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:01:33.614Z"
+    },
+    {
+      "id": "115fd939-dd12-4b69-b20d-09af654857ce",
+      "slug": "astragalus-mongholicus",
+      "name": "Astragalus mongholicus",
+      "word_count_before": 67,
+      "word_count_after": 565,
+      "word_count_delta": 498,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:01:42.141Z"
+    },
+    {
+      "id": "96b78c4a-6d6f-4cae-bd72-8db4dbff90a6",
+      "slug": "astragalus-sinicus",
+      "name": "Astragalus sinicus",
+      "word_count_before": 72,
+      "word_count_after": 534,
+      "word_count_delta": 462,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:01:54.442Z"
+    },
+    {
+      "id": "f3f8bf13-4348-45aa-8bb5-9a3fafad1446",
+      "slug": "azure-sage",
+      "name": "Azure Sage",
+      "word_count_before": 77,
+      "word_count_after": 458,
+      "word_count_delta": 381,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:02:02.659Z"
+    },
+    {
+      "id": "1bccf505-3bc0-48f4-bd5e-c69337695e48",
+      "slug": "bhumi-amla",
+      "name": "Bhumi Amla",
+      "word_count_before": 111,
+      "word_count_after": 593,
+      "word_count_delta": 482,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:02:17.806Z"
+    },
+    {
+      "id": "4bafcee2-758e-4719-833f-d2f13394f690",
+      "slug": "bibhitaki",
+      "name": "Bibhitaki",
+      "word_count_before": 104,
+      "word_count_after": 569,
+      "word_count_delta": 465,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:02:27.183Z"
+    },
+    {
+      "id": "a5516a07-6042-4df6-91ce-693a251db10f",
+      "slug": "bilberry-leaf",
+      "name": "Bilberry Leaf",
+      "word_count_before": 127,
+      "word_count_after": 602,
+      "word_count_delta": 475,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:02:34.964Z"
+    },
+    {
+      "id": "78daca37-5fc6-4b28-bf35-0f6f667271cc",
+      "slug": "birch-bark",
+      "name": "Birch Bark",
+      "word_count_before": 114,
+      "word_count_after": 567,
+      "word_count_delta": 453,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:02:45.662Z"
+    },
+    {
+      "id": "a7158bfe-e298-49fa-a5ff-48014760e2de",
+      "slug": "birch-polypore",
+      "name": "Birch Polypore",
+      "word_count_before": 117,
+      "word_count_after": 519,
+      "word_count_delta": 402,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:02:55.872Z"
+    },
+    {
+      "id": "cc811e91-fcec-4a43-ab20-28ed2c393a69",
+      "slug": "bitter-orange-flower",
+      "name": "Bitter Orange Flower",
+      "word_count_before": 104,
+      "word_count_after": 655,
+      "word_count_delta": 551,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:03:05.190Z"
+    },
+    {
+      "id": "7fc16acb-06c8-4431-84f7-112f68455e67",
+      "slug": "black-garlic",
+      "name": "Black Garlic",
+      "word_count_before": 84,
+      "word_count_after": 564,
+      "word_count_delta": 480,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:03:13.892Z"
+    },
+    {
+      "id": "91caa3d0-a895-4e49-814c-9e96fc1f65c8",
+      "slug": "black-willow",
+      "name": "Black Willow",
+      "word_count_before": 90,
+      "word_count_after": 526,
+      "word_count_delta": 436,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:03:27.494Z"
+    },
+    {
+      "id": "6fdbd123-49cf-43a1-a201-443f8b6789f3",
+      "slug": "bogmyrtle",
+      "name": "Bogmyrtle",
+      "word_count_before": 114,
+      "word_count_after": 524,
+      "word_count_delta": 410,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:03:35.072Z"
+    },
+    {
+      "id": "7831d66d-fe6c-4603-af6e-07008fbcbdee",
+      "slug": "boswellia",
+      "name": "Boswellia",
+      "word_count_before": 144,
+      "word_count_after": 498,
+      "word_count_delta": 354,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:03:42.259Z"
+    },
+    {
+      "id": "a4d8628b-afd1-453c-9f7d-0f1046531b86",
+      "slug": "boswellia-carteri",
+      "name": "Boswellia Carteri",
+      "word_count_before": 115,
+      "word_count_after": 583,
+      "word_count_delta": 468,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:03:51.848Z"
+    },
+    {
+      "id": "424c6285-2bad-4c6b-85c5-d1812d9b393e",
+      "slug": "burmese-neem",
+      "name": "Burmese Neem",
+      "word_count_before": 87,
+      "word_count_after": 582,
+      "word_count_delta": 495,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:04:04.116Z"
+    },
+    {
+      "id": "32b6b43a-1856-4edb-aca7-782626cd9a44",
+      "slug": "butterbur",
+      "name": "Butterbur",
+      "word_count_before": 147,
+      "word_count_after": 427,
+      "word_count_delta": 280,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:04:13.669Z"
+    },
+    {
+      "id": "0e29dd6c-ccaf-4262-93af-7f13d5dd6430",
+      "slug": "cassia-absus",
+      "name": "Cassia Absus",
+      "word_count_before": 101,
+      "word_count_after": 472,
+      "word_count_delta": 371,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:04:23.371Z"
+    },
+    {
+      "id": "0d9e6479-3210-440f-8c28-5fa34a199d1d",
+      "slug": "cassia-fistula",
+      "name": "Cassia fistula",
+      "word_count_before": 89,
+      "word_count_after": 616,
+      "word_count_delta": 527,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:04:32.424Z"
+    },
+    {
+      "id": "73e4cfeb-a688-4de0-8cf8-49396681e7ab",
+      "slug": "cat-thyme",
+      "name": "Cat Thyme",
+      "word_count_before": 102,
+      "word_count_after": 679,
+      "word_count_delta": 577,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:04:41.878Z"
+    },
+    {
+      "id": "cc28c185-70fc-42fb-9b9e-3166e9926a06",
+      "slug": "catalpa-bignonioides",
+      "name": "Catalpa bignonioides",
+      "word_count_before": 104,
+      "word_count_after": 492,
+      "word_count_delta": 388,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:04:50.425Z"
+    },
+    {
+      "id": "81ed995f-2d7f-451d-9267-f2c0db247ba4",
+      "slug": "chamomile",
+      "name": "Chamomile",
+      "word_count_before": 159,
+      "word_count_after": 530,
+      "word_count_delta": 371,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:04:57.911Z"
+    },
+    {
+      "id": "890290c5-b151-494b-8b02-2a7a38808f27",
+      "slug": "chamomile-roman",
+      "name": "Chamomile",
+      "word_count_before": 102,
+      "word_count_after": 489,
+      "word_count_delta": 387,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:04.726Z"
+    },
+    {
+      "id": "475b7192-ef13-4ea2-aa8c-0ab9b22da7a8",
+      "slug": "cimicifuga-foetida",
+      "name": "Cimicifuga foetida",
+      "word_count_before": 100,
+      "word_count_after": 479,
+      "word_count_delta": 379,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:10.619Z"
+    },
+    {
+      "id": "969f23c0-9d50-4637-9b89-d0913e1551fb",
+      "slug": "cinnamon",
+      "name": "Cinnamon",
+      "word_count_before": 175,
+      "word_count_after": 560,
+      "word_count_delta": 385,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:18.031Z"
+    },
+    {
+      "id": "61ef6d1c-49f1-4688-8898-bf5a917d3fe7",
+      "slug": "cistanche-herb",
+      "name": "Cistanche Herb",
+      "word_count_before": 119,
+      "word_count_after": 525,
+      "word_count_delta": 406,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:27.811Z"
+    },
+    {
+      "id": "08c0a008-0b8a-4040-8f87-2b49ae8efba5",
+      "slug": "clary-sage",
+      "name": "Clary Sage",
+      "word_count_before": 100,
+      "word_count_after": 633,
+      "word_count_delta": 533,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:33.845Z"
+    },
+    {
+      "id": "72e8bdc0-d934-4949-90ea-ef800dee9120",
+      "slug": "coltsfoot-leaf",
+      "name": "Coltsfoot Leaf",
+      "word_count_before": 116,
+      "word_count_after": 496,
+      "word_count_delta": 380,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:44.086Z"
+    },
+    {
+      "id": "8cc67962-1ddf-49fc-a158-b96bfd08e91e",
+      "slug": "commiphora-mukul",
+      "name": "Commiphora mukul",
+      "word_count_before": 95,
+      "word_count_after": 658,
+      "word_count_delta": 563,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:53.385Z"
+    },
+    {
+      "id": "400ea5ea-1bfc-4264-ae59-b21bdb161e2f",
+      "slug": "cook-island-noni-leaf",
+      "name": "Cook Island Noni Leaf",
+      "word_count_before": 75,
+      "word_count_after": 524,
+      "word_count_delta": 449,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:05:59.343Z"
+    },
+    {
+      "id": "6ead7ea5-0d9b-4da6-82b1-3e60ac2d5516",
+      "slug": "cornus-fruit",
+      "name": "Cornus Fruit",
+      "word_count_before": 111,
+      "word_count_after": 537,
+      "word_count_delta": 426,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:06.100Z"
+    },
+    {
+      "id": "fd1a8fdb-1a2e-4f82-940c-2931c03706a3",
+      "slug": "corynanthe-yohimbe",
+      "name": "Corynanthe yohimbe",
+      "word_count_before": 72,
+      "word_count_after": 581,
+      "word_count_delta": 509,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:14.065Z"
+    },
+    {
+      "id": "f52b3aff-8513-443f-ab66-ac72ce631a37",
+      "slug": "costus-afer",
+      "name": "Costus afer",
+      "word_count_before": 102,
+      "word_count_after": 602,
+      "word_count_delta": 500,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:20.924Z"
+    },
+    {
+      "id": "ee8e1b17-7e70-418a-91f9-0c0f0a6fc291",
+      "slug": "costus-speciosus",
+      "name": "Costus speciosus",
+      "word_count_before": 84,
+      "word_count_after": 530,
+      "word_count_delta": 446,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:29.704Z"
+    },
+    {
+      "id": "2e307d9b-0132-4952-909c-7eb5da487129",
+      "slug": "couch-grass",
+      "name": "Couch Grass",
+      "word_count_before": 102,
+      "word_count_after": 565,
+      "word_count_delta": 463,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:33.744Z"
+    },
+    {
+      "id": "190c1a9a-e07b-4566-a43e-800df2110a70",
+      "slug": "cuphea-hyssopifolia",
+      "name": "Cuphea hyssopifolia",
+      "word_count_before": 68,
+      "word_count_after": 530,
+      "word_count_delta": 462,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:40.015Z"
+    },
+    {
+      "id": "16518318-4344-4b0e-81bc-7f1b9e99fae6",
+      "slug": "curcuma-aromatica",
+      "name": "Curcuma Aromatica",
+      "word_count_before": 119,
+      "word_count_after": 512,
+      "word_count_delta": 393,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:46.437Z"
+    },
+    {
+      "id": "05cc1656-7a78-4af6-8859-054b20704b66",
+      "slug": "dendrobium",
+      "name": "Dendrobium",
+      "word_count_before": 95,
+      "word_count_after": 444,
+      "word_count_delta": 349,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:06:51.940Z"
+    },
+    {
+      "id": "4a72535b-4752-4596-b794-4ff0bd63aeb1",
+      "slug": "dill",
+      "name": "Dill",
+      "word_count_before": 103,
+      "word_count_after": 700,
+      "word_count_delta": 597,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:01.169Z"
+    },
+    {
+      "id": "82da2d37-9af9-4bfd-a8de-b6a7fb890eaa",
+      "slug": "dioscorea-bulbifera",
+      "name": "Dioscorea Bulbifera",
+      "word_count_before": 93,
+      "word_count_after": 514,
+      "word_count_delta": 421,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": false
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:08.079Z"
+    },
+    {
+      "id": "60710715-1407-4f5c-a6c8-cb17ac76afff",
+      "slug": "dioscorea-dumetorum",
+      "name": "Dioscorea Dumetorum",
+      "word_count_before": 84,
+      "word_count_after": 591,
+      "word_count_delta": 507,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:14.534Z"
+    },
+    {
+      "id": "b6c8b1a6-757d-4f33-9c09-c5bb53123eb9",
+      "slug": "east-african-sage",
+      "name": "East African Sage",
+      "word_count_before": 102,
+      "word_count_after": 586,
+      "word_count_delta": 484,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:25.924Z"
+    },
+    {
+      "id": "9adbbb9f-0cfa-4d23-81f5-d72a3a7484c4",
+      "slug": "echinacea",
+      "name": "Echinacea",
+      "word_count_before": 179,
+      "word_count_after": 689,
+      "word_count_delta": 510,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:35.825Z"
+    },
+    {
+      "id": "8f45d15f-8d04-43da-a1c6-038ad70f6d4f",
+      "slug": "elecampane-inula",
+      "name": "Elecampane Inula",
+      "word_count_before": 95,
+      "word_count_after": 516,
+      "word_count_delta": 421,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:42.615Z"
+    },
+    {
+      "id": "1339e5bc-2415-459e-8836-a496c72e4fc5",
+      "slug": "eleutherococcus-giraldii",
+      "name": "Eleutherococcus Giraldii",
+      "word_count_before": 106,
+      "word_count_after": 608,
+      "word_count_delta": 502,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:53.043Z"
+    },
+    {
+      "id": "95342dcd-59b5-41d1-99fc-83a289317f5c",
+      "slug": "epimedium-brevicornu",
+      "name": "Epimedium brevicornu",
+      "word_count_before": 99,
+      "word_count_after": 514,
+      "word_count_delta": 415,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:07:58.045Z"
+    },
+    {
+      "id": "22075cea-81d0-4570-ae53-f3a610301933",
+      "slug": "epimedium-sagittatum",
+      "name": "Epimedium sagittatum",
+      "word_count_before": 81,
+      "word_count_after": 615,
+      "word_count_delta": 534,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:08:04.079Z"
+    },
+    {
+      "id": "a7f1f91a-c672-43e5-952a-548fef0caff9",
+      "slug": "fenugreek-seed",
+      "name": "Fenugreek Seed",
+      "word_count_before": 71,
+      "word_count_after": 693,
+      "word_count_delta": 622,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:22:01.064Z"
+    },
+    {
+      "id": "fb0eff47-d3fb-4c61-a14b-0a61f48f2a43",
+      "slug": "fumitory-european",
+      "name": "Fumitory European",
+      "word_count_before": 105,
+      "word_count_after": 472,
+      "word_count_delta": 367,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:08:47.027Z"
+    },
+    {
+      "id": "b0d5cfd1-4851-40d6-89d2-f529e8d7f8f0",
+      "slug": "garlic",
+      "name": "Garlic",
+      "word_count_before": 159,
+      "word_count_after": 644,
+      "word_count_delta": 485,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:08:58.952Z"
+    },
+    {
+      "id": "3c5d6863-c045-4b5e-ad43-9b90cf972cc1",
+      "slug": "ge-gen-root",
+      "name": "Ge Gen Root",
+      "word_count_before": 117,
+      "word_count_after": 622,
+      "word_count_delta": 505,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:09:09.288Z"
+    },
+    {
+      "id": "ee3389d4-f06f-4429-a6e6-06440478e9a6",
+      "slug": "gentiana-macrophylla",
+      "name": "Gentiana Macrophylla",
+      "word_count_before": 97,
+      "word_count_after": 523,
+      "word_count_delta": 426,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:09:18.489Z"
+    },
+    {
+      "id": "59f882b2-1718-43c2-a778-d50dbfd52a6b",
+      "slug": "ginger-wild",
+      "name": "Ginger Wild",
+      "word_count_before": 116,
+      "word_count_after": 649,
+      "word_count_delta": 533,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:09:28.444Z"
+    },
+    {
+      "id": "4f6413f4-0340-4d72-ab3e-9dc70e193d9e",
+      "slug": "himalayan-neem",
+      "name": "Himalayan Neem",
+      "word_count_before": 85,
+      "word_count_after": 594,
+      "word_count_delta": 509,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:09:39.364Z"
+    },
+    {
+      "id": "fc0c3f56-abad-4c41-8800-44028a09602f",
+      "slug": "hypericum-empetrifolium",
+      "name": "Hypericum empetrifolium",
+      "word_count_before": 102,
+      "word_count_after": 563,
+      "word_count_delta": 461,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:09:47.448Z"
+    },
+    {
+      "id": "ab8b4bef-f09a-4f4e-b700-59855aacb983",
+      "slug": "hypericum-kouytchense",
+      "name": "Hypericum kouytchense",
+      "word_count_before": 73,
+      "word_count_after": 540,
+      "word_count_delta": 467,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:09:54.135Z"
+    },
+    {
+      "id": "b72f17a6-18c4-4dda-a5b4-0dcb78945991",
+      "slug": "hypericum-maculatum",
+      "name": "Hypericum Maculatum",
+      "word_count_before": 101,
+      "word_count_after": 528,
+      "word_count_delta": 427,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:00.236Z"
+    },
+    {
+      "id": "5afdcf65-b52d-456e-98af-b3cea737c707",
+      "slug": "iceland-moss",
+      "name": "Iceland Moss",
+      "word_count_before": 102,
+      "word_count_after": 475,
+      "word_count_delta": 373,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:05.750Z"
+    },
+    {
+      "id": "635cc63c-2c60-422e-a640-9dbc78aa05b7",
+      "slug": "jamu-kunyit-asam",
+      "name": "Jamu Kunyit Asam",
+      "word_count_before": 104,
+      "word_count_after": 555,
+      "word_count_delta": 451,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:11.485Z"
+    },
+    {
+      "id": "72c57689-c416-46c8-b85b-ed108f5633a6",
+      "slug": "japanese-myoga-ginger",
+      "name": "Japanese Myoga Ginger",
+      "word_count_before": 90,
+      "word_count_after": 484,
+      "word_count_delta": 394,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:18.777Z"
+    },
+    {
+      "id": "6395af01-65fc-4ce1-96b3-d3e6ae0f7f72",
+      "slug": "jordan-sage",
+      "name": "Jordan Sage",
+      "word_count_before": 98,
+      "word_count_after": 540,
+      "word_count_delta": 442,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:25.922Z"
+    },
+    {
+      "id": "7c534e9a-48a0-4aed-830f-3b01778d3f84",
+      "slug": "juniperus-oxycedrus",
+      "name": "Juniperus oxycedrus",
+      "word_count_before": 94,
+      "word_count_after": 570,
+      "word_count_delta": 476,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:33.458Z"
+    },
+    {
+      "id": "e7765515-5d08-4187-bc7e-477e3615bed4",
+      "slug": "juniperus-sabina",
+      "name": "Juniperus sabina",
+      "word_count_before": 87,
+      "word_count_after": 545,
+      "word_count_delta": 458,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:39.218Z"
+    },
+    {
+      "id": "3e7df914-1513-4b47-a03f-b38fe6a5e63a",
+      "slug": "karela-leaf",
+      "name": "Karela Leaf",
+      "word_count_before": 118,
+      "word_count_after": 523,
+      "word_count_delta": 405,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:43.605Z"
+    },
+    {
+      "id": "037085ba-22fb-43d1-84c2-dbfa25eb1243",
+      "slug": "korean-red-ginseng-extract",
+      "name": "Korean Red Ginseng Extract",
+      "word_count_before": 93,
+      "word_count_after": 536,
+      "word_count_delta": 443,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:48.358Z"
+    },
+    {
+      "id": "433d89f3-24d0-4a90-ba07-caa0cf7c4847",
+      "slug": "kudzu-flower",
+      "name": "Kudzu Flower",
+      "word_count_before": 107,
+      "word_count_after": 571,
+      "word_count_delta": 464,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:53.442Z"
+    },
+    {
+      "id": "6898d8f7-1b27-41ed-b5e6-cff2f418093e",
+      "slug": "lagenaria-siceraria",
+      "name": "Lagenaria siceraria",
+      "word_count_before": 99,
+      "word_count_after": 580,
+      "word_count_delta": 481,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:10:59.817Z"
+    },
+    {
+      "id": "8e107b43-a027-4bbf-9e1a-b6f2e7d5691c",
+      "slug": "lavender-stoechas",
+      "name": "Lavender Stoechas",
+      "word_count_before": 111,
+      "word_count_after": 590,
+      "word_count_delta": 479,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:11:07.157Z"
+    },
+    {
+      "id": "2d42bb5b-00c1-482d-a8fa-e8764382c1cf",
+      "slug": "lemon-myrtle",
+      "name": "Lemon Myrtle",
+      "word_count_before": 100,
+      "word_count_after": 602,
+      "word_count_delta": 502,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:11:12.057Z"
+    },
+    {
+      "id": "115b86b4-e6b7-403e-95b9-1fe052ae36aa",
+      "slug": "lemon-thyme",
+      "name": "Lemon Thyme",
+      "word_count_before": 110,
+      "word_count_after": 546,
+      "word_count_delta": 436,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:11:17.189Z"
+    },
+    {
+      "id": "b7e19b79-6019-43d0-99c6-b328e8dbc00d",
+      "slug": "lycium-chinense-bark",
+      "name": "Lycium Chinense Bark",
+      "word_count_before": 95,
+      "word_count_after": 557,
+      "word_count_delta": 462,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:11:22.214Z"
+    },
+    {
+      "id": "06d92fa5-d0ff-4825-9550-9b7c143be07f",
+      "slug": "mallow",
+      "name": "Mallow",
+      "word_count_before": 99,
+      "word_count_after": 618,
+      "word_count_delta": 519,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:11:31.702Z"
+    },
+    {
+      "id": "c9ca1249-ca9e-4879-992a-cdc456c20f3f",
+      "slug": "meadowsweet",
+      "name": "Meadowsweet",
+      "word_count_before": 186,
+      "word_count_after": 592,
+      "word_count_delta": 406,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:11:41.613Z"
+    },
+    {
+      "id": "940f71bb-8a18-428f-afbf-98e14d6305b9",
+      "slug": "melao-sao-caetano",
+      "name": "Melão de São Caetano",
+      "word_count_before": 121,
+      "word_count_after": 554,
+      "word_count_delta": 433,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:11:52.222Z"
+    },
+    {
+      "id": "7c8969b0-2744-4008-bf40-a95c61a520e2",
+      "slug": "mexican-wild-yam",
+      "name": "Mexican Wild Yam",
+      "word_count_before": 72,
+      "word_count_after": 486,
+      "word_count_delta": 414,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:12:00.907Z"
+    },
+    {
+      "id": "09653399-fc39-4d78-bd99-0602d0b8d903",
+      "slug": "misai-kucing",
+      "name": "Misai Kucing",
+      "word_count_before": 111,
+      "word_count_after": 500,
+      "word_count_delta": 389,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:12:08.907Z"
+    },
+    {
+      "id": "bfc9956b-5ced-467b-8e40-5571d2212ef0",
+      "slug": "momordica-cochinchinensis",
+      "name": "Momordica Cochinchinensis",
+      "word_count_before": 108,
+      "word_count_after": 584,
+      "word_count_delta": 476,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:12:19.424Z"
+    },
+    {
+      "id": "362d90c1-6df0-4dda-ae36-0d1840375a57",
+      "slug": "morinda-citrifolia-leaf",
+      "name": "Morinda Citrifolia Leaf",
+      "word_count_before": 98,
+      "word_count_after": 556,
+      "word_count_delta": 458,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:12:29.357Z"
+    },
+    {
+      "id": "3331ad70-a7af-4f19-a77b-7c26f261c778",
+      "slug": "morinda-morindoides",
+      "name": "Morinda Morindoides",
+      "word_count_before": 81,
+      "word_count_after": 499,
+      "word_count_delta": 418,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:12:37.709Z"
+    },
+    {
+      "id": "6f613153-fc6b-49b4-ac8b-2cb506635e53",
+      "slug": "morinda-royoc",
+      "name": "Morinda royoc",
+      "word_count_before": 78,
+      "word_count_after": 473,
+      "word_count_delta": 395,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:12:45.046Z"
+    },
+    {
+      "id": "6860370d-58cc-4533-9e24-11c90490f326",
+      "slug": "mountain-st-johns-wort",
+      "name": "Mountain St. John's Wort",
+      "word_count_before": 78,
+      "word_count_after": 566,
+      "word_count_delta": 488,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:12:52.793Z"
+    },
+    {
+      "id": "834a8e1a-7846-4e2b-8550-5520b5b9d588",
+      "slug": "mugwort-indian",
+      "name": "Mugwort Indian",
+      "word_count_before": 89,
+      "word_count_after": 552,
+      "word_count_delta": 463,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:13:06.968Z"
+    },
+    {
+      "id": "74748976-f596-4ce6-9100-215c92cd5bde",
+      "slug": "mullein-flower",
+      "name": "Mullein Flower",
+      "word_count_before": 97,
+      "word_count_after": 541,
+      "word_count_delta": 444,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:13:12.840Z"
+    },
+    {
+      "id": "9a57df8f-e9d0-44f7-ab9f-eaa6f84523fe",
+      "slug": "myrrh",
+      "name": "Myrrh",
+      "word_count_before": 122,
+      "word_count_after": 579,
+      "word_count_delta": 457,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:13:20.178Z"
+    },
+    {
+      "id": "ef75c8d3-a12b-4e00-bf9e-81fdbf3c1185",
+      "slug": "nordic-sea-buckthorn",
+      "name": "Nordic Sea Buckthorn",
+      "word_count_before": 106,
+      "word_count_after": 629,
+      "word_count_delta": 523,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:13:30.691Z"
+    },
+    {
+      "id": "d3ad1daa-b647-4dd8-ad7a-24988b00c969",
+      "slug": "oats-milky-oat-seed",
+      "name": "Oats Milky Oat Seed",
+      "word_count_before": 130,
+      "word_count_after": 712,
+      "word_count_delta": 582,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:13:37.284Z"
+    },
+    {
+      "id": "b598b548-b3f7-4019-a830-fddd2acf3575",
+      "slug": "papaya-leaf",
+      "name": "Papaya Leaf",
+      "word_count_before": 94,
+      "word_count_after": 633,
+      "word_count_delta": 539,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:13:42.808Z"
+    },
+    {
+      "id": "6f35950a-3790-41d3-aeb5-ca169ef17b8d",
+      "slug": "papaya-leaf-extract",
+      "name": "Papaya Leaf Extract",
+      "word_count_before": 106,
+      "word_count_after": 541,
+      "word_count_delta": 435,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:13:52.743Z"
+    },
+    {
+      "id": "43be23b7-5690-47d1-92f1-8dee61bbe3b6",
+      "slug": "parsley",
+      "name": "Parsley",
+      "word_count_before": 103,
+      "word_count_after": 640,
+      "word_count_delta": 537,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:03.903Z"
+    },
+    {
+      "id": "8d431da2-7ecd-4318-9b59-65eef9455173",
+      "slug": "passionflower",
+      "name": "Passionflower",
+      "word_count_before": 155,
+      "word_count_after": 491,
+      "word_count_delta": 336,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:12.374Z"
+    },
+    {
+      "id": "ac308e38-43dc-4b89-acee-55a9d848257a",
+      "slug": "peppermint",
+      "name": "Peppermint",
+      "word_count_before": 169,
+      "word_count_after": 505,
+      "word_count_delta": 336,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:20.998Z"
+    },
+    {
+      "id": "d91ba66d-37cc-4671-95e7-9701d84e6436",
+      "slug": "pineapple-sage",
+      "name": "Pineapple Sage",
+      "word_count_before": 86,
+      "word_count_after": 456,
+      "word_count_delta": 370,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:27.358Z"
+    },
+    {
+      "id": "107998cf-1a2d-46e5-80b1-9d9ece00ddb0",
+      "slug": "plantain-oval",
+      "name": "Plantain Oval-Leaved",
+      "word_count_before": 86,
+      "word_count_after": 577,
+      "word_count_delta": 491,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:33.582Z"
+    },
+    {
+      "id": "3f52428a-d1ea-431e-9de6-1148b31ec5a4",
+      "slug": "poria-cocos-skin",
+      "name": "Poria Cocos Skin",
+      "word_count_before": 87,
+      "word_count_after": 459,
+      "word_count_delta": 372,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:37.846Z"
+    },
+    {
+      "id": "8c5bc773-c6fc-4f6b-a7d9-6dbb4fad1241",
+      "slug": "pot-marjoram",
+      "name": "Pot Marjoram",
+      "word_count_before": 122,
+      "word_count_after": 551,
+      "word_count_delta": 429,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:43.018Z"
+    },
+    {
+      "id": "ff018433-8dc0-4a3b-baab-3d4750830d87",
+      "slug": "qing-hao-shu",
+      "name": "Qing Hao Shu",
+      "word_count_before": 105,
+      "word_count_after": 525,
+      "word_count_delta": 420,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:14:52.184Z"
+    },
+    {
+      "id": "d72c7cd5-cbaf-4a2f-817a-ab0a184cfee6",
+      "slug": "rauwolfia-root",
+      "name": "Rauwolfia Root",
+      "word_count_before": 92,
+      "word_count_after": 562,
+      "word_count_delta": 470,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:15:03.539Z"
+    },
+    {
+      "id": "9fb468f5-c184-4611-b174-e9ca1ec46ba4",
+      "slug": "red-elder",
+      "name": "Red Elder",
+      "word_count_before": 142,
+      "word_count_after": 613,
+      "word_count_delta": 471,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:15:14.354Z"
+    },
+    {
+      "id": "94315f67-becc-4831-9de3-cbed5097fdd3",
+      "slug": "rhodiola-kirilowii",
+      "name": "Rhodiola Kirilowii",
+      "word_count_before": 99,
+      "word_count_after": 654,
+      "word_count_delta": 555,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:15:32.705Z"
+    },
+    {
+      "id": "f283d284-88c4-42ef-beb3-25517cd21e54",
+      "slug": "rosehip-vitamin-c",
+      "name": "Rosehip Vitamin C",
+      "word_count_before": 151,
+      "word_count_after": 596,
+      "word_count_delta": 445,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:15:43.846Z"
+    },
+    {
+      "id": "99eed45c-ab7f-4a15-98de-971ba2d05e8a",
+      "slug": "rosemary",
+      "name": "Rosemary",
+      "word_count_before": 164,
+      "word_count_after": 621,
+      "word_count_delta": 457,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:16:04.154Z"
+    },
+    {
+      "id": "7cfeff67-bb05-460e-947a-b50392bafaa9",
+      "slug": "rosemary-cineole",
+      "name": "Rosemary Cineole",
+      "word_count_before": 105,
+      "word_count_after": 638,
+      "word_count_delta": 533,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:16:14.761Z"
+    },
+    {
+      "id": "5dc35b87-f8f2-4909-963b-f1ca46044cf6",
+      "slug": "salix-caprea",
+      "name": "Salix caprea",
+      "word_count_before": 83,
+      "word_count_after": 618,
+      "word_count_delta": 535,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:16:27.674Z"
+    },
+    {
+      "id": "144b9408-e40c-4a35-933b-d9751f3c46b1",
+      "slug": "salix-matsudana",
+      "name": "Salix matsudana",
+      "word_count_before": 69,
+      "word_count_after": 517,
+      "word_count_delta": 448,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:16:38.880Z"
+    },
+    {
+      "id": "5e394cca-4eb0-44cd-9acf-74112b001ff5",
+      "slug": "senna-leaf",
+      "name": "Senna Leaf",
+      "word_count_before": 127,
+      "word_count_after": 597,
+      "word_count_delta": 470,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:16:47.798Z"
+    },
+    {
+      "id": "524548cb-b272-496a-a8cd-4c655198517f",
+      "slug": "shu-di-huang-root",
+      "name": "Shu Di Huang Root",
+      "word_count_before": 121,
+      "word_count_after": 533,
+      "word_count_delta": 412,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:16:55.829Z"
+    },
+    {
+      "id": "e3ebec69-22ac-41c5-9cdf-c28f2fe921be",
+      "slug": "solidago-goldenrod",
+      "name": "European Goldenrod",
+      "word_count_before": 122,
+      "word_count_after": 515,
+      "word_count_delta": 393,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:03.034Z"
+    },
+    {
+      "id": "f98ff979-dcd0-47bf-9790-e37a6e32bebf",
+      "slug": "spanish-sage",
+      "name": "Spanish Sage",
+      "word_count_before": 112,
+      "word_count_after": 554,
+      "word_count_delta": 442,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:10.511Z"
+    },
+    {
+      "id": "3828f50b-493a-437e-b48f-79b246f328b6",
+      "slug": "sweet-annie",
+      "name": "Sweet Annie",
+      "word_count_before": 119,
+      "word_count_after": 605,
+      "word_count_delta": 486,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:18.208Z"
+    },
+    {
+      "id": "108a0bfa-39e4-4d34-88d0-ede494811dd3",
+      "slug": "szechuan-lovage",
+      "name": "Szechuan Lovage",
+      "word_count_before": 106,
+      "word_count_after": 572,
+      "word_count_delta": 466,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:25.641Z"
+    },
+    {
+      "id": "e26906c9-39e3-41d7-ba15-53ee038fabb5",
+      "slug": "tahitian-noni-leaf",
+      "name": "Tahitian Noni Leaf",
+      "word_count_before": 96,
+      "word_count_after": 564,
+      "word_count_delta": 468,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:32.157Z"
+    },
+    {
+      "id": "1cd37ea3-ed50-4429-bc23-c95e56e2b35f",
+      "slug": "tarragon",
+      "name": "Tarragon",
+      "word_count_before": 93,
+      "word_count_after": 563,
+      "word_count_delta": 470,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:38.273Z"
+    },
+    {
+      "id": "9a691896-ffa8-4fb3-bad3-bdaa3d592add",
+      "slug": "temulawak",
+      "name": "Temulawak",
+      "word_count_before": 89,
+      "word_count_after": 619,
+      "word_count_delta": 530,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:46.626Z"
+    },
+    {
+      "id": "534fc4d4-a937-42fe-9ced-0c740b16f02b",
+      "slug": "tian-hua-fen",
+      "name": "Tian Hua Fen",
+      "word_count_before": 120,
+      "word_count_after": 564,
+      "word_count_delta": 444,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:17:55.306Z"
+    },
+    {
+      "id": "c9e58b07-93c2-4d7d-8404-6f51560f9c0a",
+      "slug": "tormentil",
+      "name": "Tormentil",
+      "word_count_before": 93,
+      "word_count_after": 650,
+      "word_count_delta": 557,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:18:20.397Z"
+    },
+    {
+      "id": "e68f13f4-097b-4e42-962f-c6dd5fde59dd",
+      "slug": "triphala-digestive",
+      "name": "Triphala Digestive",
+      "word_count_before": 93,
+      "word_count_after": 557,
+      "word_count_delta": 464,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:18:30.575Z"
+    },
+    {
+      "id": "f98ce11c-452b-41b5-b62f-3e2acae59436",
+      "slug": "tulip-tree",
+      "name": "Tulip Tree",
+      "word_count_before": 92,
+      "word_count_after": 488,
+      "word_count_delta": 396,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:18:43.168Z"
+    },
+    {
+      "id": "fb3183a8-9cf9-4713-bac2-9ba16a7bfcab",
+      "slug": "turmeric",
+      "name": "Turmeric",
+      "word_count_before": 197,
+      "word_count_after": 521,
+      "word_count_delta": 324,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:18:43.762Z"
+    },
+    {
+      "id": "cb0d3c07-e81e-4087-9d1f-600f5f2575f2",
+      "slug": "urtica-urens",
+      "name": "Urtica Urens",
+      "word_count_before": 114,
+      "word_count_after": 562,
+      "word_count_delta": 448,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:18:52.577Z"
+    },
+    {
+      "id": "8819aca7-e7e2-44b7-916e-de72e1657984",
+      "slug": "valerian",
+      "name": "Valerian",
+      "word_count_before": 155,
+      "word_count_after": 544,
+      "word_count_delta": 389,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:18:58.659Z"
+    },
+    {
+      "id": "49cee25e-d967-45a5-b476-a7ecc234b320",
+      "slug": "vanuatu-kava-root",
+      "name": "Vanuatu Kava Root",
+      "word_count_before": 83,
+      "word_count_after": 688,
+      "word_count_delta": 605,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:19:50.563Z"
+    },
+    {
+      "id": "c542d03e-cff1-44e2-81d2-34f8306e84cb",
+      "slug": "vietnamese-coriander",
+      "name": "Vietnamese Coriander",
+      "word_count_before": 129,
+      "word_count_after": 582,
+      "word_count_delta": 453,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:19:56.540Z"
+    },
+    {
+      "id": "e6fc6d31-c5dc-4357-bb24-0b82787746bd",
+      "slug": "wild-sarsaparilla",
+      "name": "Wild Sarsaparilla",
+      "word_count_before": 92,
+      "word_count_after": 549,
+      "word_count_delta": 457,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:20:02.148Z"
+    },
+    {
+      "id": "a9039669-7972-41e9-9dba-5752ecdf22f9",
+      "slug": "wild-strawberry",
+      "name": "Wild Strawberry",
+      "word_count_before": 110,
+      "word_count_after": 578,
+      "word_count_delta": 468,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:20:07.230Z"
+    },
+    {
+      "id": "ae3133e0-275b-44cd-bdea-3d5e5e65a9d3",
+      "slug": "dwarf-elder",
+      "name": "Dwarf Elder",
+      "word_count_before": 108,
+      "word_count_after": 606,
+      "word_count_delta": 498,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:21:54.675Z"
+    },
+    {
+      "id": "c2180470-0606-4cfc-9ec8-085cbc76eb06",
+      "slug": "red-maca",
+      "name": "Maca Red",
+      "word_count_before": 95,
+      "word_count_after": 670,
+      "word_count_delta": 575,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "updated_in_db": true,
+      "processed_at": "2026-11-02T12:22:07.097Z"
+    }
+  ]
+}

@@ -271,17 +271,15 @@ OUTPUT JSON FORMAT:
 }
 
 /* ─── Model caller ─── */
+export const INFERENCE_MODEL = "glm-5.3-flash:cloud";
+
 export async function callModel(prompt: string): Promise<string> {
   const baseUrl =
     process.env.OLLAMA_CLOUD_URL &&
     !process.env.OLLAMA_CLOUD_URL.includes("ollama.com")
       ? process.env.OLLAMA_CLOUD_URL
       : "http://127.0.0.1:11434/v1";
-  const model =
-    process.env.OLLAMA_CLOUD_MODEL &&
-    !process.env.OLLAMA_CLOUD_MODEL.includes("deepseek")
-      ? process.env.OLLAMA_CLOUD_MODEL
-      : "glm-5.3-flash:cloud";
+  const model = INFERENCE_MODEL;
   const apiKey = process.env.OLLAMA_CLOUD_API_KEY || "ollama";
 
   const res = await fetch(`${baseUrl}/chat/completions`, {
@@ -350,7 +348,24 @@ export function parseV3Response(
     );
   }
 
-  const parsed = JSON.parse(jsonMatch[0]);
+  let jsonString = jsonMatch[0];
+  // Sanitize control characters that break JSON.parse
+  jsonString = jsonString.replace(/[\u0000-\u001F\u007F-\u009F]/g, (c) => {
+    if (c === "\n" || c === "\r" || c === "\t") return c;
+    return " ";
+  });
+
+  const parsed = JSON.parse(jsonString);
+
+  if (
+    typeof parsed.description === "string" &&
+    (parsed.description.includes("string (120-220 words)") ||
+      countWords(parsed.description) < 40)
+  ) {
+    throw new Error(
+      `Generated description is placeholder or invalid (${countWords(parsed.description)} words)`
+    );
+  }
 
   const descWords = countWords(parsed.description);
   if (descWords < 100 || descWords > 260) {
@@ -437,6 +452,13 @@ async function main() {
   const resume = !args.includes("--no-resume");
   const limitArg = args.find((a) => a.startsWith("--limit="));
   const limit = limitArg ? parseInt(limitArg.split("=")[1], 10) : 0;
+  const slugsArg = args.find((a) => a.startsWith("--slugs="));
+  const targetSlugs = slugsArg
+    ? slugsArg
+        .split("=")[1]
+        .split(",")
+        .map((s) => s.trim())
+    : null;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const supabaseKey =
@@ -710,7 +732,11 @@ async function main() {
     }
   }
 
-  const herbsToProcess = limit > 0 ? targetHerbs.slice(0, limit) : targetHerbs;
+  const herbsToProcess = targetSlugs
+    ? targetHerbs.filter((h) => targetSlugs.includes(h.slug))
+    : limit > 0
+      ? targetHerbs.slice(0, limit)
+      : targetHerbs;
   console.log(
     `   Processing target list of ${herbsToProcess.length} herbs...\n`
   );
@@ -723,8 +749,13 @@ async function main() {
     const herb = herbsToProcess[idx];
     const prefix = `[${idx + 1}/${herbsToProcess.length}] ${herb.name} (${herb.slug})`;
 
-    if (completedMap.has(herb.slug)) {
-      console.log(`   ${prefix} ✅ Already processed, skipping.`);
+    const isAlreadyV3 =
+      herb.provenance &&
+      (herb.provenance as Record<string, unknown>).prompt_version ===
+        PROMPT_VERSION;
+
+    if (!targetSlugs && (completedMap.has(herb.slug) || isAlreadyV3)) {
+      console.log(`   ${prefix} ✅ Already processed (v3 in DB), skipping.`);
       skippedCount++;
       continue;
     }
@@ -815,7 +846,7 @@ async function main() {
               verification_method: "primary_source",
               prompt_version: PROMPT_VERSION,
               deepened_at: new Date().toISOString(),
-              model: process.env.OLLAMA_CLOUD_MODEL || "glm-5.3-flash:cloud",
+              model: INFERENCE_MODEL,
               needs_source: needsSourceFlags,
             },
             updated_at: new Date().toISOString(),
