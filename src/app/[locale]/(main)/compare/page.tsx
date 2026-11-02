@@ -121,8 +121,11 @@ export default async function CompareHubPage() {
         description={intro}
         url={fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`}
         breadcrumbs={[
-          { name: "Home", url: baseUrl },
-          { name: heading, url: `${baseUrl}/compare` },
+          { name: t("common.home"), url: fr ? `${baseUrl}/fr` : baseUrl },
+          {
+            name: heading,
+            url: fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`,
+          },
         ]}
       />
       <BreadcrumbListSchema

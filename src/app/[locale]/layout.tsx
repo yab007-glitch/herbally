@@ -136,7 +136,7 @@ export default async function RootLayout({
           rel="dns-prefetch"
           href="https://pnvltmyixympgammxvoo.supabase.co"
         />
-        <OrganizationSchema />
+        <OrganizationSchema locale={locale} />
       </head>
       <body className="bg-background text-foreground">
         <LocaleProvider locale={locale}>

@@ -5,6 +5,7 @@ type SymptomMeta = {
   description: string;
   keywords: string[];
   dbKeyword: string;
+  frKeyword: string;
 };
 
 /**
@@ -28,6 +29,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "adaptogens for anxiety",
     ],
     dbKeyword: "anxiety",
+    frKeyword: "anxiété",
   },
   depression: {
     title: "Herbs for Depression & Mood",
@@ -40,6 +42,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "herbal antidepressants",
     ],
     dbKeyword: "depression",
+    frKeyword: "dépression",
   },
   sleep: {
     title: "Herbs for Sleep & Insomnia",
@@ -53,6 +56,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "valerian for sleep",
     ],
     dbKeyword: "sleep",
+    frKeyword: "sommeil",
   },
   focus: {
     title: "Herbs for Focus & Memory",
@@ -66,6 +70,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "ginkgo for focus",
     ],
     dbKeyword: "focus",
+    frKeyword: "concentration",
   },
   inflammation: {
     title: "Herbs for Inflammation",
@@ -79,6 +84,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "ginger for inflammation",
     ],
     dbKeyword: "inflammation",
+    frKeyword: "inflammation",
   },
   joint: {
     title: "Herbs for Joint & Muscle Pain",
@@ -92,6 +98,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "herbs for muscle pain",
     ],
     dbKeyword: "joint",
+    frKeyword: "articulations",
   },
   headache: {
     title: "Herbs for Headaches & Migraines",
@@ -104,6 +111,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "herbal headache remedies",
     ],
     dbKeyword: "headache",
+    frKeyword: "maux de tête",
   },
   digestion: {
     title: "Herbs for Digestive Health",
@@ -117,6 +125,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "herbs for bloating",
     ],
     dbKeyword: "digestion",
+    frKeyword: "digestion",
   },
   liver: {
     title: "Herbs for Liver Health",
@@ -130,6 +139,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "dandelion root for liver",
     ],
     dbKeyword: "liver",
+    frKeyword: "foie",
   },
   bloodPressure: {
     title: "Herbs for Blood Pressure",
@@ -142,6 +152,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "hibiscus for blood pressure",
     ],
     dbKeyword: "blood-pressure",
+    frKeyword: "tension artérielle",
   },
   cholesterol: {
     title: "Herbs for Cholesterol",
@@ -154,6 +165,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "red yeast rice benefits",
     ],
     dbKeyword: "cholesterol",
+    frKeyword: "cholestérol",
   },
   circulation: {
     title: "Herbs for Circulation",
@@ -166,6 +178,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "herbs for cardiovascular health",
     ],
     dbKeyword: "circulation",
+    frKeyword: "circulation",
   },
   immune: {
     title: "Herbs for Immune Support",
@@ -179,6 +192,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "adaptogen immune support",
     ],
     dbKeyword: "immune",
+    frKeyword: "immunité",
   },
   cold: {
     title: "Herbs for Colds & Flu",
@@ -192,6 +206,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "herbs for immunity",
     ],
     dbKeyword: "cold",
+    frKeyword: "rhume",
   },
   allergy: {
     title: "Herbs for Allergies",
@@ -204,6 +219,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "quercetin for allergies",
     ],
     dbKeyword: "allergy",
+    frKeyword: "allergies",
   },
   menstrual: {
     title: "Herbs for Menstrual Health",
@@ -216,6 +232,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "herbs for period pain",
     ],
     dbKeyword: "menstrual",
+    frKeyword: "menstruations",
   },
   menopause: {
     title: "Herbs for Menopause",
@@ -228,6 +245,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "red clover for hot flashes",
     ],
     dbKeyword: "menopause",
+    frKeyword: "ménopause",
   },
   hormonal: {
     title: "Herbs for Hormonal Balance",
@@ -240,6 +258,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "maca for hormone balance",
     ],
     dbKeyword: "hormonal",
+    frKeyword: "hormones",
   },
   skin: {
     title: "Herbs for Skin Health",
@@ -253,6 +272,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "calendula for eczema",
     ],
     dbKeyword: "skin",
+    frKeyword: "peau",
   },
   wound: {
     title: "Herbs for Wound Healing",
@@ -265,6 +285,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "comfrey for healing",
     ],
     dbKeyword: "wound",
+    frKeyword: "plaies",
   },
   acne: {
     title: "Herbs for Acne",
@@ -277,6 +298,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "burdock for skin",
     ],
     dbKeyword: "acne",
+    frKeyword: "acné",
   },
   nerve: {
     title: "Herbs for Nerve Health",
@@ -289,6 +311,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "st johns wort for neuropathy",
     ],
     dbKeyword: "nerve",
+    frKeyword: "nerfs",
   },
   prostate: {
     title: "Herbs for Prostate Health",
@@ -301,6 +324,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "pygeum benefits",
     ],
     dbKeyword: "prostate",
+    frKeyword: "prostate",
   },
   diabetes: {
     title: "Herbs for Blood Sugar",
@@ -313,6 +337,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "fenugreek for glucose",
     ],
     dbKeyword: "blood-sugar",
+    frKeyword: "glycémie",
   },
   constipation: {
     title: "Herbs for Constipation",
@@ -325,6 +350,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "psyllium for digestion",
     ],
     dbKeyword: "constipation",
+    frKeyword: "constipation",
   },
   nausea: {
     title: "Herbs for Nausea",
@@ -337,6 +363,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "peppermint for stomach",
     ],
     dbKeyword: "nausea",
+    frKeyword: "nausées",
   },
 };
 
@@ -353,4 +380,17 @@ export type { SymptomMeta };
 /** Locale-aware href for a symptom hub (`/symptoms/x` or `/fr/symptoms/x`). */
 export function symptomHref(slug: string, locale: Locale): string {
   return locale === "fr" ? `/fr/symptoms/${slug}` : `/symptoms/${slug}`;
+}
+
+/**
+ * Keyword to display in the symptom hub's match-reason line. The line used to
+ * render `dbKeyword` directly, so French pages showed the English database
+ * keyword and English pages showed a slug shape for the hyphenated ones
+ * ("blood-pressure", "blood-sugar"). `dbKeyword` stays untouched because the
+ * Supabase query matches on it.
+ */
+export function symptomMatchKeyword(slug: string, locale: Locale): string {
+  const meta = symptomMeta[slug];
+  if (!meta) return slug;
+  return locale === "fr" ? meta.frKeyword : meta.dbKeyword.replace(/-/g, " ");
 }
