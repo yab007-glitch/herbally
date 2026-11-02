@@ -66,6 +66,13 @@ export function MarketingFooter() {
               {t("footer.faq")}
             </Link>
             <Link
+              href="/guides"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.guides")}
+            </Link>
+            <Link
               href="/methodology"
               prefetch={true}
               className="hover:text-foreground transition-colors"
