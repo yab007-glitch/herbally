@@ -2,6 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import sitemap from "../sitemap";
 import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
 
+const getEmptySymptomHubsMock = vi.fn();
+vi.mock("@/lib/symptoms/hub-coverage", () => ({
+  getEmptySymptomHubs: () => getEmptySymptomHubsMock(),
+}));
+
 const rangeMock = vi.fn();
 const fromMock = vi.fn();
 const getInteractionPairsMock = vi.fn();
@@ -70,6 +75,7 @@ describe("sitemap", () => {
       ],
       error: null,
     });
+    getEmptySymptomHubsMock.mockResolvedValue([UNPOPULATED_HUB]);
     getInteractionPairsMock.mockResolvedValue([
       {
         id: "p1",
@@ -103,7 +109,7 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/interactions/ginger/warfarin`);
     expect(urls).toContain(`${BASE_URL}/fr/interactions/ginger/warfarin`);
 
-    // A hub is emitted only when a published herb carries its keyword.
+    // A hub is emitted unless the coverage read says nothing carries it.
     expect(urls).toContain(`${BASE_URL}/symptoms/anxiety`);
     expect(urls).toContain(`${BASE_URL}/fr/symptoms/anxiety`);
     expect(urls).not.toContain(`${BASE_URL}/symptoms/${UNPOPULATED_HUB}`);
@@ -119,6 +125,7 @@ describe("sitemap", () => {
 
   it("stamps static pages with a build date, not a frozen one", async () => {
     rangeMock.mockResolvedValue({ data: [], error: null });
+    getEmptySymptomHubsMock.mockResolvedValue([]);
     getInteractionPairsMock.mockResolvedValue([]);
 
     const result = await sitemap();
@@ -135,6 +142,7 @@ describe("sitemap", () => {
   it("returns only static pages when a query never settles", async () => {
     vi.useFakeTimers();
     rangeMock.mockReturnValue(new Promise(() => {}));
+    getEmptySymptomHubsMock.mockResolvedValue([]);
     getInteractionPairsMock.mockResolvedValue([]);
 
     const pending = sitemap();
