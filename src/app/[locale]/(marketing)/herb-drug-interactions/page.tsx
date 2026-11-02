@@ -10,6 +10,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { InteractionExplainer } from "@/components/herbs/interaction-explainer";
 import { EmbedSnippet } from "@/components/embed/embed-snippet";
 import { Button } from "@/components/ui/button";
+import { InteractionChecker } from "../interaction-checker";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -76,21 +77,15 @@ export default async function HerbDrugInteractionsPage() {
         <p className="text-lg text-muted-foreground">{t("intro")}</p>
       </header>
 
-      {/* Phase 2 — the checker itself lives on the homepage; point
-          at it explicitly instead of saying "check below". */}
-      <section className="mt-8 rounded-2xl border bg-card p-6">
-        <h2 className="text-xl font-semibold text-foreground">
+      {/* The checker itself, on the page.
+          This used to be a card explaining that the checker lives on the
+          homepage, with a button that sent the visitor there — on the one page
+          whose subject is checking a combination. */}
+      <section className="mt-8">
+        <h2 className="mb-3 text-xl font-semibold text-foreground">
           {t("checkerCtaTitle")}
         </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("checkerCtaBody")}
-        </p>
-        <div className="mt-4">
-          <Button render={<Link href="/" />}>
-            {t("checkerCtaButton")}
-            <ArrowRight className="ml-1 size-4" />
-          </Button>
-        </div>
+        <InteractionChecker showBrowseLink={false} />
       </section>
 
       <div className="mt-8">

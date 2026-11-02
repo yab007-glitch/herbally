@@ -44,6 +44,7 @@ import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
 import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
+import { InteractionsTable } from "@/components/herbs/interactions-table";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { ViewTracker } from "@/components/herbs/view-tracker";
@@ -633,7 +634,7 @@ export default async function HerbDetailPage({ params }: Props) {
           drug_name: i.drug_name,
           severity: i.severity,
         }))}
-        safetyHref="#safety"
+        safetyHref="#interactions"
       />
 
       {/* The hero's chips read "Evidence: A" next to "Not human-reviewed";
@@ -652,6 +653,18 @@ export default async function HerbDetailPage({ params }: Props) {
           page stays static for anonymous traffic; signed-in users get a
           personalized alert after hydration based on their medication list. */}
       <UserInteractionAlert herbSlug={slug} />
+
+      {/* Known interactions, in the flow of the page.
+          On a monograph this table used to exist only inside the "Safety"
+          tab — the reason most visitors arrive was one click away, and the
+          hero's "see the full list" link only opened a tab. It now sits above
+          the tabs so it is on the page, in the DOM, and in the printout. The
+          safety panel no longer repeats it. */}
+      {interactions.length > 0 && (
+        <section id="interactions" className="scroll-mt-24">
+          <InteractionsTable interactions={interactions} herbSlug={slug} />
+        </section>
+      )}
 
       {/* Tabbed Content — only hand-written monographs show the narrative
           tabs; every other herb renders the government-sourced view (Option B)
@@ -683,6 +696,7 @@ export default async function HerbDetailPage({ params }: Props) {
                   herb={herb}
                   interactions={interactions}
                   severityCounts={severityCounts}
+                  showInteractions={false}
                 />
               ),
             },
@@ -712,6 +726,7 @@ export default async function HerbDetailPage({ params }: Props) {
                 herb={herb}
                 interactions={interactions}
                 severityCounts={severityCounts}
+                showInteractions={false}
               />
             </div>
           )}
@@ -725,7 +740,7 @@ export default async function HerbDetailPage({ params }: Props) {
       <AdSlot
         slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
         format="auto"
-        className="my-8 min-h-[100px]"
+        className="my-8 min-h-[100px] no-print"
       />
 
       {/* Citations */}
@@ -795,7 +810,7 @@ export default async function HerbDetailPage({ params }: Props) {
       <ShareButtons
         title={`${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence - HerbAlly`}
         url={`${siteUrl()}${addLocalePrefix(`/herbs/${slug}`, locale)}`}
-        className="pt-4"
+        className="pt-4 no-print"
       />
 
       <section aria-labelledby="internal-links-heading" className="pt-4">

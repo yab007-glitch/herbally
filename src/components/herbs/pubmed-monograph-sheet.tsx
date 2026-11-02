@@ -73,7 +73,7 @@ function Section({
         {icon}
         {title}
       </h3>
-      <div className="text-sm leading-relaxed text-muted-foreground">
+      <div className="measure prose-body leading-relaxed text-muted-foreground">
         {children}
       </div>
     </section>

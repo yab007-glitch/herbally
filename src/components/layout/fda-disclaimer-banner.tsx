@@ -18,9 +18,9 @@ export function FDADisclaimerBanner() {
     <div
       role="region"
       aria-label={t("common.medicalDisclaimerLabel")}
-      className="w-full border-b border-border bg-background px-4 py-1.5 text-center"
+      className="w-full border-b border-border bg-background px-4 py-1 text-center sm:py-1.5"
     >
-      <p className="mx-auto max-w-5xl text-xs leading-relaxed text-muted-foreground">
+      <p className="mx-auto max-w-5xl text-[11px] leading-snug text-muted-foreground sm:text-xs sm:leading-relaxed">
         {t("fda.disclaimer")}
       </p>
     </div>

@@ -72,18 +72,18 @@ export function HerbCard({ herb, className }: HerbCardProps) {
   // Phase 1 gate: pregnancy/nursing verdicts are only shown for
   // human-verified entries. For unverified entries the verdict is Unknown,
   // never a fabricated "Generally safe" from AI data.
+  //
+  // Unknown is the default for 95% of the library, so rendering it on every
+  // card turned four lines of metadata into wallpaper: measured 20 of 21
+  // cards showing the same "Not Common / Pregnancy: Unknown / Nursing:
+  // Unknown". A card now shows a safety line only when there is a verdict to
+  // show, and the one herb that differs is the one the eye lands on.
   const verified = isVerified(parseProvenance(herb.provenance ?? null));
   const safety = (
     label: string,
     value: boolean | null
-  ): { text: string; tone: string; Icon: typeof ShieldCheck } => {
-    if (!verified || value === null) {
-      return {
-        text: `${label}: ${t("herbHero.unknown")}`,
-        tone: "text-muted-foreground",
-        Icon: ShieldX,
-      };
-    }
+  ): { text: string; tone: string; Icon: typeof ShieldCheck } | null => {
+    if (!verified || value === null) return null;
     return value
       ? {
           text: `${label}: ${t("herbHero.generallySafe")}`,
@@ -98,6 +98,24 @@ export function HerbCard({ herb, className }: HerbCardProps) {
   };
   const pregnancy = safety(t("herbBadges.pregnancy"), herb.pregnancy_safe);
   const nursing = safety(t("herbBadges.nursing"), herb.nursing_safe);
+  const safetyLines = [
+    pregnancy && { key: "pregnancy", ...pregnancy },
+    nursing && { key: "nursing", ...nursing },
+  ].filter(
+    (
+      line
+    ): line is {
+      key: string;
+      text: string;
+      tone: string;
+      Icon: typeof ShieldCheck;
+    } => line !== null
+  );
+  // "Not Common" is the bucket 91% of the library falls into. Printing it on
+  // a card says nothing; the evidence and provenance pills are what differ.
+  const categoryName = herb.herb_categories?.name?.trim();
+  const categoryIsBucket =
+    !!categoryName && /^(not common|pas courant)$/i.test(categoryName);
   const evidenceLevel = EVIDENCE_LEVELS.includes(
     herb.evidence_level as (typeof EVIDENCE_LEVELS)[number]
   )
@@ -134,12 +152,18 @@ export function HerbCard({ herb, className }: HerbCardProps) {
               >
                 {herb.name}
               </h3>
-              <p
-                title={herb.scientific_name}
-                className="text-xs italic text-muted-foreground line-clamp-1"
-              >
-                {herb.scientific_name}
-              </p>
+              {/* Half the library is catalogued under its botanical name, so
+                  the italic line repeated the title verbatim ("Abies alba" /
+                  "Abies alba"). Print it only when it adds something. */}
+              {herb.scientific_name?.trim().toLowerCase() !==
+                herb.name.trim().toLowerCase() && (
+                <p
+                  title={herb.scientific_name}
+                  className="text-xs italic text-muted-foreground line-clamp-1"
+                >
+                  {herb.scientific_name}
+                </p>
+              )}
               {herb.traditional_uses?.[0] && (
                 <p
                   title={herb.traditional_uses[0]}
@@ -151,10 +175,11 @@ export function HerbCard({ herb, className }: HerbCardProps) {
               <div className="mt-2 flex flex-wrap items-center gap-1.5">
                 {/* The category badge explains why a herb appears under a
                     filter: the card's one-line use is the first traditional
-                    use, which need not match the category name. */}
-                {herb.herb_categories?.name && (
+                    use, which need not match the category name. The default
+                    bucket is suppressed — it is true of almost every card. */}
+                {categoryName && !categoryIsBucket && (
                   <Badge variant="secondary" className="text-xs">
-                    {herb.herb_categories.name}
+                    {categoryName}
                   </Badge>
                 )}
                 {evidenceLevel && <EvidenceGradeBadge level={evidenceLevel} />}
@@ -164,23 +189,22 @@ export function HerbCard({ herb, className }: HerbCardProps) {
                   />
                 )}
               </div>
-              <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
-                {[
-                  { key: "pregnancy", ...pregnancy },
-                  { key: "nursing", ...nursing },
-                ].map(({ key, text, tone, Icon }) => (
-                  <span
-                    key={key}
-                    className={cn(
-                      "inline-flex items-center gap-1 text-[11px]",
-                      tone
-                    )}
-                  >
-                    <Icon className="size-3" aria-hidden="true" />
-                    {text}
-                  </span>
-                ))}
-              </div>
+              {safetyLines.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
+                  {safetyLines.map(({ key, text, tone, Icon }) => (
+                    <span
+                      key={key}
+                      className={cn(
+                        "inline-flex items-center gap-1 text-[11px]",
+                        tone
+                      )}
+                    >
+                      <Icon className="size-3" aria-hidden="true" />
+                      {text}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
             <ArrowRight className="size-4 shrink-0 self-center text-muted-foreground/40 group-hover:text-primary transition-colors" />
           </Link>

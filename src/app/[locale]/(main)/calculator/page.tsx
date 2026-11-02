@@ -137,7 +137,7 @@ export default async function CalculatorPage({
         ]}
       />
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {t("calculator.title")}
         </h1>
         <p className="mt-2 text-muted-foreground">{t("calculator.subtitle")}</p>

@@ -135,6 +135,13 @@ export function SourceAttribution({
   const t = useTranslations();
   const reviewer = getReviewer(reviewedBy);
 
+  // Nothing to attribute: a herb with no reviewer, no review date and no
+  // source list used to render the bordered wrapper on its own — an empty
+  // 832×34 box under the citations on every such page. An empty container is
+  // a bug, not a placeholder.
+  const hasContent = Boolean(reviewedBy || lastReviewed || sources?.length);
+  if (!hasContent) return null;
+
   return (
     <div className={cn("rounded-lg border bg-muted/50 p-4 text-sm", className)}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
