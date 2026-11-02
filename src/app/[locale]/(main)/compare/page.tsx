@@ -69,8 +69,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const baseUrl = siteUrl();
   const path = "/compare";
   const title = fr
-    ? "Comparer deux plantes : différences, bienfaits et laquelle choisir | HerbAlly"
-    : "Compare Two Herbs: Differences, Benefits & Which to Choose | HerbAlly";
+    ? "Comparer deux plantes : différences, bienfaits et laquelle choisir"
+    : "Compare Two Herbs: Differences, Benefits & Which to Choose";
   const description = fr
     ? "Comparaisons détaillées entre plantes médicinales : usages, posologie, grossesse et interactions médicamenteuses, avec les niveaux de preuve."
     : "Side-by-side comparisons of medicinal herbs: uses, dosage, pregnancy safety and drug interactions, with evidence grades for each claim.";

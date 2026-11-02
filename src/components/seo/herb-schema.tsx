@@ -26,6 +26,11 @@ interface Herb {
 
 interface HerbSchemaProps {
   herb: Herb;
+  /**
+   * Canonical URL for this page. Pass the localized one: French pages used to
+   * declare the English URL inside their own MedicalWebPage node.
+   */
+  url?: string;
 }
 
 /**
@@ -40,7 +45,7 @@ function asArray(value: unknown): string[] {
   return typeof value === "string" && value.trim() ? [value.trim()] : [];
 }
 
-export function HerbSchema({ herb }: HerbSchemaProps) {
+export function HerbSchema({ herb, url }: HerbSchemaProps) {
   const reviewer = getReviewer(herb.reviewed_by);
   const activeCompounds = asArray(herb.active_compounds);
   const traditionalUses = asArray(herb.traditional_uses);
@@ -52,7 +57,7 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
     name: herb.name,
     alternateName: herb.scientific_name,
     description: herb.description ?? undefined,
-    url: `${siteUrl()}/herbs/${herb.slug}`,
+    url: url ?? `${siteUrl()}/herbs/${herb.slug}`,
     mainEntity: {
       "@type": "MedicalSubstance",
       name: herb.name,

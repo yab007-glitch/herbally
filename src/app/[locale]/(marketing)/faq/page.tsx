@@ -7,7 +7,11 @@ import { FaqSearch } from "./faq-search";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const generateMetadata = () =>
-  buildPageMetadata({ titleKey: "faq", path: "/faq" });
+  buildPageMetadata({
+    titleKey: "faq",
+    descKey: "faqDesc",
+    path: "/faq",
+  });
 
 const categoryKeys = [
   "aboutHerbAlly",

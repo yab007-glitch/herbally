@@ -128,7 +128,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const c = COPY[locale];
   const path = addLocalePrefix("/editorial-policy", locale);
   return {
-    title: `${c.title} | HerbAlly`,
+    // The root layout appends "| HerbAlly"; adding it here rendered it twice.
+    title: c.title,
     description: c.description,
     alternates: {
       canonical: `${siteUrl()}${path}`,

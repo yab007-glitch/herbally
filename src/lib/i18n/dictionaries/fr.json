@@ -1522,9 +1522,12 @@
     "medicalDisclaimer": "Avertissement Médical",
     "medicalDisclaimerDesc": "Lisez l'avertissement médical complet de HerbAlly, y compris la façon dont la FDA et Santé Canada encadrent les produits à base de plantes.",
     "faq": "Questions Fréquemment Posées",
+    "faqDesc": "Réponses aux questions fréquentes sur HerbAlly : nos sources, nos méthodes, la sécurité des plantes, la posologie et les interactions médicamenteuses.",
     "methodology": "Notre Méthodologie",
+    "methodologyDesc": "Comment HerbAlly rédige et vérifie une fiche de plante : les sources utilisées, la signification de chaque niveau de preuve, l’usage de l’IA et les corrections.",
+    "privacyDesc": "Comment HerbAlly traite vos données : ce qui est recueilli, les témoins (cookies), la mesure d’audience et l’exercice de vos droits.",
     "termsOfService": "Conditions d'Utilisation",
-    "termsDesc": "Conditions d'utilisation et d'utilisation de HerbAlly.",
+    "termsDesc": "Conditions d’utilisation de HerbAlly.",
     "supportUs": "Soutenez-nous - Gardez la Médecine par les Plantes Gratuite",
     "supportUsDesc": "Aidez-nous à garder HerbAlly 100% gratuit. Votre don soutient l'hébergement, les coûts IA et l'accès gratuit pour tous.",
     "sponsorship": "Parrainage et partenariats",
@@ -1736,14 +1739,26 @@
     "compareDesc": "Comparez l'efficacité, la sécurité et les interactions côte à côte.",
     "askHerbalist": "Interroger l'herboriste IA"
   },
+  "herbMeta": {
+    "title": "{name} ({scientific}) : bienfaits, posologie et précautions",
+    "descWithNames": "Bienfaits, posologie, grossesse et interactions médicamenteuses de {name} ({common}). Sources PubMed et calculateur de doses gratuit.",
+    "descFromBody": "{body} Bienfaits, posologie, grossesse et interactions. Calculateur de doses gratuit inclus.",
+    "descFallback": "Bienfaits, posologie, grossesse, effets secondaires et interactions médicamenteuses de {name} ({scientific}). Fiche sourcée et calculateur de doses gratuit.",
+    "usesFallback": "le bien-être traditionnel"
+  },
+  "compareMeta": {
+    "title": "{a} ou {b} : différences, bienfaits et laquelle choisir",
+    "desc": "Comparer {a} et {b} : usages, posologie, grossesse, effets secondaires et interactions médicamenteuses. Verdict fondé sur les preuves et calculateur de doses gratuit."
+  },
   "seo": {
     "safePregnancy": "Généralement sûr pendant la grossesse",
     "notSafePregnancy": "Déconseillé pendant la grossesse",
     "safeNursing": "Généralement sûr pendant l'allaitement",
     "notSafeNursing": "Déconseillé pendant l'allaitement",
     "nccihSource": "Plantes Médicinales en Bref",
+    "breadcrumbHome": "Accueil",
     "orgName": "HerbAlly",
-    "orgDesc": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses."
+    "orgDesc": "Une bibliothèque de référence de plus de 2 700 plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
   },
   "brand": {
     "full": "HerbAlly"

@@ -24,6 +24,7 @@ import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
 import { siteUrl } from "@/lib/seo/site-url";
+import { truncateDescription } from "@/lib/seo/truncate-description";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
@@ -166,11 +167,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     "natural medicine",
   ].filter(Boolean);
 
-  // Click-optimized title/description (Search Console Sep 2026: 26.6k imp,
-  // 0.4% CTR, avg pos 20). Old template "{Name} ({Latin}) - Medicinal Herb
-  // Guide" matched no query. New template targets the actual converting
-  // intents: "{common} in english", benefits, dosage, pregnancy safety,
-  // "X vs Y", and "herbal dosage calculator".
+  // Title and description come from the `herbMeta` dictionary so a French page
+  // does not ship an English snippet. Hardcoding them meant all 2,700 /fr/herbs
+  // pages read "…: Benefits, Dosage, Safety & Evidence" and described the herb
+  // as "What is Curcuma in English (…)" — a page written for French queries
+  // that told the reader the answer was in English.
+  const herbT = await getTranslations({
+    locale: metaLocale,
+    namespace: "herbMeta",
+  });
   const commonNames = (herb.common_names || []).slice(0, 3).join(", ");
   const topUses = [
     ...(herb.traditional_uses || []),
@@ -178,21 +183,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   ]
     .slice(0, 3)
     .join(", ");
-  const title = `${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`;
-  const description = commonNames
-    ? `What is ${herb.name} in English (${commonNames})? Uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety & drug interactions. Evidence-based guide with PubMed sources. Free dose calculator included.`.slice(
-        0,
-        158
-      )
-    : herb.description
-      ? `${herb.description.slice(0, 120)} Uses, dosage, pregnancy safety & interactions. Free calculator included.`.slice(
-          0,
-          158
-        )
-      : `Learn about ${herb.name} (${herb.scientific_name}) — uses for ${topUses || "traditional wellness"}, dosage, pregnancy safety, side effects & drug interactions. Free calculator included.`.slice(
-          0,
-          158
-        );
+  const uses = topUses || herbT("usesFallback");
+  const title = herbT("title", {
+    name: herb.name,
+    scientific: herb.scientific_name,
+  });
+  const description = truncateDescription(
+    commonNames
+      ? herbT("descWithNames", {
+          name: herb.name,
+          common: commonNames,
+          uses,
+        })
+      : herb.description
+        ? herbT("descFromBody", { body: herb.description.slice(0, 120) })
+        : herbT("descFallback", {
+            name: herb.name,
+            scientific: herb.scientific_name,
+            uses,
+          })
+  );
 
   return {
     title,
@@ -472,6 +482,28 @@ export default async function HerbDetailPage({ params }: Props) {
   const locale = await getLocale();
   const t = await getTranslations({ locale });
   const tFaq = await getTranslations({ locale, namespace: "herbFaq" });
+  // Same `herbMeta` title the <title> tag uses, so the JSON-LD name and the
+  // share text are not English sentences on a French page.
+  const tHerbMeta = await getTranslations({ locale, namespace: "herbMeta" });
+  const herbMetaTitle = tHerbMeta("title", {
+    name: herb.name,
+    scientific: herb.scientific_name,
+  });
+  // Structured data must point at the URL this page actually serves. It used to
+  // hardcode the English paths, so every /fr/herbs/* page declared a canonical
+  // elsewhere in its own JSON-LD and English breadcrumb labels.
+  const herbPageUrl = `${siteUrl()}${addLocalePrefix(`/herbs/${slug}`, locale)}`;
+  const herbCrumbs = [
+    {
+      name: t("seo.breadcrumbHome"),
+      url: `${siteUrl()}${addLocalePrefix("/", locale)}`,
+    },
+    {
+      name: t("nav.herbs"),
+      url: `${siteUrl()}${addLocalePrefix("/herbs", locale)}`,
+    },
+    { name: herb.name, url: herbPageUrl },
+  ];
 
   // Localized fallback FAQs, shared with the visible section via the same
   // builder so JSON-LD and content match in both languages.
@@ -566,24 +598,14 @@ export default async function HerbDetailPage({ params }: Props) {
     <div className="space-y-8">
       <ViewTracker slug={slug} />
       <WebPageSchema
-        title={`${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence`}
+        title={herbMetaTitle}
         description={herb.description ?? `Learn about ${herb.name}`}
-        url={`${siteUrl()}/herbs/${slug}`}
+        url={herbPageUrl}
         dateModified={herb.last_reviewed ?? herb.updated_at ?? undefined}
-        breadcrumbs={[
-          { name: "Home", url: siteUrl() },
-          { name: "Herbs", url: `${siteUrl()}/herbs` },
-          { name: herb.name, url: `${siteUrl()}/herbs/${slug}` },
-        ]}
+        breadcrumbs={herbCrumbs}
       />
-      <BreadcrumbListSchema
-        items={[
-          { name: "Home", url: siteUrl() },
-          { name: "Herbs", url: `${siteUrl()}/herbs` },
-          { name: herb.name, url: `${siteUrl()}/herbs/${slug}` },
-        ]}
-      />
-      <HerbSchema herb={herb} />
+      <BreadcrumbListSchema items={herbCrumbs} />
+      <HerbSchema herb={herb} url={herbPageUrl} />
       <HerbFAQSchema
         herbName={herb.name}
         scientificName={herb.scientific_name}
@@ -808,8 +830,8 @@ export default async function HerbDetailPage({ params }: Props) {
 
       {/* Share buttons */}
       <ShareButtons
-        title={`${herb.name} (${herb.scientific_name}): Benefits, Dosage, Safety & Evidence - HerbAlly`}
-        url={`${siteUrl()}${addLocalePrefix(`/herbs/${slug}`, locale)}`}
+        title={`${herbMetaTitle} - HerbAlly`}
+        url={herbPageUrl}
         className="pt-4 no-print"
       />
 

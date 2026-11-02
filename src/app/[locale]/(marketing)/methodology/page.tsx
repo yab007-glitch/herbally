@@ -15,7 +15,11 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const generateMetadata = () =>
-  buildPageMetadata({ titleKey: "methodology", path: "/methodology" });
+  buildPageMetadata({
+    titleKey: "methodology",
+    descKey: "methodologyDesc",
+    path: "/methodology",
+  });
 
 const sectionKeys = [
   { key: "evidenceGrading", icon: Scale },

@@ -1522,7 +1522,10 @@
     "medicalDisclaimer": "Medical Disclaimer",
     "medicalDisclaimerDesc": "Read the full medical disclaimer for HerbAlly, including how the FDA and Health Canada regulate herbal products.",
     "faq": "Frequently Asked Questions",
+    "faqDesc": "Answers to common questions about HerbAlly: our sources, our methods, herb safety, dosage and drug interactions.",
     "methodology": "Our Methodology",
+    "methodologyDesc": "How HerbAlly writes and checks a herb profile: the sources used, what each evidence grade means, how AI is used, and how corrections are made.",
+    "privacyDesc": "How HerbAlly handles your data: what is collected, cookies, analytics, and how to exercise your rights.",
     "termsOfService": "Terms of Service",
     "termsDesc": "HerbAlly terms of service and conditions of use.",
     "supportUs": "Support Us - Keep Herbal Medicine Free",
@@ -1736,14 +1739,26 @@
     "compareDesc": "See side-by-side comparisons of effectiveness, safety, and interactions.",
     "askHerbalist": "Ask the AI Herbalist"
   },
+  "herbMeta": {
+    "title": "{name} ({scientific}): Benefits, Dosage, Safety & Evidence",
+    "descWithNames": "What is {name} in English ({common})? Uses for {uses}, dosage, pregnancy safety & drug interactions. Evidence-based guide with PubMed sources. Free dose calculator included.",
+    "descFromBody": "{body} Uses, dosage, pregnancy safety & interactions. Free calculator included.",
+    "descFallback": "Learn about {name} ({scientific}): uses for {uses}, dosage, pregnancy safety, side effects & drug interactions. Free calculator included.",
+    "usesFallback": "traditional wellness"
+  },
+  "compareMeta": {
+    "title": "{a} vs {b}: Difference, Benefits & Which Is Better?",
+    "desc": "Compare {a} vs {b}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator."
+  },
   "seo": {
     "safePregnancy": "Generally safe during pregnancy",
     "notSafePregnancy": "Not recommended during pregnancy",
     "safeNursing": "Generally safe while nursing",
     "notSafeNursing": "Not recommended while nursing",
     "nccihSource": "Herbs at a Glance",
+    "breadcrumbHome": "Home",
     "orgName": "HerbAlly",
-    "orgDesc": "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions."
+    "orgDesc": "A reference library of 2,700+ medicinal herbs with cited sources, evidence grades, an adult dosage calculator and an herb-drug interaction checker."
   },
   "brand": {
     "full": "HerbAlly"

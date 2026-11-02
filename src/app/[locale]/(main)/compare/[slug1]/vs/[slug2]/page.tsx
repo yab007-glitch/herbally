@@ -12,9 +12,11 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
+import { truncateDescription } from "@/lib/seo/truncate-description";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { addLocalePrefix } from "@/lib/i18n/routing";
 
 // ISR. The locale is a root param now, so on-demand generation is safe and
 // comparisons outside the prerendered set still render (not 500).
@@ -102,13 +104,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  // Localized so /fr/compare/* does not ship an English title and description.
+  const cmpT = await getTranslations({
+    locale: metaLocale,
+    namespace: "compareMeta",
+  });
+  const title = cmpT("title", { a: herbA.name, b: herbB.name });
+  const description = truncateDescription(
+    cmpT("desc", { a: herbA.name, b: herbB.name })
+  );
+
   return {
-    title: `${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`,
-    description:
-      `Compare ${herbA.name} vs ${herbB.name}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator.`.slice(
-        0,
-        158
-      ),
+    title,
+    description,
     alternates: {
       canonical:
         metaLocale === "fr"
@@ -136,33 +144,39 @@ export default async function ComparePage({ params }: Props) {
   const herbB = resolveHerbOr404(resultB);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
-  const compareUrl = `${baseUrl}/compare/${slug1}/vs/${slug2}`;
+  const compareUrl = `${baseUrl}${addLocalePrefix(
+    `/compare/${slug1}/vs/${slug2}`,
+    locale
+  )}`;
+  // Localized headline for the JSON-LD: an English schema name on a French page
+  // is the same defect as an English <title>.
+  const tCompare = await getTranslations({ locale, namespace: "compareMeta" });
+  const compareTitle = tCompare("title", { a: herbA.name, b: herbB.name });
+  const compareDescription = tCompare("desc", {
+    a: herbA.name,
+    b: herbB.name,
+  });
+  const compareCrumbs = [
+    {
+      name: t("seo.breadcrumbHome"),
+      url: `${baseUrl}${addLocalePrefix("/", locale)}`,
+    },
+    {
+      name: t("nav.herbs"),
+      url: `${baseUrl}${addLocalePrefix("/herbs", locale)}`,
+    },
+    { name: `${herbA.name} vs ${herbB.name}`, url: compareUrl },
+  ];
 
   return (
     <div className="space-y-8">
       <WebPageSchema
-        title={`${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`}
-        description={`Compare ${herbA.name} vs ${herbB.name}: uses, dosage, safety & interactions.`}
+        title={compareTitle}
+        description={compareDescription}
         url={compareUrl}
-        breadcrumbs={[
-          { name: "Home", url: baseUrl },
-          { name: "Herbs", url: `${baseUrl}/herbs` },
-          {
-            name: `${herbA.name} vs ${herbB.name}`,
-            url: compareUrl,
-          },
-        ]}
+        breadcrumbs={compareCrumbs}
       />
-      <BreadcrumbListSchema
-        items={[
-          { name: "Home", url: baseUrl },
-          { name: "Herbs", url: `${baseUrl}/herbs` },
-          {
-            name: `${herbA.name} vs ${herbB.name}`,
-            url: compareUrl,
-          },
-        ]}
-      />
+      <BreadcrumbListSchema items={compareCrumbs} />
       <FAQSchema
         items={[
           {
