@@ -22,6 +22,64 @@ const STATIC_PAGE_MODIFIED = new Date("2026-06-22T00:00:00Z");
 // lastModified of every unrelated marketing page.
 const SPONSORSHIP_PAGE_MODIFIED = new Date("2026-10-28T00:00:00Z");
 
+/**
+ * Rows per herb query. The herb row carries a large `translations` jsonb; 1,000
+ * rows in one response is several megabytes and times out under load, which used
+ * to cost the sitemap every herb URL. 500 still finishes the whole library in
+ * six requests on a healthy database.
+ */
+const HERB_BATCH_SIZE = 500;
+
+type HerbSitemapRow = {
+  slug: string;
+  updated_at: string | null;
+  translations: unknown;
+};
+
+/**
+ * One herb batch, or null when the query failed.
+ *
+ * `error` must be handled explicitly: PostgREST answers a statement timeout with
+ * `{ data: null, error: { code: "57014" } }`, and the previous code only read
+ * `data`, so the failure looked exactly like "no more rows".
+ */
+async function fetchHerbBatch(
+  supabase: NonNullable<ReturnType<typeof getAnonClient>>,
+  from: number,
+  size: number,
+  timeoutMs: number
+): Promise<HerbSitemapRow[] | null> {
+  try {
+    const { data, error } = await withTimeout(
+      supabase
+        .from("herbs")
+        .select("slug, updated_at, translations")
+        .eq("is_published", true)
+        .order("slug", { ascending: true })
+        .range(from, from + size - 1),
+      "sitemap_herbs_batch",
+      timeoutMs
+    );
+    if (error) {
+      logger.error("sitemap_herbs_query_error", {
+        error: error.message,
+        code: error.code,
+        from,
+        size,
+      });
+      return null;
+    }
+    return (data ?? []) as HerbSitemapRow[];
+  } catch (error) {
+    logger.error("sitemap_herbs_query_failed", {
+      error: error instanceof Error ? error.message : String(error),
+      from,
+      size,
+    });
+    return null;
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
 
@@ -291,25 +349,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // EN-content-on-FR-URL duplicates — Google then picks the EN URL as
     // canonical and reports "Alternative page with proper canonical tag"
     // (2,155 cases in Search Console, Sep 2026).
+    //
+    // 2026-11-02: a single batch that hit the database's statement timeout
+    // (57014, ~5s under load) made this loop `break` on the first iteration and
+    // served a *static-only* sitemap — 478 URLs instead of 5,876 — for the whole
+    // hour-long cache window, with a 200 status. Ordering by `name` also forces
+    // a full sort on every batch; `slug` is unique and indexed. Both fixed here,
+    // plus a retry at a quarter of the batch size before giving up.
     const herbPages: MetadataRoute.Sitemap = [];
     let from = 0;
-    const batchSize = 1000;
+    let batchSize = HERB_BATCH_SIZE;
     while (true) {
       const herbsRemainingMs = remainingBudgetMs();
       if (herbsRemainingMs <= 0) return budgetExhausted();
 
-      const { data: herbsBatch } = await withTimeout(
-        supabase
-          .from("herbs")
-          .select("slug, updated_at, translations")
-          .eq("is_published", true)
-          .order("name", { ascending: true })
-          .range(from, from + batchSize - 1),
-        "sitemap_herbs_batch",
-        herbsRemainingMs
-      );
+      let herbsBatch: Awaited<ReturnType<typeof fetchHerbBatch>> | null = null;
+      for (const size of [batchSize, Math.max(50, Math.floor(batchSize / 4))]) {
+        const remaining = remainingBudgetMs();
+        if (remaining <= 0) break;
+        herbsBatch = await fetchHerbBatch(supabase, from, size, remaining);
+        if (herbsBatch) {
+          batchSize = size;
+          break;
+        }
+        logger.error("sitemap_herbs_batch_retry", { from, size });
+      }
 
-      if (!herbsBatch || herbsBatch.length === 0) break;
+      if (!herbsBatch) {
+        // Do not pretend the sitemap is complete: keep whatever was collected
+        // and let the pair/static pages through, but record the loss loudly.
+        logger.error("sitemap_herbs_incomplete", {
+          from,
+          collected: herbPages.length,
+        });
+        break;
+      }
+
+      if (herbsBatch.length === 0) break;
 
       for (const herb of herbsBatch) {
         herbPages.push({
