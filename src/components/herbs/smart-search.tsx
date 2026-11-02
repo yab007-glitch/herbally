@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
 import { Search, X, Shuffle, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

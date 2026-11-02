@@ -60,7 +60,8 @@
     "copyResponseLabel": "Copier la réponse",
     "chatInputlabel": "Saisie du message de discussion",
     "stopGeneratingLabel": "Arrêter la génération",
-    "sendMessageLabel": "Envoyer le message"
+    "sendMessageLabel": "Envoyer le message",
+    "home": "Accueil"
   },
   "nav": {
     "symptoms": "Par Symptôme",
@@ -1152,7 +1153,9 @@
     "matchReasonSymptomGeneral": "Correspond à vos symptômes",
     "matchReasonName": "Correspondance par nom ou description",
     "alsoListedAs": "Aussi répertorié sous : {names}",
-    "orderingNote": "Les résultats sont classés selon le nombre de vos symptômes correspondants, puis selon le niveau de preuve."
+    "orderingNote": "Les résultats sont classés selon le nombre de vos symptômes correspondants, puis selon le niveau de preuve.",
+    "allSymptomsHeading": "Tous les symptômes de la base de données",
+    "allSymptomsIntro": "Chaque page répertorie les plantes enregistrées pour ce symptôme, leur niveau de preuve, les mentions grossesse et allaitement, et un lien vers la fiche complète. Commencez par la condition qui correspond à votre situation."
   },
   "herbDetailContent": {
     "herbNotFound": "Herbe Non Trouvée",

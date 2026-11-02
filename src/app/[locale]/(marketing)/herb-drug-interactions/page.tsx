@@ -1,5 +1,5 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
@@ -37,7 +37,7 @@ export default async function HerbDrugInteractionsPage() {
     namespace: "herbDrugInteractionsPage",
   });
   const tCommon = await getTranslations({ locale, namespace: "common" });
-  const url = `${siteUrl()}/herb-drug-interactions`;
+  const url = `${siteUrl()}${locale === "fr" ? "/fr" : ""}/herb-drug-interactions`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
@@ -46,7 +46,7 @@ export default async function HerbDrugInteractionsPage() {
         description={t("intro")}
         url={url}
         breadcrumbs={[
-          { name: "Home", url: siteUrl() },
+          { name: tCommon("home"), url: siteUrl() },
           { name: t("heading"), url },
         ]}
       />

@@ -7,7 +7,7 @@ import { HeroVisual } from "./hero-visual";
 import { HowItWorks } from "./how-it-works";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
 import { BookOpen, Calculator, ShieldAlert, MessageCircle } from "lucide-react";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 
 // M10 (audit 2026-06-22): the homepage previously had no generateMetadata, so
 // it emitted no canonical URL or hreflang alternates — the highest-traffic

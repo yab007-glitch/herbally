@@ -12,6 +12,7 @@ if (typeof window !== "undefined" && !("PointerEvent" in window)) {
 // Passthrough translator: returns the key so assertions can target keys
 // rather than English copy (the copy changes; the key is the contract).
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string) => key,
 }));
 

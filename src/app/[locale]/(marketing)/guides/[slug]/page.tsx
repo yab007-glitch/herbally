@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getLocale } from "@/lib/i18n/page-locale";

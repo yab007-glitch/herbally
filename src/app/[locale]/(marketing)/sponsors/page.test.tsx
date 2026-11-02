@@ -16,6 +16,10 @@ vi.mock("@/lib/i18n/metadata", () => ({
   buildPageMetadata: buildPageMetadataMock,
 }));
 
+vi.mock("next-intl", () => ({
+  useLocale: () => "en",
+}));
+
 vi.mock("next-intl/server", () => ({
   getTranslations: async ({ locale }: { locale?: "en" | "fr" } = {}) => {
     const dictionary = locale === "fr" ? fr : en;

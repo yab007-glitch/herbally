@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { trackEvent } from "@/lib/analytics";
 import { ArrowRight, Heart, ShieldCheck, ShieldX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

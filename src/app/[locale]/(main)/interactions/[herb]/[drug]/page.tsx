@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import {
   AlertOctagon,
   AlertTriangle,
@@ -300,7 +300,9 @@ export default async function InteractionPairPage({ params }: Props) {
     getRelatedPairs(pair, locale),
   ]);
   const baseUrl = siteUrl();
-  const path = `/interactions/${pair.herbSlug}/${pair.drugSlug}`;
+  // Locale-aware: a /fr page that declares the English URL competes with its
+  // own EN twin instead of pairing with it through hreflang.
+  const path = `${fr ? "/fr" : ""}/interactions/${pair.herbSlug}/${pair.drugSlug}`;
   const url = `${baseUrl}${path}`;
   const verdict = verdictCopy(pair.severity, pair.herbName, pair.drugName, fr);
   const checkerQuery = fr

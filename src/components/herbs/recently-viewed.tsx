@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Clock, ArrowRight } from "lucide-react";
 import { getExploredHerbs } from "@/lib/garden/streaks";
 import { useTranslations } from "next-intl";

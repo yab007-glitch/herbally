@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 const FR_BASE = "/fr";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
-import { SYMPTOM_SLUGS } from "@/app/[locale]/(main)/symptoms/[symptom]/page";
+import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
 import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page";
 import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";

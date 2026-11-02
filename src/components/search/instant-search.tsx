@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
+import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
 import { Search, X, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";

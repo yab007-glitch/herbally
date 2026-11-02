@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () =>
     Object.assign((key: string) => key, {
       raw: (key: string) =>

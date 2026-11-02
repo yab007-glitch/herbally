@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 export const dynamic = "force-dynamic";
