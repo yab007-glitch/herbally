@@ -31,6 +31,12 @@ export interface PageMetaOptions {
   /** Path without locale prefix, e.g. "/herbs" or "/". */
   path: string;
   /**
+   * Keep the page out of the index. Use for account-scoped surfaces whose
+   * signed-out state is an empty shell: they add nothing to search results and
+   * spend crawl budget that belongs to the herb pages.
+   */
+  noindex?: boolean;
+  /**
    * Extra Open Graph fields for this page. Merged over the defaults so
    * overriding title/description cannot drop og:image or og:locale.
    */
@@ -46,6 +52,7 @@ export async function buildPageMetadata({
   titleKey,
   descKey,
   path,
+  noindex,
   openGraph: openGraphOverrides,
 }: PageMetaOptions): Promise<Metadata> {
   const locale = await getLocale();
@@ -78,6 +85,7 @@ export async function buildPageMetadata({
   return {
     title,
     description,
+    ...(noindex ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       canonical: alternates[locale],
       languages: {
