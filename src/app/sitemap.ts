@@ -8,6 +8,7 @@ import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[s
 import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { withTimeout } from "@/lib/utils/with-timeout";
+import { publishedGuides } from "@/lib/guides/guides";
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
@@ -264,6 +265,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.4,
     },
+    // Guides hub: indexable. Individual guides are added below only once they
+    // are published — a draft is `noindex`, so listing it here would be a lie.
+    {
+      url: `${baseUrl}/guides`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/guides`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    ...publishedGuides().flatMap((guide) => [
+      {
+        url: `${baseUrl}/guides/${guide.slug}`,
+        lastModified: new Date(`${guide.updated}T00:00:00Z`),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+      {
+        url: `${baseUrl}${FR_BASE}/guides/${guide.slug}`,
+        lastModified: new Date(`${guide.updated}T00:00:00Z`),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      },
+    ]),
     {
       url: `${baseUrl}/herb-drug-interactions`,
       lastModified: STATIC_PAGE_MODIFIED,
