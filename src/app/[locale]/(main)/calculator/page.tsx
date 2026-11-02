@@ -12,6 +12,7 @@ import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
+import { ContinueExploring } from "@/components/shared/continue-exploring";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -184,6 +185,7 @@ export default async function CalculatorPage({
           </details>
         </div>
       </section>
+      <ContinueExploring />
     </div>
   );
 }

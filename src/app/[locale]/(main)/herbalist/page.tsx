@@ -3,6 +3,7 @@ import { ChatInterface } from "@/components/pharmacist/chat-interface";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { ContinueExploring } from "@/components/shared/continue-exploring";
 
 export const dynamic = "force-dynamic";
 
@@ -62,6 +63,9 @@ export default async function PharmacistPage({
         autoQuery={autoQuery}
         locale={locale}
       />
+      <div className="mt-10">
+        <ContinueExploring />
+      </div>
     </div>
   );
 }
