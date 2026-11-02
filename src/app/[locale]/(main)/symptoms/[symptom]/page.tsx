@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ArrowRight, Stethoscope, Shield } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,7 +14,11 @@ import {
   dedupeSymptomResults,
   localizeSymptomHerb,
 } from "@/lib/search/symptom-results";
-import { SYMPTOM_SLUGS, symptomMeta } from "@/lib/symptoms/symptom-meta";
+import {
+  SYMPTOM_SLUGS,
+  symptomMatchKeyword,
+  symptomMeta,
+} from "@/lib/symptoms/symptom-meta";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { siteUrl } from "@/lib/seo/site-url";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -23,6 +28,57 @@ import { JsonLd } from "@/components/seo/json-ld";
 export const revalidate = 86400;
 
 type Props = { params: Promise<{ symptom: string }> };
+
+type SymptomHerb = {
+  slug: string;
+  name: string;
+  scientific_name: string;
+  evidence_level: string | null;
+  pregnancy_safe: boolean | null;
+  nursing_safe: boolean | null;
+  traditional_uses: string[] | null;
+  modern_uses: string[] | null;
+  aliases?: string[];
+  translations?: unknown;
+};
+
+/**
+ * One query per request, shared by generateMetadata and the page body.
+ *
+ * generateMetadata needs the row count to decide the robots tag, and the body
+ * needs the rows; `cache` keeps both from hitting Supabase twice. Four hubs
+ * (bloodPressure, hormonal, prostate, diabetes) currently match zero published
+ * herbs — they rendered "no herbs yet" while sitting in the sitemap, which is
+ * the soft-404 shape Google files under "crawled - currently not indexed".
+ */
+const loadSymptomHerbs = cache(
+  async (symptom: string, locale: string): Promise<SymptomHerb[]> => {
+    const meta = symptomMeta[symptom];
+    const supabase = getAnonClient();
+    if (!meta || !supabase) return [];
+    try {
+      const { data } = await supabase
+        .from("herbs")
+        .select(
+          "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
+        )
+        .eq("is_published", true)
+        .overlaps("symptom_keywords", [meta.dbKeyword])
+        .order("evidence_level", { ascending: true })
+        .limit(20);
+      // Translate before de-duplicating: de-dup is by scientific name, the
+      // first row wins, and merged alias names must already be localized so
+      // they do not stay English on French pages. The match itself is
+      // unchanged — this page's query already requires the keyword overlap.
+      return dedupeSymptomResults(
+        (data || []).map((herb) => localizeSymptomHerb(herb, locale))
+      );
+    } catch {
+      // Fall through to the empty state rather than failing the page.
+      return [];
+    }
+  }
+);
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { symptom } = await params;
@@ -38,10 +94,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale: metaLocale });
   const title = t(`symptomMeta.${symptom}.title`) || meta.title;
   const description = t(`symptomMeta.${symptom}.desc`) || meta.description;
+  const herbs = await loadSymptomHerbs(symptom, metaLocale);
   return {
     title,
     description,
     keywords: meta.keywords,
+    // An empty hub is not a page worth indexing; it stays crawlable and
+    // linked so it starts ranking the moment data lands.
+    ...(herbs.length === 0 ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       canonical:
         metaLocale === "fr"
@@ -78,42 +138,7 @@ export default async function SymptomDetailPage({ params }: Props) {
     notFound();
   }
 
-  const supabase = getAnonClient();
-  let herbs: Array<{
-    slug: string;
-    name: string;
-    scientific_name: string;
-    evidence_level: string | null;
-    pregnancy_safe: boolean | null;
-    nursing_safe: boolean | null;
-    traditional_uses: string[] | null;
-    modern_uses: string[] | null;
-    aliases?: string[];
-    translations?: unknown;
-  }> = [];
-
-  if (supabase) {
-    try {
-      const { data } = await supabase
-        .from("herbs")
-        .select(
-          "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
-        )
-        .eq("is_published", true)
-        .overlaps("symptom_keywords", [meta.dbKeyword])
-        .order("evidence_level", { ascending: true })
-        .limit(20);
-      // One result per plant: distinct rows sharing a scientific name
-      // (e.g. two common names for one plant) collapse into one card.
-      // The match itself is unchanged — this page's query already
-      // requires the symptom keyword overlap.
-      herbs = dedupeSymptomResults(data || []).map((herb) =>
-        localizeSymptomHerb(herb, locale)
-      );
-    } catch {
-      // Show empty state on error
-    }
-  }
+  const herbs = await loadSymptomHerbs(symptom, locale);
 
   const pageTitle =
     locale === "fr"
@@ -216,7 +241,7 @@ export default async function SymptomDetailPage({ params }: Props) {
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">
                           {t("symptomsPage.matchReasonSymptom", {
-                            symptoms: meta.dbKeyword,
+                            symptoms: symptomMatchKeyword(symptom, locale),
                           })}
                         </p>
                         {herb.aliases && herb.aliases.length > 0 && (

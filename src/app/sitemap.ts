@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 const FR_BASE = "/fr";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
-import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
+import { SYMPTOM_SLUGS, symptomMeta } from "@/lib/symptoms/symptom-meta";
 import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page";
 import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
@@ -35,6 +35,7 @@ type HerbSitemapRow = {
   slug: string;
   updated_at: string | null;
   translations: unknown;
+  symptom_keywords: string[] | null;
 };
 
 /**
@@ -54,7 +55,7 @@ async function fetchHerbBatch(
     const { data, error } = await withTimeout(
       supabase
         .from("herbs")
-        .select("slug, updated_at, translations")
+        .select("slug, updated_at, translations, symptom_keywords")
         .eq("is_published", true)
         .order("slug", { ascending: true })
         .range(from, from + size - 1),
@@ -137,25 +138,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-    // Symptom detail pages — slugs come from the SAME source of truth as the
-    // route's generateStaticParams (SYMPTOM_SLUGS), so the sitemap can never
-    // emit a symptom URL the page doesn't serve (previously it listed
-    // `blood-pressure`/`cough`, which 404'd: the real keys are the camelCase
-    // `bloodPressure` and `cough` was never a symptom). Both locales emitted.
-    ...SYMPTOM_SLUGS.flatMap((s) => [
-      {
-        url: `${baseUrl}/symptoms/${s}`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      },
-      {
-        url: `${baseUrl}${FR_BASE}/symptoms/${s}`,
-        lastModified: STATIC_PAGE_MODIFIED,
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      },
-    ]),
     {
       url: `${baseUrl}/faq`,
       lastModified: STATIC_PAGE_MODIFIED,
@@ -386,6 +368,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // a full sort on every batch; `slug` is unique and indexed. Both fixed here,
     // plus a retry at a quarter of the batch size before giving up.
     const herbPages: MetadataRoute.Sitemap = [];
+    // Symptom hubs are emitted only for symptoms that actually match a
+    // published herb. Four of them (bloodPressure, hormonal, prostate,
+    // diabetes) match nothing, so they were indexable pages whose whole body
+    // was "no herbs found yet" — the soft-404 shape.
+    const presentSymptomKeywords = new Set<string>();
+    let herbsCollected = false;
     let from = 0;
     let batchSize = HERB_BATCH_SIZE;
     while (true) {
@@ -415,8 +403,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
 
       if (herbsBatch.length === 0) break;
+      herbsCollected = true;
 
       for (const herb of herbsBatch) {
+        for (const keyword of herb.symptom_keywords ?? []) {
+          presentSymptomKeywords.add(keyword);
+        }
         herbPages.push({
           url: `${baseUrl}/herbs/${herb.slug}`,
           lastModified: herb.updated_at
@@ -442,6 +434,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (herbsBatch.length < batchSize) break;
       from += batchSize;
     }
+
+    // Symptom hubs — every slug the route serves (SYMPTOM_SLUGS), but only
+    // the ones with matching published herbs. If the herb query failed
+    // outright, fail open and list them all: dropping real URLs from the
+    // sitemap is worse than listing a thin one.
+    const symptomSlugs = herbsCollected
+      ? SYMPTOM_SLUGS.filter((slug) =>
+          presentSymptomKeywords.has(symptomMeta[slug].dbKeyword)
+        )
+      : SYMPTOM_SLUGS;
+    if (herbsCollected && symptomSlugs.length < SYMPTOM_SLUGS.length) {
+      // warn, not error: an empty hub is a content gap, not a runtime failure,
+      // and this runs on every hourly revalidation.
+      logger.warn("sitemap_symptom_hubs_empty", {
+        omitted: SYMPTOM_SLUGS.filter((s) => !symptomSlugs.includes(s)),
+      });
+    }
+    const symptomPages: MetadataRoute.Sitemap = symptomSlugs.flatMap((slug) => [
+      {
+        url: `${baseUrl}/symptoms/${slug}`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      },
+      {
+        url: `${baseUrl}${FR_BASE}/symptoms/${slug}`,
+        lastModified: STATIC_PAGE_MODIFIED,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      },
+    ]);
 
     // Compare pages — pairs come from the SAME source of truth as the
     // compare route's generateStaticParams (POPULAR_COMPARISONS). Both locales.
@@ -502,7 +525,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return entries;
     });
 
-    return [...staticPages, ...comparePages, ...pairPages, ...herbPages];
+    return [
+      ...staticPages,
+      ...symptomPages,
+      ...comparePages,
+      ...pairPages,
+      ...herbPages,
+    ];
   } catch (error) {
     logger.error("sitemap_generation_error", {
       error: error instanceof Error ? error.message : String(error),

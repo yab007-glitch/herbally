@@ -1,7 +1,11 @@
+import type { Locale } from "@/lib/i18n/config";
 import { siteUrl } from "@/lib/seo/site-url";
 
-export function OrganizationSchema() {
+export function OrganizationSchema({ locale }: { locale: Locale }) {
   const base = siteUrl();
+  // The site `url` and the publisher logo identify the site entity rather
+  // than a page, so they stay at the root on every locale.
+  const searchPath = locale === "fr" ? "/fr/herbs" : "/herbs";
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -25,7 +29,7 @@ export function OrganizationSchema() {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${base}/herbs?q={search_term_string}`,
+        urlTemplate: `${base}${searchPath}?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
