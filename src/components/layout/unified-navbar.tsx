@@ -119,7 +119,7 @@ export function UnifiedNavbar() {
 
           {/* Mobile menu trigger */}
           <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-muted md:hidden">
+            <SheetTrigger className="inline-flex size-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted md:hidden">
               <Menu className="size-5" />
               <span className="sr-only">{t("common.menu")}</span>
             </SheetTrigger>

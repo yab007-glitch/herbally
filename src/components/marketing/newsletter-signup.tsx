@@ -95,6 +95,7 @@ export function NewsletterSignup({ locale }: { locale: "en" | "fr" }) {
   return (
     <section
       aria-labelledby="newsletter-heading"
+      data-print-hide
       className="rounded-sm border border-border bg-accent/40 p-5 sm:p-6"
     >
       <h2

@@ -34,12 +34,19 @@ interface HerbSafetyPanelProps {
     moderate: number;
     mild: number;
   };
+  /**
+   * The interaction table also renders inline, above the tabs, so it is
+   * visible without opening this panel. Set false here to avoid printing the
+   * same table twice on one page.
+   */
+  showInteractions?: boolean;
 }
 
 export function HerbSafetyPanel({
   herb,
   interactions,
   severityCounts,
+  showInteractions = true,
 }: HerbSafetyPanelProps) {
   const t = useTranslations();
 
@@ -140,8 +147,19 @@ export function HerbSafetyPanel({
       </Card>
 
       {/* Interactions Table */}
-      <InteractionExplainer />
-      <InteractionsTable interactions={interactions} herbSlug={herb.slug} />
+      {showInteractions ? (
+        <>
+          <InteractionExplainer />
+          <InteractionsTable interactions={interactions} herbSlug={herb.slug} />
+        </>
+      ) : (
+        <a
+          href="#interactions"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+        >
+          {t("herbDetail.knownInteractions", { count: interactions.length })} ↑
+        </a>
+      )}
 
       {/* CTA */}
       <div className="flex justify-center">

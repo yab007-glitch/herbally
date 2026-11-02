@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import { HomeSearchClient } from "./home-search-client";
+import { InteractionChecker } from "./interaction-checker";
 import { HeroVisual } from "./hero-visual";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
 import { BookOpen, Calculator, ShieldAlert, MessageCircle } from "lucide-react";
@@ -62,13 +62,13 @@ export default async function HomePage() {
       <Suspense fallback={null}>
         <WelcomeToast />
       </Suspense>
-      <div className="mx-auto grid w-full max-w-5xl gap-10 px-4 pt-12 pb-4 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-16 lg:pt-20">
-        <div className="text-center lg:pt-6 lg:text-left">
+      <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 pt-6 pb-4 sm:gap-10 sm:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-16 lg:pt-20">
+        <div className="text-center lg:text-left">
           {/* Server-rendered hero — this is the LCP element.
               No logo mark here: the header already carries it, and a second
               leaf on the same screen pushed the form below the fold on a
               phone. */}
-          <p className="eyebrow mb-3">{t("home.eyebrow")}</p>
+          <p className="eyebrow mb-3 hidden sm:block">{t("home.eyebrow")}</p>
           <h1 className="text-balance text-4xl font-medium tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem] lg:leading-[1.04]">
             {t("home.heroTitle")}
           </h1>
@@ -76,60 +76,22 @@ export default async function HomePage() {
             {t("home.heroSubtitle")}
           </p>
           <div className="rule mt-6 hidden max-w-xs lg:block" />
+          {/* The library link belongs to the hero, not to the tool: inside
+              the card it was the last item in a column of form controls and
+              read as part of the checker. */}
+          <Link
+            href="/herbs"
+            className="mt-5 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {t("home.heroButton")} →
+          </Link>
         </div>
 
-        <div className="w-full">
-          <HomeSearchClient
-            labels={{
-              herbLabel: t("home.herbLabel"),
-              medLabel: t("home.medLabel"),
-              herbPlaceholder: t("home.herbPlaceholder"),
-              medPlaceholder: t("home.medPlaceholder"),
-              checkButton: t("home.checkButton"),
-              suggestionsTitle: t("home.suggestionsTitle"),
-              suggestion1: t("home.suggestion1"),
-              suggestion2: t("home.suggestion2"),
-              suggestion3: t("home.suggestion3"),
-              suggestion4: t("home.suggestion4"),
-              trustLine: t("home.trustLine"),
-              symptomsLink: t("home.symptomsLink"),
-              emptyCheckError: t("home.emptyCheckError"),
-              sameCheckError: t("home.sameCheckError"),
-              checking: t("home.checkerChecking"),
-              checkerFoundTitle: t("home.checkerFoundTitle"),
-              checkerAskHerbalist: t("home.checkerAskHerbalist"),
-              checkerViewPair: t("home.checkerViewPair"),
-              checkerViewHerb: t("home.checkerViewHerb"),
-              checkerDisclaimer: t("home.checkerDisclaimer"),
-              checkerNotFoundTitle: t("home.checkerNotFoundTitle"),
-              // Raw: the client substitutes {herb}/{drug} itself, and passing the
-              // message through ICU formatting here throws FORMATTING_ERROR for
-              // the variables it never receives.
-              checkerNotFoundBody: t.raw("home.checkerNotFoundBody"),
-              checkerAiNote: t("home.checkerAiNote"),
-              checkerError: t("home.checkerError"),
-              checkerSource: t("home.checkerSource"),
-              checkerEvidence: t("home.checkerEvidence"),
-              checkerMechanism: t("home.checkerMechanism"),
-              severityMild: t("interactions.severity.mild"),
-              severityModerate: t("interactions.severity.moderate"),
-              severitySevere: t("interactions.severity.severe"),
-              severityContraindicated: t(
-                "interactions.severity.contraindicated"
-              ),
-            }}
-          />
-
-          {/* Browse all herbs link */}
-          <div className="mt-4">
-            <Link
-              href="/herbs"
-              className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {t("home.heroButton")} →
-            </Link>
-          </div>
-        </div>
+        {/* The checker reads as one tool, not a stack of loose fields:
+            a hairline panel groups the labels, inputs and the button, and its
+            top edge now aligns with the headline instead of sitting 24px
+            below it. */}
+        <InteractionChecker className="w-full" showBrowseLink={false} />
       </div>
 
       <HeroVisual />

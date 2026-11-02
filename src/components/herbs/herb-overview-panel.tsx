@@ -32,7 +32,7 @@ export function HerbOverviewPanel({
         <h2 className="mb-3 text-xl font-semibold text-foreground">
           {t("herbDetail.description")}
         </h2>
-        <p className="leading-relaxed text-muted-foreground text-base">
+        <p className="measure prose-body leading-relaxed text-muted-foreground">
           {herb.description}
         </p>
         {monograph && (
@@ -40,7 +40,7 @@ export function HerbOverviewPanel({
             <h3 className="font-semibold text-foreground">
               {t("herbDetail.clinicalSummary")}
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            <p className="measure prose-body mt-2 leading-relaxed text-muted-foreground">
               {monograph.summary}
             </p>
             {monograph.mechanism && (
@@ -48,7 +48,7 @@ export function HerbOverviewPanel({
                 <h4 className="mt-4 font-medium text-foreground">
                   {t("herbDetail.mechanismOfAction")}
                 </h4>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                <p className="measure prose-body mt-1 leading-relaxed text-muted-foreground">
                   {monograph.mechanism}
                 </p>
               </>

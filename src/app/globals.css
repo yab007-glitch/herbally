@@ -290,6 +290,75 @@ h4 {
   display: none;
 }
 
+/* ─── Reading measure ─────────────────────────────────────────────── */
+/*
+ * Long-form health copy was set at 14px across a 790px column — 99
+ * characters per line, roughly a third past the point where the eye starts
+ * losing the start of the next line. `.measure` caps the line, `.prose-body`
+ * sets the size. Use both on any long-form block; leave UI copy alone.
+ */
+.measure {
+  max-width: 68ch;
+}
+.prose-body {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+@media (min-width: 640px) {
+  .prose-body {
+    font-size: 1.0625rem;
+  }
+}
+
+/* ─── Print: a monograph is a reference document ──────────────────── */
+/*
+ * People print references. The screen chrome (sticky nav, bottom bar, chat
+ * bubble, ads, share row, newsletter box) is noise on paper, and the paper
+ * texture costs a full page of toner. Text goes black, links keep their
+ * URL, and section boxes stop avoiding page breaks.
+ */
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print,
+  [data-print-hide],
+  iframe {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    background-image: none !important;
+    color: #111 !important;
+  }
+
+  main {
+    padding-bottom: 0 !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #555;
+    word-break: break-all;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid-page;
+  }
+
+  table,
+  figure,
+  blockquote {
+    break-inside: avoid-page;
+  }
+}
+
 /* ─── Respect prefers-reduced-motion ──────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .animate-message-in {

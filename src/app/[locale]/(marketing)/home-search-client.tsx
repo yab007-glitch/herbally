@@ -268,8 +268,8 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
 
   return (
     <div className="w-full">
-      <div className="w-full text-center lg:text-left">
-        <div className="mt-6 space-y-3 lg:mt-0">
+      <div className="w-full text-left">
+        <div className="space-y-3">
           <div className="relative text-left">
             <label htmlFor="home-herb" className="eyebrow mb-1.5 block">
               {labels.herbLabel}
@@ -340,7 +340,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             onClick={() => void handleCheck()}
             disabled={checking}
             aria-busy={checking}
-            className="w-full rounded-md py-3 text-sm font-medium"
+            className="h-12 w-full rounded-md text-sm font-medium"
             size="lg"
           >
             <ShieldCheck className="size-4" />
@@ -476,7 +476,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
 
         <div className="mt-8">
           <p className="eyebrow mb-3">{labels.suggestionsTitle}</p>
-          <div className="flex flex-wrap justify-center gap-2">
+          <div className="flex flex-wrap justify-start gap-2">
             {SUGGESTIONS.map((s, i) => (
               <button
                 key={i}
@@ -486,7 +486,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                   setMedInput(s.med);
                   void handleCheck(s.herb, s.med);
                 }}
-                className="rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-primary hover:bg-accent disabled:opacity-50"
+                className="min-h-11 rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-primary hover:bg-accent disabled:opacity-50"
               >
                 {labels[`suggestion${i + 1}` as keyof Labels] || s.query}
               </button>

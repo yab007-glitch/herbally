@@ -187,7 +187,11 @@ export function FloatingChatButton() {
           if (!hasOpened) setHasOpened(true);
         }}
         className={cn(
-          "fixed bottom-20 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition-all md:bottom-6",
+          // Desktop-only: on a phone this button sits at bottom-20, which is
+          // exactly where the medication field lands on a 664px-tall screen —
+          // measured 48×38px of overlap on first paint. The bottom nav already
+          // carries a Chat tab, so the phone loses nothing.
+          "fixed bottom-20 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition-all md:bottom-6 max-md:hidden no-print",
           // `hidden` here is a Tailwind class, not the HTML attribute: the
           // utility's `display:flex` would beat the UA `[hidden]` rule.
           teaser && !open && "hidden",
