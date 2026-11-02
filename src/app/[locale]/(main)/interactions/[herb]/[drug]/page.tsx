@@ -142,6 +142,31 @@ function verdictCopy(
   }
 }
 
+/**
+ * Evidence levels are stored as English enums (`well-documented`,
+ * `moderate-evidence`, `limited-evidence`) straight from the curation sheet.
+ * Rendering them raw leaked English onto every French page — the badge read
+ * "Grave · well-documented" under a French headline. Map them to reader-facing
+ * labels per locale, and fall back to the stored value for any level added
+ * later so a new enum cannot crash the page.
+ */
+const EVIDENCE_LABELS_FR: Record<string, string> = {
+  "well-documented": "preuves solides",
+  "moderate-evidence": "preuves modérées",
+  "limited-evidence": "preuves limitées",
+};
+
+const EVIDENCE_LABELS_EN: Record<string, string> = {
+  "well-documented": "well-documented",
+  "moderate-evidence": "moderate evidence",
+  "limited-evidence": "limited evidence",
+};
+
+function evidenceLabel(level: string, fr: boolean): string {
+  const table = fr ? EVIDENCE_LABELS_FR : EVIDENCE_LABELS_EN;
+  return table[level] ?? level.replace(/-/g, " ");
+}
+
 function severityLabel(
   severity: InteractionPair["severity"],
   fr: boolean
@@ -333,7 +358,7 @@ export default async function InteractionPairPage({ params }: Props) {
               {severityLabel(pair.severity, fr)}
               {pair.evidenceLevel && (
                 <span className="ml-2 text-xs font-normal opacity-80">
-                  · {pair.evidenceLevel}
+                  · {evidenceLabel(pair.evidenceLevel, fr)}
                 </span>
               )}
             </p>
