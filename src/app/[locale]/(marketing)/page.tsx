@@ -4,6 +4,7 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { InteractionChecker } from "./interaction-checker";
 import { HeroVisual } from "./hero-visual";
+import { HowItWorks } from "./how-it-works";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
 import { BookOpen, Calculator, ShieldAlert, MessageCircle } from "lucide-react";
 import Link from "next/link";
@@ -146,6 +147,11 @@ export default async function HomePage() {
           {t("home.explainerNote")}
         </p>
       </section>
+
+      {/* Editorial: what the checker does and does not do. Server-rendered prose
+          is what a crawler (and a first-time visitor) can actually judge the
+          site on — the tool alone gives neither one anything to read. */}
+      <HowItWorks locale={locale} />
     </>
   );
 }
