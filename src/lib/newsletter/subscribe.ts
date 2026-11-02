@@ -28,6 +28,14 @@ export function normalizeEmail(raw: string): string | null {
   const email = raw.trim().toLowerCase();
   if (email.length < 6 || email.length > 254) return null;
   if (!EMAIL_RE.test(email)) return null;
+
+  // Disallow subscriptions to our own domain. Submitting non-existent
+  // mailboxes generates 550 MTA bounces in Zoho Mail, hurting domain reputation.
+  const domain = email.split("@")[1];
+  if (domain === "herbally.app" || domain.endsWith(".herbally.app")) {
+    return null;
+  }
+
   return email;
 }
 
@@ -55,7 +63,14 @@ export async function subscribe(input: {
   email: string;
   locale: NewsletterLocale;
   sourcePath?: string | null;
+  hp?: string | null;
 }): Promise<SubscribeOutcome> {
+  // Silent drop for automated bots filling the honeypot field
+  if (input.hp && input.hp.trim().length > 0) {
+    logger.warn("newsletter: honeypot triggered; silently ignoring submit");
+    return { ok: true, status: "pending" };
+  }
+
   const email = normalizeEmail(input.email);
   if (!email) return { ok: false, reason: "invalid-email" };
 

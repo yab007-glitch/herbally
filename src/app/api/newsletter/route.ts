@@ -9,6 +9,7 @@ const bodySchema = z.object({
   email: z.string().min(3).max(254),
   locale: z.enum(["en", "fr"]).default("en"),
   sourcePath: z.string().max(300).optional(),
+  hp: z.string().max(200).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -35,6 +36,7 @@ export async function POST(request: NextRequest) {
     email: parsed.data.email,
     locale: parsed.data.locale,
     sourcePath: parsed.data.sourcePath ?? null,
+    hp: parsed.data.hp ?? null,
   });
 
   if (!outcome.ok) {
