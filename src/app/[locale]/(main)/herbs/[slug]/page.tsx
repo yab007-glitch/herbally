@@ -14,6 +14,7 @@ import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
 import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
 import { ChipLegend } from "@/components/herbs/chip-legend";
 import { AuthorByline } from "@/components/herbs/author-byline";
+import { HerbPhoto } from "@/components/herbs/herb-photo";
 import { InternalLinkRail } from "@/components/herbs/internal-link-rail";
 import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 import {
@@ -670,6 +671,9 @@ export default async function HerbDetailPage({ params }: Props) {
         locale={locale === "fr" ? "fr" : "en"}
         lastReviewed={herb.last_reviewed ?? herb.updated_at ?? null}
       />
+
+      {/* Only the twelve herbs with a licensed photograph render anything. */}
+      <HerbPhoto slug={slug} name={herb.name} className="mt-2" />
 
       {/* Personalized interaction warning (H1). Client component so the ISR
           page stays static for anonymous traffic; signed-in users get a
