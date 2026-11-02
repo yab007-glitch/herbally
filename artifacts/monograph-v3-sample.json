@@ -1,0 +1,774 @@
+{
+  "meta": {
+    "prompt_version": "v3",
+    "generated_at": "2026-11-02T05:10:37.370Z",
+    "target_set_total": 254,
+    "sample_count": 5,
+    "total_needs_source_flags": 15
+  },
+  "herbs": [
+    {
+      "slug": "turmeric",
+      "name": "Turmeric",
+      "scientific_name": "Curcuma longa",
+      "before": {
+        "description": "Turmeric is a bright yellow spice derived from the rhizome of Curcuma longa, a member of the ginger family. It has been used for thousands of years in Ayurvedic and Traditional Chinese Medicine for its potent anti-inflammatory and antioxidant properties. Curcumin, its primary active compound, is one of the most extensively studied natural compounds in modern research.",
+        "active_compounds": [
+          "Curcumin",
+          "Demethoxycurcumin",
+          "Bisdemethoxycurcumin",
+          "Turmerone",
+          "Atlantone"
+        ],
+        "traditional_uses": [
+          "Anti-inflammatory remedy",
+          "Digestive aid",
+          "Wound healing",
+          "Liver tonic",
+          "Skin conditions"
+        ],
+        "modern_uses": [
+          "Joint pain and arthritis",
+          "Inflammatory bowel conditions",
+          "Antioxidant supplementation",
+          "Cognitive support",
+          "Metabolic syndrome support"
+        ],
+        "dosage_forms": ["capsule", "tablet", "powder", "tea", "extract"],
+        "preparation_notes": "Best absorbed with black pepper (piperine) and healthy fats. Can be taken as golden milk by mixing with warm milk and black pepper. Standardized extracts should contain at least 95% curcuminoids.",
+        "symptom_keywords": [
+          "inflammation",
+          "digestion",
+          "skin",
+          "wound",
+          "liver",
+          "joint",
+          "constipation",
+          "immune",
+          "focus"
+        ],
+        "dosage_adult": "500-2000mg standardized extract daily, or 1-3g powder daily",
+        "contraindications": [
+          "Gallstones or bile duct obstruction",
+          "Bleeding disorders",
+          "Pre-surgery (stop 2 weeks before)",
+          "Iron deficiency (may reduce absorption)"
+        ],
+        "side_effects": [
+          "GI upset at high doses",
+          "Nausea",
+          "Diarrhea",
+          "Yellow stool",
+          "Contact dermatitis in sensitive individuals"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/29065496/",
+            "pmid": "29065496",
+            "title": "Curcumin: a review of its effects on human health",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/27533649/",
+            "pmid": "27533649",
+            "title": "Efficacy of turmeric extracts and curcumin for arthritis: systematic review",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/23832433/",
+            "pmid": "23832433",
+            "title": "Curcumin and major depression: a randomized controlled trial",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 197
+      },
+      "after": {
+        "description": "Turmeric (Curcuma longa) is a rhizomatous perennial herb of the Zingiberaceae family, cultivated widely across South and Southeast Asia. Its rhizome is a source of curcuminoids, principally curcumin, demethoxycurcumin, and bisdemethoxycurcumin, a class of diarylheptanoid polyphenols responsible for the rhizome's characteristic yellow pigmentation. The volatile oil fraction contains sesquiterpenes including turmerone, arturmerone, and atlantone. Curcumin exhibits documented anti-inflammatory and antioxidant activity in preclinical and human studies, with proposed mechanisms including modulation of inflammatory signaling pathways. Clinically, systematic reviews have evaluated standardized curcuminoid extracts for osteoarthritis and other arthritic conditions, and randomized controlled trials have examined curcumin supplementation in major depression; human pharmacokinetic research demonstrates curcumin's inherently low oral bioavailability, motivating formulation strategies such as piperine co-administration and phospholipid or micellar delivery systems. The evidence base is heterogeneous, with study quality, extract standardization, and dose varying substantially across trials. Curcumin should be understood as a bioactive compound with defined investigational applications rather than a general-purpose health intervention.",
+        "active_compounds": [
+          "Curcuminoids (3-5% in dry rhizome, primarily curcumin; commercial extracts standardized to 95% curcuminoids)",
+          "Curcumin (the predominant curcuminoid)",
+          "Demethoxycurcumin",
+          "Bisdemethoxycurcumin",
+          "Volatile oils (2-7% of rhizome; turmerone, atlantone, curlone)",
+          "Turmeric essential oil sesquiterpenes (arturmerone, beta-turmerone)"
+        ],
+        "traditional_uses": [
+          "In Ayurvedic medicine, traditionally documented as a blood purifier and tonic applied to skin conditions and wounds",
+          "Traditional use in Ayurveda and Siddha systems as a digestive remedy for abdominal discomfort and poor appetite",
+          "In Traditional Chinese Medicine, historically utilized to move blood and relieve pain associated with chest, abdominal, and menstrual complaints",
+          "Traditionally prepared as a yellow dye and topical paste in South Asian folk medicine for wound care and skin inflammation",
+          "Historically employed in Indian household practice as a decoction ('golden milk') for general convalescence"
+        ],
+        "modern_uses": [
+          "Supported by clinical trials and systematic review: curcuminoid extracts have demonstrated reduction in arthritic symptom scores in osteoarthritis and rheumatoid arthritis populations (systematic review PMID 27533649)",
+          "Supported by a randomized controlled trial: adjunctive curcumin supplementation showed antidepressant effects in patients with major depression (PMID 23832433)",
+          "Evaluated in pharmacokinetic and clinical pharmacology literature for anti-inflammatory and biochemical effects across multiple health domains, though trial quality varies (review PMID 29065496)",
+          "Preliminary / limited evidence: metabolic and lipid parameters in small, short-duration human studies requiring larger trials",
+          "Explicitly NOT supported by adequate human clinical evidence: claims for cancer prevention, cognitive disease treatment, or broad 'detoxification' benefits in humans"
+        ],
+        "dosage_forms": [
+          "Standardized dry extract (95% curcuminoids)",
+          "Powdered rhizome",
+          "Curcumin-phospholipid complex formulation",
+          "Micellar or nanoparticle curcumin formulation",
+          "Capsule or tablet dosage forms"
+        ],
+        "preparation_notes": "Curcumin has low oral bioavailability; absorption is substantially improved when co-administered with piperine (black pepper) and dietary lipids, and phospholipid- or micellar-based formulations further enhance plasma levels. Standardized extracts are typically standardized to 95% curcuminoids for clinical use. Store powdered rhizome and extracts in airtight, light-protected containers away from heat and moisture to limit degradation of curcuminoids and volatile oils.",
+        "symptom_keywords": [
+          "inflammation",
+          "digestion",
+          "joint pain",
+          "osteoarthritis",
+          "depression",
+          "antioxidant",
+          "wound",
+          "skin",
+          "liver"
+        ],
+        "dosage_adult": "500-2000mg standardized extract daily, or 1-3g powder daily",
+        "contraindications": [
+          "Gallstones or bile duct obstruction",
+          "Bleeding disorders",
+          "Pre-surgery (stop 2 weeks before)",
+          "Iron deficiency (may reduce absorption)"
+        ],
+        "side_effects": [
+          "GI upset at high doses",
+          "Nausea",
+          "Diarrhea",
+          "Yellow stool",
+          "Contact dermatitis in sensitive individuals"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/29065496/",
+            "pmid": "29065496",
+            "title": "Curcumin: a review of its effects on human health",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/27533649/",
+            "pmid": "27533649",
+            "title": "Efficacy of turmeric extracts and curcumin for arthritis: systematic review",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/23832433/",
+            "pmid": "23832433",
+            "title": "Curcumin and major depression: a randomized controlled trial",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 537
+      },
+      "word_count_before": 197,
+      "word_count_after": 537,
+      "word_count_delta": 340,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "weakest_field": {
+        "field": "traditional_uses[0]",
+        "value": "In Ayurvedic medicine, traditionally documented as a blood purifier and tonic applied to skin conditions and wounds",
+        "critique": "Ethnobotanical tradition summary without citing specific classical codex volume."
+      }
+    },
+    {
+      "slug": "ashwagandha",
+      "name": "Ashwagandha",
+      "scientific_name": "Withania somnifera",
+      "before": {
+        "description": "Ashwagandha is a revered herb in Ayurvedic medicine, used for over 3,000 years as a rasayana (rejuvenating tonic). It is classified as an adaptogen, helping the body manage stress and maintain homeostasis. Modern research supports its use for anxiety, stress, and physical performance.",
+        "active_compounds": [
+          "Withanolides",
+          "Withaferin A",
+          "Sitoindosides",
+          "Alkaloids",
+          "Saponins"
+        ],
+        "traditional_uses": [
+          "Stress relief",
+          "Vitality and rejuvenation",
+          "Male fertility",
+          "Sleep aid",
+          "General tonic"
+        ],
+        "modern_uses": [
+          "Anxiety and stress management",
+          "Cognitive function",
+          "Physical endurance",
+          "Thyroid support",
+          "Sleep quality improvement"
+        ],
+        "dosage_forms": ["capsule", "powder", "tincture", "tablet", "extract"],
+        "preparation_notes": "Best taken with food and warm milk (traditional method). Standardized extracts (e.g., KSM-66 or Sensoril) provide consistent withanolide content. Can be taken morning or evening depending on purpose.",
+        "symptom_keywords": [
+          "anxiety",
+          "stress",
+          "fertility",
+          "sleep",
+          "focus",
+          "thyroid"
+        ],
+        "dosage_adult": "300-600mg root extract (standardized to withanolides) daily",
+        "contraindications": [
+          "Thyroid disorders (may increase thyroid hormones)",
+          "Autoimmune conditions",
+          "Nightshade sensitivity",
+          "Pre-surgery"
+        ],
+        "side_effects": [
+          "Drowsiness",
+          "GI upset",
+          "Diarrhea",
+          "Nausea",
+          "Headache at high doses"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/31517876/",
+            "pmid": "31517876",
+            "title": "A systematic review of ashwagandha for stress and anxiety",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/32818573/",
+            "pmid": "32818573",
+            "title": "Ashwagandha root extract improves sleep quality",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 154
+      },
+      "after": {
+        "description": "Withania somnifera, commonly known as ashwagandha, is a small evergreen shrub of the Solanaceae (nightshade) family, native to the Indian subcontinent, parts of Africa, and the Middle East. Its roots and, to a lesser extent, leaves have been used in Ayurvedic medicine for millennia as a rasayana (rejuvenating tonic), where it is classified as an adaptogen valued for its capacity to help the body modulate physiological stress responses. The plant's primary bioactive constituents are steroidal lactones collectively termed withanolides, including withanolide A and withaferin A, alongside sitoindosides, alkaloids, saponins, and phenolic compounds. Pharmacologically, withanolides have been investigated for anti-inflammatory, antioxidant, anxiolytic, and neuroprotective properties in preclinical models. Clinical research to date is most developed in the domain of stress and anxiety management: systematic review evidence indicates that standardized root extracts have demonstrated reductions in perceived stress and anxiety scores in randomized controlled trials, and a randomized controlled trial supports improved sleep quality in adults with insomnia. Other investigated areas include physical performance and cognition, though evidence is more limited. Ashwagandha remains one of the most extensively studied botanicals for stress-related conditions, but clinical claims should be anchored to the available trial evidence rather than extrapolated broadly.",
+        "active_compounds": [
+          "Withanolides (standardized root extracts typically contain 1.5-5% withanolides; KSM-66 is standardized to 5%)",
+          "Withanolide A (principal steroidal lactone constituent of root extracts)",
+          "Withaferin A (concentrated primarily in leaves; cytotoxic steroidal lactone)",
+          "Sitoindosides (glycowithanolides contributing to adaptogenic activity)",
+          "Alkaloids (including withanine and related tropine derivatives)",
+          "Saponins",
+          "Phenolic compounds and flavonoids"
+        ],
+        "traditional_uses": [
+          "In Ayurvedic medicine, traditionally documented as a rasayana (rejuvenating tonic) used over several millennia to promote vitality and longevity",
+          "Traditionally employed in Ayurvedic practice as a balya (strength-promoting) herb for general debility and convalescence",
+          "In traditional Indian medicine, historically utilized as a Brahman-yastika vajikarana preparation for male reproductive health",
+          "Traditionally prepared with warm milk (kshira-paka) as an evening tonic to support rest and address insomnia",
+          "In traditional practice, historically applied for stress, nervous exhaustion, and age-related decline"
+        ],
+        "modern_uses": [
+          "Supported by systematic review evidence (PMID 31517876): standardized root extract doses used in randomized controlled trials have demonstrated reductions in perceived stress and anxiety scores compared with placebo",
+          "Supported by randomized controlled trial evidence (PMID 32818573): ashwagandha root extract improved sleep quality in adults with insomnia relative to placebo",
+          "Preliminary / limited human evidence: physical performance, muscle strength, and cognitive function have been examined in small trials; findings are not yet firmly established",
+          "Preliminary / limited evidence: thyroid parameters and male fertility markers have been investigated in a small number of trials; conclusions are inconclusive pending replication",
+          "Explicitly NOT established by the provided human clinical evidence: no verified citation supports claims for cancer treatment, immune-system augmentation, or hormone-replacement effects in humans"
+        ],
+        "dosage_forms": [
+          "Standardized aqueous root extract (e.g., KSM-66, typically 5% withanolides)",
+          "Standardized hydroethanolic root and leaf extract (e.g., Sensoril, withanolide glycoside-enriched)",
+          "Powdered dried root (churna)",
+          "Hydroethanolic tincture",
+          "Encapsulated dry extract tablets/capsules"
+        ],
+        "preparation_notes": "Traditional Ayurvedic preparation involves simmering the root powder in milk (kshira-paka), which aligns with co-administration alongside a lipid matrix; withanolides are lipophilic steroidal lactones, so intake with a source of dietary fat is reasonable for absorption. Standardized root extracts (KSM-66 aqueous, 5% withanolides; Sensoril hydroethanolic) provide reproducible withanolide content and are the forms used in published trials. Store finished extracts and powders in airtight, light-protected containers away from heat and humidity; withanolide content is best preserved under cool, dry conditions. Discard preparations showing caking, discoloration, or off-odors.",
+        "symptom_keywords": [
+          "anxiety",
+          "stress",
+          "fertility",
+          "sleep",
+          "focus",
+          "thyroid",
+          "adrenal fatigue",
+          "energy"
+        ],
+        "dosage_adult": "300-600mg root extract (standardized to withanolides) daily",
+        "contraindications": [
+          "Thyroid disorders (may increase thyroid hormones)",
+          "Autoimmune conditions",
+          "Nightshade sensitivity",
+          "Pre-surgery"
+        ],
+        "side_effects": [
+          "Drowsiness",
+          "GI upset",
+          "Diarrhea",
+          "Nausea",
+          "Headache at high doses"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/31517876/",
+            "pmid": "31517876",
+            "title": "A systematic review of ashwagandha for stress and anxiety",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/32818573/",
+            "pmid": "32818573",
+            "title": "Ashwagandha root extract improves sleep quality",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 610
+      },
+      "word_count_before": 154,
+      "word_count_after": 610,
+      "word_count_delta": 456,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "weakest_field": {
+        "field": "traditional_uses[0]",
+        "value": "In Ayurvedic medicine, traditionally documented as a rasayana (rejuvenating tonic) used over several millennia to promote vitality and longevity",
+        "critique": "Ethnobotanical tradition summary without citing specific classical codex volume."
+      }
+    },
+    {
+      "slug": "st-johns-wort",
+      "name": "St. John's Wort",
+      "scientific_name": "Hypericum perforatum",
+      "before": {
+        "description": "St. John's Wort is a flowering plant that has been used medicinally since ancient Greece. It is best known for its use in treating mild to moderate depression, where clinical evidence supports its efficacy comparable to some conventional antidepressants. It is named for its traditional harvest on St. John's Day.",
+        "active_compounds": [
+          "Hypericin",
+          "Hyperforin",
+          "Adhyperforin",
+          "Flavonoids",
+          "Xanthones"
+        ],
+        "traditional_uses": [
+          "Depression treatment",
+          "Wound healing",
+          "Nerve pain relief",
+          "Anti-inflammatory",
+          "Sedative"
+        ],
+        "modern_uses": [
+          "Mild to moderate depression",
+          "Seasonal affective disorder",
+          "Anxiety",
+          "Nerve pain",
+          "Menopausal symptoms"
+        ],
+        "dosage_forms": ["capsule", "tablet", "tincture", "tea", "extract"],
+        "preparation_notes": "Effects may take 4-6 weeks to become apparent. Standardized extracts should contain 0.3% hypericin or 2-5% hyperforin. Avoid sun exposure as it can cause photosensitivity.",
+        "symptom_keywords": [
+          "depression",
+          "skin",
+          "wound",
+          "nerve",
+          "inflammation",
+          "sleep",
+          "allergy",
+          "anxiety"
+        ],
+        "dosage_adult": "300mg extract (0.3% hypericin) 3 times daily",
+        "contraindications": [
+          "Concurrent use with SSRIs or MAOIs",
+          "Bipolar disorder",
+          "Schizophrenia",
+          "Organ transplant recipients",
+          "HIV patients on antiretrovirals"
+        ],
+        "side_effects": [
+          "Photosensitivity",
+          "Dry mouth",
+          "Dizziness",
+          "GI upset",
+          "Fatigue",
+          "Restlessness"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/18843608/",
+            "pmid": "18843608",
+            "title": "St. Johns Wort for major depression: a systematic review",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/18843608/",
+            "pmid": "18843608",
+            "title": "Hypericum perforatum for depression: Cochrane systematic review",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 161
+      },
+      "after": {
+        "description": "St. John's Wort (Hypericum perforatum, Clusiaceae/Hypericaceae) is a perennial flowering herb native to Europe and Western Asia, now naturalized widely in temperate regions. The aerial flowering parts are the medicinal material, containing two principal bioactive constituent classes: naphthodianthrone derivatives (hypericin, pseudohypericin) and prenylated phloroglucinols (hyperforin, adhyperforin), accompanied by flavonoids (rutin, quercetin, hyperoside), xanthones, and essential oil components. Hyperforin is considered the primary contributor to its documented antidepressant pharmacological activity, acting largely via reuptake inhibition of monoamine neurotransmitters. Systematic review evidence, including the published Cochrane systematic review of Hypericum perforatum for depression, indicates efficacy comparable to standard antidepressants in mild to moderate depressive episodes with favorable tolerability. Its clinical scope extends to standardized oral extracts for mood disorders, while topical formulations are used in various contexts of minor skin conditions and neural discomfort, with supportive but less extensive evidence. Significant drug-interaction and photosensitivity considerations exist for patient counseling.",
+        "active_compounds": [
+          "Hypericin (standardized to 0.3% in commercial extracts)",
+          "Pseudohypericin",
+          "Hyperforin (2-5% in standardized extracts)",
+          "Adhyperforin",
+          "Flavonoids (quercetin, rutin, hyperoside)",
+          "Xanthones",
+          "Essential oil components (alpha-pinene, caryophyllene)"
+        ],
+        "traditional_uses": [
+          "In European folk medicine, the flowering tops were traditionally used as a topical oil preparation applied to minor wounds, bruises, and skin irritation",
+          "Historically utilized in traditional European herbalism as an infusion or tincture believed to calm nervous tension and support restful sleep",
+          "In traditional practice, employed by herbalists for soothing neural discomfort, including sciatic and nerve-related pain",
+          "Traditionally documented as a folk remedy for lung conditions, kidney complaints, and as a general anti-inflammatory poultice",
+          "Named for traditional harvest around St. John's Day (late June), when the plant was gathered for its reputed wound-healing properties"
+        ],
+        "modern_uses": [
+          "Supported by systematic review evidence: mild to moderate depression, where the Cochrane systematic review of Hypericum perforatum found efficacy comparable to some conventional antidepressants in controlled trials",
+          "Supported by systematic review evidence: favorable short-term tolerability profile relative to synthetic antidepressants in the reviewed depression trials",
+          "Preliminary / limited evidence: menopausal mood symptoms and somatic complaints, based on a limited number of small clinical studies",
+          "Preliminary / limited evidence: seasonal affective disorder and anxiety, with insufficient trial numbers to draw firm conclusions",
+          "Preliminary / limited evidence: topical hypericum oil for minor skin conditions and neural discomfort, lacking large controlled trials",
+          "Explicitly NOT supported by human clinical evidence: severe or major depression as a sole treatment, where conventional antidepressants remain the standard of care"
+        ],
+        "dosage_forms": [
+          "Standardized dry extract (300 mg tablets/capsules, 0.3% hypericin or 2-5% hyperforin)",
+          "Hydroethanolic tincture of flowering tops",
+          "Topical infused oil of fresh flowers",
+          "Dried flowering herb for infusion",
+          "Standardized liquid extract"
+        ],
+        "preparation_notes": "Therapeutic effects on mood typically require 4-6 weeks of continuous use before becoming apparent. Choose standardized extracts specifying either 0.3% hypericin or 2-5% hyperforin content for consistency, as non-standardized products vary greatly in active constituent levels. Topical oil is traditionally prepared by macerating fresh flowering tops in oil. Store in airtight containers protected from light and heat; hypericin and hyperforin degrade with prolonged light exposure and oxidation. Discard prepared topical oil after approximately 6-12 months. Consult a healthcare professional regarding drug interactions before combining with prescription medications.",
+        "symptom_keywords": [
+          "depression",
+          "anxiety",
+          "nerve pain",
+          "wound",
+          "skin",
+          "inflammation",
+          "sleep",
+          "menopause"
+        ],
+        "dosage_adult": "300mg extract (0.3% hypericin) 3 times daily",
+        "contraindications": [
+          "Concurrent use with SSRIs or MAOIs",
+          "Bipolar disorder",
+          "Schizophrenia",
+          "Organ transplant recipients",
+          "HIV patients on antiretrovirals"
+        ],
+        "side_effects": [
+          "Photosensitivity",
+          "Dry mouth",
+          "Dizziness",
+          "GI upset",
+          "Fatigue",
+          "Restlessness"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/18843608/",
+            "pmid": "18843608",
+            "title": "St. Johns Wort for major depression: a systematic review",
+            "source": "PubMed"
+          },
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/18843608/",
+            "pmid": "18843608",
+            "title": "Hypericum perforatum for depression: Cochrane systematic review",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 561
+      },
+      "word_count_before": 161,
+      "word_count_after": 561,
+      "word_count_delta": 400,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "weakest_field": {
+        "field": "preparation_notes",
+        "value": "Therapeutic effects on mood typically require 4-6 weeks of continuous use before becoming apparent. Choose standardized extracts specifying either 0.3% hypericin or 2-5% hyperforin content for consistency, as non-standardized products vary greatly in active constituent levels. Topical oil is traditionally prepared by macerating fresh flowering tops in oil. Store in airtight containers protected from light and heat; hypericin and hyperforin degrade with prolonged light exposure and oxidation. Discard prepared topical oil after approximately 6-12 months. Consult a healthcare professional regarding drug interactions before combining with prescription medications.",
+        "critique": "Accurately highlights hypericin photo-reactivity and standard hydroethanolic extracts, but omits hyperforin degradation half-life in aqueous preparations."
+      }
+    },
+    {
+      "slug": "ginger",
+      "name": "Ginger",
+      "scientific_name": "Zingiber officinale",
+      "adjusted_from": "ginkgo (citations: 0 in DB)",
+      "before": {
+        "description": "Ginger is a tropical flowering plant whose rhizome is widely used as both a spice and a medicine. It has been a cornerstone of Ayurvedic and Chinese herbal medicine for over 5,000 years. Known for its warming properties, ginger is one of the most versatile and well-researched medicinal herbs.",
+        "active_compounds": [
+          "Gingerols",
+          "Shogaols",
+          "Zingerone",
+          "Paradols",
+          "Zingiberene"
+        ],
+        "traditional_uses": [
+          "Nausea and vomiting relief",
+          "Digestive stimulant",
+          "Cold and flu remedy",
+          "Circulation enhancer",
+          "Anti-inflammatory agent"
+        ],
+        "modern_uses": [
+          "Motion sickness and nausea",
+          "Morning sickness (in pregnancy, limited doses)",
+          "Osteoarthritis pain",
+          "Digestive complaints",
+          "Chemotherapy-induced nausea"
+        ],
+        "dosage_forms": ["capsule", "tea", "powder", "tincture", "extract"],
+        "preparation_notes": "Fresh ginger can be sliced and steeped in hot water for 10-15 minutes for tea. Dried ginger is more concentrated than fresh. For nausea, crystallized ginger or ginger chews can be convenient.",
+        "symptom_keywords": [
+          "nausea",
+          "digestion",
+          "cold",
+          "circulation",
+          "inflammation",
+          "joint"
+        ],
+        "dosage_adult": "250-1000mg dried ginger 2-4 times daily, or fresh ginger tea 2-4 cups daily",
+        "contraindications": [
+          "Gallstones",
+          "Bleeding disorders",
+          "Pre-surgery (stop 1 week before)"
+        ],
+        "side_effects": [
+          "Heartburn",
+          "Gas",
+          "Mouth irritation",
+          "Mild GI discomfort at high doses"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/25230520/",
+            "pmid": "25230520",
+            "title": "Efficacy of ginger for osteoarthritis: a systematic review",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 166
+      },
+      "after": {
+        "description": "Ginger (Zingiber officinale Roscoe) is a perennial herb of the family Zingiberaceae cultivated for its underground rhizome, which serves as both a culinary spice and a pharmacological agent. The rhizome contains pungent phenolic ketones—principally the gingerols, of which 6-gingerol is the most abundant in fresh tissue—that undergo thermal degradation or dehydration to shogaols, with subsequent conversion to zingerone. These constituents, alongside volatile oil components such as zingiberene, constitute the primary bioactive classes. Documented pharmacological actions include 5-HT3 and cholinergic-mediated antiemetic activity, inhibition of prostaglandin and leukotriene synthesis relevant to anti-inflammatory effects, and gastric prokinetic activity accelerating gastric emptying. Clinical research has most extensively examined ginger for nausea of various etiologies and for painful osteoarthritis; a systematic review of osteoarthritis evidence has evaluated randomized trial data in that indication (PMID 25230520). The scope of validated clinical application remains narrower than the breadth of its traditional corpus, which spans multiple medical systems over millennia. Composition varies substantially with cultivar, harvest maturity, and processing, since dried and heat-treated preparations shift the gingerol-shogaol ratio.",
+        "active_compounds": [
+          "6-Gingerol (principal pungent constituent of fresh rhizome; gingerols typically constitute the major portion of pungent principles in fresh tissue)",
+          "8-Gingerol and 10-Gingerol (homologous gingerol series in fresh rhizome)",
+          "6-Shogaol (dehydrated derivative of 6-gingerol; proportion increases markedly in dried and heat-processed rhizome)",
+          "Zingerone (thermal degradation product of gingerols/shogaols, elevated in cooked preparations)",
+          "Paradols (reduced shogaol metabolites formed during hydrogenation/processing)",
+          "Volatile oil (1-3% of rhizome, containing zingiberene, curcumene, and bisabolene sesquiterpenes)",
+          "Gingerglycolipids and starch (major bulk constituents of the dried rhizome)"
+        ],
+        "traditional_uses": [
+          "In Ayurvedic medicine, the rhizome (Ardraka—fresh; Shunthi—dried) is traditionally documented as a digestive stimulant and remedy for nausea, indigestion, and respiratory congestion.",
+          "In traditional Chinese medicine, ginger has historically been recorded for cold-related digestive disturbance, cough, and as a warming agent circulating to the extremities.",
+          "In European folk medicine, ginger was traditionally utilized as a warming carminative for stomach complaints and as a household cold remedy.",
+          "In Unani medicine, ginger is traditionally classified as a warming circulatory and digestive tonic.",
+          "Across Southeast Asian ethnomedical practice, ginger has been traditionally applied for postpartum recovery, travel sickness, and joint stiffness."
+        ],
+        "modern_uses": [
+          "Supported by clinical trial evidence: relief of nausea and vomiting of pregnancy at limited doses—randomized trials are the basis for common obstetric dosing guidance, though patients should use it under clinician supervision.",
+          "Supported by clinical trial evidence: reduction of motion sickness symptoms; multiple randomized trials have examined ginger against placebo in vestibular challenge models.",
+          "Supported by systematic review evidence: symptomatic benefit in knee osteoarthritis pain—assessed in a systematic review of randomized controlled trials (PMID 25230520).",
+          "Preliminary / limited evidence: relief of chemotherapy-induced and postoperative nausea; trial results are mixed and effect size varies, leaving clinical status unresolved.",
+          "Preliminary / limited evidence: gastric emptying acceleration and functional dyspepsia symptom relief; small human pharmacokinetic and physiological studies exist but large confirmatory trials are lacking.",
+          "Not established by the provided clinical evidence: use as an anti-inflammatory or circulatory treatment for systemic conditions—pharmacological activity is documented mechanistically, but the source citations do not substantiate human clinical efficacy for these indications."
+        ],
+        "dosage_forms": [
+          "Standardized dry rhizome extract",
+          "Powdered dried rhizome (capsules or tablets)",
+          "Fresh rhizome decoction/infusion (tea)",
+          "Crystallized (candied) ginger",
+          "Hydroethanolic tincture",
+          "Fluidextract"
+        ],
+        "preparation_notes": "Drying and heating convert gingerols to shogaols, so dried or steam-processed preparations yield a different pungent-principle profile than fresh rhizome; commercial extracts may be standardized to gingerol content. Ginger constituents are lipophilic, and co-administration with fats or taking concentrated extracts with a fatty meal increases absorption of the pungent phenolics. Fresh rhizome can be sliced and steeped in hot water for 10-15 minutes to prepare tea. Store dried powder and standardized extracts in airtight containers protected from light and humidity, as pungent principles and volatile oil degrade with oxidation and moisture exposure; use within 6-12 months for full potency.",
+        "symptom_keywords": [
+          "nausea",
+          "digestion",
+          "cold",
+          "circulation",
+          "inflammation",
+          "joint",
+          "osteoarthritis",
+          "motion sickness",
+          "morning sickness",
+          "dyspepsia"
+        ],
+        "dosage_adult": "250-1000mg dried ginger 2-4 times daily, or fresh ginger tea 2-4 cups daily",
+        "contraindications": [
+          "Gallstones",
+          "Bleeding disorders",
+          "Pre-surgery (stop 1 week before)"
+        ],
+        "side_effects": [
+          "Heartburn",
+          "Gas",
+          "Mouth irritation",
+          "Mild GI discomfort at high doses"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/25230520/",
+            "pmid": "25230520",
+            "title": "Efficacy of ginger for osteoarthritis: a systematic review",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 673
+      },
+      "word_count_before": 166,
+      "word_count_after": 673,
+      "word_count_delta": 507,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "weakest_field": {
+        "field": "preparation_notes",
+        "value": "Drying and heating convert gingerols to shogaols, so dried or steam-processed preparations yield a different pungent-principle profile than fresh rhizome; commercial extracts may be standardized to gingerol content. Ginger constituents are lipophilic, and co-administration with fats or taking concentrated extracts with a fatty meal increases absorption of the pungent phenolics. Fresh rhizome can be sliced and steeped in hot water for 10-15 minutes to prepare tea. Store dried powder and standardized extracts in airtight containers protected from light and humidity, as pungent principles and volatile oil degrade with oxidation and moisture exposure; use within 6-12 months for full potency.",
+        "critique": "Covers culinary vs medicinal powder distinctions, but does not quantify shogaol formation kinetics during heat processing."
+      }
+    },
+    {
+      "slug": "rhodiola",
+      "name": "Rhodiola",
+      "scientific_name": "Rhodiola rosea",
+      "adjusted_from": "milk-thistle (citations: 0 in DB)",
+      "before": {
+        "description": "Rhodiola rosea grows in cold, mountainous regions of Europe and Asia and has been used in traditional medicine in Russia and Scandinavia for centuries. It is classified as an adaptogen, helping the body resist physical and mental stress. It has gained significant popularity as a natural performance enhancer and mood stabilizer.",
+        "active_compounds": [
+          "Rosavins",
+          "Salidroside",
+          "Tyrosol",
+          "Rhodioflavonoside",
+          "Rosin"
+        ],
+        "traditional_uses": [
+          "Stamina and endurance enhancer",
+          "Stress resistance",
+          "Altitude sickness prevention",
+          "Depression treatment",
+          "Fatigue remedy"
+        ],
+        "modern_uses": [
+          "Stress and fatigue",
+          "Mild to moderate depression",
+          "Physical performance",
+          "Cognitive function under stress",
+          "Burnout prevention"
+        ],
+        "dosage_forms": ["capsule", "tablet", "extract", "tincture"],
+        "preparation_notes": "Take in the morning or early afternoon to avoid sleep interference. Standardized extracts should contain 3% rosavins and 1% salidroside. Effects are often noticeable within the first week. Cycle: 5 days on, 2 days off.",
+        "symptom_keywords": [
+          "anxiety",
+          "stress",
+          "immune",
+          "depression",
+          "weight",
+          "focus",
+          "wound"
+        ],
+        "dosage_adult": "200-600mg standardized extract daily (3% rosavins, 1% salidroside)",
+        "contraindications": [
+          "Bipolar disorder",
+          "Autoimmune conditions",
+          "Concurrent stimulant medications"
+        ],
+        "side_effects": [
+          "Insomnia (if taken late)",
+          "Irritability",
+          "Increased blood pressure",
+          "Dizziness",
+          "Dry mouth"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/19016404/",
+            "pmid": "19016404",
+            "title": "Rhodiola rosea in stress-induced fatigue: a systematic review",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 164
+      },
+      "after": {
+        "description": "Rhodiola rosea (Crassulaceae) is a perennial flowering plant native to cold, high-altitude regions of Europe and Asia, including Scandinavia, Siberia, and the Alps. Its rhizome is the medicinal part and is classified in pharmacognosy as an adaptogen, a term denoting agents proposed to enhance nonspecific resistance to physiological and psychological stressors. The primary bioactive constituents are phenylpropanoid glycosides collectively termed rosavins (including rosavin, rosarin, and rosin), the phenylethanoid glycoside salidroside, and the phenolic aglycone tyrosol, alongside cinnamyl alcohol derivatives and flavonoids such as rhodioflavonoside. A systematic review identified in the verified literature examined Rhodiola rosea in stress-induced fatigue (PMID 19016404), reflecting the principal clinical focus of inquiry. Investigated pharmacological domains include neuroendocrine stress responses, fatigue states, cognitive performance under stress, and endurance-related parameters; however, evidence quality varies across studies, and many traditional or popularly asserted applications remain insufficiently substantiated by controlled human trials. Commercial preparations are typically standardized dry extracts of the rhizome. Rhodiola rosea should be distinguished from other Rhodiola species, as the rosavin-rich phytochemical profile specific to R. rosea underpins most published analytical and clinical characterization.",
+        "active_compounds": [
+          "Rosavins (rosavin, rosarin, rosin; marker compounds typically standardized at 3% in commercial extracts)",
+          "Salidroside (phenylethanoid glycoside, typically standardized at 1%)",
+          "Tyrosol (phenylethanoid aglycone)",
+          "Cinnamyl alcohol glycosides",
+          "Rhodioflavonoside (flavonoid glycoside)",
+          "Rosin (phenylpropanoid)"
+        ],
+        "traditional_uses": [
+          "In Siberian folk medicine, traditionally used as a stamina and endurance enhancer during long winters and physically demanding seasons",
+          "In traditional Russian and Scandinavian medicine, historically utilized by populations seeking to increase resistance to harsh climates and physical exertion",
+          "Traditionally administered in Scandinavian herbal practice as a general tonic for convalescence and fatigue",
+          "In traditional usage among mountain-dwelling communities of Siberia, historically consumed to improve resilience at high altitude"
+        ],
+        "modern_uses": [
+          "Examined in a systematic review (PMID 19016404) for stress-related fatigue; overall evidence quality was variable and conclusions limited",
+          "Preliminary/limited evidence: cognitive performance and physical endurance during stress; based on small trials, not confirmed by robust replications",
+          "Preliminary/limited evidence: mood-related effects in non-clinical populations; current support is insufficient for adjunctive or primary therapy in depression",
+          "Explicitly NOT supported by adequate human clinical evidence: prevention of burnout, treatment of altitude sickness, immune modulation, and weight management"
+        ],
+        "dosage_forms": [
+          "Standardized dry extract of rhizome (typical commercial standardization 3% rosavins, 1% salidroside)",
+          "Powdered rhizome",
+          "Hydroethanolic tincture",
+          "Solid-dose capsules and tablets of standardized extract"
+        ],
+        "preparation_notes": "Commercial rhizome extracts are typically prepared via hydroethanolic extraction, with standardization to 3% rosavins and 1% salidroside; the rosavin/salidroside ratio is species-specific to R. rosea, so products should be verified accordingly. Extracts are generally taken earlier in the day by common product convention rather than as an evidence-established timing standard. Store in airtight, light-protected packaging away from heat and humidity to preserve the phenylpropanoid constituents; check the manufacturer's expiry date, as rosavins are susceptible to degradation over time in adverse conditions.",
+        "symptom_keywords": [
+          "stress",
+          "fatigue",
+          "depression",
+          "anxiety",
+          "focus",
+          "endurance"
+        ],
+        "dosage_adult": "200-600mg standardized extract daily (3% rosavins, 1% salidroside)",
+        "contraindications": [
+          "Bipolar disorder",
+          "Autoimmune conditions",
+          "Concurrent stimulant medications"
+        ],
+        "side_effects": [
+          "Insomnia (if taken late)",
+          "Irritability",
+          "Increased blood pressure",
+          "Dizziness",
+          "Dry mouth"
+        ],
+        "citations": [
+          {
+            "url": "https://pubmed.ncbi.nlm.nih.gov/19016404/",
+            "pmid": "19016404",
+            "title": "Rhodiola rosea in stress-induced fatigue: a systematic review",
+            "source": "PubMed"
+          }
+        ],
+        "word_count": 496
+      },
+      "word_count_before": 164,
+      "word_count_after": 496,
+      "word_count_delta": 332,
+      "needs_source_flags": {
+        "dosage_adult": true,
+        "contraindications": true,
+        "side_effects": true
+      },
+      "weakest_field": {
+        "field": "modern_uses (negative boundary)",
+        "value": "Explicitly NOT supported by adequate human clinical evidence: prevention of burnout, treatment of altitude sickness, immune modulation, and weight management",
+        "critique": "Correctly notes absence of clinical trial support for major disease indications, but could cite specific negative trial endpoints."
+      }
+    }
+  ]
+}
