@@ -83,23 +83,23 @@ const nextConfig: NextConfig = {
         source: "/",
         has: [{ type: "query", key: "herb" }],
         destination: "/herbalist",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/",
         has: [{ type: "query", key: "medications" }],
         destination: "/herbalist",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/herbs/ginkgo",
         destination: "/herbs/ginkgo-biloba",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/:locale(en|fr)/herbs/ginkgo",
         destination: "/:locale/herbs/ginkgo-biloba",
-        permanent: true,
+        statusCode: 301,
       },
       // The interaction hub has lived at /herb-drug-interactions since launch,
       // but "interactions" is the shorter, more guessable URL — people and
@@ -108,22 +108,22 @@ const nextConfig: NextConfig = {
       {
         source: "/interactions",
         destination: "/herb-drug-interactions",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/:locale(en|fr)/interactions",
         destination: "/:locale/herb-drug-interactions",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/herb-drug-interactions/:herb/:drug",
         destination: "/interactions/:herb/:drug",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/:locale(en|fr)/herb-drug-interactions/:herb/:drug",
         destination: "/:locale/interactions/:herb/:drug",
-        permanent: true,
+        statusCode: 301,
       },
     ];
   },

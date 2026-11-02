@@ -179,13 +179,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     namespace: "herbMeta",
   });
   const commonNames = (herb.common_names || []).slice(0, 3).join(", ");
-  const topUses = [
-    ...(herb.traditional_uses || []),
-    ...(herb.modern_uses || []),
-  ]
-    .slice(0, 3)
-    .join(", ");
-  const uses = topUses || herbT("usesFallback");
+  // {uses} used to be spliced into the meta description, but those values are
+  // clauses ("In Ayurvedic medicine, traditional…"), so every one of the 2,700
+  // pages read "Uses for In Ayurvedic medicine, traditional…". The
+  // descriptions now describe the page instead of quoting a clause.
   const title = hasDistinctCommonName(herb)
     ? herbT("title", {
         name: herb.name,
@@ -197,14 +194,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? herbT("descWithNames", {
           name: herb.name,
           common: commonNames,
-          uses,
         })
       : herb.description
         ? herbT("descFromBody", { body: herb.description.slice(0, 120) })
         : herbT("descFallback", {
             name: herb.name,
             scientific: herb.scientific_name,
-            uses,
           })
   );
 
