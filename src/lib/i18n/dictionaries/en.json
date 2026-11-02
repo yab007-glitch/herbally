@@ -60,7 +60,8 @@
     "copyResponseLabel": "Copy response",
     "chatInputlabel": "Chat message input",
     "stopGeneratingLabel": "Stop generating",
-    "sendMessageLabel": "Send message"
+    "sendMessageLabel": "Send message",
+    "home": "Home"
   },
   "nav": {
     "symptoms": "By Symptom",
@@ -1152,7 +1153,9 @@
     "matchReasonSymptomGeneral": "Matched your symptoms",
     "matchReasonName": "Matched by name or description",
     "alsoListedAs": "Also listed as: {names}",
-    "orderingNote": "Results are ordered by how many of your symptoms match, then by evidence grade."
+    "orderingNote": "Results are ordered by how many of your symptoms match, then by evidence grade.",
+    "allSymptomsHeading": "Every symptom in the database",
+    "allSymptomsIntro": "Each page lists the herbs recorded for that symptom, their evidence grade, pregnancy and nursing flags, and a link to the full profile. Start with the condition that matches what you are dealing with."
   },
   "herbDetailContent": {
     "herbNotFound": "Herb Not Found",

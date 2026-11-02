@@ -3,6 +3,7 @@ import {
   dedupeSymptomResults,
   sortSymptomResultsByRelevance,
   normalizeScientificName,
+  localizeSymptomHerb,
   type DedupeableHerbResult,
 } from "../symptom-results";
 
@@ -170,5 +171,63 @@ describe("sortSymptomResultsByRelevance", () => {
       herb({ id: "b", name: "B", matchedInputs: ["sleep"] }),
     ]);
     expect(sorted.map((h) => h.id)).toEqual(["a", "b"]);
+  });
+});
+
+describe("localizeSymptomHerb", () => {
+  const row = {
+    name: "Turmeric",
+    scientific_name: "Curcuma longa",
+    traditional_uses: ["Inflammation"],
+    modern_uses: ["Digestive complaints"],
+    translations: {
+      fr: {
+        name: "Curcuma",
+        traditional_uses: ["Inflammation"],
+      },
+    },
+  };
+
+  it("returns the row untouched for English", () => {
+    expect(localizeSymptomHerb(row, "en")).toBe(row);
+  });
+
+  it("overlays the French name and uses on /fr pages", () => {
+    const out = localizeSymptomHerb(row, "fr");
+    expect(out.name).toBe("Curcuma");
+    expect(out.traditional_uses).toEqual(["Inflammation"]);
+  });
+
+  it("keeps the English value for a field the translation omits", () => {
+    // modern_uses has no French translation: blanking it would drop a use
+    // tag from the card, which is worse than showing the English wording.
+    const out = localizeSymptomHerb(row, "fr");
+    expect(out.modern_uses).toEqual(["Digestive complaints"]);
+    expect(out.scientific_name).toBe("Curcuma longa");
+  });
+
+  it("falls back when translations are missing or not an object", () => {
+    expect(localizeSymptomHerb({ name: "Ginger" }, "fr").name).toBe("Ginger");
+    expect(
+      localizeSymptomHerb({ name: "Ginger", translations: [] }, "fr").name
+    ).toBe("Ginger");
+    expect(
+      localizeSymptomHerb({ name: "Ginger", translations: { fr: null } }, "fr")
+        .name
+    ).toBe("Ginger");
+  });
+
+  it("coerces a translation emitted as a bare string into an array", () => {
+    // The AI translation pipeline emitted single strings for some array
+    // fields; a bare string passed through as-is crashes every `.join()`.
+    const out = localizeSymptomHerb(
+      {
+        name: "Ginger",
+        modern_uses: ["Nausea"],
+        translations: { fr: { modern_uses: "Nausees" } },
+      },
+      "fr"
+    );
+    expect(out.modern_uses).toEqual(["Nausees"]);
   });
 });

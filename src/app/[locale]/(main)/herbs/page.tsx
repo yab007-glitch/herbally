@@ -1,6 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { Suspense } from "react";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Badge } from "@/components/ui/badge";
 import { HerbCard } from "@/components/herbs/herb-card";
 import { HerbPagination } from "@/components/herbs/herb-pagination";
@@ -10,13 +10,13 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
 import { ChipLegend } from "@/components/herbs/chip-legend";
 import { RecentlyViewed } from "@/components/herbs/recently-viewed";
+import { JsonLd } from "@/components/seo/json-ld";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { redirect } from "next/navigation";
-import Script from "next/script";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -48,6 +48,7 @@ export default async function HerbsPage({
     params.page === undefined ? 1 : Math.floor(Number(params.page));
   const page = Number.isFinite(parsedPage) && parsedPage >= 1 ? parsedPage : 1;
   const locale = await getLocale();
+  const prefix = locale === "fr" ? "/fr" : "";
   const t = await getTranslations({ locale });
   const [herbsResult, categoriesResult] = await Promise.all([
     getHerbs({ query, category, page, sort }, locale),
@@ -126,25 +127,22 @@ export default async function HerbsPage({
           { name: t("herbs.title"), url: "/herbs" },
         ]}
       />
-      <Script
+      <JsonLd
         id="herbs-structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            itemListElement: herbs.map((herb, index) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              item: {
-                "@type": "MedicalWebPage",
-                name: herb.name,
-                alternateName: herb.scientific_name,
-                description: herb.description,
-                url: `${siteUrl()}/herbs/${herb.slug || ""}`,
-              },
-            })),
-          }).replace(/</g, "\\u003c"),
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: herbs.map((herb, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            item: {
+              "@type": "MedicalWebPage",
+              name: herb.name,
+              alternateName: herb.scientific_name,
+              description: herb.description,
+              url: `${siteUrl()}${prefix}/herbs/${herb.slug || ""}`,
+            },
+          })),
         }}
       />
 

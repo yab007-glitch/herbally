@@ -114,7 +114,7 @@ export default async function CalculatorPage({
       <BreadcrumbListSchema
         items={[
           { name: "Home", url: siteUrl() },
-          { name: "Dose Calculator", url: `${siteUrl()}/calculator` },
+          { name: t("calculator.title"), url: "/calculator" },
         ]}
       />
       <FAQSchema

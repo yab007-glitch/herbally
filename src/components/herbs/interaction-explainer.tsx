@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { AlertTriangle } from "lucide-react";
 import { useTranslations } from "next-intl";
 

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { LinkHerb } from "@/lib/data/internal-links";
 import { pairPath } from "@/lib/interactions/pair-url";

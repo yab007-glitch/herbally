@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ShieldCheck, Sparkles, MessageCircle } from "lucide-react";

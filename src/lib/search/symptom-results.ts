@@ -158,3 +158,48 @@ export function sortSymptomResultsByRelevance<T extends DedupeableHerbResult>(
     })
     .map(({ herb }) => herb);
 }
+
+/** Minimal shape of an herb row rendered on a symptom hub. */
+export interface SymptomHerbRow {
+  name: string;
+  traditional_uses?: string[] | null;
+  modern_uses?: string[] | null;
+  translations?: unknown;
+}
+
+function translatedStringArray(value: unknown): string[] | null {
+  if (Array.isArray(value)) {
+    const strings = value.filter((v): v is string => typeof v === "string");
+    return strings.length ? strings : null;
+  }
+  if (typeof value === "string" && value.trim()) return [value.trim()];
+  return null;
+}
+
+/**
+ * Overlay `translations.fr` onto a symptom-hub herb row.
+ *
+ * The symptom detail page selected only English columns, so every `/fr/symptoms/*`
+ * page listed English herb names and English use tags inside an otherwise
+ * French page. Falls back to the English value field by field when a
+ * translation is missing — a missing translation must never blank a row.
+ */
+export function localizeSymptomHerb<T extends SymptomHerbRow>(
+  row: T,
+  locale: string
+): T {
+  if (locale !== "fr") return row;
+  const translations = row.translations;
+  if (!translations || typeof translations !== "object") return row;
+  const fr = (translations as Record<string, unknown>).fr;
+  if (!fr || typeof fr !== "object") return row;
+  const t = fr as Record<string, unknown>;
+  const name = typeof t.name === "string" && t.name.trim() ? t.name : row.name;
+  return {
+    ...row,
+    name,
+    traditional_uses:
+      translatedStringArray(t.traditional_uses) ?? row.traditional_uses,
+    modern_uses: translatedStringArray(t.modern_uses) ?? row.modern_uses,
+  };
+}

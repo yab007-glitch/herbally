@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Leaf, ShieldAlert, Stethoscope } from "lucide-react";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getLocale } from "@/lib/i18n/page-locale";

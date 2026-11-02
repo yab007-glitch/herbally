@@ -4,6 +4,7 @@ import { ChatEmptyStateV2 } from "../chat-empty-state-v2";
 
 // Passthrough translator: assertions target keys, not copy that may change.
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string) => key,
 }));
 
