@@ -886,7 +886,8 @@
     "consult": "Consultez toujours votre médecin ou un professionnel de santé qualifié avant de commencer tout complément à base de plantes, surtout si vous êtes enceinte, allaitez, prenez des médicaments ou avez une condition médicale.",
     "fda": "Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. HerbAlly n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir toute maladie.",
     "emergency": "Si vous pensez avoir une urgence médicale, appelez votre médecin, rendez-vous aux urgences ou appelez immédiatement les services d'urgence.",
-    "reliance": "HerbAlly ne recommande ni n'approuve aucune plante, produit, procédure ou opinion spécifique. Se fier à toute information fournie par HerbAlly se fait à vos propres risques."
+    "reliance": "HerbAlly ne recommande ni n'approuve aucune plante, produit, procédure ou opinion spécifique. Se fier à toute information fournie par HerbAlly se fait à vos propres risques.",
+    "canada": "Au Canada, les produits de santé naturels relèvent de Santé Canada en vertu du Règlement sur les produits de santé naturels. Un produit portant un NPN (ou un DIN-HM pour les produits homéopathiques) a été autorisé à la vente, ce qui ne signifie pas que son efficacité a été démontrée cliniquement. HerbAlly n'est affilié ni à Santé Canada ni à la FDA, et cette page n'est pas un dépôt réglementaire."
   },
   "aboutContent": {
     "header": "À propos d'HerbAlly",
@@ -1519,7 +1520,7 @@
     "herbsBySymptomDesc": "Trouvez les bonnes plantes pour vos symptômes. Parcourez les recommandations phytothérapiques fondées sur les preuves pour l'anxiété, le sommeil, l'inflammation, la digestion et plus encore.",
     "privacyPolicy": "Politique de Confidentialité",
     "medicalDisclaimer": "Avertissement Médical",
-    "medicalDisclaimerDesc": "Lisez l'avertissement médical et FDA complet pour HerbAlly.",
+    "medicalDisclaimerDesc": "Lisez l'avertissement médical complet de HerbAlly, y compris la façon dont la FDA et Santé Canada encadrent les produits à base de plantes.",
     "faq": "Questions Fréquemment Posées",
     "methodology": "Notre Méthodologie",
     "termsOfService": "Conditions d'Utilisation",

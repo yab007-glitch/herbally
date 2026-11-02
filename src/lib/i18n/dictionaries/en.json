@@ -886,7 +886,8 @@
     "consult": "Always consult your physician or qualified healthcare provider before starting any herbal supplement, especially if you are pregnant, nursing, taking medication, or have a medical condition.",
     "fda": "These statements have not been evaluated by the Food and Drug Administration. HerbAlly is not intended to diagnose, treat, cure, or prevent any disease.",
     "emergency": "If you think you may have a medical emergency, call your doctor, go to the emergency department, or call emergency services immediately.",
-    "reliance": "HerbAlly does not endorse or recommend any specific herbs, products, procedures, or opinions. Reliance on any information provided by HerbAlly is solely at your own risk."
+    "reliance": "HerbAlly does not endorse or recommend any specific herbs, products, procedures, or opinions. Reliance on any information provided by HerbAlly is solely at your own risk.",
+    "canada": "In Canada, natural health products are regulated by Health Canada under the Natural Health Products Regulations. A product carrying an NPN (or DIN-HM for homeopathic products) has been licensed for sale, which is not the same as having been proven clinically effective. HerbAlly is not affiliated with Health Canada and this page is not a regulatory filing."
   },
   "aboutContent": {
     "header": "About HerbAlly",
@@ -1519,7 +1520,7 @@
     "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
     "privacyPolicy": "Privacy Policy",
     "medicalDisclaimer": "Medical Disclaimer",
-    "medicalDisclaimerDesc": "Read the full medical and FDA disclaimer for HerbAlly.",
+    "medicalDisclaimerDesc": "Read the full medical disclaimer for HerbAlly, including how the FDA and Health Canada regulate herbal products.",
     "faq": "Frequently Asked Questions",
     "methodology": "Our Methodology",
     "termsOfService": "Terms of Service",
