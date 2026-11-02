@@ -1,0 +1,25 @@
+{
+  "herb_slug": "echinacea",
+  "pairs": [
+    {
+      "drug_name": "Immunosuppressants",
+      "severity": "severe",
+      "description": "Echinacea might reduce the effectiveness of immunosuppressants because of its potential immunostimulatory activity.",
+      "mechanism": "Echinacea's potential immunostimulatory activity may oppose the immunosuppressive action of these drugs.",
+      "evidence_level": "limited-evidence",
+      "source": "NIH ODS",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://ods.od.nih.gov/factsheets/ImmuneFunction-HealthProfessional/"
+    },
+    {
+      "drug_name": "Drugs Metabolized by Cytochrome P450",
+      "severity": "moderate",
+      "description": "Echinacea might increase cytochrome P450 activity, which could reduce levels of some drugs metabolized by these enzymes.",
+      "mechanism": "Echinacea might increase cytochrome P450 activity, thereby reducing levels of drugs metabolized by these enzymes.",
+      "evidence_level": "limited-evidence",
+      "source": "NIH ODS",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://ods.od.nih.gov/factsheets/ImmuneFunction-HealthProfessional/"
+    }
+  ]
+}

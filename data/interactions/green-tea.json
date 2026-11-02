@@ -1,0 +1,45 @@
+{
+  "herb_slug": "green-tea",
+  "pairs": [
+    {
+      "drug_name": "Nadolol",
+      "severity": "severe",
+      "description": "Green tea extract dramatically reduces oral nadolol absorption, decreasing plasma drug concentrations by approximately 85 percent.",
+      "mechanism": "Potent inhibition of intestinal Organic Anion Transporting Polypeptide 1A2 (OATP1A2) by epigallocatechin gallate (EGCG).",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/green-tea"
+    },
+    {
+      "drug_name": "Bortezomib (Velcade)",
+      "severity": "contraindicated",
+      "description": "EGCG in green tea directly binds to the boronic acid moiety of bortezomib, completely inactivating its antineoplastic proteasome inhibitory action.",
+      "mechanism": "Direct covalent cross-binding between 1,2-benzenediol groups of EGCG and the boronic acid group of bortezomib.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/green-tea"
+    },
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "severe",
+      "description": "High consumption of brewed green tea containing vitamin K antagonizes warfarin's anticoagulant action, precipitating subtherapeutic INR levels.",
+      "mechanism": "Direct pharmacodynamic antagonism of vitamin K epoxide reductase inhibition by exogenous phytomenadione in tea leaves.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/green-tea"
+    },
+    {
+      "drug_name": "Atorvastatin (Lipitor)",
+      "severity": "moderate",
+      "description": "Large quantities of green tea catechins can decrease bioavailability and peak plasma concentrations of atorvastatin.",
+      "mechanism": "Inhibition of enteric influx transporters including OATP1A2 and OATP2B1 by green tea polyphenols.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/green-tea"
+    }
+  ]
+}

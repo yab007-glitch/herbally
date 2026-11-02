@@ -1,0 +1,45 @@
+{
+  "herb_slug": "valerian",
+  "pairs": [
+    {
+      "drug_name": "Lorazepam (Ativan)",
+      "severity": "severe",
+      "description": "Valerian exerts additive sedative, anxiolytic, and motor-impairing effects when co-administered with benzodiazepines including lorazepam.",
+      "mechanism": "Inhibition of GABA transaminase breakdown and enhancement of GABA release by valerenic acid at the GABA-A receptor complex.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/valerian"
+    },
+    {
+      "drug_name": "Zolpidem (Ambien)",
+      "severity": "severe",
+      "description": "Co-administration of valerian with non-benzodiazepine hypnotics like zolpidem heightens somnolence, psychomotor slowing, and respiratory depression.",
+      "mechanism": "Additive pharmacodynamic depression of central nervous system pathways via GABAergic signaling facilitation.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/valerian"
+    },
+    {
+      "drug_name": "Alcohol",
+      "severity": "severe",
+      "description": "Combining valerian preparations with alcohol markedly intensifies intoxication, sedation, cognitive impairment, and ataxia.",
+      "mechanism": "Synergistic central nervous system depressant effects mediated by combined actions on GABAergic neurotransmission.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/valerian"
+    },
+    {
+      "drug_name": "Diazepam (Valium)",
+      "severity": "severe",
+      "description": "Valerian enhances the sedative and muscle-relaxant actions of diazepam, posing substantial risks of prolonged somnolence.",
+      "mechanism": "Additive GABA-A receptor modulation by valerenic acid and its derivatives alongside benzodiazepine agonists.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/valerian"
+    }
+  ]
+}

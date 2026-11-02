@@ -1,0 +1,45 @@
+{
+  "herb_slug": "licorice-root",
+  "pairs": [
+    {
+      "drug_name": "Digoxin",
+      "severity": "severe",
+      "description": "Licorice-induced hypokalemia dramatically increases myocardial sensitivity to digoxin, precipitating life-threatening cardiac dysrhythmias.",
+      "mechanism": "Glycyrrhizin inhibits 11-beta-hydroxysteroid dehydrogenase type 2, producing pseudoaldosteronism and severe potassium depletion.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/licorice-root"
+    },
+    {
+      "drug_name": "Furosemide (Lasix)",
+      "severity": "severe",
+      "description": "Combining licorice root with loop diuretics like furosemide accelerates renal potassium wasting, causing profound hypokalemia.",
+      "mechanism": "Additive kaliuretic actions from loop diuretic inhibition of Na-K-2Cl symporters and mineralocorticoid excess.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/licorice-root"
+    },
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "moderate",
+      "description": "Licorice root may induce CYP2C9 enzymes and alter warfarin clearance, potentially decreasing anticoagulant efficacy and INR levels.",
+      "mechanism": "Mild induction of hepatic CYP2C9 and CYP3A4 metabolic pathways by triterpenoid constituents.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/licorice-root"
+    },
+    {
+      "drug_name": "Spironolactone",
+      "severity": "severe",
+      "description": "Licorice components antagonize the aldosterone-receptor blocking action of spironolactone, abolishing its diuretic and antihypertensive effects.",
+      "mechanism": "Cortisol-mediated activation of renal mineralocorticoid receptors overpowering competitive spironolactone antagonism.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/licorice-root"
+    }
+  ]
+}

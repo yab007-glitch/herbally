@@ -1,0 +1,35 @@
+{
+  "herb_slug": "bilberry",
+  "pairs": [
+    {
+      "drug_name": "Warfarin",
+      "severity": "moderate",
+      "description": "Anthocyanosides in bilberry exhibit antiplatelet properties and may augment hemorrhage risks when taken alongside warfarin.",
+      "mechanism": "Inhibition of platelet aggregation and thromboxane A2 release compounding anticoagulant effects.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/bilberry"
+    },
+    {
+      "drug_name": "Aspirin",
+      "severity": "moderate",
+      "description": "Combining bilberry supplements with aspirin produces additive platelet antiaggregatory activity, prolonging bleeding time.",
+      "mechanism": "Synergistic antiplatelet action through dual inhibition of cyclooxygenase and platelet cyclic AMP phosphodiesterase.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/bilberry"
+    },
+    {
+      "drug_name": "Metformin",
+      "severity": "mild",
+      "description": "Bilberry leaf extract preparations possess active hypoglycemic properties that may cause additive blood glucose reductions with metformin.",
+      "mechanism": "Chromium and anthocyanin-mediated stimulation of peripheral glucose oxidation and glycolysis.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/bilberry"
+    }
+  ]
+}

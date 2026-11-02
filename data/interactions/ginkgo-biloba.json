@@ -1,0 +1,45 @@
+{
+  "herb_slug": "ginkgo-biloba",
+  "pairs": [
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "severe",
+      "description": "Ginkgo biloba combined with warfarin increases bleeding risk and potential spontaneous hemorrhagic events including intracranial hemorrhage.",
+      "mechanism": "Ginkgolide B serves as a potent antagonist of platelet-activating factor (PAF), compounding warfarin's anticoagulant mechanism.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ginkgo"
+    },
+    {
+      "drug_name": "Aspirin",
+      "severity": "moderate",
+      "description": "Co-administration of ginkgo and aspirin results in dual antiplatelet inhibition, causing documented clinical bleeding episodes such as spontaneous hyphema.",
+      "mechanism": "Additive platelet antiaggregatory activity combining cyclooxygenase-1 inhibition by aspirin with PAF antagonism by ginkgolides.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ginkgo"
+    },
+    {
+      "drug_name": "Ibuprofen (Advil)",
+      "severity": "moderate",
+      "description": "Combining ginkgo with NSAIDs like ibuprofen increases the risk of gastrointestinal bleeding and prolonged bleeding times.",
+      "mechanism": "Additive impairment of primary platelet plug formation and gastric mucosal cytoprotective prostaglandin suppression.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ginkgo"
+    },
+    {
+      "drug_name": "Efavirenz",
+      "severity": "moderate",
+      "description": "Ginkgo biloba extracts may significantly lower plasma concentrations of efavirenz, jeopardizing suppression of human immunodeficiency virus.",
+      "mechanism": "Induction of cytochrome P450 2B6 by terpenoid constituents of ginkgo extract.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ginkgo"
+    }
+  ]
+}

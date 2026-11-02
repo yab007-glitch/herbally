@@ -1,0 +1,35 @@
+{
+  "herb_slug": "hawthorn",
+  "pairs": [
+    {
+      "drug_name": "Digoxin",
+      "severity": "moderate",
+      "description": "Hawthorn possesses inotropic properties and may potentiate the pharmacological activity and toxicity risk of digoxin.",
+      "mechanism": "Inhibition of myocardial Na+/K+-ATPase and additive positive inotropic activity by oligomeric procyanidins.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/hawthorn"
+    },
+    {
+      "drug_name": "Beta-blockers (Metoprolol)",
+      "severity": "moderate",
+      "description": "Hawthorn extract can produce additive hypotensive and negative chronotropic effects when combined with beta-blockers like metoprolol.",
+      "mechanism": "Additive peripheral vasodilatory and cardiac chronotropic suppression mediated by flavonoid constituents.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/hawthorn"
+    },
+    {
+      "drug_name": "Phosphodiesterase-5 inhibitors (Sildenafil)",
+      "severity": "moderate",
+      "description": "Combining hawthorn with PDE5 inhibitors can precipitate excessive vasodilation and symptomatic systemic hypotension.",
+      "mechanism": "Synergistic vascular smooth muscle relaxation through nitric oxide-cGMP pathway augmentation.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/hawthorn"
+    }
+  ]
+}

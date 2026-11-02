@@ -1,0 +1,35 @@
+{
+  "herb_slug": "milk-thistle",
+  "pairs": [
+    {
+      "drug_name": "Losartan",
+      "severity": "mild",
+      "description": "Silymarin in milk thistle inhibits CYP2C9 and may increase losartan concentrations while decreasing its active carboxylic acid metabolite.",
+      "mechanism": "Inhibition of CYP2C9-mediated metabolic oxidation of losartan to its active EXP3174 metabolite.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/milk-thistle"
+    },
+    {
+      "drug_name": "Raloxifene",
+      "severity": "moderate",
+      "description": "Milk thistle extract inhibits intestinal glucuronidation enzymes, potentially increasing the oral bioavailability of raloxifene.",
+      "mechanism": "Inhibition of UDP-glucuronosyltransferase UGT1A1 and UGT1A9 in the intestinal mucosa by silybin.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/milk-thistle"
+    },
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "moderate",
+      "description": "Silymarin may inhibit CYP2C9 metabolism of S-warfarin, leading to modest increases in prothrombin time and bleeding susceptibility.",
+      "mechanism": "Competitive inhibition of cytochrome P450 2C9-mediated hepatic clearance of active S-warfarin.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/milk-thistle"
+    }
+  ]
+}

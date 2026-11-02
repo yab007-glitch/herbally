@@ -1,0 +1,35 @@
+{
+  "herb_slug": "turmeric",
+  "pairs": [
+    {
+      "drug_name": "Sulfasalazine",
+      "severity": "moderate",
+      "description": "Curcumin in turmeric inhibits intestinal efflux transporters, significantly increasing plasma concentrations of sulfasalazine.",
+      "mechanism": "Inhibition of Breast Cancer Resistance Protein (BCRP/ABCG2) in the enteric lumen decreasing drug efflux.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/turmeric"
+    },
+    {
+      "drug_name": "Tacrolimus",
+      "severity": "moderate",
+      "description": "Turmeric intake can elevate systemic levels of tacrolimus, necessitating therapeutic drug monitoring to prevent calcineurin nephrotoxicity.",
+      "mechanism": "Inhibition of P-glycoprotein efflux transport and intestinal CYP3A4 by curcuminoids.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/turmeric"
+    },
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "severe",
+      "description": "Turmeric and curcumin demonstrate mild anticoagulant effects that may synergize with warfarin to increase hemorrhage danger.",
+      "mechanism": "Inhibition of thrombin and activated factor Xa combined with suppression of platelet aggregation.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/turmeric"
+    }
+  ]
+}

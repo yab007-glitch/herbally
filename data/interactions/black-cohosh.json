@@ -1,0 +1,35 @@
+{
+  "herb_slug": "black-cohosh",
+  "pairs": [
+    {
+      "drug_name": "Atorvastatin (Lipitor)",
+      "severity": "moderate",
+      "description": "Co-administration of black cohosh with HMG-CoA reductase inhibitors like atorvastatin may increase the risk of elevated transaminases and hepatotoxicity.",
+      "mechanism": "Additive hepatic metabolic stress and potential CYP3A4 pathway modulation by triterpene glycosides.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/black-cohosh"
+    },
+    {
+      "drug_name": "Tamoxifen",
+      "severity": "moderate",
+      "description": "Black cohosh may modulate estrogen receptor binding, raising clinical concerns regarding interference with tamoxifen in breast cancer management.",
+      "mechanism": "Selective estrogen receptor modulatory (SERM-like) activity by actein and related triterpenoids.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/black-cohosh"
+    },
+    {
+      "drug_name": "Cisplatin",
+      "severity": "moderate",
+      "description": "Preclinical data indicates black cohosh extracts can attenuate the cytotoxic effectiveness of platinum-based antineoplastics like cisplatin.",
+      "mechanism": "Induction of intracellular protective antioxidants and interference with platinum-DNA adduct apoptosis.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/black-cohosh"
+    }
+  ]
+}
