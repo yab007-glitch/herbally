@@ -501,9 +501,7 @@ export default async function SymptomDetailPage({ params }: Props) {
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground">
           {pageTitle}
         </h1>
-        <p className="mt-3 text-lg text-muted-foreground">
-          {pageDescription}
-        </p>
+        <p className="mt-3 text-lg text-muted-foreground">{pageDescription}</p>
       </div>
 
       {/* Medical Disclaimer */}

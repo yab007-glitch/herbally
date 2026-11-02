@@ -42,7 +42,8 @@ export default async function ContactPage() {
     },
   ];
 
-  const url = locale === "fr" ? `${siteUrl()}/fr/contact` : `${siteUrl()}/contact`;
+  const url =
+    locale === "fr" ? `${siteUrl()}/fr/contact` : `${siteUrl()}/contact`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">

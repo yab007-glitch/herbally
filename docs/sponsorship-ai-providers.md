@@ -9,32 +9,32 @@ In accordance with our governance rules, **no emails or applications are submitt
 
 ## 1. Vercel — Free Pro Tier Sponsorship
 
-* **Program:** Vercel Open Source Program (Quarterly Cohort)
-* **Goal:** $3,600 in platform credits over 3 years + Pro tier features & community support.
-* **Official Channel:** https://vercel.com/open-source-program
-* **Direct Email Contact:**
-sponsorships@vercel.com
-* **Project Details for Form / Email:**
-  * **Project Name:** HerbAlly
-  * **Live URL:** https://herbally.app
-  * **Repository:** https://github.com/yab007-glitch/herbally
-  * **Framework:** Next.js 16 (App Router), deployed on Vercel Edge & Serverless Functions
-  * **Impact:** Free, bilingual public-interest herbal medicine and drug-interaction safety database, authored by an accredited medical laboratory technologist (OPTMQ, CSMLS).
-  * **The Ask:** Open Source platform credits to support high-availability edge delivery and automated CI testing for public health queries.
+- **Program:** Vercel Open Source Program (Quarterly Cohort)
+- **Goal:** $3,600 in platform credits over 3 years + Pro tier features & community support.
+- **Official Channel:** https://vercel.com/open-source-program
+- **Direct Email Contact:**
+  sponsorships@vercel.com
+- **Project Details for Form / Email:**
+  - **Project Name:** HerbAlly
+  - **Live URL:** https://herbally.app
+  - **Repository:** https://github.com/yab007-glitch/herbally
+  - **Framework:** Next.js 16 (App Router), deployed on Vercel Edge & Serverless Functions
+  - **Impact:** Free, bilingual public-interest herbal medicine and drug-interaction safety database, authored by an accredited medical laboratory technologist (OPTMQ, CSMLS).
+  - **The Ask:** Open Source platform credits to support high-availability edge delivery and automated CI testing for public health queries.
 
 ---
 
 ## 2. Anthropic — Claude Pro / Max & Research Credits
 
-* **Program:** Anthropic Partnerships & Public Benefit Research
-* **Goal:** Claude Pro/Max subscription waiver and/or API credits for automated monograph analysis and interaction evidence verification.
-* **Official Channels:**
-  * Web form: https://www.anthropic.com/contact-sales
-  * Email Contact:
-partnerships@anthropic.com
-  * Economic Futures / Research Contact:
-economicfutures@anthropic.com
-* **Draft Message:**
+- **Program:** Anthropic Partnerships & Public Benefit Research
+- **Goal:** Claude Pro/Max subscription waiver and/or API credits for automated monograph analysis and interaction evidence verification.
+- **Official Channels:**
+  - Web form: https://www.anthropic.com/contact-sales
+  - Email Contact:
+    partnerships@anthropic.com
+  - Economic Futures / Research Contact:
+    economicfutures@anthropic.com
+- **Draft Message:**
 
 Subject: Sponsorship / Public Health Research: HerbAlly.app powered by Claude
 
@@ -59,12 +59,12 @@ Montreal, QC, Canada
 
 ## 3. OpenAI — Developer / Researcher Grant & Plus/Pro Access
 
-* **Program:** OpenAI Researcher Access Program / Open Source Fund
-* **Goal:** ChatGPT Plus/Pro subscription waiver or API research credits ($1,000–$25,000).
-* **Official Channels:**
-  * Application Form: https://openai.com/form/researcher-access-program
-  * Codex Open Source Fund: https://openai.com/form/codex-open-source-fund/
-* **Draft Message for Form / Inquiries:**
+- **Program:** OpenAI Researcher Access Program / Open Source Fund
+- **Goal:** ChatGPT Plus/Pro subscription waiver or API research credits ($1,000–$25,000).
+- **Official Channels:**
+  - Application Form: https://openai.com/form/researcher-access-program
+  - Codex Open Source Fund: https://openai.com/form/codex-open-source-fund/
+- **Draft Message for Form / Inquiries:**
 
 Subject: Academic & Clinical Safety Sponsorship: HerbAlly.app
 
@@ -86,11 +86,11 @@ https://herbally.app
 
 ## 4. OpenRouter — Developer Tier & Community Credits
 
-* **Program:** OpenRouter Developer Support & Ecosystem Grants
-* **Goal:** OpenRouter credits to support multi-model consensus checks (Claude, DeepSeek, Qwen) on medical interactions.
-* **Official Channel:**
-support@openrouter.ai
-* **Draft Message:**
+- **Program:** OpenRouter Developer Support & Ecosystem Grants
+- **Goal:** OpenRouter credits to support multi-model consensus checks (Claude, DeepSeek, Qwen) on medical interactions.
+- **Official Channel:**
+  support@openrouter.ai
+- **Draft Message:**
 
 Subject: Community Developer Grant / Sponsorship: HerbAlly.app
 
@@ -112,11 +112,11 @@ Montréal, QC
 
 ## 5. Nous Research — Research & Developer Sponsorship
 
-* **Program:** Community / Research Partner
-* **Goal:** Model access and developer support.
-* **Official Channel:**
-contact@nousresearch.com
-* **Draft Message:**
+- **Program:** Community / Research Partner
+- **Goal:** Model access and developer support.
+- **Official Channel:**
+  contact@nousresearch.com
+- **Draft Message:**
 
 Subject: Open Health Research & Partnership: HerbAlly.app
 
@@ -137,13 +137,13 @@ https://herbally.app
 
 ## 6. Supabase — Open Source & Startup Sponsorship
 
-* **Program:** Supabase for Startups & Open Source Support Program
-* **Goal:** Supabase Pro tier waiver and $10,000 in platform/compute credits.
-* **Official Channels:**
-  * Web portal: https://supabase.com/startups
-  * Direct Contact: partnerships@supabase.com / support@supabase.com
-* **The Ask:** Database and compute sponsorship for HerbAlly's PostgreSQL storage, pgvector semantic search for interaction queries, and double opt-in email subscriber verification.
-* **Draft Message:**
+- **Program:** Supabase for Startups & Open Source Support Program
+- **Goal:** Supabase Pro tier waiver and $10,000 in platform/compute credits.
+- **Official Channels:**
+  - Web portal: https://supabase.com/startups
+  - Direct Contact: partnerships@supabase.com / support@supabase.com
+- **The Ask:** Database and compute sponsorship for HerbAlly's PostgreSQL storage, pgvector semantic search for interaction queries, and double opt-in email subscriber verification.
+- **Draft Message:**
 
 Subject: Open Source / Public Health Sponsorship: HerbAlly.app (Powered by Supabase)
 
@@ -168,20 +168,20 @@ Montreal, QC, Canada
 
 ## 7. Google Cloud & Gemini — Google for Startups Cloud Program
 
-* **Program:** Google for Startups Cloud Program / Gemini API Developer Grant
-* **Goal:** Up to $200,000 in Google Cloud and Gemini API credits over 2 years.
-* **Official Channels:**
-  * Web Portal: https://cloud.google.com/startup
-  * Google AI Studio / Gemini Grants: https://ai.google.dev/
-* **Project Details for Form:**
-  * **Application Track:** Startups / Public Health Innovation
-  * **The Ask:** Cloud and Gemini model credits to scale automated clinical monograph ingestion (EMA, Health Canada, WHO monographs) and bilingual English/French patient safety verification.
+- **Program:** Google for Startups Cloud Program / Gemini API Developer Grant
+- **Goal:** Up to $200,000 in Google Cloud and Gemini API credits over 2 years.
+- **Official Channels:**
+  - Web Portal: https://cloud.google.com/startup
+  - Google AI Studio / Gemini Grants: https://ai.google.dev/
+- **Project Details for Form:**
+  - **Application Track:** Startups / Public Health Innovation
+  - **The Ask:** Cloud and Gemini model credits to scale automated clinical monograph ingestion (EMA, Health Canada, WHO monographs) and bilingual English/French patient safety verification.
 
 ---
 
 ## 8. Microsoft for Startups Founders Hub — Azure OpenAI Credits
 
-* **Program:** Microsoft for Startups Founders Hub
-* **Goal:** $2,500 – $25,000 in instant Azure & Azure OpenAI credits (no pitch deck or funding required for initial tier).
-* **Official Channel:** https://startups.microsoft.com/
-* **Key Benefits:** Direct access to GPT-4o / Whisper / embedding endpoints on Azure with enterprise compliance and zero out-of-pocket compute expense.
+- **Program:** Microsoft for Startups Founders Hub
+- **Goal:** $2,500 – $25,000 in instant Azure & Azure OpenAI credits (no pitch deck or funding required for initial tier).
+- **Official Channel:** https://startups.microsoft.com/
+- **Key Benefits:** Direct access to GPT-4o / Whisper / embedding endpoints on Azure with enterprise compliance and zero out-of-pocket compute expense.

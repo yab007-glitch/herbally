@@ -264,6 +264,7 @@ export default async function InteractionPairPage({ params }: Props) {
   return (
     <div className="space-y-8">
       <WebPageSchema
+        type="MedicalWebPage"
         title={`${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`}
         description={pair.description}
         url={url}

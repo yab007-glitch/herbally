@@ -112,29 +112,29 @@ export function HerbSchema({ herb }: HerbSchemaProps) {
       "@type": "Organization",
       name: "HerbAlly",
       url: siteUrl(),
-      ...(herb.reviewed_by && {
-        reviewer: reviewer
-          ? {
-              "@type": "Person",
-              name: reviewer.name,
-              jobTitle: reviewer.credentials,
-              url: reviewer.profileUrl,
-              ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
-              affiliation: reviewer.affiliations.map((a) => ({
-                "@type": "Organization",
-                name: a.name,
-                ...(a.url && { url: a.url }),
-              })),
-            }
-          : {
-              "@type": "Person",
-              name: herb.reviewed_by,
-              ...(herb.reviewer_credentials && {
-                jobTitle: herb.reviewer_credentials,
-              }),
-            },
-      }),
     },
+    ...(herb.reviewed_by && {
+      reviewedBy: reviewer
+        ? {
+            "@type": "Person",
+            name: reviewer.name,
+            jobTitle: reviewer.credentials,
+            url: reviewer.profileUrl,
+            ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
+            affiliation: reviewer.affiliations.map((a) => ({
+              "@type": "Organization",
+              name: a.name,
+              ...(a.url && { url: a.url }),
+            })),
+          }
+        : {
+            "@type": "Person",
+            name: herb.reviewed_by,
+            ...(herb.reviewer_credentials && {
+              jobTitle: herb.reviewer_credentials,
+            }),
+          },
+    }),
     // The accountable author. This is a real, credentialed person and the
     // single strongest honest trust signal the page can carry; "HerbAlly
     // Editorial Team" told a rater nothing.

@@ -37,7 +37,9 @@ export default async function MethodologyPage() {
   }));
 
   const url =
-    locale === "fr" ? `${siteUrl()}/fr/methodology` : `${siteUrl()}/methodology`;
+    locale === "fr"
+      ? `${siteUrl()}/fr/methodology`
+      : `${siteUrl()}/methodology`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
