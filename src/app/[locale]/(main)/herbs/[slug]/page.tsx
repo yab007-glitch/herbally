@@ -26,6 +26,7 @@ import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
 import { siteUrl } from "@/lib/seo/site-url";
 import { truncateDescription } from "@/lib/seo/truncate-description";
+import { hasDistinctCommonName } from "@/lib/seo/herb-naming";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
@@ -185,10 +186,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .slice(0, 3)
     .join(", ");
   const uses = topUses || herbT("usesFallback");
-  const title = herbT("title", {
-    name: herb.name,
-    scientific: herb.scientific_name,
-  });
+  const title = hasDistinctCommonName(herb)
+    ? herbT("title", {
+        name: herb.name,
+        scientific: herb.scientific_name,
+      })
+    : herbT("titleBinomial", { scientific: herb.scientific_name });
   const description = truncateDescription(
     commonNames
       ? herbT("descWithNames", {
@@ -486,10 +489,12 @@ export default async function HerbDetailPage({ params }: Props) {
   // Same `herbMeta` title the <title> tag uses, so the JSON-LD name and the
   // share text are not English sentences on a French page.
   const tHerbMeta = await getTranslations({ locale, namespace: "herbMeta" });
-  const herbMetaTitle = tHerbMeta("title", {
-    name: herb.name,
-    scientific: herb.scientific_name,
-  });
+  const herbMetaTitle = hasDistinctCommonName(herb)
+    ? tHerbMeta("title", {
+        name: herb.name,
+        scientific: herb.scientific_name,
+      })
+    : tHerbMeta("titleBinomial", { scientific: herb.scientific_name });
   // Structured data must point at the URL this page actually serves. It used to
   // hardcode the English paths, so every /fr/herbs/* page declared a canonical
   // elsewhere in its own JSON-LD and English breadcrumb labels.

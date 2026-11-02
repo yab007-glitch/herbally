@@ -1741,6 +1741,7 @@
   },
   "herbMeta": {
     "title": "{name} ({scientific}): Benefits, Dosage, Safety & Evidence",
+    "titleBinomial": "{scientific}: Benefits, Dosage, Safety & Evidence",
     "descWithNames": "What is {name} in English ({common})? Uses for {uses}, dosage, pregnancy safety & drug interactions. Evidence-based guide with PubMed sources. Free dose calculator included.",
     "descFromBody": "{body} Uses, dosage, pregnancy safety & interactions. Free calculator included.",
     "descFallback": "Learn about {name} ({scientific}): uses for {uses}, dosage, pregnancy safety, side effects & drug interactions. Free calculator included.",
