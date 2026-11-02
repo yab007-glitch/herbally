@@ -323,6 +323,6 @@ export const config = {
   matcher: [
     // Static media is excluded by path *and* by extension: the locale rewrite
     // would otherwise turn /media/x.mp4 into /en/media/x.mp4 and 404 it.
-    "/((?!monitoring|media/|_next/static|_next/image|favicon.ico|robots.txt|ads.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|mp4|webm|ogg|mp3|wav|m4a|pdf)$).*)",
+    "/((?!monitoring|media/|_next/static|_next/image|favicon.ico|robots.txt|ads.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|mp4|webm|ogg|mp3|wav|m4a|pdf|txt|html)$).*)",
   ],
 };
