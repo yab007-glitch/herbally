@@ -1,0 +1,35 @@
+{
+  "herb_slug": "cats-claw",
+  "pairs": [
+    {
+      "drug_name": "Cyclosporine",
+      "severity": "moderate",
+      "description": "Cat's claw stimulates immune cell activity and may counteract the therapeutic immunosuppression achieved by cyclosporine.",
+      "mechanism": "Oxindole alkaloids stimulate interleukin and tumor necrosis factor release, opposing calcineurin inhibition.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/cats-claw"
+    },
+    {
+      "drug_name": "Antihypertensives",
+      "severity": "moderate",
+      "description": "Cat's claw contains rhynchophylline which lowers blood pressure and may induce additive hypotension with antihypertensive drugs.",
+      "mechanism": "Blockade of L-type calcium channels and endothelial nitric oxide stimulation by rhynchophylline.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/cats-claw"
+    },
+    {
+      "drug_name": "Atazanavir",
+      "severity": "moderate",
+      "description": "Cat's claw inhibits CYP3A4 enzymes and can alter the pharmacokinetic profile and blood concentrations of protease inhibitors.",
+      "mechanism": "Inhibition of cytochrome P450 3A4-mediated oxidation by pentacyclic oxindole alkaloids.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/cats-claw"
+    }
+  ]
+}

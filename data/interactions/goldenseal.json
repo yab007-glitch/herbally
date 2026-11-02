@@ -1,0 +1,45 @@
+{
+  "herb_slug": "goldenseal",
+  "pairs": [
+    {
+      "drug_name": "Metformin",
+      "severity": "moderate",
+      "description": "Goldenseal significantly reduces metformin blood concentrations by approximately 25 percent, potentially reducing glycemic control in diabetic patients.",
+      "mechanism": "Inhibition of organic cation transporters (OCT1/OCT2) and hepatic uptake by goldenseal isoquinoline alkaloids like berberine.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/goldenseal"
+    },
+    {
+      "drug_name": "Cyclosporine",
+      "severity": "moderate",
+      "description": "Goldenseal inhibits CYP3A4 metabolism and P-glycoprotein, significantly elevating blood levels and toxicity of cyclosporine.",
+      "mechanism": "Potent intestinal and hepatic CYP3A4 and P-glycoprotein inhibition by berberine and hydrastine constituents.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/goldenseal"
+    },
+    {
+      "drug_name": "Midazolam",
+      "severity": "moderate",
+      "description": "Clinical studies demonstrate goldenseal markedly inhibits CYP3A4, substantially increasing oral midazolam exposure and sedative duration.",
+      "mechanism": "Inhibition of intestinal CYP3A4 enzymes, reducing first-pass metabolism of oral midazolam substrate.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/goldenseal"
+    },
+    {
+      "drug_name": "Digoxin",
+      "severity": "moderate",
+      "description": "Goldenseal alkaloids inhibit P-glycoprotein-mediated renal and biliary excretion of digoxin, elevating serum cardiac glycoside levels.",
+      "mechanism": "P-glycoprotein efflux pump inhibition resulting in increased absorption and decreased renal clearance of digoxin.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/goldenseal"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "herb_slug": "cranberry",
+  "pairs": [
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "moderate",
+      "description": "Cranberry products may interact with warfarin, leading to elevated international normalized ratio (INR) values and increased bleeding complications.",
+      "mechanism": "Inhibition of CYP2C9-mediated metabolism of S-warfarin by cranberry flavonoids and polyphenolic compounds.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/cranberry"
+    },
+    {
+      "drug_name": "Atorvastatin",
+      "severity": "mild",
+      "description": "High-dose cranberry consumption may alter the intestinal absorption and systemic exposure of lipophilic statins like atorvastatin.",
+      "mechanism": "Weak modulation of organic anion transporting polypeptides (OATP) and intestinal CYP3A4 by cranberry components.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/cranberry"
+    },
+    {
+      "drug_name": "Amoxicillin",
+      "severity": "mild",
+      "description": "Cranberry juice may slightly alter urinary acidification and tubular reabsorption kinetics of beta-lactam antibiotics such as amoxicillin.",
+      "mechanism": "Urinary acidification altering renal clearance and passive non-ionic reabsorption kinetics of urinary excreted antibiotics.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/cranberry"
+    }
+  ]
+}
