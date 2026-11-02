@@ -63,6 +63,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    // Hub for the 22 herb-vs-herb comparisons. It was missing entirely while
+    // the /compare/a/vs/b pages sat in this sitemap as orphans — a 404 at the
+    // parent meant the cluster had no crawl entry point.
+    {
+      url: `${baseUrl}/compare`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/compare`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
     // Symptom detail pages — slugs come from the SAME source of truth as the
     // route's generateStaticParams (SYMPTOM_SLUGS), so the sitemap can never
     // emit a symptom URL the page doesn't serve (previously it listed
