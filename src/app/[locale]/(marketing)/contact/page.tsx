@@ -1,6 +1,9 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { Mail, Shield, Scale } from "lucide-react";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
@@ -39,8 +42,25 @@ export default async function ContactPage() {
     },
   ];
 
+  const url = locale === "fr" ? `${siteUrl()}/fr/contact` : `${siteUrl()}/contact`;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <WebPageSchema
+        title={t("contact.title")}
+        description={t("contact.intro")}
+        url={url}
+        breadcrumbs={[
+          { name: "Home", url: siteUrl() },
+          { name: t("contact.title"), url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("contact.title"), url: "/contact" },
+        ]}
+      />
       <h1 className="text-4xl font-bold tracking-tight text-foreground">
         {t("contact.title")}
       </h1>

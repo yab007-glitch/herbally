@@ -10,6 +10,9 @@ import {
   BookOpen,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
@@ -45,8 +48,25 @@ export default async function AboutPage() {
     },
   ];
 
+  const url = locale === "fr" ? `${siteUrl()}/fr/about` : `${siteUrl()}/about`;
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <WebPageSchema
+        title={t("aboutContent.header")}
+        description={t("aboutContent.subtitle")}
+        url={url}
+        breadcrumbs={[
+          { name: "Home", url: siteUrl() },
+          { name: t("aboutContent.header"), url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("aboutContent.header"), url: "/about" },
+        ]}
+      />
       {/* Header */}
       <div className="mb-16 text-center">
         <div className="mb-4 inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">

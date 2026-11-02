@@ -6,6 +6,7 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { InteractionExplainer } from "@/components/herbs/interaction-explainer";
 import { EmbedSnippet } from "@/components/embed/embed-snippet";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ const COMMON_HERBS = [
   { slug: "garlic", nameKey: "cGarlic" },
   { slug: "turmeric", nameKey: "cTurmeric" },
   { slug: "ginger", nameKey: "cGinger" },
-  { slug: "ginkgo", nameKey: "cGinkgo" },
+  { slug: "ginkgo-biloba", nameKey: "cGinkgo" },
   { slug: "kava", nameKey: "cKava" },
   { slug: "milk-thistle", nameKey: "cMilkThistle" },
   { slug: "ashwagandha", nameKey: "cAshwagandha" },
@@ -46,6 +47,12 @@ export default async function HerbDrugInteractionsPage() {
         breadcrumbs={[
           { name: "Home", url: siteUrl() },
           { name: t("heading"), url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("heading"), url: "/herb-drug-interactions" },
         ]}
       />
 

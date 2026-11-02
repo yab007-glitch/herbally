@@ -106,15 +106,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-    // /herbalist now redirects to / (chat-first homepage)
+    // Core tools and E-E-A-T policy/contact pages
     {
-      url: `${baseUrl}/profile`,
+      url: `${baseUrl}/herbalist`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/herbalist`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/editorial-policy`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/editorial-policy`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/contact`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: `${baseUrl}${FR_BASE}/profile`,
+      url: `${baseUrl}${FR_BASE}/contact`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "monthly",
       priority: 0.5,

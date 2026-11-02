@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Leaf } from "lucide-react";
 import { FDADisclaimerBanner } from "@/components/layout/fda-disclaimer-banner";
@@ -6,6 +7,10 @@ import { MarketingFooter } from "@/components/layout/marketing-footer";
 import { LocalizedLink } from "@/components/i18n/localized-link";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 // Auth pages previously rendered only a logo above a centred card: no
 // navigation, no footer, no FDA disclaimer, and no privacy/terms links.

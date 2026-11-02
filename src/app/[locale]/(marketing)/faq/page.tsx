@@ -4,6 +4,7 @@ import { Stethoscope, MessageCircle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { FaqSearch } from "./faq-search";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const generateMetadata = () =>
   buildPageMetadata({ titleKey: "faq", path: "/faq" });
@@ -67,6 +68,12 @@ export default async function FAQPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("faqContent.title"), url: "/faq" },
+        ]}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
 import { ChipLegend } from "@/components/herbs/chip-legend";
 import { RecentlyViewed } from "@/components/herbs/recently-viewed";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
@@ -119,6 +120,12 @@ export default async function HerbsPage({
 
   return (
     <div>
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("herbs.title"), url: "/herbs" },
+        ]}
+      />
       <Script
         id="herbs-structured-data"
         type="application/ld+json"

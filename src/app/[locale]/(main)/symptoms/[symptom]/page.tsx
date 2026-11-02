@@ -10,6 +10,9 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { notFound } from "next/navigation";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { dedupeSymptomResults } from "@/lib/search/symptom-results";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { siteUrl } from "@/lib/seo/site-url";
+import Script from "next/script";
 
 // ISR. The locale is a root param, so static generation no longer throws; the
 // slug set is finite (SYMPTOM_SLUGS), and unknown slugs still render notFound.
@@ -443,8 +446,51 @@ export default async function SymptomDetailPage({ params }: Props) {
     }
   }
 
+  const pageTitle =
+    locale === "fr"
+      ? t(`symptomMeta.${symptom}.title`) || meta.title
+      : meta.title;
+  const pageDescription =
+    locale === "fr"
+      ? t(`symptomMeta.${symptom}.desc`) || meta.description
+      : meta.description;
+
   return (
     <div className="space-y-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("symptomsPage.title"), url: "/symptoms" },
+          { name: pageTitle, url: `/symptoms/${symptom}` },
+        ]}
+      />
+      <Script
+        id={`symptom-${symptom}-structured-data`}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "MedicalWebPage",
+            name: pageTitle,
+            description: pageDescription,
+            url: `${siteUrl()}/symptoms/${symptom}`,
+            mainEntity: {
+              "@type": "ItemList",
+              name: pageTitle,
+              itemListElement: herbs.map((herb, idx) => ({
+                "@type": "ListItem",
+                position: idx + 1,
+                item: {
+                  "@type": "MedicalSubstance",
+                  name: herb.name,
+                  alternateName: herb.scientific_name,
+                  url: `${siteUrl()}/herbs/${herb.slug}`,
+                },
+              })),
+            },
+          }).replace(/</g, "\u003c"),
+        }}
+      />
       <div>
         <Link
           href="/symptoms"
@@ -453,14 +499,10 @@ export default async function SymptomDetailPage({ params }: Props) {
           ← {t("symptomsPage.allSymptoms")}
         </Link>
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground">
-          {locale === "fr"
-            ? t(`symptomMeta.${symptom}.title`) || meta.title
-            : meta.title}
+          {pageTitle}
         </h1>
         <p className="mt-3 text-lg text-muted-foreground">
-          {locale === "fr"
-            ? t(`symptomMeta.${symptom}.desc`) || meta.description
-            : meta.description}
+          {pageDescription}
         </p>
       </div>
 

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
 import { addLocalePrefix } from "@/lib/i18n/routing";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
 export const revalidate = 86400;
 
@@ -142,9 +144,25 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function EditorialPolicyPage() {
   const locale = (await getLocale()) === "fr" ? "fr" : "en";
   const c = COPY[locale];
+  const url = `${siteUrl()}${addLocalePrefix("/editorial-policy", locale)}`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+      <WebPageSchema
+        title={c.title}
+        description={c.description}
+        url={url}
+        breadcrumbs={[
+          { name: "Home", url: siteUrl() },
+          { name: c.title, url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: c.title, url: "/editorial-policy" },
+        ]}
+      />
       <p className="eyebrow mb-3">HerbAlly</p>
       <h1 className="text-balance text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
         {c.title}

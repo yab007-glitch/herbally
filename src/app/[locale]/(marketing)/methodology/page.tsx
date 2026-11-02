@@ -9,6 +9,7 @@ import {
   FileCheck,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
@@ -35,8 +36,17 @@ export default async function MethodologyPage() {
     content: t(`methodologyContent.${key}.content`),
   }));
 
+  const url =
+    locale === "fr" ? `${siteUrl()}/fr/methodology` : `${siteUrl()}/methodology`;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("methodologyContent.title"), url: "/methodology" },
+        ]}
+      />
       {/* Schema */}
       <script
         type="application/ld+json"
@@ -44,16 +54,15 @@ export default async function MethodologyPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "AboutPage",
-            name: "HerbAlly Methodology",
-            description:
-              "How HerbAlly grades evidence, sources citations, and ensures accuracy",
-            url: `${siteUrl()}/methodology`,
+            name: t("methodologyContent.title"),
+            description: t("methodologyContent.subtitle"),
+            url,
             publisher: {
               "@type": "Organization",
               name: "HerbAlly",
               url: siteUrl(),
             },
-          }).replace(/</g, "\\u003c"),
+          }).replace(/</g, "\u003c"),
         }}
       />
 

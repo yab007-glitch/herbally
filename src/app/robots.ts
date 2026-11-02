@@ -7,15 +7,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/"],
+        disallow: ["/admin/", "/api/", "/profile", "/fr/profile"],
       },
       {
         // The site runs on the Hobby plan, where function CPU is a hard
-        // constraint. These crawlers do not send search traffic but sweep all
-        // ~2,700 herb pages repeatedly. Googlebot/Bingbot are unaffected.
+        // constraint. Scrapers and training crawlers sweep all ~2,700 herb
+        // pages repeatedly without sending search traffic. Googlebot/Bingbot
+        // as well as search-engine bots (OAI-SearchBot, PerplexityBot) are allowed.
         userAgent: [
           "GPTBot",
-          "OAI-SearchBot",
           "ChatGPT-User",
           "CCBot",
           "ClaudeBot",
@@ -25,7 +25,6 @@ export default function robots(): MetadataRoute.Robots {
           "Applebot-Extended",
           "Bytespider",
           "Amazonbot",
-          "PerplexityBot",
           "meta-externalagent",
           "FacebookBot",
           "cohere-ai",

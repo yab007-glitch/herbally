@@ -91,6 +91,16 @@ const nextConfig: NextConfig = {
         destination: "/herbalist",
         permanent: true,
       },
+      {
+        source: "/herbs/ginkgo",
+        destination: "/herbs/ginkgo-biloba",
+        permanent: true,
+      },
+      {
+        source: "/:locale(en|fr)/herbs/ginkgo",
+        destination: "/:locale/herbs/ginkgo-biloba",
+        permanent: true,
+      },
     ];
   },
 };
