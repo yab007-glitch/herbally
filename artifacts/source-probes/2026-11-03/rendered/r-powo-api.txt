@@ -1,0 +1,11 @@
+title: Just a moment...
+final_url: https://powo.science.kew.org/api/2/search?q=Zingiber%20officinale&limit=1
+
+powo.science.kew.org
+Performing security verification
+
+This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.
+
+Ray ID: a54bcab3bda2e09b
+Performance and Security by Cloudflare
+Privacy

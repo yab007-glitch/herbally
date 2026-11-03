@@ -1,0 +1,2553 @@
+{
+ "generated_at": "2026-11-03T18:32:38.260Z",
+ "report": [
+  {
+   "slug": "ligusticum-sinense-cv-chuanxiong",
+   "status": "exists"
+  },
+  {
+   "slug": "brassica-oleracea-var-italica",
+   "status": "exists"
+  },
+  {
+   "slug": "sambucus-nigra-subsp-nigra",
+   "status": "exists"
+  },
+  {
+   "slug": "garcinia-gummi-gutta",
+   "status": "exists"
+  },
+  {
+   "slug": "brassica-oleracea-var-viridis",
+   "status": "exists"
+  },
+  {
+   "slug": "alisma-plantago-aquatica-subsp-orientale",
+   "status": "exists"
+  },
+  {
+   "slug": "mentha-canadensis",
+   "status": "exists"
+  },
+  {
+   "slug": "ginkgo-biloba",
+   "status": "exists"
+  },
+  {
+   "slug": "cocos-nucifera",
+   "status": "exists"
+  },
+  {
+   "slug": "glycine-max",
+   "status": "exists"
+  },
+  {
+   "slug": "citrus-sinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "oryza-sativa",
+   "status": "exists"
+  },
+  {
+   "slug": "prunus-cerasus",
+   "status": "exists"
+  },
+  {
+   "slug": "nepeta-tenuifolia",
+   "status": "exists"
+  },
+  {
+   "slug": "foeniculum-vulgare-subsp-vulgare-var-dulce",
+   "status": "exists"
+  },
+  {
+   "slug": "citrus-limon",
+   "status": "exists"
+  },
+  {
+   "slug": "vitis-vinifera",
+   "status": "exists"
+  },
+  {
+   "slug": "citrus-paradisi",
+   "status": "exists"
+  },
+  {
+   "slug": "lophatherum-gracile",
+   "status": "exists"
+  },
+  {
+   "slug": "hansenia-forbesii",
+   "status": "exists"
+  },
+  {
+   "slug": "ananas-comosus-var-comosus",
+   "status": "exists"
+  },
+  {
+   "slug": "chenopodium-quinoa",
+   "status": "exists"
+  },
+  {
+   "slug": "prunus-davidiana",
+   "status": "exists"
+  },
+  {
+   "slug": "paeonia-anomala-subsp-veitchii",
+   "status": "exists"
+  },
+  {
+   "slug": "saccharomyces-boulardii",
+   "status": "exists"
+  },
+  {
+   "slug": "sambucus-nigra-subsp-canadensis",
+   "status": "exists"
+  },
+  {
+   "slug": "actaea-dahurica",
+   "status": "exists"
+  },
+  {
+   "slug": "coffea-arabica",
+   "status": "exists"
+  },
+  {
+   "slug": "paecilomyces-hepiali",
+   "status": "exists"
+  },
+  {
+   "slug": "acorus-gramineus",
+   "status": "exists"
+  },
+  {
+   "slug": "curcuma-kwangsiensis",
+   "status": "exists"
+  },
+  {
+   "slug": "brassica-oleracea-var-gemmifera",
+   "status": "exists"
+  },
+  {
+   "slug": "hansenia-weberbaueriana",
+   "status": "exists"
+  },
+  {
+   "slug": "brassica-oleracea-var-botrytis",
+   "status": "exists"
+  },
+  {
+   "slug": "brassica-oleracea-var-capitata",
+   "status": "exists"
+  },
+  {
+   "slug": "prunus-domestica",
+   "status": "exists"
+  },
+  {
+   "slug": "lindera-aggregata",
+   "status": "exists"
+  },
+  {
+   "slug": "rubus-plicatus",
+   "status": "exists"
+  },
+  {
+   "slug": "vaccinium-macrocarpon-aiton",
+   "status": "exists"
+  },
+  {
+   "slug": "gentiana-manshurica",
+   "status": "exists"
+  },
+  {
+   "slug": "foeniculum-vulgare-subsp-vulgare-var-vulgare",
+   "status": "exists"
+  },
+  {
+   "slug": "crataegus-cuneata",
+   "status": "exists"
+  },
+  {
+   "slug": "codonopsis-tangshen",
+   "status": "exists"
+  },
+  {
+   "slug": "styphnolobium-japonicum",
+   "status": "exists"
+  },
+  {
+   "slug": "dolomiaea-souliei",
+   "status": "exists"
+  },
+  {
+   "slug": "sparganium-eurycarpum",
+   "status": "exists"
+  },
+  {
+   "slug": "chlorella-pyrenoidosa",
+   "status": "exists"
+  },
+  {
+   "slug": "hydrastis-canadensis",
+   "status": "exists"
+  },
+  {
+   "slug": "glehnia-littoralis",
+   "status": "exists"
+  },
+  {
+   "slug": "rosa-laevigata",
+   "status": "exists"
+  },
+  {
+   "slug": "lithothamnion-corallioides",
+   "status": "exists"
+  },
+  {
+   "slug": "solanum-tuberosum",
+   "status": "exists"
+  },
+  {
+   "slug": "arisaema-amurense",
+   "status": "exists"
+  },
+  {
+   "slug": "porphyra-yezoensis",
+   "status": "exists"
+  },
+  {
+   "slug": "ignatia-amara",
+   "status": "exists"
+  },
+  {
+   "slug": "citrullus-lanatus-var-lanatus",
+   "status": "exists"
+  },
+  {
+   "slug": "mentha-piperita",
+   "status": "exists"
+  },
+  {
+   "slug": "dictamnus-dasycarpus",
+   "status": "exists"
+  },
+  {
+   "slug": "corydalis-turtschaninovii",
+   "status": "exists"
+  },
+  {
+   "slug": "phymatolithon-calcareum",
+   "status": "exists"
+  },
+  {
+   "slug": "phyllolobium-chinense",
+   "status": "exists"
+  },
+  {
+   "slug": "tetrapanax-papyrifer",
+   "status": "exists"
+  },
+  {
+   "slug": "apium-graveolens-var-dulce",
+   "status": "exists"
+  },
+  {
+   "slug": "abies-balsamea",
+   "status": "exists"
+  },
+  {
+   "slug": "cynanchum-wilfordii",
+   "status": "exists"
+  },
+  {
+   "slug": "angelica-decursiva",
+   "status": "exists"
+  },
+  {
+   "slug": "vitex-rotundifolia",
+   "status": "exists"
+  },
+  {
+   "slug": "cocculus-indicus",
+   "status": "exists"
+  },
+  {
+   "slug": "matricaria-recutita",
+   "status": "exists"
+  },
+  {
+   "slug": "phlomis-umbrosa",
+   "status": "exists"
+  },
+  {
+   "slug": "lycopus-lucidus-var-hirtus",
+   "status": "exists"
+  },
+  {
+   "slug": "amomum-longiligulare",
+   "status": "exists"
+  },
+  {
+   "slug": "litchi-chinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "elettaria-cardamomum-var-cardamomum",
+   "status": "exists"
+  },
+  {
+   "slug": "tagetes-erecta",
+   "status": "exists"
+  },
+  {
+   "slug": "malpighia-emarginata",
+   "status": "exists"
+  },
+  {
+   "slug": "stemona-japonica",
+   "status": "exists"
+  },
+  {
+   "slug": "bambusa-beecheyana",
+   "status": "exists"
+  },
+  {
+   "slug": "bassia-scoparia",
+   "status": "exists"
+  },
+  {
+   "slug": "plantago-afra",
+   "status": "exists"
+  },
+  {
+   "slug": "mosla-chinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "viola-philippica-var-philippica",
+   "status": "exists"
+  },
+  {
+   "slug": "amomum-krervanh",
+   "status": "exists"
+  },
+  {
+   "slug": "cucurbita-moschata",
+   "status": "exists"
+  },
+  {
+   "slug": "cucumis-melo-subsp-melo-var-cantalupo",
+   "status": "exists"
+  },
+  {
+   "slug": "actinidia-deliciosa",
+   "status": "exists"
+  },
+  {
+   "slug": "vaccinium-myrtillus",
+   "status": "exists"
+  },
+  {
+   "slug": "anemone-chinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "cyamopsis-tetragonoloba",
+   "status": "exists"
+  },
+  {
+   "slug": "hebanthe-eriantha",
+   "status": "exists"
+  },
+  {
+   "slug": "raphanus-sativus-var-sativus",
+   "status": "exists"
+  },
+  {
+   "slug": "spigelia-anthelmia",
+   "status": "exists"
+  },
+  {
+   "slug": "vaccaria-hispanica-subsp-hispanica",
+   "status": "exists"
+  },
+  {
+   "slug": "handroanthus-heptaphyllus",
+   "status": "exists"
+  },
+  {
+   "slug": "magnolia-officinalis-var-biloba",
+   "status": "exists"
+  },
+  {
+   "slug": "elaeis-guineensis",
+   "status": "exists"
+  },
+  {
+   "slug": "arnebia-euchroma",
+   "status": "exists"
+  },
+  {
+   "slug": "pleurotus-eryngii",
+   "status": "exists"
+  },
+  {
+   "slug": "medicago-sativa-l",
+   "status": "exists"
+  },
+  {
+   "slug": "alpinia-hainanensis",
+   "status": "exists"
+  },
+  {
+   "slug": "vincetoxicum-pycnostelma",
+   "status": "exists"
+  },
+  {
+   "slug": "fragaria-virginiana",
+   "status": "exists"
+  },
+  {
+   "slug": "valeriana-officinalis-l",
+   "status": "exists"
+  },
+  {
+   "slug": "polygonatum-kingianum",
+   "status": "exists"
+  },
+  {
+   "slug": "buglossoides-arvensis",
+   "status": "exists"
+  },
+  {
+   "slug": "citrus-aurantiifolia",
+   "status": "exists"
+  },
+  {
+   "slug": "secale-cornutum",
+   "status": "exists"
+  },
+  {
+   "slug": "silybum-marianum-l-gaertn",
+   "status": "exists"
+  },
+  {
+   "slug": "sticta-pulmonaria",
+   "status": "exists"
+  },
+  {
+   "slug": "camellia-sinensis-l-kuntze",
+   "status": "exists"
+  },
+  {
+   "slug": "vigna-angularis",
+   "status": "exists"
+  },
+  {
+   "slug": "anacardium-orientale",
+   "status": "exists"
+  },
+  {
+   "slug": "eupatorium-purpureum",
+   "status": "exists"
+  },
+  {
+   "slug": "pinus-radiata",
+   "status": "exists"
+  },
+  {
+   "slug": "amaranthus-cruentus",
+   "status": "exists"
+  },
+  {
+   "slug": "bambusa-tuldoides",
+   "status": "exists"
+  },
+  {
+   "slug": "prunus-cerasifera",
+   "status": "exists"
+  },
+  {
+   "slug": "stellaria-dichotoma-var-lanceolata",
+   "status": "exists"
+  },
+  {
+   "slug": "vigna-radiata-var-radiata",
+   "status": "exists"
+  },
+  {
+   "slug": "cymbopogon-martini",
+   "status": "exists"
+  },
+  {
+   "slug": "hovenia-dulcis",
+   "status": "exists"
+  },
+  {
+   "slug": "lycopodium-japonicum",
+   "status": "exists"
+  },
+  {
+   "slug": "sargentodoxa-cuneata",
+   "status": "exists"
+  },
+  {
+   "slug": "phoenix-dactylifera",
+   "status": "exists"
+  },
+  {
+   "slug": "pareira-brava",
+   "status": "exists"
+  },
+  {
+   "slug": "boswellia-frereana",
+   "status": "exists"
+  },
+  {
+   "slug": "fallopia-japonica",
+   "status": "exists"
+  },
+  {
+   "slug": "spirodela-polyrhiza",
+   "status": "exists"
+  },
+  {
+   "slug": "impatiens-glandulifera",
+   "status": "exists"
+  },
+  {
+   "slug": "cynanchum-glaucescens",
+   "status": "exists"
+  },
+  {
+   "slug": "vincetoxicum-atratum",
+   "status": "exists"
+  },
+  {
+   "slug": "rhodiola-rosea",
+   "status": "exists"
+  },
+  {
+   "slug": "dioscorea-collettii-var-hypoglauca",
+   "status": "exists"
+  },
+  {
+   "slug": "typhonium-giganteum",
+   "status": "exists"
+  },
+  {
+   "slug": "vaccinium-myrtillus-l",
+   "status": "exists"
+  },
+  {
+   "slug": "ocimum-sanctum",
+   "status": "exists"
+  },
+  {
+   "slug": "cassia-angustifolia",
+   "status": "exists"
+  },
+  {
+   "slug": "anemone-altaica",
+   "status": "exists"
+  },
+  {
+   "slug": "senna-tora",
+   "status": "exists"
+  },
+  {
+   "slug": "agaricus-muscarius",
+   "status": "exists"
+  },
+  {
+   "slug": "candida-albicans",
+   "status": "exists"
+  },
+  {
+   "slug": "ligusticum-jeholense",
+   "status": "exists"
+  },
+  {
+   "slug": "sabal-serrulata",
+   "status": "exists"
+  },
+  {
+   "slug": "helonias-dioica",
+   "status": "exists"
+  },
+  {
+   "slug": "actaea-heracleifolia",
+   "status": "exists"
+  },
+  {
+   "slug": "sarcandra-glabra",
+   "status": "exists"
+  },
+  {
+   "slug": "bambusa-textilis",
+   "status": "exists"
+  },
+  {
+   "slug": "fraxinus-chinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "vigna-umbellata",
+   "status": "exists"
+  },
+  {
+   "slug": "homalomena-occulta",
+   "status": "exists"
+  },
+  {
+   "slug": "vincetoxicum-stauntonii",
+   "status": "exists"
+  },
+  {
+   "slug": "centipeda-minima",
+   "status": "exists"
+  },
+  {
+   "slug": "vitis-labrusca",
+   "status": "exists"
+  },
+  {
+   "slug": "arum-triphyllum",
+   "status": "exists"
+  },
+  {
+   "slug": "descurainia-sophia",
+   "status": "exists"
+  },
+  {
+   "slug": "rubus-occidentalis",
+   "status": "exists"
+  },
+  {
+   "slug": "flemingia-philippinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "pyrola-calliantha",
+   "status": "exists"
+  },
+  {
+   "slug": "helianthemum-nummularium",
+   "status": "exists"
+  },
+  {
+   "slug": "triticum-turgidum-subsp-durum",
+   "status": "exists"
+  },
+  {
+   "slug": "linum-usitatissimum-l-subsp-sativa",
+   "status": "exists"
+  },
+  {
+   "slug": "arisaema-erubescens",
+   "status": "exists"
+  },
+  {
+   "slug": "senega-officinalis",
+   "status": "exists"
+  },
+  {
+   "slug": "ranunculus-ternatus",
+   "status": "exists"
+  },
+  {
+   "slug": "smilax-aristolochiifolia",
+   "status": "exists"
+  },
+  {
+   "slug": "lepidium-apetalum",
+   "status": "exists"
+  },
+  {
+   "slug": "artemisia-anomala",
+   "status": "exists"
+  },
+  {
+   "slug": "ilex-aquifolium",
+   "status": "exists"
+  },
+  {
+   "slug": "caladium-seguinum",
+   "status": "exists"
+  },
+  {
+   "slug": "linum-usitatissimum-l",
+   "status": "exists"
+  },
+  {
+   "slug": "prunus-armeniaca-var-ansu",
+   "status": "exists"
+  },
+  {
+   "slug": "laminaria-hyperborea",
+   "status": "exists"
+  },
+  {
+   "slug": "luffa-operculata",
+   "status": "exists"
+  },
+  {
+   "slug": "bergera-koenigii",
+   "status": "exists"
+  },
+  {
+   "slug": "ambrosia-artemisiaefolia",
+   "status": "exists"
+  },
+  {
+   "slug": "ganoderma-applanatum",
+   "status": "exists"
+  },
+  {
+   "slug": "bambusa-breviflora",
+   "status": "exists"
+  },
+  {
+   "slug": "paris-polyphylla-var-chinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "achyranthes-aspera",
+   "status": "exists"
+  },
+  {
+   "slug": "sorbus-aucuparia-subsp-aucuparia",
+   "status": "exists"
+  },
+  {
+   "slug": "corymbia-citriodora",
+   "status": "exists"
+  },
+  {
+   "slug": "convolvulus-prostratus",
+   "status": "exists"
+  },
+  {
+   "slug": "chamomilla-recutita",
+   "status": "exists"
+  },
+  {
+   "slug": "dendrobium-chrysanthum",
+   "status": "exists"
+  },
+  {
+   "slug": "aralia-quinquefolia",
+   "status": "exists"
+  },
+  {
+   "slug": "prunus-humilis",
+   "status": "exists"
+  },
+  {
+   "slug": "lappa-major",
+   "status": "exists"
+  },
+  {
+   "slug": "actinidia-chinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "lycopersicum-esculentum",
+   "status": "inserted"
+  },
+  {
+   "slug": "sigesbeckia-glabrescens",
+   "status": "exists"
+  },
+  {
+   "slug": "senecio-aureus",
+   "status": "inserted"
+  },
+  {
+   "slug": "plantago-arenaria",
+   "status": "inserted"
+  },
+  {
+   "slug": "hydrocotyle-asiatica",
+   "status": "inserted"
+  },
+  {
+   "slug": "uncaria-hirsuta",
+   "status": "exists"
+  },
+  {
+   "slug": "corydalis-bungeana",
+   "status": "exists"
+  },
+  {
+   "slug": "helianthus-tuberosus",
+   "status": "inserted"
+  },
+  {
+   "slug": "pygeum-africanum",
+   "status": "inserted"
+  },
+  {
+   "slug": "aletris-farinosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhamnus-frangula",
+   "status": "inserted"
+  },
+  {
+   "slug": "leptandra-virginica",
+   "status": "inserted"
+  },
+  {
+   "slug": "harpagophytum-zeyheri",
+   "status": "inserted"
+  },
+  {
+   "slug": "syzygium-jambolanum",
+   "status": "inserted"
+  },
+  {
+   "slug": "brassica-juncea",
+   "status": "inserted"
+  },
+  {
+   "slug": "dolichos-pruriens",
+   "status": "inserted"
+  },
+  {
+   "slug": "lilium-tigrinum",
+   "status": "inserted"
+  },
+  {
+   "slug": "dryopteris-crassirhizoma",
+   "status": "inserted"
+  },
+  {
+   "slug": "celosia-argentea-var-cristata",
+   "status": "inserted"
+  },
+  {
+   "slug": "ranunculus-bulbosus",
+   "status": "inserted"
+  },
+  {
+   "slug": "bambusa-bambos",
+   "status": "inserted"
+  },
+  {
+   "slug": "alchemilla-xanthochlora",
+   "status": "inserted"
+  },
+  {
+   "slug": "lithospermum-erythrorhizon",
+   "status": "exists"
+  },
+  {
+   "slug": "jasminum-officinale",
+   "status": "inserted"
+  },
+  {
+   "slug": "dendrobium-fimbriatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "lemna-minor",
+   "status": "inserted"
+  },
+  {
+   "slug": "schizophyllum-commune",
+   "status": "inserted"
+  },
+  {
+   "slug": "vaccinium-uliginosum",
+   "status": "inserted"
+  },
+  {
+   "slug": "lonicera-caerulea",
+   "status": "inserted"
+  },
+  {
+   "slug": "ceratostigma-willmottianum",
+   "status": "inserted"
+  },
+  {
+   "slug": "cineraria-maritima",
+   "status": "inserted"
+  },
+  {
+   "slug": "elymus-repens-subsp-repens",
+   "status": "inserted"
+  },
+  {
+   "slug": "abrus-cantoniensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "saraca-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "trachycarpus-fortunei",
+   "status": "inserted"
+  },
+  {
+   "slug": "canarium-album",
+   "status": "exists"
+  },
+  {
+   "slug": "thlaspi-bursa-pastoris",
+   "status": "inserted"
+  },
+  {
+   "slug": "erythroxylum-catuaba",
+   "status": "inserted"
+  },
+  {
+   "slug": "styrax-tonkinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "vitis-vinifera-var-tinctoria",
+   "status": "inserted"
+  },
+  {
+   "slug": "castanea-vesca",
+   "status": "inserted"
+  },
+  {
+   "slug": "ulmus-procera",
+   "status": "inserted"
+  },
+  {
+   "slug": "lactuca-sativa",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhus-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "capsicum-annuum-var-annuum",
+   "status": "inserted"
+  },
+  {
+   "slug": "salix-vitellina",
+   "status": "inserted"
+  },
+  {
+   "slug": "cyclamen-europaeum",
+   "status": "inserted"
+  },
+  {
+   "slug": "eriocaulon-buergerianum",
+   "status": "exists"
+  },
+  {
+   "slug": "alaria-esculenta",
+   "status": "inserted"
+  },
+  {
+   "slug": "raphanus-sativus-var-niger",
+   "status": "inserted"
+  },
+  {
+   "slug": "taraxacum-sinicum",
+   "status": "inserted"
+  },
+  {
+   "slug": "eupatorium-fortunei",
+   "status": "inserted"
+  },
+  {
+   "slug": "scleranthus-annuus",
+   "status": "inserted"
+  },
+  {
+   "slug": "wyethia-helenioides",
+   "status": "inserted"
+  },
+  {
+   "slug": "ledebouriella-divaricata",
+   "status": "inserted"
+  },
+  {
+   "slug": "dendrobium-officinale",
+   "status": "inserted"
+  },
+  {
+   "slug": "curcuma-longa",
+   "status": "inserted"
+  },
+  {
+   "slug": "tagetes-erecta-l",
+   "status": "inserted"
+  },
+  {
+   "slug": "brassica-rapa",
+   "status": "inserted"
+  },
+  {
+   "slug": "galphimia-glauca",
+   "status": "inserted"
+  },
+  {
+   "slug": "cremastra-appendiculata",
+   "status": "inserted"
+  },
+  {
+   "slug": "veratrum-viride",
+   "status": "inserted"
+  },
+  {
+   "slug": "phyllostachys-nigra-var-henonis",
+   "status": "inserted"
+  },
+  {
+   "slug": "erodium-stephanianum",
+   "status": "exists"
+  },
+  {
+   "slug": "fraxinus-americana",
+   "status": "inserted"
+  },
+  {
+   "slug": "prunus-sibirica",
+   "status": "inserted"
+  },
+  {
+   "slug": "cistanche-salsa",
+   "status": "exists"
+  },
+  {
+   "slug": "barosma-betulina",
+   "status": "inserted"
+  },
+  {
+   "slug": "onosmodium-virginianum",
+   "status": "inserted"
+  },
+  {
+   "slug": "semiaquilegia-adoxoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "vaccinium-pallidum",
+   "status": "inserted"
+  },
+  {
+   "slug": "crataegus-monogyna-jacq",
+   "status": "inserted"
+  },
+  {
+   "slug": "apocynum-cannabinum",
+   "status": "inserted"
+  },
+  {
+   "slug": "ulva-lactuca",
+   "status": "inserted"
+  },
+  {
+   "slug": "aspergillus-niger",
+   "status": "inserted"
+  },
+  {
+   "slug": "crateva-magna",
+   "status": "inserted"
+  },
+  {
+   "slug": "saccharomyces-boulardii-lyo",
+   "status": "inserted"
+  },
+  {
+   "slug": "saccharum-officinale",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhaponticum-uniflorum",
+   "status": "exists"
+  },
+  {
+   "slug": "chamomilla-vulgaris",
+   "status": "inserted"
+  },
+  {
+   "slug": "prunus-amygdalus",
+   "status": "inserted"
+  },
+  {
+   "slug": "citrus-limonum",
+   "status": "inserted"
+  },
+  {
+   "slug": "arum-maculatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "pulsatilla-pratensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "ulex-europaeus",
+   "status": "inserted"
+  },
+  {
+   "slug": "centaurium-umbellatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "polygonatum-cyrtonema",
+   "status": "inserted"
+  },
+  {
+   "slug": "scaphium-lychnophorum",
+   "status": "inserted"
+  },
+  {
+   "slug": "acalypha-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "fritillaria-unibracteata",
+   "status": "inserted"
+  },
+  {
+   "slug": "cucurbita-pepo-var-pepo",
+   "status": "inserted"
+  },
+  {
+   "slug": "typha-orientalis",
+   "status": "exists"
+  },
+  {
+   "slug": "gentianella-amarella",
+   "status": "inserted"
+  },
+  {
+   "slug": "periploca-sepium",
+   "status": "inserted"
+  },
+  {
+   "slug": "scaphium-affine",
+   "status": "exists"
+  },
+  {
+   "slug": "agropyron-repens",
+   "status": "inserted"
+  },
+  {
+   "slug": "salvia-chinensis",
+   "status": "exists"
+  },
+  {
+   "slug": "ulmus-fulva",
+   "status": "inserted"
+  },
+  {
+   "slug": "argyreia-speciosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "uncaria-sinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "pueraria-candollei",
+   "status": "inserted"
+  },
+  {
+   "slug": "selaginella-tamariscina",
+   "status": "exists"
+  },
+  {
+   "slug": "lonicera-macranthoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "erigeron-canadensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "abies-nigra",
+   "status": "inserted"
+  },
+  {
+   "slug": "sophora-japonica-quercetin-phosphatidylcholine-complex",
+   "status": "inserted"
+  },
+  {
+   "slug": "anacardium-occidentale",
+   "status": "inserted"
+  },
+  {
+   "slug": "sinapis-nigra",
+   "status": "inserted"
+  },
+  {
+   "slug": "clematis-erecta",
+   "status": "inserted"
+  },
+  {
+   "slug": "sedum-sarmentosum",
+   "status": "inserted"
+  },
+  {
+   "slug": "rosmarinus-officinalis-l",
+   "status": "inserted"
+  },
+  {
+   "slug": "copaiva-officinalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "candida-parapsilosis",
+   "status": "inserted"
+  },
+  {
+   "slug": "biota-orientalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "sigesbeckia-orientalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "melaleuca-quinquenervia",
+   "status": "inserted"
+  },
+  {
+   "slug": "lasiosphaera-fenzlii",
+   "status": "inserted"
+  },
+  {
+   "slug": "selaginella-pulvinata",
+   "status": "inserted"
+  },
+  {
+   "slug": "cucurbita-maxima",
+   "status": "inserted"
+  },
+  {
+   "slug": "usnea-filipendula",
+   "status": "inserted"
+  },
+  {
+   "slug": "fraxinus-chinensis-subsp-rhynchophylla",
+   "status": "inserted"
+  },
+  {
+   "slug": "wasabia-japonica",
+   "status": "inserted"
+  },
+  {
+   "slug": "buddleja-officinalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "nardostachys-grandiflora-dc",
+   "status": "inserted"
+  },
+  {
+   "slug": "dunaliella-salina",
+   "status": "inserted"
+  },
+  {
+   "slug": "eruca-sativa",
+   "status": "inserted"
+  },
+  {
+   "slug": "plukenetia-volubilis-seed-protein",
+   "status": "inserted"
+  },
+  {
+   "slug": "cypripedium-pubescens",
+   "status": "inserted"
+  },
+  {
+   "slug": "trichosanthes-rosthornii",
+   "status": "inserted"
+  },
+  {
+   "slug": "pteris-multifida",
+   "status": "inserted"
+  },
+  {
+   "slug": "cedrus-libani",
+   "status": "inserted"
+  },
+  {
+   "slug": "plantago-depressa",
+   "status": "inserted"
+  },
+  {
+   "slug": "sinapis-arvensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "thuya-occidentalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "clerodendrum-phlomidis",
+   "status": "inserted"
+  },
+  {
+   "slug": "spiraea-ulmaria",
+   "status": "inserted"
+  },
+  {
+   "slug": "hottonia-palustris",
+   "status": "inserted"
+  },
+  {
+   "slug": "vitis-vinifera-grape-seed-extract",
+   "status": "inserted"
+  },
+  {
+   "slug": "fragaria-chiloensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "cistus-canadensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "sorbus-domestica",
+   "status": "inserted"
+  },
+  {
+   "slug": "phaseolus-vulgaris",
+   "status": "exists"
+  },
+  {
+   "slug": "gratiola-officinalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "dioscorea-spongiosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "bombax-ceiba",
+   "status": "inserted"
+  },
+  {
+   "slug": "cornus-sanguinea",
+   "status": "inserted"
+  },
+  {
+   "slug": "cassia-acutifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "bolbostemma-paniculatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "pinus-montana",
+   "status": "inserted"
+  },
+  {
+   "slug": "viscum-coloratum",
+   "status": "exists"
+  },
+  {
+   "slug": "vaccinium-oxycoccos",
+   "status": "inserted"
+  },
+  {
+   "slug": "agraphis-nutans",
+   "status": "inserted"
+  },
+  {
+   "slug": "euterpe-oleracea-mart-arecaceae",
+   "status": "inserted"
+  },
+  {
+   "slug": "bromus-ramosus",
+   "status": "inserted"
+  },
+  {
+   "slug": "chelone-glabra",
+   "status": "inserted"
+  },
+  {
+   "slug": "camelina-sativa",
+   "status": "inserted"
+  },
+  {
+   "slug": "aloe-vulgaris",
+   "status": "inserted"
+  },
+  {
+   "slug": "pyrus-pyrifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "jasminum-sambac",
+   "status": "inserted"
+  },
+  {
+   "slug": "dipsacus-asperoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "lilium-brownii-var-viridulum",
+   "status": "inserted"
+  },
+  {
+   "slug": "melilotus-alba",
+   "status": "inserted"
+  },
+  {
+   "slug": "scilla-maritima",
+   "status": "inserted"
+  },
+  {
+   "slug": "paullinia-sorbilis",
+   "status": "inserted"
+  },
+  {
+   "slug": "ptelea-trifoliata",
+   "status": "inserted"
+  },
+  {
+   "slug": "brassica-napus",
+   "status": "inserted"
+  },
+  {
+   "slug": "anatherum-muricatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "ligusticum-sinense-var-sinense",
+   "status": "inserted"
+  },
+  {
+   "slug": "sequoia-gigantea",
+   "status": "inserted"
+  },
+  {
+   "slug": "jacaranda-caroba",
+   "status": "inserted"
+  },
+  {
+   "slug": "carduus-benedictus",
+   "status": "inserted"
+  },
+  {
+   "slug": "thea-sinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "echium-plantagineum",
+   "status": "inserted"
+  },
+  {
+   "slug": "pothos-foetidus",
+   "status": "inserted"
+  },
+  {
+   "slug": "lathyrus-sativus",
+   "status": "inserted"
+  },
+  {
+   "slug": "trillium-pendulum",
+   "status": "inserted"
+  },
+  {
+   "slug": "fraxinus-ornus",
+   "status": "exists"
+  },
+  {
+   "slug": "vitis-rotundifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "paris-polyphylla",
+   "status": "inserted"
+  },
+  {
+   "slug": "rheum-rhaponticum",
+   "status": "inserted"
+  },
+  {
+   "slug": "abies-sibirica",
+   "status": "inserted"
+  },
+  {
+   "slug": "dendrobium-loddigesii",
+   "status": "inserted"
+  },
+  {
+   "slug": "senecio-scandens",
+   "status": "inserted"
+  },
+  {
+   "slug": "macrocystis-pyrifera",
+   "status": "inserted"
+  },
+  {
+   "slug": "hura-brasiliensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "solanum-lasiocarpum",
+   "status": "inserted"
+  },
+  {
+   "slug": "pluchea-lanceolata",
+   "status": "inserted"
+  },
+  {
+   "slug": "jonesia-asoca",
+   "status": "inserted"
+  },
+  {
+   "slug": "auxenochlorella-pyrenoidosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "pleione-bulbocodioides",
+   "status": "inserted"
+  },
+  {
+   "slug": "xerophyllum-asphodeloides",
+   "status": "inserted"
+  },
+  {
+   "slug": "phyllostachys-nigra",
+   "status": "inserted"
+  },
+  {
+   "slug": "myosotis-arvensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "juniperus-virginiana",
+   "status": "inserted"
+  },
+  {
+   "slug": "arthrospira-platensis-gomont",
+   "status": "inserted"
+  },
+  {
+   "slug": "aesculus-carnea",
+   "status": "inserted"
+  },
+  {
+   "slug": "turnera-diffusa-var-aphrodisiaca",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhus-aromatica",
+   "status": "inserted"
+  },
+  {
+   "slug": "amygdalus-persica",
+   "status": "inserted"
+  },
+  {
+   "slug": "cephalandra-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "ocimum-canum",
+   "status": "inserted"
+  },
+  {
+   "slug": "microcos-paniculata",
+   "status": "exists"
+  },
+  {
+   "slug": "picea-mariana",
+   "status": "inserted"
+  },
+  {
+   "slug": "aloe-vera-l-burm-f",
+   "status": "inserted"
+  },
+  {
+   "slug": "erycibe-schmidtii",
+   "status": "inserted"
+  },
+  {
+   "slug": "zanthoxylum-schinifolium",
+   "status": "inserted"
+  },
+  {
+   "slug": "anagallis-arvensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "paris-polyphylla-var-yunnanensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "cladosiphon-okamuranus",
+   "status": "inserted"
+  },
+  {
+   "slug": "phellandrium-aquaticum",
+   "status": "inserted"
+  },
+  {
+   "slug": "vigna-unguiculata-subsp-cylindrica",
+   "status": "inserted"
+  },
+  {
+   "slug": "ampelopsis-quinquefolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "dimorphandra-mollis",
+   "status": "inserted"
+  },
+  {
+   "slug": "eugenia-jambosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "triticum-aestivum-subsp-spelta",
+   "status": "inserted"
+  },
+  {
+   "slug": "brassica-oleracea-var-acephala",
+   "status": "inserted"
+  },
+  {
+   "slug": "cubeba-officinalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "kadsura-coccinea",
+   "status": "inserted"
+  },
+  {
+   "slug": "mucor-mucedo",
+   "status": "inserted"
+  },
+  {
+   "slug": "larix-laricina",
+   "status": "inserted"
+  },
+  {
+   "slug": "anemone-raddeana",
+   "status": "inserted"
+  },
+  {
+   "slug": "ocimum-sanctum",
+   "status": "exists"
+  },
+  {
+   "slug": "medicago-sativa-protein-concentrate",
+   "status": "inserted"
+  },
+  {
+   "slug": "symphoricarpus-racemosus",
+   "status": "inserted"
+  },
+  {
+   "slug": "euonymus-europaeus",
+   "status": "inserted"
+  },
+  {
+   "slug": "ficus-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "teucrium-scorodonia",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhododendron-aureum",
+   "status": "inserted"
+  },
+  {
+   "slug": "ficus-pumila",
+   "status": "inserted"
+  },
+  {
+   "slug": "mesophyllum-superpositum",
+   "status": "inserted"
+  },
+  {
+   "slug": "pulsatilla-nigricans",
+   "status": "inserted"
+  },
+  {
+   "slug": "cinnamomum-cassia-presl",
+   "status": "inserted"
+  },
+  {
+   "slug": "carlina-acaulis",
+   "status": "exists"
+  },
+  {
+   "slug": "rhus-venenata",
+   "status": "inserted"
+  },
+  {
+   "slug": "mercurialis-perennis",
+   "status": "inserted"
+  },
+  {
+   "slug": "arachis-hypogaea",
+   "status": "inserted"
+  },
+  {
+   "slug": "angelica-archangelica-l",
+   "status": "inserted"
+  },
+  {
+   "slug": "teramnus-labialis",
+   "status": "inserted"
+  },
+  {
+   "slug": "polygonum-punctatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "prunus-salicina",
+   "status": "inserted"
+  },
+  {
+   "slug": "sinocrassula-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "fritillaria-delavayi",
+   "status": "inserted"
+  },
+  {
+   "slug": "nymphaea-nouchali",
+   "status": "inserted"
+  },
+  {
+   "slug": "hepatica-triloba",
+   "status": "inserted"
+  },
+  {
+   "slug": "chrysanthellum-americanum",
+   "status": "inserted"
+  },
+  {
+   "slug": "iris-tenax",
+   "status": "inserted"
+  },
+  {
+   "slug": "pimpinella-saxifraga",
+   "status": "inserted"
+  },
+  {
+   "slug": "lycopersicon-lycopersicum",
+   "status": "inserted"
+  },
+  {
+   "slug": "rubus-arcticus",
+   "status": "inserted"
+  },
+  {
+   "slug": "blainvillea-acmella",
+   "status": "inserted"
+  },
+  {
+   "slug": "menispermum-dauricum",
+   "status": "exists"
+  },
+  {
+   "slug": "pinus-mugo",
+   "status": "inserted"
+  },
+  {
+   "slug": "anogeissus-latifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "crataegus-laevigata-poir-dc",
+   "status": "inserted"
+  },
+  {
+   "slug": "schoenocaulon-officinale",
+   "status": "inserted"
+  },
+  {
+   "slug": "paeonia-obovata",
+   "status": "inserted"
+  },
+  {
+   "slug": "piper-wallichii",
+   "status": "inserted"
+  },
+  {
+   "slug": "vaccinium-myrsinites",
+   "status": "inserted"
+  },
+  {
+   "slug": "prunus-japonica",
+   "status": "inserted"
+  },
+  {
+   "slug": "selinum-striatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "glycyrrhiza-inflata",
+   "status": "inserted"
+  },
+  {
+   "slug": "leonurus-heterophyllus",
+   "status": "inserted"
+  },
+  {
+   "slug": "ipomoea-purpurea",
+   "status": "inserted"
+  },
+  {
+   "slug": "phragmites-communis",
+   "status": "inserted"
+  },
+  {
+   "slug": "coffea-canephora-robusta",
+   "status": "inserted"
+  },
+  {
+   "slug": "lachnanthes-tinctoria",
+   "status": "inserted"
+  },
+  {
+   "slug": "myristica-sebifera",
+   "status": "inserted"
+  },
+  {
+   "slug": "dendrobium-chrysotoxum",
+   "status": "inserted"
+  },
+  {
+   "slug": "anemone-hepatica",
+   "status": "inserted"
+  },
+  {
+   "slug": "prunus-cerasoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "lithothamnion-calcareum",
+   "status": "inserted"
+  },
+  {
+   "slug": "inula-cappa",
+   "status": "inserted"
+  },
+  {
+   "slug": "ligustrum-vulgare",
+   "status": "inserted"
+  },
+  {
+   "slug": "pinus-contorta",
+   "status": "inserted"
+  },
+  {
+   "slug": "aspergillus-niger-e-volumine-cellulae",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhamnus-californica",
+   "status": "inserted"
+  },
+  {
+   "slug": "origanum-compactum",
+   "status": "inserted"
+  },
+  {
+   "slug": "taiwanofungus-camphoratus",
+   "status": "inserted"
+  },
+  {
+   "slug": "cheiranthus-cheiri",
+   "status": "inserted"
+  },
+  {
+   "slug": "amaranthus-tricolor",
+   "status": "inserted"
+  },
+  {
+   "slug": "camellia-sinensis-var-assamica",
+   "status": "inserted"
+  },
+  {
+   "slug": "ilex-rotunda",
+   "status": "inserted"
+  },
+  {
+   "slug": "viburnum-lantana",
+   "status": "inserted"
+  },
+  {
+   "slug": "cereus-bonplandii",
+   "status": "inserted"
+  },
+  {
+   "slug": "duchesnea-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "amorphophallus-paeoniifolius",
+   "status": "inserted"
+  },
+  {
+   "slug": "opuntia-vulgaris",
+   "status": "inserted"
+  },
+  {
+   "slug": "scutellaria-lateriflora-l",
+   "status": "inserted"
+  },
+  {
+   "slug": "pinus-ponderosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "mucor-racemosus-e-volumine-cellulae",
+   "status": "inserted"
+  },
+  {
+   "slug": "acer-campestre",
+   "status": "inserted"
+  },
+  {
+   "slug": "helleborus-viridis",
+   "status": "inserted"
+  },
+  {
+   "slug": "lolium-temulentum",
+   "status": "inserted"
+  },
+  {
+   "slug": "eugenia-caryophyllus",
+   "status": "inserted"
+  },
+  {
+   "slug": "quillaja-saponaria",
+   "status": "inserted"
+  },
+  {
+   "slug": "daphne-mezereum",
+   "status": "inserted"
+  },
+  {
+   "slug": "turnera-aphrodisiaca",
+   "status": "inserted"
+  },
+  {
+   "slug": "solanum-anguivi",
+   "status": "inserted"
+  },
+  {
+   "slug": "origanum-vulgare-subsp-vulgare",
+   "status": "inserted"
+  },
+  {
+   "slug": "hieracium-pilosella",
+   "status": "inserted"
+  },
+  {
+   "slug": "oxydendrum-arboreum",
+   "status": "inserted"
+  },
+  {
+   "slug": "ribes-rubrum",
+   "status": "inserted"
+  },
+  {
+   "slug": "betula-verrucosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "rubus-strigosus",
+   "status": "inserted"
+  },
+  {
+   "slug": "lactuca-sativa-var-longifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "rubus-ursinus",
+   "status": "inserted"
+  },
+  {
+   "slug": "haematoxylon-campechianum",
+   "status": "inserted"
+  },
+  {
+   "slug": "daucus-carota-sativa",
+   "status": "inserted"
+  },
+  {
+   "slug": "callerya-speciosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "fumaria-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "gaultheria-fragrantissima",
+   "status": "inserted"
+  },
+  {
+   "slug": "ludwigia-prostrata",
+   "status": "inserted"
+  },
+  {
+   "slug": "comocladia-dentata",
+   "status": "inserted"
+  },
+  {
+   "slug": "cupressus-lawsoniana",
+   "status": "inserted"
+  },
+  {
+   "slug": "melicope-pteleifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "ilex-asprella",
+   "status": "inserted"
+  },
+  {
+   "slug": "jasminum-grandiflorum",
+   "status": "inserted"
+  },
+  {
+   "slug": "lonicera-nigra",
+   "status": "inserted"
+  },
+  {
+   "slug": "spiranthes-autumnalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "commiphora-molmol",
+   "status": "inserted"
+  },
+  {
+   "slug": "franciscea-uniflora",
+   "status": "inserted"
+  },
+  {
+   "slug": "ranunculus-sceleratus",
+   "status": "inserted"
+  },
+  {
+   "slug": "lithothamnium-calcareum",
+   "status": "inserted"
+  },
+  {
+   "slug": "solanum-lyratum",
+   "status": "inserted"
+  },
+  {
+   "slug": "rosmarinus-officinalis-rosemary-leaf-extract",
+   "status": "inserted"
+  },
+  {
+   "slug": "helminthostachys-zeylanica",
+   "status": "inserted"
+  },
+  {
+   "slug": "persicaria-tinctoria",
+   "status": "inserted"
+  },
+  {
+   "slug": "sterculia-acuminata",
+   "status": "inserted"
+  },
+  {
+   "slug": "duboisia-myoporoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "pennisetum-glaucum",
+   "status": "inserted"
+  },
+  {
+   "slug": "tamus-communis",
+   "status": "inserted"
+  },
+  {
+   "slug": "penthorum-sedoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "helicteres-angustifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "vigna-trilobata",
+   "status": "inserted"
+  },
+  {
+   "slug": "malpighia-punicifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "asparagus-adscendens",
+   "status": "inserted"
+  },
+  {
+   "slug": "amaranthus-dubius",
+   "status": "inserted"
+  },
+  {
+   "slug": "boehmeria-nivea",
+   "status": "inserted"
+  },
+  {
+   "slug": "pistacia-integerrima",
+   "status": "inserted"
+  },
+  {
+   "slug": "fabiana-imbricata",
+   "status": "inserted"
+  },
+  {
+   "slug": "pinus-tabuliformis",
+   "status": "inserted"
+  },
+  {
+   "slug": "polyporus-officinalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "dichroa-febrifuga",
+   "status": "inserted"
+  },
+  {
+   "slug": "sambucus-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "phyllostachys-nigra-var-nigra",
+   "status": "inserted"
+  },
+  {
+   "slug": "sticta-pulmonacea",
+   "status": "inserted"
+  },
+  {
+   "slug": "nasturtium-aquaticum",
+   "status": "inserted"
+  },
+  {
+   "slug": "quercus-pedunculata",
+   "status": "inserted"
+  },
+  {
+   "slug": "passiflora-incarnata",
+   "status": "inserted"
+  },
+  {
+   "slug": "conyza-canadensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "aristolochia-mollissima",
+   "status": "inserted"
+  },
+  {
+   "slug": "guarea-trichilioides",
+   "status": "inserted"
+  },
+  {
+   "slug": "glechoma-longituba",
+   "status": "inserted"
+  },
+  {
+   "slug": "dioscorea-futschauensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "tylophora-indica",
+   "status": "inserted"
+  },
+  {
+   "slug": "sinomenium-acutum",
+   "status": "inserted"
+  },
+  {
+   "slug": "clerodendron-trichotomum",
+   "status": "inserted"
+  },
+  {
+   "slug": "amanita-muscaria",
+   "status": "inserted"
+  },
+  {
+   "slug": "crypthecodinium-cohnii",
+   "status": "inserted"
+  },
+  {
+   "slug": "citrus-grandis",
+   "status": "inserted"
+  },
+  {
+   "slug": "chamaesyce-hirta",
+   "status": "inserted"
+  },
+  {
+   "slug": "primula-obconica",
+   "status": "inserted"
+  },
+  {
+   "slug": "majorana-hortensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "boerhaavia-diffusa",
+   "status": "inserted"
+  },
+  {
+   "slug": "omphalia-lapidescens",
+   "status": "inserted"
+  },
+  {
+   "slug": "citrus-wilsonii",
+   "status": "inserted"
+  },
+  {
+   "slug": "bacopa-monniera",
+   "status": "inserted"
+  },
+  {
+   "slug": "cyclocarya-paliurus",
+   "status": "inserted"
+  },
+  {
+   "slug": "spartium-scoparium",
+   "status": "inserted"
+  },
+  {
+   "slug": "atractylodes-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "penicillium-chrysogenum-e-volumine-cellulae",
+   "status": "inserted"
+  },
+  {
+   "slug": "cassia-tora",
+   "status": "inserted"
+  },
+  {
+   "slug": "gelidium-amansii",
+   "status": "inserted"
+  },
+  {
+   "slug": "veronica-virginica",
+   "status": "inserted"
+  },
+  {
+   "slug": "oxytropis-falcata",
+   "status": "inserted"
+  },
+  {
+   "slug": "alyxia-sinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "camellia-sinensis-purple-tea-cultivar",
+   "status": "inserted"
+  },
+  {
+   "slug": "abelmoschus-manihot",
+   "status": "inserted"
+  },
+  {
+   "slug": "cynanchum-atratum",
+   "status": "inserted"
+  },
+  {
+   "slug": "nardostachys-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "arnebia-guttata",
+   "status": "inserted"
+  },
+  {
+   "slug": "plantago-psyllium",
+   "status": "inserted"
+  },
+  {
+   "slug": "vincetoxicum-hirundinaria",
+   "status": "inserted"
+  },
+  {
+   "slug": "fragaria-ananassa",
+   "status": "inserted"
+  },
+  {
+   "slug": "chrysanthemum-parthenium",
+   "status": "inserted"
+  },
+  {
+   "slug": "haematococcus-pluvialis-extract",
+   "status": "inserted"
+  },
+  {
+   "slug": "callicarpa-macrophylla",
+   "status": "inserted"
+  },
+  {
+   "slug": "baphicacanthus-cusia",
+   "status": "inserted"
+  },
+  {
+   "slug": "potentilla-tormentilla",
+   "status": "inserted"
+  },
+  {
+   "slug": "cinnamomum-aromaticum",
+   "status": "inserted"
+  },
+  {
+   "slug": "platanus-orientalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "cornus-circinata",
+   "status": "inserted"
+  },
+  {
+   "slug": "kadsura-longipedunculata",
+   "status": "inserted"
+  },
+  {
+   "slug": "schefflera-arboricola",
+   "status": "inserted"
+  },
+  {
+   "slug": "erodium-cicutarium",
+   "status": "inserted"
+  },
+  {
+   "slug": "syringa-vulgaris",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhodymenia-palmata",
+   "status": "inserted"
+  },
+  {
+   "slug": "okoubaka-aubrevillei",
+   "status": "inserted"
+  },
+  {
+   "slug": "schoepfia-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "pothos-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "brassaiopsis-glomerulata",
+   "status": "inserted"
+  },
+  {
+   "slug": "erigeron-breviscapus",
+   "status": "inserted"
+  },
+  {
+   "slug": "scurrula-parasitica",
+   "status": "inserted"
+  },
+  {
+   "slug": "stereospermum-chelonoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "foeniculum-vulgare-var-vulgare",
+   "status": "inserted"
+  },
+  {
+   "slug": "achyranthes-japonica",
+   "status": "inserted"
+  },
+  {
+   "slug": "eucalyptus-dives",
+   "status": "inserted"
+  },
+  {
+   "slug": "hibiscus-mutabilis",
+   "status": "inserted"
+  },
+  {
+   "slug": "colocynthis-vulgaris",
+   "status": "inserted"
+  },
+  {
+   "slug": "cephalanthus-occidentalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "hypericum-japonicum",
+   "status": "inserted"
+  },
+  {
+   "slug": "apocynum-androsaemifolium",
+   "status": "inserted"
+  },
+  {
+   "slug": "basella-alba",
+   "status": "inserted"
+  },
+  {
+   "slug": "kunzea-ericoides-honey",
+   "status": "inserted"
+  },
+  {
+   "slug": "tuber-melanosporum",
+   "status": "inserted"
+  },
+  {
+   "slug": "anamirta-cocculus",
+   "status": "inserted"
+  },
+  {
+   "slug": "physochlaina-infundibularis",
+   "status": "inserted"
+  },
+  {
+   "slug": "orchis-mascula",
+   "status": "inserted"
+  },
+  {
+   "slug": "saxifraga-granulata",
+   "status": "inserted"
+  },
+  {
+   "slug": "toxicodendron-diversilobum",
+   "status": "inserted"
+  },
+  {
+   "slug": "camellia-sinensis-extract",
+   "status": "inserted"
+  },
+  {
+   "slug": "rheum-pumilum",
+   "status": "inserted"
+  },
+  {
+   "slug": "potentilla-discolor",
+   "status": "inserted"
+  },
+  {
+   "slug": "bacopa-monnieria",
+   "status": "inserted"
+  },
+  {
+   "slug": "woodfordia-fruticosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "lophophytum-leandri",
+   "status": "inserted"
+  },
+  {
+   "slug": "hemerocallis-citrina-baroni",
+   "status": "inserted"
+  },
+  {
+   "slug": "fagus-sylvatica-flos",
+   "status": "inserted"
+  },
+  {
+   "slug": "daucus-carota-subsp-carota",
+   "status": "inserted"
+  },
+  {
+   "slug": "tinospora-sagittata",
+   "status": "inserted"
+  },
+  {
+   "slug": "rubus-loganobaccus",
+   "status": "inserted"
+  },
+  {
+   "slug": "gnaphalium-uliginosum",
+   "status": "inserted"
+  },
+  {
+   "slug": "cucumis-pepo",
+   "status": "inserted"
+  },
+  {
+   "slug": "angelica-polymorpha-var-sinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "lactuca-quercina",
+   "status": "inserted"
+  },
+  {
+   "slug": "galipea-officinalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "betula-lenta",
+   "status": "inserted"
+  },
+  {
+   "slug": "auxenochlorella-protothecoides",
+   "status": "inserted"
+  },
+  {
+   "slug": "eugenia-jambos",
+   "status": "inserted"
+  },
+  {
+   "slug": "cicuta-maculata",
+   "status": "inserted"
+  },
+  {
+   "slug": "fumaria-parviflora",
+   "status": "inserted"
+  },
+  {
+   "slug": "ficus-racemosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "patrinia-villosa",
+   "status": "inserted"
+  },
+  {
+   "slug": "achyranthes-longifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "sapindus-mukorossi",
+   "status": "inserted"
+  },
+  {
+   "slug": "euglena-gracilis",
+   "status": "inserted"
+  },
+  {
+   "slug": "tanacetum-parthenium-l-sch-bip",
+   "status": "inserted"
+  },
+  {
+   "slug": "rosa-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "abroma-augusta",
+   "status": "inserted"
+  }
+ ]
+}

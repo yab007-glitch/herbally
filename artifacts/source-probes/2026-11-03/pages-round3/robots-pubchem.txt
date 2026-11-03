@@ -1,0 +1,190 @@
+# PubChem robots.txt
+# Maintainer: PubChem Team
+# Version: 2026-10-29.1
+# Last updated: 2026-10-29
+#
+# Public pages are crawlable unless a matching restriction below applies.
+#
+# Named groups do not inherit the User-agent: * rules. Keep the shared
+# restrictions in the search/user-access and default groups synchronized.
+# Prefix restrictions include bare paths and similarly named paths.
+# Keep /rest/pug/ scoped so /rest/pug_view remains crawlable.
+# Mirror endpoint policy for mapped /interactive aliases, including exceptions.
+# Keep the Allow exceptions scoped to their existing subpaths.
+#
+# These are voluntary crawler instructions, not authentication, a universal
+# prohibition on reuse, or a guarantee against training by unlisted agents.
+
+# ------------------------------------------------------------------------
+# Exclude listed training-related and corpus-collection crawlers.
+# Amazonbot also serves broader Amazon product/service uses.
+# Search/retrieval agents belonging to these providers are handled below.
+# ------------------------------------------------------------------------
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Amazonbot
+User-agent: CCBot
+Disallow: /
+
+# ------------------------------------------------------------------------
+# Content-use controls, not separate network crawlers.
+# Google-Extended: Gemini training and specified Gemini/Vertex AI grounding.
+# Applebot-Extended: training of Apple's generative foundation models.
+# These opt-outs do not block ordinary Google or Apple search inclusion.
+# ------------------------------------------------------------------------
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Disallow: /
+
+# Preserve the existing YaCy exclusion using a standard path pattern.
+User-agent: yacybot
+Disallow: /
+
+# ------------------------------------------------------------------------
+# Search indexing and user-requested retrieval.
+# This includes AI search/retrieval, but excludes training-specific agents.
+# User-triggered fetchers may not honor every robots.txt directive.
+# Request a five-second delay where supported. Google, Applebot, and Amazon
+# bots do not support it; enforce limits at the server or reverse proxy.
+# Allow the public PUG tables on both the original and /interactive routes.
+# ------------------------------------------------------------------------
+User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: bingbot
+User-agent: Applebot
+User-agent: DuckDuckBot
+User-agent: OAI-SearchBot
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Amzn-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-User
+User-agent: Perplexity-User
+User-agent: Amzn-User
+Crawl-delay: 5
+Allow: /interactive/rest/pug/periodictable/
+Allow: /interactive/rest/pug/sourcetable/
+Allow: /rest/pug/periodictable/
+Allow: /rest/pug/sourcetable/
+Disallow: /api3d/api3d.cgi
+Disallow: /assay/pcget.cgi
+Disallow: /classification_2/classification_2.fcgi
+Disallow: /cooccurrence
+Disallow: /data
+Disallow: /edit3/index.html
+Disallow: /error_handler.cgi
+Disallow: /he
+Disallow: /history
+Disallow: /idexchange/idexchange.cgi
+Disallow: /ini
+Disallow: /interactive/api3d/api3d.cgi
+Disallow: /interactive/assay/pcget.cgi
+Disallow: /interactive/classification_2/classification_2.fcgi
+Disallow: /interactive/cooccurrence
+Disallow: /interactive/data
+Disallow: /interactive/link_db
+Disallow: /interactive/list_gateway
+Disallow: /interactive/pc_fetch
+Disallow: /interactive/pug2/pug2.cgi
+Disallow: /interactive/rest/pug/
+Disallow: /interactive/sdq
+Disallow: /interactive/unified_search/structure_search.cgi
+Disallow: /kill.cgi
+Disallow: /link_db
+Disallow: /list_creator
+Disallow: /list_gateway
+Disallow: /pc3d
+Disallow: /pc_fetch
+Disallow: /pcautocp
+Disallow: /pug/pug.cgi
+Disallow: /pug2/pug2.cgi
+Disallow: /pug_soap/pug_soap.cgi
+Disallow: /resolver
+Disallow: /rest/pug/
+Disallow: /rest/rdf
+Disallow: /score_matrix/score_matrix.cgi
+Disallow: /sdq
+Disallow: /search
+Disallow: /sketch
+Disallow: /standardize/standardize.cgi
+Disallow: /summary
+Disallow: /unified_search/structure_search.cgi
+Disallow: /vw3d
+Disallow: /wgetenv.cgi
+
+# Image endpoints are crawlable for this group.
+# /search already blocks /search_3d and its front-end CGI endpoint.
+
+# ------------------------------------------------------------------------
+# Other crawlers.
+# Preserve the generic group's additional image restrictions and API policy.
+# Crawl-delay is nonstandard and only applies to crawlers that support it.
+# Removed legacy-only groups and the unrestricted Browsershots exception.
+# Agents without another matching group use this default policy.
+# ------------------------------------------------------------------------
+User-agent: *
+Crawl-delay: 5
+Disallow: /api3d/api3d.cgi
+Disallow: /assay/pcget.cgi
+Disallow: /classification_2/classification_2.fcgi
+Disallow: /cooccurrence
+Disallow: /data
+Disallow: /edit3/index.html
+Disallow: /error_handler.cgi
+Disallow: /he
+Disallow: /history
+Disallow: /idexchange/idexchange.cgi
+Disallow: /image/imagefly.cgi
+Disallow: /image/img3d.cgi
+Disallow: /ini
+Disallow: /interactive/api3d/api3d.cgi
+Disallow: /interactive/assay/pcget.cgi
+Disallow: /interactive/classification_2/classification_2.fcgi
+Disallow: /interactive/cooccurrence
+Disallow: /interactive/data
+Disallow: /interactive/image/imagefly.cgi
+Disallow: /interactive/image/img3d.cgi
+Disallow: /interactive/link_db
+Disallow: /interactive/list_gateway
+Disallow: /interactive/pc_fetch
+Disallow: /interactive/pug2/pug2.cgi
+Disallow: /interactive/rest/pug/
+Disallow: /interactive/sdq
+Disallow: /interactive/unified_search/structure_search.cgi
+Disallow: /kill.cgi
+Disallow: /link_db
+Disallow: /list_creator
+Disallow: /list_gateway
+Disallow: /pc3d
+Disallow: /pc_fetch
+Disallow: /pcautocp
+Disallow: /pug/pug.cgi
+Disallow: /pug2/pug2.cgi
+Disallow: /pug_soap/pug_soap.cgi
+Disallow: /resolver
+Disallow: /rest/pug/
+Disallow: /rest/rdf
+Disallow: /score_matrix/score_matrix.cgi
+Disallow: /sdq
+Disallow: /search
+Disallow: /sketch
+Disallow: /standardize/standardize.cgi
+Disallow: /summary
+Disallow: /unified_search/structure_search.cgi
+Disallow: /vw3d
+Disallow: /wgetenv.cgi
+
+# ------------------------------------------------------------------------
+# Sitemap declarations are global and unchanged.
+# ------------------------------------------------------------------------
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/pcsitemap.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=concept/sitemap_index.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=annotation/sitemap_index.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=assay/sitemap_index.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=source/sitemap.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=gene/sitemap_index.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=protein/sitemap_index.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=patent/sitemap_index.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=docs
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=cell/sitemap_index.xml
+Sitemap: https://pubchem.ncbi.nlm.nih.gov/sitemap/sitemap.cgi?p=taxonomy/sitemap_index.xml

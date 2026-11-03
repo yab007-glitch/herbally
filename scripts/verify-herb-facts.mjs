@@ -18,7 +18,9 @@ const BASELINE = join(ROOT, "data", "herb-name-baseline.json");
 
 function env() {
   const out = {};
-  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split("\n")) {
+  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split(
+    "\n"
+  )) {
     const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
     if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, "");
   }
@@ -26,7 +28,10 @@ function env() {
 }
 
 const e = env();
-const HEAD = { apikey: e.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}` };
+const HEAD = {
+  apikey: e.SUPABASE_SERVICE_ROLE_KEY,
+  Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}`,
+};
 
 async function main() {
   const baseline = JSON.parse(readFileSync(BASELINE, "utf8"));
@@ -48,18 +53,30 @@ async function main() {
     if (!now) continue; // merged/unpublished rows are expected to disappear
     if (now.scientific_name === before) continue;
     const tax = now.provenance?.taxonomy;
-    const record = { slug, before, after: now.scientific_name, source: tax?.source || null, licence: tax?.licence || null };
+    const record = {
+      slug,
+      before,
+      after: now.scientific_name,
+      source: tax?.source || null,
+      licence: tax?.licence || null,
+    };
     changed.push(record);
     if (!tax?.source) unsourced.push(record);
   }
 
-  console.log(`[facts] ${Object.keys(baseline).length} baseline names | ${changed.length} changed | ${unsourced.length} unsourced`);
+  console.log(
+    `[facts] ${Object.keys(baseline).length} baseline names | ${changed.length} changed | ${unsourced.length} unsourced`
+  );
   for (const c of changed.slice(0, 30)) {
-    console.log(`  ${unsourced.includes(c) ? "✗" : "✓"} ${c.slug}: ${c.before} -> ${c.after}${c.source ? ` (${c.source}, ${c.licence})` : " (NO SOURCE)"}`);
+    console.log(
+      `  ${unsourced.includes(c) ? "✗" : "✓"} ${c.slug}: ${c.before} -> ${c.after}${c.source ? ` (${c.source}, ${c.licence})` : " (NO SOURCE)"}`
+    );
   }
 
   if (unsourced.length) {
-    console.error(`\n[facts] FAIL — ${unsourced.length} name change(s) with no provenance.taxonomy`);
+    console.error(
+      `\n[facts] FAIL — ${unsourced.length} name change(s) with no provenance.taxonomy`
+    );
     process.exit(1);
   }
   console.log("\n[facts] OK — every changed name carries a source");
