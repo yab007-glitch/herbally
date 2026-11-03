@@ -875,8 +875,12 @@ export default async function HerbDetailPage({ params }: Props) {
       />
 
       <section aria-labelledby="internal-links-heading" className="pt-4">
+        {/* Distinct from the visible "Related Herbs" heading below. An sr-only
+            h2 repeating that exact string made the page carry two identical
+            <h2> "Related Herbs" — harmless to sighted readers, a duplicate
+            heading to a screen reader or a crawler. */}
         <h2 id="internal-links-heading" className="sr-only">
-          {t("herbDetail.relatedHerbs")}
+          {locale === "fr" ? "Autres plantes et interactions" : "More herbs and interactions"}
         </h2>
         <InternalLinkRail
           locale={locale === "fr" ? "fr" : "en"}
