@@ -27,6 +27,15 @@ const nextConfig: NextConfig = {
       }),
   // Don't advertise the runtime/framework in response headers.
   poweredByHeader: false,
+  // Build-time static generation is DB-backed (symptom hubs, herb pages,
+  // sitemap). Next's default per-page cap is 60s; when Supabase answers slowly
+  // a single symptom hub can exceed it, the page is retried, and the whole
+  // deploy dies with BUILD_UTILS_SPAWN_1 ("npm run build" exited with 1) —
+  // observed 2026-11-02 on commit 75eaee54, where /fr/symptoms/* took >60s and
+  // the sitemap exhausted its 40s DB budget. Give each page room to finish
+  // instead of failing the deployment; a genuinely broken query still fails,
+  // just later. Vercel's build ceiling (45 min) is the outer bound.
+  staticPageGenerationTimeout: 180,
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
   },
