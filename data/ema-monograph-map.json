@@ -1,496 +1,274 @@
 {
- "ema_urls": [
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/community-herbal-monograph-cinnamomum-verum-js-presl-cortex_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/community-herbal-monograph-cinnamomum-verum-js-presl-corticis-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-achillea-millefolium-l-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-agrimonia-eupatoria-l-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-althaea-officinalis-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-artemisia-absinthium-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-avena-sativa-l-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-avena-sativa-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-barbados-aloes-aloe-barbadensis-and-cape-aloes-aloe-capensis_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-camellia-sinensis-l-kuntze-non-fermentatum-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-centaurium-erythraea-rafn-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-chamaemelum-nobile-l-all-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cichorium-intybus-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cimicifuga-racemosa-l-nutt-rhizome-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-crataegus-spp-folium-cum-flore_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cucurbita-pepo-l-semen_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-curcuma-longa-l-rhizoma_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-curcuma-xanthorrhiza-roxb-rhizoma_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cynara-scolymus-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-echinacea-pallida-nutt-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-echinacea-purpurea-l-moench-herba-recens_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-echinaceae-angustifolia-dc-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-eleutherococcus-senticosus-rupr-et-maxim-maxim-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-eschscholzia-californica-cham-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-filipendula-ulmaria-l-maxim-spiraea-ulmaria-l-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-foeniculum-vulgare-miller-subsp-vulgare-var-vulgare-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-foeniculum-vulgare-miller-subsp-vulgare-var-vulgare-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-frangula-bark-frangulae-cortex_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-fraxinus-excelsior-l-and-fraxinus-angustifolia-vahl-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-glycyrrhiza-glabra-l-and-or-glycyrrhiza-inflata-bat-and-or-glycyrrhiza-uralensis-fisch-radix-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-hamamelis-virginiana-l-cortex_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-hieracium-pilosella-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-humulus-lupulus-l-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-hypericum-perforatum-l-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ilex-paraguariensis-st-hil-folium-first-time_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ispaghula-husk-plantago-ovate-tegumentum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-juniperus-communis-l-pseudo-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-lavandula-angustifolia-mill-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-levisticum-officinale-koch-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-matricaria-recutita-l-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-melaleuca-alternifolia-maiden-and-betch-cheel-m-linariifolia-smith-m-dissitiflora-f-mueller-and-or-other-species-melaleuca-aetheroleum-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-melissa-officinalis-l-leaf_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-mentha-x-piperita-l-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-olea-europaea-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ononis-spinosa-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-origanum-dictamnus-l-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-orthosiphon-stamineus-benth-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-paullinia-cupana-kunth-ex-hbk-var-sorbilis-mart-ducke-semen-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-pelargonium-sidoides-dc-and-or-pelargonium-reniforme-curt-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-pimpinella-anisum-l-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-pimpinella-anisum-l-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-plantaginis-lanceolatae-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-primula-veris-l-primula-elatior-l-hill-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-psyllium-seed-plantago-afra-et-plantago-indica-semen_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rhodiola-rosea-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ribes-nigrum-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rosa-centifolia-l-rosa-gallica-l-rosa-damascena-mill-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rosmarinus-officinalis-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rubus-idaeus-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ruscus-aculeatus-l-rhizome-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-senna-leaf-sennae-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-senna-pods-alexandrian-sennae-fructus-acutifoliae-and-senna-pods-tinnevelly-sennae-fructus-angustifoliae_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-solanum-dulcamara-l-stipites_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-solidago-virgaurea-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-syzygium-aromaticum-l-merill-et-l-m-perry-floris-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-tanacetum-parthenium-l-schulz-bip-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-loefl-ex-l-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-tilia-cordata-miller-tilia-platyphyllos-scop-tilia-x-vulgaris-heyne-or-their-mixtures-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-trigonella-foenumgraecum-l-semen_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-urtica-dioica-l-and-urtica-urens-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-urtica-dioica-l-urtica-urens-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-valeriana-officinalis-l-radix-and-humulus-lupulus-l-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-verbascum-thapsus-l-v-densiflorum-bertol-v-thapsiforme-schrad-and-v-phlomoides-l-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-zingiberis-rhizoma_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-carum-carvi-l-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-cimicifuga-racemosa-l-nutt-rhizome-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-fragaria-vesca-l-fragaria-moschata-weston-fragaria-viridis-weston-and-fragaria-x-ananassa-weston-duchesne-ex-rozier-folium-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-glycine-max-l-merr-lecithin_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-glycine-max-l-merr-oleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-mentha-x-piperita-l-folium-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-origanum-majorana-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-pelargonium-sidoides-dc-and-or-pelargonium-reniforme-curt-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-polygonum-aviculare-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-prunus-africana-hook-f-kalkm-cortex_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-rhamnus-frangula-l-cortex-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-ribes-nigrum-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-ruscus-aculeatus-l-rhizoma-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-senna-alexandrina-mill-cassia-senna-l-cassia-angustifolia-vahl-folium-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-sideritis-scardica-griseb-sideritis-clandestina-bory-chaub-hayek-sideritis-raeseri-boiss-heldr-sideritis-syriaca-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-silybum-marianum-l-gaertn-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-valeriana-officinalis-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/european-union-herbal-monograph-epilobium-angustifolium-l-and-or-epilobium-parviflorum-schreb-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-arctium-lappa-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-arnica-montana-l-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-avena-sativa-l-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-avena-sativa-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-capsella-bursa-pastoris-l-medikus-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-cichorium-intybus-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-cola-nitida-vent-schott-et-endl-and-its-varieties-and-cola-acuminata-p-beauv-schott-et-endl-semen_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-commiphora-molmol-engler-gummi-resina_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-echinacea-angustifolia-dc-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-eleutherococcus-senticosus-rupr-et-maxim-maxim-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-eucalyptus-globulus-labill-eucalyptus-polybractea-rt-baker-or-eucalyptus-smithii-rt-baker-aetheroleum-superseded_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-filipendula-ulmaria-l-maxim-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-fraxinus-excelsior-l-or-fraxinus-angustifolia-vahl-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-grindelia-robusta-nutt-grindelia-squarrosa-pursh-dunal-grindelia-humilis-hook-et-arn-grindelia-camporum-greene-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-hamamelis-virginiana-l-folium-cortex-aut-ramunculus-destillatum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-hamamelis-virginiana-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-humulus-lupulus-l-flos-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-juglans-regia-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-juniperus-communis-l-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-lavandula-angustifolia-miller-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-lavandula-angustifolia-p-mill-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-leonurus-cardiaca-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-linum-usitatissimum-l-semen_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-ononis-spinosa-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-phaseolus-vulgaris-l-fructus-sine-semine_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-pimpinella-anisum-l-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-plantago-ovata-forssk-semen_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-plantago-ovata-forssk-seminis-tegumentum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-quercus-robur-l-quercus-petraea-matt-liebl-quercus-pubescens-willd-cortex_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-solidago-virgaurea-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-syzygium-aromaticum-l-merill-et-l-m-perry-floris-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-taraxacum-officinale-weber-ex-wigg-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-l-herba-and-primula-veris-l-and-primula-elatior-l-hill-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-thymus-vulgaris-l-thymus-zygis-loefl-ex-l-aetheroleum-superseded_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-tilia-cordata-miller-tilia-platyphyllos-scop-tilia-x-vulgaris-heyne-or-their-mixtures-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-viola-tricolor-l_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-agrimonia-eupatoria-l-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-aloe-barbadensis-mill-and-aloe-various-species-mainly-aloe-ferox-mill-and-its-hybrids-folii-succus-siccatus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-betula-pendula-roth-betula-pubescens-ehrh-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-carum-carvi-l-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-cetraria-islandica-l-acharius-sl-thallus-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-crataegus-spp-folium-cum-flore_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-curcuma-longa-l-rhizoma-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-cynara-cardunculus-l-syn-cynara-scolymus-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-epilobium-angustifolium-l-andor-epilobium-parviflorum-schreb-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-eschscholzia-californica-cham-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-glycine-max-l-merr-oleum-raffinatum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-harpagophytum-procumbens-dc-andor-harpagophytum-zeyheri-decne-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-malva-sylvestris-l-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-matricaria-recutita-l-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-melilotus-officinalis-l-lam-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-oenothera-biennis-l-oenothera-lamarckiana-l-oleum-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-olea-europaea-l-folium-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-onechinacea-purpurea-l-moench-radix-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-origanum-majorana-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-peumus-boldus-molina-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-ribes-nigrum-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-salix-various-species-including-s-purpurea-l-s-daphnoides-vill-s-fragilis-l-cortex_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-sambucus-nigra-l-flos-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-sideritis-scardica-griseb-sideritis-clandestina-bory-chaub-hayek-sideritis-raeseri-boiss-heldr-sideritis-syriaca-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-sisymbrium-officinale-l-scop-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-symphytum-officinale-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-vaccinium-myrtillus-l-fructus-recens_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-valeriana-officinalis-l-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-valeriana-officinalis-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-vitex-agnus-castus-l-fructus-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-vitis-vinifera-l-folium-revision-1_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-agropyron-repens-l-p-beauv-rhizoma_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-althaea-officinalis-l-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-cassia-senna-l-fructus-and-cassia-angustifolia-vahl-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-cimicifuga-racemosa-l-nutt-rhizome-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-echinacea-pallida-nutt-nutt-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-echinacea-purpurea-l-moench-radix-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-equisetum-arvense-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-foeniculum-vulgare-miller-subsp-vulgare-var-vulgare-fructus_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-gentiana-lutea-l-radix-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-glycyrrhiza-glabra-l-or-glycyrrhiza-inflata-bat-or-glycyrrhiza-uralensis-fisch-radix-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-hypericum-perforatum-l-herba-well-established-medicinal-use_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-melilotus-officinalis-l-lam-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-melissa-officinalis-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-olea-europaea-l-folium-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-pelargonium-sidoides-dc-and-or-pelargonium-reniforme-curt-radix-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-plantago-ovata-forssk-semen_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-primula-veris-l-and-primula-elatior-l-hill-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-rheum-palmatum-l-and-rheum-officinale-baillon-radix_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-rosmarinus-officinalis-l-folium_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-salix-various-species-including-s-purpurea-l-s-daphnoides-vill-s-fragilis-l-cortex_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-sambucus-nigra-l-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-urtica-dioica-l-urtica-urens-l-herba_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-urtica-dioica-l-urtica-urens-l-their-hybrids-or-their-mixtures-radix-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-vitex-agnus-castus-l-fructus-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-vitis-vinifera-l-folium-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-european-union-herbal-monograph-artemisia-absinthium-l-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-european-union-herbal-monograph-pelargonium-sidoides-dc-andor-pelargonium-reniforme-curt-radix-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-achillea-millefolium-l-herba-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-humulus-lupulus-l-flos-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-rhamnus-frangula-l-cortex-first-version_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-valeriana-officinalis-l-radix-valerianae-aetheroleum_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-verbascum-thapsus-l-v-densiflorum-bertol-and-v-phlomoides-l-flos_en.pdf",
-  "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-european-union-herbal-monograph-pelargonium-sidoides-dc-or-pelargonium-reniforme-curt-radix-revision-1_en.pdf"
- ],
- "matched": [
-  [
-   "carum carvi",
-   "carum-carvi-herb"
-  ],
-  [
-   "cetraria islandica",
-   "iceland-moss"
-  ],
-  [
-   "urtica dioica",
-   "swedish-nettle-herb"
-  ],
-  [
-   "malva sylvestris",
-   "mallow"
-  ],
-  [
-   "melilotus officinalis",
-   "melilot"
-  ],
-  [
-   "cucurbita pepo",
-   "pumpkin-seed"
-  ],
-  [
-   "valeriana officinalis",
-   "czech-valerian"
-  ],
-  [
-   "melissa officinalis",
-   "melissa-romana"
-  ],
-  [
-   "ononis spinosa",
-   "restharrow"
-  ],
-  [
-   "matricaria recutita",
-   "matricaria-recutita"
-  ],
-  [
-   "symphytum officinale",
-   "comfrey"
-  ],
-  [
-   "harpagophytum procumbens",
-   "devils-claw"
-  ],
-  [
-   "curcuma xanthorrhiza",
-   "java-turmeric"
-  ],
-  [
-   "verbascum thapsus",
-   "mullein-flower"
-  ],
-  [
-   "solanum dulcamara",
-   "bittersweet-nightshade"
-  ],
-  [
-   "solidago virgaurea",
-   "goldenrod-solidago"
-  ],
-  [
-   "glycyrrhiza glabra",
-   "unani-mulethi-root"
-  ],
-  [
-   "peumus boldus",
-   "boldo-leaf"
-  ],
-  [
-   "melaleuca alternifolia",
-   "tea-tree"
-  ],
-  [
-   "primula veris",
-   "cowslip"
-  ],
-  [
-   "ruscus aculeatus",
-   "butchers-broom"
-  ],
-  [
-   "levisticum officinale",
-   "lovage-root"
-  ],
-  [
-   "vitex agnus",
-   "vitex"
-  ],
-  [
-   "camellia sinensis",
-   "camellia-sinensis-extract"
-  ],
-  [
-   "cynara cardunculus",
-   "artichoke-liver"
-  ],
-  [
-   "tanacetum parthenium",
-   "tanacetum-parthenium-l-sch-bip"
-  ],
-  [
-   "echinacea purpurea",
-   "echinacea"
-  ],
-  [
-   "achillea millefolium",
-   "achillea-millefolium-var"
-  ],
-  [
-   "chamaemelum nobile",
-   "asteraceae-roman-chamomile"
-  ],
-  [
-   "epilobium angustifolium",
-   "epilobium-angustifolium"
-  ],
-  [
-   "oenothera biennis",
-   "evening-primrose"
-  ],
-  [
-   "glycine max",
-   "phosphatidylserine-noot"
-  ],
-  [
-   "echinacea pallida",
-   "echinacea-pallida"
-  ],
-  [
-   "origanum majorana",
-   "marjoram"
-  ],
-  [
-   "pelargonium sidoides",
-   "umckaloabo"
-  ],
-  [
-   "filipendula ulmaria",
-   "spiraea-ulmaria-root"
-  ],
-  [
-   "paullinia cupana",
-   "guarana-seed"
-  ],
-  [
-   "artemisia absinthium",
-   "wormwood"
-  ],
-  [
-   "cichorium intybus",
-   "chicory"
-  ],
-  [
-   "mentha x",
-   "chocolate-mint"
-  ],
-  [
-   "olea europaea",
-   "zatoun"
-  ],
-  [
-   "althaea officinalis",
-   "marshmallow-root"
-  ],
-  [
-   "hypericum perforatum",
-   "st-johns-wort-oil"
-  ],
-  [
-   "hamamelis virginiana",
-   "witch-hazel"
-  ],
-  [
-   "avena sativa",
-   "milk-oat"
-  ],
-  [
-   "cinnamomum verum",
-   "cinnamon"
-  ],
-  [
-   "orthosiphon stamineus",
-   "orthosiphon-stamineus"
-  ],
-  [
-   "juniperus communis",
-   "serbian-juniper"
-  ],
-  [
-   "betula pendula",
-   "betula-pendula-bark"
-  ],
-  [
-   "agrimonia eupatoria",
-   "agrimonia-eupatoria-herb"
-  ],
-  [
-   "syzygium aromaticum",
-   "clove"
-  ],
-  [
-   "curcuma longa",
-   "curcumin"
-  ],
-  [
-   "sideritis scardica",
-   "sideritis"
-  ],
-  [
-   "ribes nigrum",
-   "ribes-nigrum"
-  ],
-  [
-   "tilia cordata",
-   "tilia-cordata-herb"
-  ],
-  [
-   "aloe barbadensis",
-   "aloe-vera"
-  ],
-  [
-   "vitis vinifera",
-   "vitis-vinifera-var-tinctoria"
-  ],
-  [
-   "foeniculum vulgare",
-   "foeniculum-vulgare-subsp-vulgare-var-vulgare"
-  ],
-  [
-   "rosmarinus officinalis",
-   "moroccan-rosemary"
-  ],
-  [
-   "origanum dictamnus",
-   "origanum-dictamnus"
-  ],
-  [
-   "vaccinium myrtillus",
-   "vaccinium-myrtillus-l"
-  ],
-  [
-   "fraxinus excelsior",
-   "fraxinus-excelsior-herb"
-  ],
-  [
-   "thymus vulgaris",
-   "thyme"
-  ],
-  [
-   "pimpinella anisum",
-   "anise-green"
-  ],
-  [
-   "eleutherococcus senticosus",
-   "korean-acanthopanax"
-  ],
-  [
-   "lavandula angustifolia",
-   "lavender"
-  ],
-  [
-   "rhodiola rosea",
-   "rhodiola"
-  ],
-  [
-   "sambucus nigra",
-   "elder-bark"
-  ],
-  [
-   "ilex paraguariensis",
-   "yerba-mate"
-  ],
-  [
-   "hieracium pilosella",
-   "hieracium-pilosella"
-  ],
-  [
-   "eschscholzia californica",
-   "eschscholzia-californica-herb"
-  ],
-  [
-   "centaurium erythraea",
-   "centaury-european"
-  ],
-  [
-   "rubus idaeus",
-   "raspberry-ketone"
-  ],
-  [
-   "humulus lupulus",
-   "hops"
+  "ema_urls": [
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/community-herbal-monograph-cinnamomum-verum-js-presl-cortex_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/community-herbal-monograph-cinnamomum-verum-js-presl-corticis-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-achillea-millefolium-l-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-agrimonia-eupatoria-l-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-althaea-officinalis-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-artemisia-absinthium-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-avena-sativa-l-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-avena-sativa-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-barbados-aloes-aloe-barbadensis-and-cape-aloes-aloe-capensis_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-camellia-sinensis-l-kuntze-non-fermentatum-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-centaurium-erythraea-rafn-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-chamaemelum-nobile-l-all-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cichorium-intybus-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cimicifuga-racemosa-l-nutt-rhizome-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-crataegus-spp-folium-cum-flore_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cucurbita-pepo-l-semen_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-curcuma-longa-l-rhizoma_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-curcuma-xanthorrhiza-roxb-rhizoma_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-cynara-scolymus-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-echinacea-pallida-nutt-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-echinacea-purpurea-l-moench-herba-recens_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-echinaceae-angustifolia-dc-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-eleutherococcus-senticosus-rupr-et-maxim-maxim-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-eschscholzia-californica-cham-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-filipendula-ulmaria-l-maxim-spiraea-ulmaria-l-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-foeniculum-vulgare-miller-subsp-vulgare-var-vulgare-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-foeniculum-vulgare-miller-subsp-vulgare-var-vulgare-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-frangula-bark-frangulae-cortex_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-fraxinus-excelsior-l-and-fraxinus-angustifolia-vahl-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-glycyrrhiza-glabra-l-and-or-glycyrrhiza-inflata-bat-and-or-glycyrrhiza-uralensis-fisch-radix-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-hamamelis-virginiana-l-cortex_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-hieracium-pilosella-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-humulus-lupulus-l-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-hypericum-perforatum-l-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ilex-paraguariensis-st-hil-folium-first-time_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ispaghula-husk-plantago-ovate-tegumentum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-juniperus-communis-l-pseudo-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-lavandula-angustifolia-mill-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-levisticum-officinale-koch-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-matricaria-recutita-l-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-melaleuca-alternifolia-maiden-and-betch-cheel-m-linariifolia-smith-m-dissitiflora-f-mueller-and-or-other-species-melaleuca-aetheroleum-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-melissa-officinalis-l-leaf_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-mentha-x-piperita-l-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-olea-europaea-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ononis-spinosa-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-origanum-dictamnus-l-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-orthosiphon-stamineus-benth-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-paullinia-cupana-kunth-ex-hbk-var-sorbilis-mart-ducke-semen-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-pelargonium-sidoides-dc-and-or-pelargonium-reniforme-curt-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-pimpinella-anisum-l-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-pimpinella-anisum-l-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-plantaginis-lanceolatae-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-primula-veris-l-primula-elatior-l-hill-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-psyllium-seed-plantago-afra-et-plantago-indica-semen_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rhodiola-rosea-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ribes-nigrum-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rosa-centifolia-l-rosa-gallica-l-rosa-damascena-mill-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rosmarinus-officinalis-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-rubus-idaeus-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-ruscus-aculeatus-l-rhizome-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-senna-leaf-sennae-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-senna-pods-alexandrian-sennae-fructus-acutifoliae-and-senna-pods-tinnevelly-sennae-fructus-angustifoliae_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-solanum-dulcamara-l-stipites_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-solidago-virgaurea-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-syzygium-aromaticum-l-merill-et-l-m-perry-floris-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-tanacetum-parthenium-l-schulz-bip-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-loefl-ex-l-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-tilia-cordata-miller-tilia-platyphyllos-scop-tilia-x-vulgaris-heyne-or-their-mixtures-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-trigonella-foenumgraecum-l-semen_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-urtica-dioica-l-and-urtica-urens-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-urtica-dioica-l-urtica-urens-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-valeriana-officinalis-l-radix-and-humulus-lupulus-l-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-verbascum-thapsus-l-v-densiflorum-bertol-v-thapsiforme-schrad-and-v-phlomoides-l-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-community-herbal-monograph-zingiberis-rhizoma_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-carum-carvi-l-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-cimicifuga-racemosa-l-nutt-rhizome-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-fragaria-vesca-l-fragaria-moschata-weston-fragaria-viridis-weston-and-fragaria-x-ananassa-weston-duchesne-ex-rozier-folium-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-glycine-max-l-merr-lecithin_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-glycine-max-l-merr-oleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-mentha-x-piperita-l-folium-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-origanum-majorana-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-pelargonium-sidoides-dc-and-or-pelargonium-reniforme-curt-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-polygonum-aviculare-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-prunus-africana-hook-f-kalkm-cortex_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-rhamnus-frangula-l-cortex-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-ribes-nigrum-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-ruscus-aculeatus-l-rhizoma-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-senna-alexandrina-mill-cassia-senna-l-cassia-angustifolia-vahl-folium-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-sideritis-scardica-griseb-sideritis-clandestina-bory-chaub-hayek-sideritis-raeseri-boiss-heldr-sideritis-syriaca-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-silybum-marianum-l-gaertn-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/draft-european-union-herbal-monograph-valeriana-officinalis-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/european-union-herbal-monograph-epilobium-angustifolium-l-and-or-epilobium-parviflorum-schreb-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-arctium-lappa-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-arnica-montana-l-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-avena-sativa-l-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-avena-sativa-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-capsella-bursa-pastoris-l-medikus-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-cichorium-intybus-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-cola-nitida-vent-schott-et-endl-and-its-varieties-and-cola-acuminata-p-beauv-schott-et-endl-semen_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-commiphora-molmol-engler-gummi-resina_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-echinacea-angustifolia-dc-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-eleutherococcus-senticosus-rupr-et-maxim-maxim-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-eucalyptus-globulus-labill-eucalyptus-polybractea-rt-baker-or-eucalyptus-smithii-rt-baker-aetheroleum-superseded_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-filipendula-ulmaria-l-maxim-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-fraxinus-excelsior-l-or-fraxinus-angustifolia-vahl-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-grindelia-robusta-nutt-grindelia-squarrosa-pursh-dunal-grindelia-humilis-hook-et-arn-grindelia-camporum-greene-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-hamamelis-virginiana-l-folium-cortex-aut-ramunculus-destillatum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-hamamelis-virginiana-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-humulus-lupulus-l-flos-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-juglans-regia-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-juniperus-communis-l-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-lavandula-angustifolia-miller-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-lavandula-angustifolia-p-mill-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-leonurus-cardiaca-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-linum-usitatissimum-l-semen_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-ononis-spinosa-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-phaseolus-vulgaris-l-fructus-sine-semine_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-pimpinella-anisum-l-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-plantago-ovata-forssk-semen_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-plantago-ovata-forssk-seminis-tegumentum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-quercus-robur-l-quercus-petraea-matt-liebl-quercus-pubescens-willd-cortex_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-solidago-virgaurea-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-syzygium-aromaticum-l-merill-et-l-m-perry-floris-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-taraxacum-officinale-weber-ex-wigg-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-l-herba-and-primula-veris-l-and-primula-elatior-l-hill-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-thymus-vulgaris-l-and-thymus-zygis-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-thymus-vulgaris-l-thymus-zygis-loefl-ex-l-aetheroleum-superseded_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-tilia-cordata-miller-tilia-platyphyllos-scop-tilia-x-vulgaris-heyne-or-their-mixtures-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-viola-tricolor-l_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-agrimonia-eupatoria-l-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-aloe-barbadensis-mill-and-aloe-various-species-mainly-aloe-ferox-mill-and-its-hybrids-folii-succus-siccatus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-betula-pendula-roth-betula-pubescens-ehrh-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-carum-carvi-l-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-cetraria-islandica-l-acharius-sl-thallus-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-crataegus-spp-folium-cum-flore_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-curcuma-longa-l-rhizoma-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-cynara-cardunculus-l-syn-cynara-scolymus-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-epilobium-angustifolium-l-andor-epilobium-parviflorum-schreb-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-eschscholzia-californica-cham-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-glycine-max-l-merr-oleum-raffinatum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-harpagophytum-procumbens-dc-andor-harpagophytum-zeyheri-decne-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-malva-sylvestris-l-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-matricaria-recutita-l-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-melilotus-officinalis-l-lam-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-oenothera-biennis-l-oenothera-lamarckiana-l-oleum-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-olea-europaea-l-folium-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-onechinacea-purpurea-l-moench-radix-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-origanum-majorana-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-peumus-boldus-molina-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-ribes-nigrum-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-salix-various-species-including-s-purpurea-l-s-daphnoides-vill-s-fragilis-l-cortex_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-sambucus-nigra-l-flos-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-sideritis-scardica-griseb-sideritis-clandestina-bory-chaub-hayek-sideritis-raeseri-boiss-heldr-sideritis-syriaca-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-sisymbrium-officinale-l-scop-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-symphytum-officinale-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-vaccinium-myrtillus-l-fructus-recens_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-valeriana-officinalis-l-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-valeriana-officinalis-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-vitex-agnus-castus-l-fructus-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-vitis-vinifera-l-folium-revision-1_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-agropyron-repens-l-p-beauv-rhizoma_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-althaea-officinalis-l-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-cassia-senna-l-fructus-and-cassia-angustifolia-vahl-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-cimicifuga-racemosa-l-nutt-rhizome-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-echinacea-pallida-nutt-nutt-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-echinacea-purpurea-l-moench-radix-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-equisetum-arvense-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-foeniculum-vulgare-miller-subsp-vulgare-var-vulgare-fructus_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-gentiana-lutea-l-radix-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-glycyrrhiza-glabra-l-or-glycyrrhiza-inflata-bat-or-glycyrrhiza-uralensis-fisch-radix-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-hypericum-perforatum-l-herba-well-established-medicinal-use_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-melilotus-officinalis-l-lam-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-melissa-officinalis-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-olea-europaea-l-folium-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-pelargonium-sidoides-dc-and-or-pelargonium-reniforme-curt-radix-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-plantago-ovata-forssk-semen_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-primula-veris-l-and-primula-elatior-l-hill-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-rheum-palmatum-l-and-rheum-officinale-baillon-radix_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-rosmarinus-officinalis-l-folium_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-salix-various-species-including-s-purpurea-l-s-daphnoides-vill-s-fragilis-l-cortex_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-sambucus-nigra-l-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-urtica-dioica-l-urtica-urens-l-herba_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-urtica-dioica-l-urtica-urens-l-their-hybrids-or-their-mixtures-radix-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-vitex-agnus-castus-l-fructus-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-community-herbal-monograph-vitis-vinifera-l-folium-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-european-union-herbal-monograph-artemisia-absinthium-l-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-european-union-herbal-monograph-pelargonium-sidoides-dc-andor-pelargonium-reniforme-curt-radix-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-achillea-millefolium-l-herba-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-humulus-lupulus-l-flos-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-rhamnus-frangula-l-cortex-first-version_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-valeriana-officinalis-l-radix-valerianae-aetheroleum_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-community-herbal-monograph-verbascum-thapsus-l-v-densiflorum-bertol-and-v-phlomoides-l-flos_en.pdf",
+    "https://www.ema.europa.eu/en/documents/herbal-monograph/superseded-final-european-union-herbal-monograph-pelargonium-sidoides-dc-or-pelargonium-reniforme-curt-radix-revision-1_en.pdf"
+  ],
+  "matched": [
+    ["carum carvi", "carum-carvi-herb"],
+    ["cetraria islandica", "iceland-moss"],
+    ["urtica dioica", "swedish-nettle-herb"],
+    ["malva sylvestris", "mallow"],
+    ["melilotus officinalis", "melilot"],
+    ["cucurbita pepo", "pumpkin-seed"],
+    ["valeriana officinalis", "czech-valerian"],
+    ["melissa officinalis", "melissa-romana"],
+    ["ononis spinosa", "restharrow"],
+    ["matricaria recutita", "matricaria-recutita"],
+    ["symphytum officinale", "comfrey"],
+    ["harpagophytum procumbens", "devils-claw"],
+    ["curcuma xanthorrhiza", "java-turmeric"],
+    ["verbascum thapsus", "mullein-flower"],
+    ["solanum dulcamara", "bittersweet-nightshade"],
+    ["solidago virgaurea", "goldenrod-solidago"],
+    ["glycyrrhiza glabra", "unani-mulethi-root"],
+    ["peumus boldus", "boldo-leaf"],
+    ["melaleuca alternifolia", "tea-tree"],
+    ["primula veris", "cowslip"],
+    ["ruscus aculeatus", "butchers-broom"],
+    ["levisticum officinale", "lovage-root"],
+    ["vitex agnus", "vitex"],
+    ["camellia sinensis", "camellia-sinensis-extract"],
+    ["cynara cardunculus", "artichoke-liver"],
+    ["tanacetum parthenium", "tanacetum-parthenium-l-sch-bip"],
+    ["echinacea purpurea", "echinacea"],
+    ["achillea millefolium", "achillea-millefolium-var"],
+    ["chamaemelum nobile", "asteraceae-roman-chamomile"],
+    ["epilobium angustifolium", "epilobium-angustifolium"],
+    ["oenothera biennis", "evening-primrose"],
+    ["glycine max", "phosphatidylserine-noot"],
+    ["echinacea pallida", "echinacea-pallida"],
+    ["origanum majorana", "marjoram"],
+    ["pelargonium sidoides", "umckaloabo"],
+    ["filipendula ulmaria", "spiraea-ulmaria-root"],
+    ["paullinia cupana", "guarana-seed"],
+    ["artemisia absinthium", "wormwood"],
+    ["cichorium intybus", "chicory"],
+    ["mentha x", "chocolate-mint"],
+    ["olea europaea", "zatoun"],
+    ["althaea officinalis", "marshmallow-root"],
+    ["hypericum perforatum", "st-johns-wort-oil"],
+    ["hamamelis virginiana", "witch-hazel"],
+    ["avena sativa", "milk-oat"],
+    ["cinnamomum verum", "cinnamon"],
+    ["orthosiphon stamineus", "orthosiphon-stamineus"],
+    ["juniperus communis", "serbian-juniper"],
+    ["betula pendula", "betula-pendula-bark"],
+    ["agrimonia eupatoria", "agrimonia-eupatoria-herb"],
+    ["syzygium aromaticum", "clove"],
+    ["curcuma longa", "curcumin"],
+    ["sideritis scardica", "sideritis"],
+    ["ribes nigrum", "ribes-nigrum"],
+    ["tilia cordata", "tilia-cordata-herb"],
+    ["aloe barbadensis", "aloe-vera"],
+    ["vitis vinifera", "vitis-vinifera-var-tinctoria"],
+    ["foeniculum vulgare", "foeniculum-vulgare-subsp-vulgare-var-vulgare"],
+    ["rosmarinus officinalis", "moroccan-rosemary"],
+    ["origanum dictamnus", "origanum-dictamnus"],
+    ["vaccinium myrtillus", "vaccinium-myrtillus-l"],
+    ["fraxinus excelsior", "fraxinus-excelsior-herb"],
+    ["thymus vulgaris", "thyme"],
+    ["pimpinella anisum", "anise-green"],
+    ["eleutherococcus senticosus", "korean-acanthopanax"],
+    ["lavandula angustifolia", "lavender"],
+    ["rhodiola rosea", "rhodiola"],
+    ["sambucus nigra", "elder-bark"],
+    ["ilex paraguariensis", "yerba-mate"],
+    ["hieracium pilosella", "hieracium-pilosella"],
+    ["eschscholzia californica", "eschscholzia-californica-herb"],
+    ["centaurium erythraea", "centaury-european"],
+    ["rubus idaeus", "raspberry-ketone"],
+    ["humulus lupulus", "hops"]
   ]
- ]
 }

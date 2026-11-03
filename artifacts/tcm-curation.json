@@ -1,0 +1,563 @@
+{
+ "generated_at": "2026-11-03T17:39:11.024Z",
+ "rule": "LNHPD + MeSH + PubChem",
+ "results": [
+  {
+   "name": "Ethyl alcohol",
+   "products": 3811,
+   "lnhpd": {
+    "products": 3811,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": true,
+    "cid": 702
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor"
+   ]
+  },
+  {
+   "name": "Bifidobacterium longum subsp. longum",
+   "products": 1455,
+   "lnhpd": {
+    "products": 1455,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Bifidobacterium animalis subsp. lactis",
+   "products": 1393,
+   "lnhpd": {
+    "products": 1393,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Bifidobacterium bifidum",
+   "products": 1364,
+   "lnhpd": {
+    "products": 1364,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": true,
+    "label": "Bifidobacterium bifidum",
+    "id": "D000069985"
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Whey protein isolate",
+   "products": 1268,
+   "lnhpd": {
+    "products": 1268,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Lactiplantibacillus plantarum",
+   "products": 1243,
+   "lnhpd": {
+    "products": 1243,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": true,
+    "label": "Lactiplantibacillus plantarum",
+    "id": "D048191"
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Ligusticum sinense cv. chuanxiong",
+   "products": 1139,
+   "lnhpd": {
+    "products": 1139,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Bifidobacterium breve",
+   "products": 1108,
+   "lnhpd": {
+    "products": 1108,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": true,
+    "label": "Bifidobacterium breve",
+    "id": "D000069984"
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Stem bromelain",
+   "products": 1014,
+   "lnhpd": {
+    "products": 1014,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Titanium dioxide",
+   "products": 869,
+   "lnhpd": {
+    "products": 869,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": true,
+    "cid": 26042
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor"
+   ]
+  },
+  {
+   "name": "Lacticaseibacillus paracasei",
+   "products": 847,
+   "lnhpd": {
+    "products": 847,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": true,
+    "label": "Lacticaseibacillus paracasei",
+    "id": "D000069980"
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Lacticaseibacillus rhamnosus",
+   "products": 818,
+   "lnhpd": {
+    "products": 818,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": true,
+    "label": "Lacticaseibacillus rhamnosus",
+    "id": "D052201"
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Brassica oleracea var. italica",
+   "products": 807,
+   "lnhpd": {
+    "products": 807,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Triacylglycerol lipase",
+   "products": 791,
+   "lnhpd": {
+    "products": 791,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": true,
+    "cid": 178882616
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor"
+   ]
+  },
+  {
+   "name": "Bifidobacterium longum subsp. infantis",
+   "products": 775,
+   "lnhpd": {
+    "products": 775,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": true,
+    "label": "Bifidobacterium longum subspecies infantis",
+    "id": "D000070236"
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Sambucus nigra subsp. nigra",
+   "products": 760,
+   "lnhpd": {
+    "products": 760,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Pea protein",
+   "products": 731,
+   "lnhpd": {
+    "products": 731,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": true,
+    "label": "Pea Proteins",
+    "id": "D000078724"
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Garcinia gummi-gutta",
+   "products": 593,
+   "lnhpd": {
+    "products": 593,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Brassica oleracea var. viridis",
+   "products": 570,
+   "lnhpd": {
+    "products": 570,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Alisma plantago-aquatica subsp. orientale",
+   "products": 538,
+   "lnhpd": {
+    "products": 538,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Mentha canadensis",
+   "products": 513,
+   "lnhpd": {
+    "products": 513,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Fungal protease",
+   "products": 508,
+   "lnhpd": {
+    "products": 508,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Seal oil",
+   "products": 507,
+   "lnhpd": {
+    "products": 507,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Ginkgo biloba L.",
+   "products": 501,
+   "lnhpd": {
+    "products": 501,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  },
+  {
+   "name": "Cocos nucifera",
+   "products": 462,
+   "lnhpd": {
+    "products": 462,
+    "sampled": 3,
+    "tcmProducts": 0,
+    "urls": []
+   },
+   "mesh": {
+    "found": false
+   },
+   "pubchem": {
+    "found": false
+   },
+   "verdict": "reject",
+   "reasons": [
+    "no TCM-theory product among samples",
+    "no MeSH descriptor",
+    "no PubChem compound"
+   ]
+  }
+ ]
+}

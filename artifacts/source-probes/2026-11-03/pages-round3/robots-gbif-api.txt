@@ -1,0 +1,18 @@
+# robots.txt for api.gbif.org
+#
+
+User-agent: *
+# Block unsigned images
+Disallow: /v1/image/unsafe
+
+# Allow message/social previews
+User-agent: Discordbot
+User-agent: LinkedInBot
+User-agent: Pinterestbot
+User-agent: Slackbot
+User-agent: Snapchat
+User-agent: TelegramBot
+User-agent: Twitterbot
+User-agent: WhatsApp
+User-agent: facebookexternalhit
+Disallow: 

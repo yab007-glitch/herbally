@@ -1,0 +1,7862 @@
+{
+ "generated_at": "2026-11-03T20:22:53.381Z",
+ "scanned_pages": 50,
+ "scanned_products": 15414350,
+ "tcm_products": 64500,
+ "herbs": {
+  "terminalia chebula": {
+   "name": "Terminalia chebula",
+   "products": 1200,
+   "sample_ids": [
+    4683861,
+    20028840,
+    20028840,
+    20374263,
+    21041904,
+    21861918,
+    21861918,
+    21861918
+   ]
+  },
+  "phyllanthus emblica": {
+   "name": "Phyllanthus emblica",
+   "products": 2850,
+   "sample_ids": [
+    4683861,
+    5859282,
+    5901636,
+    5987358,
+    5999058,
+    6390774,
+    6390774,
+    6390813
+   ]
+  },
+  "terminalia bellirica": {
+   "name": "Terminalia bellirica",
+   "products": 1000,
+   "sample_ids": [
+    4683861,
+    20028840,
+    20028840,
+    21861918,
+    21861918,
+    21861918,
+    22084920,
+    22084920
+   ]
+  },
+  "phyllanthus niruri": {
+   "name": "Phyllanthus niruri",
+   "products": 900,
+   "sample_ids": [
+    4683861,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168
+   ]
+  },
+  "glycyrrhiza glabra": {
+   "name": "Glycyrrhiza glabra",
+   "products": 3800,
+   "sample_ids": [
+    4683861,
+    8069607,
+    8069763,
+    8053890,
+    8053929,
+    8054202,
+    8069334,
+    8069373
+   ]
+  },
+  "alpinia calcarata": {
+   "name": "Alpinia calcarata",
+   "products": 50,
+   "sample_ids": [
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939
+   ]
+  },
+  "zingiber officinale": {
+   "name": "Zingiber officinale",
+   "products": 4100,
+   "sample_ids": [
+    4683939,
+    7074522,
+    7408947,
+    7408947,
+    8069607,
+    8053890,
+    8053929,
+    8054202
+   ]
+  },
+  "ricinus communis": {
+   "name": "Ricinus communis",
+   "products": 50,
+   "sample_ids": [
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939
+   ]
+  },
+  "gmelina arborea": {
+   "name": "Gmelina arborea",
+   "products": 50,
+   "sample_ids": [
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939
+   ]
+  },
+  "saraca indica": {
+   "name": "Saraca indica",
+   "products": 300,
+   "sample_ids": [
+    4683939,
+    25716054,
+    25716054,
+    25716054,
+    25716054,
+    25716054,
+    4683939,
+    25716054
+   ]
+  },
+  "moringa oleifera": {
+   "name": "Moringa oleifera",
+   "products": 750,
+   "sample_ids": [
+    4683939,
+    21280857,
+    21280857,
+    21732087,
+    21732087,
+    22080786,
+    22702173,
+    23800491
+   ]
+  },
+  "withania somnifera": {
+   "name": "Withania somnifera",
+   "products": 2000,
+   "sample_ids": [
+    4683939,
+    5901636,
+    5999058,
+    6390813,
+    6761352,
+    7061106,
+    7061106,
+    7122141
+   ]
+  },
+  "bombax malabaricum": {
+   "name": "Bombax malabaricum",
+   "products": 50,
+   "sample_ids": [
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939
+   ]
+  },
+  "boswellia serrata": {
+   "name": "Boswellia serrata",
+   "products": 900,
+   "sample_ids": [
+    4683939,
+    5987358,
+    21741252,
+    21741252,
+    21741252,
+    21741252,
+    21741252,
+    21741252
+   ]
+  },
+  "commiphora mukul": {
+   "name": "Commiphora mukul",
+   "products": 50,
+   "sample_ids": [
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939,
+    4683939
+   ]
+  },
+  "pueraria lobata": {
+   "name": "Pueraria lobata",
+   "products": 150,
+   "sample_ids": [
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506
+   ]
+  },
+  "platycodon grandiflorus": {
+   "name": "Platycodon grandiflorus",
+   "products": 1450,
+   "sample_ids": [
+    4783506,
+    4783818,
+    4781907,
+    4796025,
+    4780464,
+    4783506,
+    4783506,
+    7409025
+   ]
+  },
+  "angelica dahurica": {
+   "name": "Angelica dahurica",
+   "products": 1350,
+   "sample_ids": [
+    4783506,
+    4783779,
+    4780464,
+    4783506,
+    4783506,
+    4798365,
+    4817241,
+    5978076
+   ]
+  },
+  "saposhnikovia divaricata": {
+   "name": "Saposhnikovia divaricata",
+   "products": 950,
+   "sample_ids": [
+    4783506,
+    4783506,
+    4783506,
+    5978076,
+    6945237,
+    8053929,
+    8083491,
+    20400627
+   ]
+  },
+  "phragmites communis": {
+   "name": "Phragmites communis",
+   "products": 150,
+   "sample_ids": [
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506,
+    4783506
+   ]
+  },
+  "bupleurum chinense": {
+   "name": "Bupleurum chinense",
+   "products": 1800,
+   "sample_ids": [
+    4783506,
+    4783506,
+    4783506,
+    4798365,
+    5857683,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "prunus armeniaca": {
+   "name": "Prunus armeniaca",
+   "products": 600,
+   "sample_ids": [
+    4783506,
+    4783506,
+    4783506,
+    8083296,
+    20385612,
+    20403786,
+    22723038,
+    22940970
+   ]
+  },
+  "schizonepeta tenuifolia": {
+   "name": "Schizonepeta tenuifolia",
+   "products": 350,
+   "sample_ids": [
+    4783506,
+    4783818,
+    4780464,
+    4783506,
+    4783506,
+    4798365,
+    6271590,
+    4783506
+   ]
+  },
+  "corydalis bungeana": {
+   "name": "Corydalis bungeana",
+   "products": 200,
+   "sample_ids": [
+    4783506,
+    4783506,
+    4783506,
+    4798365,
+    4783506,
+    4783506,
+    4783506,
+    4798365
+   ]
+  },
+  "perilla frutescens": {
+   "name": "Perilla frutescens",
+   "products": 1050,
+   "sample_ids": [
+    4783506,
+    4783506,
+    4783506,
+    20398443,
+    20332650,
+    20287020,
+    21018816,
+    20961681
+   ]
+  },
+  "mentha haplocalyx": {
+   "name": "Mentha haplocalyx",
+   "products": 350,
+   "sample_ids": [
+    4783506,
+    4783584,
+    4783818,
+    4780464,
+    4783506,
+    4783506,
+    4798365,
+    4783506
+   ]
+  },
+  "boswellia carteri": {
+   "name": "Boswellia carteri",
+   "products": 50,
+   "sample_ids": [
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584
+   ]
+  },
+  "commiphora myrrha": {
+   "name": "Commiphora myrrha",
+   "products": 350,
+   "sample_ids": [
+    4783584,
+    20317791,
+    21037809,
+    23377965,
+    28729311,
+    29775876,
+    29775876,
+    4783584
+   ]
+  },
+  "cinnamomum cassia": {
+   "name": "Cinnamomum cassia",
+   "products": 50,
+   "sample_ids": [
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584
+   ]
+  },
+  "eucalyptus globulus": {
+   "name": "Eucalyptus globulus",
+   "products": 100,
+   "sample_ids": [
+    4783584,
+    22120332,
+    4783584,
+    22120332,
+    4783584,
+    22120332,
+    4783584,
+    22120332
+   ]
+  },
+  "daemonorops draco": {
+   "name": "Daemonorops draco",
+   "products": 100,
+   "sample_ids": [
+    4783584,
+    22558224,
+    4783584,
+    22558224,
+    4783584,
+    22558224,
+    4783584,
+    22558224
+   ]
+  },
+  "2-methyl-1,3,5-trinitro-4-tertbutyl-benzene": {
+   "name": "2-Methyl-1,3,5-trinitro-4-tertbutyl-benzene",
+   "products": 50,
+   "sample_ids": [
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584
+   ]
+  },
+  "ocimum gratissimum": {
+   "name": "Ocimum gratissimum",
+   "products": 50,
+   "sample_ids": [
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584,
+    4783584
+   ]
+  },
+  "corydalis yanhusuo": {
+   "name": "Corydalis yanhusuo",
+   "products": 400,
+   "sample_ids": [
+    4783779,
+    20885553,
+    20885553,
+    20885553,
+    21025836,
+    21025836,
+    29775876,
+    29775876
+   ]
+  },
+  "glycine max": {
+   "name": "Glycine max",
+   "products": 100,
+   "sample_ids": [
+    4783818,
+    22524996,
+    4783818,
+    22524996,
+    4783818,
+    22524996,
+    4783818,
+    22524996
+   ]
+  },
+  "lonicera japonica": {
+   "name": "Lonicera japonica",
+   "products": 800,
+   "sample_ids": [
+    4783818,
+    4798365,
+    20375706,
+    20326644,
+    20283276,
+    20283276,
+    21038862,
+    22718475
+   ]
+  },
+  "lophatherum gracile": {
+   "name": "Lophatherum gracile",
+   "products": 400,
+   "sample_ids": [
+    4783818,
+    4783818,
+    20283276,
+    20283276,
+    20380737,
+    21048105,
+    21048105,
+    24877827
+   ]
+  },
+  "glycyrrhiza uralensis": {
+   "name": "Glycyrrhiza uralensis",
+   "products": 1650,
+   "sample_ids": [
+    4783818,
+    4796025,
+    4780464,
+    4798365,
+    5857683,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "arctium lappa": {
+   "name": "Arctium lappa",
+   "products": 700,
+   "sample_ids": [
+    4783818,
+    6271512,
+    8869770,
+    20325942,
+    20288073,
+    20283276,
+    20283276,
+    21031881
+   ]
+  },
+  "forsythia suspensa": {
+   "name": "Forsythia suspensa",
+   "products": 900,
+   "sample_ids": [
+    4783818,
+    4780464,
+    4798365,
+    8053695,
+    8083296,
+    20376018,
+    20403708,
+    20403786
+   ]
+  },
+  "chinemys reevesii": {
+   "name": "Chinemys reevesii",
+   "products": 100,
+   "sample_ids": [
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896
+   ]
+  },
+  "cynanchum atratum": {
+   "name": "Cynanchum atratum",
+   "products": 50,
+   "sample_ids": [
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896
+   ]
+  },
+  "lycium chinense": {
+   "name": "Lycium chinense",
+   "products": 300,
+   "sample_ids": [
+    4783896,
+    4783896,
+    8124402,
+    20972172,
+    20972172,
+    21007740,
+    4783896,
+    4783896
+   ]
+  },
+  "dendrobium nobile": {
+   "name": "Dendrobium nobile",
+   "products": 200,
+   "sample_ids": [
+    4783896,
+    23552490,
+    24399453,
+    24399453,
+    4783896,
+    23552490,
+    24399453,
+    24399453
+   ]
+  },
+  "chrysanthemum morifolium": {
+   "name": "Chrysanthemum morifolium",
+   "products": 100,
+   "sample_ids": [
+    4783896,
+    4780464,
+    4783896,
+    4780464,
+    4783896,
+    4780464,
+    4783896,
+    4780464
+   ]
+  },
+  "anemarrhena asphodeloidis": {
+   "name": "Anemarrhena asphodeloidis",
+   "products": 50,
+   "sample_ids": [
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896
+   ]
+  },
+  "eclipta prostrata": {
+   "name": "Eclipta prostrata",
+   "products": 300,
+   "sample_ids": [
+    4783896,
+    5978076,
+    7056192,
+    7056192,
+    20317752,
+    21037848,
+    4783896,
+    5978076
+   ]
+  },
+  "scutellaria baicalensis": {
+   "name": "Scutellaria Baicalensis",
+   "products": 1800,
+   "sample_ids": [
+    4783896,
+    4781907,
+    4780464,
+    4798365,
+    8069607,
+    8069412,
+    8082555,
+    20398599
+   ]
+  },
+  "paeonia lactiflora": {
+   "name": "Paeonia lactiflora",
+   "products": 2750,
+   "sample_ids": [
+    4783896,
+    5978076,
+    7074405,
+    7074522,
+    7074678,
+    8053812,
+    8053929,
+    8069529
+   ]
+  },
+  "ligustrum lucidum": {
+   "name": "Ligustrum lucidum",
+   "products": 550,
+   "sample_ids": [
+    4783896,
+    8750430,
+    8750430,
+    8750625,
+    8750625,
+    20325981,
+    20972172,
+    20972172
+   ]
+  },
+  "hyriopsis cumingii": {
+   "name": "Hyriopsis cumingii",
+   "products": 50,
+   "sample_ids": [
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896
+   ]
+  },
+  "spatholobus suberectus": {
+   "name": "Spatholobus suberectus",
+   "products": 300,
+   "sample_ids": [
+    4783896,
+    20375511,
+    21039174,
+    21457332,
+    26649597,
+    26655603,
+    4783896,
+    20375511
+   ]
+  },
+  "morus alba": {
+   "name": "Morus alba",
+   "products": 1150,
+   "sample_ids": [
+    4783896,
+    7532694,
+    7532889,
+    8083296,
+    20403786,
+    21028917,
+    21028917,
+    21028995
+   ]
+  },
+  "ziziphus spinosa": {
+   "name": "Ziziphus spinosa",
+   "products": 50,
+   "sample_ids": [
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896
+   ]
+  },
+  "paeonia veitchii": {
+   "name": "Paeonia veitchii",
+   "products": 100,
+   "sample_ids": [
+    4783896,
+    4798365,
+    4783896,
+    4798365,
+    4783896,
+    4798365,
+    4783896,
+    4798365
+   ]
+  },
+  "ophiopogon japonicus": {
+   "name": "Ophiopogon japonicus",
+   "products": 1000,
+   "sample_ids": [
+    4783896,
+    7409025,
+    7409025,
+    8069646,
+    8124402,
+    20399808,
+    20317518,
+    20401524
+   ]
+  },
+  "polygonum multiflorum": {
+   "name": "Polygonum multiflorum",
+   "products": 50,
+   "sample_ids": [
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896
+   ]
+  },
+  "angelica sinensis": {
+   "name": "Angelica sinensis",
+   "products": 4100,
+   "sample_ids": [
+    4783896,
+    4798365,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    7074405,
+    7074522
+   ]
+  },
+  "cuscuta chinensis": {
+   "name": "Cuscuta chinensis",
+   "products": 1100,
+   "sample_ids": [
+    4783896,
+    7408986,
+    7408986,
+    8054436,
+    8054631,
+    8750430,
+    8750430,
+    8750625
+   ]
+  },
+  "rubus chingii": {
+   "name": "Rubus chingii",
+   "products": 350,
+   "sample_ids": [
+    4783896,
+    7408986,
+    7408986,
+    20335107,
+    21044439,
+    21044439,
+    28668822,
+    4783896
+   ]
+  },
+  "rehmannia glutinosa": {
+   "name": "Rehmannia glutinosa",
+   "products": 2550,
+   "sample_ids": [
+    4783896,
+    7074249,
+    7074405,
+    7074483,
+    7074678,
+    7409025,
+    7409025,
+    7536321
+   ]
+  },
+  "adenophora tetraphylla": {
+   "name": "Adenophora tetraphylla",
+   "products": 50,
+   "sample_ids": [
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896,
+    4783896
+   ]
+  },
+  "sophora flavescens": {
+   "name": "Sophora flavescens",
+   "products": 300,
+   "sample_ids": [
+    4781907,
+    4798365,
+    20384013,
+    20288073,
+    21038706,
+    24357138,
+    4781907,
+    4798365
+   ]
+  },
+  "trichosanthes kirilowii": {
+   "name": "Trichosanthes kirilowii",
+   "products": 950,
+   "sample_ids": [
+    4781907,
+    4798365,
+    20382999,
+    21042684,
+    21042684,
+    21042723,
+    21027786,
+    21027786
+   ]
+  },
+  "gardenia jasminoides": {
+   "name": "Gardenia jasminoides",
+   "products": 950,
+   "sample_ids": [
+    4781907,
+    4780464,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    8069412,
+    8146320
+   ]
+  },
+  "peucedanum praeruptorum": {
+   "name": "Peucedanum praeruptorum",
+   "products": 100,
+   "sample_ids": [
+    4781907,
+    20326215,
+    4781907,
+    20326215,
+    4781907,
+    20326215,
+    4781907,
+    20326215
+   ]
+  },
+  "anemarrhena asphodeloides": {
+   "name": "Anemarrhena asphodeloides",
+   "products": 950,
+   "sample_ids": [
+    4781907,
+    7074483,
+    8069646,
+    8069451,
+    8124402,
+    20332338,
+    20399847,
+    20401524
+   ]
+  },
+  "rheum palmatum": {
+   "name": "Rheum palmatum",
+   "products": 250,
+   "sample_ids": [
+    4781907,
+    4781907,
+    4780464,
+    4780464,
+    4798365,
+    4781907,
+    4781907,
+    4780464
+   ]
+  },
+  "phellodendron amurense": {
+   "name": "Phellodendron amurense",
+   "products": 200,
+   "sample_ids": [
+    4781907,
+    4780464,
+    4798365,
+    7074483,
+    4781907,
+    4780464,
+    4798365,
+    7074483
+   ]
+  },
+  "fritillaria thunbergii": {
+   "name": "Fritillaria thunbergii",
+   "products": 400,
+   "sample_ids": [
+    4781907,
+    20332299,
+    21023613,
+    22959495,
+    24877827,
+    28664493,
+    29771274,
+    29771274
+   ]
+  },
+  "atractylodes macrocephala": {
+   "name": "Atractylodes macrocephala",
+   "products": 3100,
+   "sample_ids": [
+    4796025,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    6945237,
+    6945237,
+    7074522
+   ]
+  },
+  "poria cocos": {
+   "name": "Poria cocos",
+   "products": 450,
+   "sample_ids": [
+    4796025,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    7074249,
+    7074405,
+    7074639
+   ]
+  },
+  "amomum villosum": {
+   "name": "Amomum villosum",
+   "products": 300,
+   "sample_ids": [
+    4796025,
+    7532967,
+    20285265,
+    20286669,
+    21009495,
+    23541765,
+    4796025,
+    7532967
+   ]
+  },
+  "lablab purpureus": {
+   "name": "Lablab purpureus",
+   "products": 250,
+   "sample_ids": [
+    4796025,
+    8164377,
+    20285265,
+    20317245,
+    21009495,
+    4796025,
+    8164377,
+    20285265
+   ]
+  },
+  "nelumbo nucifera": {
+   "name": "Nelumbo nucifera",
+   "products": 600,
+   "sample_ids": [
+    4796025,
+    20374224,
+    21041943,
+    21009495,
+    21038433,
+    22535448,
+    22535565,
+    22537047
+   ]
+  },
+  "dioscorea oppositifolia": {
+   "name": "Dioscorea oppositifolia",
+   "products": 1200,
+   "sample_ids": [
+    4796025,
+    7074249,
+    7074483,
+    8069763,
+    20285265,
+    20399769,
+    20401290,
+    20328438
+   ]
+  },
+  "panax ginseng": {
+   "name": "Panax ginseng",
+   "products": 2700,
+   "sample_ids": [
+    4796025,
+    5901636,
+    5999058,
+    7074639,
+    7122141,
+    7200882,
+    7408947,
+    7408947
+   ]
+  },
+  "coix lacryma-jobi": {
+   "name": "Coix lacryma-jobi",
+   "products": 50,
+   "sample_ids": [
+    4796025,
+    4796025,
+    4796025,
+    4796025,
+    4796025,
+    4796025,
+    4796025,
+    4796025
+   ]
+  },
+  "ledebouriella divaricata": {
+   "name": "Ledebouriella divaricata",
+   "products": 100,
+   "sample_ids": [
+    4780464,
+    4798365,
+    4780464,
+    4798365,
+    4780464,
+    4798365,
+    4780464,
+    4798365
+   ]
+  },
+  "vitex rotundifolia": {
+   "name": "Vitex rotundifolia",
+   "products": 150,
+   "sample_ids": [
+    4780464,
+    20317713,
+    22717851,
+    4780464,
+    20317713,
+    22717851,
+    4780464,
+    20317713
+   ]
+  },
+  "inula britannica": {
+   "name": "Inula britannica",
+   "products": 250,
+   "sample_ids": [
+    4780464,
+    20331714,
+    21026031,
+    21026031,
+    28668549,
+    4780464,
+    20331714,
+    21026031
+   ]
+  },
+  "coptis chinensis": {
+   "name": "Coptis chinensis",
+   "products": 800,
+   "sample_ids": [
+    4780464,
+    4798365,
+    8082360,
+    8082555,
+    20398404,
+    20406906,
+    20286474,
+    20374692
+   ]
+  },
+  "calcium sulfate": {
+   "name": "Calcium sulfate",
+   "products": 50,
+   "sample_ids": [
+    4780464,
+    4780464,
+    4780464,
+    4780464,
+    4780464,
+    4780464,
+    4780464,
+    4780464
+   ]
+  },
+  "ligusticum chuanxiong": {
+   "name": "Ligusticum chuanxiong",
+   "products": 200,
+   "sample_ids": [
+    4780464,
+    4817241,
+    7074405,
+    7074678,
+    4780464,
+    4817241,
+    7074405,
+    7074678
+   ]
+  },
+  "notopterygium incisum": {
+   "name": "Notopterygium incisum",
+   "products": 100,
+   "sample_ids": [
+    4798365,
+    4817241,
+    4798365,
+    4817241,
+    4798365,
+    4817241,
+    4798365,
+    4817241
+   ]
+  },
+  "ephedra sinica": {
+   "name": "Ephedra sinica",
+   "products": 150,
+   "sample_ids": [
+    4798365,
+    4817241,
+    8163402,
+    4798365,
+    4817241,
+    8163402,
+    4798365,
+    4817241
+   ]
+  },
+  "selaginella tamariscina": {
+   "name": "Selaginella tamariscina",
+   "products": 100,
+   "sample_ids": [
+    4817241,
+    8163402,
+    4817241,
+    8163402,
+    4817241,
+    8163402,
+    4817241,
+    8163402
+   ]
+  },
+  "cassia obtusifolia": {
+   "name": "Cassia obtusifolia",
+   "products": 50,
+   "sample_ids": [
+    4817241,
+    4817241,
+    4817241,
+    4817241,
+    4817241,
+    4817241,
+    4817241,
+    4817241
+   ]
+  },
+  "senecio scandens": {
+   "name": "Senecio scandens",
+   "products": 100,
+   "sample_ids": [
+    4817241,
+    8163402,
+    4817241,
+    8163402,
+    4817241,
+    8163402,
+    4817241,
+    8163402
+   ]
+  },
+  "salvia miltiorrhiza": {
+   "name": "Salvia miltiorrhiza",
+   "products": 550,
+   "sample_ids": [
+    4817397,
+    7409025,
+    7409025,
+    20334093,
+    21048144,
+    21048144,
+    23562708,
+    23741211
+   ]
+  },
+  "massa medicata fermentata": {
+   "name": "Massa medicata fermentata",
+   "products": 350,
+   "sample_ids": [
+    4817397,
+    4817397,
+    4817397,
+    4817397,
+    4817397,
+    4817397,
+    28707549,
+    4817397
+   ]
+  },
+  "hordeum vulgare": {
+   "name": "Hordeum vulgare",
+   "products": 500,
+   "sample_ids": [
+    4817397,
+    8053890,
+    20342049,
+    20400588,
+    21037887,
+    22608339,
+    22717812,
+    22946547
+   ]
+  },
+  "crataegus pinnatifida": {
+   "name": "Crataegus pinnatifida",
+   "products": 200,
+   "sample_ids": [
+    4817397,
+    23541765,
+    29780712,
+    29780712,
+    4817397,
+    23541765,
+    29780712,
+    29780712
+   ]
+  },
+  "ilex pubescens": {
+   "name": "Ilex pubescens",
+   "products": 100,
+   "sample_ids": [
+    4883424,
+    22558146,
+    4883424,
+    22558146,
+    4883424,
+    22558146,
+    4883424,
+    22558146
+   ]
+  },
+  "curcuma longa": {
+   "name": "Curcuma longa",
+   "products": 2300,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5717868
+   ]
+  },
+  "eclipta alba": {
+   "name": "Eclipta alba",
+   "products": 350,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168
+   ]
+  },
+  "fumaria indica": {
+   "name": "Fumaria indica",
+   "products": 350,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168
+   ]
+  },
+  "swertia chirata": {
+   "name": "Swertia chirata",
+   "products": 350,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168
+   ]
+  },
+  "andrographis paniculata": {
+   "name": "Andrographis paniculata",
+   "products": 550,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    6271668
+   ]
+  },
+  "silybum marianum": {
+   "name": "Silybum marianum",
+   "products": 450,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    7056192
+   ]
+  },
+  "berberis aristata": {
+   "name": "Berberis aristata",
+   "products": 350,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168
+   ]
+  },
+  "solanum nigrum": {
+   "name": "Solanum nigrum",
+   "products": 400,
+   "sample_ids": [
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    5589168,
+    20376057
+   ]
+  },
+  "iron": {
+   "name": "Iron",
+   "products": 50,
+   "sample_ids": [
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868
+   ]
+  },
+  "magnesium": {
+   "name": "Magnesium",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    22347117,
+    5717868,
+    5859282,
+    5901636,
+    22347117
+   ]
+  },
+  "emblica officinalis": {
+   "name": "Emblica officinalis",
+   "products": 50,
+   "sample_ids": [
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868,
+    5717868
+   ]
+  },
+  "methylsulfonylmethane": {
+   "name": "Methylsulfonylmethane",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5987358,
+    23847174,
+    23847174,
+    5717868,
+    5987358,
+    23847174,
+    23847174
+   ]
+  },
+  "vitamin e": {
+   "name": "Vitamin E",
+   "products": 150,
+   "sample_ids": [
+    5717868,
+    5901636,
+    5999058,
+    5717868,
+    5901636,
+    5999058,
+    5717868,
+    5901636
+   ]
+  },
+  "vitamin d": {
+   "name": "Vitamin D",
+   "products": 300,
+   "sample_ids": [
+    5717868,
+    5901636,
+    5999058,
+    7122141,
+    20211711,
+    20211711,
+    5717868,
+    5901636
+   ]
+  },
+  "vitamin b12": {
+   "name": "Vitamin B12",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    5717868,
+    5859282,
+    5901636,
+    5999058
+   ]
+  },
+  "manganese": {
+   "name": "Manganese",
+   "products": 150,
+   "sample_ids": [
+    5717868,
+    5901636,
+    5999058,
+    5717868,
+    5901636,
+    5999058,
+    5717868,
+    5901636
+   ]
+  },
+  "beta-carotene": {
+   "name": "Beta-carotene",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5901636,
+    5999058,
+    7122141,
+    5717868,
+    5901636,
+    5999058,
+    7122141
+   ]
+  },
+  "riboflavin": {
+   "name": "Riboflavin",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    5717868,
+    5859282,
+    5901636,
+    5999058
+   ]
+  },
+  "selenium": {
+   "name": "Selenium",
+   "products": 250,
+   "sample_ids": [
+    5717868,
+    5901636,
+    5999058,
+    23641410,
+    23641410,
+    5717868,
+    5901636,
+    5999058
+   ]
+  },
+  "folate": {
+   "name": "Folate",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    5717868,
+    5859282,
+    5901636,
+    5999058
+   ]
+  },
+  "biotin": {
+   "name": "Biotin",
+   "products": 150,
+   "sample_ids": [
+    5717868,
+    5901636,
+    5999058,
+    5717868,
+    5901636,
+    5999058,
+    5717868,
+    5901636
+   ]
+  },
+  "vitamin c": {
+   "name": "Vitamin C",
+   "products": 250,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    24871158,
+    5717868,
+    5859282,
+    5901636
+   ]
+  },
+  "niacin": {
+   "name": "Niacin",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    5717868,
+    5859282,
+    5901636,
+    5999058
+   ]
+  },
+  "zinc": {
+   "name": "Zinc",
+   "products": 500,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    7037550,
+    7037550,
+    7122141,
+    22960665
+   ]
+  },
+  "vitamin b6": {
+   "name": "Vitamin B6",
+   "products": 250,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    22347117,
+    5717868,
+    5859282,
+    5901636
+   ]
+  },
+  "thiamine": {
+   "name": "Thiamine",
+   "products": 200,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    5717868,
+    5859282,
+    5901636,
+    5999058
+   ]
+  },
+  "copper": {
+   "name": "Copper",
+   "products": 300,
+   "sample_ids": [
+    5717868,
+    5859282,
+    5901636,
+    5999058,
+    23641410,
+    23641410,
+    5717868,
+    5859282
+   ]
+  },
+  "coriolus versicolor": {
+   "name": "Coriolus Versicolor",
+   "products": 50,
+   "sample_ids": [
+    5699616,
+    5699616,
+    5699616,
+    5699616,
+    5699616,
+    5699616,
+    5699616,
+    5699616
+   ]
+  },
+  "triticum aestivum": {
+   "name": "Triticum aestivum",
+   "products": 550,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    20399457,
+    20335146,
+    21025875,
+    21025875
+   ]
+  },
+  "dens draconis": {
+   "name": "Dens draconis",
+   "products": 200,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "ziziphus jujuba": {
+   "name": "Ziziphus jujuba",
+   "products": 2000,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "pinellia ternata": {
+   "name": "Pinellia ternata",
+   "products": 1600,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    8069607,
+    8053695,
+    8069334,
+    8082555
+   ]
+  },
+  "polygala tenuifolia": {
+   "name": "Polygala tenuifolia",
+   "products": 1000,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    7408947,
+    7408947,
+    7409025,
+    7409025
+   ]
+  },
+  "acorus tatarinowii": {
+   "name": "Acorus tatarinowii",
+   "products": 200,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "arisaema erubescens": {
+   "name": "Arisaema erubescens",
+   "products": 250,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5978076,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "curcuma wenyujin": {
+   "name": "Curcuma wenyujin",
+   "products": 250,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    21024354,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "lilium lancifolium": {
+   "name": "Lilium lancifolium",
+   "products": 200,
+   "sample_ids": [
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683,
+    5857683
+   ]
+  },
+  "valeriana officinalis": {
+   "name": "Valeriana officinalis",
+   "products": 400,
+   "sample_ids": [
+    5859282,
+    7061106,
+    7061106,
+    22327929,
+    23120370,
+    23120370,
+    23872758,
+    23872758
+   ]
+  },
+  "melatonin": {
+   "name": "Melatonin",
+   "products": 50,
+   "sample_ids": [
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282
+   ]
+  },
+  "pantothenic acid": {
+   "name": "Pantothenic acid",
+   "products": 150,
+   "sample_ids": [
+    5859282,
+    5901636,
+    5999058,
+    5859282,
+    5901636,
+    5999058,
+    5859282,
+    5901636
+   ]
+  },
+  "calcium": {
+   "name": "Calcium",
+   "products": 400,
+   "sample_ids": [
+    5859282,
+    5901636,
+    5901636,
+    5999058,
+    5999058,
+    7122141,
+    23847174,
+    23847174
+   ]
+  },
+  "melissa officinalis": {
+   "name": "Melissa officinalis",
+   "products": 50,
+   "sample_ids": [
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282,
+    5859282
+   ]
+  },
+  "passiflora incarnata": {
+   "name": "Passiflora incarnata",
+   "products": 150,
+   "sample_ids": [
+    5859282,
+    5901636,
+    5999058,
+    5859282,
+    5901636,
+    5999058,
+    5859282,
+    5901636
+   ]
+  },
+  "humulus lupulus": {
+   "name": "Humulus lupulus",
+   "products": 150,
+   "sample_ids": [
+    5859282,
+    7061106,
+    7061106,
+    5859282,
+    7061106,
+    7061106,
+    5859282,
+    7061106
+   ]
+  },
+  "2,5-cyclohexadiene-1,4-dione, 2-[(2e,6e,10e,14e,18e,22e,26e,30e,34e)-3,7,11,15,19,23,27,31,35,39-decamethyl-2,6,10,14,18,22,26,30,34,38-tetracontadecaenyl]-5,6-dimethoxy-3-methyl": {
+   "name": "2,5-Cyclohexadiene-1,4-dione, 2-[(2E,6E,10E,14E,18E,22E,26E,30E,34E)-3,7,11,15,19,23,27,31,35,39-decamethyl-2,6,10,14,18,22,26,30,34,38-tetracontadecaenyl]-5,6-dimethoxy-3-methyl",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "resveratrol": {
+   "name": "Resveratrol",
+   "products": 50,
+   "sample_ids": [
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636
+   ]
+  },
+  "lutein esters": {
+   "name": "Lutein esters",
+   "products": 50,
+   "sample_ids": [
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636,
+    5901636
+   ]
+  },
+  "vitis vinifera": {
+   "name": "Vitis vinifera",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "dl-alpha-lipoic acid": {
+   "name": "DL-alpha-Lipoic acid",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "boron": {
+   "name": "Boron",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "phosphore": {
+   "name": "Phosphore",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "potassium": {
+   "name": "Potassium",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "all-trans-lycopene": {
+   "name": "All-trans-lycopene",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "(3r,3'r)-dihydroxy-beta-carotene": {
+   "name": "(3R,3'R)-Dihydroxy-beta-carotene",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "bacopa monnieri": {
+   "name": "Bacopa monnieri",
+   "products": 950,
+   "sample_ids": [
+    5901636,
+    5999058,
+    6390774,
+    6390774,
+    6926829,
+    8753706,
+    21521058,
+    21521058
+   ]
+  },
+  "inositol": {
+   "name": "Inositol",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "lecithin": {
+   "name": "Lecithin",
+   "products": 100,
+   "sample_ids": [
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058,
+    5901636,
+    5999058
+   ]
+  },
+  "chromium": {
+   "name": "Chromium",
+   "products": 350,
+   "sample_ids": [
+    5901636,
+    5999058,
+    6960057,
+    6960057,
+    6960057,
+    8778081,
+    8778081,
+    5901636
+   ]
+  },
+  "glucosamine hydrochloride": {
+   "name": "Glucosamine hydrochloride",
+   "products": 50,
+   "sample_ids": [
+    5987358,
+    5987358,
+    5987358,
+    5987358,
+    5987358,
+    5987358,
+    5987358,
+    5987358
+   ]
+  },
+  "centipeda minima": {
+   "name": "Centipeda minima",
+   "products": 250,
+   "sample_ids": [
+    5978076,
+    24213657,
+    28745808,
+    29780205,
+    29780205,
+    5978076,
+    24213657,
+    28745808
+   ]
+  },
+  "xanthium sibiricum": {
+   "name": "Xanthium sibiricum",
+   "products": 450,
+   "sample_ids": [
+    5978076,
+    6945237,
+    8053617,
+    20396415,
+    20403669,
+    21051537,
+    21051537,
+    29780205
+   ]
+  },
+  "chrysanthemum indicum": {
+   "name": "Chrysanthemum indicum",
+   "products": 200,
+   "sample_ids": [
+    5978076,
+    20331831,
+    21025758,
+    21025758,
+    5978076,
+    20331831,
+    21025758,
+    21025758
+   ]
+  },
+  "tribulus terrestris": {
+   "name": "Tribulus terrestris",
+   "products": 650,
+   "sample_ids": [
+    5978076,
+    7200882,
+    8687757,
+    8712990,
+    8712990,
+    8768292,
+    8768292,
+    20375472
+   ]
+  },
+  "magnesium citrate tribasic": {
+   "name": "Magnesium citrate tribasic",
+   "products": 50,
+   "sample_ids": [
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058
+   ]
+  },
+  "trans-resveratrol": {
+   "name": "Trans-Resveratrol",
+   "products": 50,
+   "sample_ids": [
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058
+   ]
+  },
+  "(3r,3'r,6'r)-beta,epsilon-carotene-3,3'-diol": {
+   "name": "(3R,3'R,6'R)-beta,epsilon-Carotene-3,3'-diol",
+   "products": 50,
+   "sample_ids": [
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058,
+    5999058
+   ]
+  },
+  "astragalus membranaceus": {
+   "name": "Astragalus membranaceus",
+   "products": 2800,
+   "sample_ids": [
+    6271902,
+    6945237,
+    7408947,
+    7408947,
+    8053929,
+    8069373,
+    8082867,
+    8124402
+   ]
+  },
+  "clitoria ternatea": {
+   "name": "Clitoria ternatea",
+   "products": 100,
+   "sample_ids": [
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774
+   ]
+  },
+  "sarcostemma brevistigma": {
+   "name": "Sarcostemma brevistigma",
+   "products": 100,
+   "sample_ids": [
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774
+   ]
+  },
+  "elaeocarpus angustifolius": {
+   "name": "Elaeocarpus angustifolius",
+   "products": 100,
+   "sample_ids": [
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774,
+    6390774
+   ]
+  },
+  "valeriana jatamansi": {
+   "name": "Valeriana jatamansi",
+   "products": 300,
+   "sample_ids": [
+    6390774,
+    6390774,
+    25716171,
+    25716171,
+    25716171,
+    25716171,
+    6390774,
+    6390774
+   ]
+  },
+  "plumbago zeylanica": {
+   "name": "Plumbago zeylanica",
+   "products": 50,
+   "sample_ids": [
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813
+   ]
+  },
+  "ocimum tenuiflorum": {
+   "name": "Ocimum tenuiflorum",
+   "products": 150,
+   "sample_ids": [
+    6390813,
+    8343270,
+    22528194,
+    6390813,
+    8343270,
+    22528194,
+    6390813,
+    8343270
+   ]
+  },
+  "millettia pinnata": {
+   "name": "Millettia pinnata",
+   "products": 50,
+   "sample_ids": [
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813,
+    6390813
+   ]
+  },
+  "griffonia simplicifolia": {
+   "name": "Griffonia Simplicifolia",
+   "products": 50,
+   "sample_ids": [
+    6761352,
+    6761352,
+    6761352,
+    6761352,
+    6761352,
+    6761352,
+    6761352,
+    6761352
+   ]
+  },
+  "hypericum perforatum": {
+   "name": "Hypericum perforatum",
+   "products": 150,
+   "sample_ids": [
+    6761352,
+    7026201,
+    24213774,
+    6761352,
+    7026201,
+    24213774,
+    6761352,
+    7026201
+   ]
+  },
+  "achyranthes aspera": {
+   "name": "Achyranthes aspera",
+   "products": 150,
+   "sample_ids": [
+    6883305,
+    6883305,
+    20283783,
+    6883305,
+    6883305,
+    20283783,
+    6883305,
+    6883305
+   ]
+  },
+  "gymnema sylvestre": {
+   "name": "Gymnema sylvestre",
+   "products": 450,
+   "sample_ids": [
+    6960057,
+    6960057,
+    6960057,
+    8778081,
+    8778081,
+    26188929,
+    26188929,
+    26188929
+   ]
+  },
+  "momordica charantia": {
+   "name": "Momordica charantia",
+   "products": 400,
+   "sample_ids": [
+    6960057,
+    6960057,
+    6960057,
+    8743683,
+    8743683,
+    8743683,
+    8778081,
+    8778081
+   ]
+  },
+  "syzygium cumini": {
+   "name": "Syzygium cumini",
+   "products": 250,
+   "sample_ids": [
+    6960057,
+    6960057,
+    6960057,
+    8778081,
+    8778081,
+    6960057,
+    6960057,
+    6960057
+   ]
+  },
+  "enicostema axillare subsp. littorale": {
+   "name": "Enicostema axillare subsp. littorale",
+   "products": 250,
+   "sample_ids": [
+    6960057,
+    6960057,
+    6960057,
+    8778081,
+    8778081,
+    6960057,
+    6960057,
+    6960057
+   ]
+  },
+  "shilajit": {
+   "name": "Shilajit",
+   "products": 800,
+   "sample_ids": [
+    6960057,
+    6960057,
+    6960057,
+    8743410,
+    8743410,
+    8768292,
+    8768292,
+    8778081
+   ]
+  },
+  "ginkgo biloba": {
+   "name": "Ginkgo biloba",
+   "products": 600,
+   "sample_ids": [
+    6926829,
+    7122141,
+    7122141,
+    7200882,
+    7200882,
+    20317323,
+    22560681,
+    22721790
+   ]
+  },
+  "convolvulus prostratus": {
+   "name": "Convolvulus prostratus",
+   "products": 50,
+   "sample_ids": [
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829
+   ]
+  },
+  "celastrus paniculatus": {
+   "name": "Celastrus paniculatus",
+   "products": 50,
+   "sample_ids": [
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829,
+    6926829
+   ]
+  },
+  "commiphora wightii": {
+   "name": "Commiphora wightii",
+   "products": 350,
+   "sample_ids": [
+    6949254,
+    6949254,
+    6949254,
+    6949254,
+    23641410,
+    23641410,
+    23641644,
+    6949254
+   ]
+  },
+  "allium sativum": {
+   "name": "Allium sativum",
+   "products": 550,
+   "sample_ids": [
+    6949254,
+    6949254,
+    6949254,
+    6949254,
+    7122141,
+    8712522,
+    8712522,
+    8748324
+   ]
+  },
+  "trigonella foenum-graecum": {
+   "name": "Trigonella foenum-graecum",
+   "products": 650,
+   "sample_ids": [
+    6949254,
+    6949254,
+    6949254,
+    6949254,
+    8778081,
+    8778081,
+    20374497,
+    22678227
+   ]
+  },
+  "plantago ovata": {
+   "name": "Plantago ovata",
+   "products": 200,
+   "sample_ids": [
+    6949254,
+    6949254,
+    6949254,
+    6949254,
+    6949254,
+    6949254,
+    6949254,
+    6949254
+   ]
+  },
+  "magnolia biondii": {
+   "name": "Magnolia biondii",
+   "products": 400,
+   "sample_ids": [
+    6945237,
+    8053617,
+    20330817,
+    20403669,
+    21026070,
+    21026070,
+    29780205,
+    29780205
+   ]
+  },
+  "mentha canadensis": {
+   "name": "Mentha canadensis",
+   "products": 950,
+   "sample_ids": [
+    6945237,
+    7074522,
+    8053617,
+    8083296,
+    20404176,
+    20333391,
+    20403669,
+    20403786
+   ]
+  },
+  "tinospora cordifolia": {
+   "name": "Tinospora cordifolia",
+   "products": 550,
+   "sample_ids": [
+    7037550,
+    7037550,
+    7056192,
+    8424000,
+    8424000,
+    23778885,
+    23778885,
+    24084177
+   ]
+  },
+  "chlorella vulgaris": {
+   "name": "Chlorella vulgaris",
+   "products": 100,
+   "sample_ids": [
+    7037550,
+    7037550,
+    7037550,
+    7037550,
+    7037550,
+    7037550,
+    7037550,
+    7037550
+   ]
+  },
+  "terminalia arjuna": {
+   "name": "Terminalia arjuna",
+   "products": 100,
+   "sample_ids": [
+    7056192,
+    22534473,
+    7056192,
+    22534473,
+    7056192,
+    22534473,
+    7056192,
+    22534473
+   ]
+  },
+  "boerhavia diffusa": {
+   "name": "Boerhavia diffusa",
+   "products": 200,
+   "sample_ids": [
+    7056192,
+    7056192,
+    8687757,
+    24666096,
+    7056192,
+    7056192,
+    8687757,
+    24666096
+   ]
+  },
+  "picrorhiza kurrooa": {
+   "name": "Picrorhiza kurrooa",
+   "products": 350,
+   "sample_ids": [
+    7056192,
+    21741408,
+    21741408,
+    21741408,
+    21741408,
+    23779002,
+    23779002,
+    7056192
+   ]
+  },
+  "matricaria chamomilla": {
+   "name": "Matricaria chamomilla",
+   "products": 100,
+   "sample_ids": [
+    7061106,
+    7061106,
+    7061106,
+    7061106,
+    7061106,
+    7061106,
+    7061106,
+    7061106
+   ]
+  },
+  "trifolium pratense": {
+   "name": "Trifolium pratense",
+   "products": 50,
+   "sample_ids": [
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201
+   ]
+  },
+  "actaea racemosa": {
+   "name": "Actaea racemosa",
+   "products": 50,
+   "sample_ids": [
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201
+   ]
+  },
+  "vitex agnus-castus": {
+   "name": "Vitex agnus-castus",
+   "products": 50,
+   "sample_ids": [
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201,
+    7026201
+   ]
+  },
+  "alisma orientale": {
+   "name": "Alisma orientale",
+   "products": 50,
+   "sample_ids": [
+    7074249,
+    7074249,
+    7074249,
+    7074249,
+    7074249,
+    7074249,
+    7074249,
+    7074249
+   ]
+  },
+  "cornus officinalis": {
+   "name": "Cornus officinalis",
+   "products": 950,
+   "sample_ids": [
+    7074249,
+    7074483,
+    8069763,
+    20274774,
+    20399769,
+    20401290,
+    20328516,
+    20972172
+   ]
+  },
+  "paeonia suffruticosa": {
+   "name": "Paeonia suffruticosa",
+   "products": 800,
+   "sample_ids": [
+    7074249,
+    7074483,
+    8053812,
+    20274774,
+    20280468,
+    20280468,
+    20399769,
+    20399925
+   ]
+  },
+  "zingiber": {
+   "name": "Zingiber",
+   "products": 50,
+   "sample_ids": [
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405
+   ]
+  },
+  "rhizoma atractylodis macrocephalae": {
+   "name": "Rhizoma Atractylodis Macrocephalae",
+   "products": 50,
+   "sample_ids": [
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405
+   ]
+  },
+  "ginseng": {
+   "name": "Ginseng",
+   "products": 50,
+   "sample_ids": [
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405,
+    7074405
+   ]
+  },
+  "alisma plantago-aquatica": {
+   "name": "Alisma plantago-aquatica",
+   "products": 50,
+   "sample_ids": [
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483
+   ]
+  },
+  "poria": {
+   "name": "Poria",
+   "products": 50,
+   "sample_ids": [
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483,
+    7074483
+   ]
+  },
+  "wolfiporia extensa": {
+   "name": "Wolfiporia extensa",
+   "products": 3850,
+   "sample_ids": [
+    7074522,
+    7408947,
+    7408947,
+    7409025,
+    7409025,
+    8069763,
+    8053695,
+    8053812
+   ]
+  },
+  "radix glycyrrhizae preparata": {
+   "name": "Radix Glycyrrhizae Preparata",
+   "products": 50,
+   "sample_ids": [
+    7074522,
+    7074522,
+    7074522,
+    7074522,
+    7074522,
+    7074522,
+    7074522,
+    7074522
+   ]
+  },
+  "matricaire chamomille": {
+   "name": "Matricaire chamomille",
+   "products": 50,
+   "sample_ids": [
+    7122141,
+    7122141,
+    7122141,
+    7122141,
+    7122141,
+    7122141,
+    7122141,
+    7122141
+   ]
+  },
+  "bergera koenigii": {
+   "name": "Bergera koenigii",
+   "products": 100,
+   "sample_ids": [
+    7170228,
+    7170228,
+    7170228,
+    7170228,
+    7170228,
+    7170228,
+    7170228,
+    7170228
+   ]
+  },
+  "mucuna pruriens": {
+   "name": "Mucuna pruriens",
+   "products": 450,
+   "sample_ids": [
+    7200882,
+    8768292,
+    8768292,
+    21369816,
+    22721790,
+    22721790,
+    25716132,
+    25716132
+   ]
+  },
+  "eurycoma longifolia": {
+   "name": "Eurycoma Longifolia",
+   "products": 800,
+   "sample_ids": [
+    7200882,
+    8750430,
+    8750430,
+    8750625,
+    8750625,
+    21270756,
+    21852753,
+    21852753
+   ]
+  },
+  "l-arginine": {
+   "name": "L-Arginine",
+   "products": 50,
+   "sample_ids": [
+    7200882,
+    7200882,
+    7200882,
+    7200882,
+    7200882,
+    7200882,
+    7200882,
+    7200882
+   ]
+  },
+  "ziziphus jujuba var. spinosa": {
+   "name": "Ziziphus jujuba var. spinosa",
+   "products": 550,
+   "sample_ids": [
+    7408947,
+    7408947,
+    7409025,
+    7409025,
+    7536165,
+    8069451,
+    20399847,
+    20974629
+   ]
+  },
+  "dimocarpus longan": {
+   "name": "Dimocarpus longan",
+   "products": 250,
+   "sample_ids": [
+    7408947,
+    7408947,
+    20376096,
+    21038160,
+    28617459,
+    7408947,
+    7408947,
+    20376096
+   ]
+  },
+  "plantago asiatica": {
+   "name": "Plantago asiatica",
+   "products": 650,
+   "sample_ids": [
+    7408986,
+    7408986,
+    8069412,
+    8146320,
+    20399574,
+    20380503,
+    21051342,
+    21051342
+   ]
+  },
+  "lycium barbarum": {
+   "name": "Lycium barbarum",
+   "products": 1250,
+   "sample_ids": [
+    7408986,
+    7408986,
+    8069763,
+    8054436,
+    8054631,
+    20399613,
+    20399769,
+    20334639
+   ]
+  },
+  "schisandra chinensis": {
+   "name": "Schisandra chinensis",
+   "products": 1150,
+   "sample_ids": [
+    7408986,
+    7408986,
+    7409025,
+    7409025,
+    8082867,
+    8124402,
+    8381919,
+    20399808
+   ]
+  },
+  "asparagus cochinchinensis": {
+   "name": "Asparagus cochinchinensis",
+   "products": 400,
+   "sample_ids": [
+    7409025,
+    7409025,
+    20329764,
+    21027825,
+    21027825,
+    27771705,
+    27771705,
+    27771705
+   ]
+  },
+  "scrophularia ningpoensis": {
+   "name": "Scrophularia ningpoensis",
+   "products": 500,
+   "sample_ids": [
+    7409025,
+    7409025,
+    20331753,
+    21025953,
+    21025953,
+    22959495,
+    22943544,
+    28679547
+   ]
+  },
+  "platycladus orientalis": {
+   "name": "Platycladus orientalis",
+   "products": 550,
+   "sample_ids": [
+    7409025,
+    7409025,
+    20333040,
+    20333586,
+    21051420,
+    21051420,
+    21023574,
+    21023574
+   ]
+  },
+  "cynomorium songaricum": {
+   "name": "Cynomorium songaricum",
+   "products": 150,
+   "sample_ids": [
+    7536126,
+    21027981,
+    21027981,
+    7536126,
+    21027981,
+    21027981,
+    7536126,
+    21027981
+   ]
+  },
+  "luffa aegyptiaca": {
+   "name": "Luffa aegyptiaca",
+   "products": 250,
+   "sample_ids": [
+    7536243,
+    21028059,
+    21028059,
+    23541999,
+    23541999,
+    7536243,
+    21028059,
+    21028059
+   ]
+  },
+  "gypsum fibrosum": {
+   "name": "Gypsum fibrosum",
+   "products": 500,
+   "sample_ids": [
+    7536399,
+    8069646,
+    20401524,
+    20288073,
+    21028215,
+    24357723,
+    24357723,
+    24357723
+   ]
+  },
+  "actaea dahurica": {
+   "name": "Actaea dahurica",
+   "products": 350,
+   "sample_ids": [
+    7536438,
+    20286513,
+    21028332,
+    21028332,
+    24358347,
+    24358347,
+    28677714,
+    7536438
+   ]
+  },
+  "stemona japonica": {
+   "name": "Stemona japonica",
+   "products": 150,
+   "sample_ids": [
+    7538622,
+    8164338,
+    28655523,
+    7538622,
+    8164338,
+    28655523,
+    7538622,
+    8164338
+   ]
+  },
+  "sparganium eurycarpum": {
+   "name": "Sparganium eurycarpum",
+   "products": 150,
+   "sample_ids": [
+    7532616,
+    21029112,
+    21029112,
+    7532616,
+    21029112,
+    21029112,
+    7532616,
+    21029112
+   ]
+  },
+  "taxillus chinensis": {
+   "name": "Taxillus chinensis",
+   "products": 150,
+   "sample_ids": [
+    7532811,
+    21028956,
+    21028956,
+    7532811,
+    21028956,
+    21028956,
+    7532811,
+    21028956
+   ]
+  },
+  "equus asinus": {
+   "name": "Equus asinus",
+   "products": 250,
+   "sample_ids": [
+    7685340,
+    21166509,
+    22903023,
+    22833252,
+    22952241,
+    7685340,
+    21166509,
+    22903023
+   ]
+  },
+  "achyranthes bidentata": {
+   "name": "Achyranthes bidentata",
+   "products": 550,
+   "sample_ids": [
+    8069646,
+    8054436,
+    8054631,
+    20399613,
+    20401524,
+    20385261,
+    20972172,
+    20972172
+   ]
+  },
+  "artemisia annua": {
+   "name": "Artemisia Annua",
+   "products": 600,
+   "sample_ids": [
+    8053695,
+    8053890,
+    20400588,
+    20326566,
+    20403708,
+    21028683,
+    21028683,
+    22608456
+   ]
+  },
+  "citrus reticulata": {
+   "name": "Citrus reticulata",
+   "products": 2100,
+   "sample_ids": [
+    8053695,
+    8053890,
+    8069334,
+    8082867,
+    8083491,
+    8124402,
+    8124402,
+    8869380
+   ]
+  },
+  "raphanus sativus": {
+   "name": "Raphanus sativus",
+   "products": 350,
+   "sample_ids": [
+    8053695,
+    8053890,
+    20375979,
+    20400588,
+    20403708,
+    21038589,
+    24877827,
+    8053695
+   ]
+  },
+  "crataegus cuneata": {
+   "name": "Crataegus cuneata",
+   "products": 500,
+   "sample_ids": [
+    8053695,
+    8053890,
+    20400588,
+    20328477,
+    20403708,
+    21028800,
+    21028800,
+    22558185
+   ]
+  },
+  "prunus davidiana": {
+   "name": "Prunus davidiana",
+   "products": 750,
+   "sample_ids": [
+    8053812,
+    8083335,
+    8083491,
+    8083608,
+    8083764,
+    20406945,
+    20399925,
+    20400783
+   ]
+  },
+  "cinnamomum aromaticum": {
+   "name": "Cinnamomum aromaticum",
+   "products": 2500,
+   "sample_ids": [
+    8053812,
+    8082867,
+    8768292,
+    8768292,
+    20274774,
+    20284914,
+    20399535,
+    20399925
+   ]
+  },
+  "areca catechu": {
+   "name": "Areca catechu",
+   "products": 400,
+   "sample_ids": [
+    8053890,
+    20340450,
+    20400588,
+    20287020,
+    21048300,
+    21048300,
+    22561383,
+    22537476
+   ]
+  },
+  "magnolia officinalis": {
+   "name": "Magnolia officinalis",
+   "products": 700,
+   "sample_ids": [
+    8053890,
+    20284992,
+    20398443,
+    20400588,
+    20287020,
+    20374458,
+    21041748,
+    21011679
+   ]
+  },
+  "atractylodes lancea": {
+   "name": "Atractylodes lancea",
+   "products": 1200,
+   "sample_ids": [
+    8053890,
+    8083491,
+    20284992,
+    20333547,
+    20400588,
+    20400783,
+    20288073,
+    21051459
+   ]
+  },
+  "hansenia forbesii": {
+   "name": "Hansenia forbesii",
+   "products": 400,
+   "sample_ids": [
+    8053929,
+    8083491,
+    20404176,
+    20400627,
+    20400783,
+    22718241,
+    22944597,
+    28677909
+   ]
+  },
+  "reynoutria multiflora": {
+   "name": "Reynoutria multiflora",
+   "products": 850,
+   "sample_ids": [
+    8054436,
+    8054631,
+    20332728,
+    20399613,
+    21041982,
+    21041982,
+    22511346,
+    22511346
+   ]
+  },
+  "cullen corylifolium": {
+   "name": "Cullen corylifolium",
+   "products": 350,
+   "sample_ids": [
+    8054436,
+    8054631,
+    20333430,
+    20399613,
+    21051615,
+    21051615,
+    28716753,
+    8054436
+   ]
+  },
+  "citrus aurantium": {
+   "name": "Citrus aurantium",
+   "products": 800,
+   "sample_ids": [
+    8069334,
+    8083764,
+    20404176,
+    20398599,
+    20332377,
+    20332416,
+    20400978,
+    20401212
+   ]
+  },
+  "bambusa beecheyana": {
+   "name": "Bambusa beecheyana",
+   "products": 250,
+   "sample_ids": [
+    8069334,
+    20332572,
+    20400978,
+    21032661,
+    28729233,
+    8069334,
+    20332572,
+    20400978
+   ]
+  },
+  "stephania tetrandra": {
+   "name": "Stephania tetrandra",
+   "products": 350,
+   "sample_ids": [
+    8069373,
+    8083491,
+    20381049,
+    20399379,
+    20400783,
+    22944597,
+    28724202,
+    8069373
+   ]
+  },
+  "clematis armandii": {
+   "name": "Clematis Armandii",
+   "products": 200,
+   "sample_ids": [
+    8069412,
+    20399574,
+    20385105,
+    28739100,
+    8069412,
+    20399574,
+    20385105,
+    28739100
+   ]
+  },
+  "alisma plantago-aquatica subsp. orientale": {
+   "name": "Alisma plantago-aquatica subsp. orientale",
+   "products": 550,
+   "sample_ids": [
+    8069412,
+    20274774,
+    20399340,
+    20399574,
+    20399769,
+    20386080,
+    21011679,
+    21024081
+   ]
+  },
+  "gentiana manshurica": {
+   "name": "Gentiana manshurica",
+   "products": 400,
+   "sample_ids": [
+    8069412,
+    8083491,
+    20399574,
+    20400783,
+    20384169,
+    21038277,
+    22944597,
+    28729428
+   ]
+  },
+  "ligusticum sinense cv. chuanxiong": {
+   "name": "Ligusticum sinense cv. chuanxiong",
+   "products": 1600,
+   "sample_ids": [
+    8069451,
+    8163402,
+    8083335,
+    8083491,
+    8083608,
+    8083764,
+    20404176,
+    20284914
+   ]
+  },
+  "anemone chinensis": {
+   "name": "Anemone chinensis",
+   "products": 200,
+   "sample_ids": [
+    8082360,
+    20398404,
+    20332923,
+    28748616,
+    8082360,
+    20398404,
+    20332923,
+    28748616
+   ]
+  },
+  "fraxinus chinensis": {
+   "name": "Fraxinus chinensis",
+   "products": 250,
+   "sample_ids": [
+    8082360,
+    20398404,
+    20326527,
+    21030750,
+    28745340,
+    8082360,
+    20398404,
+    20326527
+   ]
+  },
+  "phellodendron chinense": {
+   "name": "Phellodendron chinense",
+   "products": 750,
+   "sample_ids": [
+    8082360,
+    20398404,
+    20286474,
+    20288268,
+    20374614,
+    22678344,
+    22943544,
+    22944597
+   ]
+  },
+  "senna obtusifolia": {
+   "name": "Senna obtusifolia",
+   "products": 200,
+   "sample_ids": [
+    8163402,
+    20383896,
+    21038784,
+    28755636,
+    8163402,
+    20383896,
+    21038784,
+    28755636
+   ]
+  },
+  "hansenia weberbaueriana": {
+   "name": "Hansenia weberbaueriana",
+   "products": 100,
+   "sample_ids": [
+    8163402,
+    20326410,
+    8163402,
+    20326410,
+    8163402,
+    20326410,
+    8163402,
+    20326410
+   ]
+  },
+  "artemisia argyi": {
+   "name": "Artemisia argyi",
+   "products": 100,
+   "sample_ids": [
+    8164221,
+    20317089,
+    8164221,
+    20317089,
+    8164221,
+    20317089,
+    8164221,
+    20317089
+   ]
+  },
+  "phragmites australis": {
+   "name": "Phragmites australis",
+   "products": 450,
+   "sample_ids": [
+    8083296,
+    20384520,
+    20403786,
+    20283276,
+    20283276,
+    21038199,
+    28603848,
+    29771274
+   ]
+  },
+  "chrysanthemum x morifolium": {
+   "name": "Chrysanthemum x morifolium",
+   "products": 550,
+   "sample_ids": [
+    8083296,
+    20375823,
+    20399769,
+    20403786,
+    21097947,
+    22943544,
+    24877827,
+    26649597
+   ]
+  },
+  "cyathula officinalis": {
+   "name": "Cyathula officinalis",
+   "products": 400,
+   "sample_ids": [
+    8083491,
+    8083764,
+    20400783,
+    20333859,
+    20401212,
+    21031803,
+    21031803,
+    28714179
+   ]
+  },
+  "clematis chinensis": {
+   "name": "Clematis chinensis",
+   "products": 350,
+   "sample_ids": [
+    8083491,
+    20400783,
+    20330271,
+    21026967,
+    21026967,
+    22944597,
+    28724631,
+    8083491
+   ]
+  },
+  "carthamus tinctorius": {
+   "name": "Carthamus tinctorius",
+   "products": 500,
+   "sample_ids": [
+    8083608,
+    8083764,
+    20400939,
+    20401212,
+    20374380,
+    20283783,
+    21041826,
+    22940697
+   ]
+  },
+  "dianthus superbus": {
+   "name": "Dianthus superbus",
+   "products": 200,
+   "sample_ids": [
+    8146320,
+    20385417,
+    21029619,
+    21029619,
+    8146320,
+    20385417,
+    21029619,
+    21029619
+   ]
+  },
+  "talcum": {
+   "name": "Talcum",
+   "products": 150,
+   "sample_ids": [
+    8146320,
+    20383155,
+    21039915,
+    8146320,
+    20383155,
+    21039915,
+    8146320,
+    20383155
+   ]
+  },
+  "rheum officinale": {
+   "name": "Rheum officinale",
+   "products": 750,
+   "sample_ids": [
+    8146320,
+    20398599,
+    20380698,
+    20800650,
+    21048261,
+    21048261,
+    22608066,
+    22677564
+   ]
+  },
+  "clematis montana": {
+   "name": "Clematis montana",
+   "products": 50,
+   "sample_ids": [
+    8146320,
+    8146320,
+    8146320,
+    8146320,
+    8146320,
+    8146320,
+    8146320,
+    8146320
+   ]
+  },
+  "polygonum aviculare": {
+   "name": "Polygonum aviculare",
+   "products": 200,
+   "sample_ids": [
+    8146320,
+    20395557,
+    21051771,
+    21051771,
+    8146320,
+    20395557,
+    21051771,
+    21051771
+   ]
+  },
+  "morinda officinalis": {
+   "name": "Morinda officinalis",
+   "products": 300,
+   "sample_ids": [
+    8164299,
+    20317128,
+    20288268,
+    20972172,
+    20972172,
+    29798730,
+    8164299,
+    20317128
+   ]
+  },
+  "gentiana macrophylla": {
+   "name": "Gentiana macrophylla",
+   "products": 250,
+   "sample_ids": [
+    8124402,
+    20326449,
+    20283783,
+    22718319,
+    28748460,
+    8124402,
+    20326449,
+    20283783
+   ]
+  },
+  "typhonium flagelliforme": {
+   "name": "Typhonium flagelliforme",
+   "products": 300,
+   "sample_ids": [
+    8124402,
+    21011679,
+    21009495,
+    21002826,
+    20961681,
+    23516298,
+    8124402,
+    21011679
+   ]
+  },
+  "aster tataricus": {
+   "name": "Aster tataricus",
+   "products": 300,
+   "sample_ids": [
+    8124402,
+    20332689,
+    21059688,
+    24358347,
+    24358347,
+    28595385,
+    8124402,
+    20332689
+   ]
+  },
+  "linum usitatissimum": {
+   "name": "Linum usitatissimum",
+   "products": 150,
+   "sample_ids": [
+    8336172,
+    8336172,
+    8336172,
+    8336172,
+    8336172,
+    8336172,
+    8336172,
+    8336172
+   ]
+  },
+  "codonopsis pilosula": {
+   "name": "Codonopsis pilosula",
+   "products": 550,
+   "sample_ids": [
+    8381919,
+    20334600,
+    21047988,
+    21047988,
+    21457332,
+    23552490,
+    23563371,
+    23563371
+   ]
+  },
+  "piper nigrum": {
+   "name": "Piper nigrum",
+   "products": 100,
+   "sample_ids": [
+    8343270,
+    21281403,
+    8343270,
+    21281403,
+    8343270,
+    21281403,
+    8343270,
+    21281403
+   ]
+  },
+  "epimedium brevicornu": {
+   "name": "Epimedium brevicornu",
+   "products": 600,
+   "sample_ids": [
+    8750430,
+    8750430,
+    8750625,
+    8750625,
+    20331948,
+    20288268,
+    23028642,
+    29776461
+   ]
+  },
+  "rosa laevigata": {
+   "name": "Rosa laevigata",
+   "products": 300,
+   "sample_ids": [
+    8750430,
+    8750430,
+    8750625,
+    8750625,
+    20375745,
+    21038823,
+    8750430,
+    8750430
+   ]
+  },
+  "petroselinum crispum": {
+   "name": "Petroselinum crispum",
+   "products": 50,
+   "sample_ids": [
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757
+   ]
+  },
+  "apium graveolens": {
+   "name": "Apium graveolens",
+   "products": 50,
+   "sample_ids": [
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757
+   ]
+  },
+  "coriandrum sativum": {
+   "name": "Coriandrum sativum",
+   "products": 50,
+   "sample_ids": [
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757,
+    8687757
+   ]
+  },
+  "1,3-benzenediol": {
+   "name": "1,3-Benzenediol",
+   "products": 50,
+   "sample_ids": [
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012
+   ]
+  },
+  "borneolum syntheticum": {
+   "name": "Borneolum syntheticum",
+   "products": 100,
+   "sample_ids": [
+    8709012,
+    21457371,
+    8709012,
+    21457371,
+    8709012,
+    21457371,
+    8709012,
+    21457371
+   ]
+  },
+  "sulfur": {
+   "name": "Sulfur",
+   "products": 50,
+   "sample_ids": [
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012,
+    8709012
+   ]
+  },
+  "parmelia perlata": {
+   "name": "Parmelia perlata",
+   "products": 100,
+   "sample_ids": [
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292
+   ]
+  },
+  "pueraria tuberosa": {
+   "name": "Pueraria tuberosa",
+   "products": 100,
+   "sample_ids": [
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292
+   ]
+  },
+  "ipomoea batatas": {
+   "name": "Ipomoea batatas",
+   "products": 100,
+   "sample_ids": [
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292
+   ]
+  },
+  "asparagus racemosus": {
+   "name": "Asparagus racemosus",
+   "products": 250,
+   "sample_ids": [
+    8768292,
+    8768292,
+    21369894,
+    21369894,
+    24670464,
+    8768292,
+    8768292,
+    21369894
+   ]
+  },
+  "rhodiola rosea": {
+   "name": "Rhodiola rosea",
+   "products": 100,
+   "sample_ids": [
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292
+   ]
+  },
+  "orchis mascula": {
+   "name": "Orchis mascula",
+   "products": 100,
+   "sample_ids": [
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292
+   ]
+  },
+  "leptadenia reticulata": {
+   "name": "Leptadenia reticulata",
+   "products": 100,
+   "sample_ids": [
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292,
+    8768292
+   ]
+  },
+  "myristica fragrans": {
+   "name": "Myristica fragrans",
+   "products": 300,
+   "sample_ids": [
+    8768292,
+    8768292,
+    20326800,
+    21029346,
+    21029346,
+    28748499,
+    8768292,
+    8768292
+   ]
+  },
+  "syzygium aromaticum": {
+   "name": "Syzygium aromaticum",
+   "products": 300,
+   "sample_ids": [
+    8768292,
+    8768292,
+    22120332,
+    22537671,
+    22677837,
+    29798730,
+    8768292,
+    8768292
+   ]
+  },
+  "azadirachta indica": {
+   "name": "Azadirachta indica",
+   "products": 250,
+   "sample_ids": [
+    8768643,
+    21280935,
+    21280935,
+    23724480,
+    23724480,
+    8768643,
+    21280935,
+    21280935
+   ]
+  },
+  "ganoderma lucidum": {
+   "name": "Ganoderma lucidum",
+   "products": 950,
+   "sample_ids": [
+    8869380,
+    8869770,
+    20331441,
+    20342790,
+    20342790,
+    20342907,
+    20342907,
+    20884071
+   ]
+  },
+  "camellia sinensis": {
+   "name": "Camellia sinensis",
+   "products": 250,
+   "sample_ids": [
+    8869380,
+    8869770,
+    22943544,
+    23120721,
+    23120721,
+    8869380,
+    8869770,
+    22943544
+   ]
+  },
+  "gynostemma pentaphyllum": {
+   "name": "Gynostemma pentaphyllum",
+   "products": 400,
+   "sample_ids": [
+    8869770,
+    20375628,
+    20884071,
+    20884071,
+    20884071,
+    21038745,
+    29780712,
+    29780712
+   ]
+  },
+  "pterocarpus marsupium": {
+   "name": "Pterocarpus marsupium",
+   "products": 100,
+   "sample_ids": [
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081
+   ]
+  },
+  "lagerstroemia speciosa": {
+   "name": "Lagerstroemia speciosa",
+   "products": 100,
+   "sample_ids": [
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081
+   ]
+  },
+  "vanadium": {
+   "name": "Vanadium",
+   "products": 100,
+   "sample_ids": [
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081,
+    8778081
+   ]
+  },
+  "rosa x centifolia": {
+   "name": "Rosa x centifolia",
+   "products": 100,
+   "sample_ids": [
+    20028840,
+    20028840,
+    20028840,
+    20028840,
+    20028840,
+    20028840,
+    20028840,
+    20028840
+   ]
+  },
+  "paeonia anomala subsp. veitchii": {
+   "name": "Paeonia anomala subsp. veitchii",
+   "products": 250,
+   "sample_ids": [
+    20340255,
+    21051264,
+    21051264,
+    22940697,
+    28589535,
+    20340255,
+    21051264,
+    21051264
+   ]
+  },
+  "sargentodoxa cuneata": {
+   "name": "Sargentodoxa cuneata",
+   "products": 150,
+   "sample_ids": [
+    20340528,
+    21041787,
+    21041787,
+    20340528,
+    21041787,
+    21041787,
+    20340528,
+    21041787
+   ]
+  },
+  "curcuma phaeocaulis": {
+   "name": "Curcuma phaeocaulis",
+   "products": 50,
+   "sample_ids": [
+    20340606,
+    20340606,
+    20340606,
+    20340606,
+    20340606,
+    20340606,
+    20340606,
+    20340606
+   ]
+  },
+  "dioscorea polystachya": {
+   "name": "Dioscorea polystachya",
+   "products": 200,
+   "sample_ids": [
+    20274774,
+    20972172,
+    20972172,
+    21009495,
+    20274774,
+    20972172,
+    20972172,
+    21009495
+   ]
+  },
+  "nepeta tenuifolia": {
+   "name": "Nepeta tenuifolia",
+   "products": 250,
+   "sample_ids": [
+    20375784,
+    20288073,
+    20283276,
+    20283276,
+    22717422,
+    20375784,
+    20288073,
+    20283276
+   ]
+  },
+  "tinospora sinensis": {
+   "name": "Tinospora sinensis",
+   "products": 50,
+   "sample_ids": [
+    20375862,
+    20375862,
+    20375862,
+    20375862,
+    20375862,
+    20375862,
+    20375862,
+    20375862
+   ]
+  },
+  "persicaria hydropiper": {
+   "name": "Persicaria hydropiper",
+   "products": 50,
+   "sample_ids": [
+    20375901,
+    20375901,
+    20375901,
+    20375901,
+    20375901,
+    20375901,
+    20375901,
+    20375901
+   ]
+  },
+  "angelica pubescens": {
+   "name": "Angelica pubescens",
+   "products": 300,
+   "sample_ids": [
+    20404176,
+    20334873,
+    20283783,
+    21047715,
+    21047715,
+    28677870,
+    20404176,
+    20334873
+   ]
+  },
+  "angelica decursiva": {
+   "name": "Angelica decursiva",
+   "products": 200,
+   "sample_ids": [
+    20404176,
+    21031413,
+    22946703,
+    28607787,
+    20404176,
+    21031413,
+    22946703,
+    28607787
+   ]
+  },
+  "benincasa hispida": {
+   "name": "Benincasa hispida",
+   "products": 250,
+   "sample_ids": [
+    20380932,
+    21047598,
+    21047598,
+    29780712,
+    29780712,
+    20380932,
+    21047598,
+    21047598
+   ]
+  },
+  "dioscorea collettii var. hypoglauca": {
+   "name": "Dioscorea collettii var. hypoglauca",
+   "products": 100,
+   "sample_ids": [
+    20380971,
+    22677993,
+    20380971,
+    22677993,
+    20380971,
+    22677993,
+    20380971,
+    22677993
+   ]
+  },
+  "spirodela polyrhiza": {
+   "name": "Spirodela polyrhiza",
+   "products": 100,
+   "sample_ids": [
+    20381400,
+    28689375,
+    20381400,
+    28689375,
+    20381400,
+    28689375,
+    20381400,
+    28689375
+   ]
+  },
+  "dipsacus asper": {
+   "name": "Dipsacus asper",
+   "products": 350,
+   "sample_ids": [
+    20331597,
+    20972172,
+    20972172,
+    21048495,
+    21048495,
+    23741172,
+    28714413,
+    20331597
+   ]
+  },
+  "corydalis turtschaninovii": {
+   "name": "Corydalis turtschaninovii",
+   "products": 200,
+   "sample_ids": [
+    20331792,
+    22944129,
+    23377965,
+    28724670,
+    20331792,
+    22944129,
+    23377965,
+    28724670
+   ]
+  },
+  "alpinia oxyphylla": {
+   "name": "Alpinia oxyphylla",
+   "products": 150,
+   "sample_ids": [
+    20331909,
+    21024471,
+    28716831,
+    20331909,
+    21024471,
+    28716831,
+    20331909,
+    21024471
+   ]
+  },
+  "curcuma kwangsiensis": {
+   "name": "Curcuma kwangsiensis",
+   "products": 450,
+   "sample_ids": [
+    20331987,
+    21047559,
+    21047559,
+    28768038,
+    29313492,
+    29313492,
+    29313492,
+    29313492
+   ]
+  },
+  "polygonatum odoratum": {
+   "name": "Polygonatum odoratum",
+   "products": 150,
+   "sample_ids": [
+    20332065,
+    21024315,
+    28755597,
+    20332065,
+    21024315,
+    28755597,
+    20332065,
+    21024315
+   ]
+  },
+  "lycopus lucidus var. hirtus": {
+   "name": "Lycopus lucidus var. hirtus",
+   "products": 250,
+   "sample_ids": [
+    20332221,
+    21024198,
+    28748421,
+    29780712,
+    29780712,
+    20332221,
+    21024198,
+    28748421
+   ]
+  },
+  "coix lacryma-jobi var. ma-yuen": {
+   "name": "Coix lacryma-jobi var. ma-yuen",
+   "products": 300,
+   "sample_ids": [
+    20285265,
+    20385885,
+    21025602,
+    23516298,
+    23527803,
+    28673970,
+    20285265,
+    20385885
+   ]
+  },
+  "viola philippica var. philippica": {
+   "name": "Viola philippica var. philippica",
+   "products": 100,
+   "sample_ids": [
+    20332611,
+    21018855,
+    20332611,
+    21018855,
+    20332611,
+    21018855,
+    20332611,
+    21018855
+   ]
+  },
+  "albizia julibrissin": {
+   "name": "Albizia julibrissin",
+   "products": 400,
+   "sample_ids": [
+    20383311,
+    20374185,
+    21042060,
+    21042060,
+    20974629,
+    21039447,
+    21039447,
+    28617342
+   ]
+  },
+  "lysimachia christinae": {
+   "name": "Lysimachia christinae",
+   "products": 100,
+   "sample_ids": [
+    20383389,
+    21031452,
+    20383389,
+    21031452,
+    20383389,
+    21031452,
+    20383389,
+    21031452
+   ]
+  },
+  "oldenlandia diffusa": {
+   "name": "Oldenlandia diffusa",
+   "products": 100,
+   "sample_ids": [
+    20332806,
+    21022755,
+    20332806,
+    21022755,
+    20332806,
+    21022755,
+    20332806,
+    21022755
+   ]
+  },
+  "cynanchum glaucescens": {
+   "name": "Cynanchum glaucescens",
+   "products": 150,
+   "sample_ids": [
+    20332845,
+    21023223,
+    28607709,
+    20332845,
+    21023223,
+    28607709,
+    20332845,
+    21023223
+   ]
+  },
+  "dictamnus dasycarpus": {
+   "name": "Dictamnus dasycarpus",
+   "products": 200,
+   "sample_ids": [
+    20332962,
+    21023379,
+    21023379,
+    28689414,
+    20332962,
+    21023379,
+    21023379,
+    28689414
+   ]
+  },
+  "isatis tinctoria": {
+   "name": "Isatis tinctoria",
+   "products": 1200,
+   "sample_ids": [
+    20333079,
+    20334015,
+    20413107,
+    20413107,
+    21023652,
+    21023652,
+    21048222,
+    21048222
+   ]
+  },
+  "glehnia littoralis": {
+   "name": "Glehnia littoralis",
+   "products": 250,
+   "sample_ids": [
+    20333157,
+    21051927,
+    21051927,
+    22953294,
+    28601547,
+    20333157,
+    21051927,
+    21051927
+   ]
+  },
+  "bombyx mori": {
+   "name": "Bombyx mori",
+   "products": 250,
+   "sample_ids": [
+    20333469,
+    21039057,
+    22902828,
+    22833330,
+    28704078,
+    20333469,
+    21039057,
+    22902828
+   ]
+  },
+  "homalomena occulta": {
+   "name": "Homalomena occulta",
+   "products": 100,
+   "sample_ids": [
+    20326254,
+    21031374,
+    20326254,
+    21031374,
+    20326254,
+    21031374,
+    20326254,
+    21031374
+   ]
+  },
+  "euryale ferox": {
+   "name": "Euryale ferox",
+   "products": 150,
+   "sample_ids": [
+    20326332,
+    21031179,
+    23552490,
+    20326332,
+    21031179,
+    23552490,
+    20326332,
+    21031179
+   ]
+  },
+  "cistanche deserticola": {
+   "name": "Cistanche deserticola",
+   "products": 500,
+   "sample_ids": [
+    20326722,
+    21029463,
+    21029463,
+    21457332,
+    23536500,
+    23741172,
+    26649597,
+    26655603
+   ]
+  },
+  "boswellia sacra": {
+   "name": "Boswellia sacra",
+   "products": 200,
+   "sample_ids": [
+    20326917,
+    21029385,
+    21029385,
+    28729272,
+    20326917,
+    21029385,
+    21029385,
+    28729272
+   ]
+  },
+  "dolomiaea souliei": {
+   "name": "Dolomiaea souliei",
+   "products": 150,
+   "sample_ids": [
+    20333820,
+    21032622,
+    21032622,
+    20333820,
+    21032622,
+    21032622,
+    20333820,
+    21032622
+   ]
+  },
+  "eleutherococcus senticosus": {
+   "name": "Eleutherococcus senticosus",
+   "products": 250,
+   "sample_ids": [
+    20333976,
+    21048417,
+    21048417,
+    22721790,
+    22721790,
+    20333976,
+    21048417,
+    21048417
+   ]
+  },
+  "saussurea costus": {
+   "name": "Saussurea costus",
+   "products": 400,
+   "sample_ids": [
+    20286669,
+    20317908,
+    21457332,
+    22944129,
+    23562708,
+    26649597,
+    26655603,
+    28677753
+   ]
+  },
+  "sanguisorba officinalis": {
+   "name": "Sanguisorba officinalis",
+   "products": 50,
+   "sample_ids": [
+    20334756,
+    20334756,
+    20334756,
+    20334756,
+    20334756,
+    20334756,
+    20334756,
+    20334756
+   ]
+  },
+  "amomum krervanh": {
+   "name": "Amomum krervanh",
+   "products": 50,
+   "sample_ids": [
+    20334834,
+    20334834,
+    20334834,
+    20334834,
+    20334834,
+    20334834,
+    20334834,
+    20334834
+   ]
+  },
+  "eucommia ulmoides": {
+   "name": "Eucommia ulmoides",
+   "products": 500,
+   "sample_ids": [
+    20334912,
+    20283783,
+    20972172,
+    20972172,
+    21007740,
+    21047637,
+    21047637,
+    23564268
+   ]
+  },
+  "panax notoginseng": {
+   "name": "Panax notoginseng",
+   "products": 450,
+   "sample_ids": [
+    20394894,
+    21029034,
+    21029034,
+    21457332,
+    21457332,
+    26649597,
+    26655603,
+    29137017
+   ]
+  },
+  "lilium brownii": {
+   "name": "Lilium brownii",
+   "products": 250,
+   "sample_ids": [
+    20317206,
+    20856576,
+    22959495,
+    24877827,
+    28613208,
+    20317206,
+    20856576,
+    22959495
+   ]
+  },
+  "portulaca oleracea": {
+   "name": "Portulaca oleracea",
+   "products": 100,
+   "sample_ids": [
+    20317362,
+    21038082,
+    20317362,
+    21038082,
+    20317362,
+    21038082,
+    20317362,
+    21038082
+   ]
+  },
+  "chaenomeles speciosa": {
+   "name": "Chaenomeles speciosa",
+   "products": 300,
+   "sample_ids": [
+    20317869,
+    21011679,
+    21009495,
+    21037692,
+    23516298,
+    28768155,
+    20317869,
+    21011679
+   ]
+  },
+  "adenophora stricta": {
+   "name": "Adenophora stricta",
+   "products": 100,
+   "sample_ids": [
+    20317947,
+    21032115,
+    20317947,
+    21032115,
+    20317947,
+    21032115,
+    20317947,
+    21032115
+   ]
+  },
+  "phyllolobium chinense": {
+   "name": "Phyllolobium chinense",
+   "products": 200,
+   "sample_ids": [
+    20328360,
+    22722492,
+    22722492,
+    28704195,
+    20328360,
+    22722492,
+    22722492,
+    28704195
+   ]
+  },
+  "lycopodium japonicum": {
+   "name": "Lycopodium japonicum",
+   "products": 150,
+   "sample_ids": [
+    20328555,
+    21028722,
+    21028722,
+    20328555,
+    21028722,
+    21028722,
+    20328555,
+    21028722
+   ]
+  },
+  "pseudostellaria heterophylla": {
+   "name": "Pseudostellaria heterophylla",
+   "products": 150,
+   "sample_ids": [
+    20328984,
+    21027942,
+    21027942,
+    20328984,
+    21027942,
+    21027942,
+    20328984,
+    21027942
+   ]
+  },
+  "schizostachyum chinense": {
+   "name": "Schizostachyum chinense",
+   "products": 50,
+   "sample_ids": [
+    20329842,
+    20329842,
+    20329842,
+    20329842,
+    20329842,
+    20329842,
+    20329842,
+    20329842
+   ]
+  },
+  "smilax glabra": {
+   "name": "Smilax glabra",
+   "products": 200,
+   "sample_ids": [
+    20330115,
+    21027669,
+    21027669,
+    28689336,
+    20330115,
+    21027669,
+    21027669,
+    28689336
+   ]
+  },
+  "vaccaria hispanica subsp. hispanica": {
+   "name": "Vaccaria hispanica subsp. hispanica",
+   "products": 200,
+   "sample_ids": [
+    20330193,
+    21027162,
+    21027162,
+    28739022,
+    20330193,
+    21027162,
+    21027162,
+    28739022
+   ]
+  },
+  "siraitia grosvenorii": {
+   "name": "Siraitia grosvenorii",
+   "products": 50,
+   "sample_ids": [
+    20385066,
+    20385066,
+    20385066,
+    20385066,
+    20385066,
+    20385066,
+    20385066,
+    20385066
+   ]
+  },
+  "sodium sulfate decahydrate": {
+   "name": "Sodium Sulfate Decahydrate",
+   "products": 100,
+   "sample_ids": [
+    20385183,
+    28748577,
+    20385183,
+    28748577,
+    20385183,
+    28748577,
+    20385183,
+    28748577
+   ]
+  },
+  "taraxacum mongolicum": {
+   "name": "Taraxacum mongolicum",
+   "products": 300,
+   "sample_ids": [
+    20385378,
+    21031569,
+    23541999,
+    23541999,
+    29771274,
+    29771274,
+    20385378,
+    21031569
+   ]
+  },
+  "acorus gramineus": {
+   "name": "Acorus gramineus",
+   "products": 250,
+   "sample_ids": [
+    20385456,
+    20974629,
+    21028293,
+    21028293,
+    28746549,
+    20385456,
+    20974629,
+    21028293
+   ]
+  },
+  "descurainia sophia": {
+   "name": "Descurainia sophia",
+   "products": 150,
+   "sample_ids": [
+    20385573,
+    21027435,
+    21027435,
+    20385573,
+    21027435,
+    21027435,
+    20385573,
+    21027435
+   ]
+  },
+  "scutellaria barbata": {
+   "name": "Scutellaria barbata",
+   "products": 150,
+   "sample_ids": [
+    20395479,
+    21052005,
+    21052005,
+    20395479,
+    21052005,
+    21052005,
+    20395479,
+    21052005
+   ]
+  },
+  "sesamum indicum": {
+   "name": "Sesamum indicum",
+   "products": 200,
+   "sample_ids": [
+    20288073,
+    20374302,
+    21041865,
+    24071970,
+    20288073,
+    20374302,
+    21041865,
+    24071970
+   ]
+  },
+  "leonurus japonicus": {
+   "name": "Leonurus japonicus",
+   "products": 300,
+   "sample_ids": [
+    20385846,
+    20380620,
+    21025680,
+    21048378,
+    21048378,
+    23711337,
+    20385846,
+    20380620
+   ]
+  },
+  "artemisia capillaris": {
+   "name": "Artemisia capillaris",
+   "products": 100,
+   "sample_ids": [
+    20385924,
+    21024432,
+    20385924,
+    21024432,
+    20385924,
+    21024432,
+    20385924,
+    21024432
+   ]
+  },
+  "ligusticum sinense var sinense": {
+   "name": "Ligusticum sinense var sinense",
+   "products": 50,
+   "sample_ids": [
+    20373873,
+    20373873,
+    20373873,
+    20373873,
+    20373873,
+    20373873,
+    20373873,
+    20373873
+   ]
+  },
+  "pueraria montana var. lobata": {
+   "name": "Pueraria montana var. lobata",
+   "products": 400,
+   "sample_ids": [
+    20373951,
+    21042918,
+    21042918,
+    22941906,
+    22943544,
+    24213735,
+    24358347,
+    24358347
+   ]
+  },
+  "uncaria rhynchophylla": {
+   "name": "Uncaria rhynchophylla",
+   "products": 100,
+   "sample_ids": [
+    20373990,
+    20961681,
+    20373990,
+    20961681,
+    20373990,
+    20961681,
+    20373990,
+    20961681
+   ]
+  },
+  "drynaria fortunei": {
+   "name": "Drynaria fortunei",
+   "products": 250,
+   "sample_ids": [
+    20374029,
+    20972172,
+    20972172,
+    21042801,
+    21042801,
+    20374029,
+    20972172,
+    20972172
+   ]
+  },
+  "imperata cylindrica": {
+   "name": "Imperata cylindrica",
+   "products": 150,
+   "sample_ids": [
+    20395908,
+    21023028,
+    28603887,
+    20395908,
+    21023028,
+    28603887,
+    20395908,
+    21023028
+   ]
+  },
+  "aconitum carmichaelii": {
+   "name": "Aconitum carmichaelii",
+   "products": 150,
+   "sample_ids": [
+    20396454,
+    26649597,
+    28689492,
+    20396454,
+    26649597,
+    28689492,
+    20396454,
+    26649597
+   ]
+  },
+  "cyperus rotundus": {
+   "name": "Cyperus rotundus",
+   "products": 800,
+   "sample_ids": [
+    20288151,
+    20330700,
+    20885553,
+    20885553,
+    20885553,
+    21026226,
+    21026226,
+    20961681
+   ]
+  },
+  "curculigo orchioides": {
+   "name": "Curculigo orchioides",
+   "products": 400,
+   "sample_ids": [
+    20288268,
+    20330661,
+    21026304,
+    21026304,
+    29776461,
+    29776461,
+    29776539,
+    29776539
+   ]
+  },
+  "erythrina variegata": {
+   "name": "Erythrina variegata",
+   "products": 150,
+   "sample_ids": [
+    20374146,
+    21042216,
+    21042216,
+    20374146,
+    21042216,
+    21042216,
+    20374146,
+    21042216
+   ]
+  },
+  "succinum": {
+   "name": "Succinum",
+   "products": 100,
+   "sample_ids": [
+    20374536,
+    21040110,
+    20374536,
+    21040110,
+    20374536,
+    21040110,
+    20374536,
+    21040110
+   ]
+  },
+  "reynoutria japonica": {
+   "name": "Reynoutria japonica",
+   "products": 100,
+   "sample_ids": [
+    20374575,
+    21040032,
+    20374575,
+    21040032,
+    20374575,
+    21040032,
+    20374575,
+    21040032
+   ]
+  },
+  "eleutherococcus gracilistylus": {
+   "name": "Eleutherococcus gracilistylus",
+   "products": 100,
+   "sample_ids": [
+    20330310,
+    21026889,
+    20330310,
+    21026889,
+    20330310,
+    21026889,
+    20330310,
+    21026889
+   ]
+  },
+  "prunus mume": {
+   "name": "Prunus mume",
+   "products": 250,
+   "sample_ids": [
+    20330388,
+    21026772,
+    21026772,
+    23520159,
+    28714257,
+    20330388,
+    21026772,
+    21026772
+   ]
+  },
+  "tetradium ruticarpum": {
+   "name": "Tetradium ruticarpum",
+   "products": 300,
+   "sample_ids": [
+    20330466,
+    21026460,
+    21026460,
+    22952241,
+    29775876,
+    29775876,
+    20330466,
+    21026460
+   ]
+  },
+  "prunella vulgaris": {
+   "name": "Prunella vulgaris",
+   "products": 200,
+   "sample_ids": [
+    20330622,
+    21026421,
+    21026421,
+    28738164,
+    20330622,
+    21026421,
+    21026421,
+    28738164
+   ]
+  },
+  "citrus medica": {
+   "name": "Citrus medica",
+   "products": 50,
+   "sample_ids": [
+    20330739,
+    20330739,
+    20330739,
+    20330739,
+    20330739,
+    20330739,
+    20330739,
+    20330739
+   ]
+  },
+  "foeniculum vulgare": {
+   "name": "Foeniculum vulgare",
+   "products": 350,
+   "sample_ids": [
+    20330778,
+    21026148,
+    21026148,
+    23377965,
+    28717221,
+    29775876,
+    29775876,
+    20330778
+   ]
+  },
+  "sinapis alba": {
+   "name": "Sinapis alba",
+   "products": 150,
+   "sample_ids": [
+    20380386,
+    21022950,
+    21022950,
+    20380386,
+    21022950,
+    21022950,
+    20380386,
+    21022950
+   ]
+  },
+  "fritillaria cirrhosa": {
+   "name": "Fritillaria cirrhosa",
+   "products": 250,
+   "sample_ids": [
+    20380581,
+    21051186,
+    21051186,
+    24358347,
+    24358347,
+    20380581,
+    21051186,
+    21051186
+   ]
+  },
+  "bassia scoparia": {
+   "name": "Bassia scoparia",
+   "products": 150,
+   "sample_ids": [
+    20380815,
+    21047871,
+    21047871,
+    20380815,
+    21047871,
+    21047871,
+    20380815,
+    21047871
+   ]
+  },
+  "artemisia scoparia": {
+   "name": "Artemisia scoparia",
+   "products": 100,
+   "sample_ids": [
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107
+   ]
+  },
+  "vigna radiata var. radiata": {
+   "name": "Vigna radiata var. radiata",
+   "products": 150,
+   "sample_ids": [
+    20413107,
+    20413107,
+    21457371,
+    20413107,
+    20413107,
+    21457371,
+    20413107,
+    20413107
+   ]
+  },
+  "sus scrofa": {
+   "name": "Sus scrofa",
+   "products": 100,
+   "sample_ids": [
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107,
+    20413107
+   ]
+  },
+  "ophiocordyceps sinensis": {
+   "name": "Ophiocordyceps sinensis",
+   "products": 200,
+   "sample_ids": [
+    20884071,
+    20884071,
+    20884071,
+    21457332,
+    20884071,
+    20884071,
+    20884071,
+    21457332
+   ]
+  },
+  "panax quinquefolius": {
+   "name": "Panax quinquefolius",
+   "products": 500,
+   "sample_ids": [
+    20884071,
+    20884071,
+    20884071,
+    22538880,
+    23523474,
+    23552490,
+    23562708,
+    23741211
+   ]
+  },
+  "cervus elaphus": {
+   "name": "Cervus elaphus",
+   "products": 250,
+   "sample_ids": [
+    20884071,
+    20884071,
+    20884071,
+    23541999,
+    23541999,
+    20884071,
+    20884071,
+    20884071
+   ]
+  },
+  "sepia esculenta": {
+   "name": "Sepia esculenta",
+   "products": 350,
+   "sample_ids": [
+    20885553,
+    20885553,
+    20885553,
+    22835085,
+    22835085,
+    22904973,
+    22904973,
+    20885553
+   ]
+  },
+  "sargassum fusiforme": {
+   "name": "Sargassum fusiforme",
+   "products": 200,
+   "sample_ids": [
+    21042099,
+    21042099,
+    22533420,
+    22944129,
+    21042099,
+    21042099,
+    22533420,
+    22944129
+   ]
+  },
+  "liquidambar formosana": {
+   "name": "Liquidambar formosana",
+   "products": 300,
+   "sample_ids": [
+    20972172,
+    20972172,
+    22535526,
+    22717539,
+    23541999,
+    23541999,
+    20972172,
+    20972172
+   ]
+  },
+  "cistanche salsa": {
+   "name": "Cistanche salsa",
+   "products": 100,
+   "sample_ids": [
+    20972172,
+    20972172,
+    20972172,
+    20972172,
+    20972172,
+    20972172,
+    20972172,
+    20972172
+   ]
+  },
+  "epimedium grandiflorum": {
+   "name": "Epimedium grandiflorum",
+   "products": 150,
+   "sample_ids": [
+    20972172,
+    20972172,
+    21007740,
+    20972172,
+    20972172,
+    21007740,
+    20972172,
+    20972172
+   ]
+  },
+  "polyporus umbellatus": {
+   "name": "Polyporus umbellatus",
+   "products": 200,
+   "sample_ids": [
+    21011679,
+    22530807,
+    22723740,
+    23516298,
+    21011679,
+    22530807,
+    22723740,
+    23516298
+   ]
+  },
+  "bletilla striata": {
+   "name": "Bletilla striata",
+   "products": 50,
+   "sample_ids": [
+    21022911,
+    21022911,
+    21022911,
+    21022911,
+    21022911,
+    21022911,
+    21022911,
+    21022911
+   ]
+  },
+  "alpinia officinarum": {
+   "name": "Alpinia officinarum",
+   "products": 50,
+   "sample_ids": [
+    21009495,
+    21009495,
+    21009495,
+    21009495,
+    21009495,
+    21009495,
+    21009495,
+    21009495
+   ]
+  },
+  "zanthoxylum bungeanum": {
+   "name": "Zanthoxylum bungeanum",
+   "products": 200,
+   "sample_ids": [
+    21009495,
+    23531820,
+    24009297,
+    28717299,
+    21009495,
+    23531820,
+    24009297,
+    28717299
+   ]
+  },
+  "setaria italica": {
+   "name": "Setaria italica",
+   "products": 250,
+   "sample_ids": [
+    21042762,
+    21042762,
+    22608144,
+    22959573,
+    28707588,
+    21042762,
+    21042762,
+    22608144
+   ]
+  },
+  "uncaria hirsuta": {
+   "name": "Uncaria hirsuta",
+   "products": 150,
+   "sample_ids": [
+    21042840,
+    21042840,
+    28755480,
+    21042840,
+    21042840,
+    28755480,
+    21042840,
+    21042840
+   ]
+  },
+  "crassostrea gigas": {
+   "name": "Crassostrea gigas",
+   "products": 300,
+   "sample_ids": [
+    20974629,
+    22903179,
+    22904466,
+    22833603,
+    22833642,
+    28613130,
+    20974629,
+    22903179
+   ]
+  },
+  "haliotis diversicolor": {
+   "name": "Haliotis diversicolor",
+   "products": 50,
+   "sample_ids": [
+    20974629,
+    20974629,
+    20974629,
+    20974629,
+    20974629,
+    20974629,
+    20974629,
+    20974629
+   ]
+  },
+  "lithospermum erythrorhizon": {
+   "name": "Lithospermum erythrorhizon",
+   "products": 50,
+   "sample_ids": [
+    21019011,
+    21019011,
+    21019011,
+    21019011,
+    21019011,
+    21019011,
+    21019011,
+    21019011
+   ]
+  },
+  "selinum striatum": {
+   "name": "Selinum striatum",
+   "products": 50,
+   "sample_ids": [
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681
+   ]
+  },
+  "bambusa textilis": {
+   "name": "Bambusa textilis",
+   "products": 50,
+   "sample_ids": [
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681,
+    20961681
+   ]
+  },
+  "ecklonia kurome": {
+   "name": "Ecklonia kurome",
+   "products": 200,
+   "sample_ids": [
+    21038628,
+    22535331,
+    22944129,
+    22944129,
+    21038628,
+    22535331,
+    22944129,
+    22944129
+   ]
+  },
+  "juglans regia": {
+   "name": "Juglans regia",
+   "products": 100,
+   "sample_ids": [
+    21039252,
+    21039252,
+    21039252,
+    21039252,
+    21039252,
+    21039252,
+    21039252,
+    21039252
+   ]
+  },
+  "rhodiola crenulata": {
+   "name": "Rhodiola crenulata",
+   "products": 150,
+   "sample_ids": [
+    21039408,
+    24358347,
+    24358347,
+    21039408,
+    24358347,
+    24358347,
+    21039408,
+    24358347
+   ]
+  },
+  "cannabis sativa": {
+   "name": "Cannabis sativa",
+   "products": 150,
+   "sample_ids": [
+    21039564,
+    22608417,
+    24071970,
+    21039564,
+    22608417,
+    24071970,
+    21039564,
+    22608417
+   ]
+  },
+  "amomum compactum": {
+   "name": "Amomum compactum",
+   "products": 100,
+   "sample_ids": [
+    21047793,
+    21047793,
+    21047793,
+    21047793,
+    21047793,
+    21047793,
+    21047793,
+    21047793
+   ]
+  },
+  "prunus persica": {
+   "name": "Prunus persica",
+   "products": 100,
+   "sample_ids": [
+    21027903,
+    21027903,
+    21027903,
+    21027903,
+    21027903,
+    21027903,
+    21027903,
+    21027903
+   ]
+  },
+  "amomum longiligulare": {
+   "name": "Amomum longiligulare",
+   "products": 200,
+   "sample_ids": [
+    21028878,
+    21028878,
+    23482056,
+    28673931,
+    21028878,
+    21028878,
+    23482056,
+    28673931
+   ]
+  },
+  "piper longum": {
+   "name": "Piper longum",
+   "products": 50,
+   "sample_ids": [
+    21281403,
+    21281403,
+    21281403,
+    21281403,
+    21281403,
+    21281403,
+    21281403,
+    21281403
+   ]
+  },
+  "(1e,6e)-1,7-bis(4-hydroxy-3-methoxyphenyl)-1,6-heptadiene-3,5-dione": {
+   "name": "(1E,6E)-1,7-Bis(4-hydroxy-3-methoxyphenyl)-1,6-heptadiene-3,5-dione",
+   "products": 100,
+   "sample_ids": [
+    21281403,
+    22520511,
+    21281403,
+    22520511,
+    21281403,
+    22520511,
+    21281403,
+    22520511
+   ]
+  },
+  "houttuynia cordata": {
+   "name": "Houttuynia cordata",
+   "products": 350,
+   "sample_ids": [
+    21270756,
+    22530768,
+    22723545,
+    23530884,
+    24358347,
+    24358347,
+    28601664,
+    21270756
+   ]
+  },
+  "polygonatum kingianum": {
+   "name": "Polygonatum kingianum",
+   "products": 50,
+   "sample_ids": [
+    21270756,
+    21270756,
+    21270756,
+    21270756,
+    21270756,
+    21270756,
+    21270756,
+    21270756
+   ]
+  },
+  "apis mellifera": {
+   "name": "Apis mellifera",
+   "products": 50,
+   "sample_ids": [
+    21457371,
+    21457371,
+    21457371,
+    21457371,
+    21457371,
+    21457371,
+    21457371,
+    21457371
+   ]
+  },
+  "auricularia auricula-judae": {
+   "name": "Auricularia auricula-judae",
+   "products": 50,
+   "sample_ids": [
+    21521916,
+    21521916,
+    21521916,
+    21521916,
+    21521916,
+    21521916,
+    21521916,
+    21521916
+   ]
+  },
+  "piper cubeba": {
+   "name": "Piper cubeba",
+   "products": 300,
+   "sample_ids": [
+    21852753,
+    21852753,
+    24121227,
+    24121227,
+    24132225,
+    24132225,
+    21852753,
+    21852753
+   ]
+  },
+  "anacyclus pyrethrum": {
+   "name": "Anacyclus pyrethrum",
+   "products": 300,
+   "sample_ids": [
+    21852753,
+    21852753,
+    24121227,
+    24121227,
+    24132225,
+    24132225,
+    21852753,
+    21852753
+   ]
+  },
+  "erythroxylum catuaba": {
+   "name": "Erythroxylum catuaba",
+   "products": 100,
+   "sample_ids": [
+    21852753,
+    21852753,
+    21852753,
+    21852753,
+    21852753,
+    21852753,
+    21852753,
+    21852753
+   ]
+  },
+  "chlorophytum arundinaceum": {
+   "name": "Chlorophytum arundinaceum",
+   "products": 300,
+   "sample_ids": [
+    21852753,
+    21852753,
+    24121227,
+    24121227,
+    24132225,
+    24132225,
+    21852753,
+    21852753
+   ]
+  },
+  "hygrophila auriculata": {
+   "name": "Hygrophila auriculata",
+   "products": 300,
+   "sample_ids": [
+    21852753,
+    21852753,
+    24121227,
+    24121227,
+    24132225,
+    24132225,
+    21852753,
+    21852753
+   ]
+  },
+  "argyreia speciosa": {
+   "name": "Argyreia speciosa",
+   "products": 300,
+   "sample_ids": [
+    21852753,
+    21852753,
+    24121227,
+    24121227,
+    24132225,
+    24132225,
+    21852753,
+    21852753
+   ]
+  },
+  "epimedium sagittatum": {
+   "name": "Epimedium sagittatum",
+   "products": 450,
+   "sample_ids": [
+    21852753,
+    21852753,
+    22721790,
+    22721790,
+    23536500,
+    24121227,
+    24121227,
+    24132225
+   ]
+  },
+  "turnera diffusa": {
+   "name": "Turnera diffusa",
+   "products": 300,
+   "sample_ids": [
+    21852753,
+    21852753,
+    24121227,
+    24121227,
+    24132225,
+    24132225,
+    21852753,
+    21852753
+   ]
+  },
+  "ptychopetalum olacoides": {
+   "name": "Ptychopetalum olacoides",
+   "products": 300,
+   "sample_ids": [
+    21852753,
+    21852753,
+    24121227,
+    24121227,
+    24132225,
+    24132225,
+    21852753,
+    21852753
+   ]
+  },
+  "lepidium meyenii": {
+   "name": "Lepidium meyenii",
+   "products": 450,
+   "sample_ids": [
+    21852753,
+    21852753,
+    22721790,
+    22721790,
+    24121227,
+    24121227,
+    24132225,
+    24132225
+   ]
+  },
+  "eucalyptus radiata": {
+   "name": "Eucalyptus radiata",
+   "products": 50,
+   "sample_ids": [
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332
+   ]
+  },
+  "ocimum basilicum": {
+   "name": "Ocimum basilicum",
+   "products": 100,
+   "sample_ids": [
+    22120332,
+    22071543,
+    22120332,
+    22071543,
+    22120332,
+    22071543,
+    22120332,
+    22071543
+   ]
+  },
+  "melaleuca alternifolia": {
+   "name": "Melaleuca alternifolia",
+   "products": 100,
+   "sample_ids": [
+    22120332,
+    22262565,
+    22120332,
+    22262565,
+    22120332,
+    22262565,
+    22120332,
+    22262565
+   ]
+  },
+  "lavandula angustifolia": {
+   "name": "Lavandula angustifolia",
+   "products": 200,
+   "sample_ids": [
+    22120332,
+    22071465,
+    22071543,
+    22262565,
+    22120332,
+    22071465,
+    22071543,
+    22262565
+   ]
+  },
+  "corymbia citriodora": {
+   "name": "Corymbia citriodora",
+   "products": 50,
+   "sample_ids": [
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332,
+    22120332
+   ]
+  },
+  "origanum majorana": {
+   "name": "Origanum majorana",
+   "products": 150,
+   "sample_ids": [
+    22120332,
+    22071465,
+    22071543,
+    22120332,
+    22071465,
+    22071543,
+    22120332,
+    22071465
+   ]
+  },
+  "chamaemelum nobile": {
+   "name": "Chamaemelum nobile",
+   "products": 100,
+   "sample_ids": [
+    22071465,
+    22071543,
+    22071465,
+    22071543,
+    22071465,
+    22071543,
+    22071465,
+    22071543
+   ]
+  },
+  "citrus bergamia": {
+   "name": "Citrus bergamia",
+   "products": 100,
+   "sample_ids": [
+    22071465,
+    22262565,
+    22071465,
+    22262565,
+    22071465,
+    22262565,
+    22071465,
+    22262565
+   ]
+  },
+  "cananga odorata": {
+   "name": "Cananga odorata",
+   "products": 50,
+   "sample_ids": [
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465
+   ]
+  },
+  "chrysopogon zizanioides": {
+   "name": "Chrysopogon zizanioides",
+   "products": 50,
+   "sample_ids": [
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465,
+    22071465
+   ]
+  },
+  "mentha x piperita": {
+   "name": "Mentha x piperita",
+   "products": 50,
+   "sample_ids": [
+    22071543,
+    22071543,
+    22071543,
+    22071543,
+    22071543,
+    22071543,
+    22071543,
+    22071543
+   ]
+  },
+  "juniperus communis": {
+   "name": "Juniperus communis",
+   "products": 100,
+   "sample_ids": [
+    22262565,
+    22347117,
+    22262565,
+    22347117,
+    22262565,
+    22347117,
+    22262565,
+    22347117
+   ]
+  },
+  "pelargonium graveolens": {
+   "name": "Pelargonium graveolens",
+   "products": 50,
+   "sample_ids": [
+    22262565,
+    22262565,
+    22262565,
+    22262565,
+    22262565,
+    22262565,
+    22262565,
+    22262565
+   ]
+  },
+  "levocarnitine": {
+   "name": "Levocarnitine",
+   "products": 50,
+   "sample_ids": [
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117
+   ]
+  },
+  "arctostaphylos uva-ursi": {
+   "name": "Arctostaphylos uva-ursi",
+   "products": 50,
+   "sample_ids": [
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117,
+    22347117
+   ]
+  },
+  "taraxacum officinale": {
+   "name": "Taraxacum officinale",
+   "products": 100,
+   "sample_ids": [
+    22347117,
+    23520159,
+    22347117,
+    23520159,
+    22347117,
+    23520159,
+    22347117,
+    23520159
+   ]
+  },
+  "melia azedarach": {
+   "name": "Melia azedarach",
+   "products": 200,
+   "sample_ids": [
+    22510917,
+    22648899,
+    22953294,
+    22944129,
+    22510917,
+    22648899,
+    22953294,
+    22944129
+   ]
+  },
+  "senna alexandrina": {
+   "name": "Senna alexandrina",
+   "products": 100,
+   "sample_ids": [
+    22510995,
+    22677876,
+    22510995,
+    22677876,
+    22510995,
+    22677876,
+    22510995,
+    22677876
+   ]
+  },
+  "gleditsia sinensis": {
+   "name": "Gleditsia sinensis",
+   "products": 250,
+   "sample_ids": [
+    22511424,
+    22723623,
+    23541999,
+    23541999,
+    28735746,
+    22511424,
+    22723623,
+    23541999
+   ]
+  },
+  "polygonatum cirrhifolium": {
+   "name": "Polygonatum cirrhifolium",
+   "products": 250,
+   "sample_ids": [
+    22529403,
+    22716954,
+    23564307,
+    23564307,
+    28768116,
+    22529403,
+    22716954,
+    23564307
+   ]
+  },
+  "ephedra equisetina": {
+   "name": "Ephedra equisetina",
+   "products": 600,
+   "sample_ids": [
+    22529442,
+    22529442,
+    22717734,
+    22717734,
+    22940970,
+    22941906,
+    22944207,
+    23708490
+   ]
+  },
+  "pogostemon cablin": {
+   "name": "Pogostemon cablin",
+   "products": 600,
+   "sample_ids": [
+    22525230,
+    22716993,
+    24278085,
+    24278085,
+    24278085,
+    24278085,
+    24358347,
+    24358347
+   ]
+  },
+  "lygodium japonicum": {
+   "name": "Lygodium japonicum",
+   "products": 100,
+   "sample_ids": [
+    22525308,
+    22717032,
+    22525308,
+    22717032,
+    22525308,
+    22717032,
+    22525308,
+    22717032
+   ]
+  },
+  "alpinia hainanensis": {
+   "name": "Alpinia hainanensis",
+   "products": 100,
+   "sample_ids": [
+    22524762,
+    22677252,
+    22524762,
+    22677252,
+    22524762,
+    22677252,
+    22524762,
+    22677252
+   ]
+  },
+  "arisaema amurense": {
+   "name": "Arisaema amurense",
+   "products": 150,
+   "sample_ids": [
+    22525035,
+    22677681,
+    28737774,
+    22525035,
+    22677681,
+    28737774,
+    22525035,
+    22677681
+   ]
+  },
+  "typhonium giganteum": {
+   "name": "Typhonium giganteum",
+   "products": 50,
+   "sample_ids": [
+    22526010,
+    22526010,
+    22526010,
+    22526010,
+    22526010,
+    22526010,
+    22526010,
+    22526010
+   ]
+  },
+  "allium macrostemon": {
+   "name": "Allium macrostemon",
+   "products": 150,
+   "sample_ids": [
+    22530573,
+    22722999,
+    28745262,
+    22530573,
+    22722999,
+    28745262,
+    22530573,
+    22722999
+   ]
+  },
+  "tussilago farfara": {
+   "name": "Tussilago farfara",
+   "products": 300,
+   "sample_ids": [
+    22535253,
+    22717500,
+    22940970,
+    24358347,
+    24358347,
+    28603809,
+    22535253,
+    22717500
+   ]
+  },
+  "litchi chinensis": {
+   "name": "Litchi chinensis",
+   "products": 50,
+   "sample_ids": [
+    22535370,
+    22535370,
+    22535370,
+    22535370,
+    22535370,
+    22535370,
+    22535370,
+    22535370
+   ]
+  },
+  "patrinia scabiosifolia": {
+   "name": "Patrinia scabiosifolia",
+   "products": 100,
+   "sample_ids": [
+    22561188,
+    22557639,
+    22561188,
+    22557639,
+    22561188,
+    22557639,
+    22561188,
+    22557639
+   ]
+  },
+  "vincetoxicum atratum": {
+   "name": "Vincetoxicum atratum",
+   "products": 150,
+   "sample_ids": [
+    22561266,
+    22536579,
+    28617498,
+    22561266,
+    22536579,
+    28617498,
+    22561266,
+    22536579
+   ]
+  },
+  "styphnolobium japonicum": {
+   "name": "Styphnolobium japonicum",
+   "products": 200,
+   "sample_ids": [
+    22536228,
+    22536228,
+    22678266,
+    28714335,
+    22536228,
+    22536228,
+    22678266,
+    28714335
+   ]
+  },
+  "citrus medica var. sarcodactylis": {
+   "name": "Citrus medica var. sarcodactylis",
+   "products": 150,
+   "sample_ids": [
+    22536462,
+    22678032,
+    28717182,
+    22536462,
+    22678032,
+    28717182,
+    22536462,
+    22678032
+   ]
+  },
+  "allium tuberosum": {
+   "name": "Allium tuberosum",
+   "products": 100,
+   "sample_ids": [
+    22536540,
+    22717461,
+    22536540,
+    22717461,
+    22536540,
+    22717461,
+    22536540,
+    22717461
+   ]
+  },
+  "dalbergia odorifera": {
+   "name": "Dalbergia odorifera",
+   "products": 100,
+   "sample_ids": [
+    22536618,
+    22717383,
+    22536618,
+    22717383,
+    22536618,
+    22717383,
+    22536618,
+    22717383
+   ]
+  },
+  "rhaponticum uniflorum": {
+   "name": "Rhaponticum uniflorum",
+   "products": 50,
+   "sample_ids": [
+    22536696,
+    22536696,
+    22536696,
+    22536696,
+    22536696,
+    22536696,
+    22536696,
+    22536696
+   ]
+  },
+  "ephedra intermedia": {
+   "name": "Ephedra intermedia",
+   "products": 100,
+   "sample_ids": [
+    22536774,
+    22536774,
+    22536774,
+    22536774,
+    22536774,
+    22536774,
+    22536774,
+    22536774
+   ]
+  },
+  "oroxylum indicum": {
+   "name": "Oroxylum indicum",
+   "products": 150,
+   "sample_ids": [
+    22536813,
+    22536813,
+    28735707,
+    22536813,
+    22536813,
+    28735707,
+    22536813,
+    22536813
+   ]
+  },
+  "rhizoma arisaematis preparata": {
+   "name": "Rhizoma Arisaematis Preparata",
+   "products": 100,
+   "sample_ids": [
+    22536891,
+    22944597,
+    22536891,
+    22944597,
+    22536891,
+    22944597,
+    22536891,
+    22944597
+   ]
+  },
+  "ailanthus altissima": {
+   "name": "Ailanthus altissima",
+   "products": 50,
+   "sample_ids": [
+    22537515,
+    22537515,
+    22537515,
+    22537515,
+    22537515,
+    22537515,
+    22537515,
+    22537515
+   ]
+  },
+  "juncus effusus": {
+   "name": "Juncus effusus",
+   "products": 100,
+   "sample_ids": [
+    22537593,
+    22677759,
+    22537593,
+    22677759,
+    22537593,
+    22677759,
+    22537593,
+    22677759
+   ]
+  },
+  "pteris multifida": {
+   "name": "Pteris multifida",
+   "products": 50,
+   "sample_ids": [
+    22537749,
+    22537749,
+    22537749,
+    22537749,
+    22537749,
+    22537749,
+    22537749,
+    22537749
+   ]
+  },
+  "eriobotrya japonica": {
+   "name": "Eriobotrya japonica",
+   "products": 250,
+   "sample_ids": [
+    22537827,
+    22717968,
+    24009219,
+    24009219,
+    28603926,
+    22537827,
+    22717968,
+    24009219
+   ]
+  },
+  "typha orientalis": {
+   "name": "Typha orientalis",
+   "products": 50,
+   "sample_ids": [
+    22537944,
+    22537944,
+    22537944,
+    22537944,
+    22537944,
+    22537944,
+    22537944,
+    22537944
+   ]
+  },
+  "rubia cordifolia": {
+   "name": "Rubia cordifolia",
+   "products": 450,
+   "sample_ids": [
+    22538022,
+    22718202,
+    23915931,
+    25698153,
+    25698153,
+    25698153,
+    25698153,
+    25698153
+   ]
+  },
+  "cnidium monnieri": {
+   "name": "Cnidium monnieri",
+   "products": 250,
+   "sample_ids": [
+    22538178,
+    22721751,
+    24357138,
+    28668744,
+    29798730,
+    22538178,
+    22721751,
+    24357138
+   ]
+  },
+  "calcium fluoride": {
+   "name": "Calcium Fluoride",
+   "products": 100,
+   "sample_ids": [
+    22544028,
+    22723818,
+    22544028,
+    22723818,
+    22544028,
+    22723818,
+    22544028,
+    22723818
+   ]
+  },
+  "garcinia gummi-gutta": {
+   "name": "Garcinia gummi-gutta",
+   "products": 50,
+   "sample_ids": [
+    22575345,
+    22575345,
+    22575345,
+    22575345,
+    22575345,
+    22575345,
+    22575345,
+    22575345
+   ]
+  },
+  "iris domestica": {
+   "name": "Iris domestica",
+   "products": 250,
+   "sample_ids": [
+    22538295,
+    22721868,
+    28679469,
+    29771274,
+    29771274,
+    22538295,
+    22721868,
+    28679469
+   ]
+  },
+  "diospyros kaki": {
+   "name": "Diospyros kaki",
+   "products": 50,
+   "sample_ids": [
+    22538334,
+    22538334,
+    22538334,
+    22538334,
+    22538334,
+    22538334,
+    22538334,
+    22538334
+   ]
+  },
+  "prunus humilis": {
+   "name": "Prunus humilis",
+   "products": 150,
+   "sample_ids": [
+    22530651,
+    22723428,
+    28674087,
+    22530651,
+    22723428,
+    28674087,
+    22530651,
+    22723428
+   ]
+  },
+  "zea mays": {
+   "name": "Zea mays",
+   "products": 100,
+   "sample_ids": [
+    22530729,
+    22723506,
+    22530729,
+    22723506,
+    22530729,
+    22723506,
+    22530729,
+    22723506
+   ]
+  },
+  "melaphis chinensis": {
+   "name": "Melaphis chinensis",
+   "products": 50,
+   "sample_ids": [
+    22530885,
+    22530885,
+    22530885,
+    22530885,
+    22530885,
+    22530885,
+    22530885,
+    22530885
+   ]
+  },
+  "typha angustifolia": {
+   "name": "Typha angustifolia",
+   "products": 250,
+   "sample_ids": [
+    22531002,
+    22718046,
+    23377965,
+    29775876,
+    29775876,
+    22531002,
+    22718046,
+    23377965
+   ]
+  },
+  "pyrrosia lingua": {
+   "name": "Pyrrosia lingua",
+   "products": 100,
+   "sample_ids": [
+    22538451,
+    22722375,
+    22538451,
+    22722375,
+    22538451,
+    22722375,
+    22538451,
+    22722375
+   ]
+  },
+  "salvia chinensis": {
+   "name": "Salvia chinensis",
+   "products": 50,
+   "sample_ids": [
+    22538490,
+    22538490,
+    22538490,
+    22538490,
+    22538490,
+    22538490,
+    22538490,
+    22538490
+   ]
+  },
+  "lindera aggregata": {
+   "name": "Lindera aggregata",
+   "products": 150,
+   "sample_ids": [
+    22538607,
+    22722687,
+    28767999,
+    22538607,
+    22722687,
+    28767999,
+    22538607,
+    22722687
+   ]
+  },
+  "sigesbeckia glabrescens": {
+   "name": "Sigesbeckia glabrescens",
+   "products": 100,
+   "sample_ids": [
+    22538646,
+    22722726,
+    22538646,
+    22722726,
+    22538646,
+    22722726,
+    22538646,
+    22722726
+   ]
+  },
+  "agrimonia pilosa": {
+   "name": "Agrimonia pilosa",
+   "products": 100,
+   "sample_ids": [
+    22538763,
+    22722843,
+    22538763,
+    22722843,
+    22538763,
+    22722843,
+    22538763,
+    22722843
+   ]
+  },
+  "vincetoxicum pycnostelma": {
+   "name": "Vincetoxicum pycnostelma",
+   "products": 150,
+   "sample_ids": [
+    22538841,
+    22723116,
+    23520159,
+    22538841,
+    22723116,
+    23520159,
+    22538841,
+    22723116
+   ]
+  },
+  "scaphium lychnophorum": {
+   "name": "Scaphium lychnophorum",
+   "products": 50,
+   "sample_ids": [
+    22557249,
+    22557249,
+    22557249,
+    22557249,
+    22557249,
+    22557249,
+    22557249,
+    22557249
+   ]
+  },
+  "abrus cantoniensis": {
+   "name": "Abrus cantoniensis",
+   "products": 100,
+   "sample_ids": [
+    22533498,
+    22717266,
+    22533498,
+    22717266,
+    22533498,
+    22717266,
+    22533498,
+    22717266
+   ]
+  },
+  "mosla chinensis": {
+   "name": "Mosla chinensis",
+   "products": 100,
+   "sample_ids": [
+    22540167,
+    22723272,
+    22540167,
+    22723272,
+    22540167,
+    22723272,
+    22540167,
+    22723272
+   ]
+  },
+  "stellaria dichotoma var. lanceolata": {
+   "name": "Stellaria dichotoma var. lanceolata",
+   "products": 150,
+   "sample_ids": [
+    22540206,
+    22723389,
+    28735785,
+    22540206,
+    22723389,
+    28735785,
+    22540206,
+    22723389
+   ]
+  },
+  "arnebia euchroma": {
+   "name": "Arnebia euchroma",
+   "products": 150,
+   "sample_ids": [
+    22540284,
+    24254295,
+    28662036,
+    22540284,
+    24254295,
+    28662036,
+    22540284,
+    24254295
+   ]
+  },
+  "artemisia anomala": {
+   "name": "Artemisia anomala",
+   "products": 200,
+   "sample_ids": [
+    22557990,
+    22557990,
+    22717617,
+    22717617,
+    22557990,
+    22557990,
+    22717617,
+    22717617
+   ]
+  },
+  "pyrola calliantha": {
+   "name": "Pyrola calliantha",
+   "products": 50,
+   "sample_ids": [
+    22558068,
+    22558068,
+    22558068,
+    22558068,
+    22558068,
+    22558068,
+    22558068,
+    22558068
+   ]
+  },
+  "vigna angularis": {
+   "name": "Vigna angularis",
+   "products": 50,
+   "sample_ids": [
+    22677486,
+    22677486,
+    22677486,
+    22677486,
+    22677486,
+    22677486,
+    22677486,
+    22677486
+   ]
+  },
+  "3,3'-diindolylmethane": {
+   "name": "3,3'-Diindolylmethane",
+   "products": 100,
+   "sample_ids": [
+    22721790,
+    22721790,
+    22721790,
+    22721790,
+    22721790,
+    22721790,
+    22721790,
+    22721790
+   ]
+  },
+  "paris polyphylla var. chinensis": {
+   "name": "Paris polyphylla var. chinensis",
+   "products": 100,
+   "sample_ids": [
+    22718124,
+    22718124,
+    22718124,
+    22718124,
+    22718124,
+    22718124,
+    22718124,
+    22718124
+   ]
+  },
+  "santalum album": {
+   "name": "Santalum album",
+   "products": 100,
+   "sample_ids": [
+    22722570,
+    24214281,
+    22722570,
+    24214281,
+    22722570,
+    24214281,
+    22722570,
+    24214281
+   ]
+  },
+  "pelodiscus sinensis": {
+   "name": "Pelodiscus sinensis",
+   "products": 100,
+   "sample_ids": [
+    22724208,
+    22902711,
+    22724208,
+    22902711,
+    22724208,
+    22902711,
+    22724208,
+    22902711
+   ]
+  },
+  "cryptotympana atrata": {
+   "name": "Cryptotympana atrata",
+   "products": 150,
+   "sample_ids": [
+    22724247,
+    22902867,
+    28661763,
+    22724247,
+    22902867,
+    28661763,
+    22724247,
+    22902867
+   ]
+  },
+  "pheretima aspergillum": {
+   "name": "Pheretima aspergillum",
+   "products": 150,
+   "sample_ids": [
+    22724325,
+    22902984,
+    22940697,
+    22724325,
+    22902984,
+    22940697,
+    22724325,
+    22902984
+   ]
+  },
+  "eupolyphaga sinensis": {
+   "name": "Eupolyphaga sinensis",
+   "products": 100,
+   "sample_ids": [
+    22724403,
+    22724403,
+    22724403,
+    22724403,
+    22724403,
+    22724403,
+    22724403,
+    22724403
+   ]
+  },
+  "hirudo nipponica": {
+   "name": "Hirudo nipponica",
+   "products": 50,
+   "sample_ids": [
+    22834071,
+    22834071,
+    22834071,
+    22834071,
+    22834071,
+    22834071,
+    22834071,
+    22834071
+   ]
+  },
+  "concha arcae": {
+   "name": "Concha Arcae",
+   "products": 100,
+   "sample_ids": [
+    22834149,
+    22904817,
+    22834149,
+    22904817,
+    22834149,
+    22904817,
+    22834149,
+    22904817
+   ]
+  },
+  "scolopendra subspinipes mutilans": {
+   "name": "Scolopendra subspinipes mutilans",
+   "products": 50,
+   "sample_ids": [
+    22834305,
+    22834305,
+    22834305,
+    22834305,
+    22834305,
+    22834305,
+    22834305,
+    22834305
+   ]
+  },
+  "pteromys volans": {
+   "name": "Pteromys volans",
+   "products": 150,
+   "sample_ids": [
+    22835007,
+    22904934,
+    23377965,
+    22835007,
+    22904934,
+    23377965,
+    22835007,
+    22904934
+   ]
+  },
+  "cristaria plicata": {
+   "name": "Cristaria plicata",
+   "products": 100,
+   "sample_ids": [
+    22835163,
+    22905012,
+    22835163,
+    22905012,
+    22835163,
+    22905012,
+    22835163,
+    22905012
+   ]
+  },
+  "origanum vulgare": {
+   "name": "Origanum vulgare",
+   "products": 100,
+   "sample_ids": [
+    22897641,
+    22897641,
+    22897641,
+    22897641,
+    22897641,
+    22897641,
+    22897641,
+    22897641
+   ]
+  },
+  "hierodula patellifera": {
+   "name": "Hierodula patellifera",
+   "products": 100,
+   "sample_ids": [
+    22904661,
+    22833759,
+    22904661,
+    22833759,
+    22904661,
+    22833759,
+    22904661,
+    22833759
+   ]
+  },
+  "haliotis asinina": {
+   "name": "Haliotis asinina",
+   "products": 100,
+   "sample_ids": [
+    22904739,
+    22833798,
+    22904739,
+    22833798,
+    22904739,
+    22833798,
+    22904739,
+    22833798
+   ]
+  },
+  "gallus gallus domesticus": {
+   "name": "Gallus gallus domesticus",
+   "products": 200,
+   "sample_ids": [
+    22903062,
+    22833291,
+    26655603,
+    28704000,
+    22903062,
+    22833291,
+    26655603,
+    28704000
+   ]
+  },
+  "archidoskodon planifrons": {
+   "name": "Archidoskodon planifrons",
+   "products": 250,
+   "sample_ids": [
+    22903101,
+    22833408,
+    23563683,
+    23563683,
+    28613091,
+    22903101,
+    22833408,
+    23563683
+   ]
+  },
+  "parapolybia varia": {
+   "name": "Parapolybia varia",
+   "products": 200,
+   "sample_ids": [
+    22903140,
+    22903140,
+    22833525,
+    22833525,
+    22903140,
+    22903140,
+    22833525,
+    22833525
+   ]
+  },
+  "buthus martensii": {
+   "name": "Buthus martensii",
+   "products": 50,
+   "sample_ids": [
+    22833720,
+    22833720,
+    22833720,
+    22833720,
+    22833720,
+    22833720,
+    22833720,
+    22833720
+   ]
+  },
+  "akebia quinata": {
+   "name": "Akebia quinata",
+   "products": 50,
+   "sample_ids": [
+    22944129,
+    22944129,
+    22944129,
+    22944129,
+    22944129,
+    22944129,
+    22944129,
+    22944129
+   ]
+  },
+  "citrus bioflavonoids": {
+   "name": "Citrus bioflavonoids",
+   "products": 50,
+   "sample_ids": [
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665
+   ]
+  },
+  "serenoa repens": {
+   "name": "Serenoa repens",
+   "products": 50,
+   "sample_ids": [
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665
+   ]
+  },
+  "urtica dioica": {
+   "name": "Urtica dioica",
+   "products": 50,
+   "sample_ids": [
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665
+   ]
+  },
+  "cucurbita pepo": {
+   "name": "Cucurbita pepo",
+   "products": 50,
+   "sample_ids": [
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665
+   ]
+  },
+  "prunus africana": {
+   "name": "Prunus africana",
+   "products": 50,
+   "sample_ids": [
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665,
+    22960665
+   ]
+  },
+  "grape seed extract": {
+   "name": "Grape seed extract",
+   "products": 200,
+   "sample_ids": [
+    23120721,
+    23120721,
+    23536500,
+    23641644,
+    23120721,
+    23120721,
+    23536500,
+    23641644
+   ]
+  },
+  "bovine colostrum": {
+   "name": "Bovine Colostrum",
+   "products": 200,
+   "sample_ids": [
+    23120721,
+    23120721,
+    23756148,
+    23756148,
+    23120721,
+    23120721,
+    23756148,
+    23756148
+   ]
+  },
+  "gentiana scabra": {
+   "name": "Gentiana scabra",
+   "products": 50,
+   "sample_ids": [
+    23523474,
+    23523474,
+    23523474,
+    23523474,
+    23523474,
+    23523474,
+    23523474,
+    23523474
+   ]
+  },
+  "agastache rugosa": {
+   "name": "Agastache rugosa",
+   "products": 50,
+   "sample_ids": [
+    23530884,
+    23530884,
+    23530884,
+    23530884,
+    23530884,
+    23530884,
+    23530884,
+    23530884
+   ]
+  },
+  "cinnamomum verum": {
+   "name": "Cinnamomum verum",
+   "products": 50,
+   "sample_ids": [
+    23456745,
+    23456745,
+    23456745,
+    23456745,
+    23456745,
+    23456745,
+    23456745,
+    23456745
+   ]
+  },
+  "tetrapanax papyrifer": {
+   "name": "Tetrapanax papyrifer",
+   "products": 50,
+   "sample_ids": [
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803
+   ]
+  },
+  "solanum lycopersicum": {
+   "name": "Solanum lycopersicum",
+   "products": 50,
+   "sample_ids": [
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803
+   ]
+  },
+  "actaea foetida": {
+   "name": "Actaea foetida",
+   "products": 50,
+   "sample_ids": [
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803,
+    23527803
+   ]
+  },
+  "iodine": {
+   "name": "Iodine",
+   "products": 100,
+   "sample_ids": [
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410
+   ]
+  },
+  "l-tyrosine": {
+   "name": "L-Tyrosine",
+   "products": 100,
+   "sample_ids": [
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410,
+    23641410
+   ]
+  },
+  "3,3',4',5,7-pentahydroxyflavone-3-rutinoside": {
+   "name": "3,3',4',5,7-Pentahydroxyflavone-3-rutinoside",
+   "products": 50,
+   "sample_ids": [
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644
+   ]
+  },
+  "glechoma hederacea": {
+   "name": "Glechoma hederacea",
+   "products": 50,
+   "sample_ids": [
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644
+   ]
+  },
+  "aesculus hippocastanum": {
+   "name": "Aesculus hippocastanum",
+   "products": 50,
+   "sample_ids": [
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644,
+    23641644
+   ]
+  },
+  "2-amino-2-deoxy-d-glucose sulfate": {
+   "name": "2-Amino-2-deoxy-D-glucose sulfate",
+   "products": 200,
+   "sample_ids": [
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174
+   ]
+  },
+  "chondroitin sulfate": {
+   "name": "Chondroitin sulfate",
+   "products": 100,
+   "sample_ids": [
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174,
+    23847174
+   ]
+  },
+  "foeniculum vulgare subsp. vulgare var. dulce": {
+   "name": "Foeniculum vulgare subsp. vulgare var. dulce",
+   "products": 50,
+   "sample_ids": [
+    23866596,
+    23866596,
+    23866596,
+    23866596,
+    23866596,
+    23866596,
+    23866596,
+    23866596
+   ]
+  },
+  "cinnamomum camphora": {
+   "name": "Cinnamomum camphora",
+   "products": 50,
+   "sample_ids": [
+    24213579,
+    24213579,
+    24213579,
+    24213579,
+    24213579,
+    24213579,
+    24213579,
+    24213579
+   ]
+  },
+  "broussonetia papyrifera": {
+   "name": "Broussonetia papyrifera",
+   "products": 50,
+   "sample_ids": [
+    24213618,
+    24213618,
+    24213618,
+    24213618,
+    24213618,
+    24213618,
+    24213618,
+    24213618
+   ]
+  },
+  "neopicrorhiza scrophulariiflora": {
+   "name": "Neopicrorhiza scrophulariiflora",
+   "products": 50,
+   "sample_ids": [
+    24213813,
+    24213813,
+    24213813,
+    24213813,
+    24213813,
+    24213813,
+    24213813,
+    24213813
+   ]
+  },
+  "centella asiatica": {
+   "name": "Centella asiatica",
+   "products": 50,
+   "sample_ids": [
+    24213969,
+    24213969,
+    24213969,
+    24213969,
+    24213969,
+    24213969,
+    24213969,
+    24213969
+   ]
+  },
+  "zanthoxylum nitidum": {
+   "name": "Zanthoxylum nitidum",
+   "products": 50,
+   "sample_ids": [
+    24214008,
+    24214008,
+    24214008,
+    24214008,
+    24214008,
+    24214008,
+    24214008,
+    24214008
+   ]
+  },
+  "aloe vera": {
+   "name": "Aloe vera",
+   "products": 400,
+   "sample_ids": [
+    24214047,
+    24357138,
+    25716093,
+    25716093,
+    25716093,
+    25716093,
+    25716093,
+    25716093
+   ]
+  },
+  "verbena officinalis": {
+   "name": "Verbena officinalis",
+   "products": 50,
+   "sample_ids": [
+    24214086,
+    24214086,
+    24214086,
+    24214086,
+    24214086,
+    24214086,
+    24214086,
+    24214086
+   ]
+  },
+  "calvatia gigantea": {
+   "name": "Calvatia gigantea",
+   "products": 50,
+   "sample_ids": [
+    24214125,
+    24214125,
+    24214125,
+    24214125,
+    24214125,
+    24214125,
+    24214125,
+    24214125
+   ]
+  },
+  "schefflera arboricola": {
+   "name": "Schefflera arboricola",
+   "products": 50,
+   "sample_ids": [
+    24214164,
+    24214164,
+    24214164,
+    24214164,
+    24214164,
+    24214164,
+    24214164,
+    24214164
+   ]
+  },
+  "flemingia philippinensis": {
+   "name": "Flemingia philippinensis",
+   "products": 50,
+   "sample_ids": [
+    24214203,
+    24214203,
+    24214203,
+    24214203,
+    24214203,
+    24214203,
+    24214203,
+    24214203
+   ]
+  },
+  "achyranthes longifolia": {
+   "name": "Achyranthes longifolia",
+   "products": 50,
+   "sample_ids": [
+    24214320,
+    24214320,
+    24214320,
+    24214320,
+    24214320,
+    24214320,
+    24214320,
+    24214320
+   ]
+  },
+  "ficus carica": {
+   "name": "Ficus carica",
+   "products": 50,
+   "sample_ids": [
+    24214359,
+    24214359,
+    24214359,
+    24214359,
+    24214359,
+    24214359,
+    24214359,
+    24214359
+   ]
+  },
+  "sarcandra glabra": {
+   "name": "Sarcandra glabra",
+   "products": 50,
+   "sample_ids": [
+    24214398,
+    24214398,
+    24214398,
+    24214398,
+    24214398,
+    24214398,
+    24214398,
+    24214398
+   ]
+  },
+  "dryopteris crassirhizoma": {
+   "name": "Dryopteris crassirhizoma",
+   "products": 50,
+   "sample_ids": [
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295
+   ]
+  },
+  "dryobalanops aromatica": {
+   "name": "Dryobalanops aromatica",
+   "products": 50,
+   "sample_ids": [
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295
+   ]
+  },
+  "l-menthol": {
+   "name": "l-Menthol",
+   "products": 50,
+   "sample_ids": [
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295,
+    24254295
+   ]
+  },
+  "prunus armeniaca var. ansu": {
+   "name": "Prunus armeniaca var. ansu",
+   "products": 400,
+   "sample_ids": [
+    24399219,
+    24399219,
+    24399219,
+    24357723,
+    24357723,
+    24357723,
+    24358347,
+    24358347
+   ]
+  },
+  "zanthoxylum schinifolium": {
+   "name": "Zanthoxylum schinifolium",
+   "products": 150,
+   "sample_ids": [
+    24399219,
+    24399219,
+    24399219,
+    24399219,
+    24399219,
+    24399219,
+    24399219,
+    24399219
+   ]
+  },
+  "punica granatum": {
+   "name": "Punica granatum",
+   "products": 50,
+   "sample_ids": [
+    24357138,
+    24357138,
+    24357138,
+    24357138,
+    24357138,
+    24357138,
+    24357138,
+    24357138
+   ]
+  },
+  "citrus sinensis": {
+   "name": "Citrus sinensis",
+   "products": 100,
+   "sample_ids": [
+    24358347,
+    24358347,
+    24358347,
+    24358347,
+    24358347,
+    24358347,
+    24358347,
+    24358347
+   ]
+  },
+  "ethyl alcohol": {
+   "name": "Ethyl alcohol",
+   "products": 50,
+   "sample_ids": [
+    24587160,
+    24587160,
+    24587160,
+    24587160,
+    24587160,
+    24587160,
+    24587160,
+    24587160
+   ]
+  },
+  "cynanchum wilfordii": {
+   "name": "Cynanchum wilfordii",
+   "products": 50,
+   "sample_ids": [
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853
+   ]
+  },
+  "phlomis umbrosa": {
+   "name": "Phlomis umbrosa",
+   "products": 50,
+   "sample_ids": [
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853
+   ]
+  },
+  "angelica gigas": {
+   "name": "Angelica gigas",
+   "products": 50,
+   "sample_ids": [
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853
+   ]
+  },
+  "paecilomyces hepiali": {
+   "name": "Paecilomyces hepiali",
+   "products": 50,
+   "sample_ids": [
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853,
+    24890853
+   ]
+  },
+  "cocos nucifera": {
+   "name": "Cocos nucifera",
+   "products": 50,
+   "sample_ids": [
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158
+   ]
+  },
+  "pinus pinaster": {
+   "name": "Pinus pinaster",
+   "products": 50,
+   "sample_ids": [
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158
+   ]
+  },
+  "hyaluronic acid": {
+   "name": "Hyaluronic acid",
+   "products": 50,
+   "sample_ids": [
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158,
+    24871158
+   ]
+  },
+  "cassia fistula": {
+   "name": "Cassia fistula",
+   "products": 150,
+   "sample_ids": [
+    25716015,
+    25716015,
+    25716015,
+    25716015,
+    25716015,
+    25716015,
+    25716015,
+    25716015
+   ]
+  },
+  "dendrobium loddigesii": {
+   "name": "Dendrobium loddigesii",
+   "products": 150,
+   "sample_ids": [
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705
+   ]
+  },
+  "polygonatum sibiricum": {
+   "name": "Polygonatum sibiricum",
+   "products": 150,
+   "sample_ids": [
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705,
+    27771705
+   ]
+  },
+  "codonopsis tangshen": {
+   "name": "Codonopsis tangshen",
+   "products": 50,
+   "sample_ids": [
+    28429284,
+    28429284,
+    28429284,
+    28429284,
+    28429284,
+    28429284,
+    28429284,
+    28429284
+   ]
+  },
+  "1,4-diaminobutane, n-(3-aminopropyl)-": {
+   "name": "1,4-Diaminobutane, N-(3-aminopropyl)-",
+   "products": 50,
+   "sample_ids": [
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017
+   ]
+  },
+  "1h-pyrrolo(2,3-f)quinoline-2,7,9-tricarboxylic acid, 4,5-dihydro-4,5-dioxo-": {
+   "name": "1H-Pyrrolo(2,3-f)quinoline-2,7,9-tricarboxylic acid, 4,5-dihydro-4,5-dioxo-",
+   "products": 50,
+   "sample_ids": [
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017,
+    29137017
+   ]
+  },
+  "canarium album": {
+   "name": "Canarium album",
+   "products": 50,
+   "sample_ids": [
+    28745223,
+    28745223,
+    28745223,
+    28745223,
+    28745223,
+    28745223,
+    28745223,
+    28745223
+   ]
+  },
+  "ranunculus ternatus": {
+   "name": "Ranunculus ternatus",
+   "products": 250,
+   "sample_ids": [
+    29313492,
+    29313492,
+    29313492,
+    29313492,
+    29313492,
+    29313492,
+    29313492,
+    29313492
+   ]
+  }
+ }
+}

@@ -1,0 +1,143 @@
+title: USDA Plants Database Plant Profile General
+final_url: https://plants.sc.egov.usda.gov/plant-profile/ZIOF
+
+Skip to main content
+
+An official website of the United States government
+
+Here’s how you know
+Natural Resources Conservation Service
+U.S. DEPARTMENT OF AGRICULTURE
+PLANTS Database Home
+Topics
+Team
+Downloads
+Partners
+Related Tools
+Help
+Release Notes
+Select Search Type
+Scientific Name
+Common Name
+Symbol
+Family
+Global Search
+
+Choose the search type above and then enter your search query here.
+
+Search
+Characteristic Search
+Duration Search
+Fact Sheets/Plant Guides
+Group Search
+Growth Habit Search
+Image Search
+Invasive/Noxious Search
+Rarity Search
+State Search
+Wetland Search
+Home  Plant Profile
+Zingiber officinale Roscoe
+garden ginger
+Profile pages
+General
+Images
+Synonyms
+Related Links
+Sources
+garden ginger
+General Information
+Symbol
+	ZIOF
+
+Group
+	Monocot
+
+Duration
+	Perennial
+
+
+Growth Habits
+	Forb/herb
+
+
+Native Status
+	PB I | PR I | VI I
+Download Distribution Data
+View Print Options
+Zoom in
+Zoom out
+Copyright:(c) 2014 Esri | USDA-NRCS-NGCE & NPDT
+Powered by Esri
+Native	
+Introduced	
+Both	
+Native, No County Data	
+Introduced, No County Data	
+Both, No County Data	
+Excluded	
+Unknown
+Native Status:
+L48
+AK
+HI
+PR
+VI
+NAV
+CAN
+GL
+SPM
+NA
+Default View
+garden ginger
+Classification
+Kingdom
+	Plantae - Plants
+
+Subkingdom
+	Tracheobionta - Vascular plants
+
+Superdivision
+	Spermatophyta - Seed plants
+
+Division
+	Magnoliophyta - Flowering plants
+
+Class
+	Liliopsida - Monocotyledons
+
+Subclass
+	Zingiberidae
+
+Order
+	Zingiberales
+
+Family
+	Zingiberaceae Martinov - Ginger family P
+
+Genus
+	Zingiber Mill. - ginger P
+
+Species
+	Zingiber officinale Roscoe - garden ginger P
+PLANTS Database Home
+Topics
+Team
+Downloads
+Partners
+Related Tools
+Help
+Release Notes
+AskUSDA
+Privacy Policy
+Accessibility Statement
+Non-Discrimination Statement
+USDA.gov
+USA.gov
+Information Quality
+Plain Writing
+WhiteHouse.gov
+FOIA
+Current Status
+Natural Resources Conservation Service
+U.S. DEPARTMENT OF AGRICULTURE

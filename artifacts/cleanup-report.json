@@ -1,0 +1,4042 @@
+{
+ "generated_at": "2026-11-03T18:33:59.260Z",
+ "applied": true,
+ "fixes": [
+  {
+   "slug": "java-turmeric",
+   "before": {
+    "name": "Turmeric (Javanese)",
+    "sci": "Curcuma xanthorrhiza",
+    "dose": "250-500mg extract daily, or 2g dried rhizome as tea daily"
+   },
+   "after": {
+    "name": "Turmeric",
+    "sci": "Curcuma xanthorrhiza",
+    "dose": "250-500mg extract daily, or 2g dried rhizome as tea daily"
+   }
+  },
+  {
+   "slug": "shilajit-tibetan",
+   "before": {
+    "name": "Shilajit Tibetan",
+    "sci": "Asphaltum (Himalayan)",
+    "dose": "300-500mg purified daily"
+   },
+   "after": {
+    "name": "Shilajit Tibetan",
+    "sci": "Asphaltum",
+    "dose": "300-500mg purified daily"
+   }
+  },
+  {
+   "slug": "niacinamide-skin",
+   "before": {
+    "name": "Niacinamide Skin",
+    "sci": "Nicotinamide (Vitamin B3)",
+    "dose": "Topical: 2-5% serum 2x daily; Oral: 250-500mg daily"
+   },
+   "after": {
+    "name": "Niacinamide Skin",
+    "sci": "Nicotinamide",
+    "dose": "Topical: 2-5% serum 2x daily; Oral: 250-500mg daily"
+   }
+  },
+  {
+   "slug": "chocolate-mint",
+   "before": {
+    "name": "Chocolate Mint",
+    "sci": "Mentha x piperita cv. chocolate",
+    "dose": "2–3 g dried herb as tea"
+   },
+   "after": {
+    "name": "Chocolate Mint",
+    "sci": "Mentha x piperita",
+    "dose": "2–3 g dried herb as tea"
+   }
+  },
+  {
+   "slug": "ligusticum-sinense-cv-chuanxiong",
+   "before": {
+    "name": "Ligusticum sinense cv. chuanxiong",
+    "sci": "Ligusticum sinense cv. chuanxiong",
+    "dose": null
+   },
+   "after": {
+    "name": "Ligusticum sinense",
+    "sci": "Ligusticum sinense",
+    "dose": null
+   }
+  },
+  {
+   "slug": "sambucus-nigra-subsp-nigra",
+   "before": {
+    "name": "Sambucus nigra subsp. nigra",
+    "sci": "Sambucus nigra subsp. nigra",
+    "dose": "1–2 capsule 1× daily"
+   },
+   "after": {
+    "name": "Sambucus nigra subsp. nigra",
+    "sci": "Sambucus nigra subsp. nigra",
+    "dose": "1–2 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "cocos-nucifera",
+   "before": {
+    "name": "Cocos nucifera",
+    "sci": "Cocos nucifera",
+    "dose": "1–2 serving 1× daily"
+   },
+   "after": {
+    "name": "Cocos nucifera",
+    "sci": "Cocos nucifera",
+    "dose": "1–2 servings 1× daily"
+   }
+  },
+  {
+   "slug": "citrus-sinensis",
+   "before": {
+    "name": "Citrus sinensis",
+    "sci": "Citrus sinensis",
+    "dose": "45–60 drop(s) daily"
+   },
+   "after": {
+    "name": "Citrus sinensis",
+    "sci": "Citrus sinensis",
+    "dose": "45–60 drops(s) daily"
+   }
+  },
+  {
+   "slug": "foeniculum-vulgare-subsp-vulgare-var-dulce",
+   "before": {
+    "name": "Foeniculum vulgare subsp. vulgare var. dulce",
+    "sci": "Foeniculum vulgare subsp. vulgare var. dulce",
+    "dose": "2–6 tablet 1× daily"
+   },
+   "after": {
+    "name": "Foeniculum vulgare subsp. vulgare var. dulce",
+    "sci": "Foeniculum vulgare subsp. vulgare var. dulce",
+    "dose": "2–6 tablets 1× daily"
+   }
+  },
+  {
+   "slug": "citrus-limon",
+   "before": {
+    "name": "Citrus limon",
+    "sci": "Citrus limon",
+    "dose": "1–4 tablet 1× daily"
+   },
+   "after": {
+    "name": "Citrus limon",
+    "sci": "Citrus limon",
+    "dose": "1–4 tablets 1× daily"
+   }
+  },
+  {
+   "slug": "citrus-paradisi",
+   "before": {
+    "name": "Citrus paradisi",
+    "sci": "Citrus paradisi",
+    "dose": "3–12 serving 1–3× daily"
+   },
+   "after": {
+    "name": "Citrus paradisi",
+    "sci": "Citrus paradisi",
+    "dose": "3–12 servings 1–3× daily"
+   }
+  },
+  {
+   "slug": "coffea-arabica",
+   "before": {
+    "name": "Coffea arabica",
+    "sci": "Coffea arabica",
+    "dose": "3–4 capsule 3× daily"
+   },
+   "after": {
+    "name": "Coffea arabica",
+    "sci": "Coffea arabica",
+    "dose": "3–4 capsules 3× daily"
+   }
+  },
+  {
+   "slug": "brassica-oleracea-var-gemmifera",
+   "before": {
+    "name": "Brassica oleracea var. gemmifera",
+    "sci": "Brassica oleracea var. gemmifera",
+    "dose": "4–6 capsule 2× daily"
+   },
+   "after": {
+    "name": "Brassica oleracea var. gemmifera",
+    "sci": "Brassica oleracea var. gemmifera",
+    "dose": "4–6 capsules 2× daily"
+   }
+  },
+  {
+   "slug": "vaccinium-macrocarpon-aiton",
+   "before": {
+    "name": "Vaccinium macrocarpon Aiton",
+    "sci": "Vaccinium macrocarpon Aiton",
+    "dose": "1–2 capsule 1× daily"
+   },
+   "after": {
+    "name": "Vaccinium macrocarpon Aiton",
+    "sci": "Vaccinium macrocarpon Aiton",
+    "dose": "1–2 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "foeniculum-vulgare-subsp-vulgare-var-vulgare",
+   "before": {
+    "name": "Foeniculum vulgare subsp. vulgare var. vulgare",
+    "sci": "Foeniculum vulgare subsp. vulgare var. vulgare",
+    "dose": "2–8 drop(s) daily"
+   },
+   "after": {
+    "name": "Foeniculum vulgare subsp. vulgare var. vulgare",
+    "sci": "Foeniculum vulgare subsp. vulgare var. vulgare",
+    "dose": "2–8 drops(s) daily"
+   }
+  },
+  {
+   "slug": "solanum-tuberosum",
+   "before": {
+    "name": "Solanum tuberosum",
+    "sci": "Solanum tuberosum",
+    "dose": "1 scoop 1–1× daily"
+   },
+   "after": {
+    "name": "Solanum tuberosum",
+    "sci": "Solanum tuberosum",
+    "dose": "1 scoop 1× daily"
+   }
+  },
+  {
+   "slug": "ignatia-amara",
+   "before": {
+    "name": "Ignatia amara",
+    "sci": "Ignatia amara",
+    "dose": "1–2 tablet 3–4× daily"
+   },
+   "after": {
+    "name": "Ignatia amara",
+    "sci": "Ignatia amara",
+    "dose": "1–2 tablets 3–4× daily"
+   }
+  },
+  {
+   "slug": "mentha-piperita",
+   "before": {
+    "name": "Mentha piperita",
+    "sci": "Mentha piperita",
+    "dose": "5–8 drop(s) daily"
+   },
+   "after": {
+    "name": "Mentha piperita",
+    "sci": "Mentha piperita",
+    "dose": "5–8 drops(s) daily"
+   }
+  },
+  {
+   "slug": "matricaria-recutita",
+   "before": {
+    "name": "Matricaria recutita",
+    "sci": "Matricaria recutita",
+    "dose": "1–2 tablet daily"
+   },
+   "after": {
+    "name": "Matricaria recutita",
+    "sci": "Matricaria recutita",
+    "dose": "1–2 tablets daily"
+   }
+  },
+  {
+   "slug": "plantago-afra",
+   "before": {
+    "name": "Plantago afra",
+    "sci": "Plantago afra",
+    "dose": "3–4 capsule 2–3× daily"
+   },
+   "after": {
+    "name": "Plantago afra",
+    "sci": "Plantago afra",
+    "dose": "3–4 capsules 2–3× daily"
+   }
+  },
+  {
+   "slug": "spigelia-anthelmia",
+   "before": {
+    "name": "Spigelia anthelmia",
+    "sci": "Spigelia anthelmia",
+    "dose": "10–15 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Spigelia anthelmia",
+    "sci": "Spigelia anthelmia",
+    "dose": "10–15 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "elaeis-guineensis",
+   "before": {
+    "name": "Elaeis guineensis",
+    "sci": "Elaeis guineensis",
+    "dose": "1–2 capsule 1–2× daily"
+   },
+   "after": {
+    "name": "Elaeis guineensis",
+    "sci": "Elaeis guineensis",
+    "dose": "1–2 capsules 1–2× daily"
+   }
+  },
+  {
+   "slug": "medicago-sativa-l",
+   "before": {
+    "name": "Medicago sativa L.",
+    "sci": "Medicago sativa L.",
+    "dose": null
+   },
+   "after": {
+    "name": "Medicago sativa",
+    "sci": "Medicago sativa",
+    "dose": null
+   }
+  },
+  {
+   "slug": "fragaria-virginiana",
+   "before": {
+    "name": "Fragaria virginiana",
+    "sci": "Fragaria virginiana",
+    "dose": "1–2 tablet 1× daily"
+   },
+   "after": {
+    "name": "Fragaria virginiana",
+    "sci": "Fragaria virginiana",
+    "dose": "1–2 tablets 1× daily"
+   }
+  },
+  {
+   "slug": "valeriana-officinalis-l",
+   "before": {
+    "name": "Valeriana officinalis L.",
+    "sci": "Valeriana officinalis L.",
+    "dose": "0.5–1 tea spoon 1× daily"
+   },
+   "after": {
+    "name": "Valeriana officinalis",
+    "sci": "Valeriana officinalis",
+    "dose": "0.5–1 tea spoon 1× daily"
+   }
+  },
+  {
+   "slug": "buglossoides-arvensis",
+   "before": {
+    "name": "Buglossoides arvensis",
+    "sci": "Buglossoides arvensis",
+    "dose": "1–2 tablet 1× daily"
+   },
+   "after": {
+    "name": "Buglossoides arvensis",
+    "sci": "Buglossoides arvensis",
+    "dose": "1–2 tablets 1× daily"
+   }
+  },
+  {
+   "slug": "citrus-aurantiifolia",
+   "before": {
+    "name": "Citrus aurantiifolia",
+    "sci": "Citrus aurantiifolia",
+    "dose": "1–6 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Citrus aurantiifolia",
+    "sci": "Citrus aurantiifolia",
+    "dose": "1–6 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "secale-cornutum",
+   "before": {
+    "name": "Secale cornutum",
+    "sci": "Secale cornutum",
+    "dose": "10–15 drop(s) 2–3× daily"
+   },
+   "after": {
+    "name": "Secale cornutum",
+    "sci": "Secale cornutum",
+    "dose": "10–15 drops(s) 2–3× daily"
+   }
+  },
+  {
+   "slug": "silybum-marianum-l-gaertn",
+   "before": {
+    "name": "Silybum marianum (L.) Gaertn",
+    "sci": "Silybum marianum (L.) Gaertn",
+    "dose": "1–3 spray 1–3× daily"
+   },
+   "after": {
+    "name": "Silybum marianum (L.) Gaertn",
+    "sci": "Silybum marianum (L.) Gaertn",
+    "dose": "1–3 sprays 1–3× daily"
+   }
+  },
+  {
+   "slug": "sticta-pulmonaria",
+   "before": {
+    "name": "Sticta pulmonaria",
+    "sci": "Sticta pulmonaria",
+    "dose": "20–40 drop(s) 1× daily"
+   },
+   "after": {
+    "name": "Sticta pulmonaria",
+    "sci": "Sticta pulmonaria",
+    "dose": "20–40 drops(s) 1× daily"
+   }
+  },
+  {
+   "slug": "anacardium-orientale",
+   "before": {
+    "name": "Anacardium orientale",
+    "sci": "Anacardium orientale",
+    "dose": "2–3 spray 3× daily"
+   },
+   "after": {
+    "name": "Anacardium orientale",
+    "sci": "Anacardium orientale",
+    "dose": "2–3 sprays 3× daily"
+   }
+  },
+  {
+   "slug": "eupatorium-purpureum",
+   "before": {
+    "name": "Eupatorium purpureum",
+    "sci": "Eupatorium purpureum",
+    "dose": "1–2 capsule 2× daily"
+   },
+   "after": {
+    "name": "Eupatorium purpureum",
+    "sci": "Eupatorium purpureum",
+    "dose": "1–2 capsules 2× daily"
+   }
+  },
+  {
+   "slug": "prunus-cerasifera",
+   "before": {
+    "name": "Prunus cerasifera",
+    "sci": "Prunus cerasifera",
+    "dose": "1–5 spray 1–3× daily"
+   },
+   "after": {
+    "name": "Prunus cerasifera",
+    "sci": "Prunus cerasifera",
+    "dose": "1–5 sprays 1–3× daily"
+   }
+  },
+  {
+   "slug": "cymbopogon-martini",
+   "before": {
+    "name": "Cymbopogon martini",
+    "sci": "Cymbopogon martini",
+    "dose": "1–6 spray 1–6× daily"
+   },
+   "after": {
+    "name": "Cymbopogon martini",
+    "sci": "Cymbopogon martini",
+    "dose": "1–6 sprays 1–6× daily"
+   }
+  },
+  {
+   "slug": "phoenix-dactylifera",
+   "before": {
+    "name": "Phoenix dactylifera",
+    "sci": "Phoenix dactylifera",
+    "dose": "1–2 capsule 1–3× daily"
+   },
+   "after": {
+    "name": "Phoenix dactylifera",
+    "sci": "Phoenix dactylifera",
+    "dose": "1–2 capsules 1–3× daily"
+   }
+  },
+  {
+   "slug": "boswellia-frereana",
+   "before": {
+    "name": "Boswellia frereana",
+    "sci": "Boswellia frereana",
+    "dose": "3–12 serving 1–3× daily"
+   },
+   "after": {
+    "name": "Boswellia frereana",
+    "sci": "Boswellia frereana",
+    "dose": "3–12 servings 1–3× daily"
+   }
+  },
+  {
+   "slug": "vaccinium-myrtillus-l",
+   "before": {
+    "name": "Vaccinium myrtillus L.",
+    "sci": "Vaccinium myrtillus L.",
+    "dose": "1–3 capsule 3× daily"
+   },
+   "after": {
+    "name": "Vaccinium myrtillus",
+    "sci": "Vaccinium myrtillus",
+    "dose": "1–3 capsules 3× daily"
+   }
+  },
+  {
+   "slug": "anemone-altaica",
+   "before": {
+    "name": "Anemone altaica",
+    "sci": "Anemone altaica",
+    "dose": "1–2 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Anemone altaica",
+    "sci": "Anemone altaica",
+    "dose": "1–2 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "senna-tora",
+   "before": {
+    "name": "Senna tora",
+    "sci": "Senna tora",
+    "dose": "6 capsule 3–3× daily"
+   },
+   "after": {
+    "name": "Senna tora",
+    "sci": "Senna tora",
+    "dose": "6 capsules 3× daily"
+   }
+  },
+  {
+   "slug": "agaricus-muscarius",
+   "before": {
+    "name": "Agaricus muscarius",
+    "sci": "Agaricus muscarius",
+    "dose": "15–20 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Agaricus muscarius",
+    "sci": "Agaricus muscarius",
+    "dose": "15–20 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "candida-albicans",
+   "before": {
+    "name": "Candida albicans",
+    "sci": "Candida albicans",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Candida albicans",
+    "sci": "Candida albicans",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "sabal-serrulata",
+   "before": {
+    "name": "Sabal serrulata",
+    "sci": "Sabal serrulata",
+    "dose": "1–4 spray 4× daily"
+   },
+   "after": {
+    "name": "Sabal serrulata",
+    "sci": "Sabal serrulata",
+    "dose": "1–4 sprays 4× daily"
+   }
+  },
+  {
+   "slug": "helonias-dioica",
+   "before": {
+    "name": "Helonias dioica",
+    "sci": "Helonias dioica",
+    "dose": "25–30 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Helonias dioica",
+    "sci": "Helonias dioica",
+    "dose": "25–30 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "arum-triphyllum",
+   "before": {
+    "name": "Arum triphyllum",
+    "sci": "Arum triphyllum",
+    "dose": "1–4 tablet 1–4× daily"
+   },
+   "after": {
+    "name": "Arum triphyllum",
+    "sci": "Arum triphyllum",
+    "dose": "1–4 tablets 1–4× daily"
+   }
+  },
+  {
+   "slug": "helianthemum-nummularium",
+   "before": {
+    "name": "Helianthemum nummularium",
+    "sci": "Helianthemum nummularium",
+    "dose": "1–5 spray 1–3× daily"
+   },
+   "after": {
+    "name": "Helianthemum nummularium",
+    "sci": "Helianthemum nummularium",
+    "dose": "1–5 sprays 1–3× daily"
+   }
+  },
+  {
+   "slug": "senega-officinalis",
+   "before": {
+    "name": "Senega officinalis",
+    "sci": "Senega officinalis",
+    "dose": "5–10 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Senega officinalis",
+    "sci": "Senega officinalis",
+    "dose": "5–10 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "smilax-aristolochiifolia",
+   "before": {
+    "name": "Smilax aristolochiifolia",
+    "sci": "Smilax aristolochiifolia",
+    "dose": "1–2 capsule 2× daily"
+   },
+   "after": {
+    "name": "Smilax aristolochiifolia",
+    "sci": "Smilax aristolochiifolia",
+    "dose": "1–2 capsules 2× daily"
+   }
+  },
+  {
+   "slug": "lepidium-apetalum",
+   "before": {
+    "name": "Lepidium apetalum",
+    "sci": "Lepidium apetalum",
+    "dose": "3–4 capsule 3× daily"
+   },
+   "after": {
+    "name": "Lepidium apetalum",
+    "sci": "Lepidium apetalum",
+    "dose": "3–4 capsules 3× daily"
+   }
+  },
+  {
+   "slug": "linum-usitatissimum-l",
+   "before": {
+    "name": "Linum usitatissimum L.",
+    "sci": "Linum usitatissimum L.",
+    "dose": null
+   },
+   "after": {
+    "name": "Linum usitatissimum",
+    "sci": "Linum usitatissimum",
+    "dose": null
+   }
+  },
+  {
+   "slug": "luffa-operculata",
+   "before": {
+    "name": "Luffa operculata",
+    "sci": "Luffa operculata",
+    "dose": "5–10 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Luffa operculata",
+    "sci": "Luffa operculata",
+    "dose": "5–10 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "ganoderma-applanatum",
+   "before": {
+    "name": "Ganoderma applanatum",
+    "sci": "Ganoderma applanatum",
+    "dose": "1–2 capsule 2× daily"
+   },
+   "after": {
+    "name": "Ganoderma applanatum",
+    "sci": "Ganoderma applanatum",
+    "dose": "1–2 capsules 2× daily"
+   }
+  },
+  {
+   "slug": "corymbia-citriodora",
+   "before": {
+    "name": "Corymbia citriodora",
+    "sci": "Corymbia citriodora",
+    "dose": "2–4 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Corymbia citriodora",
+    "sci": "Corymbia citriodora",
+    "dose": "2–4 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "lappa-major",
+   "before": {
+    "name": "Lappa major",
+    "sci": "Lappa major",
+    "dose": "1–3 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Lappa major",
+    "sci": "Lappa major",
+    "dose": "1–3 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "aletris-farinosa",
+   "before": {
+    "name": "Aletris farinosa",
+    "sci": "Aletris farinosa",
+    "dose": "15–20 drop(s) daily"
+   },
+   "after": {
+    "name": "Aletris farinosa",
+    "sci": "Aletris farinosa",
+    "dose": "15–20 drops(s) daily"
+   }
+  },
+  {
+   "slug": "leptandra-virginica",
+   "before": {
+    "name": "Leptandra virginica",
+    "sci": "Leptandra virginica",
+    "dose": "8–20 drop(s) daily"
+   },
+   "after": {
+    "name": "Leptandra virginica",
+    "sci": "Leptandra virginica",
+    "dose": "8–20 drops(s) daily"
+   }
+  },
+  {
+   "slug": "lilium-tigrinum",
+   "before": {
+    "name": "Lilium tigrinum",
+    "sci": "Lilium tigrinum",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Lilium tigrinum",
+    "sci": "Lilium tigrinum",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "ranunculus-bulbosus",
+   "before": {
+    "name": "Ranunculus bulbosus",
+    "sci": "Ranunculus bulbosus",
+    "dose": "1–3 tablet 2× daily"
+   },
+   "after": {
+    "name": "Ranunculus bulbosus",
+    "sci": "Ranunculus bulbosus",
+    "dose": "1–3 tablets 2× daily"
+   }
+  },
+  {
+   "slug": "jasminum-officinale",
+   "before": {
+    "name": "Jasminum officinale",
+    "sci": "Jasminum officinale",
+    "dose": "1–10 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Jasminum officinale",
+    "sci": "Jasminum officinale",
+    "dose": "1–10 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "thlaspi-bursa-pastoris",
+   "before": {
+    "name": "Thlaspi bursa pastoris",
+    "sci": "Thlaspi bursa pastoris",
+    "dose": "1–2 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Thlaspi bursa pastoris",
+    "sci": "Thlaspi bursa pastoris",
+    "dose": "1–2 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "vitis-vinifera-var-tinctoria",
+   "before": {
+    "name": "Vitis vinifera var. tinctoria",
+    "sci": "Vitis vinifera var. tinctoria",
+    "dose": "1–2 capsule 1× daily"
+   },
+   "after": {
+    "name": "Vitis vinifera var. tinctoria",
+    "sci": "Vitis vinifera var. tinctoria",
+    "dose": "1–2 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "ulmus-procera",
+   "before": {
+    "name": "Ulmus procera",
+    "sci": "Ulmus procera",
+    "dose": "2 drop(s) 1–12× daily"
+   },
+   "after": {
+    "name": "Ulmus procera",
+    "sci": "Ulmus procera",
+    "dose": "2 drops(s) 1–12× daily"
+   }
+  },
+  {
+   "slug": "lactuca-sativa",
+   "before": {
+    "name": "Lactuca sativa",
+    "sci": "Lactuca sativa",
+    "dose": "5–10 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Lactuca sativa",
+    "sci": "Lactuca sativa",
+    "dose": "5–10 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "cyclamen-europaeum",
+   "before": {
+    "name": "Cyclamen europaeum",
+    "sci": "Cyclamen europaeum",
+    "dose": "1–3 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Cyclamen europaeum",
+    "sci": "Cyclamen europaeum",
+    "dose": "1–3 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "raphanus-sativus-var-niger",
+   "before": {
+    "name": "Raphanus sativus var. niger",
+    "sci": "Raphanus sativus var. niger",
+    "dose": "15–20 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Raphanus sativus var. niger",
+    "sci": "Raphanus sativus var. niger",
+    "dose": "15–20 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "dendrobium-officinale",
+   "before": {
+    "name": "Dendrobium officinale",
+    "sci": "Dendrobium officinale",
+    "dose": "2–3 capsule 1× daily"
+   },
+   "after": {
+    "name": "Dendrobium officinale",
+    "sci": "Dendrobium officinale",
+    "dose": "2–3 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "tagetes-erecta-l",
+   "before": {
+    "name": "Tagetes erecta L.",
+    "sci": "Tagetes erecta L.",
+    "dose": null
+   },
+   "after": {
+    "name": "Tagetes erecta",
+    "sci": "Tagetes erecta",
+    "dose": null
+   }
+  },
+  {
+   "slug": "galphimia-glauca",
+   "before": {
+    "name": "Galphimia glauca",
+    "sci": "Galphimia glauca",
+    "dose": "1–2 spray 3–5× daily"
+   },
+   "after": {
+    "name": "Galphimia glauca",
+    "sci": "Galphimia glauca",
+    "dose": "1–2 sprays 3–5× daily"
+   }
+  },
+  {
+   "slug": "fraxinus-americana",
+   "before": {
+    "name": "Fraxinus americana",
+    "sci": "Fraxinus americana",
+    "dose": "1–3 tablet 2× daily"
+   },
+   "after": {
+    "name": "Fraxinus americana",
+    "sci": "Fraxinus americana",
+    "dose": "1–3 tablets 2× daily"
+   }
+  },
+  {
+   "slug": "crataegus-monogyna-jacq",
+   "before": {
+    "name": "Crataegus monogyna Jacq.",
+    "sci": "Crataegus monogyna Jacq.",
+    "dose": null
+   },
+   "after": {
+    "name": "Crataegus monogyna",
+    "sci": "Crataegus monogyna",
+    "dose": null
+   }
+  },
+  {
+   "slug": "apocynum-cannabinum",
+   "before": {
+    "name": "Apocynum cannabinum",
+    "sci": "Apocynum cannabinum",
+    "dose": "15–20 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Apocynum cannabinum",
+    "sci": "Apocynum cannabinum",
+    "dose": "15–20 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "saccharomyces-boulardii-lyo",
+   "before": {
+    "name": "Saccharomyces boulardii lyo",
+    "sci": "Saccharomyces boulardii lyo",
+    "dose": "2–4 capsule 1–3× daily"
+   },
+   "after": {
+    "name": "Saccharomyces boulardii lyo",
+    "sci": "Saccharomyces boulardii lyo",
+    "dose": "2–4 capsules 1–3× daily"
+   }
+  },
+  {
+   "slug": "saccharum-officinale",
+   "before": {
+    "name": "Saccharum officinale",
+    "sci": "Saccharum officinale",
+    "dose": "5–10 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Saccharum officinale",
+    "sci": "Saccharum officinale",
+    "dose": "5–10 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "chamomilla-vulgaris",
+   "before": {
+    "name": "Chamomilla vulgaris",
+    "sci": "Chamomilla vulgaris",
+    "dose": "30–60 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Chamomilla vulgaris",
+    "sci": "Chamomilla vulgaris",
+    "dose": "30–60 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "prunus-amygdalus",
+   "before": {
+    "name": "Prunus amygdalus",
+    "sci": "Prunus amygdalus",
+    "dose": "5–15 drop(s) 1× daily"
+   },
+   "after": {
+    "name": "Prunus amygdalus",
+    "sci": "Prunus amygdalus",
+    "dose": "5–15 drops(s) 1× daily"
+   }
+  },
+  {
+   "slug": "citrus-limonum",
+   "before": {
+    "name": "Citrus limonum",
+    "sci": "Citrus limonum",
+    "dose": "1–2 spray 2–3× daily"
+   },
+   "after": {
+    "name": "Citrus limonum",
+    "sci": "Citrus limonum",
+    "dose": "1–2 sprays 2–3× daily"
+   }
+  },
+  {
+   "slug": "arum-maculatum",
+   "before": {
+    "name": "Arum maculatum",
+    "sci": "Arum maculatum",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Arum maculatum",
+    "sci": "Arum maculatum",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "pulsatilla-pratensis",
+   "before": {
+    "name": "Pulsatilla pratensis",
+    "sci": "Pulsatilla pratensis",
+    "dose": "15–20 drop(s) daily"
+   },
+   "after": {
+    "name": "Pulsatilla pratensis",
+    "sci": "Pulsatilla pratensis",
+    "dose": "15–20 drops(s) daily"
+   }
+  },
+  {
+   "slug": "agropyron-repens",
+   "before": {
+    "name": "Agropyron repens",
+    "sci": "Agropyron repens",
+    "dose": "2 tablet 2–2× daily"
+   },
+   "after": {
+    "name": "Agropyron repens",
+    "sci": "Agropyron repens",
+    "dose": "2 tablets 2× daily"
+   }
+  },
+  {
+   "slug": "ulmus-fulva",
+   "before": {
+    "name": "Ulmus fulva",
+    "sci": "Ulmus fulva",
+    "dose": "10–15 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Ulmus fulva",
+    "sci": "Ulmus fulva",
+    "dose": "10–15 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "erigeron-canadensis",
+   "before": {
+    "name": "Erigeron canadensis",
+    "sci": "Erigeron canadensis",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Erigeron canadensis",
+    "sci": "Erigeron canadensis",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "rosmarinus-officinalis-l",
+   "before": {
+    "name": "Rosmarinus officinalis L.",
+    "sci": "Rosmarinus officinalis L.",
+    "dose": null
+   },
+   "after": {
+    "name": "Rosmarinus officinalis",
+    "sci": "Rosmarinus officinalis",
+    "dose": null
+   }
+  },
+  {
+   "slug": "copaiva-officinalis",
+   "before": {
+    "name": "Copaiva officinalis",
+    "sci": "Copaiva officinalis",
+    "dose": "15–20 drop(s) 2–3× daily"
+   },
+   "after": {
+    "name": "Copaiva officinalis",
+    "sci": "Copaiva officinalis",
+    "dose": "15–20 drops(s) 2–3× daily"
+   }
+  },
+  {
+   "slug": "candida-parapsilosis",
+   "before": {
+    "name": "Candida parapsilosis",
+    "sci": "Candida parapsilosis",
+    "dose": "1–3 capsule daily"
+   },
+   "after": {
+    "name": "Candida parapsilosis",
+    "sci": "Candida parapsilosis",
+    "dose": "1–3 capsules daily"
+   }
+  },
+  {
+   "slug": "selaginella-pulvinata",
+   "before": {
+    "name": "Selaginella pulvinata",
+    "sci": "Selaginella pulvinata",
+    "dose": "3–4 tablet 3× daily"
+   },
+   "after": {
+    "name": "Selaginella pulvinata",
+    "sci": "Selaginella pulvinata",
+    "dose": "3–4 tablets 3× daily"
+   }
+  },
+  {
+   "slug": "cucurbita-maxima",
+   "before": {
+    "name": "Cucurbita maxima",
+    "sci": "Cucurbita maxima",
+    "dose": "1–3 capsule 1× daily"
+   },
+   "after": {
+    "name": "Cucurbita maxima",
+    "sci": "Cucurbita maxima",
+    "dose": "1–3 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "usnea-filipendula",
+   "before": {
+    "name": "Usnea filipendula",
+    "sci": "Usnea filipendula",
+    "dose": "1–2 spray daily"
+   },
+   "after": {
+    "name": "Usnea filipendula",
+    "sci": "Usnea filipendula",
+    "dose": "1–2 sprays daily"
+   }
+  },
+  {
+   "slug": "dunaliella-salina",
+   "before": {
+    "name": "Dunaliella salina",
+    "sci": "Dunaliella salina",
+    "dose": "2–3 capsule 1× daily"
+   },
+   "after": {
+    "name": "Dunaliella salina",
+    "sci": "Dunaliella salina",
+    "dose": "2–3 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "cypripedium-pubescens",
+   "before": {
+    "name": "Cypripedium pubescens",
+    "sci": "Cypripedium pubescens",
+    "dose": "15–35 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Cypripedium pubescens",
+    "sci": "Cypripedium pubescens",
+    "dose": "15–35 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "pteris-multifida",
+   "before": {
+    "name": "Pteris multifida",
+    "sci": "Pteris multifida",
+    "dose": "1–3 serving 1–3× daily"
+   },
+   "after": {
+    "name": "Pteris multifida",
+    "sci": "Pteris multifida",
+    "dose": "1–3 servings 1–3× daily"
+   }
+  },
+  {
+   "slug": "cedrus-libani",
+   "before": {
+    "name": "Cedrus libani",
+    "sci": "Cedrus libani",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Cedrus libani",
+    "sci": "Cedrus libani",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "spiraea-ulmaria",
+   "before": {
+    "name": "Spiraea ulmaria",
+    "sci": "Spiraea ulmaria",
+    "dose": "1–2 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Spiraea ulmaria",
+    "sci": "Spiraea ulmaria",
+    "dose": "1–2 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "sorbus-domestica",
+   "before": {
+    "name": "Sorbus domestica",
+    "sci": "Sorbus domestica",
+    "dose": "5–15 drop(s) 1× daily"
+   },
+   "after": {
+    "name": "Sorbus domestica",
+    "sci": "Sorbus domestica",
+    "dose": "5–15 drops(s) 1× daily"
+   }
+  },
+  {
+   "slug": "gratiola-officinalis",
+   "before": {
+    "name": "Gratiola officinalis",
+    "sci": "Gratiola officinalis",
+    "dose": "15–20 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Gratiola officinalis",
+    "sci": "Gratiola officinalis",
+    "dose": "15–20 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "cornus-sanguinea",
+   "before": {
+    "name": "Cornus sanguinea",
+    "sci": "Cornus sanguinea",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Cornus sanguinea",
+    "sci": "Cornus sanguinea",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "vaccinium-oxycoccos",
+   "before": {
+    "name": "Vaccinium oxycoccos",
+    "sci": "Vaccinium oxycoccos",
+    "dose": "1–2 capsule 1× daily"
+   },
+   "after": {
+    "name": "Vaccinium oxycoccos",
+    "sci": "Vaccinium oxycoccos",
+    "dose": "1–2 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "agraphis-nutans",
+   "before": {
+    "name": "Agraphis nutans",
+    "sci": "Agraphis nutans",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Agraphis nutans",
+    "sci": "Agraphis nutans",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "scilla-maritima",
+   "before": {
+    "name": "Scilla maritima",
+    "sci": "Scilla maritima",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Scilla maritima",
+    "sci": "Scilla maritima",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "anatherum-muricatum",
+   "before": {
+    "name": "Anatherum muricatum",
+    "sci": "Anatherum muricatum",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Anatherum muricatum",
+    "sci": "Anatherum muricatum",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "sequoia-gigantea",
+   "before": {
+    "name": "Sequoia gigantea",
+    "sci": "Sequoia gigantea",
+    "dose": "50–225 drop(s) daily"
+   },
+   "after": {
+    "name": "Sequoia gigantea",
+    "sci": "Sequoia gigantea",
+    "dose": "50–225 drops(s) daily"
+   }
+  },
+  {
+   "slug": "jacaranda-caroba",
+   "before": {
+    "name": "Jacaranda caroba",
+    "sci": "Jacaranda caroba",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Jacaranda caroba",
+    "sci": "Jacaranda caroba",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "pothos-foetidus",
+   "before": {
+    "name": "Pothos foetidus",
+    "sci": "Pothos foetidus",
+    "dose": "1–30 drop(s) 1–2× daily"
+   },
+   "after": {
+    "name": "Pothos foetidus",
+    "sci": "Pothos foetidus",
+    "dose": "1–30 drops(s) 1–2× daily"
+   }
+  },
+  {
+   "slug": "trillium-pendulum",
+   "before": {
+    "name": "Trillium pendulum",
+    "sci": "Trillium pendulum",
+    "dose": "1–3 tablet 2× daily"
+   },
+   "after": {
+    "name": "Trillium pendulum",
+    "sci": "Trillium pendulum",
+    "dose": "1–3 tablets 2× daily"
+   }
+  },
+  {
+   "slug": "abies-sibirica",
+   "before": {
+    "name": "Abies sibirica",
+    "sci": "Abies sibirica",
+    "dose": "1–4 drop(s) daily"
+   },
+   "after": {
+    "name": "Abies sibirica",
+    "sci": "Abies sibirica",
+    "dose": "1–4 drops(s) daily"
+   }
+  },
+  {
+   "slug": "senecio-scandens",
+   "before": {
+    "name": "Senecio scandens",
+    "sci": "Senecio scandens",
+    "dose": "1 scoop 1–1× daily"
+   },
+   "after": {
+    "name": "Senecio scandens",
+    "sci": "Senecio scandens",
+    "dose": "1 scoop 1× daily"
+   }
+  },
+  {
+   "slug": "hura-brasiliensis",
+   "before": {
+    "name": "Hura brasiliensis",
+    "sci": "Hura brasiliensis",
+    "dose": "4–6 spray 1× daily"
+   },
+   "after": {
+    "name": "Hura brasiliensis",
+    "sci": "Hura brasiliensis",
+    "dose": "4–6 sprays 1× daily"
+   }
+  },
+  {
+   "slug": "pluchea-lanceolata",
+   "before": {
+    "name": "Pluchea lanceolata",
+    "sci": "Pluchea lanceolata",
+    "dose": "1–2 tablet 2× daily"
+   },
+   "after": {
+    "name": "Pluchea lanceolata",
+    "sci": "Pluchea lanceolata",
+    "dose": "1–2 tablets 2× daily"
+   }
+  },
+  {
+   "slug": "jonesia-asoca",
+   "before": {
+    "name": "Jonesia asoca",
+    "sci": "Jonesia asoca",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Jonesia asoca",
+    "sci": "Jonesia asoca",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "xerophyllum-asphodeloides",
+   "before": {
+    "name": "Xerophyllum asphodeloides",
+    "sci": "Xerophyllum asphodeloides",
+    "dose": "2–3 tablet 4× hours"
+   },
+   "after": {
+    "name": "Xerophyllum asphodeloides",
+    "sci": "Xerophyllum asphodeloides",
+    "dose": "2–3 tablets 4× hours"
+   }
+  },
+  {
+   "slug": "aesculus-carnea",
+   "before": {
+    "name": "Aesculus carnea",
+    "sci": "Aesculus carnea",
+    "dose": "0–2 drop(s) 1–4× daily"
+   },
+   "after": {
+    "name": "Aesculus carnea",
+    "sci": "Aesculus carnea",
+    "dose": "0–2 drops(s) 1–4× daily"
+   }
+  },
+  {
+   "slug": "turnera-diffusa-var-aphrodisiaca",
+   "before": {
+    "name": "Turnera diffusa var. aphrodisiaca",
+    "sci": "Turnera diffusa var. aphrodisiaca",
+    "dose": "2–3 tablet 3× daily"
+   },
+   "after": {
+    "name": "Turnera diffusa var. aphrodisiaca",
+    "sci": "Turnera diffusa var. aphrodisiaca",
+    "dose": "2–3 tablets 3× daily"
+   }
+  },
+  {
+   "slug": "picea-mariana",
+   "before": {
+    "name": "Picea mariana",
+    "sci": "Picea mariana",
+    "dose": "1–6 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Picea mariana",
+    "sci": "Picea mariana",
+    "dose": "1–6 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "anagallis-arvensis",
+   "before": {
+    "name": "Anagallis arvensis",
+    "sci": "Anagallis arvensis",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Anagallis arvensis",
+    "sci": "Anagallis arvensis",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "ampelopsis-quinquefolia",
+   "before": {
+    "name": "Ampelopsis quinquefolia",
+    "sci": "Ampelopsis quinquefolia",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Ampelopsis quinquefolia",
+    "sci": "Ampelopsis quinquefolia",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "dimorphandra-mollis",
+   "before": {
+    "name": "Dimorphandra mollis",
+    "sci": "Dimorphandra mollis",
+    "dose": "3 tablet 1–1× daily"
+   },
+   "after": {
+    "name": "Dimorphandra mollis",
+    "sci": "Dimorphandra mollis",
+    "dose": "3 tablets 1× daily"
+   }
+  },
+  {
+   "slug": "eugenia-jambosa",
+   "before": {
+    "name": "Eugenia jambosa",
+    "sci": "Eugenia jambosa",
+    "dose": "1–3 spray 3–6× daily"
+   },
+   "after": {
+    "name": "Eugenia jambosa",
+    "sci": "Eugenia jambosa",
+    "dose": "1–3 sprays 3–6× daily"
+   }
+  },
+  {
+   "slug": "mucor-mucedo",
+   "before": {
+    "name": "Mucor mucedo",
+    "sci": "Mucor mucedo",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Mucor mucedo",
+    "sci": "Mucor mucedo",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "euonymus-europaeus",
+   "before": {
+    "name": "Euonymus europaeus",
+    "sci": "Euonymus europaeus",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Euonymus europaeus",
+    "sci": "Euonymus europaeus",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "teucrium-scorodonia",
+   "before": {
+    "name": "Teucrium scorodonia",
+    "sci": "Teucrium scorodonia",
+    "dose": "10–15 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Teucrium scorodonia",
+    "sci": "Teucrium scorodonia",
+    "dose": "10–15 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "cinnamomum-cassia-presl",
+   "before": {
+    "name": "Cinnamomum cassia Presl",
+    "sci": "Cinnamomum cassia Presl",
+    "dose": "1–3 capsule 1× daily"
+   },
+   "after": {
+    "name": "Cinnamomum cassia Presl",
+    "sci": "Cinnamomum cassia Presl",
+    "dose": "1–3 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "mercurialis-perennis",
+   "before": {
+    "name": "Mercurialis perennis",
+    "sci": "Mercurialis perennis",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Mercurialis perennis",
+    "sci": "Mercurialis perennis",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "angelica-archangelica-l",
+   "before": {
+    "name": "Angelica archangelica L.",
+    "sci": "Angelica archangelica L.",
+    "dose": "2–10 capsule 1–3× daily"
+   },
+   "after": {
+    "name": "Angelica archangelica",
+    "sci": "Angelica archangelica",
+    "dose": "2–10 capsules 1–3× daily"
+   }
+  },
+  {
+   "slug": "polygonum-punctatum",
+   "before": {
+    "name": "Polygonum punctatum",
+    "sci": "Polygonum punctatum",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Polygonum punctatum",
+    "sci": "Polygonum punctatum",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "lycopersicon-lycopersicum",
+   "before": {
+    "name": "Lycopersicon lycopersicum",
+    "sci": "Lycopersicon lycopersicum",
+    "dose": "10–15 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Lycopersicon lycopersicum",
+    "sci": "Lycopersicon lycopersicum",
+    "dose": "10–15 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "schoenocaulon-officinale",
+   "before": {
+    "name": "Schoenocaulon officinale",
+    "sci": "Schoenocaulon officinale",
+    "dose": "10–15 drop(s) 3–4× daily"
+   },
+   "after": {
+    "name": "Schoenocaulon officinale",
+    "sci": "Schoenocaulon officinale",
+    "dose": "10–15 drops(s) 3–4× daily"
+   }
+  },
+  {
+   "slug": "paeonia-obovata",
+   "before": {
+    "name": "Paeonia obovata",
+    "sci": "Paeonia obovata",
+    "dose": "1–2 tablet 3× daily"
+   },
+   "after": {
+    "name": "Paeonia obovata",
+    "sci": "Paeonia obovata",
+    "dose": "1–2 tablets 3× daily"
+   }
+  },
+  {
+   "slug": "phragmites-communis",
+   "before": {
+    "name": "Phragmites communis",
+    "sci": "Phragmites communis",
+    "dose": "4–8 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Phragmites communis",
+    "sci": "Phragmites communis",
+    "dose": "4–8 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "lachnanthes-tinctoria",
+   "before": {
+    "name": "Lachnanthes tinctoria",
+    "sci": "Lachnanthes tinctoria",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Lachnanthes tinctoria",
+    "sci": "Lachnanthes tinctoria",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "ligustrum-vulgare",
+   "before": {
+    "name": "Ligustrum vulgare",
+    "sci": "Ligustrum vulgare",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Ligustrum vulgare",
+    "sci": "Ligustrum vulgare",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "aspergillus-niger-e-volumine-cellulae",
+   "before": {
+    "name": "Aspergillus niger e volumine cellulae",
+    "sci": "Aspergillus niger e volumine cellulae",
+    "dose": "1–3 capsule 1–4× daily"
+   },
+   "after": {
+    "name": "Aspergillus niger e volumine cellulae",
+    "sci": "Aspergillus niger e volumine cellulae",
+    "dose": "1–3 capsules 1–4× daily"
+   }
+  },
+  {
+   "slug": "viburnum-lantana",
+   "before": {
+    "name": "Viburnum lantana",
+    "sci": "Viburnum lantana",
+    "dose": "5–15 drop(s) 1× daily"
+   },
+   "after": {
+    "name": "Viburnum lantana",
+    "sci": "Viburnum lantana",
+    "dose": "5–15 drops(s) 1× daily"
+   }
+  },
+  {
+   "slug": "cereus-bonplandii",
+   "before": {
+    "name": "Cereus bonplandii",
+    "sci": "Cereus bonplandii",
+    "dose": "1–5 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Cereus bonplandii",
+    "sci": "Cereus bonplandii",
+    "dose": "1–5 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "scutellaria-lateriflora-l",
+   "before": {
+    "name": "Scutellaria lateriflora L.",
+    "sci": "Scutellaria lateriflora L.",
+    "dose": null
+   },
+   "after": {
+    "name": "Scutellaria lateriflora",
+    "sci": "Scutellaria lateriflora",
+    "dose": null
+   }
+  },
+  {
+   "slug": "acer-campestre",
+   "before": {
+    "name": "Acer campestre",
+    "sci": "Acer campestre",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Acer campestre",
+    "sci": "Acer campestre",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "quillaja-saponaria",
+   "before": {
+    "name": "Quillaja saponaria",
+    "sci": "Quillaja saponaria",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Quillaja saponaria",
+    "sci": "Quillaja saponaria",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "hieracium-pilosella",
+   "before": {
+    "name": "Hieracium pilosella",
+    "sci": "Hieracium pilosella",
+    "dose": "2–3 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Hieracium pilosella",
+    "sci": "Hieracium pilosella",
+    "dose": "2–3 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "betula-verrucosa",
+   "before": {
+    "name": "Betula verrucosa",
+    "sci": "Betula verrucosa",
+    "dose": "5–15 drop(s) daily"
+   },
+   "after": {
+    "name": "Betula verrucosa",
+    "sci": "Betula verrucosa",
+    "dose": "5–15 drops(s) daily"
+   }
+  },
+  {
+   "slug": "gaultheria-fragrantissima",
+   "before": {
+    "name": "Gaultheria fragrantissima",
+    "sci": "Gaultheria fragrantissima",
+    "dose": "2–4 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Gaultheria fragrantissima",
+    "sci": "Gaultheria fragrantissima",
+    "dose": "2–4 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "comocladia-dentata",
+   "before": {
+    "name": "Comocladia dentata",
+    "sci": "Comocladia dentata",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Comocladia dentata",
+    "sci": "Comocladia dentata",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "cupressus-lawsoniana",
+   "before": {
+    "name": "Cupressus lawsoniana",
+    "sci": "Cupressus lawsoniana",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Cupressus lawsoniana",
+    "sci": "Cupressus lawsoniana",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "lonicera-nigra",
+   "before": {
+    "name": "Lonicera nigra",
+    "sci": "Lonicera nigra",
+    "dose": "50–225 drop(s) daily"
+   },
+   "after": {
+    "name": "Lonicera nigra",
+    "sci": "Lonicera nigra",
+    "dose": "50–225 drops(s) daily"
+   }
+  },
+  {
+   "slug": "ranunculus-sceleratus",
+   "before": {
+    "name": "Ranunculus sceleratus",
+    "sci": "Ranunculus sceleratus",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Ranunculus sceleratus",
+    "sci": "Ranunculus sceleratus",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "solanum-lyratum",
+   "before": {
+    "name": "Solanum lyratum",
+    "sci": "Solanum lyratum",
+    "dose": "1–2 serving 3× daily"
+   },
+   "after": {
+    "name": "Solanum lyratum",
+    "sci": "Solanum lyratum",
+    "dose": "1–2 servings 3× daily"
+   }
+  },
+  {
+   "slug": "helicteres-angustifolia",
+   "before": {
+    "name": "Helicteres angustifolia",
+    "sci": "Helicteres angustifolia",
+    "dose": "3–4 tablet 3× daily"
+   },
+   "after": {
+    "name": "Helicteres angustifolia",
+    "sci": "Helicteres angustifolia",
+    "dose": "3–4 tablets 3× daily"
+   }
+  },
+  {
+   "slug": "fabiana-imbricata",
+   "before": {
+    "name": "Fabiana imbricata",
+    "sci": "Fabiana imbricata",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Fabiana imbricata",
+    "sci": "Fabiana imbricata",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "sambucus-chinensis",
+   "before": {
+    "name": "Sambucus chinensis",
+    "sci": "Sambucus chinensis",
+    "dose": "2–3 capsule 1× daily"
+   },
+   "after": {
+    "name": "Sambucus chinensis",
+    "sci": "Sambucus chinensis",
+    "dose": "2–3 capsules 1× daily"
+   }
+  },
+  {
+   "slug": "quercus-pedunculata",
+   "before": {
+    "name": "Quercus pedunculata",
+    "sci": "Quercus pedunculata",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Quercus pedunculata",
+    "sci": "Quercus pedunculata",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "passiflora-incarnata",
+   "before": {
+    "name": "Passiflora incarnata",
+    "sci": "Passiflora incarnata",
+    "dose": "1–2 capsule 1–2× daily"
+   },
+   "after": {
+    "name": "Passiflora incarnata",
+    "sci": "Passiflora incarnata",
+    "dose": "1–2 capsules 1–2× daily"
+   }
+  },
+  {
+   "slug": "clerodendron-trichotomum",
+   "before": {
+    "name": "Clerodendron trichotomum",
+    "sci": "Clerodendron trichotomum",
+    "dose": "3–4 tablet 2× daily"
+   },
+   "after": {
+    "name": "Clerodendron trichotomum",
+    "sci": "Clerodendron trichotomum",
+    "dose": "3–4 tablets 2× daily"
+   }
+  },
+  {
+   "slug": "primula-obconica",
+   "before": {
+    "name": "Primula obconica",
+    "sci": "Primula obconica",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Primula obconica",
+    "sci": "Primula obconica",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "majorana-hortensis",
+   "before": {
+    "name": "Majorana hortensis",
+    "sci": "Majorana hortensis",
+    "dose": "10–15 drop(s) daily"
+   },
+   "after": {
+    "name": "Majorana hortensis",
+    "sci": "Majorana hortensis",
+    "dose": "10–15 drops(s) daily"
+   }
+  },
+  {
+   "slug": "spartium-scoparium",
+   "before": {
+    "name": "Spartium scoparium",
+    "sci": "Spartium scoparium",
+    "dose": "5–10 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Spartium scoparium",
+    "sci": "Spartium scoparium",
+    "dose": "5–10 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "gelidium-amansii",
+   "before": {
+    "name": "Gelidium amansii",
+    "sci": "Gelidium amansii",
+    "dose": "1–3 tablet 1× daily"
+   },
+   "after": {
+    "name": "Gelidium amansii",
+    "sci": "Gelidium amansii",
+    "dose": "1–3 tablets 1× daily"
+   }
+  },
+  {
+   "slug": "veronica-virginica",
+   "before": {
+    "name": "Veronica virginica",
+    "sci": "Veronica virginica",
+    "dose": "5–10 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Veronica virginica",
+    "sci": "Veronica virginica",
+    "dose": "5–10 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "abelmoschus-manihot",
+   "before": {
+    "name": "Abelmoschus manihot",
+    "sci": "Abelmoschus manihot",
+    "dose": "1–3 capsule 2× daily"
+   },
+   "after": {
+    "name": "Abelmoschus manihot",
+    "sci": "Abelmoschus manihot",
+    "dose": "1–3 capsules 2× daily"
+   }
+  },
+  {
+   "slug": "plantago-psyllium",
+   "before": {
+    "name": "Plantago psyllium",
+    "sci": "Plantago psyllium",
+    "dose": "8–15 capsule daily"
+   },
+   "after": {
+    "name": "Plantago psyllium",
+    "sci": "Plantago psyllium",
+    "dose": "8–15 capsules daily"
+   }
+  },
+  {
+   "slug": "fragaria-ananassa",
+   "before": {
+    "name": "Fragaria ananassa",
+    "sci": "Fragaria ananassa",
+    "dose": "1–2 sachet 1× daily"
+   },
+   "after": {
+    "name": "Fragaria ananassa",
+    "sci": "Fragaria ananassa",
+    "dose": "1–2 sachets 1× daily"
+   }
+  },
+  {
+   "slug": "potentilla-tormentilla",
+   "before": {
+    "name": "Potentilla tormentilla",
+    "sci": "Potentilla tormentilla",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Potentilla tormentilla",
+    "sci": "Potentilla tormentilla",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "platanus-orientalis",
+   "before": {
+    "name": "Platanus orientalis",
+    "sci": "Platanus orientalis",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Platanus orientalis",
+    "sci": "Platanus orientalis",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "syringa-vulgaris",
+   "before": {
+    "name": "Syringa vulgaris",
+    "sci": "Syringa vulgaris",
+    "dose": "50–225 drop(s) daily"
+   },
+   "after": {
+    "name": "Syringa vulgaris",
+    "sci": "Syringa vulgaris",
+    "dose": "50–225 drops(s) daily"
+   }
+  },
+  {
+   "slug": "okoubaka-aubrevillei",
+   "before": {
+    "name": "Okoubaka aubrevillei",
+    "sci": "Okoubaka aubrevillei",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Okoubaka aubrevillei",
+    "sci": "Okoubaka aubrevillei",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "achyranthes-japonica",
+   "before": {
+    "name": "Achyranthes japonica",
+    "sci": "Achyranthes japonica",
+    "dose": "4–6 tablet 3× daily"
+   },
+   "after": {
+    "name": "Achyranthes japonica",
+    "sci": "Achyranthes japonica",
+    "dose": "4–6 tablets 3× daily"
+   }
+  },
+  {
+   "slug": "eucalyptus-dives",
+   "before": {
+    "name": "Eucalyptus dives",
+    "sci": "Eucalyptus dives",
+    "dose": "1–6 drop(s) daily"
+   },
+   "after": {
+    "name": "Eucalyptus dives",
+    "sci": "Eucalyptus dives",
+    "dose": "1–6 drops(s) daily"
+   }
+  },
+  {
+   "slug": "colocynthis-vulgaris",
+   "before": {
+    "name": "Colocynthis vulgaris",
+    "sci": "Colocynthis vulgaris",
+    "dose": "2–3 spray 3× daily"
+   },
+   "after": {
+    "name": "Colocynthis vulgaris",
+    "sci": "Colocynthis vulgaris",
+    "dose": "2–3 sprays 3× daily"
+   }
+  },
+  {
+   "slug": "cephalanthus-occidentalis",
+   "before": {
+    "name": "Cephalanthus occidentalis",
+    "sci": "Cephalanthus occidentalis",
+    "dose": "1–4 tablet 2–3× daily"
+   },
+   "after": {
+    "name": "Cephalanthus occidentalis",
+    "sci": "Cephalanthus occidentalis",
+    "dose": "1–4 tablets 2–3× daily"
+   }
+  },
+  {
+   "slug": "apocynum-androsaemifolium",
+   "before": {
+    "name": "Apocynum androsaemifolium",
+    "sci": "Apocynum androsaemifolium",
+    "dose": "10–30 drop(s) 1–3× daily"
+   },
+   "after": {
+    "name": "Apocynum androsaemifolium",
+    "sci": "Apocynum androsaemifolium",
+    "dose": "10–30 drops(s) 1–3× daily"
+   }
+  },
+  {
+   "slug": "anamirta-cocculus",
+   "before": {
+    "name": "Anamirta cocculus",
+    "sci": "Anamirta cocculus",
+    "dose": "10–30 drop(s) 15–60× minutes"
+   },
+   "after": {
+    "name": "Anamirta cocculus",
+    "sci": "Anamirta cocculus",
+    "dose": "10–30 drops(s) 15–60× minutes"
+   }
+  },
+  {
+   "slug": "physochlaina-infundibularis",
+   "before": {
+    "name": "Physochlaina infundibularis",
+    "sci": "Physochlaina infundibularis",
+    "dose": "1–2 tablet 3× daily"
+   },
+   "after": {
+    "name": "Physochlaina infundibularis",
+    "sci": "Physochlaina infundibularis",
+    "dose": "1–2 tablets 3× daily"
+   }
+  },
+  {
+   "slug": "saxifraga-granulata",
+   "before": {
+    "name": "Saxifraga granulata",
+    "sci": "Saxifraga granulata",
+    "dose": "1–2 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Saxifraga granulata",
+    "sci": "Saxifraga granulata",
+    "dose": "1–2 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "toxicodendron-diversilobum",
+   "before": {
+    "name": "Toxicodendron diversilobum",
+    "sci": "Toxicodendron diversilobum",
+    "dose": "1–2 tablet 1–4× daily"
+   },
+   "after": {
+    "name": "Toxicodendron diversilobum",
+    "sci": "Toxicodendron diversilobum",
+    "dose": "1–2 tablets 1–4× daily"
+   }
+  },
+  {
+   "slug": "lophophytum-leandri",
+   "before": {
+    "name": "Lophophytum leandri",
+    "sci": "Lophophytum leandri",
+    "dose": "2–4 drop(s) 3× daily"
+   },
+   "after": {
+    "name": "Lophophytum leandri",
+    "sci": "Lophophytum leandri",
+    "dose": "2–4 drops(s) 3× daily"
+   }
+  },
+  {
+   "slug": "lactuca-quercina",
+   "before": {
+    "name": "Lactuca quercina",
+    "sci": "Lactuca quercina",
+    "dose": "1–2 serving(s) 1–2× daily"
+   },
+   "after": {
+    "name": "Lactuca quercina",
+    "sci": "Lactuca quercina",
+    "dose": "1–2 servings(s) 1–2× daily"
+   }
+  },
+  {
+   "slug": "galipea-officinalis",
+   "before": {
+    "name": "Galipea officinalis",
+    "sci": "Galipea officinalis",
+    "dose": "0–2 tablet daily"
+   },
+   "after": {
+    "name": "Galipea officinalis",
+    "sci": "Galipea officinalis",
+    "dose": "0–2 tablets daily"
+   }
+  },
+  {
+   "slug": "cicuta-maculata",
+   "before": {
+    "name": "Cicuta maculata",
+    "sci": "Cicuta maculata",
+    "dose": "1–3 tablet 2× daily"
+   },
+   "after": {
+    "name": "Cicuta maculata",
+    "sci": "Cicuta maculata",
+    "dose": "1–3 tablets 2× daily"
+   }
+  },
+  {
+   "slug": "ficus-racemosa",
+   "before": {
+    "name": "Ficus racemosa",
+    "sci": "Ficus racemosa",
+    "dose": "1–2 capsule 2× daily"
+   },
+   "after": {
+    "name": "Ficus racemosa",
+    "sci": "Ficus racemosa",
+    "dose": "1–2 capsules 2× daily"
+   }
+  },
+  {
+   "slug": "tanacetum-parthenium-l-sch-bip",
+   "before": {
+    "name": "Tanacetum parthenium (L.) Sch. Bip.",
+    "sci": "Tanacetum parthenium (L.) Sch. Bip.",
+    "dose": null
+   },
+   "after": {
+    "name": "Tanacetum parthenium (L.) Sch.",
+    "sci": "Tanacetum parthenium (L.) Sch.",
+    "dose": null
+   }
+  }
+ ],
+ "duplicates": [
+  {
+   "species": "cynara cardunculus",
+   "rows": [
+    {
+     "slug": "artichoke",
+     "name": "Artichoke",
+     "scientific_name": "Cynara cardunculus var. scolymus",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "artichoke-liver",
+     "name": "Artichoke Leaf Liver",
+     "scientific_name": "Cynara cardunculus subsp. cardunculus",
+     "published": true,
+     "created_at": "2026-03-27T17:09:24.413629+00:00"
+    },
+    {
+     "slug": "globe-artichoke",
+     "name": "Globe Artichoke",
+     "scientific_name": "Cynara cardunculus",
+     "published": false,
+     "created_at": "2026-03-29T13:05:41.825843+00:00"
+    }
+   ]
+  },
+  {
+   "species": "crocus sativus",
+   "rows": [
+    {
+     "slug": "saffron",
+     "name": "Saffron",
+     "scientific_name": "Crocus sativus",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "kashmiri-saffron",
+     "name": "Kashmiri Saffron",
+     "scientific_name": "Crocus sativus var. cashmirianus",
+     "published": false,
+     "created_at": "2026-03-29T19:07:09.826896+00:00"
+    }
+   ]
+  },
+  {
+   "species": "moringa oleifera",
+   "rows": [
+    {
+     "slug": "moringa",
+     "name": "Moringa",
+     "scientific_name": "Moringa oleifera",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "moringa-seed",
+     "name": "Moringa Seed",
+     "scientific_name": "Moringa oleifera seed",
+     "published": true,
+     "created_at": "2026-03-29T15:57:59.410309+00:00"
+    }
+   ]
+  },
+  {
+   "species": "urtica dioica",
+   "rows": [
+    {
+     "slug": "nettle",
+     "name": "Nettle",
+     "scientific_name": "Urtica dioica",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "nettle-root",
+     "name": "Stinging Nettle Root",
+     "scientific_name": "Urtica dioica",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "nettle-leaf",
+     "name": "Nettle Leaf",
+     "scientific_name": "Urtica dioica subsp. dioica",
+     "published": true,
+     "created_at": "2026-03-29T15:48:03.80979+00:00"
+    },
+    {
+     "slug": "swedish-nettle-herb",
+     "name": "Swedish Nettle Herb",
+     "scientific_name": "Urtica dioica var. suecica",
+     "published": true,
+     "created_at": "2026-03-29T19:03:25.305584+00:00"
+    }
+   ]
+  },
+  {
+   "species": "hypericum perforatum",
+   "rows": [
+    {
+     "slug": "st-johns-wort",
+     "name": "St. John's Wort",
+     "scientific_name": "Hypericum perforatum",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "st-johns-wort-oil",
+     "name": "St. Johns Wort Oil",
+     "scientific_name": "Hypericum perforatum oleum",
+     "published": true,
+     "created_at": "2026-03-29T18:11:03.323036+00:00"
+    }
+   ]
+  },
+  {
+   "species": "panax ginseng",
+   "rows": [
+    {
+     "slug": "ginseng",
+     "name": "Ginseng",
+     "scientific_name": "Panax ginseng",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "korean-red-ginseng-extract",
+     "name": "Korean Red Ginseng Extract",
+     "scientific_name": "Panax ginseng",
+     "published": true,
+     "created_at": "2026-03-27T13:18:57.652667+00:00"
+    }
+   ]
+  },
+  {
+   "species": "crataegus monogyna",
+   "rows": [
+    {
+     "slug": "hawthorn",
+     "name": "Hawthorn",
+     "scientific_name": "Crataegus monogyna",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "hawthorn-flowers",
+     "name": "Hawthorn Flowers",
+     "scientific_name": "Crataegus monogyna",
+     "published": true,
+     "created_at": "2026-03-29T17:58:23.126984+00:00"
+    }
+   ]
+  },
+  {
+   "species": "lepidium meyenii",
+   "rows": [
+    {
+     "slug": "red-maca",
+     "name": "Maca Red",
+     "scientific_name": "Lepidium meyenii",
+     "published": true,
+     "created_at": "2026-03-27T16:40:10.641822+00:00"
+    },
+    {
+     "slug": "maca-red",
+     "name": "Maca Red",
+     "scientific_name": "Lepidium meyenii var. rubrum",
+     "published": false,
+     "created_at": "2026-03-29T14:04:15.398414+00:00"
+    }
+   ]
+  },
+  {
+   "species": "artemisia absinthium",
+   "rows": [
+    {
+     "slug": "wormwood",
+     "name": "Wormwood",
+     "scientific_name": "Artemisia absinthium",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "romanian-wormwood",
+     "name": "Romanian Wormwood",
+     "scientific_name": "Artemisia absinthium var. pannonica",
+     "published": false,
+     "created_at": "2026-03-29T19:03:25.305584+00:00"
+    }
+   ]
+  },
+  {
+   "species": "glycyrrhiza glabra",
+   "rows": [
+    {
+     "slug": "licorice-dgl-digestive",
+     "name": "Licorice DGL Digestive",
+     "scientific_name": "Glycyrrhiza glabra",
+     "published": false,
+     "created_at": "2026-03-29T02:24:37.745726+00:00"
+    },
+    {
+     "slug": "licorice-dgl",
+     "name": "Licorice DGL",
+     "scientific_name": "Glycyrrhiza glabra",
+     "published": true,
+     "created_at": "2026-03-29T14:17:06.294457+00:00"
+    }
+   ]
+  },
+  {
+   "species": "mentha x",
+   "rows": [
+    {
+     "slug": "peppermint",
+     "name": "Peppermint",
+     "scientific_name": "Mentha x piperita",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "peppermint-spanish",
+     "name": "Peppermint Spanish",
+     "scientific_name": "Mentha x piperita var. citrata",
+     "published": false,
+     "created_at": "2026-03-29T18:38:22.860012+00:00"
+    }
+   ]
+  },
+  {
+   "species": "astragalus membranaceus",
+   "rows": [
+    {
+     "slug": "astragalus",
+     "name": "Astragalus",
+     "scientific_name": "Astragalus membranaceus",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "hwanggi-korean-astragalus",
+     "name": "Hwanggi Korean Astragalus",
+     "scientific_name": "Astragalus membranaceus var. koreanus",
+     "published": false,
+     "created_at": "2026-03-29T19:07:08.411682+00:00"
+    }
+   ]
+  },
+  {
+   "species": "trifolium pratense",
+   "rows": [
+    {
+     "slug": "red-clover",
+     "name": "Red Clover",
+     "scientific_name": "Trifolium pratense",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "red-clover-iso",
+     "name": "Red Clover Isoflavone",
+     "scientific_name": "Trifolium pratense isoflavones",
+     "published": true,
+     "created_at": "2026-03-29T16:47:56.860331+00:00"
+    }
+   ]
+  },
+  {
+   "species": "sambucus nigra",
+   "rows": [
+    {
+     "slug": "sambucol",
+     "name": "Elderberry Syrup",
+     "scientific_name": "Sambucus nigra",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "elderberry",
+     "name": "Elderberry",
+     "scientific_name": "Sambucus nigra",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    }
+   ]
+  },
+  {
+   "species": "centella asiatica",
+   "rows": [
+    {
+     "slug": "gotu-kola",
+     "name": "Gotu Kola",
+     "scientific_name": "Centella asiatica",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "gotu-kola-leaf",
+     "name": "Gotu Kola Leaf",
+     "scientific_name": "Centella asiatica",
+     "published": true,
+     "created_at": "2026-03-29T14:18:40.266662+00:00"
+    }
+   ]
+  },
+  {
+   "species": "melissa officinalis",
+   "rows": [
+    {
+     "slug": "lemon-balm",
+     "name": "Lemon Balm",
+     "scientific_name": "Melissa officinalis",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "lemon-balm-toronjil",
+     "name": "Lemon Balm Toronjil",
+     "scientific_name": "Melissa officinalis",
+     "published": false,
+     "created_at": "2026-03-29T17:18:42.483777+00:00"
+    }
+   ]
+  },
+  {
+   "species": "allium sativum",
+   "rows": [
+    {
+     "slug": "garlic",
+     "name": "Garlic",
+     "scientific_name": "Allium sativum",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "black-garlic",
+     "name": "Black Garlic",
+     "scientific_name": "Allium sativum",
+     "published": true,
+     "created_at": "2026-03-29T14:34:14.961432+00:00"
+    }
+   ]
+  },
+  {
+   "species": "passiflora incarnata",
+   "rows": [
+    {
+     "slug": "passionflower",
+     "name": "Passionflower",
+     "scientific_name": "Passiflora incarnata",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "venezuelan-passionflower",
+     "name": "Venezuelan Passionflower",
+     "scientific_name": "Passiflora incarnata var. venezolana",
+     "published": false,
+     "created_at": "2026-03-29T19:01:41.806708+00:00"
+    }
+   ]
+  },
+  {
+   "species": "verbascum thapsus",
+   "rows": [
+    {
+     "slug": "mullein",
+     "name": "Mullein",
+     "scientific_name": "Verbascum thapsus",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "mullein-flower",
+     "name": "Mullein Flower",
+     "scientific_name": "Verbascum thapsus",
+     "published": true,
+     "created_at": "2026-03-29T18:11:03.323036+00:00"
+    }
+   ]
+  },
+  {
+   "species": "zingiber officinale",
+   "rows": [
+    {
+     "slug": "gan-jiang",
+     "name": "Gan Jiang",
+     "scientific_name": "Zingiber officinale",
+     "published": false,
+     "created_at": "2026-03-29T15:50:50.595442+00:00"
+    },
+    {
+     "slug": "gan-jiang-root",
+     "name": "Gan Jiang Root",
+     "scientific_name": "Zingiber officinale siccum",
+     "published": true,
+     "created_at": "2026-03-29T18:02:09.039407+00:00"
+    }
+   ]
+  },
+  {
+   "species": "achillea millefolium",
+   "rows": [
+    {
+     "slug": "yarrow",
+     "name": "Yarrow",
+     "scientific_name": "Achillea millefolium",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "nordic-yarrow",
+     "name": "Nordic Yarrow",
+     "scientific_name": "Achillea millefolium var. boreale",
+     "published": false,
+     "created_at": "2026-03-29T17:14:56.754862+00:00"
+    },
+    {
+     "slug": "norse-yarrow",
+     "name": "Norse Yarrow",
+     "scientific_name": "Achillea millefolium var. borealis",
+     "published": false,
+     "created_at": "2026-03-29T19:03:25.305584+00:00"
+    }
+   ]
+  },
+  {
+   "species": "tribulus terrestris",
+   "rows": [
+    {
+     "slug": "tribulus",
+     "name": "Tribulus",
+     "scientific_name": "Tribulus terrestris",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "tribulus-aerial",
+     "name": "Tribulus Aerial",
+     "scientific_name": "Tribulus terrestris",
+     "published": true,
+     "created_at": "2026-03-29T16:33:46.694468+00:00"
+    }
+   ]
+  },
+  {
+   "species": "curcuma longa",
+   "rows": [
+    {
+     "slug": "turmeric",
+     "name": "Turmeric",
+     "scientific_name": "Curcuma longa",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "turmeric-curcumin",
+     "name": "Turmeric Curcumin",
+     "scientific_name": "Curcuma longa",
+     "published": false,
+     "created_at": "2026-03-29T14:31:57.798337+00:00"
+    },
+    {
+     "slug": "tongan-turmeric",
+     "name": "Tongan Turmeric",
+     "scientific_name": "Curcuma longa var. australis",
+     "published": false,
+     "created_at": "2026-03-29T18:59:56.203394+00:00"
+    },
+    {
+     "slug": "okinawan-turmeric",
+     "name": "Okinawan Turmeric",
+     "scientific_name": "Curcuma longa var. okinawa",
+     "published": false,
+     "created_at": "2026-03-29T19:07:08.411682+00:00"
+    }
+   ]
+  },
+  {
+   "species": "withania somnifera",
+   "rows": [
+    {
+     "slug": "ashwagandha",
+     "name": "Ashwagandha",
+     "scientific_name": "Withania somnifera",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "ashwagandha-ksm66",
+     "name": "Ashwagandha KSM-66",
+     "scientific_name": "Withania somnifera",
+     "published": false,
+     "created_at": "2026-03-29T14:09:08.737414+00:00"
+    },
+    {
+     "slug": "afghan-ashwagandha",
+     "name": "Afghan Ashwagandha",
+     "scientific_name": "Withania somnifera var. afghana",
+     "published": false,
+     "created_at": "2026-03-29T19:01:40.261628+00:00"
+    },
+    {
+     "slug": "andhra-ashwagandha-root",
+     "name": "Andhra Ashwagandha Root",
+     "scientific_name": "Withania somnifera var. andhra",
+     "published": false,
+     "created_at": "2026-03-29T19:07:09.826896+00:00"
+    }
+   ]
+  },
+  {
+   "species": "vaccinium myrtillus",
+   "rows": [
+    {
+     "slug": "bilberry",
+     "name": "Bilberry",
+     "scientific_name": "Vaccinium myrtillus",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "bilberry-leaf",
+     "name": "Bilberry Leaf",
+     "scientific_name": "Vaccinium myrtillus leaf",
+     "published": true,
+     "created_at": "2026-03-29T16:47:56.860331+00:00"
+    },
+    {
+     "slug": "vaccinium-myrtillus",
+     "name": "Vaccinium myrtillus",
+     "scientific_name": "Vaccinium myrtillus",
+     "published": true,
+     "created_at": "2026-11-03T18:18:08.24639+00:00"
+    },
+    {
+     "slug": "vaccinium-myrtillus-l",
+     "name": "Vaccinium myrtillus L.",
+     "scientific_name": "Vaccinium myrtillus L.",
+     "published": true,
+     "created_at": "2026-11-03T18:19:50.557065+00:00"
+    }
+   ]
+  },
+  {
+   "species": "valeriana officinalis",
+   "rows": [
+    {
+     "slug": "valerian",
+     "name": "Valerian",
+     "scientific_name": "Valeriana officinalis",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "tibetan-valerian",
+     "name": "Tibetan Valerian",
+     "scientific_name": "Valeriana officinalis subsp. tiliifolia",
+     "published": false,
+     "created_at": "2026-03-29T13:23:18.913046+00:00"
+    },
+    {
+     "slug": "czech-valerian",
+     "name": "Czech Valerian",
+     "scientific_name": "Valeriana officinalis var. bohemia",
+     "published": false,
+     "created_at": "2026-03-29T19:03:25.305584+00:00"
+    },
+    {
+     "slug": "valeriana-officinalis-l",
+     "name": "Valeriana officinalis L.",
+     "scientific_name": "Valeriana officinalis L.",
+     "published": true,
+     "created_at": "2026-11-03T18:18:48.865017+00:00"
+    }
+   ]
+  },
+  {
+   "species": "trigonella foenum",
+   "rows": [
+    {
+     "slug": "fenugreek",
+     "name": "Fenugreek",
+     "scientific_name": "Trigonella foenum-graecum",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "fenugreek-seed",
+     "name": "Fenugreek Seed",
+     "scientific_name": "Trigonella foenum-graecum",
+     "published": true,
+     "created_at": "2026-03-29T14:31:59.216717+00:00"
+    },
+    {
+     "slug": "fenugreek-leaf",
+     "name": "Fenugreek Leaf",
+     "scientific_name": "Trigonella foenum-graecum",
+     "published": true,
+     "created_at": "2026-03-29T17:23:52.845555+00:00"
+    },
+    {
+     "slug": "anatolian-fenugreek",
+     "name": "Anatolian Fenugreek",
+     "scientific_name": "Trigonella foenum-graecum var. turcica",
+     "published": false,
+     "created_at": "2026-03-29T18:59:54.698648+00:00"
+    },
+    {
+     "slug": "persian-fenugreek",
+     "name": "Persian Fenugreek",
+     "scientific_name": "Trigonella foenum-graecum var. persica",
+     "published": false,
+     "created_at": "2026-03-29T19:01:40.261628+00:00"
+    }
+   ]
+  },
+  {
+   "species": "salvia rosmarinus",
+   "rows": [
+    {
+     "slug": "rosemary",
+     "name": "Rosemary",
+     "scientific_name": "Salvia rosmarinus",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "rosemary-extract",
+     "name": "Rosemary Extract",
+     "scientific_name": "Salvia rosmarinus",
+     "published": true,
+     "created_at": "2026-03-27T05:23:01.379392+00:00"
+    },
+    {
+     "slug": "rosemary-cineole",
+     "name": "Rosemary Cineole",
+     "scientific_name": "Salvia rosmarinus ct. cineole",
+     "published": true,
+     "created_at": "2026-03-29T14:31:57.798337+00:00"
+    }
+   ]
+  },
+  {
+   "species": "rhodiola rosea",
+   "rows": [
+    {
+     "slug": "rhodiola",
+     "name": "Rhodiola",
+     "scientific_name": "Rhodiola rosea",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "rhodiola-rosea",
+     "name": "Rhodiola rosea",
+     "scientific_name": "Rhodiola rosea",
+     "published": true,
+     "created_at": "2026-11-03T18:19:43.737799+00:00"
+    }
+   ]
+  },
+  {
+   "species": "schisandra chinensis",
+   "rows": [
+    {
+     "slug": "schisandra",
+     "name": "Schisandra",
+     "scientific_name": "Schisandra chinensis",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "schisandra-black",
+     "name": "Schisandra Berry Black",
+     "scientific_name": "Schisandra chinensis",
+     "published": false,
+     "created_at": "2026-03-29T16:43:48.002635+00:00"
+    }
+   ]
+  },
+  {
+   "species": "calendula officinalis",
+   "rows": [
+    {
+     "slug": "calendula",
+     "name": "Calendula",
+     "scientific_name": "Calendula officinalis",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "polish-calendula",
+     "name": "Polish Calendula",
+     "scientific_name": "Calendula officinalis var. polonica",
+     "published": false,
+     "created_at": "2026-03-29T19:03:25.305584+00:00"
+    }
+   ]
+  },
+  {
+   "species": "arthrospira platensis",
+   "rows": [
+    {
+     "slug": "spirulina",
+     "name": "Spirulina",
+     "scientific_name": "Arthrospira platensis",
+     "published": true,
+     "created_at": "2026-03-27T04:37:39.440654+00:00"
+    },
+    {
+     "slug": "spirulina-platensis",
+     "name": "Spirulina platensis",
+     "scientific_name": "Arthrospira platensis",
+     "published": true,
+     "created_at": "2026-03-29T15:06:00.690239+00:00"
+    }
+   ]
+  },
+  {
+   "species": "boerhavia diffusa",
+   "rows": [
+    {
+     "slug": "punarnava",
+     "name": "Punarnava",
+     "scientific_name": "Boerhavia diffusa",
+     "published": true,
+     "created_at": "2026-03-27T05:13:33.908031+00:00"
+    },
+    {
+     "slug": "punarnava-mandur",
+     "name": "Punarnava Mandur",
+     "scientific_name": "Boerhavia diffusa compound",
+     "published": true,
+     "created_at": "2026-03-29T14:20:23.506379+00:00"
+    }
+   ]
+  },
+  {
+   "species": "swertia chirayita",
+   "rows": [
+    {
+     "slug": "chirata",
+     "name": "Chirata",
+     "scientific_name": "Swertia chirayita",
+     "published": true,
+     "created_at": "2026-03-27T05:13:33.908031+00:00"
+    },
+    {
+     "slug": "swertia-chirata",
+     "name": "Swertia Chirata",
+     "scientific_name": "Swertia chirayita",
+     "published": true,
+     "created_at": "2026-03-29T12:42:44.430002+00:00"
+    }
+   ]
+  },
+  {
+   "species": "eupatorium perfoliatum",
+   "rows": [
+    {
+     "slug": "boneset",
+     "name": "Boneset",
+     "scientific_name": "Eupatorium perfoliatum",
+     "published": true,
+     "created_at": "2026-03-27T05:16:21.604025+00:00"
+    },
+    {
+     "slug": "boneset-herb",
+     "name": "Boneset Herb",
+     "scientific_name": "Eupatorium perfoliatum",
+     "published": true,
+     "created_at": "2026-03-29T18:47:55.12593+00:00"
+    }
+   ]
+  },
+  {
+   "species": "elymus repens",
+   "rows": [
+    {
+     "slug": "couch-grass",
+     "name": "Couch Grass",
+     "scientific_name": "Elymus repens",
+     "published": true,
+     "created_at": "2026-03-27T05:21:42.224879+00:00"
+    },
+    {
+     "slug": "couch-grass-root",
+     "name": "Couch Grass Root",
+     "scientific_name": "Elymus repens radix",
+     "published": true,
+     "created_at": "2026-03-29T14:36:21.733005+00:00"
+    }
+   ]
+  },
+  {
+   "species": "salvia sclarea",
+   "rows": [
+    {
+     "slug": "clary-sage",
+     "name": "Clary Sage",
+     "scientific_name": "Salvia sclarea",
+     "published": true,
+     "created_at": "2026-03-27T05:40:12.006527+00:00"
+    },
+    {
+     "slug": "clary-sage-seed-oil",
+     "name": "Clary Sage Seed Oil",
+     "scientific_name": "Salvia sclarea",
+     "published": true,
+     "created_at": "2026-03-29T14:34:13.567663+00:00"
+    }
+   ]
+  },
+  {
+   "species": "artemisia dracunculus",
+   "rows": [
+    {
+     "slug": "tarragon",
+     "name": "Tarragon",
+     "scientific_name": "Artemisia dracunculus",
+     "published": false,
+     "created_at": "2026-03-27T05:43:30.705687+00:00"
+    },
+    {
+     "slug": "tarragon-wild",
+     "name": "Tarragon Wild",
+     "scientific_name": "Artemisia dracunculus var. sativa",
+     "published": false,
+     "created_at": "2026-03-29T14:36:23.038284+00:00"
+    }
+   ]
+  },
+  {
+   "species": "carapichea ipecacuanha",
+   "rows": [
+    {
+     "slug": "ipecac",
+     "name": "Ipecac",
+     "scientific_name": "Carapichea ipecacuanha",
+     "published": true,
+     "created_at": "2026-03-27T05:43:30.705687+00:00"
+    },
+    {
+     "slug": "ipecac-root",
+     "name": "Ipecac Root",
+     "scientific_name": "Carapichea ipecacuanha",
+     "published": true,
+     "created_at": "2026-03-29T13:26:09.374475+00:00"
+    }
+   ]
+  },
+  {
+   "species": "albizia julibrissin",
+   "rows": [
+    {
+     "slug": "he-huan-hua-tcm",
+     "name": "He Huan Hua TCM",
+     "scientific_name": "Albizia julibrissin",
+     "published": false,
+     "created_at": "2026-03-29T01:44:58.215058+00:00"
+    },
+    {
+     "slug": "he-huan-hua",
+     "name": "He Huan Hua",
+     "scientific_name": "Albizia julibrissin",
+     "published": false,
+     "created_at": "2026-03-29T18:02:10.691649+00:00"
+    }
+   ]
+  },
+  {
+   "species": "senegalia senegal",
+   "rows": [
+    {
+     "slug": "acacia",
+     "name": "Acacia",
+     "scientific_name": "Senegalia senegal",
+     "published": true,
+     "created_at": "2026-03-27T05:45:23.862057+00:00"
+    },
+    {
+     "slug": "acacia-senegal",
+     "name": "Acacia senegal",
+     "scientific_name": "Senegalia senegal",
+     "published": true,
+     "created_at": "2026-03-29T21:32:56.135992+00:00"
+    }
+   ]
+  },
+  {
+   "species": "carica papaya",
+   "rows": [
+    {
+     "slug": "papaya-leaf",
+     "name": "Papaya Leaf",
+     "scientific_name": "Carica papaya",
+     "published": true,
+     "created_at": "2026-03-27T05:50:44.354795+00:00"
+    },
+    {
+     "slug": "papaya-leaf-extract",
+     "name": "Papaya Leaf Extract",
+     "scientific_name": "Carica papaya leaf",
+     "published": true,
+     "created_at": "2026-03-29T18:09:06.751452+00:00"
+    }
+   ]
+  },
+  {
+   "species": "chrysopogon zizanioides",
+   "rows": [
+    {
+     "slug": "vetiver",
+     "name": "Vetiver",
+     "scientific_name": "Chrysopogon zizanioides",
+     "published": true,
+     "created_at": "2026-03-27T05:52:51.400893+00:00"
+    },
+    {
+     "slug": "haitian-vetiver",
+     "name": "Haitian Vetiver",
+     "scientific_name": "Chrysopogon zizanioides",
+     "published": true,
+     "created_at": "2026-03-29T19:01:41.806708+00:00"
+    }
+   ]
+  },
+  {
+   "species": "apium graveolens",
+   "rows": [
+    {
+     "slug": "apium-graveolens",
+     "name": "Apium graveolens",
+     "scientific_name": "Apium graveolens",
+     "published": true,
+     "created_at": "2026-03-30T03:28:45.823289+00:00"
+    },
+    {
+     "slug": "apium-graveolens-var-dulce",
+     "name": "Apium graveolens var. dulce",
+     "scientific_name": "Apium graveolens var. dulce",
+     "published": true,
+     "created_at": "2026-11-03T18:17:30.491338+00:00"
+    }
+   ]
+  },
+  {
+   "species": "monascus purpureus",
+   "rows": [
+    {
+     "slug": "red-yeast-rice",
+     "name": "Red Yeast Rice",
+     "scientific_name": "Monascus purpureus",
+     "published": true,
+     "created_at": "2026-03-27T16:42:57.254402+00:00"
+    },
+    {
+     "slug": "red-yeast-rice-cardiovasc",
+     "name": "Red Yeast Rice Cardiovasc",
+     "scientific_name": "Monascus purpureus",
+     "published": false,
+     "created_at": "2026-03-29T02:35:57.377499+00:00"
+    }
+   ]
+  },
+  {
+   "species": "bacillus subtilis",
+   "rows": [
+    {
+     "slug": "nattokinase-source",
+     "name": "Nattokinase Source",
+     "scientific_name": "Bacillus subtilis",
+     "published": false,
+     "created_at": "2026-03-27T16:42:57.254402+00:00"
+    },
+    {
+     "slug": "nattokinase-cardiovasc",
+     "name": "Nattokinase Source",
+     "scientific_name": "Bacillus subtilis",
+     "published": true,
+     "created_at": "2026-03-29T02:35:57.377499+00:00"
+    }
+   ]
+  },
+  {
+   "species": "apis mellifera",
+   "rows": [
+    {
+     "slug": "propolis",
+     "name": "Propolis",
+     "scientific_name": "Apis mellifera product",
+     "published": false,
+     "created_at": "2026-03-27T19:57:13.183035+00:00"
+    },
+    {
+     "slug": "bee-pollen-nutritive",
+     "name": "Bee Pollen Nutritive",
+     "scientific_name": "Apis mellifera pollen",
+     "published": true,
+     "created_at": "2026-03-28T01:43:20.202878+00:00"
+    },
+    {
+     "slug": "propolis-antimicro",
+     "name": "Propolis Antimicro",
+     "scientific_name": "Apis mellifera propolis",
+     "published": true,
+     "created_at": "2026-03-29T02:22:14.139585+00:00"
+    },
+    {
+     "slug": "bee-pollen",
+     "name": "Bee Pollen",
+     "scientific_name": "Apis mellifera",
+     "published": true,
+     "created_at": "2026-03-29T12:52:38.875489+00:00"
+    }
+   ]
+  },
+  {
+   "species": "morus alba",
+   "rows": [
+    {
+     "slug": "sang-bai-pi",
+     "name": "Sang Bai Pi",
+     "scientific_name": "Morus alba",
+     "published": true,
+     "created_at": "2026-03-27T20:00:09.461877+00:00"
+    },
+    {
+     "slug": "sang-bai-pi-tcm-v2",
+     "name": "Sang Bai Pi TCM v2",
+     "scientific_name": "Morus alba",
+     "published": true,
+     "created_at": "2026-03-29T01:44:58.215058+00:00"
+    }
+   ]
+  },
+  {
+   "species": "prunus armeniaca",
+   "rows": [
+    {
+     "slug": "xing-ren",
+     "name": "Xing Ren",
+     "scientific_name": "Prunus armeniaca",
+     "published": true,
+     "created_at": "2026-03-27T20:00:09.461877+00:00"
+    },
+    {
+     "slug": "ku-xing-ren-seed",
+     "name": "Ku Xing Ren Seed",
+     "scientific_name": "Prunus armeniaca semen",
+     "published": true,
+     "created_at": "2026-03-29T18:05:21.717039+00:00"
+    }
+   ]
+  },
+  {
+   "species": "serratia marcescens",
+   "rows": [
+    {
+     "slug": "serrapeptase-source",
+     "name": "Serrapeptase Source",
+     "scientific_name": "Serratia marcescens",
+     "published": false,
+     "created_at": "2026-03-28T01:41:15.982676+00:00"
+    },
+    {
+     "slug": "serrapeptase",
+     "name": "Serrapeptase",
+     "scientific_name": "Serratia marcescens",
+     "published": true,
+     "created_at": "2026-03-29T14:04:16.958813+00:00"
+    }
+   ]
+  },
+  {
+   "species": "rauvolfia serpentina",
+   "rows": [
+    {
+     "slug": "rauwolfia-cardio",
+     "name": "Rauwolfia",
+     "scientific_name": "Rauvolfia serpentina",
+     "published": true,
+     "created_at": "2026-03-28T01:49:32.454052+00:00"
+    },
+    {
+     "slug": "rauwolfia-root",
+     "name": "Rauwolfia Root",
+     "scientific_name": "Rauvolfia serpentina",
+     "published": true,
+     "created_at": "2026-03-29T18:43:45.316098+00:00"
+    }
+   ]
+  },
+  {
+   "species": "citrus reticulata",
+   "rows": [
+    {
+     "slug": "qing-pi-liver",
+     "name": "Qing Pi Liver",
+     "scientific_name": "Citrus reticulata",
+     "published": true,
+     "created_at": "2026-03-28T02:01:05.487416+00:00"
+    },
+    {
+     "slug": "qing-pi",
+     "name": "Qing Pi",
+     "scientific_name": "Citrus reticulata immature",
+     "published": true,
+     "created_at": "2026-03-29T15:50:50.595442+00:00"
+    }
+   ]
+  },
+  {
+   "species": "polygonum multiflorum",
+   "rows": [
+    {
+     "slug": "ye-jiao-teng-nervine",
+     "name": "Ye Jiao Teng",
+     "scientific_name": "Polygonum multiflorum",
+     "published": true,
+     "created_at": "2026-03-28T02:05:02.474421+00:00"
+    },
+    {
+     "slug": "ye-jiao-teng-vine",
+     "name": "Ye Jiao Teng Vine",
+     "scientific_name": "Polygonum multiflorum caulis",
+     "published": true,
+     "created_at": "2026-03-29T18:02:10.691649+00:00"
+    }
+   ]
+  },
+  {
+   "species": "rehmannia glutinosa",
+   "rows": [
+    {
+     "slug": "sheng-di-huang-tcm",
+     "name": "Sheng Di Huang TCM",
+     "scientific_name": "Rehmannia glutinosa",
+     "published": true,
+     "created_at": "2026-03-29T01:44:58.215058+00:00"
+    },
+    {
+     "slug": "sheng-di-huang",
+     "name": "Sheng Di Huang",
+     "scientific_name": "Rehmannia glutinosa",
+     "published": true,
+     "created_at": "2026-03-29T15:50:50.595442+00:00"
+    },
+    {
+     "slug": "shu-di-huang",
+     "name": "Shu Di Huang",
+     "scientific_name": "Rehmannia glutinosa",
+     "published": true,
+     "created_at": "2026-03-29T15:50:50.595442+00:00"
+    },
+    {
+     "slug": "shu-di-huang-root",
+     "name": "Shu Di Huang Root",
+     "scientific_name": "Rehmannia glutinosa preparata",
+     "published": true,
+     "created_at": "2026-03-29T18:04:16.656739+00:00"
+    }
+   ]
+  },
+  {
+   "species": "nelumbo nucifera",
+   "rows": [
+    {
+     "slug": "lian-zi-xin-tcm",
+     "name": "Lian Zi Xin TCM",
+     "scientific_name": "Nelumbo nucifera",
+     "published": true,
+     "created_at": "2026-03-29T01:44:58.215058+00:00"
+    },
+    {
+     "slug": "lian-zi",
+     "name": "Lian Zi",
+     "scientific_name": "Nelumbo nucifera",
+     "published": true,
+     "created_at": "2026-03-29T17:01:32.551177+00:00"
+    },
+    {
+     "slug": "lian-zi-xin-heart",
+     "name": "Lian Zi Xin Heart",
+     "scientific_name": "Nelumbo nucifera embryo",
+     "published": true,
+     "created_at": "2026-03-29T18:04:16.656739+00:00"
+    }
+   ]
+  },
+  {
+   "species": "glycine max",
+   "rows": [
+    {
+     "slug": "phosphatidylserine-noot",
+     "name": "Phosphatidylserine Source",
+     "scientific_name": "Glycine max",
+     "published": true,
+     "created_at": "2026-03-29T02:22:14.139585+00:00"
+    },
+    {
+     "slug": "phosphatidylserine-herb",
+     "name": "Phosphatidylserine",
+     "scientific_name": "Glycine max",
+     "published": false,
+     "created_at": "2026-03-29T14:07:22.492127+00:00"
+    }
+   ]
+  },
+  {
+   "species": "chamaemelum nobile",
+   "rows": [
+    {
+     "slug": "chamomile-roman",
+     "name": "Chamomile",
+     "scientific_name": "Chamaemelum nobile",
+     "published": true,
+     "created_at": "2026-03-29T14:07:24.015087+00:00"
+    },
+    {
+     "slug": "asteraceae-roman-chamomile",
+     "name": "Asteraceae Roman Chamomile",
+     "scientific_name": "Chamaemelum nobile",
+     "published": true,
+     "created_at": "2026-03-29T19:12:36.622813+00:00"
+    }
+   ]
+  },
+  {
+   "species": "ocimum basilicum",
+   "rows": [
+    {
+     "slug": "thai-basil",
+     "name": "Thai Basil",
+     "scientific_name": "Ocimum basilicum var. thyrsiflora",
+     "published": true,
+     "created_at": "2026-03-29T15:41:19.687522+00:00"
+    },
+    {
+     "slug": "thai-basil-herb",
+     "name": "Thai Basil Herb",
+     "scientific_name": "Ocimum basilicum var. thyrsiflorum",
+     "published": true,
+     "created_at": "2026-03-29T18:58:18.448179+00:00"
+    }
+   ]
+  },
+  {
+   "species": "vachellia xanthophloea",
+   "rows": [
+    {
+     "slug": "fever-tree",
+     "name": "Fever Tree",
+     "scientific_name": "Vachellia xanthophloea",
+     "published": true,
+     "created_at": "2026-03-29T15:59:19.873656+00:00"
+    },
+    {
+     "slug": "fever-tree",
+     "name": "Fever Tree",
+     "scientific_name": "Vachellia xanthophloea",
+     "published": true,
+     "created_at": "2026-03-29T15:59:19.873656+00:00"
+    }
+   ]
+  },
+  {
+   "species": "pueraria montana",
+   "rows": [
+    {
+     "slug": "ge-gen",
+     "name": "Ge Gen",
+     "scientific_name": "Pueraria montana var. lobata",
+     "published": true,
+     "created_at": "2026-03-29T16:14:13.209373+00:00"
+    },
+    {
+     "slug": "ge-gen-root",
+     "name": "Ge Gen Root",
+     "scientific_name": "Pueraria montana var. thomsonii",
+     "published": true,
+     "created_at": "2026-03-29T18:05:21.717039+00:00"
+    }
+   ]
+  },
+  {
+   "species": "vaccinium vitis",
+   "rows": [
+    {
+     "slug": "cowberry",
+     "name": "Cowberry",
+     "scientific_name": "Vaccinium vitis-idaea",
+     "published": true,
+     "created_at": "2026-03-29T16:16:19.059862+00:00"
+    },
+    {
+     "slug": "cowberry-leaf",
+     "name": "Cowberry Leaf",
+     "scientific_name": "Vaccinium vitis-idaea leaf",
+     "published": true,
+     "created_at": "2026-03-29T16:47:56.860331+00:00"
+    }
+   ]
+  },
+  {
+   "species": "gleditsia sinensis",
+   "rows": [
+    {
+     "slug": "zao-jiao",
+     "name": "Zao Jiao",
+     "scientific_name": "Gleditsia sinensis",
+     "published": true,
+     "created_at": "2026-03-29T17:01:32.551177+00:00"
+    },
+    {
+     "slug": "zao-jiao-ci",
+     "name": "Zao Jiao Ci",
+     "scientific_name": "Gleditsia sinensis",
+     "published": true,
+     "created_at": "2026-03-29T17:25:09.09731+00:00"
+    }
+   ]
+  },
+  {
+   "species": "peganum harmala",
+   "rows": [
+    {
+     "slug": "harmel",
+     "name": "Harmel",
+     "scientific_name": "Peganum harmala",
+     "published": true,
+     "created_at": "2026-03-29T17:04:10.077298+00:00"
+    },
+    {
+     "slug": "tunisian-harmel",
+     "name": "Tunisian Harmel",
+     "scientific_name": "Peganum harmala var. africana",
+     "published": false,
+     "created_at": "2026-03-29T19:08:58.205603+00:00"
+    }
+   ]
+  },
+  {
+   "species": "perilla frutescens",
+   "rows": [
+    {
+     "slug": "perilla",
+     "name": "Perilla",
+     "scientific_name": "Perilla frutescens",
+     "published": true,
+     "created_at": "2026-03-29T18:18:51.567714+00:00"
+    },
+    {
+     "slug": "perilla-seed-tcm",
+     "name": "Perilla Seed TCM",
+     "scientific_name": "Perilla frutescens var. frutescens",
+     "published": true,
+     "created_at": "2026-03-29T18:38:21.42294+00:00"
+    }
+   ]
+  },
+  {
+   "species": "vitis vinifera",
+   "rows": [
+    {
+     "slug": "grape-seed",
+     "name": "Grape Seed",
+     "scientific_name": "Vitis vinifera",
+     "published": true,
+     "created_at": "2026-03-29T18:39:33.682529+00:00"
+    },
+    {
+     "slug": "vitis-vinifera",
+     "name": "Vitis vinifera",
+     "scientific_name": "Vitis vinifera",
+     "published": true,
+     "created_at": "2026-11-03T18:15:59.363076+00:00"
+    },
+    {
+     "slug": "vitis-vinifera-var-tinctoria",
+     "name": "Vitis vinifera var. tinctoria",
+     "scientific_name": "Vitis vinifera var. tinctoria",
+     "published": true,
+     "created_at": "2026-11-03T18:22:55.308466+00:00"
+    },
+    {
+     "slug": "vitis-vinifera-grape-seed-extract",
+     "name": "Vitis vinifera (grape) seed extract",
+     "scientific_name": "Vitis vinifera (grape) seed extract",
+     "published": true,
+     "created_at": "2026-11-03T18:25:09.711973+00:00"
+    }
+   ]
+  },
+  {
+   "species": "linum usitatissimum",
+   "rows": [
+    {
+     "slug": "linum-usitatissimum-l-subsp-sativa",
+     "name": "Linum usitatissimum L. subsp. sativa",
+     "scientific_name": "Linum usitatissimum L. subsp. sativa",
+     "published": true,
+     "created_at": "2026-11-03T18:20:48.214059+00:00"
+    },
+    {
+     "slug": "linum-usitatissimum-l",
+     "name": "Linum usitatissimum L.",
+     "scientific_name": "Linum usitatissimum L.",
+     "published": true,
+     "created_at": "2026-11-03T18:21:02.340383+00:00"
+    }
+   ]
+  },
+  {
+   "species": "haworthiopsis attenuata",
+   "rows": [
+    {
+     "slug": "haworthia-attenuata-herb",
+     "name": "Haworthia Attenuata Herb",
+     "scientific_name": "Haworthiopsis attenuata",
+     "published": true,
+     "created_at": "2026-03-29T21:13:45.472419+00:00"
+    },
+    {
+     "slug": "haworthia-attenuata",
+     "name": "Haworthia attenuata",
+     "scientific_name": "Haworthiopsis attenuata",
+     "published": true,
+     "created_at": "2026-03-30T03:45:05.008315+00:00"
+    }
+   ]
+  },
+  {
+   "species": "jatropha gossypiifolia",
+   "rows": [
+    {
+     "slug": "jatropha-gossypiifolia",
+     "name": "Jatropha gossypiifolia",
+     "scientific_name": "Jatropha gossypiifolia",
+     "published": true,
+     "created_at": "2026-03-29T21:26:04.055891+00:00"
+    },
+    {
+     "slug": "jatropha-gossypifolia",
+     "name": "Jatropha gossypiifolia",
+     "scientific_name": "Jatropha gossypiifolia",
+     "published": true,
+     "created_at": "2026-03-30T02:05:34.269537+00:00"
+    }
+   ]
+  },
+  {
+   "species": "vigna radiata",
+   "rows": [
+    {
+     "slug": "vigna-radiata",
+     "name": "Vigna radiata",
+     "scientific_name": "Vigna radiata",
+     "published": true,
+     "created_at": "2026-03-29T21:49:40.670291+00:00"
+    },
+    {
+     "slug": "vigna-radiata-var-radiata",
+     "name": "Vigna radiata var. radiata",
+     "scientific_name": "Vigna radiata var. radiata",
+     "published": true,
+     "created_at": "2026-11-03T18:19:21.725333+00:00"
+    }
+   ]
+  },
+  {
+   "species": "coffea canephora",
+   "rows": [
+    {
+     "slug": "coffea-canephora",
+     "name": "Coffea canephora",
+     "scientific_name": "Coffea canephora",
+     "published": true,
+     "created_at": "2026-03-29T21:54:56.68193+00:00"
+    },
+    {
+     "slug": "coffea-canephora-robusta",
+     "name": "Coffea canephora robusta",
+     "scientific_name": "Coffea canephora robusta",
+     "published": true,
+     "created_at": "2026-11-03T18:28:02.244285+00:00"
+    }
+   ]
+  },
+  {
+   "species": "vigna unguiculata",
+   "rows": [
+    {
+     "slug": "vigna-unguiculata",
+     "name": "Vigna unguiculata",
+     "scientific_name": "Vigna unguiculata",
+     "published": true,
+     "created_at": "2026-03-30T02:50:55.584591+00:00"
+    },
+    {
+     "slug": "vigna-unguiculata-subsp-cylindrica",
+     "name": "Vigna unguiculata subsp. cylindrica",
+     "scientific_name": "Vigna unguiculata subsp. cylindrica",
+     "published": true,
+     "created_at": "2026-11-03T18:26:49.71671+00:00"
+    }
+   ]
+  },
+  {
+   "species": "medicago sativa",
+   "rows": [
+    {
+     "slug": "medicago-sativa",
+     "name": "Medicago sativa",
+     "scientific_name": "Medicago sativa",
+     "published": true,
+     "created_at": "2026-03-30T02:56:13.253606+00:00"
+    },
+    {
+     "slug": "medicago-sativa-l",
+     "name": "Medicago sativa L.",
+     "scientific_name": "Medicago sativa L.",
+     "published": true,
+     "created_at": "2026-11-03T18:18:41.833395+00:00"
+    },
+    {
+     "slug": "medicago-sativa-protein-concentrate",
+     "name": "Medicago sativa protein concentrate",
+     "scientific_name": "Medicago sativa protein concentrate",
+     "published": true,
+     "created_at": "2026-11-03T18:27:04.013768+00:00"
+    }
+   ]
+  },
+  {
+   "species": "angelica polymorpha",
+   "rows": [
+    {
+     "slug": "angelica-polymorpha",
+     "name": "Angelica polymorpha",
+     "scientific_name": "Angelica polymorpha",
+     "published": true,
+     "created_at": "2026-03-30T03:03:22.376765+00:00"
+    },
+    {
+     "slug": "angelica-polymorpha-var-sinensis",
+     "name": "Angelica polymorpha var. sinensis",
+     "scientific_name": "Angelica polymorpha var. sinensis",
+     "published": true,
+     "created_at": "2026-11-03T18:32:12.315309+00:00"
+    }
+   ]
+  },
+  {
+   "species": "tagetes erecta",
+   "rows": [
+    {
+     "slug": "tagetes-erecta",
+     "name": "Tagetes erecta",
+     "scientific_name": "Tagetes erecta",
+     "published": true,
+     "created_at": "2026-03-30T03:07:10.790525+00:00"
+    },
+    {
+     "slug": "tagetes-erecta-l",
+     "name": "Tagetes erecta L.",
+     "scientific_name": "Tagetes erecta L.",
+     "published": true,
+     "created_at": "2026-11-03T18:23:21.06985+00:00"
+    }
+   ]
+  },
+  {
+   "species": "coffea liberica",
+   "rows": [
+    {
+     "slug": "coffea-liberica",
+     "name": "Coffea liberica",
+     "scientific_name": "Coffea liberica",
+     "published": true,
+     "created_at": "2026-03-30T03:16:31.826549+00:00"
+    },
+    {
+     "slug": "coffea-excelsa",
+     "name": "Coffea liberica-alt",
+     "scientific_name": "Coffea liberica var. dewevrei",
+     "published": false,
+     "created_at": "2026-03-30T03:30:21.771575+00:00"
+    }
+   ]
+  },
+  {
+   "species": "coffea arabica",
+   "rows": [
+    {
+     "slug": "coffee-green-extract",
+     "name": "Coffea arabica raw",
+     "scientific_name": "Coffea arabica",
+     "published": true,
+     "created_at": "2026-03-30T03:27:09.775905+00:00"
+    },
+    {
+     "slug": "coffea-arabica",
+     "name": "Coffea arabica",
+     "scientific_name": "Coffea arabica",
+     "published": true,
+     "created_at": "2026-11-03T18:16:21.749028+00:00"
+    }
+   ]
+  },
+  {
+   "species": "fagus sylvatica",
+   "rows": [
+    {
+     "slug": "fagus-sylvatica",
+     "name": "Fagus sylvatica",
+     "scientific_name": "Fagus sylvatica",
+     "published": true,
+     "created_at": "2026-03-30T03:38:29.106343+00:00"
+    },
+    {
+     "slug": "fagus-sylvatica-flos",
+     "name": "Fagus sylvatica flos",
+     "scientific_name": "Fagus sylvatica flos",
+     "published": true,
+     "created_at": "2026-11-03T18:32:00.443578+00:00"
+    }
+   ]
+  },
+  {
+   "species": "fraxinus chinensis",
+   "rows": [
+    {
+     "slug": "fraxinus-chinensis",
+     "name": "Fraxinus chinensis",
+     "scientific_name": "Fraxinus chinensis",
+     "published": true,
+     "created_at": "2026-11-03T18:02:46.688975+00:00"
+    },
+    {
+     "slug": "fraxinus-chinensis-subsp-rhynchophylla",
+     "name": "Fraxinus chinensis subsp. rhynchophylla",
+     "scientific_name": "Fraxinus chinensis subsp. rhynchophylla",
+     "published": true,
+     "created_at": "2026-11-03T18:24:46.439056+00:00"
+    }
+   ]
+  },
+  {
+   "species": "saccharomyces boulardii",
+   "rows": [
+    {
+     "slug": "saccharomyces-boulardii",
+     "name": "Saccharomyces boulardii",
+     "scientific_name": "Saccharomyces boulardii",
+     "published": true,
+     "created_at": "2026-11-03T18:16:11.211474+00:00"
+    },
+    {
+     "slug": "saccharomyces-boulardii-lyo",
+     "name": "Saccharomyces boulardii lyo",
+     "scientific_name": "Saccharomyces boulardii lyo",
+     "published": true,
+     "created_at": "2026-11-03T18:23:43.857589+00:00"
+    }
+   ]
+  },
+  {
+   "species": "paris polyphylla",
+   "rows": [
+    {
+     "slug": "paris-polyphylla-var-chinensis",
+     "name": "Paris polyphylla var. chinensis",
+     "scientific_name": "Paris polyphylla var. chinensis",
+     "published": true,
+     "created_at": "2026-11-03T18:21:22.160154+00:00"
+    },
+    {
+     "slug": "paris-polyphylla",
+     "name": "Paris polyphylla",
+     "scientific_name": "Paris polyphylla",
+     "published": true,
+     "created_at": "2026-11-03T18:26:02.790551+00:00"
+    },
+    {
+     "slug": "paris-polyphylla-var-yunnanensis",
+     "name": "Paris polyphylla var. yunnanensis",
+     "scientific_name": "Paris polyphylla var. yunnanensis",
+     "published": true,
+     "created_at": "2026-11-03T18:26:45.025907+00:00"
+    }
+   ]
+  },
+  {
+   "species": "lactuca sativa",
+   "rows": [
+    {
+     "slug": "lactuca-sativa",
+     "name": "Lactuca sativa",
+     "scientific_name": "Lactuca sativa",
+     "published": true,
+     "created_at": "2026-11-03T18:22:59.34469+00:00"
+    },
+    {
+     "slug": "lactuca-sativa-var-longifolia",
+     "name": "Lactuca sativa var. longifolia",
+     "scientific_name": "Lactuca sativa var. longifolia",
+     "published": true,
+     "created_at": "2026-11-03T18:29:01.901322+00:00"
+    }
+   ]
+  },
+  {
+   "species": "phyllostachys nigra",
+   "rows": [
+    {
+     "slug": "phyllostachys-nigra-var-henonis",
+     "name": "Phyllostachys nigra var. henonis",
+     "scientific_name": "Phyllostachys nigra var. henonis",
+     "published": true,
+     "created_at": "2026-11-03T18:23:28.612897+00:00"
+    },
+    {
+     "slug": "phyllostachys-nigra",
+     "name": "Phyllostachys nigra",
+     "scientific_name": "Phyllostachys nigra",
+     "published": true,
+     "created_at": "2026-11-03T18:26:24.121168+00:00"
+    },
+    {
+     "slug": "phyllostachys-nigra-var-nigra",
+     "name": "Phyllostachys nigra var nigra",
+     "scientific_name": "Phyllostachys nigra var nigra",
+     "published": true,
+     "created_at": "2026-11-03T18:29:54.048044+00:00"
+    }
+   ]
+  },
+  {
+   "species": "aspergillus niger",
+   "rows": [
+    {
+     "slug": "aspergillus-niger",
+     "name": "Aspergillus niger",
+     "scientific_name": "Aspergillus niger",
+     "published": true,
+     "created_at": "2026-11-03T18:23:41.252095+00:00"
+    },
+    {
+     "slug": "aspergillus-niger-e-volumine-cellulae",
+     "name": "Aspergillus niger e volumine cellulae",
+     "scientific_name": "Aspergillus niger e volumine cellulae",
+     "published": true,
+     "created_at": "2026-11-03T18:28:18.571869+00:00"
+    }
+   ]
+  }
+ ]
+}
