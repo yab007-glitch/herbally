@@ -240,6 +240,16 @@
       "from": "cerasee",
       "to": "bitter-melon-metabolic",
       "carry_note": "Caribbean wild bitter vine widely consumed as tea in Jamaica for blood cleansing and diabetes."
+    },
+    {
+      "from": "citrus-medica",
+      "to": "fo-shou",
+      "carry_note": "Ancient citrus species; peel used in Ayurveda for digestive complaints; Etrog used in Jewish Sukkot."
+    },
+    {
+      "from": "dominican-cacao",
+      "to": "cocoa-bean",
+      "carry_note": ""
     }
   ]
 }
