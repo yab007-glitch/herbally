@@ -315,6 +315,51 @@
       "from": "melissa-romana",
       "to": "lemon-balm",
       "carry_note": "Taller southern European lemon balm variety with higher rosmarinic acid content used in folk medicine for thyroid and nervous conditions."
+    },
+    {
+      "from": "nattokinase-source",
+      "to": "nattokinase-cardiovasc",
+      "carry_note": "Japanese fermented soybean enzyme for fibrinolytic and cardiovascular support."
+    },
+    {
+      "from": "nordic-yarrow",
+      "to": "achillea-millefolium-var",
+      "carry_note": "Northern European variety of yarrow used in Scandinavian folk medicine for fever, wound healing, and digestive conditions; slightly different chemistry from common yarrow."
+    },
+    {
+      "from": "norse-yarrow",
+      "to": "achillea-millefolium-var",
+      "carry_note": "Nordic variety of yarrow used by Vikings and Norse peoples as a wound herb, digestive bitter, and fever remedy."
+    },
+    {
+      "from": "pegaga",
+      "to": "gotu-kola",
+      "carry_note": "Malay traditional herb identical to Gotu Kola but used in distinct Malaysian Jamu preparations for cognitive support, wound healing, and leprosy treatment."
+    },
+    {
+      "from": "peppermint-spanish",
+      "to": "peppermint",
+      "carry_note": "Peppermint Spanish (Mentha x piperita var. citrata) is a citrus-scented infraspecific hybrid of the Mentha piperita complex, classified within the Lamiaceae family. Its essential oil profile differs markedly from classic peppermint: linalool and linalyl acetate dominate, with only trace menthol and the coumarin bergapten, yielding characterization closer to bergamot-mint than menthol-dominant chemotypes. Documented pharmacological activity of the volatile constituents includes in vitro antifungal effects, with linalool and linalyl acetate showing anti-inflammatory and anxiolytic-relevant activity in preclinical research. The verified primary literature for this variety concerns terpene production in Agrobacterium-transformed shoot cultures of M. citrata, confirming biosynthetic capacity for monoterpene accumulation. Clinically, the herb is positioned as a gentler aromatic carminative relative to standard peppermint, used predominantly at culinary and aromatherapy exposure levels; robust human clinical trials specific to this variety are lacking, and its therapeutic scope remains chiefly traditional and preclinical."
+    },
+    {
+      "from": "phosphatidylserine-herb",
+      "to": "phosphatidylserine-noot",
+      "carry_note": "Phospholipid isolated from soy or sunflower lecithin, essential for neuronal membrane function."
+    },
+    {
+      "from": "propolis",
+      "to": "propolis-antimicro",
+      "carry_note": "Resinous bee product with broad-spectrum antimicrobial and immunomodulatory properties."
+    },
+    {
+      "from": "prunus-avium",
+      "to": "cherry-stalk",
+      "carry_note": "European cherry tree; stalks (peduncles) used as diuretic; bark for cough; fruit highly nutritious."
+    },
+    {
+      "from": "qing-hao-aerial",
+      "to": "sweet-annie",
+      "carry_note": "The aerial herb form of artemisia annua used in TCM for cooling heat; separate from artemisinin extraction."
     }
   ]
 }
