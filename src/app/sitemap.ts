@@ -4,7 +4,8 @@ const FR_BASE = "/fr";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { execSync } from "node:child_process";
 import { logger } from "@/lib/utils/logger";
-import { SYMPTOM_SLUGS, symptomMeta } from "@/lib/symptoms/symptom-meta";
+import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
+import { getEmptySymptomHubs } from "@/lib/symptoms/hub-coverage";
 import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page";
 import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
@@ -64,7 +65,6 @@ type HerbSitemapRow = {
   slug: string;
   updated_at: string | null;
   translations: unknown;
-  symptom_keywords: string[] | null;
 };
 
 /**
@@ -84,7 +84,7 @@ async function fetchHerbBatch(
     const { data, error } = await withTimeout(
       supabase
         .from("herbs")
-        .select("slug, updated_at, translations, symptom_keywords")
+        .select("slug, updated_at, translations")
         .eq("is_published", true)
         .order("slug", { ascending: true })
         .range(from, from + size - 1),
@@ -436,8 +436,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // published herb. Four of them (bloodPressure, hormonal, prostate,
     // diabetes) match nothing, so they were indexable pages whose whole body
     // was "no herbs found yet" — the soft-404 shape.
-    const presentSymptomKeywords = new Set<string>();
-    let herbsCollected = false;
     let from = 0;
     let batchSize = HERB_BATCH_SIZE;
     while (true) {
@@ -467,12 +465,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
 
       if (herbsBatch.length === 0) break;
-      herbsCollected = true;
 
       for (const herb of herbsBatch) {
-        for (const keyword of herb.symptom_keywords ?? []) {
-          presentSymptomKeywords.add(keyword);
-        }
         herbPages.push({
           url: `${baseUrl}/herbs/${herb.slug}`,
           lastModified: herb.updated_at
@@ -503,18 +497,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // the ones with matching published herbs. If the herb query failed
     // outright, fail open and list them all: dropping real URLs from the
     // sitemap is worse than listing a thin one.
-    const symptomSlugs = herbsCollected
-      ? SYMPTOM_SLUGS.filter((slug) =>
-          presentSymptomKeywords.has(symptomMeta[slug].dbKeyword)
-        )
-      : SYMPTOM_SLUGS;
-    if (herbsCollected && symptomSlugs.length < SYMPTOM_SLUGS.length) {
+    // One shared column read (memoised in hub-coverage), not a per-row scan of
+    // the herb batches: selecting `symptom_keywords` alongside 2,700 rows made
+    // this query time out at 40s during the build.
+    const emptyHubs = await getEmptySymptomHubs();
+    if (emptyHubs.length > 0) {
       // warn, not error: an empty hub is a content gap, not a runtime failure,
       // and this runs on every hourly revalidation.
-      logger.warn("sitemap_symptom_hubs_empty", {
-        omitted: SYMPTOM_SLUGS.filter((s) => !symptomSlugs.includes(s)),
-      });
+      logger.warn("sitemap_symptom_hubs_empty", { omitted: emptyHubs });
     }
+    const symptomSlugs = SYMPTOM_SLUGS.filter(
+      (slug) => !emptyHubs.includes(slug)
+    );
     const symptomPages = symptomPagesFor(symptomSlugs, baseUrl);
 
     // Compare pages — pairs come from the SAME source of truth as the

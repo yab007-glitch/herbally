@@ -19,6 +19,7 @@ import {
   symptomMatchKeyword,
   symptomMeta,
 } from "@/lib/symptoms/symptom-meta";
+import { isSymptomHubPopulated } from "@/lib/symptoms/hub-coverage";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { siteUrl } from "@/lib/seo/site-url";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -51,21 +52,39 @@ type SymptomHerb = {
  * herbs — they rendered "no herbs yet" while sitting in the sitemap, which is
  * the soft-404 shape Google files under "crawled - currently not indexed".
  */
+const QUERY_TIMEOUT_MS = 8_000;
+
+/** Reject instead of hanging when the database stops answering. */
+function withTimeout<T>(query: PromiseLike<T>, ms: number): Promise<T> {
+  return Promise.race([
+    Promise.resolve(query),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`query timed out after ${ms}ms`)), ms)
+    ),
+  ]);
+}
+
 const loadSymptomHerbs = cache(
   async (symptom: string, locale: string): Promise<SymptomHerb[]> => {
     const meta = symptomMeta[symptom];
     const supabase = getAnonClient();
     if (!meta || !supabase) return [];
     try {
-      const { data } = await supabase
-        .from("herbs")
-        .select(
-          "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
-        )
-        .eq("is_published", true)
-        .overlaps("symptom_keywords", [meta.dbKeyword])
-        .order("evidence_level", { ascending: true })
-        .limit(20);
+      // Bounded: an unresponsive database must not hang a prerender until
+      // Next's 60s page budget kills the build. 2026-11-02 a wedged PostgREST
+      // failed the whole production deploy this way.
+      const { data } = await withTimeout(
+        supabase
+          .from("herbs")
+          .select(
+            "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
+          )
+          .eq("is_published", true)
+          .overlaps("symptom_keywords", [meta.dbKeyword])
+          .order("evidence_level", { ascending: true })
+          .limit(20),
+        QUERY_TIMEOUT_MS
+      );
       // Translate before de-duplicating: de-dup is by scientific name, the
       // first row wins, and merged alias names must already be localized so
       // they do not stay English on French pages. The match itself is
@@ -94,14 +113,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale: metaLocale });
   const title = t(`symptomMeta.${symptom}.title`) || meta.title;
   const description = t(`symptomMeta.${symptom}.desc`) || meta.description;
-  const herbs = await loadSymptomHerbs(symptom, metaLocale);
+  // Deliberately NOT the herb query: running it here doubled the Supabase
+  // round-trips per hub during static generation, the pool saturated, and every
+  // symptom prerender blew the 60s page budget (failed prod deploy, 2026-11-02).
+  // Coverage is one memoised column read shared by the whole process.
+  const populated = await isSymptomHubPopulated(symptom);
   return {
     title,
     description,
     keywords: meta.keywords,
     // An empty hub is not a page worth indexing; it stays crawlable and
     // linked so it starts ranking the moment data lands.
-    ...(herbs.length === 0 ? { robots: { index: false, follow: true } } : {}),
+    ...(populated ? {} : { robots: { index: false, follow: true } }),
     alternates: {
       canonical:
         metaLocale === "fr"
