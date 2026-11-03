@@ -1,0 +1,1353 @@
+[
+  {
+    "slug": "acacia",
+    "ours": "Acacia senegal",
+    "powo_verdict": "synonym",
+    "powo_target": "Senegalia senegal",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "acacia-nilotica",
+    "ours": "Acacia nilotica",
+    "powo_verdict": "synonym",
+    "powo_target": "Vachellia nilotica",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "acanthopanax-gracilistylus",
+    "ours": "Acanthopanax gracilistylus",
+    "powo_verdict": "synonym",
+    "powo_target": "Eleutherococcus nodiflorus",
+    "corroborated_by": []
+  },
+  {
+    "slug": "acapulco",
+    "ours": "Cassia alata",
+    "powo_verdict": "synonym",
+    "powo_target": "Senna alata",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "acinos-arvensis",
+    "ours": "Acinos arvensis",
+    "powo_verdict": "synonym",
+    "powo_target": "Clinopodium acinos",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "aerva-lanata",
+    "ours": "Aerva lanata",
+    "powo_verdict": "synonym",
+    "powo_target": "Ouret lanata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "agarikon-immune",
+    "ours": "Fomitopsis officinalis",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "alisma-oriental",
+    "ours": "Alisma orientale",
+    "powo_verdict": "synonym",
+    "powo_target": "Alisma plantago-aquatica subsp. orientale",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "alpinia-katsumadai",
+    "ours": "Alpinia katsumadai",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "amomum-compactum",
+    "ours": "Amomum compactum",
+    "powo_verdict": "synonym",
+    "powo_target": "Wurfbainia compacta",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "an-xa-huong",
+    "ours": "Desmodium styracifolium",
+    "powo_verdict": "synonym",
+    "powo_target": "Grona styracifolia",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "anatolian-borage",
+    "ours": "Borago officinalis var. turcica",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "antrodia-camphorata",
+    "ours": "Antrodia cinnamomea",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "argan-tree",
+    "ours": "Argania spinosa",
+    "powo_verdict": "synonym",
+    "powo_target": "Sideroxylon spinosum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "arrabidaea-chica",
+    "ours": "Arrabidaea chica",
+    "powo_verdict": "synonym",
+    "powo_target": "Fridericia chica",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "artichoke-liver",
+    "ours": "Cynara scolymus",
+    "powo_verdict": "synonym",
+    "powo_target": "Cynara cardunculus subsp. cardunculus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "asafoetida",
+    "ours": "Ferula asafoetida",
+    "powo_verdict": "synonym",
+    "powo_target": "Ferula narthex",
+    "corroborated_by": []
+  },
+  {
+    "slug": "astaxanthin-source",
+    "ours": "Haematococcus pluvialis",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "asteraceae-blessed-thistle",
+    "ours": "Cnicus benedictus",
+    "powo_verdict": "synonym",
+    "powo_target": "Centaurea benedicta",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "astragalus-complanatus",
+    "ours": "Astragalus complanatus",
+    "powo_verdict": "synonym",
+    "powo_target": "Phyllolobium chinense",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "ati-atihan",
+    "ours": "Hyptis suaveolens",
+    "powo_verdict": "synonym",
+    "powo_target": "Mesosphaerum suaveolens",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "aztec-sweet-herb",
+    "ours": "Lippia dulcis",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "bai-bian-dou-seed",
+    "ours": "Dolichos lablab",
+    "powo_verdict": "synonym",
+    "powo_target": "Lablab purpureus subsp. purpureus",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "bai-dou-kou",
+    "ours": "Amomum kravanh",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "bayberry",
+    "ours": "Myrica cerifera",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "betula-alba-herb",
+    "ours": "Betula alba",
+    "powo_verdict": "synonym",
+    "powo_target": "Betula pubescens var. pubescens",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "bhumyamalaki",
+    "ours": "Phyllanthus amarus",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "bi-xie",
+    "ours": "Dioscorea hypoglauca",
+    "powo_verdict": "synonym",
+    "powo_target": "Dioscorea collettii var. hypoglauca",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "bitter-orange-flower",
+    "ours": "Citrus aurantium",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "black-cumin-anatolian",
+    "ours": "Nigella sativa var. anatolica",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "blue-lotus",
+    "ours": "Nymphaea caerulea",
+    "powo_verdict": "synonym",
+    "powo_target": "Nymphaea nouchali var. caerulea",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "boswellia-carteri",
+    "ours": "Boswellia carteri",
+    "powo_verdict": "synonym",
+    "powo_target": "Boswellia sacra",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "bulnesia-sarmientoi",
+    "ours": "Bulnesia sarmientoi",
+    "powo_verdict": "synonym",
+    "powo_target": "Plectrocarpa sarmientoi",
+    "corroborated_by": []
+  },
+  {
+    "slug": "burundian-vernonia",
+    "ours": "Vernonia colorata",
+    "powo_verdict": "synonym",
+    "powo_target": "Gymnanthemum coloratum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "caesalpinia-bonduc",
+    "ours": "Caesalpinia bonduc",
+    "powo_verdict": "synonym",
+    "powo_target": "Guilandina bonduc",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "calamintha-nepeta",
+    "ours": "Calamintha nepeta",
+    "powo_verdict": "synonym",
+    "powo_target": "Clinopodium nepeta",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "carduus-marianus",
+    "ours": "Carduus marianus",
+    "powo_verdict": "synonym",
+    "powo_target": "Silybum marianum",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "cassia-absus",
+    "ours": "Cassia absus",
+    "powo_verdict": "synonym",
+    "powo_target": "Chamaecrista absus",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "cay-hy-thiem",
+    "ours": "Siegesbeckia orientalis",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "chamomile-roman",
+    "ours": "Anthemis nobilis",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "chionodoxa-luciliae",
+    "ours": "Chionodoxa luciliae",
+    "powo_verdict": "synonym",
+    "powo_target": "Scilla luciliae",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "chocolate-mint",
+    "ours": "Mentha x piperita cv. chocolate",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "chrysophyllum",
+    "ours": "Chrysophyllum albidum",
+    "powo_verdict": "synonym",
+    "powo_target": "Gambeya albida",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "chuan-lian-zi",
+    "ours": "Melia toosendan",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "chuchuhuasi",
+    "ours": "Maytenus macrocarpa",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "cimicifuga-heracleifolia",
+    "ours": "Cimicifuga heracleifolia",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "citrus-aurantifolia",
+    "ours": "Citrus aurantiifolia",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "cleome-gynandra",
+    "ours": "Cleome gynandra",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "clerodendrum-serratum",
+    "ours": "Clerodendrum serratum",
+    "powo_verdict": "synonym",
+    "powo_target": "Rotheca serrata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "co-voi",
+    "ours": "Vernonia cinerea",
+    "powo_verdict": "synonym",
+    "powo_target": "Cyanthillium cinereum",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "costus-igneus",
+    "ours": "Costus igneus",
+    "powo_verdict": "synonym",
+    "powo_target": "Chamaecostus cuspidatus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "costus-speciosus",
+    "ours": "Costus speciosus",
+    "powo_verdict": "synonym",
+    "powo_target": "Hellenia speciosa",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "couch-grass-root",
+    "ours": "Elymus repens radix",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "cucubalus-baccifer",
+    "ours": "Cucubalus baccifer",
+    "powo_verdict": "synonym",
+    "powo_target": "Silene baccifera",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "cucumeropsis-mannii",
+    "ours": "Cucumeropsis mannii",
+    "powo_verdict": "synonym",
+    "powo_target": "Melothria sphaerocarpa",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "cynanchum-stauntonii",
+    "ours": "Cynanchum stauntonii",
+    "powo_verdict": "synonym",
+    "powo_target": "Vincetoxicum stauntonii",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "delphinium-staphisagria",
+    "ours": "Delphinium staphisagria",
+    "powo_verdict": "synonym",
+    "powo_target": "Staphisagria macrosperma",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "desmodium-adscendens",
+    "ours": "Desmodium adscendens",
+    "powo_verdict": "synonym",
+    "powo_target": "Grona adscendens",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "di-fu-zi",
+    "ours": "Kochia scoparia",
+    "powo_verdict": "synonym",
+    "powo_target": "Bassia scoparia",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "di-long",
+    "ours": "Pheretima aspergillum",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "dioscorea-rotundata",
+    "ours": "Dioscorea rotundata",
+    "powo_verdict": "synonym",
+    "powo_target": "Dioscorea cayenensis subsp. rotundata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "diphylleia-grayi",
+    "ours": "Diphylleia grayi",
+    "powo_verdict": "synonym",
+    "powo_target": "Podophyllum grayi",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "dragon-fruit",
+    "ours": "Hylocereus undatus",
+    "powo_verdict": "synonym",
+    "powo_target": "Selenicereus undatus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "dragons-blood",
+    "ours": "Daemonorops draco",
+    "powo_verdict": "synonym",
+    "powo_target": "Calamus draco",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "drynaria-fern",
+    "ours": "Drynaria roosii",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "drynaria-fortunei",
+    "ours": "Drynaria fortunei",
+    "powo_verdict": "synonym",
+    "powo_target": "Drynaria roosii",
+    "corroborated_by": []
+  },
+  {
+    "slug": "elecampane-inula",
+    "ours": "Inula britannica",
+    "powo_verdict": "synonym",
+    "powo_target": "Pentanema britannica",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "elettaria-major",
+    "ours": "Elettaria major",
+    "powo_verdict": "synonym",
+    "powo_target": "Elettaria ensal",
+    "corroborated_by": []
+  },
+  {
+    "slug": "epilobium-angustifolium",
+    "ours": "Epilobium angustifolium",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "eugenia-caryophyllata",
+    "ours": "Eugenia caryophyllata",
+    "powo_verdict": "synonym",
+    "powo_target": "Syzygium aromaticum",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "evodia-rutaecarpa",
+    "ours": "Evodia rutaecarpa",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "fadogia-mens",
+    "ours": "Fadogia agrestis",
+    "powo_verdict": "synonym",
+    "powo_target": "Vangueria agrestis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "fagara-zanthoxyloides",
+    "ours": "Fagara zanthoxyloides",
+    "powo_verdict": "synonym",
+    "powo_target": "Zanthoxylum zanthoxyloides",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "feijoa-sellowiana",
+    "ours": "Acca sellowiana",
+    "powo_verdict": "synonym",
+    "powo_target": "Feijoa sellowiana",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "fennel",
+    "ours": "Foeniculum vulgare",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "ferulago-angulata",
+    "ours": "Ferulago angulata",
+    "powo_verdict": "synonym",
+    "powo_target": "Anisotaenia angulata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "fever-tree",
+    "ours": "Acacia xanthophloea",
+    "powo_verdict": "synonym",
+    "powo_target": "Vachellia xanthophloea",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "fo-ti-root",
+    "ours": "Polygonum multiflorum",
+    "powo_verdict": "synonym",
+    "powo_target": "Pleuropterus multiflorus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "fo-ti-vine",
+    "ours": "Fallopia multiflora",
+    "powo_verdict": "synonym",
+    "powo_target": "Pleuropterus multiflorus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "ge-gen",
+    "ours": "Pueraria lobata",
+    "powo_verdict": "synonym",
+    "powo_target": "Pueraria montana var. lobata",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "grindelia",
+    "ours": "Grindelia robusta",
+    "powo_verdict": "synonym",
+    "powo_target": "Grindelia hirsutula",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "gui-zhi",
+    "ours": "Cinnamomum cassia",
+    "powo_verdict": "synonym",
+    "powo_target": "Cinnamomum burmanni",
+    "corroborated_by": []
+  },
+  {
+    "slug": "haitian-vetiver",
+    "ours": "Vetiveria zizanioides",
+    "powo_verdict": "synonym",
+    "powo_target": "Chrysopogon zizanioides",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "haworthia-attenuata",
+    "ours": "Haworthia attenuata",
+    "powo_verdict": "synonym",
+    "powo_target": "Haworthiopsis attenuata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "he-shou-wu",
+    "ours": "Reynoutria multiflora",
+    "powo_verdict": "synonym",
+    "powo_target": "Pleuropterus multiflorus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "helosciadium-nodiflorum",
+    "ours": "Apium nodiflorum",
+    "powo_verdict": "synonym",
+    "powo_target": "Helosciadium nodiflorum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "inulin-prebiotic",
+    "ours": "Cichorium intybus root",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "ipecac-root",
+    "ours": "Cephaelis ipecacuanha",
+    "powo_verdict": "synonym",
+    "powo_target": "Carapichea ipecacuanha",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "jamu-kunyit-asam",
+    "ours": "Curcuma longa/Tamarindus indica",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "japanese-cinnamon",
+    "ours": "Cinnamomum japonicum",
+    "powo_verdict": "synonym",
+    "powo_target": "Cinnamomum chekiangense",
+    "corroborated_by": []
+  },
+  {
+    "slug": "jue-ming-zi",
+    "ours": "Cassia obtusifolia",
+    "powo_verdict": "synonym",
+    "powo_target": "Senna obtusifolia",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "kantkari",
+    "ours": "Solanum xanthocarpum",
+    "powo_verdict": "synonym",
+    "powo_target": "Solanum virginianum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "karpuravalli",
+    "ours": "Coleus aromaticus",
+    "powo_verdict": "synonym",
+    "powo_target": "Coleus amboinicus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "kemangi-indo",
+    "ours": "Ocimum citriodorum",
+    "powo_verdict": "synonym",
+    "powo_target": "Ocimum \u00d7 africanum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "khella-herb",
+    "ours": "Ammi visnaga",
+    "powo_verdict": "synonym",
+    "powo_target": "Visnaga daucoides",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "korean-acanthopanax",
+    "ours": "Acanthopanax senticosus",
+    "powo_verdict": "synonym",
+    "powo_target": "Eleutherococcus senticosus",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "kudzu-root-standard",
+    "ours": "Pueraria mirifica",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "kunyit-jamu",
+    "ours": "Curcuma domestica",
+    "powo_verdict": "synonym",
+    "powo_target": "Curcuma longa",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "lamiaceae-betony",
+    "ours": "Stachys betonica",
+    "powo_verdict": "synonym",
+    "powo_target": "Betonica officinalis",
+    "corroborated_by": []
+  },
+  {
+    "slug": "lebanese-thyme",
+    "ours": "Thymus capitatus",
+    "powo_verdict": "synonym",
+    "powo_target": "Thymbra capitata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "leek",
+    "ours": "Allium porrum",
+    "powo_verdict": "synonym",
+    "powo_target": "Allium obliquum",
+    "corroborated_by": []
+  },
+  {
+    "slug": "ligusticum-sinense",
+    "ours": "Ligusticum sinense",
+    "powo_verdict": "synonym",
+    "powo_target": "Conioselinum anthriscoides",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "lychnis-flos-cuculi",
+    "ours": "Lychnis flos-cuculi",
+    "powo_verdict": "synonym",
+    "powo_target": "Silene flos-cuculi",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "macropiper-excelsum",
+    "ours": "Macropiper excelsum",
+    "powo_verdict": "synonym",
+    "powo_target": "Piper excelsum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "maekmoondong-korean",
+    "ours": "Liriope platyphylla",
+    "powo_verdict": "synonym",
+    "powo_target": "Liriope muscari",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "mahonia-aquifolium-herb",
+    "ours": "Mahonia aquifolium",
+    "powo_verdict": "synonym",
+    "powo_target": "Berberis aquifolium",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "mahonia-repens",
+    "ours": "Mahonia repens",
+    "powo_verdict": "synonym",
+    "powo_target": "Berberis repens",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "maytenus-senegalensis",
+    "ours": "Maytenus senegalensis",
+    "powo_verdict": "synonym",
+    "powo_target": "Gymnosporia senegalensis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "melanthium-virginicum",
+    "ours": "Melanthium virginicum",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "melissa-citrina",
+    "ours": "Melissa citrina",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "mentha-haplocalyx",
+    "ours": "Mentha haplocalyx",
+    "powo_verdict": "synonym",
+    "powo_target": "Mentha canadensis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "mesquite-pod",
+    "ours": "Prosopis glandulosa",
+    "powo_verdict": "synonym",
+    "powo_target": "Neltuma glandulosa",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "michelia-champaca",
+    "ours": "Michelia champaca",
+    "powo_verdict": "synonym",
+    "powo_target": "Magnolia champaca",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "michelia-figo",
+    "ours": "Michelia figo",
+    "powo_verdict": "synonym",
+    "powo_target": "Magnolia figo",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "millettia-pinnata",
+    "ours": "Millettia pinnata",
+    "powo_verdict": "synonym",
+    "powo_target": "Pongamia pinnata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "millettia-reticulata",
+    "ours": "Millettia reticulata",
+    "powo_verdict": "synonym",
+    "powo_target": "Wisteriopsis reticulata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "morinda-root-tcm",
+    "ours": "Morinda officinalis",
+    "powo_verdict": "synonym",
+    "powo_target": "Gynochthodes officinalis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "mu-li",
+    "ours": "Ostrea gigas",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "mulberry-twig",
+    "ours": "Morus alba ramulus",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "myrica-esculenta",
+    "ours": "Myrica esculenta",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "niyog-niyogan",
+    "ours": "Quisqualis indica",
+    "powo_verdict": "synonym",
+    "powo_target": "Combretum indicum",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "nomocharis-aperta",
+    "ours": "Nomocharis aperta",
+    "powo_verdict": "synonym",
+    "powo_target": "Lilium apertum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "notopterygium-root",
+    "ours": "Notopterygium incisum",
+    "powo_verdict": "synonym",
+    "powo_target": "Hansenia weberbaueriana",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "ottoman-rosehip",
+    "ours": "Rosa canina var. turcica",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "pang-da-hai-seed",
+    "ours": "Sterculia lychnophora",
+    "powo_verdict": "synonym",
+    "powo_target": "Scaphium affine",
+    "corroborated_by": []
+  },
+  {
+    "slug": "parsley-piert",
+    "ours": "Aphanes arvensis",
+    "powo_verdict": "synonym",
+    "powo_target": "Alchemilla arvensis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "pau-darco-inner",
+    "ours": "Tabebuia impetiginosa",
+    "powo_verdict": "synonym",
+    "powo_target": "Handroanthus impetiginosus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "pausinystalia-african",
+    "ours": "Pausinystalia macroceras",
+    "powo_verdict": "synonym",
+    "powo_target": "Corynanthe macroceras",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "pausinystalia-johimbe",
+    "ours": "Pausinystalia johimbe",
+    "powo_verdict": "synonym",
+    "powo_target": "Corynanthe johimbe",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "peony-licorice-combo",
+    "ours": "Paeonia lactiflora + Glycyrrhiza",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "pfaffia-paniculata",
+    "ours": "Pfaffia paniculata",
+    "powo_verdict": "synonym",
+    "powo_target": "Hebanthe erianthos",
+    "corroborated_by": []
+  },
+  {
+    "slug": "phellinus-linteus",
+    "ours": "Phellinus linteus",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "philippine-lemon",
+    "ours": "Citrus microcarpa",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "phyllanthus-emblica",
+    "ours": "Phyllanthus emblica",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "phyllanthus-maderaspatensis",
+    "ours": "Phyllanthus maderaspatensis",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "physalis-alkekengi-herb",
+    "ours": "Physalis alkekengi",
+    "powo_verdict": "synonym",
+    "powo_target": "Physalis lagascae",
+    "corroborated_by": []
+  },
+  {
+    "slug": "picorrhiza-kurroa",
+    "ours": "Picrorhiza kurroa",
+    "powo_verdict": "synonym",
+    "powo_target": "Picrorhiza kurrooa",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "piscidia-analgesic",
+    "ours": "Piscidia erythrina",
+    "powo_verdict": "synonym",
+    "powo_target": "Piscidia piscipula",
+    "corroborated_by": ["ITIS"]
+  },
+  {
+    "slug": "pisum-sativum-medicinal",
+    "ours": "Pisum sativum",
+    "powo_verdict": "synonym",
+    "powo_target": "Lathyrus oleraceus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "plectranthus-esculentus",
+    "ours": "Plectranthus esculentus",
+    "powo_verdict": "synonym",
+    "powo_target": "Coleus esculentus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "polyalthia-longifolia",
+    "ours": "Polyalthia longifolia",
+    "powo_verdict": "synonym",
+    "powo_target": "Monoon longifolium",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "poncirus-trifoliata",
+    "ours": "Poncirus trifoliata",
+    "powo_verdict": "synonym",
+    "powo_target": "Citrus trifoliata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "propolis-antimicro",
+    "ours": "Apis mellifera propolis",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "prosopis-juliflora",
+    "ours": "Prosopis juliflora",
+    "powo_verdict": "synonym",
+    "powo_target": "Neltuma juliflora",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "prumnopitys-ferruginea",
+    "ours": "Prumnopitys ferruginea",
+    "powo_verdict": "synonym",
+    "powo_target": "Pectinopitys ferruginea",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "psidium-cattleianum",
+    "ours": "Psidium cattleianum",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "pteleopsis-suberosa",
+    "ours": "Pteleopsis suberosa",
+    "powo_verdict": "synonym",
+    "powo_target": "Terminalia engleri",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "pueraria-phaseoloides",
+    "ours": "Pueraria phaseoloides",
+    "powo_verdict": "synonym",
+    "powo_target": "Neustanthus phaseoloides",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "quan-xie",
+    "ours": "Buthus martensii",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "rhamnus-purshiana",
+    "ours": "Rhamnus purshiana",
+    "powo_verdict": "synonym",
+    "powo_target": "Frangula purshiana",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "rhododendron-chrysanthum-herb",
+    "ours": "Rhododendron chrysanthum",
+    "powo_verdict": "synonym",
+    "powo_target": "Rhododendron aureum subsp. aureum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "rosa-centifolia",
+    "ours": "Rosa centifolia",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "rose-petal",
+    "ours": "Rosa damascena",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "rosemary-extract",
+    "ours": "Rosmarinus officinalis",
+    "powo_verdict": "synonym",
+    "powo_target": "Salvia rosmarinus",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "sa-nhan",
+    "ours": "Amomum villosum",
+    "powo_verdict": "synonym",
+    "powo_target": "Wurfbainia villosa",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "salazaria-mexicana",
+    "ours": "Salazaria mexicana",
+    "powo_verdict": "synonym",
+    "powo_target": "Scutellaria mexicana",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "salvia-lavandulifolia",
+    "ours": "Salvia lavandulifolia",
+    "powo_verdict": "synonym",
+    "powo_target": "Salvia officinalis subsp. lavandulifolia",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "sappanwood",
+    "ours": "Caesalpinia sappan",
+    "powo_verdict": "synonym",
+    "powo_target": "Biancaea sappan",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "sarcocephalus-latifolius",
+    "ours": "Nauclea latifolia",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "scallion-root",
+    "ours": "Allium fistulosum radix",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "sceletium",
+    "ours": "Sceletium tortuosum",
+    "powo_verdict": "synonym",
+    "powo_target": "Mesembryanthemum tortuosum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "scilla-squill",
+    "ours": "Drimia maritima",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "scorzonera-hispanica",
+    "ours": "Scorzonera hispanica",
+    "powo_verdict": "synonym",
+    "powo_target": "Pseudopodospermum hispanicum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "sechium-edule",
+    "ours": "Sechium edule",
+    "powo_verdict": "synonym",
+    "powo_target": "Sicyos edulis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "seneca-snakeroot",
+    "ours": "Polygala senega",
+    "powo_verdict": "synonym",
+    "powo_target": "Senega officinalis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "shu-di-huang",
+    "ours": "Rehmannia glutinosa var. purpurea",
+    "powo_verdict": "synonym",
+    "powo_target": "Rehmannia glutinosa",
+    "corroborated_by": ["GBIF"]
+  },
+  {
+    "slug": "sophora-japonica",
+    "ours": "Sophora japonica",
+    "powo_verdict": "synonym",
+    "powo_target": "Styphnolobium japonicum",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "spiraea-ulmaria-root",
+    "ours": "Filipendula ulmaria radix",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "spirulina",
+    "ours": "Arthrospira platensis",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "sprekelia-formosissima",
+    "ours": "Sprekelia formosissima",
+    "powo_verdict": "synonym",
+    "powo_target": "Zephyranthes formosissima",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "stachys-officinalis",
+    "ours": "Stachys officinalis",
+    "powo_verdict": "synonym",
+    "powo_target": "Betonica officinalis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "stephanandra-incisa",
+    "ours": "Stephanandra incisa",
+    "powo_verdict": "synonym",
+    "powo_target": "Neillia incisa",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "stephania-root",
+    "ours": "Stephania tetrandra",
+    "powo_verdict": "synonym",
+    "powo_target": "Botryodiscia tetrandra",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "swartzia-madagascariensis",
+    "ours": "Swartzia madagascariensis",
+    "powo_verdict": "synonym",
+    "powo_target": "Bobgunnia madagascariensis",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "swertia-chirata",
+    "ours": "Swertia chirata",
+    "powo_verdict": "synonym",
+    "powo_target": "Swertia chirayita",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "szechuan-lovage",
+    "ours": "Ligusticum striatum",
+    "powo_verdict": "synonym",
+    "powo_target": "Oreocome striata",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "tanacetum-annuum",
+    "ours": "Tanacetum annuum",
+    "powo_verdict": "synonym",
+    "powo_target": "Vogtia annua",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "thapsia-garganica",
+    "ours": "Thapsia garganica",
+    "powo_verdict": "synonym",
+    "powo_target": "Elaeoselinum garganicum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "thevetia-peruviana",
+    "ours": "Cascabela thevetia",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "toluifera-balsamum",
+    "ours": "Toluifera balsamum",
+    "powo_verdict": "synonym",
+    "powo_target": "Myroxylon balsamum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "trichocereus-pachanoi",
+    "ours": "Echinopsis pachanoi",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "tsaang-gubat",
+    "ours": "Carmona retusa",
+    "powo_verdict": "synonym",
+    "powo_target": "Ehretia microphylla",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "tule-root",
+    "ours": "Scirpus acutus",
+    "powo_verdict": "synonym",
+    "powo_target": "Eleocharis acuta",
+    "corroborated_by": []
+  },
+  {
+    "slug": "tussilago-japonica",
+    "ours": "Tussilago japonica",
+    "powo_verdict": "synonym",
+    "powo_target": "Farfugium japonicum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "varronia-curassavica",
+    "ours": "Varronia curassavica",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "vasaka",
+    "ours": "Adhatoda vasica",
+    "powo_verdict": "synonym",
+    "powo_target": "Justicia adhatoda",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "vernonia-amygdalina",
+    "ours": "Vernonia amygdalina",
+    "powo_verdict": "synonym",
+    "powo_target": "Gymnanthemum amygdalinum",
+    "corroborated_by": ["NCBI"]
+  },
+  {
+    "slug": "woodruff",
+    "ours": "Asperula odorata",
+    "powo_verdict": "synonym",
+    "powo_target": "Galium odoratum",
+    "corroborated_by": ["NCBI", "ITIS"]
+  },
+  {
+    "slug": "yellow-gentian-root",
+    "ours": "Gentiana lutea radix",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "yerba-buena",
+    "ours": "Clinopodium douglasii",
+    "powo_verdict": "confirmed",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "yi-mu-cao-root",
+    "ours": "Leonurus japonicus root",
+    "powo_verdict": "unknown",
+    "powo_target": null,
+    "corroborated_by": []
+  },
+  {
+    "slug": "zephyranthes-grandiflora",
+    "ours": "Zephyranthes grandiflora",
+    "powo_verdict": "synonym",
+    "powo_target": "Zephyranthes minuta",
+    "corroborated_by": ["ITIS"]
+  },
+  {
+    "slug": "ziziphus-spine-date",
+    "ours": "Ziziphus spinosa",
+    "powo_verdict": "synonym",
+    "powo_target": "Ziziphus jujuba subsp. spinosa",
+    "corroborated_by": []
+  }
+]

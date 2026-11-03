@@ -1,0 +1,237 @@
+{
+ "generated_at": "2026-11-03T18:03:12.456Z",
+ "report": [
+  {
+   "slug": "prunus-davidiana",
+   "status": "inserted"
+  },
+  {
+   "slug": "chrysanthemum-x-morifolium",
+   "status": "inserted"
+  },
+  {
+   "slug": "curcuma-kwangsiensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "gentiana-manshurica",
+   "status": "inserted"
+  },
+  {
+   "slug": "arisaema-erubescens",
+   "status": "inserted"
+  },
+  {
+   "slug": "bambusa-beecheyana",
+   "status": "inserted"
+  },
+  {
+   "slug": "fraxinus-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "iris-domestica",
+   "status": "inserted"
+  },
+  {
+   "slug": "ranunculus-ternatus",
+   "status": "inserted"
+  },
+  {
+   "slug": "rosa-laevigata",
+   "status": "inserted"
+  },
+  {
+   "slug": "angelica-decursiva",
+   "status": "inserted"
+  },
+  {
+   "slug": "corydalis-turtschaninovii",
+   "status": "inserted"
+  },
+  {
+   "slug": "dictamnus-dasycarpus",
+   "status": "inserted"
+  },
+  {
+   "slug": "wurfbainia-longiligularis",
+   "status": "inserted"
+  },
+  {
+   "slug": "artemisia-anomala",
+   "status": "inserted"
+  },
+  {
+   "slug": "vitex-rotundifolia",
+   "status": "inserted"
+  },
+  {
+   "slug": "stemona-japonica",
+   "status": "inserted"
+  },
+  {
+   "slug": "sparganium-eurycarpum",
+   "status": "inserted"
+  },
+  {
+   "slug": "sargentodoxa-cuneata",
+   "status": "inserted"
+  },
+  {
+   "slug": "vincetoxicum-glaucescens",
+   "status": "inserted"
+  },
+  {
+   "slug": "dolomiaea-souliei",
+   "status": "inserted"
+  },
+  {
+   "slug": "lycopodium-japonicum",
+   "status": "inserted"
+  },
+  {
+   "slug": "descurainia-sophia",
+   "status": "inserted"
+  },
+  {
+   "slug": "uncaria-hirsuta",
+   "status": "inserted"
+  },
+  {
+   "slug": "arisaema-amurense",
+   "status": "inserted"
+  },
+  {
+   "slug": "vincetoxicum-atratum",
+   "status": "inserted"
+  },
+  {
+   "slug": "prunus-humilis",
+   "status": "inserted"
+  },
+  {
+   "slug": "lindera-aggregata",
+   "status": "inserted"
+  },
+  {
+   "slug": "mesostemma-dichotomum-var-lanceolatum",
+   "status": "inserted"
+  },
+  {
+   "slug": "selaginella-tamariscina",
+   "status": "inserted"
+  },
+  {
+   "slug": "delairea-odorata",
+   "status": "inserted"
+  },
+  {
+   "slug": "spirodela-polyrhiza",
+   "status": "inserted"
+  },
+  {
+   "slug": "homalomena-occulta",
+   "status": "inserted"
+  },
+  {
+   "slug": "cistanche-salsa",
+   "status": "inserted"
+  },
+  {
+   "slug": "alpinia-hainanensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "sigesbeckia-glabrescens",
+   "status": "inserted"
+  },
+  {
+   "slug": "vincetoxicum-bungei",
+   "status": "inserted"
+  },
+  {
+   "slug": "mosla-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "paris-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "vincetoxicum-atratum",
+   "status": "failed 409: {\"code\":\"23505\",\"details\":\"Key (slug)=(vincetoxicum-atratum) already exists.\",\"hint\":null,\"message\":\"duplicate key value violates unique con"
+  },
+  {
+   "slug": "clematis-montana",
+   "status": "inserted"
+  },
+  {
+   "slug": "wurfbainia-vera",
+   "status": "inserted"
+  },
+  {
+   "slug": "cephalostachyum-chinense",
+   "status": "inserted"
+  },
+  {
+   "slug": "achyranthes-aspera",
+   "status": "inserted"
+  },
+  {
+   "slug": "lithospermum-erythrorhizon",
+   "status": "inserted"
+  },
+  {
+   "slug": "polygonatum-kingianum",
+   "status": "inserted"
+  },
+  {
+   "slug": "sauromatum-giganteum",
+   "status": "inserted"
+  },
+  {
+   "slug": "rhaponticum-uniflorum",
+   "status": "inserted"
+  },
+  {
+   "slug": "hemionitis-ludens",
+   "status": "inserted"
+  },
+  {
+   "slug": "typha-orientalis",
+   "status": "inserted"
+  },
+  {
+   "slug": "salvia-chinensis",
+   "status": "inserted"
+  },
+  {
+   "slug": "scaphium-affine",
+   "status": "inserted"
+  },
+  {
+   "slug": "pyrola-calliantha",
+   "status": "inserted"
+  },
+  {
+   "slug": "vigna-angularis",
+   "status": "inserted"
+  },
+  {
+   "slug": "heptapleurum-arboricola",
+   "status": "inserted"
+  },
+  {
+   "slug": "flemingia-prostrata",
+   "status": "inserted"
+  },
+  {
+   "slug": "sarcandra-glabra",
+   "status": "inserted"
+  },
+  {
+   "slug": "canarium-album",
+   "status": "inserted"
+  }
+ ]
+}
