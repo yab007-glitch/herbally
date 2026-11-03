@@ -52,6 +52,10 @@ import { AdSlot } from "@/components/ads/ad-slot";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { ViewTracker } from "@/components/herbs/view-tracker";
 import { GovSources } from "@/components/herbs/gov-sources";
+import {
+  RegulatoryEvidenceSection,
+  type RegulatoryEvidence,
+} from "@/components/herbs/regulatory-evidence";
 import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
 import { PubmedMonographSheet } from "@/components/herbs/pubmed-monograph-sheet";
 import type {
@@ -110,6 +114,30 @@ async function fetchHerb(
 
 const loadHerb = cache((slug: string, locale: Locale) =>
   fetchHerb(slug, locale)
+);
+
+/**
+ * Regulator evidence for this herb (Health Canada LNHPD). Cached for the same
+ * 24 h window as the rest of the page and tagged so an import can purge it.
+ * A missing row is normal: 1,535 of 2,699 herbs have no licensed product in
+ * Canada, and those pages must render without the section rather than with an
+ * empty shell.
+ */
+const loadRegulatoryEvidence = unstable_cache(
+  async (slug: string): Promise<RegulatoryEvidence | null> => {
+    const supabase = getAnonClient();
+    if (!supabase) return null;
+    const { data } = await supabase
+      .from("herb_regulatory_evidence")
+      .select(
+        "herb_slug,source,source_licence,purposes,doses,risks,products_sampled,source_urls,retrieved_at"
+      )
+      .eq("herb_slug", slug)
+      .maybeSingle();
+    return (data as RegulatoryEvidence | null) ?? null;
+  },
+  ["herb-regulatory-evidence"],
+  { revalidate: 86400, tags: ["herb-regulatory-evidence"] }
 );
 
 export async function generateStaticParams() {
@@ -573,6 +601,8 @@ export default async function HerbDetailPage({ params }: Props) {
     { revalidate: 86400, tags: ["related-herbs-" + slug] }
   );
 
+  const regulatoryEvidence = await loadRegulatoryEvidence(slug);
+
   let relatedHerbs: Array<{
     name: string;
     slug: string;
@@ -778,6 +808,14 @@ export default async function HerbDetailPage({ params }: Props) {
         reviewedBy={reviewedBy}
         reviewerCredentials={reviewerCredentials}
         lastReviewed={lastReviewed}
+      />
+
+      {/* Regulator record: quoted statements from licensed products. Renders
+          only where the herb has a Health Canada match. */}
+      <RegulatoryEvidenceSection
+        evidence={regulatoryEvidence}
+        locale={locale === "fr" ? "fr" : "en"}
+        className="mt-4"
       />
 
       {/* Government sources — the credible source-of-truth layer. Direct
