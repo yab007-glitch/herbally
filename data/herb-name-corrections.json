@@ -1,0 +1,243 @@
+{
+  "applied": [
+    {
+      "slug": "jatropha-gossypifolia",
+      "ours": "Jatropha gossypifolia",
+      "gbif": "Jatropha gossypiifolia",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "yin-yang-complex",
+      "ours": "Epimedium brevicornum",
+      "gbif": "Epimedium brevicornu",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "hypsizygus-tessellatus",
+      "ours": "Hypsizygus tessellatus",
+      "gbif": "Hypsizygus tesselatus",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "notopterygium-incisium",
+      "ours": "Notopterygium incisium",
+      "gbif": "Notopterygium incisum",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "cinnamomum-burmannii",
+      "ours": "Cinnamomum burmannii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "citrus-aurantifolia",
+      "ours": "Citrus aurantifolia",
+      "gbif": "Citrus aurantiifolia",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "cota-triumfettii",
+      "ours": "Cota triumfettii",
+      "gbif": "Cota triumfetti",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "solanum-tomentosum-herb",
+      "ours": "Solanum tomentosm",
+      "gbif": "Solanum tomentosum",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "ru-xiang-resin",
+      "ours": "Boswellia carterii",
+      "gbif": "Boswellia carteri",
+      "ratio": 0.97,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "korean-bellflower",
+      "ours": "Platycodon grandiflorum",
+      "gbif": "Platycodon grandiflorus",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "pau-d-arco",
+      "ours": "Handroanthus impetiginosus",
+      "gbif": "Handroanthus impetiginosum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "corynanthe-yohimbe",
+      "ours": "Pausinystalia yohimbe",
+      "gbif": "Pausinystalia yohimba",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "kayu-manis-jamu",
+      "ours": "Cinnamomum burmanii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "kumarahou",
+      "ours": "Pomaderris kumerahou",
+      "gbif": "Pomaderris kumarahou",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "thyme-moroccan",
+      "ours": "Thymus satureioides",
+      "gbif": "Thymus saturejoides",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "condurango",
+      "ours": "Gonolobus condurango",
+      "gbif": "Gonolobus cundurango",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "samambaia-amazonian",
+      "ours": "Polypodium leucotomos",
+      "gbif": "Polypodium leucatomos",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "artemisia-genepi",
+      "ours": "Artemisia genepi",
+      "gbif": "Artemisia genipi",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "entada-seed",
+      "ours": "Entada rheedii",
+      "gbif": "Entada rheedei",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "tamanu",
+      "ours": "Calophyllum inophyllatum",
+      "gbif": "Calophyllum inophyllum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    },
+    {
+      "slug": "hawthorn-small-leaf",
+      "ours": "Crataegus cuneatiformis",
+      "gbif": "Crataegus cuneiformis",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 2
+    },
+    {
+      "slug": "boneset",
+      "ours": "Eupatorium perfolidum",
+      "gbif": "Eupatorium perfoliatum",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    },
+    {
+      "slug": "spanish-sage",
+      "ours": "Salvia lavandulaefolia",
+      "gbif": "Salvia lavandulifolia",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    },
+    {
+      "slug": "strobilanthes-crispus",
+      "ours": "Strobilanthes crispus",
+      "gbif": "Strobilanthes crispa",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    }
+  ],
+  "skipped": [
+    {
+      "slug": "lavandula-intermedia",
+      "ours": "Lavandula x intermedia",
+      "gbif": "Lavandula intermedia",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "symphytum-uplandicum",
+      "ours": "Symphytum x uplandicum",
+      "gbif": "Symphytum uplandicum",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "ginger-mint",
+      "ours": "Mentha x gracilis",
+      "gbif": "Mentha gracilis",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "musa-paradisiaca",
+      "ours": "Musa x paradisiaca",
+      "gbif": "Musa paradisiaca",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "peppermint",
+      "ours": "Mentha x piperita",
+      "gbif": "Mentha piperita",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    }
+  ]
+}
