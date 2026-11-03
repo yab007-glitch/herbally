@@ -17,17 +17,20 @@
  * Handroanthus impetiginosus, which the manifest records; only the batch 2 entry
  * remains in `applied`, where it now reads as "already applied".
  *
- * An applied row whose `provenance.taxonomy.source` is missing also gets a
- * provenance repair built from the manifest: GBIF Backbone Taxonomy, CC BY 4.0,
- * the target as `current_name`, and `entry.ours` as `previous_name`.
- * `verification` is one of:
+ * An applied row's `provenance.taxonomy` record is rebuilt when it is missing,
+ * when it names a different `current_name` than the row, or when it claims a
+ * second source with no record behind it. The rebuilt record carries GBIF
+ * Backbone Taxonomy, CC BY 4.0, the target as `current_name`, and `entry.ours`
+ * as `previous_name`. `second_source` is written only when the manifest carries
+ * a second-source record; `manifest.resolutions` supplies the `resolution` text
+ * when one exists. `verification` is one of:
  *   - corroborated   exact match or corroborated second source
  *   - third_form     different or third-form second source
  *   - contradicted   contradicted second source
  *   - single_source  anything else, including no second source
  * A contradicted second source is recorded but never blocks a reviewed
- * correction. A taxonomy record that already has a source is never overwritten,
- * so a second run reports zero taxonomy updates.
+ * correction. A correct taxonomy record is never overwritten, so a second run
+ * reports zero taxonomy updates.
  *
  * Usage:
  *   node scripts/apply-name-corrections.mjs
@@ -77,33 +80,56 @@ function verificationFromVerdict(verdict) {
   return "single_source";
 }
 
+function taxonomyRepairReason(tax, target) {
+  if (!tax || !tax.source) return "missing";
+  if (
+    tax.current_name !== null &&
+    tax.current_name !== undefined &&
+    tax.current_name !== target
+  )
+    return "stale current_name";
+  if (
+    tax.second_source &&
+    tax.second_source_name == null &&
+    tax.second_source_taxid == null
+  )
+    return "second source with no record";
+  return null;
+}
+
 /**
  * The manifest carries a second source either on the entry (`ncbi_name`,
  * `taxid`) or in the top-level `ncbi_second_pass` array (`ncbi_name`,
  * `ncbi_taxid`). The entry wins when present; no record at all means null.
  */
 function secondSourceRecord(entry, secondPass) {
+  let record = null;
   if (entry.second_source) {
-    return {
+    record = {
       name: entry.second_source.ncbi_name ?? null,
       taxid: entry.second_source.taxid ?? null,
       verdict: entry.second_source.verdict,
     };
+  } else {
+    const pass = secondPass.get(entry.slug);
+    if (pass) {
+      record = {
+        name: pass.ncbi_name ?? null,
+        taxid: pass.ncbi_taxid ?? null,
+        verdict: pass.verdict,
+      };
+    }
   }
-  const pass = secondPass.get(entry.slug);
-  if (pass) {
-    return {
-      name: pass.ncbi_name ?? null,
-      taxid: pass.ncbi_taxid ?? null,
-      verdict: pass.verdict,
-    };
-  }
-  return null;
+  // A "no NCBI record" verdict carries neither a name nor a taxid. It is not a
+  // second source, and writing one would recreate the phantom record this
+  // repair exists to remove, so a second run would never converge.
+  if (!record || (record.name == null && record.taxid == null)) return null;
+  return record;
 }
 
-function taxonomyRecord(entry, target, secondPass) {
+function taxonomyRecord(entry, target, secondPass, resolution) {
   const second = secondSourceRecord(entry, secondPass);
-  return {
+  const record = {
     source: "GBIF Backbone Taxonomy",
     licence: "CC BY 4.0",
     checked_at: TODAY,
@@ -112,10 +138,12 @@ function taxonomyRecord(entry, target, secondPass) {
     current_name: target,
     previous_name: entry.ours,
     verification: verificationFromVerdict(second?.verdict),
-    second_source: "NCBI Taxonomy",
+    second_source: second ? "NCBI Taxonomy" : null,
     second_source_name: second?.name ?? null,
     second_source_taxid: second?.taxid ?? null,
   };
+  if (resolution) record.resolution = resolution;
+  return record;
 }
 
 async function getHerb(slug) {
@@ -153,6 +181,7 @@ async function main() {
   const secondPass = new Map(
     (manifest.ncbi_second_pass || []).map((r) => [r.slug, r])
   );
+  const resolutions = manifest.resolutions || {};
 
   console.log(
     `[names] ${applied.length} applied entries, ${alignments.size} display alignments${APPLY ? "" : " (dry run)"}`
@@ -250,16 +279,22 @@ async function main() {
 
     if (guardFailed) continue;
 
-    if (!herb.provenance?.taxonomy?.source) {
-      const taxonomy = taxonomyRecord(entry, target, secondPass);
+    const reason = taxonomyRepairReason(herb.provenance?.taxonomy, target);
+    if (reason) {
+      const taxonomy = taxonomyRecord(
+        entry,
+        target,
+        secondPass,
+        resolutions[entry.slug]
+      );
       patch.provenance = { ...(herb.provenance || {}), taxonomy };
+      intended.taxonomy = taxonomy;
       intended.taxonomyWritten = true;
-      intended.taxonomyTarget = target;
       table.push({
         slug: entry.slug,
         field: "provenance.taxonomy",
-        before: "(none)",
-        after: taxonomy.verification,
+        before: herb.provenance?.taxonomy?.current_name ?? "(none)",
+        after: `${taxonomy.verification} | ${reason}`,
         action: APPLY ? "update" : "would update",
       });
     }
@@ -288,18 +323,15 @@ async function main() {
           `${t.slug}: read-back name is ${JSON.stringify(herb.name)}, expected ${JSON.stringify(t.displayTarget)}`
         );
       }
-      if (t.taxonomyWritten && !herb.provenance?.taxonomy?.source) {
-        failures.push(
-          `${t.slug}: read-back provenance.taxonomy.source is missing`
-        );
-      }
-      if (
-        t.taxonomyWritten &&
-        herb.provenance?.taxonomy?.current_name !== t.taxonomyTarget
-      ) {
-        failures.push(
-          `${t.slug}: read-back provenance.taxonomy.current_name is ${JSON.stringify(herb.provenance?.taxonomy?.current_name)}, expected ${JSON.stringify(t.taxonomyTarget)}`
-        );
+      if (t.taxonomyWritten) {
+        for (const key of Object.keys(t.taxonomy)) {
+          const live = herb.provenance?.taxonomy?.[key];
+          if ((live ?? null) !== (t.taxonomy[key] ?? null)) {
+            failures.push(
+              `${t.slug}: read-back provenance.taxonomy.${key} is ${JSON.stringify(live)}, expected ${JSON.stringify(t.taxonomy[key])}`
+            );
+          }
+        }
       }
     }
   }

@@ -5,9 +5,13 @@
  * name differs without `provenance.taxonomy` recording where the correction came
  * from. A fact with no source is a rumour with a schema.
  *
+ * It also fails when a taxonomy record's `current_name` differs from the row's
+ * `scientific_name`, or when a record claims a second source with no
+ * `second_source_name` and no `second_source_taxid`.
+ *
  * Run after any worker or import touches taxonomy:
  *   node scripts/verify-herb-facts.mjs
- * Exit 1 = unsourced drift present.
+ * Exit 1 = unsourced drift or a taxonomy record that misdescribes its row.
  */
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -44,6 +48,27 @@ async function main() {
     if (page.length < 1000) break;
   }
 
+  const currentNameDrift = [];
+  const phantomSecondSource = [];
+  for (const row of rows) {
+    const tax = row.provenance?.taxonomy;
+    if (!tax?.source) continue;
+    if (
+      tax.current_name !== null &&
+      tax.current_name !== undefined &&
+      tax.current_name !== row.scientific_name
+    ) {
+      currentNameDrift.push(row);
+    }
+    if (
+      tax.second_source &&
+      !tax.second_source_name &&
+      !tax.second_source_taxid
+    ) {
+      phantomSecondSource.push(row);
+    }
+  }
+
   const current = new Map(rows.map((r) => [r.slug, r]));
   const changed = [];
   const unsourced = [];
@@ -67,6 +92,19 @@ async function main() {
   console.log(
     `[facts] ${Object.keys(baseline).length} baseline names | ${changed.length} changed | ${unsourced.length} unsourced`
   );
+  console.log(
+    `[facts] taxonomy: ${currentNameDrift.length} current_name drift | ${phantomSecondSource.length} phantom second sources`
+  );
+  for (const row of currentNameDrift.slice(0, 20)) {
+    console.log(
+      `  ✗ ${row.slug}: current_name ${row.provenance.taxonomy.current_name} != scientific_name ${row.scientific_name}`
+    );
+  }
+  for (const row of phantomSecondSource.slice(0, 20)) {
+    console.log(
+      `  ✗ ${row.slug}: second_source ${JSON.stringify(row.provenance.taxonomy.second_source)} with no second_source_name or second_source_taxid`
+    );
+  }
   for (const c of changed.slice(0, 30)) {
     console.log(
       `  ${unsourced.includes(c) ? "✗" : "✓"} ${c.slug}: ${c.before} -> ${c.after}${c.source ? ` (${c.source}, ${c.licence})` : " (NO SOURCE)"}`
@@ -79,7 +117,15 @@ async function main() {
     );
     process.exit(1);
   }
-  console.log("\n[facts] OK — every changed name carries a source");
+  if (currentNameDrift.length || phantomSecondSource.length) {
+    console.error(
+      `\n[facts] FAIL — ${currentNameDrift.length} taxonomy current_name drift, ${phantomSecondSource.length} phantom second source(s)`
+    );
+    process.exit(1);
+  }
+  console.log(
+    "\n[facts] OK — every changed name carries a source and every taxonomy record matches its row"
+  );
 }
 
 main().catch((err) => {
