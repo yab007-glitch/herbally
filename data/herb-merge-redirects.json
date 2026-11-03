@@ -198,5 +198,33 @@
  {
   "from": "/herbs/dominican-cacao",
   "to": "/herbs/cocoa-bean"
+ },
+ {
+  "from": "/herbs/harmal-persian",
+  "to": "/herbs/harmel"
+ },
+ {
+  "from": "/herbs/he-huan-hua",
+  "to": "/herbs/albizia"
+ },
+ {
+  "from": "/herbs/he-huan-hua-tcm",
+  "to": "/herbs/albizia"
+ },
+ {
+  "from": "/herbs/herba-centellae",
+  "to": "/herbs/gotu-kola"
+ },
+ {
+  "from": "/herbs/huang-qi-bei",
+  "to": "/herbs/astragalus"
+ },
+ {
+  "from": "/herbs/jahe-merah",
+  "to": "/herbs/ginger"
+ },
+ {
+  "from": "/herbs/kaunch-beej",
+  "to": "/herbs/velvet-bean"
  }
 ]
