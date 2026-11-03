@@ -11,7 +11,13 @@
  *
  * Usage: node scripts/verify-ncbi-taxonomy.mjs [--limit N]
  */
-import { readFileSync, writeFileSync, existsSync, appendFileSync, mkdirSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  appendFileSync,
+  mkdirSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,20 +28,28 @@ const UA = { "User-Agent": "HerbAlly taxonomy verification (herbally.app)" };
 
 function env() {
   const out = {};
-  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split("\n")) {
+  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split(
+    "\n"
+  )) {
     const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
     if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, "");
   }
   return out;
 }
 const e = env();
-const HEAD = { apikey: e.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}` };
+const HEAD = {
+  apikey: e.SUPABASE_SERVICE_ROLE_KEY,
+  Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}`,
+};
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function allHerbs() {
   const rows = [];
   for (let off = 0; ; off += 1000) {
-    const res = await fetch(`${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/herbs?select=slug,scientific_name,is_published&order=slug&limit=1000&offset=${off}`, { headers: HEAD });
+    const res = await fetch(
+      `${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/herbs?select=slug,scientific_name,is_published&order=slug&limit=1000&offset=${off}`,
+      { headers: HEAD }
+    );
     const page = await res.json();
     rows.push(...page);
     if (page.length < 1000) break;
@@ -52,12 +66,18 @@ async function polite() {
 
 async function ncbi(name) {
   await polite();
-  const s = await fetch(`${PAGE}/esearch.fcgi?db=taxonomy&term=${encodeURIComponent(name)}&retmode=json&retmax=1`, { headers: UA });
+  const s = await fetch(
+    `${PAGE}/esearch.fcgi?db=taxonomy&term=${encodeURIComponent(name)}&retmode=json&retmax=1`,
+    { headers: UA }
+  );
   const sj = await s.json();
   const ids = sj?.esearchresult?.idlist || [];
   if (!ids.length) return { taxid: null, name: null };
   await polite();
-  const f = await fetch(`${PAGE}/efetch.fcgi?db=taxonomy&id=${ids[0]}&retmode=xml`, { headers: UA });
+  const f = await fetch(
+    `${PAGE}/efetch.fcgi?db=taxonomy&id=${ids[0]}&retmode=xml`,
+    { headers: UA }
+  );
   const xml = await f.text();
   const m = /<ScientificName>([^<]+)<\/ScientificName>/.exec(xml);
   return { taxid: ids[0], name: m ? m[1] : null };
@@ -94,7 +114,9 @@ async function main() {
   if (limit) herbs = herbs.slice(0, limit);
   console.log(`[ncbi] ${herbs.length} herbs to check`);
 
-  const results = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")).results : [];
+  const results = existsSync(OUT)
+    ? JSON.parse(readFileSync(OUT, "utf8")).results
+    : [];
   mkdirSync(dirname(OUT), { recursive: true });
 
   for (let i = 0; i < herbs.length; i++) {
@@ -102,20 +124,59 @@ async function main() {
     let r;
     try {
       const got = await ncbi(h.scientific_name);
-      r = { slug: h.slug, scientific_name: h.scientific_name, taxid: got.taxid, ncbi_name: got.name, verdict: verdict(h.scientific_name, got.name) };
+      r = {
+        slug: h.slug,
+        scientific_name: h.scientific_name,
+        taxid: got.taxid,
+        ncbi_name: got.name,
+        verdict: verdict(h.scientific_name, got.name),
+      };
     } catch (err) {
-      r = { slug: h.slug, scientific_name: h.scientific_name, error: err.message, verdict: "error" };
+      r = {
+        slug: h.slug,
+        scientific_name: h.scientific_name,
+        error: err.message,
+        verdict: "error",
+      };
     }
     results.push(r);
     if ((i + 1) % 100 === 0) {
-      writeFileSync(OUT, JSON.stringify({ generated_at: new Date().toISOString(), source: "NCBI Taxonomy (E-utilities)", results }, null, 1));
-      const c = results.reduce((a, x) => ((a[x.verdict] = (a[x.verdict] || 0) + 1), a), {});
+      writeFileSync(
+        OUT,
+        JSON.stringify(
+          {
+            generated_at: new Date().toISOString(),
+            source: "NCBI Taxonomy (E-utilities)",
+            results,
+          },
+          null,
+          1
+        )
+      );
+      const c = results.reduce(
+        (a, x) => ((a[x.verdict] = (a[x.verdict] || 0) + 1), a),
+        {}
+      );
       console.log(`[ncbi] ${i + 1}/${herbs.length}`, JSON.stringify(c));
     }
   }
 
-  writeFileSync(OUT, JSON.stringify({ generated_at: new Date().toISOString(), source: "NCBI Taxonomy (E-utilities)", results }, null, 1));
-  const c = results.reduce((a, x) => ((a[x.verdict] = (a[x.verdict] || 0) + 1), a), {});
+  writeFileSync(
+    OUT,
+    JSON.stringify(
+      {
+        generated_at: new Date().toISOString(),
+        source: "NCBI Taxonomy (E-utilities)",
+        results,
+      },
+      null,
+      1
+    )
+  );
+  const c = results.reduce(
+    (a, x) => ((a[x.verdict] = (a[x.verdict] || 0) + 1), a),
+    {}
+  );
   console.log("[ncbi] done:", JSON.stringify(c));
 }
 
