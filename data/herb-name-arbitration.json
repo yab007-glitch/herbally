@@ -1,0 +1,798 @@
+{
+ "applied": [
+  {
+   "slug": "acacia-nilotica",
+   "ours": "Acacia nilotica",
+   "ncbi": "Vachellia nilotica",
+   "gbif": "Acacia nilotica",
+   "itis_tsn": "182086",
+   "itis_accepted": "Vachellia nilotica",
+   "err": null
+  },
+  {
+   "slug": "acapulco",
+   "ours": "Cassia alata",
+   "ncbi": "Senna alata",
+   "gbif": "Cassia alata",
+   "itis_tsn": "25738",
+   "itis_accepted": "Senna alata",
+   "err": null
+  },
+  {
+   "slug": "acinos-arvensis",
+   "ours": "Acinos arvensis",
+   "ncbi": "Clinopodium acinos",
+   "gbif": "Acinos arvensis",
+   "itis_tsn": "184862",
+   "itis_accepted": "Clinopodium acinos",
+   "err": null
+  },
+  {
+   "slug": "amomum-compactum",
+   "ours": "Amomum compactum",
+   "ncbi": "Wurfbainia compacta",
+   "gbif": "Amomum compactum",
+   "itis_tsn": "506502",
+   "itis_accepted": "Wurfbainia compacta",
+   "err": null
+  },
+  {
+   "slug": "asteraceae-blessed-thistle",
+   "ours": "Cnicus benedictus",
+   "ncbi": "Centaurea benedicta",
+   "gbif": "Cnicus benedictus",
+   "itis_tsn": "37103",
+   "itis_accepted": "Centaurea benedicta",
+   "err": null
+  },
+  {
+   "slug": "aztec-sweet-herb",
+   "ours": "Lippia dulcis",
+   "ncbi": "Phyla dulcis",
+   "gbif": "Lippia dulcis",
+   "itis_tsn": "516031",
+   "itis_accepted": "Phyla dulcis",
+   "err": null
+  },
+  {
+   "slug": "bai-bian-dou-seed",
+   "ours": "Dolichos lablab",
+   "ncbi": "Lablab purpureus",
+   "gbif": "Dolichos lablab",
+   "itis_tsn": "512434",
+   "itis_accepted": "Lablab purpureus",
+   "err": null
+  },
+  {
+   "slug": "bayberry",
+   "ours": "Myrica cerifera",
+   "ncbi": "Morella cerifera",
+   "gbif": "Myrica cerifera",
+   "itis_tsn": "19261",
+   "itis_accepted": "Morella cerifera",
+   "err": null
+  },
+  {
+   "slug": "betula-alba-herb",
+   "ours": "Betula alba",
+   "ncbi": "Betula pubescens",
+   "gbif": "Betula alba",
+   "itis_tsn": "19482",
+   "itis_accepted": "Betula pubescens ssp. pubescens",
+   "err": null
+  },
+  {
+   "slug": "bitter-orange-flower",
+   "ours": "Citrus aurantium",
+   "ncbi": "Citrus x aurantium",
+   "gbif": "Citrus aurantium",
+   "itis_tsn": "28884",
+   "itis_accepted": "Citrus X aurantium",
+   "err": null
+  },
+  {
+   "slug": "boswellia-carteri",
+   "ours": "Boswellia carteri",
+   "ncbi": "Boswellia sacra",
+   "gbif": "Boswellia carteri",
+   "itis_tsn": "509640",
+   "itis_accepted": "Boswellia sacra",
+   "err": null
+  },
+  {
+   "slug": "caesalpinia-bonduc",
+   "ours": "Caesalpinia bonduc",
+   "ncbi": "Guilandina bonduc",
+   "gbif": "Caesalpinia bonduc",
+   "itis_tsn": "26500",
+   "itis_accepted": "Guilandina bonduc",
+   "err": null
+  },
+  {
+   "slug": "calamintha-nepeta",
+   "ours": "Calamintha nepeta",
+   "ncbi": "Clinopodium nepeta",
+   "gbif": "Calamintha nepeta",
+   "itis_tsn": "501114",
+   "itis_accepted": "Clinopodium nepeta",
+   "err": null
+  },
+  {
+   "slug": "carduus-marianus",
+   "ours": "Carduus marianus",
+   "ncbi": "Silybum marianum",
+   "gbif": "Carduus marianus",
+   "itis_tsn": "510125",
+   "itis_accepted": "Silybum marianum",
+   "err": null
+  },
+  {
+   "slug": "cassia-absus",
+   "ours": "Cassia absus",
+   "ncbi": "Chamaecrista absus",
+   "gbif": "Fabaceae",
+   "itis_tsn": "25737",
+   "itis_accepted": "Chamaecrista absus var. absus",
+   "err": null
+  },
+  {
+   "slug": "chamomile-roman",
+   "ours": "Anthemis nobilis",
+   "ncbi": "Chamaemelum nobile",
+   "gbif": "Anthemis nobilis",
+   "itis_tsn": "508914",
+   "itis_accepted": "Chamaemelum nobile",
+   "err": null
+  },
+  {
+   "slug": "chionodoxa-luciliae",
+   "ours": "Chionodoxa luciliae",
+   "ncbi": "Scilla luciliae",
+   "gbif": "Chionodoxa luciliae",
+   "itis_tsn": "501494",
+   "itis_accepted": "Scilla luciliae",
+   "err": null
+  },
+  {
+   "slug": "citrus-aurantifolia",
+   "ours": "Citrus aurantiifolia",
+   "ncbi": "Citrus x aurantiifolia",
+   "gbif": "Citrus aurantiifolia",
+   "itis_tsn": "506403",
+   "itis_accepted": "Citrus X aurantiifolia",
+   "err": null
+  },
+  {
+   "slug": "cleome-gynandra",
+   "ours": "Cleome gynandra",
+   "ncbi": "Gynandropsis gynandra",
+   "gbif": "Cleome gynandra",
+   "itis_tsn": "22616",
+   "itis_accepted": "Gynandropsis gynandra",
+   "err": null
+  },
+  {
+   "slug": "co-voi",
+   "ours": "Vernonia cinerea",
+   "ncbi": "Cyanthillium cinereum",
+   "gbif": "Vernonia cinerea",
+   "itis_tsn": "38626",
+   "itis_accepted": "Cyanthillium cinereum",
+   "err": null
+  },
+  {
+   "slug": "cucumeropsis-mannii",
+   "ours": "Cucumeropsis mannii",
+   "ncbi": "Melothria sphaerocarpa",
+   "gbif": "Cucumeropsis mannii",
+   "itis_tsn": "505895",
+   "itis_accepted": "Melothria sphaerocarpa",
+   "err": null
+  },
+  {
+   "slug": "eugenia-caryophyllata",
+   "ours": "Eugenia caryophyllata",
+   "ncbi": "Syzygium aromaticum",
+   "gbif": "Eugenia caryophyllata",
+   "itis_tsn": "513263",
+   "itis_accepted": "Syzygium aromaticum",
+   "err": null
+  },
+  {
+   "slug": "fever-tree",
+   "ours": "Acacia xanthophloea",
+   "ncbi": "Vachellia xanthophloea",
+   "gbif": "Acacia xanthophloea",
+   "itis_tsn": "820461",
+   "itis_accepted": "Vachellia xanthophloea",
+   "err": null
+  },
+  {
+   "slug": "ge-gen",
+   "ours": "Pueraria lobata",
+   "ncbi": "Pueraria montana var. lobata",
+   "gbif": "Pueraria lobata",
+   "itis_tsn": "26936",
+   "itis_accepted": "Pueraria montana var. lobata",
+   "err": null
+  },
+  {
+   "slug": "grindelia",
+   "ours": "Grindelia robusta",
+   "ncbi": "Grindelia hirsutula",
+   "gbif": "Grindelia robusta",
+   "itis_tsn": "37470",
+   "itis_accepted": "Grindelia hirsutula",
+   "err": null
+  },
+  {
+   "slug": "gui-zhi",
+   "ours": "Cinnamomum cassia",
+   "ncbi": "Neolitsea cassia",
+   "gbif": "Lauraceae",
+   "itis_tsn": "511017",
+   "itis_accepted": "Neolitsea cassia",
+   "err": null
+  },
+  {
+   "slug": "haitian-vetiver",
+   "ours": "Vetiveria zizanioides",
+   "ncbi": "Chrysopogon zizanioides",
+   "gbif": "Vetiveria zizanioides",
+   "itis_tsn": "42309",
+   "itis_accepted": "Chrysopogon zizanioides",
+   "err": null
+  },
+  {
+   "slug": "ipecac-root",
+   "ours": "Cephaelis ipecacuanha",
+   "ncbi": "Carapichea ipecacuanha",
+   "gbif": "Cephaelis ipecacuanha",
+   "itis_tsn": "506056",
+   "itis_accepted": "Carapichea ipecacuanha",
+   "err": null
+  },
+  {
+   "slug": "jue-ming-zi",
+   "ours": "Cassia obtusifolia",
+   "ncbi": "Senna obtusifolia",
+   "gbif": "Cassia obtusifolia",
+   "itis_tsn": "25761",
+   "itis_accepted": "Senna obtusifolia",
+   "err": null
+  },
+  {
+   "slug": "korean-acanthopanax",
+   "ours": "Acanthopanax senticosus",
+   "ncbi": "Eleutherococcus senticosus",
+   "gbif": "Acanthopanax senticosus",
+   "itis_tsn": "508249",
+   "itis_accepted": "Eleutherococcus senticosus",
+   "err": null
+  },
+  {
+   "slug": "kunyit-jamu",
+   "ours": "Curcuma domestica",
+   "ncbi": "Curcuma longa",
+   "gbif": "Curcuma domestica",
+   "itis_tsn": "511861",
+   "itis_accepted": "Curcuma longa",
+   "err": null
+  },
+  {
+   "slug": "lychnis-flos-cuculi",
+   "ours": "Lychnis flos-cuculi",
+   "ncbi": "Silene flos-cuculi",
+   "gbif": "Lychnis flos-cuculi",
+   "itis_tsn": "20309",
+   "itis_accepted": "Silene flos-cuculi",
+   "err": null
+  },
+  {
+   "slug": "mahonia-aquifolium-herb",
+   "ours": "Mahonia aquifolium",
+   "ncbi": "Berberis aquifolium",
+   "gbif": "Mahonia aquifolium",
+   "itis_tsn": "195030",
+   "itis_accepted": "Berberis aquifolium",
+   "err": null
+  },
+  {
+   "slug": "mahonia-repens",
+   "ours": "Mahonia repens",
+   "ncbi": "Berberis repens",
+   "gbif": "Mahonia repens",
+   "itis_tsn": "195045",
+   "itis_accepted": "Berberis repens",
+   "err": null
+  },
+  {
+   "slug": "melanthium-virginicum",
+   "ours": "Melanthium virginicum",
+   "ncbi": "Veratrum virginicum",
+   "gbif": "Melanthium virginicum",
+   "itis_tsn": "42967",
+   "itis_accepted": "Veratrum virginicum",
+   "err": null
+  },
+  {
+   "slug": "michelia-champaca",
+   "ours": "Michelia champaca",
+   "ncbi": "Magnolia champaca",
+   "gbif": "Michelia champaca",
+   "itis_tsn": "506190",
+   "itis_accepted": "Magnolia champaca",
+   "err": null
+  },
+  {
+   "slug": "mu-li",
+   "ours": "Ostrea gigas",
+   "ncbi": "Magallana gigas",
+   "gbif": "Plantae",
+   "itis_tsn": "79868",
+   "itis_accepted": "Magallana gigas",
+   "err": null
+  },
+  {
+   "slug": "niyog-niyogan",
+   "ours": "Quisqualis indica",
+   "ncbi": "Combretum indicum",
+   "gbif": "Combretum",
+   "itis_tsn": "507743",
+   "itis_accepted": "Combretum indicum",
+   "err": null
+  },
+  {
+   "slug": "rosa-centifolia",
+   "ours": "Rosa centifolia",
+   "ncbi": "Rosa x centifolia",
+   "gbif": "Rosa centifolia",
+   "itis_tsn": "24820",
+   "itis_accepted": "Rosa X centifolia",
+   "err": null
+  },
+  {
+   "slug": "sophora-japonica",
+   "ours": "Sophora japonica",
+   "ncbi": "Styphnolobium japonicum",
+   "gbif": "Sophora japonica",
+   "itis_tsn": "506288",
+   "itis_accepted": "Styphnolobium japonicum",
+   "err": null
+  },
+  {
+   "slug": "stephanandra-incisa",
+   "ours": "Stephanandra incisa",
+   "ncbi": "Neillia incisa",
+   "gbif": "Stephanandra incisa",
+   "itis_tsn": "565543",
+   "itis_accepted": "Neillia incisa",
+   "err": null
+  },
+  {
+   "slug": "thevetia-peruviana",
+   "ours": "Cascabela thevetia",
+   "ncbi": "Thevetia peruviana",
+   "gbif": "Cascabela thevetia",
+   "itis_tsn": "510320",
+   "itis_accepted": "Thevetia peruviana",
+   "err": null
+  },
+  {
+   "slug": "tule-root",
+   "ours": "Scirpus acutus",
+   "ncbi": "Schoenoplectus acutus",
+   "gbif": "Scirpus acutus",
+   "itis_tsn": "40240",
+   "itis_accepted": "Schoenoplectus acutus var. acutus",
+   "err": null
+  },
+  {
+   "slug": "vasaka",
+   "ours": "Adhatoda vasica",
+   "ncbi": "Justicia adhatoda",
+   "gbif": "Adhatoda vasica",
+   "itis_tsn": "508377",
+   "itis_accepted": "Justicia adhatoda",
+   "err": null
+  },
+  {
+   "slug": "woodruff",
+   "ours": "Asperula odorata",
+   "ncbi": "Galium odoratum",
+   "gbif": "Asperula odorata",
+   "itis_tsn": "35235",
+   "itis_accepted": "Galium odoratum",
+   "err": null
+  },
+  {
+   "slug": "yerba-buena",
+   "ours": "Clinopodium douglasii",
+   "ncbi": "Micromeria douglasii",
+   "gbif": "Clinopodium douglasii",
+   "itis_tsn": "565078",
+   "itis_accepted": "Micromeria douglasii",
+   "err": null
+  }
+ ],
+ "confirmed_current": [
+  {
+   "slug": "acacia",
+   "ours": "Acacia senegal",
+   "ncbi": "Senegalia senegal",
+   "gbif": "Acacia senegal",
+   "itis_tsn": "506367",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "aerva-lanata",
+   "ours": "Aerva lanata",
+   "ncbi": "Ouret lanata",
+   "gbif": "Aerva lanata",
+   "itis_tsn": "506581",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "an-xa-huong",
+   "ours": "Desmodium styracifolium",
+   "ncbi": "Grona styracifolia",
+   "gbif": "Desmodium styracifolium",
+   "itis_tsn": "819644",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "arrabidaea-chica",
+   "ours": "Arrabidaea chica",
+   "ncbi": "Fridericia chica",
+   "gbif": "Arrabidaea chica",
+   "itis_tsn": "34330",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "artichoke-liver",
+   "ours": "Cynara scolymus",
+   "ncbi": "Cynara cardunculus var. scolymus",
+   "gbif": "Cynara scolymus",
+   "itis_tsn": "37222",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "astaxanthin-source",
+   "ours": "Haematococcus pluvialis",
+   "ncbi": "Haematococcus lacustris",
+   "gbif": "Haematococcus pluvialis",
+   "itis_tsn": "5608",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "ati-atihan",
+   "ours": "Hyptis suaveolens",
+   "ncbi": "Mesosphaerum suaveolens",
+   "gbif": "Hyptis suaveolens",
+   "itis_tsn": "32534",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "bhumyamalaki",
+   "ours": "Phyllanthus amarus",
+   "ncbi": "Moeroris amara",
+   "gbif": "Phyllanthus amarus",
+   "itis_tsn": "28367",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "blue-lotus",
+   "ours": "Nymphaea caerulea",
+   "ncbi": "Nymphaea nouchali var. caerulea",
+   "gbif": "Nymphaea caerulea",
+   "itis_tsn": "506589",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "chrysophyllum",
+   "ours": "Chrysophyllum albidum",
+   "ncbi": "Gambeya albida",
+   "gbif": "Chrysophyllum albidum",
+   "itis_tsn": "505966",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "desmodium-adscendens",
+   "ours": "Desmodium adscendens",
+   "ncbi": "Grona adscendens",
+   "gbif": "Desmodium adscendens",
+   "itis_tsn": "502009",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "di-fu-zi",
+   "ours": "Kochia scoparia",
+   "ncbi": "Bassia scoparia",
+   "gbif": "Kochia scoparia",
+   "itis_tsn": "20696",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "dioscorea-rotundata",
+   "ours": "Dioscorea rotundata",
+   "ncbi": "Dioscorea cayenensis subsp. rotundata",
+   "gbif": "Dioscorea rotundata",
+   "itis_tsn": "43376",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "elecampane-inula",
+   "ours": "Inula britannica",
+   "ncbi": "Pentanema britannica",
+   "gbif": "Inula britannica",
+   "itis_tsn": "503171",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "feijoa-sellowiana",
+   "ours": "Acca sellowiana",
+   "ncbi": "Feijoa sellowiana",
+   "gbif": "Acca sellowiana",
+   "itis_tsn": "834974",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "fennel",
+   "ours": "Foeniculum vulgare",
+   "ncbi": "Anethum foeniculum",
+   "gbif": "Foeniculum vulgare",
+   "itis_tsn": "29509",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "fo-ti-vine",
+   "ours": "Fallopia multiflora",
+   "ncbi": "Pleuropterus multiflorus",
+   "gbif": "Fallopia multiflora",
+   "itis_tsn": "823798",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "helosciadium-nodiflorum",
+   "ours": "Apium nodiflorum",
+   "ncbi": "Helosciadium nodiflorum",
+   "gbif": "Apium nodiflorum",
+   "itis_tsn": "29593",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "khella-herb",
+   "ours": "Ammi visnaga",
+   "ncbi": "Visnaga daucoides",
+   "gbif": "Ammi visnaga",
+   "itis_tsn": "29578",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "lebanese-thyme",
+   "ours": "Thymus capitatus",
+   "ncbi": "Thymbra capitata",
+   "gbif": "Lamiaceae",
+   "itis_tsn": "506023",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "leek",
+   "ours": "Allium porrum",
+   "ncbi": "Allium ampeloprasum",
+   "gbif": "Allium",
+   "itis_tsn": "42659",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "mesquite-pod",
+   "ours": "Prosopis glandulosa",
+   "ncbi": "Neltuma glandulosa",
+   "gbif": "Prosopis glandulosa",
+   "itis_tsn": "26879",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "millettia-pinnata",
+   "ours": "Millettia pinnata",
+   "ncbi": "Pongamia pinnata",
+   "gbif": "Millettia pinnata",
+   "itis_tsn": "819763",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "parsley-piert",
+   "ours": "Aphanes arvensis",
+   "ncbi": "Alchemilla arvensis",
+   "gbif": "Aphanes arvensis",
+   "itis_tsn": "184592",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "phyllanthus-emblica",
+   "ours": "Phyllanthus emblica",
+   "ncbi": "Emblica officinalis",
+   "gbif": "Phyllanthus emblica",
+   "itis_tsn": "504352",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "physalis-alkekengi-herb",
+   "ours": "Physalis alkekengi",
+   "ncbi": "Alkekengi officinarum",
+   "gbif": "Solanaceae",
+   "itis_tsn": "30589",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "pisum-sativum-medicinal",
+   "ours": "Pisum sativum",
+   "ncbi": "Lathyrus oleraceus",
+   "gbif": "Pisum sativum",
+   "itis_tsn": "26867",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "poncirus-trifoliata",
+   "ours": "Poncirus trifoliata",
+   "ncbi": "Citrus trifoliata",
+   "gbif": "Poncirus trifoliata",
+   "itis_tsn": "28989",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "psidium-cattleianum",
+   "ours": "Psidium cattleianum",
+   "ncbi": "Psidium cattleyanum",
+   "gbif": "Psidium cattleianum",
+   "itis_tsn": "27239",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "pueraria-phaseoloides",
+   "ours": "Pueraria phaseoloides",
+   "ncbi": "Neustanthus phaseoloides",
+   "gbif": "Pueraria phaseoloides",
+   "itis_tsn": "504684",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "rhamnus-purshiana",
+   "ours": "Rhamnus purshiana",
+   "ncbi": "Frangula purshiana",
+   "gbif": "Rhamnus purshiana",
+   "itis_tsn": "28582",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "rosemary-extract",
+   "ours": "Rosmarinus officinalis",
+   "ncbi": "Salvia rosmarinus",
+   "gbif": "Rosmarinus officinalis",
+   "itis_tsn": "32677",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "salazaria-mexicana",
+   "ours": "Salazaria mexicana",
+   "ncbi": "Scutellaria mexicana",
+   "gbif": "Salazaria mexicana",
+   "itis_tsn": "32679",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "sappanwood",
+   "ours": "Caesalpinia sappan",
+   "ncbi": "Biancaea sappan",
+   "gbif": "Caesalpinia sappan",
+   "itis_tsn": "506349",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "scilla-squill",
+   "ours": "Drimia maritima",
+   "ncbi": "Squilla maritima",
+   "gbif": "Drimia maritima",
+   "itis_tsn": "810302",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "scorzonera-hispanica",
+   "ours": "Scorzonera hispanica",
+   "ncbi": "Pseudopodospermum hispanicum",
+   "gbif": "Scorzonera hispanica",
+   "itis_tsn": "505091",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "seneca-snakeroot",
+   "ours": "Polygala senega",
+   "ncbi": "Senega officinalis",
+   "gbif": "Polygala senega",
+   "itis_tsn": "29316",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "spirulina",
+   "ours": "Arthrospira platensis",
+   "ncbi": "Limnospira platensis",
+   "gbif": "Arthrospira platensis",
+   "itis_tsn": "1238242",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "spirulina-platensis",
+   "ours": "Arthrospira platensis",
+   "ncbi": "Limnospira platensis",
+   "gbif": "Spirulina platensis",
+   "itis_tsn": "1238242",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "sprekelia-formosissima",
+   "ours": "Sprekelia formosissima",
+   "ncbi": "Zephyranthes formosissima",
+   "gbif": "Sprekelia formosissima",
+   "itis_tsn": "810164",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "stachys-officinalis",
+   "ours": "Stachys officinalis",
+   "ncbi": "Betonica officinalis",
+   "gbif": "Stachys officinalis",
+   "itis_tsn": "32343",
+   "itis_accepted": null,
+   "err": null
+  },
+  {
+   "slug": "tsaang-gubat",
+   "ours": "Carmona retusa",
+   "ncbi": "Ehretia microphylla",
+   "gbif": "Carmona retusa",
+   "itis_tsn": "507682",
+   "itis_accepted": null,
+   "err": null
+  }
+ ]
+}
