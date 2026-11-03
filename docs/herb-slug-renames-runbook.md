@@ -32,8 +32,18 @@ node scripts/verify-slug-renames.mjs --require-ready
 ## 3. Live state verified 2026-11-03
 
 - All six source URLs return 200 and all six destination URLs return 404.
-- `sitemap.xml` holds 88 URLs and no `/herbs/` slug URL at all, so there is
-  nothing to remove from the sitemap after the rename.
+- `sitemap.xml` returns 200 with 5,715 `<loc>` entries, 5,243 of them
+  `/herbs/` URLs. It is generated from the `herbs` table by
+  `src/app/sitemap.ts`, which sets `export const revalidate = 3600` (line
+  589). Each of the six source slugs is present twice (English and French) and
+  each destination slug is absent, so the rename does change the sitemap: the
+  six old paths must disappear and the six new paths must appear twice each.
+- Match whole `<loc>` URLs when checking, never substrings:
+  `xanthorrhiza-simplicissima-herb` is a separate published slug that keeps
+  the old token and stays in the sitemap after the rename.
+- The sitemap keeps serving its pre-write render for up to one hour because of
+  `revalidate = 3600`, so a check run straight after the database write can
+  still show the old slugs.
 - `herb_monographs` holds 1 row for each of the six source slugs.
 - `herb_pubmed_monographs` holds 1 row for five of them: every pair except
   `anthonota-macrophylla`.
@@ -91,6 +101,21 @@ Exit codes:
 
 A second run is safe: it reports `already-renamed` and writes nothing.
 
+Known limits of the applier:
+
+- The pre-check accepts `scientific_name` equal to either
+  `scientific_name_before` or `scientific_name_after`, while the post-write
+  read-back requires `scientific_name_after`. All six live rows already carry
+  the corrected binomial, so the gap cannot fire today, but a row still
+  carrying the old name would be renamed and then fail the read-back.
+- `already-renamed` pairs are skipped on a re-run. A crash after the parent
+  rename but before a dependent move leaves an orphan that neither the re-run
+  nor `verify-slug-renames.mjs` (which reads only `herbs`) detects; only the
+  in-run read-back or the dependent-table census catches it.
+- `artifacts/slug-rename-pubmed-backup.json` is the only copy of the five
+  pubmed rows the applier deletes. Attach it to the kanban card or copy it
+  outside the worktree before the worktree is reaped.
+
 ## 6. The activation step
 
 1. After the write, run the gate and expect 6 of 6 ready:
@@ -99,12 +124,47 @@ A second run is safe: it reports `already-renamed` and writes nothing.
    node scripts/verify-slug-renames.mjs --require-ready
    ```
 
-2. Ship a deploy that restores the `herbSlugRenames` wiring in `next.config.ts`
-   and flips `activation` in `data/herb-slug-renames.json` to `active`.
-3. Wait for the deployment whose `githubCommitSha` matches the merged commit to
-   reach READY.
-4. Check both locales with `curl`: the old path must return 308 and the new
-   path must return 200, for `/herbs/...` and `/fr/herbs/...`.
+2. Ship one commit that restores the `herbSlugRenames` wiring in
+   `next.config.ts` and flips `activation` in
+   `data/herb-slug-renames.json` to `active`.
+   `src/lib/data/__tests__/herb-name-manifests.test.ts` branches on
+   `activation`: under `deferred` it requires all twelve source paths to
+   stay unwired, and under `active` it requires every pair to be wired for
+   `/herbs/<old>` and `/fr/herbs/<old>` with `permanent: true` pointing
+   at the destination. Flipping the flag without the wiring, or the reverse,
+   fails the manifest suite. Do not delete or weaken that assertion.
+3. Wait for the deployment whose `githubCommitSha` matches the merged commit
+   to reach READY.
+4. Check both locales with `curl`: the old path must return 308 with a
+   `location` header at the new slug, and the new path must return 200, for
+   `/herbs/...` and `/fr/herbs/...`.
+5. Check the sitemap after its `revalidate = 3600` window, or after forcing
+   a revalidation. Fetch it and count exact path matches:
+
+   ```sh
+   curl -s https://herbally.app/sitemap.xml > /tmp/sitemap.xml
+   ```
+
+   Then count exact matches per slug:
+
+   ```python
+   import re
+   locs = re.findall(r"<loc>([^<]+)</loc>", open("/tmp/sitemap.xml").read())
+   slugs = [
+       "anthonota-macrophylla", "anthonotha-macrophylla",
+       "xanthorrhiza-simplicissima", "xanthorhiza-simplicissima",
+       "hypsizygus-tessellatus", "hypsizygus-tesselatus",
+       "notopterygium-incisium", "notopterygium-incisum",
+       "cinnamomum-burmannii", "cinnamomum-burmanni",
+       "rauwolfia-cardio", "rauvolfia-cardio",
+   ]
+   for slug in slugs:
+       print(slug, sum(1 for loc in locs if loc.endswith("/herbs/" + slug)))
+   ```
+
+   The six old slugs must print 0 and the six new slugs
+   must print 2. A substring grep is not valid here:
+   `xanthorrhiza-simplicissima-herb` keeps the old token.
 
 ## 7. Client state
 
