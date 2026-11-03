@@ -124,15 +124,22 @@ Known limits of the applier:
    node scripts/verify-slug-renames.mjs --require-ready
    ```
 
-2. Ship one commit that restores the `herbSlugRenames` wiring in
-   `next.config.ts` and flips `activation` in
-   `data/herb-slug-renames.json` to `active`.
-   `src/lib/data/__tests__/herb-name-manifests.test.ts` branches on
-   `activation`: under `deferred` it requires all twelve source paths to
-   stay unwired, and under `active` it requires every pair to be wired for
-   `/herbs/<old>` and `/fr/herbs/<old>` with `permanent: true` pointing
-   at the destination. Flipping the flag without the wiring, or the reverse,
-   fails the manifest suite. Do not delete or weaken that assertion.
+2. Ship one commit that restores the
+   `herbSlugRenames.renames.flatMap(...)` wiring in `next.config.ts` — one
+   `{ source, destination, permanent: true }` pair per rename for
+   `/herbs/<old>` and `/fr/herbs/<old>` — and flips `activation` in
+   `data/herb-slug-renames.json` to `active`. Do not add a `statusCode` to
+   these rules: Next prefers `statusCode` over `permanent`, so a stray 301 or
+   307 silently replaces the intended 308. The manifest guard in
+   `src/lib/data/__tests__/herb-name-manifests.test.ts` now evaluates the
+   twelve concrete request paths (six English, six French) through Next's own
+   `getPathMatch` and `getRedirectStatus`: under `deferred` it requires every
+   path to stay unwired, and under `active` it requires a matching 308 to the
+   new path, rejects `statusCode` 301 or 307 and any `has`/`missing` gating,
+   and accepts a ginkgo-style parameterized locale rule
+   (`/:locale(en|fr)/herbs/<old>` → `/:locale/herbs/<new>`). Flipping the flag
+   without the wiring, or the reverse, fails the manifest suite. Do not delete
+   or weaken that assertion.
 3. Wait for the deployment whose `githubCommitSha` matches the merged commit
    to reach READY.
 4. Check both locales with `curl`: the old path must return 308 with a
