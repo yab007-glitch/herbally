@@ -1,0 +1,501 @@
+{
+ "normalised": [
+  [
+   "ahcc-source",
+   "Lentinula edodes mycelium",
+   "Lentinula edodes"
+  ],
+  [
+   "amalaki-rasayana",
+   "Phyllanthus emblica (rasayana)",
+   "Phyllanthus emblica"
+  ],
+  [
+   "amla-dried",
+   "Emblica officinalis dried",
+   "Emblica officinalis"
+  ],
+  [
+   "argan-nut",
+   "Argania spinosa (nut)",
+   "Argania spinosa"
+  ],
+  [
+   "ashwagandha-ksm66",
+   "Withania somnifera KSM-66",
+   "Withania somnifera"
+  ],
+  [
+   "bai-guo",
+   "Ginkgo biloba (nut)",
+   "Ginkgo biloba"
+  ],
+  [
+   "basil-holy-seed",
+   "Ocimum tenuiflorum (seed)",
+   "Ocimum tenuiflorum"
+  ],
+  [
+   "bee-pollen",
+   "Apis mellifera (via plant pollen)",
+   "Apis mellifera"
+  ],
+  [
+   "berberis-vulgaris",
+   "Berberis vulgaris (fruit)",
+   "Berberis vulgaris"
+  ],
+  [
+   "bitter-gourd-leaf",
+   "Momordica charantia (leaf)",
+   "Momordica charantia"
+  ],
+  [
+   "bitter-orange-flower",
+   "Citrus aurantium (flower)",
+   "Citrus aurantium"
+  ],
+  [
+   "black-garlic",
+   "Allium sativum (fermented)",
+   "Allium sativum"
+  ],
+  [
+   "black-maca",
+   "Lepidium meyenii (black)",
+   "Lepidium meyenii"
+  ],
+  [
+   "california-poppy-tea",
+   "Eschscholzia californica (tea)",
+   "Eschscholzia californica"
+  ],
+  [
+   "cbd-analgesic",
+   "Cannabis sativa (hemp)",
+   "Cannabis sativa"
+  ],
+  [
+   "chuan-wu-analgesic",
+   "Aconitum carmichaelii (raw)",
+   "Aconitum carmichaelii"
+  ],
+  [
+   "clary-sage-seed-oil",
+   "Salvia sclarea (seed oil)",
+   "Salvia sclarea"
+  ],
+  [
+   "colostrum-bovine",
+   "Bos taurus (bovine colostrum)",
+   "Bos taurus"
+  ],
+  [
+   "curcumin",
+   "Curcuma longa (extract)",
+   "Curcuma longa"
+  ],
+  [
+   "da-qing-ye-antimicro",
+   "Isatis indigotica (leaf)",
+   "Isatis indigotica"
+  ],
+  [
+   "dim-natural-horm",
+   "Brassica oleracea extract",
+   "Brassica oleracea"
+  ],
+  [
+   "dog-rose-flower",
+   "Rosa canina flos",
+   "Rosa canina"
+  ],
+  [
+   "elderflower",
+   "Sambucus nigra (flowers)",
+   "Sambucus nigra"
+  ],
+  [
+   "fenugreek-leaf",
+   "Trigonella foenum-graecum (leaf)",
+   "Trigonella foenum-graecum"
+  ],
+  [
+   "fenugreek-seed",
+   "Trigonella foenum-graecum (seed extract)",
+   "Trigonella foenum-graecum"
+  ],
+  [
+   "gan-jiang",
+   "Zingiber officinale dried",
+   "Zingiber officinale"
+  ],
+  [
+   "gotu-kola-leaf",
+   "Centella asiatica (fresh leaf)",
+   "Centella asiatica"
+  ],
+  [
+   "gu-ya-digestive",
+   "Oryza sativa (germinated)",
+   "Oryza sativa"
+  ],
+  [
+   "gua-lou-pi-resp",
+   "Trichosanthes kirilowii (pericarp)",
+   "Trichosanthes kirilowii"
+  ],
+  [
+   "harmal-persian",
+   "Peganum harmala var.",
+   "Peganum harmala"
+  ],
+  [
+   "hawthorn-flowers",
+   "Crataegus monogyna flos",
+   "Crataegus monogyna"
+  ],
+  [
+   "he-huan-hua",
+   "Albizia julibrissin flos",
+   "Albizia julibrissin"
+  ],
+  [
+   "he-huan-hua-tcm",
+   "Albizia julibrissin (flower)",
+   "Albizia julibrissin"
+  ],
+  [
+   "he-ye",
+   "Nelumbo nucifera (leaf)",
+   "Nelumbo nucifera"
+  ],
+  [
+   "herba-centellae",
+   "Centella asiatica (topical)",
+   "Centella asiatica"
+  ],
+  [
+   "juniper-leaf",
+   "Juniperus communis (leaf)",
+   "Juniperus communis"
+  ],
+  [
+   "kaunch-beej",
+   "Mucuna pruriens (seed)",
+   "Mucuna pruriens"
+  ],
+  [
+   "korean-red-ginseng-extract",
+   "Panax ginseng (steamed)",
+   "Panax ginseng"
+  ],
+  [
+   "ladies-bedstraw",
+   "Galium verum var.",
+   "Galium verum"
+  ],
+  [
+   "lai-fu-zi-dig",
+   "Raphanus sativus (seed)",
+   "Raphanus sativus"
+  ],
+  [
+   "lemon-balm-toronjil",
+   "Melissa officinalis (tropical)",
+   "Melissa officinalis"
+  ],
+  [
+   "lemon-grass-whole",
+   "Cymbopogon citratus whole",
+   "Cymbopogon citratus"
+  ],
+  [
+   "lian-zi",
+   "Nelumbo nucifera (seed)",
+   "Nelumbo nucifera"
+  ],
+  [
+   "lian-zi-xin-tcm",
+   "Nelumbo nucifera (plumule)",
+   "Nelumbo nucifera"
+  ],
+  [
+   "licorice-dgl",
+   "Glycyrrhiza glabra (deglycyrrhizinated)",
+   "Glycyrrhiza glabra"
+  ],
+  [
+   "licorice-dgl-digestive",
+   "Glycyrrhiza glabra (DGL)",
+   "Glycyrrhiza glabra"
+  ],
+  [
+   "long-yan-rou-fruit",
+   "Dimocarpus longan flesh",
+   "Dimocarpus longan"
+  ],
+  [
+   "mai-ya-digestive",
+   "Hordeum vulgare (germinated)",
+   "Hordeum vulgare"
+  ],
+  [
+   "manuka-honey",
+   "Leptospermum scoparium (honey)",
+   "Leptospermum scoparium"
+  ],
+  [
+   "marshmallow-leaf",
+   "Althaea officinalis (leaf)",
+   "Althaea officinalis"
+  ],
+  [
+   "milk-oat",
+   "Avena sativa (milky oats)",
+   "Avena sativa"
+  ],
+  [
+   "morinda-officinalis",
+   "Morinda officinalis (var.)",
+   "Morinda officinalis"
+  ],
+  [
+   "mu-li-nervine",
+   "Ostrea gigas (shell)",
+   "Ostrea gigas"
+  ],
+  [
+   "mullein-flower",
+   "Verbascum thapsus flos",
+   "Verbascum thapsus"
+  ],
+  [
+   "nattokinase-source",
+   "Bacillus subtilis natto",
+   "Bacillus subtilis"
+  ],
+  [
+   "neroli-oil",
+   "Citrus aurantium (blossom oil)",
+   "Citrus aurantium"
+  ],
+  [
+   "nettle-root",
+   "Urtica dioica (root)",
+   "Urtica dioica"
+  ],
+  [
+   "nigella-oil",
+   "Nigella sativa (cold pressed oil)",
+   "Nigella sativa"
+  ],
+  [
+   "nigella-sativa-seed",
+   "Nigella sativa (seed only)",
+   "Nigella sativa"
+  ],
+  [
+   "olive-oil-polyphenols",
+   "Olea europaea (fruit)",
+   "Olea europaea"
+  ],
+  [
+   "pegaga",
+   "Centella asiatica (Malay)",
+   "Centella asiatica"
+  ],
+  [
+   "phosphatidylserine-herb",
+   "Glycine max (phospholipid)",
+   "Glycine max"
+  ],
+  [
+   "phosphatidylserine-noot",
+   "Glycine max extract",
+   "Glycine max"
+  ],
+  [
+   "qing-hao-aerial",
+   "Artemisia annua aerial",
+   "Artemisia annua"
+  ],
+  [
+   "qing-pi-liver",
+   "Citrus reticulata (immature)",
+   "Citrus reticulata"
+  ],
+  [
+   "red-maca",
+   "Lepidium meyenii (red ecotype)",
+   "Lepidium meyenii"
+  ],
+  [
+   "red-yeast-rice-cardiovasc",
+   "Monascus purpureus ferment",
+   "Monascus purpureus"
+  ],
+  [
+   "reishi-spore",
+   "Ganoderma lucidum (spores)",
+   "Ganoderma lucidum"
+  ],
+  [
+   "salvia-miltiorrhiza-leaf",
+   "Salvia miltiorrhiza (leaf)",
+   "Salvia miltiorrhiza"
+  ],
+  [
+   "sambucol",
+   "Sambucus nigra (standardized)",
+   "Sambucus nigra"
+  ],
+  [
+   "samento-amazonian",
+   "Uncaria tomentosa (POA-free)",
+   "Uncaria tomentosa"
+  ],
+  [
+   "sang-bai-pi",
+   "Morus alba (bark)",
+   "Morus alba"
+  ],
+  [
+   "sang-bai-pi-tcm-v2",
+   "Morus alba (root bark)",
+   "Morus alba"
+  ],
+  [
+   "sang-shen",
+   "Morus alba (fruit)",
+   "Morus alba"
+  ],
+  [
+   "sang-zhi",
+   "Morus alba (branch)",
+   "Morus alba"
+  ],
+  [
+   "schisandra-black",
+   "Schisandra chinensis berry",
+   "Schisandra chinensis"
+  ],
+  [
+   "schizandra-berry",
+   "Schisandra chinensis (berry)",
+   "Schisandra chinensis"
+  ],
+  [
+   "serrapeptase-source",
+   "Serratia marcescens enzyme",
+   "Serratia marcescens"
+  ],
+  [
+   "sheng-di-huang-tcm",
+   "Rehmannia glutinosa (raw)",
+   "Rehmannia glutinosa"
+  ],
+  [
+   "shigru",
+   "Moringa oleifera (seeds/bark)",
+   "Moringa oleifera"
+  ],
+  [
+   "snail-vine-skin",
+   "Centella asiatica extract",
+   "Centella asiatica"
+  ],
+  [
+   "sod-antioxidant",
+   "Cucumis melo extract",
+   "Cucumis melo"
+  ],
+  [
+   "temu-putih",
+   "Curcuma zedoaria var.",
+   "Curcuma zedoaria"
+  ],
+  [
+   "tribulus-aerial",
+   "Tribulus terrestris aerial",
+   "Tribulus terrestris"
+  ],
+  [
+   "turmeric-curcumin",
+   "Curcuma longa (curcumin extract)",
+   "Curcuma longa"
+  ],
+  [
+   "xia-ku-cao",
+   "Prunella vulgaris spike",
+   "Prunella vulgaris"
+  ],
+  [
+   "yashad-bhasma",
+   "Zinc compound (Ayurvedic)",
+   "Zinc compound"
+  ],
+  [
+   "yasthimadhu",
+   "Glycyrrhiza glabra (Ayurvedic)",
+   "Glycyrrhiza glabra"
+  ],
+  [
+   "ye-jiao-teng-nervine",
+   "Polygonum multiflorum (vine)",
+   "Polygonum multiflorum"
+  ],
+  [
+   "zao-jiao-ci",
+   "Gleditsia sinensis (spine)",
+   "Gleditsia sinensis"
+  ],
+  [
+   "zatoun",
+   "Olea europaea (leaf)",
+   "Olea europaea"
+  ]
+ ],
+ "review": [
+  [
+   "berberine-metabolic-v2",
+   "Coptis/Berberis extract",
+   "Coptis/Berberis"
+  ],
+  [
+   "chocolate-mint",
+   "Mentha x piperita cv. chocolate",
+   "Mentha x piperita"
+  ],
+  [
+   "ji-nei-jin-digestive",
+   "Gallus gallus domesticus (gizzard lining)",
+   "Gallus gallus domesticus"
+  ],
+  [
+   "long-gu-nervine",
+   "Os Draconis (fossilized bone)",
+   "Os Draconis"
+  ],
+  [
+   "lychnis-flos-cuculi",
+   "Lychnis flos-cuculi",
+   "Lychnis"
+  ],
+  [
+   "niacinamide-skin",
+   "Nicotinamide (Vitamin B3)",
+   "Nicotinamide"
+  ],
+  [
+   "shilajit-tibetan",
+   "Asphaltum (Himalayan)",
+   "Asphaltum"
+  ],
+  [
+   "zi-ran-tong",
+   "Pyritum (mineral)",
+   "Pyritum"
+  ]
+ ]
+}
