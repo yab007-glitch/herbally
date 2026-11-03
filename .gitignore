@@ -67,3 +67,6 @@ test-results/
 .env.sentry-build-plugin
 .playwright-mcp/
 supabase/backups/
+
+# Regenerable LNHPD harvest (49 MB, rebuilt by scripts/harvest-lnhpd.mjs)
+artifacts/lnhpd-matches.json
