@@ -1,374 +1,374 @@
 [
- {
-  "from": "/herbs/ladies-bedstraw",
-  "to": "/herbs/ladys-bedstraw"
- },
- {
-  "from": "/herbs/maca-red",
-  "to": "/herbs/red-maca"
- },
- {
-  "from": "/herbs/licorice-dgl-digestive",
-  "to": "/herbs/licorice-dgl"
- },
- {
-  "from": "/herbs/long-yan-rou-fruit",
-  "to": "/herbs/longan-fruit"
- },
- {
-  "from": "/herbs/afghan-ashwagandha",
-  "to": "/herbs/ashwagandha"
- },
- {
-  "from": "/herbs/andhra-ashwagandha-root",
-  "to": "/herbs/ashwagandha"
- },
- {
-  "from": "/herbs/czech-valerian",
-  "to": "/herbs/valerian"
- },
- {
-  "from": "/herbs/kashmiri-saffron",
-  "to": "/herbs/saffron"
- },
- {
-  "from": "/herbs/globe-artichoke",
-  "to": "/herbs/artichoke"
- },
- {
-  "from": "/herbs/lemon-grass-whole",
-  "to": "/herbs/lemongrass"
- },
- {
-  "from": "/herbs/hwanggi-korean-astragalus",
-  "to": "/herbs/astragalus"
- },
- {
-  "from": "/herbs/coffea-excelsa",
-  "to": "/herbs/coffea-liberica"
- },
- {
-  "from": "/herbs/anatolian-fenugreek",
-  "to": "/herbs/fenugreek"
- },
- {
-  "from": "/herbs/argan-nut",
-  "to": "/herbs/argan-tree"
- },
- {
-  "from": "/herbs/gan-jiang",
-  "to": "/herbs/ginger"
- },
- {
-  "from": "/herbs/hawthorn-korean",
-  "to": "/herbs/hawthorn-berry-chinese"
- },
- {
-  "from": "/herbs/indian-kalonji-seed",
-  "to": "/herbs/black-seed"
- },
- {
-  "from": "/herbs/kesar",
-  "to": "/herbs/saffron"
- },
- {
-  "from": "/herbs/libyan-thyme",
-  "to": "/herbs/lebanese-thyme"
- },
- {
-  "from": "/herbs/long-gu-nervine",
-  "to": "/herbs/long-gu-fossil"
- },
- {
-  "from": "/herbs/maca-yellow",
-  "to": "/herbs/maca"
- },
- {
-  "from": "/herbs/mu-li-nervine",
-  "to": "/herbs/mu-li"
- },
- {
-  "from": "/herbs/nigella-sativa-seed",
-  "to": "/herbs/black-seed"
- },
- {
-  "from": "/herbs/okinawan-turmeric",
-  "to": "/herbs/turmeric"
- },
- {
-  "from": "/herbs/persian-fenugreek",
-  "to": "/herbs/fenugreek"
- },
- {
-  "from": "/herbs/polish-calendula",
-  "to": "/herbs/calendula"
- },
- {
-  "from": "/herbs/pueraria-root",
-  "to": "/herbs/ge-gen-root"
- },
- {
-  "from": "/herbs/red-yeast-rice-cardiovasc",
-  "to": "/herbs/red-yeast-rice"
- },
- {
-  "from": "/herbs/reishi-spore",
-  "to": "/herbs/reishi"
- },
- {
-  "from": "/herbs/royal-sun-immune",
-  "to": "/herbs/agaricus-blazei"
- },
- {
-  "from": "/herbs/schisandra-black",
-  "to": "/herbs/schisandra"
- },
- {
-  "from": "/herbs/serbian-juniper",
-  "to": "/herbs/juniper-communis"
- },
- {
-  "from": "/herbs/serrapeptase-source",
-  "to": "/herbs/serrapeptase"
- },
- {
-  "from": "/herbs/sri-lankan-siddha-pepper",
-  "to": "/herbs/black-pepper"
- },
- {
-  "from": "/herbs/tibetan-valerian",
-  "to": "/herbs/valerian"
- },
- {
-  "from": "/herbs/tongan-turmeric",
-  "to": "/herbs/turmeric"
- },
- {
-  "from": "/herbs/tunisian-harmel",
-  "to": "/herbs/harmel"
- },
- {
-  "from": "/herbs/venezuelan-passionflower",
-  "to": "/herbs/passionflower"
- },
- {
-  "from": "/herbs/ahcc-source",
-  "to": "/herbs/shiitake"
- },
- {
-  "from": "/herbs/allium-sativum-hardneck",
-  "to": "/herbs/garlic"
- },
- {
-  "from": "/herbs/aloe-barbadensis",
-  "to": "/herbs/aloe-vera"
- },
- {
-  "from": "/herbs/amalaki-rasayana",
-  "to": "/herbs/phyllanthus-emblica"
- },
- {
-  "from": "/herbs/ashwagandha-ksm66",
-  "to": "/herbs/ashwagandha"
- },
- {
-  "from": "/herbs/bawang",
-  "to": "/herbs/garlic"
- },
- {
-  "from": "/herbs/black-maca",
-  "to": "/herbs/maca"
- },
- {
-  "from": "/herbs/centella-indian",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/centella-taiwan",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/cerasee",
-  "to": "/herbs/bitter-melon-metabolic"
- },
- {
-  "from": "/herbs/citrus-medica",
-  "to": "/herbs/fo-shou"
- },
- {
-  "from": "/herbs/dominican-cacao",
-  "to": "/herbs/cocoa-bean"
- },
- {
-  "from": "/herbs/harmal-persian",
-  "to": "/herbs/harmel"
- },
- {
-  "from": "/herbs/he-huan-hua",
-  "to": "/herbs/albizia"
- },
- {
-  "from": "/herbs/he-huan-hua-tcm",
-  "to": "/herbs/albizia"
- },
- {
-  "from": "/herbs/herba-centellae",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/huang-qi-bei",
-  "to": "/herbs/astragalus"
- },
- {
-  "from": "/herbs/jahe-merah",
-  "to": "/herbs/ginger"
- },
- {
-  "from": "/herbs/kaunch-beej",
-  "to": "/herbs/velvet-bean"
- },
- {
-  "from": "/herbs/lemon-balm-toronjil",
-  "to": "/herbs/lemon-balm"
- },
- {
-  "from": "/herbs/lemon-thyme",
-  "to": "/herbs/thymus-citriodorus"
- },
- {
-  "from": "/herbs/lu-rong",
-  "to": "/herbs/deer-antler-velvet-mens"
- },
- {
-  "from": "/herbs/mandukaparni",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/melao-sao-caetano",
-  "to": "/herbs/bitter-melon-metabolic"
- },
- {
-  "from": "/herbs/melissa-romana",
-  "to": "/herbs/lemon-balm"
- },
- {
-  "from": "/herbs/nattokinase-source",
-  "to": "/herbs/nattokinase-cardiovasc"
- },
- {
-  "from": "/herbs/nordic-yarrow",
-  "to": "/herbs/achillea-millefolium-var"
- },
- {
-  "from": "/herbs/norse-yarrow",
-  "to": "/herbs/achillea-millefolium-var"
- },
- {
-  "from": "/herbs/pegaga",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/peppermint-spanish",
-  "to": "/herbs/peppermint"
- },
- {
-  "from": "/herbs/phosphatidylserine-herb",
-  "to": "/herbs/phosphatidylserine-noot"
- },
- {
-  "from": "/herbs/propolis",
-  "to": "/herbs/propolis-antimicro"
- },
- {
-  "from": "/herbs/prunus-avium",
-  "to": "/herbs/cherry-stalk"
- },
- {
-  "from": "/herbs/qing-hao-aerial",
-  "to": "/herbs/sweet-annie"
- },
- {
-  "from": "/herbs/mastic-resin",
-  "to": "/herbs/chios-mastic-v2"
- },
- {
-  "from": "/herbs/romanian-wormwood",
-  "to": "/herbs/wormwood"
- },
- {
-  "from": "/herbs/rosmarinus-prostratus",
-  "to": "/herbs/rosemary"
- },
- {
-  "from": "/herbs/samento-amazonian",
-  "to": "/herbs/cats-claw"
- },
- {
-  "from": "/herbs/schizandra-berry",
-  "to": "/herbs/schisandra"
- },
- {
-  "from": "/herbs/shbbet-mriouh",
-  "to": "/herbs/fennel"
- },
- {
-  "from": "/herbs/snail-vine-skin",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/suan-zao-ren-seed",
-  "to": "/herbs/zizyphus-jujube-seed"
- },
- {
-  "from": "/herbs/tarragon",
-  "to": "/herbs/artemisia-dracunculus"
- },
- {
-  "from": "/herbs/tarragon-wild",
-  "to": "/herbs/artemisia-dracunculus"
- },
- {
-  "from": "/herbs/temu-putih",
-  "to": "/herbs/zedoary"
- },
- {
-  "from": "/herbs/turmeric-curcumin",
-  "to": "/herbs/turmeric"
- },
- {
-  "from": "/herbs/vietnamese-pennywort",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/wild-celery",
-  "to": "/herbs/apium-graveolens"
- },
- {
-  "from": "/herbs/xia-ku-cao",
-  "to": "/herbs/heal-all-spica"
- },
- {
-  "from": "/herbs/yasthimadhu",
-  "to": "/herbs/yashtimadhu"
- },
- {
-  "from": "/herbs/artichoke-liver",
-  "to": "/herbs/artichoke"
- },
- {
-  "from": "/herbs/gotu-kola-leaf",
-  "to": "/herbs/gotu-kola"
- },
- {
-  "from": "/herbs/couch-grass-root",
-  "to": "/herbs/couch-grass"
- },
- {
-  "from": "/herbs/rosemary-extract",
-  "to": "/herbs/rosemary"
- },
- {
-  "from": "/herbs/rauwolfia-cardio",
-  "to": "/herbs/rauwolfia-root"
- }
+  {
+    "from": "/herbs/ladies-bedstraw",
+    "to": "/herbs/ladys-bedstraw"
+  },
+  {
+    "from": "/herbs/maca-red",
+    "to": "/herbs/red-maca"
+  },
+  {
+    "from": "/herbs/licorice-dgl-digestive",
+    "to": "/herbs/licorice-dgl"
+  },
+  {
+    "from": "/herbs/long-yan-rou-fruit",
+    "to": "/herbs/longan-fruit"
+  },
+  {
+    "from": "/herbs/afghan-ashwagandha",
+    "to": "/herbs/ashwagandha"
+  },
+  {
+    "from": "/herbs/andhra-ashwagandha-root",
+    "to": "/herbs/ashwagandha"
+  },
+  {
+    "from": "/herbs/czech-valerian",
+    "to": "/herbs/valerian"
+  },
+  {
+    "from": "/herbs/kashmiri-saffron",
+    "to": "/herbs/saffron"
+  },
+  {
+    "from": "/herbs/globe-artichoke",
+    "to": "/herbs/artichoke"
+  },
+  {
+    "from": "/herbs/lemon-grass-whole",
+    "to": "/herbs/lemongrass"
+  },
+  {
+    "from": "/herbs/hwanggi-korean-astragalus",
+    "to": "/herbs/astragalus"
+  },
+  {
+    "from": "/herbs/coffea-excelsa",
+    "to": "/herbs/coffea-liberica"
+  },
+  {
+    "from": "/herbs/anatolian-fenugreek",
+    "to": "/herbs/fenugreek"
+  },
+  {
+    "from": "/herbs/argan-nut",
+    "to": "/herbs/argan-tree"
+  },
+  {
+    "from": "/herbs/gan-jiang",
+    "to": "/herbs/ginger"
+  },
+  {
+    "from": "/herbs/hawthorn-korean",
+    "to": "/herbs/hawthorn-berry-chinese"
+  },
+  {
+    "from": "/herbs/indian-kalonji-seed",
+    "to": "/herbs/black-seed"
+  },
+  {
+    "from": "/herbs/kesar",
+    "to": "/herbs/saffron"
+  },
+  {
+    "from": "/herbs/libyan-thyme",
+    "to": "/herbs/lebanese-thyme"
+  },
+  {
+    "from": "/herbs/long-gu-nervine",
+    "to": "/herbs/long-gu-fossil"
+  },
+  {
+    "from": "/herbs/maca-yellow",
+    "to": "/herbs/maca"
+  },
+  {
+    "from": "/herbs/mu-li-nervine",
+    "to": "/herbs/mu-li"
+  },
+  {
+    "from": "/herbs/nigella-sativa-seed",
+    "to": "/herbs/black-seed"
+  },
+  {
+    "from": "/herbs/okinawan-turmeric",
+    "to": "/herbs/turmeric"
+  },
+  {
+    "from": "/herbs/persian-fenugreek",
+    "to": "/herbs/fenugreek"
+  },
+  {
+    "from": "/herbs/polish-calendula",
+    "to": "/herbs/calendula"
+  },
+  {
+    "from": "/herbs/pueraria-root",
+    "to": "/herbs/ge-gen-root"
+  },
+  {
+    "from": "/herbs/red-yeast-rice-cardiovasc",
+    "to": "/herbs/red-yeast-rice"
+  },
+  {
+    "from": "/herbs/reishi-spore",
+    "to": "/herbs/reishi"
+  },
+  {
+    "from": "/herbs/royal-sun-immune",
+    "to": "/herbs/agaricus-blazei"
+  },
+  {
+    "from": "/herbs/schisandra-black",
+    "to": "/herbs/schisandra"
+  },
+  {
+    "from": "/herbs/serbian-juniper",
+    "to": "/herbs/juniper-communis"
+  },
+  {
+    "from": "/herbs/serrapeptase-source",
+    "to": "/herbs/serrapeptase"
+  },
+  {
+    "from": "/herbs/sri-lankan-siddha-pepper",
+    "to": "/herbs/black-pepper"
+  },
+  {
+    "from": "/herbs/tibetan-valerian",
+    "to": "/herbs/valerian"
+  },
+  {
+    "from": "/herbs/tongan-turmeric",
+    "to": "/herbs/turmeric"
+  },
+  {
+    "from": "/herbs/tunisian-harmel",
+    "to": "/herbs/harmel"
+  },
+  {
+    "from": "/herbs/venezuelan-passionflower",
+    "to": "/herbs/passionflower"
+  },
+  {
+    "from": "/herbs/ahcc-source",
+    "to": "/herbs/shiitake"
+  },
+  {
+    "from": "/herbs/allium-sativum-hardneck",
+    "to": "/herbs/garlic"
+  },
+  {
+    "from": "/herbs/aloe-barbadensis",
+    "to": "/herbs/aloe-vera"
+  },
+  {
+    "from": "/herbs/amalaki-rasayana",
+    "to": "/herbs/phyllanthus-emblica"
+  },
+  {
+    "from": "/herbs/ashwagandha-ksm66",
+    "to": "/herbs/ashwagandha"
+  },
+  {
+    "from": "/herbs/bawang",
+    "to": "/herbs/garlic"
+  },
+  {
+    "from": "/herbs/black-maca",
+    "to": "/herbs/maca"
+  },
+  {
+    "from": "/herbs/centella-indian",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/centella-taiwan",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/cerasee",
+    "to": "/herbs/bitter-melon-metabolic"
+  },
+  {
+    "from": "/herbs/citrus-medica",
+    "to": "/herbs/fo-shou"
+  },
+  {
+    "from": "/herbs/dominican-cacao",
+    "to": "/herbs/cocoa-bean"
+  },
+  {
+    "from": "/herbs/harmal-persian",
+    "to": "/herbs/harmel"
+  },
+  {
+    "from": "/herbs/he-huan-hua",
+    "to": "/herbs/albizia"
+  },
+  {
+    "from": "/herbs/he-huan-hua-tcm",
+    "to": "/herbs/albizia"
+  },
+  {
+    "from": "/herbs/herba-centellae",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/huang-qi-bei",
+    "to": "/herbs/astragalus"
+  },
+  {
+    "from": "/herbs/jahe-merah",
+    "to": "/herbs/ginger"
+  },
+  {
+    "from": "/herbs/kaunch-beej",
+    "to": "/herbs/velvet-bean"
+  },
+  {
+    "from": "/herbs/lemon-balm-toronjil",
+    "to": "/herbs/lemon-balm"
+  },
+  {
+    "from": "/herbs/lemon-thyme",
+    "to": "/herbs/thymus-citriodorus"
+  },
+  {
+    "from": "/herbs/lu-rong",
+    "to": "/herbs/deer-antler-velvet-mens"
+  },
+  {
+    "from": "/herbs/mandukaparni",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/melao-sao-caetano",
+    "to": "/herbs/bitter-melon-metabolic"
+  },
+  {
+    "from": "/herbs/melissa-romana",
+    "to": "/herbs/lemon-balm"
+  },
+  {
+    "from": "/herbs/nattokinase-source",
+    "to": "/herbs/nattokinase-cardiovasc"
+  },
+  {
+    "from": "/herbs/nordic-yarrow",
+    "to": "/herbs/achillea-millefolium-var"
+  },
+  {
+    "from": "/herbs/norse-yarrow",
+    "to": "/herbs/achillea-millefolium-var"
+  },
+  {
+    "from": "/herbs/pegaga",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/peppermint-spanish",
+    "to": "/herbs/peppermint"
+  },
+  {
+    "from": "/herbs/phosphatidylserine-herb",
+    "to": "/herbs/phosphatidylserine-noot"
+  },
+  {
+    "from": "/herbs/propolis",
+    "to": "/herbs/propolis-antimicro"
+  },
+  {
+    "from": "/herbs/prunus-avium",
+    "to": "/herbs/cherry-stalk"
+  },
+  {
+    "from": "/herbs/qing-hao-aerial",
+    "to": "/herbs/sweet-annie"
+  },
+  {
+    "from": "/herbs/mastic-resin",
+    "to": "/herbs/chios-mastic-v2"
+  },
+  {
+    "from": "/herbs/romanian-wormwood",
+    "to": "/herbs/wormwood"
+  },
+  {
+    "from": "/herbs/rosmarinus-prostratus",
+    "to": "/herbs/rosemary"
+  },
+  {
+    "from": "/herbs/samento-amazonian",
+    "to": "/herbs/cats-claw"
+  },
+  {
+    "from": "/herbs/schizandra-berry",
+    "to": "/herbs/schisandra"
+  },
+  {
+    "from": "/herbs/shbbet-mriouh",
+    "to": "/herbs/fennel"
+  },
+  {
+    "from": "/herbs/snail-vine-skin",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/suan-zao-ren-seed",
+    "to": "/herbs/zizyphus-jujube-seed"
+  },
+  {
+    "from": "/herbs/tarragon",
+    "to": "/herbs/artemisia-dracunculus"
+  },
+  {
+    "from": "/herbs/tarragon-wild",
+    "to": "/herbs/artemisia-dracunculus"
+  },
+  {
+    "from": "/herbs/temu-putih",
+    "to": "/herbs/zedoary"
+  },
+  {
+    "from": "/herbs/turmeric-curcumin",
+    "to": "/herbs/turmeric"
+  },
+  {
+    "from": "/herbs/vietnamese-pennywort",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/wild-celery",
+    "to": "/herbs/apium-graveolens"
+  },
+  {
+    "from": "/herbs/xia-ku-cao",
+    "to": "/herbs/heal-all-spica"
+  },
+  {
+    "from": "/herbs/yasthimadhu",
+    "to": "/herbs/yashtimadhu"
+  },
+  {
+    "from": "/herbs/artichoke-liver",
+    "to": "/herbs/artichoke"
+  },
+  {
+    "from": "/herbs/gotu-kola-leaf",
+    "to": "/herbs/gotu-kola"
+  },
+  {
+    "from": "/herbs/couch-grass-root",
+    "to": "/herbs/couch-grass"
+  },
+  {
+    "from": "/herbs/rosemary-extract",
+    "to": "/herbs/rosemary"
+  },
+  {
+    "from": "/herbs/rauwolfia-cardio",
+    "to": "/herbs/rauwolfia-root"
+  }
 ]

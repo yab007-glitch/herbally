@@ -9,11 +9,26 @@
       "scientific_name_before": "Anthonota macrophylla",
       "scientific_name_after": "Anthonotha macrophylla",
       "dependent_updates": [
-        { "table": "herb_monographs", "column": "herb_slug" },
-        { "table": "herb_pubmed_monographs", "column": "slug" },
-        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
-        { "table": "garden_herbs", "column": "herb_slug" },
-        { "table": "herb_ratings", "column": "herb_slug" }
+        {
+          "table": "herb_monographs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_pubmed_monographs",
+          "column": "slug"
+        },
+        {
+          "table": "herb_regulatory_evidence",
+          "column": "herb_slug"
+        },
+        {
+          "table": "garden_herbs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_ratings",
+          "column": "herb_slug"
+        }
       ],
       "batch": 2,
       "decision": "staged"
@@ -25,11 +40,26 @@
       "scientific_name_before": "Xanthorrhiza simplicissima",
       "scientific_name_after": "Xanthorhiza simplicissima",
       "dependent_updates": [
-        { "table": "herb_monographs", "column": "herb_slug" },
-        { "table": "herb_pubmed_monographs", "column": "slug" },
-        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
-        { "table": "garden_herbs", "column": "herb_slug" },
-        { "table": "herb_ratings", "column": "herb_slug" }
+        {
+          "table": "herb_monographs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_pubmed_monographs",
+          "column": "slug"
+        },
+        {
+          "table": "herb_regulatory_evidence",
+          "column": "herb_slug"
+        },
+        {
+          "table": "garden_herbs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_ratings",
+          "column": "herb_slug"
+        }
       ],
       "batch": 2,
       "decision": "staged"
@@ -41,11 +71,26 @@
       "scientific_name_before": "Hypsizygus tessellatus",
       "scientific_name_after": "Hypsizygus tesselatus",
       "dependent_updates": [
-        { "table": "herb_monographs", "column": "herb_slug" },
-        { "table": "herb_pubmed_monographs", "column": "slug" },
-        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
-        { "table": "garden_herbs", "column": "herb_slug" },
-        { "table": "herb_ratings", "column": "herb_slug" }
+        {
+          "table": "herb_monographs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_pubmed_monographs",
+          "column": "slug"
+        },
+        {
+          "table": "herb_regulatory_evidence",
+          "column": "herb_slug"
+        },
+        {
+          "table": "garden_herbs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_ratings",
+          "column": "herb_slug"
+        }
       ],
       "batch": 1,
       "decision": "staged"
@@ -57,11 +102,26 @@
       "scientific_name_before": "Notopterygium incisium",
       "scientific_name_after": "Notopterygium incisum",
       "dependent_updates": [
-        { "table": "herb_monographs", "column": "herb_slug" },
-        { "table": "herb_pubmed_monographs", "column": "slug" },
-        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
-        { "table": "garden_herbs", "column": "herb_slug" },
-        { "table": "herb_ratings", "column": "herb_slug" }
+        {
+          "table": "herb_monographs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_pubmed_monographs",
+          "column": "slug"
+        },
+        {
+          "table": "herb_regulatory_evidence",
+          "column": "herb_slug"
+        },
+        {
+          "table": "garden_herbs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_ratings",
+          "column": "herb_slug"
+        }
       ],
       "batch": 1,
       "decision": "staged"
@@ -73,29 +133,28 @@
       "scientific_name_before": "Cinnamomum burmannii",
       "scientific_name_after": "Cinnamomum burmanni",
       "dependent_updates": [
-        { "table": "herb_monographs", "column": "herb_slug" },
-        { "table": "herb_pubmed_monographs", "column": "slug" },
-        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
-        { "table": "garden_herbs", "column": "herb_slug" },
-        { "table": "herb_ratings", "column": "herb_slug" }
+        {
+          "table": "herb_monographs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_pubmed_monographs",
+          "column": "slug"
+        },
+        {
+          "table": "herb_regulatory_evidence",
+          "column": "herb_slug"
+        },
+        {
+          "table": "garden_herbs",
+          "column": "herb_slug"
+        },
+        {
+          "table": "herb_ratings",
+          "column": "herb_slug"
+        }
       ],
       "batch": 1,
-      "decision": "staged"
-    },
-    {
-      "from": "/herbs/rauwolfia-cardio",
-      "to": "/herbs/rauvolfia-cardio",
-      "reason": "The old slug token rauwolfia is a misspelling of the corrected binomial Rauvolfia serpentina; the destination slug had zero rows in herbs when checked on 2026-11-03.",
-      "scientific_name_before": "Rauwolfia serpentina",
-      "scientific_name_after": "Rauvolfia serpentina",
-      "dependent_updates": [
-        { "table": "herb_monographs", "column": "herb_slug" },
-        { "table": "herb_pubmed_monographs", "column": "slug" },
-        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
-        { "table": "garden_herbs", "column": "herb_slug" },
-        { "table": "herb_ratings", "column": "herb_slug" }
-      ],
-      "batch": 2,
       "decision": "staged"
     }
   ]

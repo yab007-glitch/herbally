@@ -1,470 +1,470 @@
 {
- "_comment": "Reviewed duplicate merges. Every entry was checked against both records' content before being added: same species, same plant part or preparation, and no unique clinical claim that would be lost. `carry_note` is a sentence from the duplicate that the canonical record was missing.",
- "merges": [
-  {
-   "from": "ladies-bedstraw",
-   "to": "ladys-bedstraw",
-   "carry_note": ""
-  },
-  {
-   "from": "maca-red",
-   "to": "red-maca",
-   "carry_note": "The red ecotype is also the one studied for prostate health and bone density in male populations."
-  },
-  {
-   "from": "licorice-dgl-digestive",
-   "to": "licorice-dgl",
-   "carry_note": ""
-  },
-  {
-   "from": "long-yan-rou-fruit",
-   "to": "longan-fruit",
-   "carry_note": ""
-  },
-  {
-   "from": "afghan-ashwagandha",
-   "to": "ashwagandha",
-   "carry_note": "Withania somnifera var. afghana grows wild in Afghanistan and Pakistan and is used in Unani medicine as a rejuvenating adaptogen."
-  },
-  {
-   "from": "andhra-ashwagandha-root",
-   "to": "ashwagandha",
-   "carry_note": ""
-  },
-  {
-   "from": "czech-valerian",
-   "to": "valerian",
-   "carry_note": "Valeriana officinalis var. bohemica is the Central European variety used in Czech and Slovak folk medicine for sleep, anxiety and nervous conditions."
-  },
-  {
-   "from": "kashmiri-saffron",
-   "to": "saffron",
-   "carry_note": "The Kashmiri variety (Crocus sativus var. cashmirianus) grown around Pampore is used in Unani medicine for mood, cognition and inflammatory conditions."
-  },
-  {
-   "from": "globe-artichoke",
-   "to": "artichoke",
-   "carry_note": "Cynarin and luteolin in the leaf extract stimulate bile production, which is the mechanism behind its choleretic use."
-  },
-  {
-   "from": "lemon-grass-whole",
-   "to": "lemongrass",
-   "carry_note": "The whole plant, stalk and leaf, is used in Thai, Malaysian and Caribbean medicine for fever, digestion and antimicrobial purposes."
-  },
-  {
-   "from": "hwanggi-korean-astragalus",
-   "to": "astragalus",
-   "carry_note": "Astragalus membranaceus var. koreanus is the Korean variety used in Hanbang medicine as a qi and immune tonic."
-  },
-  {
-   "from": "coffea-excelsa",
-   "to": "coffea-liberica",
-   "carry_note": "Coffea liberica var. dewevrei is the rarer Excelsa variety, with a distinct flavour and the same caffeine and antioxidant profile."
-  },
-  {
-   "from": "anatolian-fenugreek",
-   "to": "fenugreek",
-   "carry_note": "Fenugreek widely cultivated in Turkey used in Ottoman medicine for digestive, metabolic, and hormonal conditions."
-  },
-  {
-   "from": "argan-nut",
-   "to": "argan-tree",
-   "carry_note": ""
-  },
-  {
-   "from": "gan-jiang",
-   "to": "ginger",
-   "carry_note": "Dried form of ginger used in TCM \u2014 more warming and less dispersing than fresh ginger (Sheng Jiang); specifically for cold in the middle burner."
-  },
-  {
-   "from": "hawthorn-korean",
-   "to": "hawthorn-berry-chinese",
-   "carry_note": "Larger-fruited Korean variety of Chinese hawthorn cultivated and used medicinally in Korean Hanbang medicine for digestion and cardiovascular health."
-  },
-  {
-   "from": "indian-kalonji-seed",
-   "to": "black-seed",
-   "carry_note": "Black seed widely used in Indian Unani and folk medicine as immune tonic, respiratory herb, and metabolic support."
-  },
-  {
-   "from": "kesar",
-   "to": "saffron",
-   "carry_note": "Premium Kashmiri-grown saffron used in Ayurveda for skin, mood, and reproductive health."
-  },
-  {
-   "from": "libyan-thyme",
-   "to": "lebanese-thyme",
-   "carry_note": "Pungent thyme variety from North African coastal areas used in Libyan folk medicine for respiratory and digestive conditions."
-  },
-  {
-   "from": "long-gu-nervine",
-   "to": "long-gu-fossil",
-   "carry_note": ""
-  },
-  {
-   "from": "maca-yellow",
-   "to": "maca",
-   "carry_note": "Most common and widely studied maca variety, used for energy and general hormonal balance."
-  },
-  {
-   "from": "mu-li-nervine",
-   "to": "mu-li",
-   "carry_note": ""
-  },
-  {
-   "from": "nigella-sativa-seed",
-   "to": "black-seed",
-   "carry_note": "Whole seed form of black seed used as a condiment and complete medicine in Prophetic and folk medicine."
-  },
-  {
-   "from": "okinawan-turmeric",
-   "to": "turmeric",
-   "carry_note": "Turmeric variety grown in Okinawa used in local folk medicine for liver support and longevity."
-  },
-  {
-   "from": "persian-fenugreek",
-   "to": "fenugreek",
-   "carry_note": "Persian variety of fenugreek central to Unani and Persian medicine for blood sugar, digestion, and male health."
-  },
-  {
-   "from": "polish-calendula",
-   "to": "calendula",
-   "carry_note": "Calendula variety cultivated in Poland used extensively in European folk medicine for skin, anti-inflammatory, and wound healing."
-  },
-  {
-   "from": "pueraria-root",
-   "to": "ge-gen-root",
-   "carry_note": "Major TCM herb that releases the muscle layer, raises yang and body fluids, treats fever and stiff neck, and reduces alcohol cravings. Now studied extensively for alcohol use disorder."
-  },
-  {
-   "from": "red-yeast-rice-cardiovasc",
-   "to": "red-yeast-rice",
-   "carry_note": ""
-  },
-  {
-   "from": "reishi-spore",
-   "to": "reishi",
-   "carry_note": "Cracked Reishi mushroom spores with highest concentration of ganoderic acids for potency."
-  },
-  {
-   "from": "royal-sun-immune",
-   "to": "agaricus-blazei",
-   "carry_note": ""
-  },
-  {
-   "from": "schisandra-black",
-   "to": "schisandra",
-   "carry_note": "Fresh or differently processed schisandra berries used in specific TCM preparations for different clinical applications."
-  },
-  {
-   "from": "serbian-juniper",
-   "to": "juniper-communis",
-   "carry_note": "Juniper widespread across Balkans and Southeastern Europe used for urinary, digestive, and antimicrobial conditions."
-  },
-  {
-   "from": "serrapeptase-source",
-   "to": "serrapeptase",
-   "carry_note": ""
-  },
-  {
-   "from": "sri-lankan-siddha-pepper",
-   "to": "black-pepper",
-   "carry_note": "Black pepper variety native to Sri Lanka used in Siddha medicine as a bioavailability enhancer and digestive tonic."
-  },
-  {
-   "from": "tibetan-valerian",
-   "to": "valerian",
-   "carry_note": "A calming sedative herb used in Tibetan medicine for sleep disorders and nervous conditions."
-  },
-  {
-   "from": "tongan-turmeric",
-   "to": "turmeric",
-   "carry_note": "Turmeric variety grown throughout Polynesia used in Tongan traditional medicine for anti-inflammatory and digestive conditions."
-  },
-  {
-   "from": "tunisian-harmel",
-   "to": "harmel",
-   "carry_note": ""
-  },
-  {
-   "from": "venezuelan-passionflower",
-   "to": "passionflower",
-   "carry_note": "Native passionflower from South American highlands used for anxiety, insomnia, and nervous conditions."
-  },
-  {
-   "from": "ahcc-source",
-   "to": "shiitake",
-   "carry_note": "Proprietary shiitake mycelium extract for NK cell activity and immune surveillance."
-  },
-  {
-   "from": "allium-sativum-hardneck",
-   "to": "garlic",
-   "carry_note": "Hardneck garlic varieties with higher allicin content and more complex flavor profiles than softneck garlic."
-  },
-  {
-   "from": "aloe-barbadensis",
-   "to": "aloe-vera",
-   "carry_note": "The inner leaf gel of this succulent is one of the most studied topical herbs globally; contains polysaccharides that soothe burns, sunburn, eczema, and accelerate wound healing."
-  },
-  {
-   "from": "amalaki-rasayana",
-   "to": "phyllanthus-emblica",
-   "carry_note": "Ayurvedic rejuvenation formulation of amalaki prepared with ghee and honey as a rasayana."
-  },
-  {
-   "from": "ashwagandha-ksm66",
-   "to": "ashwagandha",
-   "carry_note": "Withania somnifera (L.) Dunal, family Solanaceae, is a perennial shrub native to the Indian subcontinent and parts of Africa and the Mediterranean. KSM-66 is a standardized hydroethanolic root extract of the species, prepared to concentrate the withanolide class of steroidal lactones, the principal bioactive constituents. Additional constituent classes include withanolide glycosides, sitoindosides, steroidal saponins, phenolic compounds, and withanine-type alkaloids. Pharmacologically, Withania somnifera extracts have been characterized predominantly in preclinical models demonstrating antioxidant activity, modulation of hypothalamic-pituitary-adrenal axis markers, and neuroprotective effects; a peer-reviewed study (PMID 34765761) demonstrated neuroprotective activity in the SH-SY5Y Parkinson's disease cell model. A ninety-day repeated-dose toxicity study in Wistar rats (PMID 37711361) evaluated the safety profile of the root extract in an animal model. Clinical scope in humans, including effects on stress markers, thyroid function, and cognitive outcomes, has been investigated in trials reported in the primary literature; however, the citations supplied for this monograph are preclinical (in vitro) and animal toxicology studies, and do not themselves establish human clinical dosage, contraindications, or adverse effect profiles. Claims regarding human efficacy should therefore be evaluated against trial-level human sources rather than extrapolated from animal data."
-  },
-  {
-   "from": "bawang",
-   "to": "garlic",
-   "carry_note": "Filipino garlic variety with similar but distinct chemistry from Western garlic; officially approved by Philippine DOH for hypertension and hyperlipidemia."
-  },
-  {
-   "from": "black-maca",
-   "to": "maca",
-   "carry_note": "The black variant of maca specifically studied for spermatogenesis and memory."
-  },
-  {
-   "from": "centella-indian",
-   "to": "gotu-kola",
-   "carry_note": "Indian variety of gotu kola used in classical Ayurveda as Mandukparni for cognitive enhancement, wound healing, and as a Rasayana tonic."
-  },
-  {
-   "from": "centella-taiwan",
-   "to": "gotu-kola",
-   "carry_note": "Taiwanese variety of gotu kola used in Taiwanese folk medicine for liver conditions, skin diseases, and as cooling food medicine."
-  },
-  {
-   "from": "cerasee",
-   "to": "bitter-melon-metabolic",
-   "carry_note": "Caribbean wild bitter vine widely consumed as tea in Jamaica for blood cleansing and diabetes."
-  },
-  {
-   "from": "citrus-medica",
-   "to": "fo-shou",
-   "carry_note": "Ancient citrus species; peel used in Ayurveda for digestive complaints; Etrog used in Jewish Sukkot."
-  },
-  {
-   "from": "dominican-cacao",
-   "to": "cocoa-bean",
-   "carry_note": ""
-  },
-  {
-   "from": "harmal-persian",
-   "to": "harmel",
-   "carry_note": "Persian traditional medicine uses harmal seeds as a fumigant against evil eye; active MAO inhibitors; also used in Moroccan and Central Asian traditions."
-  },
-  {
-   "from": "he-huan-hua",
-   "to": "albizia",
-   "carry_note": "TCM calming flower that is gentler than the bark; used for sadness, depression, and insomnia with irritability."
-  },
-  {
-   "from": "he-huan-hua-tcm",
-   "to": "albizia",
-   "carry_note": "TCM flower that regulates qi and relieves constraint for depression."
-  },
-  {
-   "from": "herba-centellae",
-   "to": "gotu-kola",
-   "carry_note": "Topical application of Centella for wound healing, scar treatment, and skin repair; widely used in dermatology and Korean skincare."
-  },
-  {
-   "from": "huang-qi-bei",
-   "to": "astragalus",
-   "carry_note": "Mongolian variety of Astragalus used in TCM and Mongolian medicine; considered superior to the standard Astragalus with stronger adaptogenic and immune properties."
-  },
-  {
-   "from": "jahe-merah",
-   "to": "ginger",
-   "carry_note": "Red ginger variety with higher essential oil content than common ginger, used in Jamu for circulation and immunity."
-  },
-  {
-   "from": "kaunch-beej",
-   "to": "velvet-bean",
-   "carry_note": "Ayurvedic nerve and reproductive tonic from velvet bean seeds with highest natural L-DOPA."
-  },
-  {
-   "from": "lemon-balm-toronjil",
-   "to": "lemon-balm",
-   "carry_note": "Melissa officinalis (Lamiaceae) is an aromatic perennial herb; the tropical form described as 'Toronjil' is naturalized in Latin America, where it is botanically consistent with the species' essential-oil-bearing foliar chemistry. Primary bioactive constituent classes include a volatile oil dominated by monoterpene aldehydes (citral isomers, geranial/neral), monoterpene alcohols (geraniol), phenolic acids (notably rosmarinic acid), and flavonoids including luteolin and apigenin. Reported pharmacological actions in preclinical and human-experimental literature encompass central nervous system depressant (sedative/anxiolytic-type) effects, antispasmodic activity on smooth muscle, and in-vitro antiviral and antioxidant activity attributable largely to rosmarinic acid and citral fractions. A controlled human investigation referenced in the 3rd IPLeiria International Health Congress proceedings (PMID: 27409075) contributes to the limited clinical dataset on Melissa officinalis administration. Clinical scope remains concentrated on short-term use for mood-state parameters, stress modulation, and mild gastro-intestinal spasm; larger definitive trials are lacking. Traditional Latin American and Caribbean applications (anxiety, digestive complaints, fever) are documented ethnobotanically but do not constitute clinical evidence. Preparations typically exploit water-soluble phenolic and volatile components."
-  },
-  {
-   "from": "lemon-thyme",
-   "to": "thymus-citriodorus",
-   "carry_note": "Lemon thyme (Thymus x citriodorus) is a sterile hybrid of Thymus vulgaris and Thymus pulegioides within the Lamiaceae family, distinguished by a pronounced citrus aroma derived from elevated geraniol, citral, and limonene content relative to common thyme. Its essential oil contains phenolic monoterpenes, primarily thymol and carvacrol, alongside linalool and terpinene fractions; aromatic profiling of Italian ornamental thyme accessions (PMID 20334146) identifies these chemotype differences. In vitro research, including comparative evaluation of essential oils against Cutibacterium acnes strains (PMID 39603568), supports antimicrobial activity of thyme-derived oils, though results derive from laboratory assays rather than human intervention trials. Traditional and culinary applications center on respiratory complaints, digestive discomfort, and aromatherapeutic use; these remain ethnobotanical in framing. No robust human clinical trials establish efficacy for respiratory, digestive, or anxiolytic indications in this hybrid specifically, and pharmacological data are largely extrapolated from Thymus vulgaris and generic thyme oil research. Clinical scope is therefore limited: thyme oils and extracts demonstrate antimicrobial and antispasmodic properties in preclinical models, but lemon thyme lacks hybrid-specific controlled human evidence."
-  },
-  {
-   "from": "lu-rong",
-   "to": "deer-antler-velvet-mens",
-   "carry_note": "Immature antler velvet from sika deer, one of the most prized tonics in TCM for replenishing essence and marrow, tonifying kidney yang, and strengthening bones and blood."
-  },
-  {
-   "from": "mandukaparni",
-   "to": "gotu-kola",
-   "carry_note": "Ayurvedic brain herb for meditation and spiritual clarity."
-  },
-  {
-   "from": "melao-sao-caetano",
-   "to": "bitter-melon-metabolic",
-   "carry_note": "Mel\u00e3o de S\u00e3o Caetano (Momordica charantia var. abbreviata Ser.) is a small-fruited wild variety of bitter melon in the Cucurbitaceae family, native to and naturalized in Brazil, where it grows as a climbing vine with lobed leaves and warty, ellipsoid fruit. Unlike cultivated bitter melon cultivars, this botanical variety has been characterized in comparative phytochemical and pharmacological studies. Its principal bioactive constituent classes include triterpene glycosides (charantin), cucurbitane-type triterpenoids (momordicins, cucurbitacins), an insulin-like polypeptide (polypeptide-p), pyrimidine nucleoside glycosides (vicine), and phenolic compounds contributing antioxidant capacity. Published in vitro research on the wild variety, including direct comparative investigations (PMID 31151277), documents antifungal, antimicrobial, and antioxidant activities in leaf-derived extracts, with antioxidant retention in juice affected by storage conditions (PMID 32784816). Broader research on Momordica charantia species complex has examined hypoglycemic effects in animal and limited human models. Clinical evidence for the var. abbreviata specifically remains preclinical and analytical; no clinical trials establish therapeutic efficacy or dosing for this botanical variety."
-  },
-  {
-   "from": "melissa-romana",
-   "to": "lemon-balm",
-   "carry_note": "Taller southern European lemon balm variety with higher rosmarinic acid content used in folk medicine for thyroid and nervous conditions."
-  },
-  {
-   "from": "nattokinase-source",
-   "to": "nattokinase-cardiovasc",
-   "carry_note": "Japanese fermented soybean enzyme for fibrinolytic and cardiovascular support."
-  },
-  {
-   "from": "nordic-yarrow",
-   "to": "achillea-millefolium-var",
-   "carry_note": "Northern European variety of yarrow used in Scandinavian folk medicine for fever, wound healing, and digestive conditions; slightly different chemistry from common yarrow."
-  },
-  {
-   "from": "norse-yarrow",
-   "to": "achillea-millefolium-var",
-   "carry_note": "Nordic variety of yarrow used by Vikings and Norse peoples as a wound herb, digestive bitter, and fever remedy."
-  },
-  {
-   "from": "pegaga",
-   "to": "gotu-kola",
-   "carry_note": "Malay traditional herb identical to Gotu Kola but used in distinct Malaysian Jamu preparations for cognitive support, wound healing, and leprosy treatment."
-  },
-  {
-   "from": "peppermint-spanish",
-   "to": "peppermint",
-   "carry_note": "Peppermint Spanish (Mentha x piperita var. citrata) is a citrus-scented infraspecific hybrid of the Mentha piperita complex, classified within the Lamiaceae family. Its essential oil profile differs markedly from classic peppermint: linalool and linalyl acetate dominate, with only trace menthol and the coumarin bergapten, yielding characterization closer to bergamot-mint than menthol-dominant chemotypes. Documented pharmacological activity of the volatile constituents includes in vitro antifungal effects, with linalool and linalyl acetate showing anti-inflammatory and anxiolytic-relevant activity in preclinical research. The verified primary literature for this variety concerns terpene production in Agrobacterium-transformed shoot cultures of M. citrata, confirming biosynthetic capacity for monoterpene accumulation. Clinically, the herb is positioned as a gentler aromatic carminative relative to standard peppermint, used predominantly at culinary and aromatherapy exposure levels; robust human clinical trials specific to this variety are lacking, and its therapeutic scope remains chiefly traditional and preclinical."
-  },
-  {
-   "from": "phosphatidylserine-herb",
-   "to": "phosphatidylserine-noot",
-   "carry_note": "Phospholipid isolated from soy or sunflower lecithin, essential for neuronal membrane function."
-  },
-  {
-   "from": "propolis",
-   "to": "propolis-antimicro",
-   "carry_note": "Resinous bee product with broad-spectrum antimicrobial and immunomodulatory properties."
-  },
-  {
-   "from": "prunus-avium",
-   "to": "cherry-stalk",
-   "carry_note": "European cherry tree; stalks (peduncles) used as diuretic; bark for cough; fruit highly nutritious."
-  },
-  {
-   "from": "qing-hao-aerial",
-   "to": "sweet-annie",
-   "carry_note": "The aerial herb form of artemisia annua used in TCM for cooling heat; separate from artemisinin extraction."
-  },
-  {
-   "from": "mastic-resin",
-   "to": "chios-mastic-v2",
-   "carry_note": "Aromatic resin from the island of Chios, Greece used since ancient Greek times for digestive complaints, oral hygiene, and peptic ulcers. Clinical evidence for H. pylori eradication."
-  },
-  {
-   "from": "romanian-wormwood",
-   "to": "wormwood",
-   "carry_note": "Artemisia absinthium var. pannonica is a Central European variant of wormwood (Asteraceae), a woody perennial bearing silvery-green, deeply dissected, finely pubescent leaves with a characteristically bitter taste. Taxonomically placed within the A. absinthium complex, the pannonica variety is documented in Romanian and Hungarian ethnobotanical practice. Its phytochemistry centers on sesquiterpene lactones (notably absinthin and artabsin, major bitter principles), a volatile oil fraction containing thujone isomers (alpha- and beta-thujone) alongside chamazulene derived from chamazulene carboxylic acid precursors, and phenolic compounds including flavonoids and phenolic acids. Pharmacologically, the sesquiterpene lactones account for pronounced bitter-stimulant activity on gustatory and gastric reflexes, while the essential oil has documented in vitro antimicrobial and antiparasitic activity; thujone acts as a CNS GABA-A receptor modulator with established neurotoxic potential at elevated or sustained intake. The sole verified primary-source citation is an ethnobotanical survey of K\u0131rklareli Province, Turkey (PMID 17257791), documenting medicinal plant use. Clinical scope is limited: no high-quality human clinical trials substantiating therapeutic efficacy were identified in the provided citations, and use should be framed as traditional practice pending controlled pharmacokinetic and efficacy data."
-  },
-  {
-   "from": "rosmarinus-prostratus",
-   "to": "rosemary",
-   "carry_note": "Low-spreading rosemary variety with identical medicinal properties to common rosemary used in Mediterranean folk medicine."
-  },
-  {
-   "from": "samento-amazonian",
-   "to": "cats-claw",
-   "carry_note": "Specialized pentacyclic-only cats claw extract for Lyme and immune conditions."
-  },
-  {
-   "from": "schizandra-berry",
-   "to": "schisandra",
-   "carry_note": "Schisandra chinensis (Schisandraceae) is a woody vine whose dried fruit, known as Wu Wei Zi in traditional Chinese medicine and Omija in Korea, is a pharmacopeial botanical. The fruit contains dibenzocyclooctadiene lignans as its principal bioactive class, including schisandrin (schizandrin), schisandrin B, schisandrin C, gomisin A, and deoxyschisandrin, alongside polysaccharides, organic acids, and volatile constituents. Documented pharmacological activities from in vitro, animal, and human research include hepatoprotective effects via modulation of hepatic drug-metabolizing enzymes and antioxidative mechanisms, adaptogenic properties examined in stress-response studies, and preliminary cognitive and anti-inflammatory effects. The lignan fraction, particularly schisandrin B, has been characterized for anti-inflammatory and cytoprotective signaling activity in preclinical models. Clinical investigation has focused on hepatic function markers, exercise endurance, and cognitive parameters, though the breadth of rigorous human trials remains limited relative to preclinical literature. Modern phytotherapeutic application centers on standardized lignan-standardized extracts used in hepatology-adjacent and adaptogenic formulations. The existing record's contraindication, adverse effect, and dosage entries are drawn from traditional and monograph conventions rather than the two verified primary-source citations supplied."
-  },
-  {
-   "from": "shbbet-mriouh",
-   "to": "fennel",
-   "carry_note": "Moroccan fennel variety used extensively in North African cooking and traditional medicine for digestive complaints, lactation, and as a carminative."
-  },
-  {
-   "from": "snail-vine-skin",
-   "to": "gotu-kola",
-   "carry_note": "Concentrated extract form of centella for K-beauty formulations."
-  },
-  {
-   "from": "suan-zao-ren-seed",
-   "to": "zizyphus-jujube-seed",
-   "carry_note": "TCM primary herb for insomnia from heart and liver blood deficiency; nourishes heart and calms spirit."
-  },
-  {
-   "from": "tarragon",
-   "to": "artemisia-dracunculus",
-   "carry_note": "Tarragon (Artemisia dracunculus L., Asteraceae) is a perennial herb in the Asteraceae (Compositae) family, closely related to mugwort and wormwood. Its chemical composition includes a volatile oil fraction characterized by methyl chavicole (estragole) as the predominant constituent, alongside coumarins, flavonoids (notably quercetin and luteolin derivatives), phenolic acids, and sesquiterpene lactones. Documented pharmacological activity derived primarily from in vitro, animal, and analytical studies includes antioxidant capacity attributable to polyphenolic content, hypoglycemic effects in animal models, antimicrobial activity of the essential oil, and modulation of osteoblast proliferation and mineralization demonstrated in a 2023 in vitro study (PMID 37686232). A critical review of the species (PMID 21942448) confirms extensive traditional use as a digestive aid and notes that human clinical evidence for most purported therapeutic applications remains limited or absent. Estragole content warrants attention due to its classified genotoxic carcinogenic potential in high-dose animal Studies, forming the basis of regulatory precaution regarding concentrated preparations. The clinical scope of tarragon is therefore principally as a culinary herb and traditional carminative, with pharmacological interest ongoing but translation to evidence-based human therapeutics not yet established."
-  },
-  {
-   "from": "tarragon-wild",
-   "to": "artemisia-dracunculus",
-   "carry_note": "Russian and Central Asian tarragon variety with stronger medicinal properties than French tarragon."
-  },
-  {
-   "from": "temu-putih",
-   "to": "zedoary",
-   "carry_note": "Indonesian and Thai traditional herb from zedoary family used in Jamu formulations for immunity."
-  },
-  {
-   "from": "turmeric-curcumin",
-   "to": "turmeric",
-   "carry_note": "Curcuma longa (Zingiberaceae), turmeric, is a rhizomatous perennial whose curcuminoid-rich extracts constitute the commercial entity known as turmeric curcumin. Standardized extracts concentrate curcuminoids\u2014curcumin, demethoxycurcumin, bisdemethoxycurcumin\u2014to levels far exceeding the 3\u20135% content of the dried rhizome. Curcumin exhibits documented anti-inflammatory, antioxidant, and anti-amyloid activities in preclinical models, with proposed mechanisms including modulation of NF-\u03baB, COX-2, and cytokine signaling. Because unconjugated curcumin has low oral bioavailability, commercial preparations employ phospholipid complexation, nanoparticle carriers, or co-administration with piperine. Clinical evaluation is most substantiated in osteoarthritis: two systematic reviews and meta-analyses of randomized controlled trials (PMID 35935936; PMID 34017975) report evidence for symptomatic benefit in knee and other osteoarthritis populations, with efficacy comparable to nonsteroidal anti-inflammatory drugs in some trials. The metabolic fate of curcumin is complex, with extensive glucuronidation and reduction; circulating parent compound concentrations remain low without absorption-enhancing formulations. Clinical scope is accordingly narrow: analgesic and functional benefit in osteoarthritis is the best-supported indication, whereas neuroprotective and broad systemic anti-inflammatory claims lack comparable human trial support. This monograph addresses the standardized extract product, distinct from culinary turmeric powder or whole-rhizome preparations."
-  },
-  {
-   "from": "vietnamese-pennywort",
-   "to": "gotu-kola",
-   "carry_note": "Vietnamese variety of gotu kola used as a vegetable and medicine for skin, cognitive, and wound healing."
-  },
-  {
-   "from": "wild-celery",
-   "to": "apium-graveolens",
-   "carry_note": "European wild celery used for gout, joint pain, and urinary disorders."
-  },
-  {
-   "from": "xia-ku-cao",
-   "to": "heal-all-spica",
-   "carry_note": "The dried flower spikes of self-heal used in TCM to clear liver fire and dissipate phlegm nodules \u2014 important for thyroid and lymph node conditions."
-  },
-  {
-   "from": "yasthimadhu",
-   "to": "yashtimadhu",
-   "carry_note": "Ayurvedic name for licorice root, used extensively as a rasayana herb for respiratory and digestive health."
-  },
-  {
-   "from": "artichoke-liver",
-   "to": "artichoke",
-   "carry_note": ""
-  },
-  {
-   "from": "gotu-kola-leaf",
-   "to": "gotu-kola",
-   "carry_note": ""
-  },
-  {
-   "from": "couch-grass-root",
-   "to": "couch-grass",
-   "carry_note": ""
-  },
-  {
-   "from": "rosemary-extract",
-   "to": "rosemary",
-   "carry_note": ""
-  },
-  {
-   "from": "rauwolfia-cardio",
-   "to": "rauwolfia-root",
-   "carry_note": ""
-  }
- ]
+  "_comment": "Reviewed duplicate merges. Every entry was checked against both records' content before being added: same species, same plant part or preparation, and no unique clinical claim that would be lost. `carry_note` is a sentence from the duplicate that the canonical record was missing.",
+  "merges": [
+    {
+      "from": "ladies-bedstraw",
+      "to": "ladys-bedstraw",
+      "carry_note": ""
+    },
+    {
+      "from": "maca-red",
+      "to": "red-maca",
+      "carry_note": "The red ecotype is also the one studied for prostate health and bone density in male populations."
+    },
+    {
+      "from": "licorice-dgl-digestive",
+      "to": "licorice-dgl",
+      "carry_note": ""
+    },
+    {
+      "from": "long-yan-rou-fruit",
+      "to": "longan-fruit",
+      "carry_note": ""
+    },
+    {
+      "from": "afghan-ashwagandha",
+      "to": "ashwagandha",
+      "carry_note": "Withania somnifera var. afghana grows wild in Afghanistan and Pakistan and is used in Unani medicine as a rejuvenating adaptogen."
+    },
+    {
+      "from": "andhra-ashwagandha-root",
+      "to": "ashwagandha",
+      "carry_note": ""
+    },
+    {
+      "from": "czech-valerian",
+      "to": "valerian",
+      "carry_note": "Valeriana officinalis var. bohemica is the Central European variety used in Czech and Slovak folk medicine for sleep, anxiety and nervous conditions."
+    },
+    {
+      "from": "kashmiri-saffron",
+      "to": "saffron",
+      "carry_note": "The Kashmiri variety (Crocus sativus var. cashmirianus) grown around Pampore is used in Unani medicine for mood, cognition and inflammatory conditions."
+    },
+    {
+      "from": "globe-artichoke",
+      "to": "artichoke",
+      "carry_note": "Cynarin and luteolin in the leaf extract stimulate bile production, which is the mechanism behind its choleretic use."
+    },
+    {
+      "from": "lemon-grass-whole",
+      "to": "lemongrass",
+      "carry_note": "The whole plant, stalk and leaf, is used in Thai, Malaysian and Caribbean medicine for fever, digestion and antimicrobial purposes."
+    },
+    {
+      "from": "hwanggi-korean-astragalus",
+      "to": "astragalus",
+      "carry_note": "Astragalus membranaceus var. koreanus is the Korean variety used in Hanbang medicine as a qi and immune tonic."
+    },
+    {
+      "from": "coffea-excelsa",
+      "to": "coffea-liberica",
+      "carry_note": "Coffea liberica var. dewevrei is the rarer Excelsa variety, with a distinct flavour and the same caffeine and antioxidant profile."
+    },
+    {
+      "from": "anatolian-fenugreek",
+      "to": "fenugreek",
+      "carry_note": "Fenugreek widely cultivated in Turkey used in Ottoman medicine for digestive, metabolic, and hormonal conditions."
+    },
+    {
+      "from": "argan-nut",
+      "to": "argan-tree",
+      "carry_note": ""
+    },
+    {
+      "from": "gan-jiang",
+      "to": "ginger",
+      "carry_note": "Dried form of ginger used in TCM \u2014 more warming and less dispersing than fresh ginger (Sheng Jiang); specifically for cold in the middle burner."
+    },
+    {
+      "from": "hawthorn-korean",
+      "to": "hawthorn-berry-chinese",
+      "carry_note": "Larger-fruited Korean variety of Chinese hawthorn cultivated and used medicinally in Korean Hanbang medicine for digestion and cardiovascular health."
+    },
+    {
+      "from": "indian-kalonji-seed",
+      "to": "black-seed",
+      "carry_note": "Black seed widely used in Indian Unani and folk medicine as immune tonic, respiratory herb, and metabolic support."
+    },
+    {
+      "from": "kesar",
+      "to": "saffron",
+      "carry_note": "Premium Kashmiri-grown saffron used in Ayurveda for skin, mood, and reproductive health."
+    },
+    {
+      "from": "libyan-thyme",
+      "to": "lebanese-thyme",
+      "carry_note": "Pungent thyme variety from North African coastal areas used in Libyan folk medicine for respiratory and digestive conditions."
+    },
+    {
+      "from": "long-gu-nervine",
+      "to": "long-gu-fossil",
+      "carry_note": ""
+    },
+    {
+      "from": "maca-yellow",
+      "to": "maca",
+      "carry_note": "Most common and widely studied maca variety, used for energy and general hormonal balance."
+    },
+    {
+      "from": "mu-li-nervine",
+      "to": "mu-li",
+      "carry_note": ""
+    },
+    {
+      "from": "nigella-sativa-seed",
+      "to": "black-seed",
+      "carry_note": "Whole seed form of black seed used as a condiment and complete medicine in Prophetic and folk medicine."
+    },
+    {
+      "from": "okinawan-turmeric",
+      "to": "turmeric",
+      "carry_note": "Turmeric variety grown in Okinawa used in local folk medicine for liver support and longevity."
+    },
+    {
+      "from": "persian-fenugreek",
+      "to": "fenugreek",
+      "carry_note": "Persian variety of fenugreek central to Unani and Persian medicine for blood sugar, digestion, and male health."
+    },
+    {
+      "from": "polish-calendula",
+      "to": "calendula",
+      "carry_note": "Calendula variety cultivated in Poland used extensively in European folk medicine for skin, anti-inflammatory, and wound healing."
+    },
+    {
+      "from": "pueraria-root",
+      "to": "ge-gen-root",
+      "carry_note": "Major TCM herb that releases the muscle layer, raises yang and body fluids, treats fever and stiff neck, and reduces alcohol cravings. Now studied extensively for alcohol use disorder."
+    },
+    {
+      "from": "red-yeast-rice-cardiovasc",
+      "to": "red-yeast-rice",
+      "carry_note": ""
+    },
+    {
+      "from": "reishi-spore",
+      "to": "reishi",
+      "carry_note": "Cracked Reishi mushroom spores with highest concentration of ganoderic acids for potency."
+    },
+    {
+      "from": "royal-sun-immune",
+      "to": "agaricus-blazei",
+      "carry_note": ""
+    },
+    {
+      "from": "schisandra-black",
+      "to": "schisandra",
+      "carry_note": "Fresh or differently processed schisandra berries used in specific TCM preparations for different clinical applications."
+    },
+    {
+      "from": "serbian-juniper",
+      "to": "juniper-communis",
+      "carry_note": "Juniper widespread across Balkans and Southeastern Europe used for urinary, digestive, and antimicrobial conditions."
+    },
+    {
+      "from": "serrapeptase-source",
+      "to": "serrapeptase",
+      "carry_note": ""
+    },
+    {
+      "from": "sri-lankan-siddha-pepper",
+      "to": "black-pepper",
+      "carry_note": "Black pepper variety native to Sri Lanka used in Siddha medicine as a bioavailability enhancer and digestive tonic."
+    },
+    {
+      "from": "tibetan-valerian",
+      "to": "valerian",
+      "carry_note": "A calming sedative herb used in Tibetan medicine for sleep disorders and nervous conditions."
+    },
+    {
+      "from": "tongan-turmeric",
+      "to": "turmeric",
+      "carry_note": "Turmeric variety grown throughout Polynesia used in Tongan traditional medicine for anti-inflammatory and digestive conditions."
+    },
+    {
+      "from": "tunisian-harmel",
+      "to": "harmel",
+      "carry_note": ""
+    },
+    {
+      "from": "venezuelan-passionflower",
+      "to": "passionflower",
+      "carry_note": "Native passionflower from South American highlands used for anxiety, insomnia, and nervous conditions."
+    },
+    {
+      "from": "ahcc-source",
+      "to": "shiitake",
+      "carry_note": "Proprietary shiitake mycelium extract for NK cell activity and immune surveillance."
+    },
+    {
+      "from": "allium-sativum-hardneck",
+      "to": "garlic",
+      "carry_note": "Hardneck garlic varieties with higher allicin content and more complex flavor profiles than softneck garlic."
+    },
+    {
+      "from": "aloe-barbadensis",
+      "to": "aloe-vera",
+      "carry_note": "The inner leaf gel of this succulent is one of the most studied topical herbs globally; contains polysaccharides that soothe burns, sunburn, eczema, and accelerate wound healing."
+    },
+    {
+      "from": "amalaki-rasayana",
+      "to": "phyllanthus-emblica",
+      "carry_note": "Ayurvedic rejuvenation formulation of amalaki prepared with ghee and honey as a rasayana."
+    },
+    {
+      "from": "ashwagandha-ksm66",
+      "to": "ashwagandha",
+      "carry_note": "Withania somnifera (L.) Dunal, family Solanaceae, is a perennial shrub native to the Indian subcontinent and parts of Africa and the Mediterranean. KSM-66 is a standardized hydroethanolic root extract of the species, prepared to concentrate the withanolide class of steroidal lactones, the principal bioactive constituents. Additional constituent classes include withanolide glycosides, sitoindosides, steroidal saponins, phenolic compounds, and withanine-type alkaloids. Pharmacologically, Withania somnifera extracts have been characterized predominantly in preclinical models demonstrating antioxidant activity, modulation of hypothalamic-pituitary-adrenal axis markers, and neuroprotective effects; a peer-reviewed study (PMID 34765761) demonstrated neuroprotective activity in the SH-SY5Y Parkinson's disease cell model. A ninety-day repeated-dose toxicity study in Wistar rats (PMID 37711361) evaluated the safety profile of the root extract in an animal model. Clinical scope in humans, including effects on stress markers, thyroid function, and cognitive outcomes, has been investigated in trials reported in the primary literature; however, the citations supplied for this monograph are preclinical (in vitro) and animal toxicology studies, and do not themselves establish human clinical dosage, contraindications, or adverse effect profiles. Claims regarding human efficacy should therefore be evaluated against trial-level human sources rather than extrapolated from animal data."
+    },
+    {
+      "from": "bawang",
+      "to": "garlic",
+      "carry_note": "Filipino garlic variety with similar but distinct chemistry from Western garlic; officially approved by Philippine DOH for hypertension and hyperlipidemia."
+    },
+    {
+      "from": "black-maca",
+      "to": "maca",
+      "carry_note": "The black variant of maca specifically studied for spermatogenesis and memory."
+    },
+    {
+      "from": "centella-indian",
+      "to": "gotu-kola",
+      "carry_note": "Indian variety of gotu kola used in classical Ayurveda as Mandukparni for cognitive enhancement, wound healing, and as a Rasayana tonic."
+    },
+    {
+      "from": "centella-taiwan",
+      "to": "gotu-kola",
+      "carry_note": "Taiwanese variety of gotu kola used in Taiwanese folk medicine for liver conditions, skin diseases, and as cooling food medicine."
+    },
+    {
+      "from": "cerasee",
+      "to": "bitter-melon-metabolic",
+      "carry_note": "Caribbean wild bitter vine widely consumed as tea in Jamaica for blood cleansing and diabetes."
+    },
+    {
+      "from": "citrus-medica",
+      "to": "fo-shou",
+      "carry_note": "Ancient citrus species; peel used in Ayurveda for digestive complaints; Etrog used in Jewish Sukkot."
+    },
+    {
+      "from": "dominican-cacao",
+      "to": "cocoa-bean",
+      "carry_note": ""
+    },
+    {
+      "from": "harmal-persian",
+      "to": "harmel",
+      "carry_note": "Persian traditional medicine uses harmal seeds as a fumigant against evil eye; active MAO inhibitors; also used in Moroccan and Central Asian traditions."
+    },
+    {
+      "from": "he-huan-hua",
+      "to": "albizia",
+      "carry_note": "TCM calming flower that is gentler than the bark; used for sadness, depression, and insomnia with irritability."
+    },
+    {
+      "from": "he-huan-hua-tcm",
+      "to": "albizia",
+      "carry_note": "TCM flower that regulates qi and relieves constraint for depression."
+    },
+    {
+      "from": "herba-centellae",
+      "to": "gotu-kola",
+      "carry_note": "Topical application of Centella for wound healing, scar treatment, and skin repair; widely used in dermatology and Korean skincare."
+    },
+    {
+      "from": "huang-qi-bei",
+      "to": "astragalus",
+      "carry_note": "Mongolian variety of Astragalus used in TCM and Mongolian medicine; considered superior to the standard Astragalus with stronger adaptogenic and immune properties."
+    },
+    {
+      "from": "jahe-merah",
+      "to": "ginger",
+      "carry_note": "Red ginger variety with higher essential oil content than common ginger, used in Jamu for circulation and immunity."
+    },
+    {
+      "from": "kaunch-beej",
+      "to": "velvet-bean",
+      "carry_note": "Ayurvedic nerve and reproductive tonic from velvet bean seeds with highest natural L-DOPA."
+    },
+    {
+      "from": "lemon-balm-toronjil",
+      "to": "lemon-balm",
+      "carry_note": "Melissa officinalis (Lamiaceae) is an aromatic perennial herb; the tropical form described as 'Toronjil' is naturalized in Latin America, where it is botanically consistent with the species' essential-oil-bearing foliar chemistry. Primary bioactive constituent classes include a volatile oil dominated by monoterpene aldehydes (citral isomers, geranial/neral), monoterpene alcohols (geraniol), phenolic acids (notably rosmarinic acid), and flavonoids including luteolin and apigenin. Reported pharmacological actions in preclinical and human-experimental literature encompass central nervous system depressant (sedative/anxiolytic-type) effects, antispasmodic activity on smooth muscle, and in-vitro antiviral and antioxidant activity attributable largely to rosmarinic acid and citral fractions. A controlled human investigation referenced in the 3rd IPLeiria International Health Congress proceedings (PMID: 27409075) contributes to the limited clinical dataset on Melissa officinalis administration. Clinical scope remains concentrated on short-term use for mood-state parameters, stress modulation, and mild gastro-intestinal spasm; larger definitive trials are lacking. Traditional Latin American and Caribbean applications (anxiety, digestive complaints, fever) are documented ethnobotanically but do not constitute clinical evidence. Preparations typically exploit water-soluble phenolic and volatile components."
+    },
+    {
+      "from": "lemon-thyme",
+      "to": "thymus-citriodorus",
+      "carry_note": "Lemon thyme (Thymus x citriodorus) is a sterile hybrid of Thymus vulgaris and Thymus pulegioides within the Lamiaceae family, distinguished by a pronounced citrus aroma derived from elevated geraniol, citral, and limonene content relative to common thyme. Its essential oil contains phenolic monoterpenes, primarily thymol and carvacrol, alongside linalool and terpinene fractions; aromatic profiling of Italian ornamental thyme accessions (PMID 20334146) identifies these chemotype differences. In vitro research, including comparative evaluation of essential oils against Cutibacterium acnes strains (PMID 39603568), supports antimicrobial activity of thyme-derived oils, though results derive from laboratory assays rather than human intervention trials. Traditional and culinary applications center on respiratory complaints, digestive discomfort, and aromatherapeutic use; these remain ethnobotanical in framing. No robust human clinical trials establish efficacy for respiratory, digestive, or anxiolytic indications in this hybrid specifically, and pharmacological data are largely extrapolated from Thymus vulgaris and generic thyme oil research. Clinical scope is therefore limited: thyme oils and extracts demonstrate antimicrobial and antispasmodic properties in preclinical models, but lemon thyme lacks hybrid-specific controlled human evidence."
+    },
+    {
+      "from": "lu-rong",
+      "to": "deer-antler-velvet-mens",
+      "carry_note": "Immature antler velvet from sika deer, one of the most prized tonics in TCM for replenishing essence and marrow, tonifying kidney yang, and strengthening bones and blood."
+    },
+    {
+      "from": "mandukaparni",
+      "to": "gotu-kola",
+      "carry_note": "Ayurvedic brain herb for meditation and spiritual clarity."
+    },
+    {
+      "from": "melao-sao-caetano",
+      "to": "bitter-melon-metabolic",
+      "carry_note": "Mel\u00e3o de S\u00e3o Caetano (Momordica charantia var. abbreviata Ser.) is a small-fruited wild variety of bitter melon in the Cucurbitaceae family, native to and naturalized in Brazil, where it grows as a climbing vine with lobed leaves and warty, ellipsoid fruit. Unlike cultivated bitter melon cultivars, this botanical variety has been characterized in comparative phytochemical and pharmacological studies. Its principal bioactive constituent classes include triterpene glycosides (charantin), cucurbitane-type triterpenoids (momordicins, cucurbitacins), an insulin-like polypeptide (polypeptide-p), pyrimidine nucleoside glycosides (vicine), and phenolic compounds contributing antioxidant capacity. Published in vitro research on the wild variety, including direct comparative investigations (PMID 31151277), documents antifungal, antimicrobial, and antioxidant activities in leaf-derived extracts, with antioxidant retention in juice affected by storage conditions (PMID 32784816). Broader research on Momordica charantia species complex has examined hypoglycemic effects in animal and limited human models. Clinical evidence for the var. abbreviata specifically remains preclinical and analytical; no clinical trials establish therapeutic efficacy or dosing for this botanical variety."
+    },
+    {
+      "from": "melissa-romana",
+      "to": "lemon-balm",
+      "carry_note": "Taller southern European lemon balm variety with higher rosmarinic acid content used in folk medicine for thyroid and nervous conditions."
+    },
+    {
+      "from": "nattokinase-source",
+      "to": "nattokinase-cardiovasc",
+      "carry_note": "Japanese fermented soybean enzyme for fibrinolytic and cardiovascular support."
+    },
+    {
+      "from": "nordic-yarrow",
+      "to": "achillea-millefolium-var",
+      "carry_note": "Northern European variety of yarrow used in Scandinavian folk medicine for fever, wound healing, and digestive conditions; slightly different chemistry from common yarrow."
+    },
+    {
+      "from": "norse-yarrow",
+      "to": "achillea-millefolium-var",
+      "carry_note": "Nordic variety of yarrow used by Vikings and Norse peoples as a wound herb, digestive bitter, and fever remedy."
+    },
+    {
+      "from": "pegaga",
+      "to": "gotu-kola",
+      "carry_note": "Malay traditional herb identical to Gotu Kola but used in distinct Malaysian Jamu preparations for cognitive support, wound healing, and leprosy treatment."
+    },
+    {
+      "from": "peppermint-spanish",
+      "to": "peppermint",
+      "carry_note": "Peppermint Spanish (Mentha x piperita var. citrata) is a citrus-scented infraspecific hybrid of the Mentha piperita complex, classified within the Lamiaceae family. Its essential oil profile differs markedly from classic peppermint: linalool and linalyl acetate dominate, with only trace menthol and the coumarin bergapten, yielding characterization closer to bergamot-mint than menthol-dominant chemotypes. Documented pharmacological activity of the volatile constituents includes in vitro antifungal effects, with linalool and linalyl acetate showing anti-inflammatory and anxiolytic-relevant activity in preclinical research. The verified primary literature for this variety concerns terpene production in Agrobacterium-transformed shoot cultures of M. citrata, confirming biosynthetic capacity for monoterpene accumulation. Clinically, the herb is positioned as a gentler aromatic carminative relative to standard peppermint, used predominantly at culinary and aromatherapy exposure levels; robust human clinical trials specific to this variety are lacking, and its therapeutic scope remains chiefly traditional and preclinical."
+    },
+    {
+      "from": "phosphatidylserine-herb",
+      "to": "phosphatidylserine-noot",
+      "carry_note": "Phospholipid isolated from soy or sunflower lecithin, essential for neuronal membrane function."
+    },
+    {
+      "from": "propolis",
+      "to": "propolis-antimicro",
+      "carry_note": "Resinous bee product with broad-spectrum antimicrobial and immunomodulatory properties."
+    },
+    {
+      "from": "prunus-avium",
+      "to": "cherry-stalk",
+      "carry_note": "European cherry tree; stalks (peduncles) used as diuretic; bark for cough; fruit highly nutritious."
+    },
+    {
+      "from": "qing-hao-aerial",
+      "to": "sweet-annie",
+      "carry_note": "The aerial herb form of artemisia annua used in TCM for cooling heat; separate from artemisinin extraction."
+    },
+    {
+      "from": "mastic-resin",
+      "to": "chios-mastic-v2",
+      "carry_note": "Aromatic resin from the island of Chios, Greece used since ancient Greek times for digestive complaints, oral hygiene, and peptic ulcers. Clinical evidence for H. pylori eradication."
+    },
+    {
+      "from": "romanian-wormwood",
+      "to": "wormwood",
+      "carry_note": "Artemisia absinthium var. pannonica is a Central European variant of wormwood (Asteraceae), a woody perennial bearing silvery-green, deeply dissected, finely pubescent leaves with a characteristically bitter taste. Taxonomically placed within the A. absinthium complex, the pannonica variety is documented in Romanian and Hungarian ethnobotanical practice. Its phytochemistry centers on sesquiterpene lactones (notably absinthin and artabsin, major bitter principles), a volatile oil fraction containing thujone isomers (alpha- and beta-thujone) alongside chamazulene derived from chamazulene carboxylic acid precursors, and phenolic compounds including flavonoids and phenolic acids. Pharmacologically, the sesquiterpene lactones account for pronounced bitter-stimulant activity on gustatory and gastric reflexes, while the essential oil has documented in vitro antimicrobial and antiparasitic activity; thujone acts as a CNS GABA-A receptor modulator with established neurotoxic potential at elevated or sustained intake. The sole verified primary-source citation is an ethnobotanical survey of K\u0131rklareli Province, Turkey (PMID 17257791), documenting medicinal plant use. Clinical scope is limited: no high-quality human clinical trials substantiating therapeutic efficacy were identified in the provided citations, and use should be framed as traditional practice pending controlled pharmacokinetic and efficacy data."
+    },
+    {
+      "from": "rosmarinus-prostratus",
+      "to": "rosemary",
+      "carry_note": "Low-spreading rosemary variety with identical medicinal properties to common rosemary used in Mediterranean folk medicine."
+    },
+    {
+      "from": "samento-amazonian",
+      "to": "cats-claw",
+      "carry_note": "Specialized pentacyclic-only cats claw extract for Lyme and immune conditions."
+    },
+    {
+      "from": "schizandra-berry",
+      "to": "schisandra",
+      "carry_note": "Schisandra chinensis (Schisandraceae) is a woody vine whose dried fruit, known as Wu Wei Zi in traditional Chinese medicine and Omija in Korea, is a pharmacopeial botanical. The fruit contains dibenzocyclooctadiene lignans as its principal bioactive class, including schisandrin (schizandrin), schisandrin B, schisandrin C, gomisin A, and deoxyschisandrin, alongside polysaccharides, organic acids, and volatile constituents. Documented pharmacological activities from in vitro, animal, and human research include hepatoprotective effects via modulation of hepatic drug-metabolizing enzymes and antioxidative mechanisms, adaptogenic properties examined in stress-response studies, and preliminary cognitive and anti-inflammatory effects. The lignan fraction, particularly schisandrin B, has been characterized for anti-inflammatory and cytoprotective signaling activity in preclinical models. Clinical investigation has focused on hepatic function markers, exercise endurance, and cognitive parameters, though the breadth of rigorous human trials remains limited relative to preclinical literature. Modern phytotherapeutic application centers on standardized lignan-standardized extracts used in hepatology-adjacent and adaptogenic formulations. The existing record's contraindication, adverse effect, and dosage entries are drawn from traditional and monograph conventions rather than the two verified primary-source citations supplied."
+    },
+    {
+      "from": "shbbet-mriouh",
+      "to": "fennel",
+      "carry_note": "Moroccan fennel variety used extensively in North African cooking and traditional medicine for digestive complaints, lactation, and as a carminative."
+    },
+    {
+      "from": "snail-vine-skin",
+      "to": "gotu-kola",
+      "carry_note": "Concentrated extract form of centella for K-beauty formulations."
+    },
+    {
+      "from": "suan-zao-ren-seed",
+      "to": "zizyphus-jujube-seed",
+      "carry_note": "TCM primary herb for insomnia from heart and liver blood deficiency; nourishes heart and calms spirit."
+    },
+    {
+      "from": "tarragon",
+      "to": "artemisia-dracunculus",
+      "carry_note": "Tarragon (Artemisia dracunculus L., Asteraceae) is a perennial herb in the Asteraceae (Compositae) family, closely related to mugwort and wormwood. Its chemical composition includes a volatile oil fraction characterized by methyl chavicole (estragole) as the predominant constituent, alongside coumarins, flavonoids (notably quercetin and luteolin derivatives), phenolic acids, and sesquiterpene lactones. Documented pharmacological activity derived primarily from in vitro, animal, and analytical studies includes antioxidant capacity attributable to polyphenolic content, hypoglycemic effects in animal models, antimicrobial activity of the essential oil, and modulation of osteoblast proliferation and mineralization demonstrated in a 2023 in vitro study (PMID 37686232). A critical review of the species (PMID 21942448) confirms extensive traditional use as a digestive aid and notes that human clinical evidence for most purported therapeutic applications remains limited or absent. Estragole content warrants attention due to its classified genotoxic carcinogenic potential in high-dose animal Studies, forming the basis of regulatory precaution regarding concentrated preparations. The clinical scope of tarragon is therefore principally as a culinary herb and traditional carminative, with pharmacological interest ongoing but translation to evidence-based human therapeutics not yet established."
+    },
+    {
+      "from": "tarragon-wild",
+      "to": "artemisia-dracunculus",
+      "carry_note": "Russian and Central Asian tarragon variety with stronger medicinal properties than French tarragon."
+    },
+    {
+      "from": "temu-putih",
+      "to": "zedoary",
+      "carry_note": "Indonesian and Thai traditional herb from zedoary family used in Jamu formulations for immunity."
+    },
+    {
+      "from": "turmeric-curcumin",
+      "to": "turmeric",
+      "carry_note": "Curcuma longa (Zingiberaceae), turmeric, is a rhizomatous perennial whose curcuminoid-rich extracts constitute the commercial entity known as turmeric curcumin. Standardized extracts concentrate curcuminoids\u2014curcumin, demethoxycurcumin, bisdemethoxycurcumin\u2014to levels far exceeding the 3\u20135% content of the dried rhizome. Curcumin exhibits documented anti-inflammatory, antioxidant, and anti-amyloid activities in preclinical models, with proposed mechanisms including modulation of NF-\u03baB, COX-2, and cytokine signaling. Because unconjugated curcumin has low oral bioavailability, commercial preparations employ phospholipid complexation, nanoparticle carriers, or co-administration with piperine. Clinical evaluation is most substantiated in osteoarthritis: two systematic reviews and meta-analyses of randomized controlled trials (PMID 35935936; PMID 34017975) report evidence for symptomatic benefit in knee and other osteoarthritis populations, with efficacy comparable to nonsteroidal anti-inflammatory drugs in some trials. The metabolic fate of curcumin is complex, with extensive glucuronidation and reduction; circulating parent compound concentrations remain low without absorption-enhancing formulations. Clinical scope is accordingly narrow: analgesic and functional benefit in osteoarthritis is the best-supported indication, whereas neuroprotective and broad systemic anti-inflammatory claims lack comparable human trial support. This monograph addresses the standardized extract product, distinct from culinary turmeric powder or whole-rhizome preparations."
+    },
+    {
+      "from": "vietnamese-pennywort",
+      "to": "gotu-kola",
+      "carry_note": "Vietnamese variety of gotu kola used as a vegetable and medicine for skin, cognitive, and wound healing."
+    },
+    {
+      "from": "wild-celery",
+      "to": "apium-graveolens",
+      "carry_note": "European wild celery used for gout, joint pain, and urinary disorders."
+    },
+    {
+      "from": "xia-ku-cao",
+      "to": "heal-all-spica",
+      "carry_note": "The dried flower spikes of self-heal used in TCM to clear liver fire and dissipate phlegm nodules \u2014 important for thyroid and lymph node conditions."
+    },
+    {
+      "from": "yasthimadhu",
+      "to": "yashtimadhu",
+      "carry_note": "Ayurvedic name for licorice root, used extensively as a rasayana herb for respiratory and digestive health."
+    },
+    {
+      "from": "artichoke-liver",
+      "to": "artichoke",
+      "carry_note": ""
+    },
+    {
+      "from": "gotu-kola-leaf",
+      "to": "gotu-kola",
+      "carry_note": ""
+    },
+    {
+      "from": "couch-grass-root",
+      "to": "couch-grass",
+      "carry_note": ""
+    },
+    {
+      "from": "rosemary-extract",
+      "to": "rosemary",
+      "carry_note": ""
+    },
+    {
+      "from": "rauwolfia-cardio",
+      "to": "rauwolfia-root",
+      "carry_note": ""
+    }
+  ]
 }
