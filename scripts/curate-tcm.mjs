@@ -29,7 +29,8 @@ const CANDIDATES = join(ROOT, "artifacts", "lnhpd-new-candidates.json");
 const OUT = join(ROOT, "artifacts", "tcm-curation.json");
 const UA = { "User-Agent": "HerbAlly TCM curation (herbally.app)" };
 
-const TCM_RX = /traditional chinese medicine|chinese medicine theory|tcm|中医|中藥|中药/i;
+const TCM_RX =
+  /traditional chinese medicine|chinese medicine theory|tcm|中医|中藥|中药/i;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function getJson(url, tries = 2) {
@@ -59,12 +60,18 @@ async function lnhpdCheck(candidate) {
   for (const id of (candidate.sample_ids || []).slice(0, 3)) {
     sampled++;
     try {
-      const p = rows(await getJson(`https://health-products.canada.ca/api/natural-licences/productlicence/?id=${id}&lang=en&type=json`))[0];
+      const p = rows(
+        await getJson(
+          `https://health-products.canada.ca/api/natural-licences/productlicence/?id=${id}&lang=en&type=json`
+        )
+      )[0];
       if (!p) continue;
       const text = JSON.stringify(p);
       if (TCM_RX.test(text)) {
         tcmProducts++;
-        urls.push(`https://health-products.canada.ca/api/natural-licences/productlicence/?id=${id}&lang=en&type=json`);
+        urls.push(
+          `https://health-products.canada.ca/api/natural-licences/productlicence/?id=${id}&lang=en&type=json`
+        );
       }
     } catch {}
     await sleep(120);
@@ -74,10 +81,17 @@ async function lnhpdCheck(candidate) {
 
 async function meshCheck(name) {
   try {
-    const j = await getJson(`https://id.nlm.nih.gov/mesh/lookup/descriptor?label=${encodeURIComponent(name)}&match=contains&limit=3`);
+    const j = await getJson(
+      `https://id.nlm.nih.gov/mesh/lookup/descriptor?label=${encodeURIComponent(name)}&match=contains&limit=3`
+    );
     if (!Array.isArray(j) || !j.length) return { found: false };
-    const exact = j.find((x) => x.label.toLowerCase() === name.toLowerCase()) || j[0];
-    return { found: true, label: exact.label, id: exact.resource.split("/").pop() };
+    const exact =
+      j.find((x) => x.label.toLowerCase() === name.toLowerCase()) || j[0];
+    return {
+      found: true,
+      label: exact.label,
+      id: exact.resource.split("/").pop(),
+    };
   } catch {
     return { found: false };
   }
@@ -85,7 +99,9 @@ async function meshCheck(name) {
 
 async function pubchemCheck(name) {
   try {
-    const j = await getJson(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/cids/JSON`);
+    const j = await getJson(
+      `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/cids/JSON`
+    );
     const cid = j?.IdentifierList?.CID?.[0];
     return cid ? { found: true, cid } : { found: false };
   } catch {
@@ -105,7 +121,9 @@ async function main() {
     .filter((c) => c.products >= 3 && BINOMIAL.test(c.name))
     .sort((a, b) => b.products - a.products)
     .slice(0, limit || 60);
-  console.log(`[tcm] ${candidates.length} binomial-shaped candidates clearing the LNHPD volume bar (≥3 products)`);
+  console.log(
+    `[tcm] ${candidates.length} binomial-shaped candidates clearing the LNHPD volume bar (≥3 products)`
+  );
 
   const results = [];
   for (let i = 0; i < candidates.length; i++) {
@@ -113,21 +131,48 @@ async function main() {
     const ln = await lnhpdCheck(c);
     const mesh = await meshCheck(c.name);
     const pc = await pubchemCheck(c.name);
-    const verdict = ln.tcmProducts > 0 && mesh.found && pc.found ? "accept" : "reject";
+    const verdict =
+      ln.tcmProducts > 0 && mesh.found && pc.found ? "accept" : "reject";
     const reasons = [];
     if (!ln.tcmProducts) reasons.push("no TCM-theory product among samples");
     if (!mesh.found) reasons.push("no MeSH descriptor");
     if (!pc.found) reasons.push("no PubChem compound");
-    results.push({ name: c.name, products: c.products, lnhpd: ln, mesh, pubchem: pc, verdict, reasons });
-    if ((i + 1) % 10 === 0) console.log(`[tcm] ${i + 1}/${candidates.length} | accepted ${results.filter((r) => r.verdict === "accept").length}`);
+    results.push({
+      name: c.name,
+      products: c.products,
+      lnhpd: ln,
+      mesh,
+      pubchem: pc,
+      verdict,
+      reasons,
+    });
+    if ((i + 1) % 10 === 0)
+      console.log(
+        `[tcm] ${i + 1}/${candidates.length} | accepted ${results.filter((r) => r.verdict === "accept").length}`
+      );
   }
 
   const accepted = results.filter((r) => r.verdict === "accept");
-  writeFileSync(OUT, JSON.stringify({ generated_at: new Date().toISOString(), rule: "LNHPD + MeSH + PubChem", results }, null, 1));
+  writeFileSync(
+    OUT,
+    JSON.stringify(
+      {
+        generated_at: new Date().toISOString(),
+        rule: "LNHPD + MeSH + PubChem",
+        results,
+      },
+      null,
+      1
+    )
+  );
   console.log(`[tcm] done: ${accepted.length} accepted of ${results.length}`);
-  for (const a of accepted.slice(0, 15)) console.log(`  ✓ ${a.name} | ${a.products} products | MeSH ${a.mesh.id} | CID ${a.pubchem.cid}`);
+  for (const a of accepted.slice(0, 15))
+    console.log(
+      `  ✓ ${a.name} | ${a.products} products | MeSH ${a.mesh.id} | CID ${a.pubchem.cid}`
+    );
   const reasons = {};
-  for (const r of results) for (const x of r.reasons) reasons[x] = (reasons[x] || 0) + 1;
+  for (const r of results)
+    for (const x of r.reasons) reasons[x] = (reasons[x] || 0) + 1;
   console.log("[tcm] rejection reasons:", JSON.stringify(reasons));
 }
 

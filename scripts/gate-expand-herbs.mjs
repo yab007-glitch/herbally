@@ -28,7 +28,15 @@ const UA = { "User-Agent": "HerbAlly herb expansion (herbally.app)" };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const BINOMIAL = /^[A-Z][a-z-]+ [a-z][a-z-]+(\s|$)/;
-const bino = (s) => (s || "").toLowerCase().replace(/×/g, "x").replace(/[^a-z ]+/g, " ").split(" ").filter(Boolean).slice(0, 2).join(" ");
+const bino = (s) =>
+  (s || "")
+    .toLowerCase()
+    .replace(/×/g, "x")
+    .replace(/[^a-z ]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(" ");
 
 let lastNcbi = 0;
 async function ncbi(name) {
@@ -36,7 +44,10 @@ async function ncbi(name) {
   if (gap < 350) await sleep(350 - gap);
   lastNcbi = Date.now();
   try {
-    const res = await fetch(`https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&term=${encodeURIComponent(name)}&retmode=json&retmax=1`, { headers: UA, signal: AbortSignal.timeout(15000) });
+    const res = await fetch(
+      `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&term=${encodeURIComponent(name)}&retmode=json&retmax=1`,
+      { headers: UA, signal: AbortSignal.timeout(15000) }
+    );
     const j = await res.json();
     const ids = j?.esearchresult?.idlist || [];
     return ids[0] || null;
@@ -48,7 +59,10 @@ async function ncbi(name) {
 async function gbif(name) {
   const target = bino(name);
   try {
-    const res = await fetch(`https://api.gbif.org/v1/species/match?name=${encodeURIComponent(name)}&kingdom=Plantae`, { headers: UA, signal: AbortSignal.timeout(15000) });
+    const res = await fetch(
+      `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(name)}&kingdom=Plantae`,
+      { headers: UA, signal: AbortSignal.timeout(15000) }
+    );
     const j = await res.json();
     if (!j.usageKey || j.matchType === "NONE") return null;
     if (bino(j.canonicalName || j.scientificName) !== target) return null;
@@ -74,7 +88,9 @@ async function main() {
     console.log(`[expand] resuming, ${done.size} already checked`);
   }
   if (limit) queue = queue.slice(0, limit);
-  console.log(`[expand] ${queue.length} candidates to gate (≥3 products, binomial name)`);
+  console.log(
+    `[expand] ${queue.length} candidates to gate (≥3 products, binomial name)`
+  );
 
   const results = prev.results || [];
   const checked = new Set(prev.checked || []);
@@ -82,20 +98,54 @@ async function main() {
     const c = queue[i];
     const g = await gbif(c.name);
     const taxid = null; // NCBI dropped: it rate-limits us to 429 and stalls the run. LNHPD + GBIF are the two sources.
-    results.push({ name: c.name, products: c.products, sample_ids: (c.sample_ids || []).slice(0, 6), ncbi_taxid: taxid, gbif: g, gate: g ? "pass" : "fail" });
+    results.push({
+      name: c.name,
+      products: c.products,
+      sample_ids: (c.sample_ids || []).slice(0, 6),
+      ncbi_taxid: taxid,
+      gbif: g,
+      gate: g ? "pass" : "fail",
+    });
     checked.add(c.name);
     if ((i + 1) % 100 === 0) {
-      writeFileSync(OUT, JSON.stringify({ generated_at: new Date().toISOString(), checked: [...checked], results }, null, 1));
+      writeFileSync(
+        OUT,
+        JSON.stringify(
+          {
+            generated_at: new Date().toISOString(),
+            checked: [...checked],
+            results,
+          },
+          null,
+          1
+        )
+      );
       const p = results.filter((r) => r.gate === "pass").length;
       console.log(`[expand] ${i + 1}/${queue.length} | passing ${p}`);
     }
     await sleep(30);
   }
 
-  writeFileSync(OUT, JSON.stringify({ generated_at: new Date().toISOString(), checked: [...checked], results }, null, 1));
+  writeFileSync(
+    OUT,
+    JSON.stringify(
+      {
+        generated_at: new Date().toISOString(),
+        checked: [...checked],
+        results,
+      },
+      null,
+      1
+    )
+  );
   const p = results.filter((r) => r.gate === "pass");
-  console.log(`[expand] done: ${p.length} of ${results.length} clear all three sources`);
-  for (const r of p.sort((a, b) => b.products - a.products).slice(0, 20)) console.log(`  ✓ ${r.name} — ${r.products} products, taxid ${r.ncbi_taxid}`);
+  console.log(
+    `[expand] done: ${p.length} of ${results.length} clear all three sources`
+  );
+  for (const r of p.sort((a, b) => b.products - a.products).slice(0, 20))
+    console.log(
+      `  ✓ ${r.name} — ${r.products} products, taxid ${r.ncbi_taxid}`
+    );
 }
 
 main().catch((err) => {
