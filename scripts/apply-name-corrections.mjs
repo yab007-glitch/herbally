@@ -38,31 +38,32 @@
  *
  * Exit 1 = a guard failed, a write failed, or a post-write read-back disagreed.
  */
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+import {
+  hasCurrentNameDrift,
+  hasPhantomSecondSource,
+} from "./lib/herb-taxonomy.mjs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const MANIFEST = join(ROOT, "data", "herb-name-corrections.json");
-const APPLY = process.argv.includes("--apply");
 
 function env() {
   const out = {};
-  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split(
-    "\n"
-  )) {
-    const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
-    if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, "");
+  const local = join(ROOT, ".env.local");
+  if (existsSync(local)) {
+    for (const line of readFileSync(local, "utf8").split("\n")) {
+      const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
+      if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, "");
+    }
+  }
+  for (const [key, value] of Object.entries(process.env)) {
+    if (out[key] === undefined && value !== undefined) out[key] = value;
   }
   return out;
 }
-
-const e = env();
-const HEAD = {
-  apikey: e.SUPABASE_SERVICE_ROLE_KEY,
-  Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}`,
-};
-const REST = `${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/herbs`;
 
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -82,18 +83,8 @@ function verificationFromVerdict(verdict) {
 
 function taxonomyRepairReason(tax, target) {
   if (!tax || !tax.source) return "missing";
-  if (
-    tax.current_name !== null &&
-    tax.current_name !== undefined &&
-    tax.current_name !== target
-  )
-    return "stale current_name";
-  if (
-    tax.second_source &&
-    tax.second_source_name == null &&
-    tax.second_source_taxid == null
-  )
-    return "second source with no record";
+  if (hasCurrentNameDrift(tax, target)) return "stale current_name";
+  if (hasPhantomSecondSource(tax)) return "second source with no record";
   return null;
 }
 
@@ -146,10 +137,12 @@ function taxonomyRecord(entry, target, secondPass, resolution) {
   return record;
 }
 
-async function getHerb(slug) {
+async function getHerb(rest, head, slug) {
   const res = await fetch(
-    `${REST}?slug=eq.${encodeURIComponent(slug)}&select=*`,
-    { headers: HEAD }
+    `${rest}?slug=eq.${encodeURIComponent(slug)}&select=*`,
+    {
+      headers: head,
+    }
   );
   const rows = await res.json();
   if (!Array.isArray(rows) || rows.length !== 1)
@@ -157,11 +150,11 @@ async function getHerb(slug) {
   return rows[0];
 }
 
-async function patchHerb(slug, patch) {
-  const res = await fetch(`${REST}?slug=eq.${encodeURIComponent(slug)}`, {
+async function patchHerb(rest, head, slug, patch) {
+  const res = await fetch(`${rest}?slug=eq.${encodeURIComponent(slug)}`, {
     method: "PATCH",
     headers: {
-      ...HEAD,
+      ...head,
       "Content-Type": "application/json",
       Prefer: "return=minimal",
     },
@@ -172,7 +165,15 @@ async function patchHerb(slug, patch) {
   return res;
 }
 
-async function main() {
+export async function main(options = {}) {
+  const apply = options.apply ?? process.argv.includes("--apply");
+  const e = env();
+  const head = {
+    apikey: e.SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}`,
+  };
+  const rest = `${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/herbs`;
+
   const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
   const applied = manifest.applied || [];
   const alignments = new Map(
@@ -184,7 +185,7 @@ async function main() {
   const resolutions = manifest.resolutions || {};
 
   console.log(
-    `[names] ${applied.length} applied entries, ${alignments.size} display alignments${APPLY ? "" : " (dry run)"}`
+    `[names] ${applied.length} applied entries, ${alignments.size} display alignments${apply ? "" : " (dry run)"}`
   );
 
   const table = [];
@@ -202,7 +203,7 @@ async function main() {
       continue;
     }
 
-    const herb = await getHerb(entry.slug);
+    const herb = await getHerb(rest, head, entry.slug);
     const patch = {};
     const intended = { nameTarget: target };
     let guardFailed = false;
@@ -224,7 +225,7 @@ async function main() {
         field: "scientific_name",
         before: herb.scientific_name,
         after: target,
-        action: APPLY ? "update" : "would update",
+        action: apply ? "update" : "would update",
       });
     } else {
       table.push({
@@ -260,7 +261,7 @@ async function main() {
           field: "name",
           before: herb.name,
           after: alignment.new_name,
-          action: APPLY ? "update" : "would update",
+          action: apply ? "update" : "would update",
         });
       } else {
         table.push({
@@ -295,13 +296,13 @@ async function main() {
         field: "provenance.taxonomy",
         before: herb.provenance?.taxonomy?.current_name ?? "(none)",
         after: `${taxonomy.verification} | ${reason}`,
-        action: APPLY ? "update" : "would update",
+        action: apply ? "update" : "would update",
       });
     }
 
     if (!Object.keys(patch).length) continue;
 
-    if (APPLY) await patchHerb(entry.slug, patch);
+    if (apply) await patchHerb(rest, head, entry.slug, patch);
     touched.push({ slug: entry.slug, ...intended });
     if (intended.scientificWritten) scientificUpdates++;
     if (intended.nameWritten) displayUpdates++;
@@ -310,9 +311,9 @@ async function main() {
 
   console.table(table);
 
-  if (APPLY) {
+  if (apply) {
     for (const t of touched) {
-      const herb = await getHerb(t.slug);
+      const herb = await getHerb(rest, head, t.slug);
       if (t.scientificWritten && herb.scientific_name !== t.nameTarget) {
         failures.push(
           `${t.slug}: read-back scientific_name is ${JSON.stringify(herb.scientific_name)}, expected ${JSON.stringify(t.nameTarget)}`
@@ -336,7 +337,7 @@ async function main() {
     }
   }
 
-  const mode = APPLY ? "applied" : "dry run";
+  const mode = apply ? "applied" : "dry run";
   console.log(
     `[names] ${mode}: ${scientificUpdates} scientific updates, ${displayUpdates} display updates, ${taxonomyUpdates} taxonomy updates, ${unchanged} already applied, ${failures.length} guard failures`
   );
@@ -344,14 +345,32 @@ async function main() {
   if (failures.length) {
     console.error(`\n[names] FAIL - ${failures.length} guard failure(s)`);
     for (const failure of failures) console.error(`  - ${failure}`);
-    process.exit(1);
+  } else {
+    console.log(
+      `[names] OK - every touched row ${apply ? "re-read and matched" : "is safe to write"}`
+    );
   }
-  console.log(
-    `[names] OK - every touched row ${APPLY ? "re-read and matched" : "is safe to write"}`
-  );
+
+  return {
+    scientificUpdates,
+    displayUpdates,
+    taxonomyUpdates,
+    unchanged,
+    failures,
+    table,
+  };
 }
 
-main().catch((err) => {
-  console.error("[names] fatal:", err.message);
-  process.exit(1);
-});
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
+  main()
+    .then((result) => {
+      if (result.failures.length) process.exit(1);
+    })
+    .catch((err) => {
+      console.error("[names] fatal:", err.message);
+      process.exit(1);
+    });
+}
