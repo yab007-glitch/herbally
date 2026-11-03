@@ -1,0 +1,61 @@
+{
+  "_comment": "Botanicals absent from the library that Health Canada licenses give quoted indications and doses for. Curated by hand from artifacts/lnhpd-new-candidates.json — no food crops, no microbes, no homeopathics, no enzymes.",
+  "herbs": [
+    {
+      "slug": "mentha-canadensis",
+      "name": "Field Mint",
+      "scientific_name": "Mentha canadensis",
+      "lnhpd_name": "Mentha canadensis",
+      "common_names": ["Canadian Mint", "Wild Mint", "Bo He"]
+    },
+    {
+      "slug": "nepeta-tenuifolia",
+      "name": "Fine-Leaf Catmint",
+      "scientific_name": "Nepeta tenuifolia",
+      "lnhpd_name": "Nepeta tenuifolia",
+      "common_names": ["Jing Jie", "Schizonepeta"]
+    },
+    {
+      "slug": "lophatherum-gracile",
+      "name": "Lophatherum",
+      "scientific_name": "Lophatherum gracile",
+      "lnhpd_name": "Lophatherum gracile",
+      "common_names": ["Dan Zhu Ye", "Bamboo Leaf"]
+    },
+    {
+      "slug": "hansenia-forbesii",
+      "name": "Hansenia",
+      "scientific_name": "Hansenia forbesii",
+      "lnhpd_name": "Hansenia forbesii",
+      "common_names": ["Qiang Huo", "Notopterygium"]
+    },
+    {
+      "slug": "paeonia-anomala",
+      "name": "Anomalous Peony",
+      "scientific_name": "Paeonia anomala",
+      "lnhpd_name": "Paeonia anomala subsp. veitchii",
+      "common_names": ["Chi Shao", "Veitch Peony"]
+    },
+    {
+      "slug": "actaea-dahurica",
+      "name": "Dahurian Bugbane",
+      "scientific_name": "Actaea dahurica",
+      "lnhpd_name": "Actaea dahurica",
+      "common_names": ["Sheng Ma", "Cimicifuga dahurica"]
+    },
+    {
+      "slug": "acorus-gramineus",
+      "name": "Grassy Sweet Flag",
+      "scientific_name": "Acorus gramineus",
+      "lnhpd_name": "Acorus gramineus",
+      "common_names": ["Shi Chang Pu", "Japanese Sweet Flag"]
+    },
+    {
+      "slug": "prunus-cerasus",
+      "name": "Sour Cherry",
+      "scientific_name": "Prunus cerasus",
+      "lnhpd_name": "Prunus cerasus",
+      "common_names": ["Tart Cherry", "Montmorency Cherry"]
+    }
+  ]
+}
