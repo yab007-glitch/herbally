@@ -360,6 +360,86 @@
       "from": "qing-hao-aerial",
       "to": "sweet-annie",
       "carry_note": "The aerial herb form of artemisia annua used in TCM for cooling heat; separate from artemisinin extraction."
+    },
+    {
+      "from": "mastic-resin",
+      "to": "chios-mastic-v2",
+      "carry_note": "Aromatic resin from the island of Chios, Greece used since ancient Greek times for digestive complaints, oral hygiene, and peptic ulcers. Clinical evidence for H. pylori eradication."
+    },
+    {
+      "from": "romanian-wormwood",
+      "to": "wormwood",
+      "carry_note": "Artemisia absinthium var. pannonica is a Central European variant of wormwood (Asteraceae), a woody perennial bearing silvery-green, deeply dissected, finely pubescent leaves with a characteristically bitter taste. Taxonomically placed within the A. absinthium complex, the pannonica variety is documented in Romanian and Hungarian ethnobotanical practice. Its phytochemistry centers on sesquiterpene lactones (notably absinthin and artabsin, major bitter principles), a volatile oil fraction containing thujone isomers (alpha- and beta-thujone) alongside chamazulene derived from chamazulene carboxylic acid precursors, and phenolic compounds including flavonoids and phenolic acids. Pharmacologically, the sesquiterpene lactones account for pronounced bitter-stimulant activity on gustatory and gastric reflexes, while the essential oil has documented in vitro antimicrobial and antiparasitic activity; thujone acts as a CNS GABA-A receptor modulator with established neurotoxic potential at elevated or sustained intake. The sole verified primary-source citation is an ethnobotanical survey of K\u0131rklareli Province, Turkey (PMID 17257791), documenting medicinal plant use. Clinical scope is limited: no high-quality human clinical trials substantiating therapeutic efficacy were identified in the provided citations, and use should be framed as traditional practice pending controlled pharmacokinetic and efficacy data."
+    },
+    {
+      "from": "rosmarinus-prostratus",
+      "to": "rosemary",
+      "carry_note": "Low-spreading rosemary variety with identical medicinal properties to common rosemary used in Mediterranean folk medicine."
+    },
+    {
+      "from": "samento-amazonian",
+      "to": "cats-claw",
+      "carry_note": "Specialized pentacyclic-only cats claw extract for Lyme and immune conditions."
+    },
+    {
+      "from": "schizandra-berry",
+      "to": "schisandra",
+      "carry_note": "Schisandra chinensis (Schisandraceae) is a woody vine whose dried fruit, known as Wu Wei Zi in traditional Chinese medicine and Omija in Korea, is a pharmacopeial botanical. The fruit contains dibenzocyclooctadiene lignans as its principal bioactive class, including schisandrin (schizandrin), schisandrin B, schisandrin C, gomisin A, and deoxyschisandrin, alongside polysaccharides, organic acids, and volatile constituents. Documented pharmacological activities from in vitro, animal, and human research include hepatoprotective effects via modulation of hepatic drug-metabolizing enzymes and antioxidative mechanisms, adaptogenic properties examined in stress-response studies, and preliminary cognitive and anti-inflammatory effects. The lignan fraction, particularly schisandrin B, has been characterized for anti-inflammatory and cytoprotective signaling activity in preclinical models. Clinical investigation has focused on hepatic function markers, exercise endurance, and cognitive parameters, though the breadth of rigorous human trials remains limited relative to preclinical literature. Modern phytotherapeutic application centers on standardized lignan-standardized extracts used in hepatology-adjacent and adaptogenic formulations. The existing record's contraindication, adverse effect, and dosage entries are drawn from traditional and monograph conventions rather than the two verified primary-source citations supplied."
+    },
+    {
+      "from": "shbbet-mriouh",
+      "to": "fennel",
+      "carry_note": "Moroccan fennel variety used extensively in North African cooking and traditional medicine for digestive complaints, lactation, and as a carminative."
+    },
+    {
+      "from": "snail-vine-skin",
+      "to": "gotu-kola",
+      "carry_note": "Concentrated extract form of centella for K-beauty formulations."
+    },
+    {
+      "from": "suan-zao-ren-seed",
+      "to": "zizyphus-jujube-seed",
+      "carry_note": "TCM primary herb for insomnia from heart and liver blood deficiency; nourishes heart and calms spirit."
+    },
+    {
+      "from": "tarragon",
+      "to": "artemisia-dracunculus",
+      "carry_note": "Tarragon (Artemisia dracunculus L., Asteraceae) is a perennial herb in the Asteraceae (Compositae) family, closely related to mugwort and wormwood. Its chemical composition includes a volatile oil fraction characterized by methyl chavicole (estragole) as the predominant constituent, alongside coumarins, flavonoids (notably quercetin and luteolin derivatives), phenolic acids, and sesquiterpene lactones. Documented pharmacological activity derived primarily from in vitro, animal, and analytical studies includes antioxidant capacity attributable to polyphenolic content, hypoglycemic effects in animal models, antimicrobial activity of the essential oil, and modulation of osteoblast proliferation and mineralization demonstrated in a 2023 in vitro study (PMID 37686232). A critical review of the species (PMID 21942448) confirms extensive traditional use as a digestive aid and notes that human clinical evidence for most purported therapeutic applications remains limited or absent. Estragole content warrants attention due to its classified genotoxic carcinogenic potential in high-dose animal Studies, forming the basis of regulatory precaution regarding concentrated preparations. The clinical scope of tarragon is therefore principally as a culinary herb and traditional carminative, with pharmacological interest ongoing but translation to evidence-based human therapeutics not yet established."
+    },
+    {
+      "from": "tarragon-wild",
+      "to": "artemisia-dracunculus",
+      "carry_note": "Russian and Central Asian tarragon variety with stronger medicinal properties than French tarragon."
+    },
+    {
+      "from": "temu-putih",
+      "to": "zedoary",
+      "carry_note": "Indonesian and Thai traditional herb from zedoary family used in Jamu formulations for immunity."
+    },
+    {
+      "from": "turmeric-curcumin",
+      "to": "turmeric",
+      "carry_note": "Curcuma longa (Zingiberaceae), turmeric, is a rhizomatous perennial whose curcuminoid-rich extracts constitute the commercial entity known as turmeric curcumin. Standardized extracts concentrate curcuminoids\u2014curcumin, demethoxycurcumin, bisdemethoxycurcumin\u2014to levels far exceeding the 3\u20135% content of the dried rhizome. Curcumin exhibits documented anti-inflammatory, antioxidant, and anti-amyloid activities in preclinical models, with proposed mechanisms including modulation of NF-\u03baB, COX-2, and cytokine signaling. Because unconjugated curcumin has low oral bioavailability, commercial preparations employ phospholipid complexation, nanoparticle carriers, or co-administration with piperine. Clinical evaluation is most substantiated in osteoarthritis: two systematic reviews and meta-analyses of randomized controlled trials (PMID 35935936; PMID 34017975) report evidence for symptomatic benefit in knee and other osteoarthritis populations, with efficacy comparable to nonsteroidal anti-inflammatory drugs in some trials. The metabolic fate of curcumin is complex, with extensive glucuronidation and reduction; circulating parent compound concentrations remain low without absorption-enhancing formulations. Clinical scope is accordingly narrow: analgesic and functional benefit in osteoarthritis is the best-supported indication, whereas neuroprotective and broad systemic anti-inflammatory claims lack comparable human trial support. This monograph addresses the standardized extract product, distinct from culinary turmeric powder or whole-rhizome preparations."
+    },
+    {
+      "from": "vietnamese-pennywort",
+      "to": "gotu-kola",
+      "carry_note": "Vietnamese variety of gotu kola used as a vegetable and medicine for skin, cognitive, and wound healing."
+    },
+    {
+      "from": "wild-celery",
+      "to": "apium-graveolens",
+      "carry_note": "European wild celery used for gout, joint pain, and urinary disorders."
+    },
+    {
+      "from": "xia-ku-cao",
+      "to": "heal-all-spica",
+      "carry_note": "The dried flower spikes of self-heal used in TCM to clear liver fire and dissipate phlegm nodules \u2014 important for thyroid and lymph node conditions."
+    },
+    {
+      "from": "yasthimadhu",
+      "to": "yashtimadhu",
+      "carry_note": "Ayurvedic name for licorice root, used extensively as a rasayana herb for respiratory and digestive health."
     }
   ]
 }

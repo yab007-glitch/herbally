@@ -286,5 +286,13 @@
  {
   "from": "/herbs/qing-hao-aerial",
   "to": "/herbs/sweet-annie"
+ },
+ {
+  "from": "/herbs/mastic-resin",
+  "to": "/herbs/chios-mastic-v2"
+ },
+ {
+  "from": "/herbs/romanian-wormwood",
+  "to": "/herbs/wormwood"
  }
 ]
