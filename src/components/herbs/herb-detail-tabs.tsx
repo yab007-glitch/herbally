@@ -61,10 +61,16 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
     }
   }, []);
 
-  // Desktop: tab bar
+  // One content render, two navigation shells.
+  //
+  // The desktop tab panel and the mobile accordion used to each render the
+  // active tab's content, so every herb page carried the same markup twice in
+  // the DOM: two "Description" headings, ~100 KB of duplicated RSC payload in
+  // a 212 KB document, and double the text for a crawler to read. The nav still
+  // differs by viewport; the content now lives once, below both.
   return (
     <div ref={rootRef} className="scroll-mt-24">
-      {/* Desktop tab bar */}
+      {/* Desktop: tab bar */}
       <div className="hidden sm:block">
         <div className="sticky top-12 z-30 -mx-4 bg-background/90 px-4 py-2 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">
@@ -85,15 +91,11 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
             ))}
           </div>
         </div>
-        <div className="mt-6 animate-message-in">
-          {tabs.find((tab) => tab.key === active)?.content}
-        </div>
       </div>
 
-      {/* Mobile: accordion */}
+      {/* Mobile: accordion headers, which select the panel rendered below */}
       <div className="space-y-2 sm:hidden">
         {tabConfig.map((tab) => {
-          const tabItem = tabs.find((t) => t.key === tab.key);
           const isOpen = active === tab.key;
           return (
             <div key={tab.key} className="rounded-xl border border-border">
@@ -107,6 +109,7 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
                   }
                 }}
                 aria-expanded={isOpen}
+                aria-controls="herb-tab-panel"
                 className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-foreground"
               >
                 {t(tab.labelKey)}
@@ -117,15 +120,21 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
                   )}
                 />
               </button>
-              {isOpen && (
-                <div className="border-t border-border px-4 pb-4 pt-3 animate-message-in">
-                  {tabItem?.content}
-                </div>
-              )}
             </div>
           );
         })}
       </div>
+
+      {/* The single content render. Hidden while the mobile accordion is fully
+          collapsed, matching the previous behaviour. */}
+      {active ? (
+        <div
+          id="herb-tab-panel"
+          className="mt-6 animate-message-in sm:mt-6"
+        >
+          {tabs.find((tab) => tab.key === active)?.content}
+        </div>
+      ) : null}
     </div>
   );
 }
