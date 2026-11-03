@@ -1,0 +1,857 @@
+{
+  "applied": [
+    {
+      "slug": "jatropha-gossypifolia",
+      "ours": "Jatropha gossypifolia",
+      "gbif": "Jatropha gossypiifolia",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "yin-yang-complex",
+      "ours": "Epimedium brevicornum",
+      "gbif": "Epimedium brevicornu",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "hypsizygus-tessellatus",
+      "ours": "Hypsizygus tessellatus",
+      "gbif": "Hypsizygus tesselatus",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "notopterygium-incisium",
+      "ours": "Notopterygium incisium",
+      "gbif": "Notopterygium incisum",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "cinnamomum-burmannii",
+      "ours": "Cinnamomum burmannii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "citrus-aurantifolia",
+      "ours": "Citrus aurantifolia",
+      "gbif": "Citrus aurantiifolia",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "cota-triumfettii",
+      "ours": "Cota triumfettii",
+      "gbif": "Cota triumfetti",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "solanum-tomentosum-herb",
+      "ours": "Solanum tomentosm",
+      "gbif": "Solanum tomentosum",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "ru-xiang-resin",
+      "ours": "Boswellia carterii",
+      "gbif": "Boswellia carteri",
+      "ratio": 0.97,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "korean-bellflower",
+      "ours": "Platycodon grandiflorum",
+      "gbif": "Platycodon grandiflorus",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "corynanthe-yohimbe",
+      "ours": "Pausinystalia yohimbe",
+      "gbif": "Pausinystalia yohimba",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "kayu-manis-jamu",
+      "ours": "Cinnamomum burmanii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "kumarahou",
+      "ours": "Pomaderris kumerahou",
+      "gbif": "Pomaderris kumarahou",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "thyme-moroccan",
+      "ours": "Thymus satureioides",
+      "gbif": "Thymus saturejoides",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "condurango",
+      "ours": "Gonolobus condurango",
+      "gbif": "Gonolobus cundurango",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "samambaia-amazonian",
+      "ours": "Polypodium leucotomos",
+      "gbif": "Polypodium leucatomos",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1
+    },
+    {
+      "slug": "artemisia-genepi",
+      "ours": "Artemisia genepi",
+      "gbif": "Artemisia genipi",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "entada-seed",
+      "ours": "Entada rheedii",
+      "gbif": "Entada rheedei",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 1
+    },
+    {
+      "slug": "tamanu",
+      "ours": "Calophyllum inophyllatum",
+      "gbif": "Calophyllum inophyllum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    },
+    {
+      "slug": "hawthorn-small-leaf",
+      "ours": "Crataegus cuneatiformis",
+      "gbif": "Crataegus cuneiformis",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 2
+    },
+    {
+      "slug": "boneset",
+      "ours": "Eupatorium perfolidum",
+      "gbif": "Eupatorium perfoliatum",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    },
+    {
+      "slug": "spanish-sage",
+      "ours": "Salvia lavandulaefolia",
+      "gbif": "Salvia lavandulifolia",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    },
+    {
+      "slug": "strobilanthes-crispus",
+      "ours": "Strobilanthes crispus",
+      "gbif": "Strobilanthes crispa",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2
+    },
+    {
+      "slug": "clivers-goosegrass",
+      "ours": "Galium aparine var.",
+      "new_name": "Galium aparine",
+      "batch": 2,
+      "kind": "incomplete_name",
+      "evidence": "GBIF returns Galium aparine; the trailing 'var.' is a truncated variety marker, not part of the binomial.",
+      "second_source": {
+        "taxid": "29788",
+        "ncbi_name": "Galium aparine",
+        "verdict": "exact match"
+      },
+      "merge_candidate": "cleavers-herb"
+    },
+    {
+      "slug": "fumitory-common",
+      "ours": "Fumaria officinalis var.",
+      "new_name": "Fumaria officinalis",
+      "batch": 2,
+      "kind": "incomplete_name",
+      "evidence": "GBIF returns Fumaria officinalis; the trailing 'var.' is a truncated variety marker, not part of the binomial.",
+      "second_source": {
+        "taxid": "200993",
+        "ncbi_name": "Fumaria officinalis",
+        "verdict": "exact match"
+      },
+      "merge_candidate": "fumitory-herb"
+    },
+    {
+      "slug": "herb-bennet",
+      "ours": "Geum urbanum var.",
+      "new_name": "Geum urbanum",
+      "batch": 2,
+      "kind": "incomplete_name",
+      "evidence": "GBIF returns Geum urbanum; the trailing 'var.' is a truncated variety marker, not part of the binomial.",
+      "second_source": {
+        "taxid": "57919",
+        "ncbi_name": "Geum urbanum",
+        "verdict": "exact match"
+      },
+      "merge_candidate": "wood-avens"
+    },
+    {
+      "slug": "anthonota-macrophylla",
+      "ours": "Anthonota macrophylla",
+      "new_name": "Anthonotha macrophylla",
+      "batch": 2,
+      "kind": "name_mismatch",
+      "evidence": "GBIF uses the conserved genus spelling Anthonotha; Anthonota is a misspelling.",
+      "second_source": {
+        "taxid": "162653",
+        "ncbi_name": "Anthonotha macrophylla",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "cipo-cravo",
+      "ours": "Tynnanthus fasciculatus",
+      "new_name": "Tynanthus fasciculatus",
+      "batch": 2,
+      "kind": "name_mismatch",
+      "evidence": "GBIF returns Tynanthus fasciculatus; Tynnanthus is a misspelling.",
+      "second_source": {
+        "taxid": "1641889",
+        "ncbi_name": "Tynanthus fasciculatus",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "rauwolfia-cardio",
+      "ours": "Rauwolfia serpentina",
+      "new_name": "Rauvolfia serpentina",
+      "batch": 2,
+      "kind": "name_mismatch",
+      "evidence": "GBIF returns Rauvolfia serpentina; Rauwolfia is a common but non-standard spelling.",
+      "second_source": {
+        "taxid": "4060",
+        "ncbi_name": "Rauvolfia serpentina",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "varuna-bark",
+      "ours": "Crataeva nurvala",
+      "new_name": "Crateva nurvala",
+      "batch": 2,
+      "kind": "name_mismatch",
+      "evidence": "GBIF returns Crateva nurvala; Crataeva is a misspelling.",
+      "second_source": {
+        "taxid": "1149812",
+        "ncbi_name": "Crateva nurvala",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "xanthorrhiza-simplicissima",
+      "ours": "Xanthorrhiza simplicissima",
+      "new_name": "Xanthorhiza simplicissima",
+      "batch": 2,
+      "kind": "name_mismatch",
+      "evidence": "GBIF returns Xanthorhiza simplicissima; Xanthorrhiza is a misspelling.",
+      "second_source": {
+        "taxid": "13762",
+        "ncbi_name": "Xanthorhiza simplicissima",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "nattokinase-cardiovasc",
+      "ours": "Bacillus subtilis ferment",
+      "new_name": "Bacillus subtilis",
+      "batch": 2,
+      "kind": "preparation_note",
+      "evidence": "GBIF returns Bacillus subtilis; 'ferment' is a preparation note, not part of the taxon.",
+      "second_source": {
+        "taxid": "1423",
+        "ncbi_name": "Bacillus subtilis",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "serrapeptase",
+      "ours": "Serratia marcescens derived",
+      "new_name": "Serratia marcescens",
+      "batch": 2,
+      "kind": "preparation_note",
+      "evidence": "GBIF returns Serratia marcescens; 'derived' is a preparation note, not part of the taxon.",
+      "second_source": {
+        "taxid": "615",
+        "ncbi_name": "Serratia marcescens",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "spirulina-platensis",
+      "ours": "Spirulina platensis (Arthrospira platensis)",
+      "new_name": "Arthrospira platensis",
+      "batch": 2,
+      "kind": "synonym",
+      "evidence": "GBIF returns Arthrospira platensis; the parenthetical synonym is redundant.",
+      "second_source": {
+        "taxid": "118562",
+        "ncbi_name": "Limnospira platensis",
+        "verdict": "different"
+      }
+    },
+    {
+      "slug": "ravintsara-malagasy",
+      "ours": "Cinnamomum camphora (Madagascar)",
+      "new_name": "Cinnamomum camphora",
+      "batch": 2,
+      "kind": "origin_note",
+      "evidence": "GBIF returns Cinnamomum camphora; '(Madagascar)' is an origin note, not part of the name.",
+      "second_source": {
+        "taxid": "13429",
+        "ncbi_name": "Cinnamomum camphora",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "can-sha",
+      "ours": "Bombyx mori excrement",
+      "new_name": "Bombyx mori",
+      "batch": 2,
+      "kind": "preparation_note",
+      "evidence": "GBIF returns Bombyx mori; 'excrement' names the medicinal preparation, not the taxon.",
+      "second_source": {
+        "taxid": "7091",
+        "ncbi_name": "Bombyx mori",
+        "verdict": "exact match"
+      }
+    },
+    {
+      "slug": "triphala-digestive",
+      "ours": "Emblica/Terminalia/Terminalia",
+      "new_name": "Phyllanthus emblica, Terminalia chebula, Terminalia bellirica",
+      "batch": 2,
+      "kind": "composite_name",
+      "evidence": "GBIF resolves each component: Phyllanthus emblica, Terminalia chebula, Terminalia bellirica.",
+      "second_source": null,
+      "second_source_note": "The three components were resolved against GBIF one by one, not NCBI, so the composite has no NCBI second source; an NCBI spot-check of Phyllanthus emblica (taxid 296036) returns Emblica officinalis as a synonym."
+    },
+    {
+      "slug": "pau-d-arco",
+      "ours": "Handroanthus impetiginosum",
+      "new_name": "Handroanthus impetiginosus",
+      "batch": 2,
+      "kind": "reverted_second_source",
+      "previous_batch": 1,
+      "evidence": "GBIF returns the gender variant Handroanthus impetiginosum, but NCBI taxid 429701 returns Handroanthus impetiginosus, and the basionym Tecoma impetiginosa agrees with the masculine epithet, so batch 1 followed GBIF into an error.",
+      "second_source": {
+        "taxid": "429701",
+        "ncbi_name": "Handroanthus impetiginosus",
+        "verdict": "exact match"
+      }
+    }
+  ],
+  "superseded": [
+    {
+      "slug": "pau-d-arco",
+      "ours": "Handroanthus impetiginosus",
+      "gbif": "Handroanthus impetiginosum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "superseded_by": "pau-d-arco batch 2",
+      "reason": "GBIF returned a gender variant that NCBI and the basionym contradict."
+    }
+  ],
+  "skipped": [
+    {
+      "slug": "lavandula-intermedia",
+      "ours": "Lavandula x intermedia",
+      "gbif": "Lavandula intermedia",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "symphytum-uplandicum",
+      "ours": "Symphytum x uplandicum",
+      "gbif": "Symphytum uplandicum",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "ginger-mint",
+      "ours": "Mentha x gracilis",
+      "gbif": "Mentha gracilis",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "musa-paradisiaca",
+      "ours": "Musa x paradisiaca",
+      "gbif": "Musa paradisiaca",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "peppermint",
+      "ours": "Mentha x piperita",
+      "gbif": "Mentha piperita",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
+    },
+    {
+      "slug": "chocolate-mint",
+      "ours": "Mentha x piperita cv. chocolate",
+      "gbif": "Mentha piperita",
+      "batch": 2,
+      "reason": "cultivar of a hybrid \u2014 GBIF strips both the cross sign and the cultivar",
+      "evidence": "GBIF's match drops the hybrid marker and the cultivar epithet, which changes the taxon."
+    },
+    {
+      "slug": "spirulina",
+      "ours": "Arthrospira platensis",
+      "gbif": "Arthrospira platensis",
+      "batch": 2,
+      "reason": "name is already correct \u2014 GBIF only flagged low confidence",
+      "evidence": "Arthrospira platensis is the accepted name; a low-confidence GBIF match is not evidence of an error."
+    },
+    {
+      "slug": "hai-zao",
+      "ours": "Sargassum pallidum",
+      "gbif": "Sargassum polyporum",
+      "batch": 2,
+      "reason": "GBIF treats Sargassum pallidum as a synonym of Sargassum polyporum, but Sargassum pallidum is the pharmacopoeial name and there is no spelling error",
+      "evidence": "The correction is a taxonomic synonymy, not a spelling fix; the pharmacopoeial name stays."
+    }
+  ],
+  "display_name_alignments": [
+    {
+      "slug": "jatropha-gossypifolia",
+      "old_name": "Jatropha gossypifolia",
+      "new_name": "Jatropha gossypiifolia",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "hypsizygus-tessellatus",
+      "old_name": "Hypsizygus tessellatus",
+      "new_name": "Hypsizygus tesselatus",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "notopterygium-incisium",
+      "old_name": "Notopterygium incisium",
+      "new_name": "Notopterygium incisum",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "cinnamomum-burmannii",
+      "old_name": "Cinnamomum burmannii",
+      "new_name": "Cinnamomum burmanni",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "citrus-aurantifolia",
+      "old_name": "Citrus aurantifolia",
+      "new_name": "Citrus aurantiifolia",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "cota-triumfettii",
+      "old_name": "Cota triumfettii",
+      "new_name": "Cota triumfetti",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "artemisia-genepi",
+      "old_name": "Artemisia genepi",
+      "new_name": "Artemisia genipi",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "strobilanthes-crispus",
+      "old_name": "Strobilanthes Crispus",
+      "new_name": "Strobilanthes crispa",
+      "batch": 1,
+      "reason": "visible name was still the old binomial after the scientific name was corrected"
+    },
+    {
+      "slug": "anthonota-macrophylla",
+      "old_name": "Anthonota macrophylla",
+      "new_name": "Anthonotha macrophylla",
+      "batch": 2,
+      "reason": "visible name matches the misspelled binomial being corrected in this batch"
+    },
+    {
+      "slug": "xanthorrhiza-simplicissima",
+      "old_name": "Xanthorrhiza simplicissima",
+      "new_name": "Xanthorhiza simplicissima",
+      "batch": 2,
+      "reason": "visible name matches the misspelled binomial being corrected in this batch"
+    }
+  ],
+  "ncbi_second_pass": [
+    {
+      "slug": "jatropha-gossypifolia",
+      "ours": "Jatropha gossypifolia",
+      "gbif": "Jatropha gossypiifolia",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "454931",
+      "ncbi_name": "Jatropha gossypiifolia",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "yin-yang-complex",
+      "ours": "Epimedium brevicornum",
+      "gbif": "Epimedium brevicornu",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "253618",
+      "ncbi_name": "Epimedium brevicornu",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "hypsizygus-tessellatus",
+      "ours": "Hypsizygus tessellatus",
+      "gbif": "Hypsizygus tesselatus",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "notopterygium-incisium",
+      "ours": "Notopterygium incisium",
+      "gbif": "Notopterygium incisum",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "cinnamomum-burmannii",
+      "ours": "Cinnamomum burmannii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "119261",
+      "ncbi_name": "Cinnamomum burmanni",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "citrus-aurantifolia",
+      "ours": "Citrus aurantifolia",
+      "gbif": "Citrus aurantiifolia",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "159033",
+      "ncbi_name": "Citrus x aurantiifolia",
+      "verdict": "third form: Citrus x aurantiifolia"
+    },
+    {
+      "slug": "cota-triumfettii",
+      "ours": "Cota triumfettii",
+      "gbif": "Cota triumfetti",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "158232",
+      "ncbi_name": "Cota triumfetti",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "solanum-tomentosum-herb",
+      "ours": "Solanum tomentosm",
+      "gbif": "Solanum tomentosum",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "ru-xiang-resin",
+      "ours": "Boswellia carterii",
+      "gbif": "Boswellia carteri",
+      "ratio": 0.97,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "korean-bellflower",
+      "ours": "Platycodon grandiflorum",
+      "gbif": "Platycodon grandiflorus",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "94286",
+      "ncbi_name": "Platycodon grandiflorus",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "pau-d-arco",
+      "ours": "Handroanthus impetiginosus",
+      "gbif": "Handroanthus impetiginosum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "429701",
+      "ncbi_name": "Handroanthus impetiginosus",
+      "verdict": "CONTRADICTED"
+    },
+    {
+      "slug": "corynanthe-yohimbe",
+      "ours": "Pausinystalia yohimbe",
+      "gbif": "Pausinystalia yohimba",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "kayu-manis-jamu",
+      "ours": "Cinnamomum burmanii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "kumarahou",
+      "ours": "Pomaderris kumerahou",
+      "gbif": "Pomaderris kumarahou",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "thyme-moroccan",
+      "ours": "Thymus satureioides",
+      "gbif": "Thymus saturejoides",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "751874",
+      "ncbi_name": "Thymus saturejoides",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "condurango",
+      "ours": "Gonolobus condurango",
+      "gbif": "Gonolobus cundurango",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "samambaia-amazonian",
+      "ours": "Polypodium leucotomos",
+      "gbif": "Polypodium leucatomos",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "artemisia-genepi",
+      "ours": "Artemisia genepi",
+      "gbif": "Artemisia genipi",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "entada-seed",
+      "ours": "Entada rheedii",
+      "gbif": "Entada rheedei",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "204974",
+      "ncbi_name": "Entada rheedei",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "tamanu",
+      "ours": "Calophyllum inophyllatum",
+      "gbif": "Calophyllum inophyllum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "hawthorn-small-leaf",
+      "ours": "Crataegus cuneatiformis",
+      "gbif": "Crataegus cuneiformis",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 2,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "boneset",
+      "ours": "Eupatorium perfolidum",
+      "gbif": "Eupatorium perfoliatum",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "spanish-sage",
+      "ours": "Salvia lavandulaefolia",
+      "gbif": "Salvia lavandulifolia",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": "3110498",
+      "ncbi_name": "Salvia officinalis subsp. lavandulifolia",
+      "verdict": "third form: Salvia officinalis subsp. lavandulifolia"
+    },
+    {
+      "slug": "strobilanthes-crispus",
+      "ours": "Strobilanthes crispus",
+      "gbif": "Strobilanthes crispa",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": "946018",
+      "ncbi_name": "Strobilanthes crispa",
+      "verdict": "corroborated"
+    }
+  ],
+  "second_pass_summary": {
+    "corroborated": 8,
+    "contradicted_reverted": 1,
+    "third_form": 2,
+    "single_source_no_ncbi_record": 13,
+    "no_name_returned": 0
+  },
+  "resolutions": {
+    "pau-d-arco": "Contradicted by NCBI (taxid 429701, Handroanthus impetiginosus) and reverted in batch 2 as an applied entry."
+  },
+  "slug_decisions": {
+    "anthonota-macrophylla": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Anthonota; the destination slug anthonotha-macrophylla had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "xanthorrhiza-simplicissima": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Xanthorrhiza; the destination slug xanthorhiza-simplicissima had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "hypsizygus-tessellatus": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Hypsizygus tessellatus; the destination slug hypsizygus-tesselatus had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "notopterygium-incisium": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Notopterygium incisium; the destination slug notopterygium-incisum had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "cinnamomum-burmannii": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Cinnamomum burmannii; the destination slug cinnamomum-burmanni had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "rauwolfia-cardio": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Rauwolfia; the destination slug rauvolfia-cardio had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "jatropha-gossypifolia": {
+      "decision": "keep",
+      "reason": "The destination slug jatropha-gossypiifolia already exists as a separate published row with the same binomial, so this is a duplicate-record merge decision rather than a rename."
+    },
+    "citrus-aurantifolia": {
+      "decision": "keep",
+      "reason": "aurantifolia is a widely used orthographic variant (NCBI uses Citrus x aurantiifolia) rather than a misspelling."
+    },
+    "cota-triumfettii": {
+      "decision": "keep",
+      "reason": "triumfettii is a common orthographic variant of the GBIF canonical triumfetti rather than a typo."
+    },
+    "corynanthe-yohimbe": {
+      "decision": "keep",
+      "reason": "yohimbe is both the English common name and the basionym epithet, so the slug remains a correct historical label."
+    }
+  }
+}
