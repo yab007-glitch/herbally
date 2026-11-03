@@ -16,7 +16,11 @@ export type RegulatoryEvidence = {
   source: string;
   source_licence: string;
   purposes: string[];
-  doses: { text: string; population?: string | null; age_minimum?: number | null }[];
+  doses: {
+    text: string;
+    population?: string | null;
+    age_minimum?: number | null;
+  }[];
   risks: string[];
   products_sampled: number;
   source_urls: string[];
@@ -31,7 +35,8 @@ const COPY = {
     purposes: "Indications on record",
     doses: "Doses used",
     risks: "Risk statements",
-    products: (n: number) => `Drawn from ${n} licensed product${n === 1 ? "" : "s"}.`,
+    products: (n: number) =>
+      `Drawn from ${n} licensed product${n === 1 ? "" : "s"}.`,
     attribution: "Health Canada, Licensed Natural Health Products Database",
     retrieved: "retrieved",
   },
@@ -42,8 +47,10 @@ const COPY = {
     purposes: "Indications au dossier",
     doses: "Doses utilisées",
     risks: "Mentions de risque",
-    products: (n: number) => `Tiré de ${n} produit${n === 1 ? "" : "s"} homologué${n === 1 ? "" : "s"}.`,
-    attribution: "Santé Canada, Base de données des produits de santé naturels homologués",
+    products: (n: number) =>
+      `Tiré de ${n} produit${n === 1 ? "" : "s"} homologué${n === 1 ? "" : "s"}.`,
+    attribution:
+      "Santé Canada, Base de données des produits de santé naturels homologués",
     retrieved: "consultée le",
   },
 } as const;
@@ -59,7 +66,9 @@ export function RegulatoryEvidenceSection({
 }) {
   if (!evidence) return null;
   const hasAny =
-    evidence.purposes?.length || evidence.doses?.length || evidence.risks?.length;
+    evidence.purposes?.length ||
+    evidence.doses?.length ||
+    evidence.risks?.length;
   if (!hasAny) return null;
 
   const c = COPY[locale];
@@ -73,7 +82,10 @@ export function RegulatoryEvidenceSection({
   return (
     <section
       aria-labelledby="regulatory-evidence-heading"
-      className={cn("rounded-2xl border border-border/70 bg-muted/30 p-5", className)}
+      className={cn(
+        "rounded-2xl border border-border/70 bg-muted/30 p-5",
+        className
+      )}
     >
       <h2
         id="regulatory-evidence-heading"
@@ -87,7 +99,9 @@ export function RegulatoryEvidenceSection({
 
       {evidence.purposes?.length > 0 && (
         <div className="mt-4">
-          <h3 className="text-sm font-semibold text-foreground">{c.purposes}</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            {c.purposes}
+          </h3>
           <ul className="mt-2 space-y-1.5">
             {evidence.purposes.slice(0, 6).map((p) => (
               <li

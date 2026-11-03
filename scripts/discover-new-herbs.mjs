@@ -21,7 +21,8 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const OUT = join(ROOT, "artifacts", "lnhpd-new-candidates.json");
-const API = "https://health-products.canada.ca/api/natural-licences/medicinalingredient/";
+const API =
+  "https://health-products.canada.ca/api/natural-licences/medicinalingredient/";
 const CONCURRENCY = 8;
 
 const norm = (s) =>
@@ -35,7 +36,8 @@ const norm = (s) =>
 
 // Things that are medicinal ingredients but not herbs. Importing these would
 // pollute a botanical library.
-const NOT_HERB = /\b(vitamin|mineral|acid|zinc|magnesium|calcium|iron|potassium|selenium|chromium|copper|manganese|iodine|biotin|niacin|thiamin|riboflavin|folate|folacin|cyanocobalamin|enzyme|lactase|probiotic|lactobacillus|bifidobacter|homeopath|nosode|tincture of|glucosamine|chondroitin|collagen|melatonin|l-carnitine|coenzyme|omega|fish oil|flax ?seed oil|evening primrose oil)\b/i;
+const NOT_HERB =
+  /\b(vitamin|mineral|acid|zinc|magnesium|calcium|iron|potassium|selenium|chromium|copper|manganese|iodine|biotin|niacin|thiamin|riboflavin|folate|folacin|cyanocobalamin|enzyme|lactase|probiotic|lactobacillus|bifidobacter|homeopath|nosode|tincture of|glucosamine|chondroitin|collagen|melatonin|l-carnitine|coenzyme|omega|fish oil|flax ?seed oil|evening primrose oil)\b/i;
 
 async function fetchPage(page, attempt = 1) {
   try {
@@ -53,7 +55,9 @@ async function fetchPage(page, attempt = 1) {
 
 function env() {
   const out = {};
-  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split("\n")) {
+  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split(
+    "\n"
+  )) {
     const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
     if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, "");
   }
@@ -62,7 +66,10 @@ function env() {
 
 async function knownKeys() {
   const e = env();
-  const headers = { apikey: e.NEXT_PUBLIC_SUPABASE_ANON_KEY, Authorization: `Bearer ${e.NEXT_PUBLIC_SUPABASE_ANON_KEY}` };
+  const headers = {
+    apikey: e.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${e.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+  };
   const keys = new Set();
   for (let off = 0; ; off += 1000) {
     const url = `${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/herbs?select=name,scientific_name,common_names&order=slug&limit=1000&offset=${off}`;
@@ -87,7 +94,9 @@ async function main() {
   let scanned = 0;
   while (true) {
     const batch = Array.from({ length: CONCURRENCY }, (_, i) => cursor + i);
-    const pages = await Promise.all(batch.map((p) => fetchPage(p).catch(() => null)));
+    const pages = await Promise.all(
+      batch.map((p) => fetchPage(p).catch(() => null))
+    );
     let advanced = 0;
     for (const payload of pages) {
       if (!payload?.data) break;
@@ -98,12 +107,18 @@ async function main() {
       for (const row of payload.data) {
         const key = norm(row.ingredient_name);
         if (!key || key.length < 4) continue;
-        if (!counts.has(key)) counts.set(key, { name: row.ingredient_name.trim(), products: new Set(), sample: [] });
+        if (!counts.has(key))
+          counts.set(key, {
+            name: row.ingredient_name.trim(),
+            products: new Set(),
+            sample: [],
+          });
         const rec = counts.get(key);
         rec.products.add(row.lnhpd_id);
         // Keep a few product ids so the importer can pull purpose/dose/risk for
         // this name without a second full crawl.
-        if (rec.sample.length < 8 && !rec.sample.includes(row.lnhpd_id)) rec.sample.push(row.lnhpd_id);
+        if (rec.sample.length < 8 && !rec.sample.includes(row.lnhpd_id))
+          rec.sample.push(row.lnhpd_id);
       }
       scanned += payload.data.length;
       advanced += 1;
@@ -115,7 +130,9 @@ async function main() {
     cursor += advanced;
     if (cursor % 400 < CONCURRENCY) {
       mkdirSync(dirname(OUT), { recursive: true });
-      console.log(`[discover] page ${cursor} | scanned ${scanned} | distinct names ${counts.size}`);
+      console.log(
+        `[discover] page ${cursor} | scanned ${scanned} | distinct names ${counts.size}`
+      );
     }
   }
 
@@ -124,7 +141,12 @@ async function main() {
     for (const [key, v] of counts) {
       if (known.has(key)) continue;
       if (NOT_HERB.test(v.name)) continue;
-      candidates.push({ name: v.name, products: v.products.size, normalized: key, sample_ids: v.sample });
+      candidates.push({
+        name: v.name,
+        products: v.products.size,
+        normalized: key,
+        sample_ids: v.sample,
+      });
     }
     candidates.sort((a, b) => b.products - a.products);
     mkdirSync(dirname(OUT), { recursive: true });
@@ -145,7 +167,9 @@ async function main() {
       )
     );
     const strong = candidates.filter((c) => c.products >= 3).length;
-    console.log(`[discover] done. ${candidates.length} unnamed candidates, ${strong} with >=3 licensed products -> ${OUT}`);
+    console.log(
+      `[discover] done. ${candidates.length} unnamed candidates, ${strong} with >=3 licensed products -> ${OUT}`
+    );
   }
 }
 
