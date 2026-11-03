@@ -285,6 +285,36 @@
       "from": "kaunch-beej",
       "to": "velvet-bean",
       "carry_note": "Ayurvedic nerve and reproductive tonic from velvet bean seeds with highest natural L-DOPA."
+    },
+    {
+      "from": "lemon-balm-toronjil",
+      "to": "lemon-balm",
+      "carry_note": "Melissa officinalis (Lamiaceae) is an aromatic perennial herb; the tropical form described as 'Toronjil' is naturalized in Latin America, where it is botanically consistent with the species' essential-oil-bearing foliar chemistry. Primary bioactive constituent classes include a volatile oil dominated by monoterpene aldehydes (citral isomers, geranial/neral), monoterpene alcohols (geraniol), phenolic acids (notably rosmarinic acid), and flavonoids including luteolin and apigenin. Reported pharmacological actions in preclinical and human-experimental literature encompass central nervous system depressant (sedative/anxiolytic-type) effects, antispasmodic activity on smooth muscle, and in-vitro antiviral and antioxidant activity attributable largely to rosmarinic acid and citral fractions. A controlled human investigation referenced in the 3rd IPLeiria International Health Congress proceedings (PMID: 27409075) contributes to the limited clinical dataset on Melissa officinalis administration. Clinical scope remains concentrated on short-term use for mood-state parameters, stress modulation, and mild gastro-intestinal spasm; larger definitive trials are lacking. Traditional Latin American and Caribbean applications (anxiety, digestive complaints, fever) are documented ethnobotanically but do not constitute clinical evidence. Preparations typically exploit water-soluble phenolic and volatile components."
+    },
+    {
+      "from": "lemon-thyme",
+      "to": "thymus-citriodorus",
+      "carry_note": "Lemon thyme (Thymus x citriodorus) is a sterile hybrid of Thymus vulgaris and Thymus pulegioides within the Lamiaceae family, distinguished by a pronounced citrus aroma derived from elevated geraniol, citral, and limonene content relative to common thyme. Its essential oil contains phenolic monoterpenes, primarily thymol and carvacrol, alongside linalool and terpinene fractions; aromatic profiling of Italian ornamental thyme accessions (PMID 20334146) identifies these chemotype differences. In vitro research, including comparative evaluation of essential oils against Cutibacterium acnes strains (PMID 39603568), supports antimicrobial activity of thyme-derived oils, though results derive from laboratory assays rather than human intervention trials. Traditional and culinary applications center on respiratory complaints, digestive discomfort, and aromatherapeutic use; these remain ethnobotanical in framing. No robust human clinical trials establish efficacy for respiratory, digestive, or anxiolytic indications in this hybrid specifically, and pharmacological data are largely extrapolated from Thymus vulgaris and generic thyme oil research. Clinical scope is therefore limited: thyme oils and extracts demonstrate antimicrobial and antispasmodic properties in preclinical models, but lemon thyme lacks hybrid-specific controlled human evidence."
+    },
+    {
+      "from": "lu-rong",
+      "to": "deer-antler-velvet-mens",
+      "carry_note": "Immature antler velvet from sika deer, one of the most prized tonics in TCM for replenishing essence and marrow, tonifying kidney yang, and strengthening bones and blood."
+    },
+    {
+      "from": "mandukaparni",
+      "to": "gotu-kola",
+      "carry_note": "Ayurvedic brain herb for meditation and spiritual clarity."
+    },
+    {
+      "from": "melao-sao-caetano",
+      "to": "bitter-melon-metabolic",
+      "carry_note": "Mel\u00e3o de S\u00e3o Caetano (Momordica charantia var. abbreviata Ser.) is a small-fruited wild variety of bitter melon in the Cucurbitaceae family, native to and naturalized in Brazil, where it grows as a climbing vine with lobed leaves and warty, ellipsoid fruit. Unlike cultivated bitter melon cultivars, this botanical variety has been characterized in comparative phytochemical and pharmacological studies. Its principal bioactive constituent classes include triterpene glycosides (charantin), cucurbitane-type triterpenoids (momordicins, cucurbitacins), an insulin-like polypeptide (polypeptide-p), pyrimidine nucleoside glycosides (vicine), and phenolic compounds contributing antioxidant capacity. Published in vitro research on the wild variety, including direct comparative investigations (PMID 31151277), documents antifungal, antimicrobial, and antioxidant activities in leaf-derived extracts, with antioxidant retention in juice affected by storage conditions (PMID 32784816). Broader research on Momordica charantia species complex has examined hypoglycemic effects in animal and limited human models. Clinical evidence for the var. abbreviata specifically remains preclinical and analytical; no clinical trials establish therapeutic efficacy or dosing for this botanical variety."
+    },
+    {
+      "from": "melissa-romana",
+      "to": "lemon-balm",
+      "carry_note": "Taller southern European lemon balm variety with higher rosmarinic acid content used in folk medicine for thyroid and nervous conditions."
     }
   ]
 }

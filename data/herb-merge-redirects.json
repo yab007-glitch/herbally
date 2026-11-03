@@ -226,5 +226,29 @@
  {
   "from": "/herbs/kaunch-beej",
   "to": "/herbs/velvet-bean"
+ },
+ {
+  "from": "/herbs/lemon-balm-toronjil",
+  "to": "/herbs/lemon-balm"
+ },
+ {
+  "from": "/herbs/lemon-thyme",
+  "to": "/herbs/thymus-citriodorus"
+ },
+ {
+  "from": "/herbs/lu-rong",
+  "to": "/herbs/deer-antler-velvet-mens"
+ },
+ {
+  "from": "/herbs/mandukaparni",
+  "to": "/herbs/gotu-kola"
+ },
+ {
+  "from": "/herbs/melao-sao-caetano",
+  "to": "/herbs/bitter-melon-metabolic"
+ },
+ {
+  "from": "/herbs/melissa-romana",
+  "to": "/herbs/lemon-balm"
  }
 ]
