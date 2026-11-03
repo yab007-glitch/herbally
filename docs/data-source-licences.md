@@ -84,6 +84,28 @@ If a publisher changes its terms, re-check this register and remove the source
 from `SOURCE_VALUES` before the next import. Existing imported rows keep their
 provenance in the seed artifact, which is what makes the removal auditable.
 
+## Health Canada LNHPD — accepted 2026-11-02 (monograph evidence, not interaction pairs)
+
+The Licensed Natural Health Products Database publishes licensed-product records
+through a JSON API. Decisive terms: the dataset is published on the Open
+Government Portal under the **Open Government Licence – Canada**, which permits
+commercial reuse with attribution.
+
+| Field | Value |
+| --- | --- |
+| `source` | `Health Canada LNHPD` |
+| host | `health-products.canada.ca` |
+| `source_licence` | `canada-ogl` |
+| obligations | attribute "Health Canada, Licensed Natural Health Products Database"; link the dataset; record the retrieval date; do not imply Health Canada endorsement |
+| scope | product purpose (indications), dose, risk statements, medicinal-ingredient quantities |
+| not usable for | interaction severity — the LNHPD carries no interaction grading, so it never seeds `data/interactions/*.json` |
+
+Coverage measured 2026-11-02 by `scripts/harvest-lnhpd.mjs`: 832,126
+medicinal-ingredient rows scanned; **1,164 of 2,699 published herbs** matched at
+least one licensed product; median 25 records per herb. The remaining 1,535
+herbs have no regulator record in this source and must not be padded to look
+like they do.
+
 ## Per-pair provenance
 
 Every pair in `data/interactions/<herb>.json` carries:

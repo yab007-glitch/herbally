@@ -70,3 +70,4 @@ supabase/backups/
 
 # Regenerable LNHPD harvest (49 MB, rebuilt by scripts/harvest-lnhpd.mjs)
 artifacts/lnhpd-matches.json
+artifacts/lnhpd-enrichment.json
