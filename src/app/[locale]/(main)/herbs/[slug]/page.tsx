@@ -59,6 +59,7 @@ import type {
   Citation,
 } from "@/components/herbs/pubmed-monograph-sheet";
 import { hasManualMonograph } from "@/lib/data/monographs";
+import { getReviewer } from "@/lib/data/reviewers";
 
 // ISR. This route was force-dynamic because the locale used to come from
 // headers(): the root layout's `headers()` call threw during on-demand static
@@ -526,28 +527,24 @@ export default async function HerbDetailPage({ params }: Props) {
     herb.citations as unknown as CitationData[] | null,
     t
   );
-  // Only a human-reviewed entry gets a reviewer attribution or a review
-  // date. For unverified entries, `lastReviewed` must not fall back to
-  // `updated_at` — an update date is not a review.
-  const lastReviewed = humanReviewed
-    ? herb.last_reviewed
+  // A review attribution needs a named, registered reviewer. Every herb row
+  // carries the generic string "HerbAlly Editorial Team", which is not a
+  // person and cannot be shown as a byline or emitted as a schema.org Person:
+  // that would claim review by a body nobody can name. Until a real reviewer
+  // is registered for a herb, the page shows its author and leaves review
+  // unclaimed. `last_reviewed` is tied to the same condition — the current
+  // value is one bulk date stamped across all 2,699 rows, so it is a
+  // data-entry artifact, not evidence that anything was reviewed.
+  const registeredReviewer = getReviewer(herb.reviewed_by);
+  const lastReviewed =
+    registeredReviewer && herb.last_reviewed
       ? new Date(herb.last_reviewed).toLocaleDateString("en-US", {
           month: "long",
           year: "numeric",
         })
-      : herb.updated_at
-        ? new Date(herb.updated_at).toLocaleDateString("en-US", {
-            month: "long",
-            year: "numeric",
-          })
-        : undefined
-    : undefined;
-  const reviewedBy = humanReviewed
-    ? herb.reviewed_by || t("herbDetailContent.editorialTeam")
-    : undefined;
-  const reviewerCredentials = humanReviewed
-    ? herb.reviewer_credentials || t("herbDetailContent.editorialCredentials")
-    : undefined;
+      : undefined;
+  const reviewedBy = registeredReviewer?.name;
+  const reviewerCredentials = registeredReviewer?.credentials;
 
   // Related herbs: the category query is the only un-cached Supabase fetch on
   // this page (every other query uses tagged `fetch`/`unstable_cache`). Wrap

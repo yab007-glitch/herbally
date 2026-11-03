@@ -389,10 +389,10 @@ export default async function ComparePage({ params }: Props) {
         </CardContent>
       </Card>
 
-      {/* Sources */}
+      {/* Sources. No reviewer attribution: "HerbAlly Editorial Team" is not a
+          person, and a comparison page cannot claim a review that no registered
+          reviewer performed. Sources stay, the byline claim goes. */}
       <SourceAttribution
-        reviewedBy={t("herbDetailContent.editorialTeam")}
-        reviewerCredentials={t("herbDetailContent.editorialCredentials")}
         sources={[
           t("herbDetailContent.sources.who"),
           t("herbDetailContent.sources.nccih"),

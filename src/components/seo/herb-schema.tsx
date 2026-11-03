@@ -118,27 +118,27 @@ export function HerbSchema({ herb, url }: HerbSchemaProps) {
       name: "HerbAlly",
       url: siteUrl(),
     },
-    ...(herb.reviewed_by && {
-      reviewedBy: reviewer
-        ? {
-            "@type": "Person",
-            name: reviewer.name,
-            jobTitle: reviewer.credentials,
-            url: reviewer.profileUrl,
-            ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
-            affiliation: reviewer.affiliations.map((a) => ({
-              "@type": "Organization",
-              name: a.name,
-              ...(a.url && { url: a.url }),
-            })),
-          }
-        : {
-            "@type": "Person",
-            name: herb.reviewed_by,
-            ...(herb.reviewer_credentials && {
-              jobTitle: herb.reviewer_credentials,
-            }),
-          },
+    // A reviewer claim is only honest when a specific, named person is on the
+    // record. The registry (`getReviewer`) is the only source of such a person;
+    // every herb row instead carries the generic string "HerbAlly Editorial
+    // Team", and emitting that as a schema.org Person with jobTitle "Medical
+    // herbalists and healthcare professionals" claims review by a body that
+    // cannot be named — fabricated credentials on YMYL content, which is worse
+    // than no reviewer at all. Unregistered values are therefore omitted: the
+    // page claims authorship (true) and leaves review unclaimed.
+    ...(reviewer && {
+      reviewedBy: {
+        "@type": "Person",
+        name: reviewer.name,
+        jobTitle: reviewer.credentials,
+        url: reviewer.profileUrl,
+        ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
+        affiliation: reviewer.affiliations.map((a) => ({
+          "@type": "Organization",
+          name: a.name,
+          ...(a.url && { url: a.url }),
+        })),
+      },
     }),
     // The accountable author. This is a real, credentialed person and the
     // single strongest honest trust signal the page can carry; "HerbAlly

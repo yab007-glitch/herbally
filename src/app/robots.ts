@@ -16,7 +16,9 @@ export default function robots(): MetadataRoute.Robots {
         // as well as search-engine bots (OAI-SearchBot, PerplexityBot) are allowed.
         userAgent: [
           "GPTBot",
-          "ChatGPT-User",
+          // NOT ChatGPT-User: that is the browsing agent behind a ChatGPT
+          // answer, not a trainer. Blocking it stops the site being read — and
+          // cited — in the place a growing share of health questions end.
           "CCBot",
           "ClaudeBot",
           "anthropic-ai",
