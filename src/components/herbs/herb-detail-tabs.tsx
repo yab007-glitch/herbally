@@ -128,10 +128,7 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
       {/* The single content render. Hidden while the mobile accordion is fully
           collapsed, matching the previous behaviour. */}
       {active ? (
-        <div
-          id="herb-tab-panel"
-          className="mt-6 animate-message-in sm:mt-6"
-        >
+        <div id="herb-tab-panel" className="mt-6 animate-message-in sm:mt-6">
           {tabs.find((tab) => tab.key === active)?.content}
         </div>
       ) : null}

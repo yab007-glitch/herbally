@@ -880,7 +880,9 @@ export default async function HerbDetailPage({ params }: Props) {
             <h2> "Related Herbs" — harmless to sighted readers, a duplicate
             heading to a screen reader or a crawler. */}
         <h2 id="internal-links-heading" className="sr-only">
-          {locale === "fr" ? "Autres plantes et interactions" : "More herbs and interactions"}
+          {locale === "fr"
+            ? "Autres plantes et interactions"
+            : "More herbs and interactions"}
         </h2>
         <InternalLinkRail
           locale={locale === "fr" ? "fr" : "en"}

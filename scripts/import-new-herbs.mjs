@@ -24,23 +24,34 @@ const DRY = process.argv.includes("--dry-run");
 
 function env() {
   const out = {};
-  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split("\n")) {
+  for (const line of readFileSync(join(ROOT, ".env.local"), "utf8").split(
+    "\n"
+  )) {
     const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
     if (m) out[m[1]] = m[2].replace(/^["']|["']$/g, "");
   }
   return out;
 }
 const e = env();
-const HEAD = { apikey: e.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}` };
+const HEAD = {
+  apikey: e.SUPABASE_SERVICE_ROLE_KEY,
+  Authorization: `Bearer ${e.SUPABASE_SERVICE_ROLE_KEY}`,
+};
 const REST = `${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1`;
 
-const clean = (s) => String(s || "").replace(/\s+/g, " ").trim();
+const clean = (s) =>
+  String(s || "")
+    .replace(/\s+/g, " ")
+    .trim();
 
 async function getJson(path, attempt = 1) {
   try {
-    const res = await fetch(`${API}/${path}${path.includes("?") ? "&" : "?"}lang=en&type=json`, {
-      headers: { "User-Agent": "HerbAlly data importer (herbally.app)" },
-    });
+    const res = await fetch(
+      `${API}/${path}${path.includes("?") ? "&" : "?"}lang=en&type=json`,
+      {
+        headers: { "User-Agent": "HerbAlly data importer (herbally.app)" },
+      }
+    );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const p = await res.json();
     return p.data ?? p ?? [];
@@ -52,7 +63,10 @@ async function getJson(path, attempt = 1) {
 }
 
 async function evidenceFor(ids) {
-  const purposes = [], doses = [], risks = [], sources = [];
+  const purposes = [],
+    doses = [],
+    risks = [],
+    sources = [];
   for (const id of ids.slice(0, 6)) {
     const [p, d, r] = await Promise.all([
       getJson(`productpurpose/?id=${id}`).catch(() => []),
@@ -68,9 +82,18 @@ async function evidenceFor(ids) {
       const unit = clean(x.uom_type_desc_quantity_dose);
       const freq = Number(x.frequency) || 0;
       const fUnit = clean(x.uom_type_desc_frequency);
-      const text = [unit ? `${qty} ${unit}` : null, freq ? `${freq}x ${fUnit || "daily"}` : null].filter(Boolean).join(" / ");
+      const text = [
+        unit ? `${qty} ${unit}` : null,
+        freq ? `${freq}x ${fUnit || "daily"}` : null,
+      ]
+        .filter(Boolean)
+        .join(" / ");
       if (text && !doses.some((y) => y.text === text)) {
-        doses.push({ text, population: clean(x.population_type_desc) || null, age_minimum: x.age_minimum ?? null });
+        doses.push({
+          text,
+          population: clean(x.population_type_desc) || null,
+          age_minimum: x.age_minimum ?? null,
+        });
       }
     }
     for (const x of r) {
@@ -84,18 +107,24 @@ async function evidenceFor(ids) {
 
 async function main() {
   const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
-  const candidates = existsSync(CANDIDATES) ? JSON.parse(readFileSync(CANDIDATES, "utf8")).list : [];
+  const candidates = existsSync(CANDIDATES)
+    ? JSON.parse(readFileSync(CANDIDATES, "utf8")).list
+    : [];
   const byName = new Map(candidates.map((c) => [c.name.toLowerCase(), c]));
 
   for (const herb of manifest.herbs) {
     const cand = byName.get(herb.lnhpd_name.toLowerCase());
     if (!cand) {
-      console.log(`[skip] ${herb.slug}: no LNHPD candidate named "${herb.lnhpd_name}"`);
+      console.log(
+        `[skip] ${herb.slug}: no LNHPD candidate named "${herb.lnhpd_name}"`
+      );
       continue;
     }
     const ev = await evidenceFor(cand.sample_ids || []);
     if (!ev.purposes.length || !ev.doses.length) {
-      console.log(`[skip] ${herb.slug}: evidence too thin (purposes ${ev.purposes.length}, doses ${ev.doses.length})`);
+      console.log(
+        `[skip] ${herb.slug}: evidence too thin (purposes ${ev.purposes.length}, doses ${ev.doses.length})`
+      );
       continue;
     }
 
@@ -121,17 +150,25 @@ async function main() {
     };
 
     if (DRY) {
-      console.log(`[dry] ${herb.slug} | purposes ${ev.purposes.length} doses ${ev.doses.length} risks ${ev.risks.length}`);
+      console.log(
+        `[dry] ${herb.slug} | purposes ${ev.purposes.length} doses ${ev.doses.length} risks ${ev.risks.length}`
+      );
       continue;
     }
 
     const ins = await fetch(`${REST}/herbs`, {
       method: "POST",
-      headers: { ...HEAD, "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates,return=minimal" },
+      headers: {
+        ...HEAD,
+        "Content-Type": "application/json",
+        Prefer: "resolution=ignore-duplicates,return=minimal",
+      },
       body: JSON.stringify([row]),
     });
     if (!ins.ok) {
-      console.log(`[fail] ${herb.slug}: ${ins.status} ${(await ins.text()).slice(0, 160)}`);
+      console.log(
+        `[fail] ${herb.slug}: ${ins.status} ${(await ins.text()).slice(0, 160)}`
+      );
       continue;
     }
 
@@ -149,10 +186,16 @@ async function main() {
     };
     const insEv = await fetch(`${REST}/herb_regulatory_evidence`, {
       method: "POST",
-      headers: { ...HEAD, "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
+      headers: {
+        ...HEAD,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      },
       body: JSON.stringify([evRow]),
     });
-    console.log(`[added] ${herb.slug} | purposes ${ev.purposes.length} doses ${ev.doses.length} risks ${ev.risks.length} | evidence ${insEv.ok ? "ok" : insEv.status}`);
+    console.log(
+      `[added] ${herb.slug} | purposes ${ev.purposes.length} doses ${ev.doses.length} risks ${ev.risks.length} | evidence ${insEv.ok ? "ok" : insEv.status}`
+    );
   }
 }
 

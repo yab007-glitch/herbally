@@ -26,7 +26,8 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const ARTIFACT = join(ROOT, "artifacts", "lnhpd-matches.json");
-const API = "https://health-products.canada.ca/api/natural-licences/medicinalingredient/";
+const API =
+  "https://health-products.canada.ca/api/natural-licences/medicinalingredient/";
 const ARGS = process.argv.slice(2);
 const RESET = ARGS.includes("--reset");
 const PAGE_LIMIT = (() => {
@@ -55,7 +56,13 @@ const norm = (s) =>
 
 function loadState() {
   if (RESET || !existsSync(ARTIFACT)) {
-    return { startedAt: new Date().toISOString(), page: 1, total: null, matches: {}, scanned: 0 };
+    return {
+      startedAt: new Date().toISOString(),
+      page: 1,
+      total: null,
+      matches: {},
+      scanned: 0,
+    };
   }
   return JSON.parse(readFileSync(ARTIFACT, "utf8"));
 }
@@ -78,7 +85,8 @@ async function loadHerbIndex() {
   for (let offset = 0; ; offset += 1000) {
     const url = `${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/herbs?select=slug,name,scientific_name,common_names&is_published=eq.true&order=slug&limit=1000&offset=${offset}`;
     const res = await fetch(url, { headers });
-    if (!res.ok) throw new Error(`herbs fetch failed: ${res.status} at offset ${offset}`);
+    if (!res.ok)
+      throw new Error(`herbs fetch failed: ${res.status} at offset ${offset}`);
     const page = await res.json();
     rows.push(...page);
     if (page.length < 1000) break;
@@ -132,7 +140,9 @@ async function main() {
   while (true) {
     const batch = [];
     for (let i = 0; i < CONCURRENCY; i += 1) batch.push(cursor + i);
-    const pages = await Promise.all(batch.map((p) => fetchPage(p).catch(() => ({ data: null, page: p }))));
+    const pages = await Promise.all(
+      batch.map((p) => fetchPage(p).catch(() => ({ data: null, page: p })))
+    );
 
     let advanced = 0;
     for (const payload of pages) {
@@ -146,7 +156,9 @@ async function main() {
       const total = payload.metadata?.pagination?.total ?? null;
       if (total && state.total !== total) {
         state.total = total;
-        console.log(`[lnhpd] table reports ${total} rows (${Math.ceil(total / 100)} pages)`);
+        console.log(
+          `[lnhpd] table reports ${total} rows (${Math.ceil(total / 100)} pages)`
+        );
       }
 
       for (const row of rows) {
@@ -155,7 +167,13 @@ async function main() {
         if (!slugs) continue;
         for (const slug of slugs) {
           const bucket = state.matches[slug] || (state.matches[slug] = []);
-          if (!bucket.some((m) => m.lnhpd_id === row.lnhpd_id && m.ingredient_name === row.ingredient_name)) {
+          if (
+            !bucket.some(
+              (m) =>
+                m.lnhpd_id === row.lnhpd_id &&
+                m.ingredient_name === row.ingredient_name
+            )
+          ) {
             bucket.push({
               lnhpd_id: row.lnhpd_id,
               ingredient_name: row.ingredient_name,
@@ -172,7 +190,9 @@ async function main() {
     }
 
     if (advanced === 0) {
-      console.log(`[lnhpd] batch at page ${cursor} failed entirely, retrying in 5s`);
+      console.log(
+        `[lnhpd] batch at page ${cursor} failed entirely, retrying in 5s`
+      );
       await new Promise((r) => setTimeout(r, 5000));
       continue;
     }

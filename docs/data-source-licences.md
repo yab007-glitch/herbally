@@ -91,14 +91,14 @@ through a JSON API. Decisive terms: the dataset is published on the Open
 Government Portal under the **Open Government Licence – Canada**, which permits
 commercial reuse with attribution.
 
-| Field | Value |
-| --- | --- |
-| `source` | `Health Canada LNHPD` |
-| host | `health-products.canada.ca` |
-| `source_licence` | `canada-ogl` |
-| obligations | attribute "Health Canada, Licensed Natural Health Products Database"; link the dataset; record the retrieval date; do not imply Health Canada endorsement |
-| scope | product purpose (indications), dose, risk statements, medicinal-ingredient quantities |
-| not usable for | interaction severity — the LNHPD carries no interaction grading, so it never seeds `data/interactions/*.json` |
+| Field            | Value                                                                                                                                                     |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`         | `Health Canada LNHPD`                                                                                                                                     |
+| host             | `health-products.canada.ca`                                                                                                                               |
+| `source_licence` | `canada-ogl`                                                                                                                                              |
+| obligations      | attribute "Health Canada, Licensed Natural Health Products Database"; link the dataset; record the retrieval date; do not imply Health Canada endorsement |
+| scope            | product purpose (indications), dose, risk statements, medicinal-ingredient quantities                                                                     |
+| not usable for   | interaction severity — the LNHPD carries no interaction grading, so it never seeds `data/interactions/*.json`                                             |
 
 Coverage measured 2026-11-02 by `scripts/harvest-lnhpd.mjs`: 832,126
 medicinal-ingredient rows scanned; **1,164 of 2,699 published herbs** matched at

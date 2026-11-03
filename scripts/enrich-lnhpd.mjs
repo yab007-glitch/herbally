@@ -35,13 +35,19 @@ const argVal = (flag) => {
 const LIMIT = Number(argVal("--limit")) || 0;
 const ONLY = (argVal("--only") || "").split(",").filter(Boolean);
 
-const clean = (s) => String(s || "").replace(/\s+/g, " ").trim();
+const clean = (s) =>
+  String(s || "")
+    .replace(/\s+/g, " ")
+    .trim();
 
 async function getJson(path, attempt = 1) {
   try {
-    const res = await fetch(`${API}/${path}${path.includes("?") ? "&" : "?"}lang=en&type=json`, {
-      headers: { "User-Agent": "HerbAlly data importer (herbally.app)" },
-    });
+    const res = await fetch(
+      `${API}/${path}${path.includes("?") ? "&" : "?"}lang=en&type=json`,
+      {
+        headers: { "User-Agent": "HerbAlly data importer (herbally.app)" },
+      }
+    );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const payload = await res.json();
     return payload.data ?? payload ?? [];
@@ -53,8 +59,18 @@ async function getJson(path, attempt = 1) {
 }
 
 async function enrichHerb(slug, rows) {
-  const ids = [...new Set(rows.map((r) => r.lnhpd_id))].slice(0, PRODUCTS_PER_HERB);
-  const record = { slug, products_sampled: ids.length, purposes: [], doses: [], risks: [], sources: [] };
+  const ids = [...new Set(rows.map((r) => r.lnhpd_id))].slice(
+    0,
+    PRODUCTS_PER_HERB
+  );
+  const record = {
+    slug,
+    products_sampled: ids.length,
+    purposes: [],
+    doses: [],
+    risks: [],
+    sources: [],
+  };
 
   for (const id of ids) {
     const [purpose, dose, risk] = await Promise.all([
@@ -77,22 +93,34 @@ async function enrichHerb(slug, rows) {
       const freq = Number(d.frequency) || 0;
       const freqUnit = clean(d.uom_type_desc_frequency);
       const amount = qtyMax > qty ? `${qty}-${qtyMax}` : `${qty}`;
-      const text = [unit ? `${amount} ${unit}` : null, freq ? `${freq}x ${freqUnit || "daily"}` : null]
+      const text = [
+        unit ? `${amount} ${unit}` : null,
+        freq ? `${freq}x ${freqUnit || "daily"}` : null,
+      ]
         .filter(Boolean)
         .join(" / ");
       if (!text) continue;
       const population = clean(d.population_type_desc) || null;
-      if (!record.doses.some((x) => x.text === text && x.population === population)) {
-        record.doses.push({ text, population, age_minimum: d.age_minimum ?? null });
+      if (
+        !record.doses.some(
+          (x) => x.text === text && x.population === population
+        )
+      ) {
+        record.doses.push({
+          text,
+          population,
+          age_minimum: d.age_minimum ?? null,
+        });
       }
     }
     for (const r of risk) {
       const text = clean(r.risk || r.risk_text || r.description);
       if (text && !record.risks.includes(text)) record.risks.push(text);
-      else for (const key of ["contraindication", "warning", "caution"]) {
-        const t = clean(r[key]);
-        if (t && !record.risks.includes(t)) record.risks.push(t);
-      }
+      else
+        for (const key of ["contraindication", "warning", "caution"]) {
+          const t = clean(r[key]);
+          if (t && !record.risks.includes(t)) record.risks.push(t);
+        }
     }
     record.sources.push(`${API}/productlicence/?id=${id}&lang=en&type=json`);
   }
@@ -114,7 +142,9 @@ async function main() {
 
   const existing = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : {};
   const out = existing.herbs ? existing.herbs : {};
-  console.log(`[enrich] ${slugs.length} herbs to process (${Object.keys(out).length} already done)`);
+  console.log(
+    `[enrich] ${slugs.length} herbs to process (${Object.keys(out).length} already done)`
+  );
 
   let done = 0;
   const queue = [...slugs];
@@ -129,18 +159,38 @@ async function main() {
       }
       done += 1;
       if (done % 20 === 0) {
-        writeFileSync(OUT, JSON.stringify({ generated_at: new Date().toISOString(), herbs: out }, null, 1));
-        console.log(`[enrich] ${done}/${slugs.length} processed | with purpose text: ${Object.values(out).filter((h) => h.purposes?.length).length}`);
+        writeFileSync(
+          OUT,
+          JSON.stringify(
+            { generated_at: new Date().toISOString(), herbs: out },
+            null,
+            1
+          )
+        );
+        console.log(
+          `[enrich] ${done}/${slugs.length} processed | with purpose text: ${Object.values(out).filter((h) => h.purposes?.length).length}`
+        );
       }
     }
   }
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 
-  writeFileSync(OUT, JSON.stringify({ generated_at: new Date().toISOString(), herbs: out }, null, 1));
-  const withPurpose = Object.values(out).filter((h) => h.purposes?.length).length;
+  writeFileSync(
+    OUT,
+    JSON.stringify(
+      { generated_at: new Date().toISOString(), herbs: out },
+      null,
+      1
+    )
+  );
+  const withPurpose = Object.values(out).filter(
+    (h) => h.purposes?.length
+  ).length;
   const withDose = Object.values(out).filter((h) => h.doses?.length).length;
   const withRisk = Object.values(out).filter((h) => h.risks?.length).length;
-  console.log(`[enrich] done. herbs=${Object.keys(out).length} | purpose=${withPurpose} dose=${withDose} risk=${withRisk} -> ${OUT}`);
+  console.log(
+    `[enrich] done. herbs=${Object.keys(out).length} | purpose=${withPurpose} dose=${withDose} risk=${withRisk} -> ${OUT}`
+  );
 }
 
 main().catch((e) => {
