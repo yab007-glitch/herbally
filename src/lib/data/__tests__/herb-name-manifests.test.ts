@@ -64,6 +64,8 @@ const corrections = correctionsJson as unknown as {
   slug_decisions: Record<string, SlugDecision>;
 };
 const renames: SlugRename[] = renamesJson.renames;
+const activation = (renamesJson as unknown as { activation: string })
+  .activation;
 const mergeRedirects = mergeRedirectsJson as Array<{
   from: string;
   to: string;
@@ -151,21 +153,51 @@ describe("herb slug renames manifest", () => {
     }
   });
 
-  it("does not redirect any staged rename until activation", async () => {
+  it("matches the redirect wiring to the activation flag", async () => {
     if (!nextConfig.redirects) {
       throw new Error("next.config.ts has no redirects() function");
     }
     const redirects = await nextConfig.redirects();
-    const sources = new Set(redirects.map((redirect) => redirect.source));
+    const bySource = new Map(
+      redirects.map((redirect) => [redirect.source, redirect])
+    );
+
+    if (activation === "deferred") {
+      for (const rename of renames) {
+        expect(
+          bySource.has(rename.from),
+          `${rename.from} must keep serving its own row until activation`
+        ).toBe(false);
+        expect(
+          bySource.has(`/fr${rename.from}`),
+          `/fr${rename.from} must keep serving its own row until activation`
+        ).toBe(false);
+      }
+      return;
+    }
+
+    expect(activation, "activation must be deferred or active").toBe("active");
 
     for (const rename of renames) {
+      for (const [source, destination] of [
+        [rename.from, rename.to],
+        [`/fr${rename.from}`, `/fr${rename.to}`],
+      ] as const) {
+        const redirect = bySource.get(source);
+        expect(
+          redirect,
+          `${source} must be wired once activation is active`
+        ).toBeDefined();
+        expect(redirect!.destination, source).toBe(destination);
+        expect(redirect!.permanent, source).toBe(true);
+      }
+    }
+
+    const renamedSources = new Set(renames.map((rename) => rename.from));
+    for (const rename of renames) {
       expect(
-        sources.has(rename.from),
-        `${rename.from} must keep serving its own row until activation`
-      ).toBe(false);
-      expect(
-        sources.has(`/fr${rename.from}`),
-        `/fr${rename.from} must keep serving its own row until activation`
+        renamedSources.has(rename.to),
+        `${rename.to} must not be a rename source`
       ).toBe(false);
     }
   });
