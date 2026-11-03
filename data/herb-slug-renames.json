@@ -1,6 +1,6 @@
 {
   "activation": "deferred",
-  "activation_note": "No redirect may be wired for these pairs until scripts/verify-slug-renames.mjs --require-ready exits 0 against the live database and the database rename ships in the same deploy; see kanban card t_4aba63c3.",
+  "activation_note": "Apply the database rename first with scripts/apply-herb-slug-renames.mjs. Wire these redirects and flip activation to \"active\" in a separate deploy, only after node scripts/verify-slug-renames.mjs --require-ready exits 0; see kanban card t_4aba63c3.",
   "renames": [
     {
       "from": "/herbs/anthonota-macrophylla",
