@@ -4,6 +4,7 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 import createNextIntlPlugin from "next-intl/plugin";
 import { buildSecurityHeaders } from "./src/lib/security/csp";
 import herbMergeRedirects from "./data/herb-merge-redirects.json";
+import herbSlugRenames from "./data/herb-slug-renames.json";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -140,6 +141,17 @@ const nextConfig: NextConfig = {
       // so the old URL still resolves through a permanent redirect instead of
       // 404ing on a page that has real historical traffic.
       ...herbMergeRedirects.flatMap(({ from, to }) => [
+        { source: from, destination: to, permanent: true },
+        {
+          source: `/fr${from}`,
+          destination: `/fr${to}`,
+          permanent: true,
+        },
+      ]),
+      // Corrected binomials sometimes change the slug itself. Keep the old URL
+      // (and its French counterpart) resolving through the same permanent pair
+      // as a merge, so no indexed herb page starts 404ing after a rename.
+      ...herbSlugRenames.flatMap(({ from, to }) => [
         { source: from, destination: to, permanent: true },
         {
           source: `/fr${from}`,

@@ -1,0 +1,28 @@
+[
+  {
+    "from": "/herbs/anthonota-macrophylla",
+    "to": "/herbs/anthonotha-macrophylla",
+    "reason": "Slug carried the misspelled genus Anthonota; the corrected binomial is Anthonotha macrophylla.",
+    "scientific_name_before": "Anthonota macrophylla",
+    "scientific_name_after": "Anthonotha macrophylla",
+    "dependent_updates": [
+      { "table": "herb_monographs", "column": "herb_slug" },
+      { "table": "herb_pubmed_monographs", "column": "slug" },
+      { "table": "garden_herbs", "column": "herb_slug" },
+      { "table": "herb_ratings", "column": "herb_slug" }
+    ]
+  },
+  {
+    "from": "/herbs/xanthorrhiza-simplicissima",
+    "to": "/herbs/xanthorhiza-simplicissima",
+    "reason": "Slug carried the misspelled genus Xanthorrhiza; the corrected binomial is Xanthorhiza simplicissima.",
+    "scientific_name_before": "Xanthorrhiza simplicissima",
+    "scientific_name_after": "Xanthorhiza simplicissima",
+    "dependent_updates": [
+      { "table": "herb_monographs", "column": "herb_slug" },
+      { "table": "herb_pubmed_monographs", "column": "slug" },
+      { "table": "garden_herbs", "column": "herb_slug" },
+      { "table": "herb_ratings", "column": "herb_slug" }
+    ]
+  }
+]
