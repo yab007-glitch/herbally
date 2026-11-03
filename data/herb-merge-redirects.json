@@ -190,5 +190,13 @@
  {
   "from": "/herbs/cerasee",
   "to": "/herbs/bitter-melon-metabolic"
+ },
+ {
+  "from": "/herbs/citrus-medica",
+  "to": "/herbs/fo-shou"
+ },
+ {
+  "from": "/herbs/dominican-cacao",
+  "to": "/herbs/cocoa-bean"
  }
 ]
