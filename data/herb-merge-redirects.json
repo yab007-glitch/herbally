@@ -250,5 +250,41 @@
  {
   "from": "/herbs/melissa-romana",
   "to": "/herbs/lemon-balm"
+ },
+ {
+  "from": "/herbs/nattokinase-source",
+  "to": "/herbs/nattokinase-cardiovasc"
+ },
+ {
+  "from": "/herbs/nordic-yarrow",
+  "to": "/herbs/achillea-millefolium-var"
+ },
+ {
+  "from": "/herbs/norse-yarrow",
+  "to": "/herbs/achillea-millefolium-var"
+ },
+ {
+  "from": "/herbs/pegaga",
+  "to": "/herbs/gotu-kola"
+ },
+ {
+  "from": "/herbs/peppermint-spanish",
+  "to": "/herbs/peppermint"
+ },
+ {
+  "from": "/herbs/phosphatidylserine-herb",
+  "to": "/herbs/phosphatidylserine-noot"
+ },
+ {
+  "from": "/herbs/propolis",
+  "to": "/herbs/propolis-antimicro"
+ },
+ {
+  "from": "/herbs/prunus-avium",
+  "to": "/herbs/cherry-stalk"
+ },
+ {
+  "from": "/herbs/qing-hao-aerial",
+  "to": "/herbs/sweet-annie"
  }
 ]
