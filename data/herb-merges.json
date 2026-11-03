@@ -250,6 +250,41 @@
       "from": "dominican-cacao",
       "to": "cocoa-bean",
       "carry_note": ""
+    },
+    {
+      "from": "harmal-persian",
+      "to": "harmel",
+      "carry_note": "Persian traditional medicine uses harmal seeds as a fumigant against evil eye; active MAO inhibitors; also used in Moroccan and Central Asian traditions."
+    },
+    {
+      "from": "he-huan-hua",
+      "to": "albizia",
+      "carry_note": "TCM calming flower that is gentler than the bark; used for sadness, depression, and insomnia with irritability."
+    },
+    {
+      "from": "he-huan-hua-tcm",
+      "to": "albizia",
+      "carry_note": "TCM flower that regulates qi and relieves constraint for depression."
+    },
+    {
+      "from": "herba-centellae",
+      "to": "gotu-kola",
+      "carry_note": "Topical application of Centella for wound healing, scar treatment, and skin repair; widely used in dermatology and Korean skincare."
+    },
+    {
+      "from": "huang-qi-bei",
+      "to": "astragalus",
+      "carry_note": "Mongolian variety of Astragalus used in TCM and Mongolian medicine; considered superior to the standard Astragalus with stronger adaptogenic and immune properties."
+    },
+    {
+      "from": "jahe-merah",
+      "to": "ginger",
+      "carry_note": "Red ginger variety with higher essential oil content than common ginger, used in Jamu for circulation and immunity."
+    },
+    {
+      "from": "kaunch-beej",
+      "to": "velvet-bean",
+      "carry_note": "Ayurvedic nerve and reproductive tonic from velvet bean seeds with highest natural L-DOPA."
     }
   ]
 }
