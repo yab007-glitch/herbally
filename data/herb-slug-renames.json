@@ -11,6 +11,7 @@
       "dependent_updates": [
         { "table": "herb_monographs", "column": "herb_slug" },
         { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
         { "table": "garden_herbs", "column": "herb_slug" },
         { "table": "herb_ratings", "column": "herb_slug" }
       ],
@@ -26,6 +27,7 @@
       "dependent_updates": [
         { "table": "herb_monographs", "column": "herb_slug" },
         { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
         { "table": "garden_herbs", "column": "herb_slug" },
         { "table": "herb_ratings", "column": "herb_slug" }
       ],
@@ -41,6 +43,7 @@
       "dependent_updates": [
         { "table": "herb_monographs", "column": "herb_slug" },
         { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
         { "table": "garden_herbs", "column": "herb_slug" },
         { "table": "herb_ratings", "column": "herb_slug" }
       ],
@@ -56,6 +59,7 @@
       "dependent_updates": [
         { "table": "herb_monographs", "column": "herb_slug" },
         { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
         { "table": "garden_herbs", "column": "herb_slug" },
         { "table": "herb_ratings", "column": "herb_slug" }
       ],
@@ -71,6 +75,7 @@
       "dependent_updates": [
         { "table": "herb_monographs", "column": "herb_slug" },
         { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
         { "table": "garden_herbs", "column": "herb_slug" },
         { "table": "herb_ratings", "column": "herb_slug" }
       ],
@@ -86,6 +91,7 @@
       "dependent_updates": [
         { "table": "herb_monographs", "column": "herb_slug" },
         { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "herb_regulatory_evidence", "column": "herb_slug" },
         { "table": "garden_herbs", "column": "herb_slug" },
         { "table": "herb_ratings", "column": "herb_slug" }
       ],
