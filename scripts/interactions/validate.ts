@@ -42,6 +42,7 @@ export const SOURCE_HOST_ALLOWLIST = [
   "pubmed.ncbi.nlm.nih.gov",
   "livertox.nlm.nih.gov",
   "canada.ca",
+  "health-products.canada.ca",
   "ema.europa.eu",
   "who.int",
   "cochrane.org",
@@ -56,6 +57,7 @@ export const SOURCE_HOST_ALLOWLIST = [
  */
 export const SOURCE_VALUES = [
   "EMA HMPC",
+  "Health Canada LNHPD",
   "NIH ODS",
   "NCCIH",
   "LiverTox",
@@ -77,6 +79,7 @@ export type SourceLicence = (typeof SOURCE_LICENCES)[number];
 /** The host each allowed source must cite (itself or a subdomain). */
 export const SOURCE_HOSTS: Readonly<Record<SourceValue, string>> = {
   "EMA HMPC": "ema.europa.eu",
+  "Health Canada LNHPD": "health-products.canada.ca",
   "NIH ODS": "ods.od.nih.gov",
   NCCIH: "nccih.nih.gov",
   LiverTox: "livertox.nlm.nih.gov",
@@ -96,6 +99,7 @@ export const HOST_LICENCES: Readonly<
   "pubmed.ncbi.nlm.nih.gov": "us-federal-public-domain",
   "livertox.nlm.nih.gov": "us-federal-public-domain",
   "canada.ca": "canada-ogl",
+  "health-products.canada.ca": "canada-ogl",
   "who.int": "who-cc-by-nc-sa",
   "cochrane.org": "cochrane-abstract-licence",
 };
