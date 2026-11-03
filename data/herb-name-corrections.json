@@ -811,5 +811,47 @@
   },
   "resolutions": {
     "pau-d-arco": "Contradicted by NCBI (taxid 429701, Handroanthus impetiginosus) and reverted in batch 2 as an applied entry."
+  },
+  "slug_decisions": {
+    "anthonota-macrophylla": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Anthonota; the destination slug anthonotha-macrophylla had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "xanthorrhiza-simplicissima": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Xanthorrhiza; the destination slug xanthorhiza-simplicissima had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "hypsizygus-tessellatus": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Hypsizygus tessellatus; the destination slug hypsizygus-tesselatus had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "notopterygium-incisium": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Notopterygium incisium; the destination slug notopterygium-incisum had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "cinnamomum-burmannii": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Cinnamomum burmannii; the destination slug cinnamomum-burmanni had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "rauwolfia-cardio": {
+      "decision": "staged",
+      "reason": "The slug embeds the misspelled name Rauwolfia; the destination slug rauvolfia-cardio had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+    },
+    "jatropha-gossypifolia": {
+      "decision": "keep",
+      "reason": "The destination slug jatropha-gossypiifolia already exists as a separate published row with the same binomial, so this is a duplicate-record merge decision rather than a rename."
+    },
+    "citrus-aurantifolia": {
+      "decision": "keep",
+      "reason": "aurantifolia is a widely used orthographic variant (NCBI uses Citrus x aurantiifolia) rather than a misspelling."
+    },
+    "cota-triumfettii": {
+      "decision": "keep",
+      "reason": "triumfettii is a common orthographic variant of the GBIF canonical triumfetti rather than a typo."
+    },
+    "corynanthe-yohimbe": {
+      "decision": "keep",
+      "reason": "yohimbe is both the English common name and the basionym epithet, so the slug remains a correct historical label."
+    }
   }
 }

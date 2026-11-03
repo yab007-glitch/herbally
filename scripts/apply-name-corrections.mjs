@@ -17,6 +17,18 @@
  * Handroanthus impetiginosus, which the manifest records; only the batch 2 entry
  * remains in `applied`, where it now reads as "already applied".
  *
+ * An applied row whose `provenance.taxonomy.source` is missing also gets a
+ * provenance repair built from the manifest: GBIF Backbone Taxonomy, CC BY 4.0,
+ * the target as `current_name`, and `entry.ours` as `previous_name`.
+ * `verification` is one of:
+ *   - corroborated   exact match or corroborated second source
+ *   - third_form     different or third-form second source
+ *   - contradicted   contradicted second source
+ *   - single_source  anything else, including no second source
+ * A contradicted second source is recorded but never blocks a reviewed
+ * correction. A taxonomy record that already has a source is never overwritten,
+ * so a second run reports zero taxonomy updates.
+ *
  * Usage:
  *   node scripts/apply-name-corrections.mjs
  *   node scripts/apply-name-corrections.mjs --apply
@@ -49,8 +61,62 @@ const HEAD = {
 };
 const REST = `${e.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/herbs`;
 
+const TODAY = new Date().toISOString().slice(0, 10);
+
 /** Batch 1 stored its target in `gbif`; batch 2 uses `new_name`. */
 const targetName = (entry) => entry.new_name ?? entry.gbif;
+
+function verificationFromVerdict(verdict) {
+  const v = String(verdict ?? "")
+    .trim()
+    .toLowerCase();
+  if (v === "exact match" || v === "corroborated") return "corroborated";
+  if (v === "different" || v === "third_form" || v.startsWith("third form"))
+    return "third_form";
+  if (v === "contradicted") return "contradicted";
+  return "single_source";
+}
+
+/**
+ * The manifest carries a second source either on the entry (`ncbi_name`,
+ * `taxid`) or in the top-level `ncbi_second_pass` array (`ncbi_name`,
+ * `ncbi_taxid`). The entry wins when present; no record at all means null.
+ */
+function secondSourceRecord(entry, secondPass) {
+  if (entry.second_source) {
+    return {
+      name: entry.second_source.ncbi_name ?? null,
+      taxid: entry.second_source.taxid ?? null,
+      verdict: entry.second_source.verdict,
+    };
+  }
+  const pass = secondPass.get(entry.slug);
+  if (pass) {
+    return {
+      name: pass.ncbi_name ?? null,
+      taxid: pass.ncbi_taxid ?? null,
+      verdict: pass.verdict,
+    };
+  }
+  return null;
+}
+
+function taxonomyRecord(entry, target, secondPass) {
+  const second = secondSourceRecord(entry, secondPass);
+  return {
+    source: "GBIF Backbone Taxonomy",
+    licence: "CC BY 4.0",
+    checked_at: TODAY,
+    verified_at: TODAY,
+    source_url: `https://www.gbif.org/species/search?q=${encodeURIComponent(target)}`,
+    current_name: target,
+    previous_name: entry.ours,
+    verification: verificationFromVerdict(second?.verdict),
+    second_source: "NCBI Taxonomy",
+    second_source_name: second?.name ?? null,
+    second_source_taxid: second?.taxid ?? null,
+  };
+}
 
 async function getHerb(slug) {
   const res = await fetch(
@@ -84,6 +150,9 @@ async function main() {
   const alignments = new Map(
     (manifest.display_name_alignments || []).map((a) => [a.slug, a])
   );
+  const secondPass = new Map(
+    (manifest.ncbi_second_pass || []).map((r) => [r.slug, r])
+  );
 
   console.log(
     `[names] ${applied.length} applied entries, ${alignments.size} display alignments${APPLY ? "" : " (dry run)"}`
@@ -94,6 +163,7 @@ async function main() {
   const failures = [];
   let scientificUpdates = 0;
   let displayUpdates = 0;
+  let taxonomyUpdates = 0;
   let unchanged = 0;
 
   for (const entry of applied) {
@@ -179,12 +249,28 @@ async function main() {
     }
 
     if (guardFailed) continue;
+
+    if (!herb.provenance?.taxonomy?.source) {
+      const taxonomy = taxonomyRecord(entry, target, secondPass);
+      patch.provenance = { ...(herb.provenance || {}), taxonomy };
+      intended.taxonomyWritten = true;
+      intended.taxonomyTarget = target;
+      table.push({
+        slug: entry.slug,
+        field: "provenance.taxonomy",
+        before: "(none)",
+        after: taxonomy.verification,
+        action: APPLY ? "update" : "would update",
+      });
+    }
+
     if (!Object.keys(patch).length) continue;
 
     if (APPLY) await patchHerb(entry.slug, patch);
     touched.push({ slug: entry.slug, ...intended });
     if (intended.scientificWritten) scientificUpdates++;
     if (intended.nameWritten) displayUpdates++;
+    if (intended.taxonomyWritten) taxonomyUpdates++;
   }
 
   console.table(table);
@@ -202,12 +288,25 @@ async function main() {
           `${t.slug}: read-back name is ${JSON.stringify(herb.name)}, expected ${JSON.stringify(t.displayTarget)}`
         );
       }
+      if (t.taxonomyWritten && !herb.provenance?.taxonomy?.source) {
+        failures.push(
+          `${t.slug}: read-back provenance.taxonomy.source is missing`
+        );
+      }
+      if (
+        t.taxonomyWritten &&
+        herb.provenance?.taxonomy?.current_name !== t.taxonomyTarget
+      ) {
+        failures.push(
+          `${t.slug}: read-back provenance.taxonomy.current_name is ${JSON.stringify(herb.provenance?.taxonomy?.current_name)}, expected ${JSON.stringify(t.taxonomyTarget)}`
+        );
+      }
     }
   }
 
   const mode = APPLY ? "applied" : "dry run";
   console.log(
-    `[names] ${mode}: ${scientificUpdates} scientific updates, ${displayUpdates} display updates, ${unchanged} already applied, ${failures.length} guard failures`
+    `[names] ${mode}: ${scientificUpdates} scientific updates, ${displayUpdates} display updates, ${taxonomyUpdates} taxonomy updates, ${unchanged} already applied, ${failures.length} guard failures`
   );
 
   if (failures.length) {

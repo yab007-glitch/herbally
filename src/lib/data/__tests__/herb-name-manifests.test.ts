@@ -48,14 +48,22 @@ type SlugRename = {
   scientific_name_before: string;
   scientific_name_after: string;
   dependent_updates: Array<{ table: string; column: string }>;
+  batch: number;
+  decision: string;
+};
+
+type SlugDecision = {
+  decision: string;
+  reason: string;
 };
 
 const corrections = correctionsJson as unknown as {
   applied: AppliedEntry[];
   skipped: SkippedEntry[];
   display_name_alignments: DisplayAlignment[];
+  slug_decisions: Record<string, SlugDecision>;
 };
-const renames = renamesJson as unknown as SlugRename[];
+const renames: SlugRename[] = renamesJson.renames;
 const mergeRedirects = mergeRedirectsJson as Array<{
   from: string;
   to: string;
@@ -143,23 +151,49 @@ describe("herb slug renames manifest", () => {
     }
   });
 
-  it("has a permanent redirect pair for every rename", async () => {
+  it("does not redirect any staged rename until activation", async () => {
     if (!nextConfig.redirects) {
       throw new Error("next.config.ts has no redirects() function");
     }
     const redirects = await nextConfig.redirects();
+    const sources = new Set(redirects.map((redirect) => redirect.source));
 
     for (const rename of renames) {
-      expect(redirects).toContainEqual({
-        source: rename.from,
-        destination: rename.to,
-        permanent: true,
-      });
-      expect(redirects).toContainEqual({
-        source: `/fr${rename.from}`,
-        destination: `/fr${rename.to}`,
-        permanent: true,
-      });
+      expect(
+        sources.has(rename.from),
+        `${rename.from} must keep serving its own row until activation`
+      ).toBe(false);
+      expect(
+        sources.has(`/fr${rename.from}`),
+        `/fr${rename.from} must keep serving its own row until activation`
+      ).toBe(false);
+    }
+  });
+
+  it("stages every rename with a positive batch", () => {
+    for (const rename of renames) {
+      expect(rename.decision, rename.from).toBe("staged");
+      expect(Number.isInteger(rename.batch), rename.from).toBe(true);
+      expect(rename.batch, rename.from).toBeGreaterThan(0);
+    }
+  });
+
+  it("matches the staged slug decisions to the rename sources", () => {
+    const staged = Object.entries(corrections.slug_decisions)
+      .filter(([, entry]) => entry.decision === "staged")
+      .map(([slug]) => slug)
+      .sort();
+    const renameSlugs = renames
+      .map((rename) => rename.from.replace(/^\/herbs\//, ""))
+      .sort();
+
+    expect(staged).toEqual(renameSlugs);
+  });
+
+  it("gives every slug decision a keep or staged verdict and a reason", () => {
+    for (const [slug, entry] of Object.entries(corrections.slug_decisions)) {
+      expect(["keep", "staged"], slug).toContain(entry.decision);
+      expect(entry.reason.trim(), slug).not.toBe("");
     }
   });
 });

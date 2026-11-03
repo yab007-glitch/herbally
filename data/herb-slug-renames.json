@@ -1,28 +1,96 @@
-[
-  {
-    "from": "/herbs/anthonota-macrophylla",
-    "to": "/herbs/anthonotha-macrophylla",
-    "reason": "Slug carried the misspelled genus Anthonota; the corrected binomial is Anthonotha macrophylla.",
-    "scientific_name_before": "Anthonota macrophylla",
-    "scientific_name_after": "Anthonotha macrophylla",
-    "dependent_updates": [
-      { "table": "herb_monographs", "column": "herb_slug" },
-      { "table": "herb_pubmed_monographs", "column": "slug" },
-      { "table": "garden_herbs", "column": "herb_slug" },
-      { "table": "herb_ratings", "column": "herb_slug" }
-    ]
-  },
-  {
-    "from": "/herbs/xanthorrhiza-simplicissima",
-    "to": "/herbs/xanthorhiza-simplicissima",
-    "reason": "Slug carried the misspelled genus Xanthorrhiza; the corrected binomial is Xanthorhiza simplicissima.",
-    "scientific_name_before": "Xanthorrhiza simplicissima",
-    "scientific_name_after": "Xanthorhiza simplicissima",
-    "dependent_updates": [
-      { "table": "herb_monographs", "column": "herb_slug" },
-      { "table": "herb_pubmed_monographs", "column": "slug" },
-      { "table": "garden_herbs", "column": "herb_slug" },
-      { "table": "herb_ratings", "column": "herb_slug" }
-    ]
-  }
-]
+{
+  "activation": "deferred",
+  "activation_note": "No redirect may be wired for these pairs until scripts/verify-slug-renames.mjs --require-ready exits 0 against the live database and the database rename ships in the same deploy; see kanban card t_4aba63c3.",
+  "renames": [
+    {
+      "from": "/herbs/anthonota-macrophylla",
+      "to": "/herbs/anthonotha-macrophylla",
+      "reason": "The old slug token anthonota is a misspelling of the corrected binomial Anthonotha macrophylla; the destination slug had zero rows in herbs when checked on 2026-11-03.",
+      "scientific_name_before": "Anthonota macrophylla",
+      "scientific_name_after": "Anthonotha macrophylla",
+      "dependent_updates": [
+        { "table": "herb_monographs", "column": "herb_slug" },
+        { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "garden_herbs", "column": "herb_slug" },
+        { "table": "herb_ratings", "column": "herb_slug" }
+      ],
+      "batch": 2,
+      "decision": "staged"
+    },
+    {
+      "from": "/herbs/xanthorrhiza-simplicissima",
+      "to": "/herbs/xanthorhiza-simplicissima",
+      "reason": "The old slug token xanthorrhiza is a misspelling of the corrected binomial Xanthorhiza simplicissima; the destination slug had zero rows in herbs when checked on 2026-11-03.",
+      "scientific_name_before": "Xanthorrhiza simplicissima",
+      "scientific_name_after": "Xanthorhiza simplicissima",
+      "dependent_updates": [
+        { "table": "herb_monographs", "column": "herb_slug" },
+        { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "garden_herbs", "column": "herb_slug" },
+        { "table": "herb_ratings", "column": "herb_slug" }
+      ],
+      "batch": 2,
+      "decision": "staged"
+    },
+    {
+      "from": "/herbs/hypsizygus-tessellatus",
+      "to": "/herbs/hypsizygus-tesselatus",
+      "reason": "The old slug token tessellatus is a misspelling of the corrected binomial Hypsizygus tesselatus; the destination slug had zero rows in herbs when checked on 2026-11-03.",
+      "scientific_name_before": "Hypsizygus tessellatus",
+      "scientific_name_after": "Hypsizygus tesselatus",
+      "dependent_updates": [
+        { "table": "herb_monographs", "column": "herb_slug" },
+        { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "garden_herbs", "column": "herb_slug" },
+        { "table": "herb_ratings", "column": "herb_slug" }
+      ],
+      "batch": 1,
+      "decision": "staged"
+    },
+    {
+      "from": "/herbs/notopterygium-incisium",
+      "to": "/herbs/notopterygium-incisum",
+      "reason": "The old slug token incisium is a misspelling of the corrected binomial Notopterygium incisum; the destination slug had zero rows in herbs when checked on 2026-11-03.",
+      "scientific_name_before": "Notopterygium incisium",
+      "scientific_name_after": "Notopterygium incisum",
+      "dependent_updates": [
+        { "table": "herb_monographs", "column": "herb_slug" },
+        { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "garden_herbs", "column": "herb_slug" },
+        { "table": "herb_ratings", "column": "herb_slug" }
+      ],
+      "batch": 1,
+      "decision": "staged"
+    },
+    {
+      "from": "/herbs/cinnamomum-burmannii",
+      "to": "/herbs/cinnamomum-burmanni",
+      "reason": "The old slug token burmannii is a misspelling of the corrected binomial Cinnamomum burmanni; the destination slug had zero rows in herbs when checked on 2026-11-03.",
+      "scientific_name_before": "Cinnamomum burmannii",
+      "scientific_name_after": "Cinnamomum burmanni",
+      "dependent_updates": [
+        { "table": "herb_monographs", "column": "herb_slug" },
+        { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "garden_herbs", "column": "herb_slug" },
+        { "table": "herb_ratings", "column": "herb_slug" }
+      ],
+      "batch": 1,
+      "decision": "staged"
+    },
+    {
+      "from": "/herbs/rauwolfia-cardio",
+      "to": "/herbs/rauvolfia-cardio",
+      "reason": "The old slug token rauwolfia is a misspelling of the corrected binomial Rauvolfia serpentina; the destination slug had zero rows in herbs when checked on 2026-11-03.",
+      "scientific_name_before": "Rauwolfia serpentina",
+      "scientific_name_after": "Rauvolfia serpentina",
+      "dependent_updates": [
+        { "table": "herb_monographs", "column": "herb_slug" },
+        { "table": "herb_pubmed_monographs", "column": "slug" },
+        { "table": "garden_herbs", "column": "herb_slug" },
+        { "table": "herb_ratings", "column": "herb_slug" }
+      ],
+      "batch": 2,
+      "decision": "staged"
+    }
+  ]
+}
