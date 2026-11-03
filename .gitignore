@@ -72,3 +72,4 @@ supabase/backups/
 artifacts/lnhpd-matches.json
 artifacts/lnhpd-enrichment.json
 artifacts/lnhpd-new-candidates.json
+artifacts/ncbi-verify-all.json
