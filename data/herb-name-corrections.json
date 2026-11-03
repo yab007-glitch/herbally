@@ -239,5 +239,278 @@
       "edit_distance": 2,
       "reason": "hybrid notation (x) \u2014 GBIF strips it, removing it would change the taxon"
     }
-  ]
+  ],
+  "ncbi_second_pass": [
+    {
+      "slug": "jatropha-gossypifolia",
+      "ours": "Jatropha gossypifolia",
+      "gbif": "Jatropha gossypiifolia",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "454931",
+      "ncbi_name": "Jatropha gossypiifolia",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "yin-yang-complex",
+      "ours": "Epimedium brevicornum",
+      "gbif": "Epimedium brevicornu",
+      "ratio": 0.98,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "253618",
+      "ncbi_name": "Epimedium brevicornu",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "hypsizygus-tessellatus",
+      "ours": "Hypsizygus tessellatus",
+      "gbif": "Hypsizygus tesselatus",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "notopterygium-incisium",
+      "ours": "Notopterygium incisium",
+      "gbif": "Notopterygium incisum",
+      "ratio": 0.98,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "cinnamomum-burmannii",
+      "ours": "Cinnamomum burmannii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "119261",
+      "ncbi_name": "Cinnamomum burmanni",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "citrus-aurantifolia",
+      "ours": "Citrus aurantifolia",
+      "gbif": "Citrus aurantiifolia",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "159033",
+      "ncbi_name": "Citrus x aurantiifolia",
+      "verdict": "third form: Citrus x aurantiifolia"
+    },
+    {
+      "slug": "cota-triumfettii",
+      "ours": "Cota triumfettii",
+      "gbif": "Cota triumfetti",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "158232",
+      "ncbi_name": "Cota triumfetti",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "solanum-tomentosum-herb",
+      "ours": "Solanum tomentosm",
+      "gbif": "Solanum tomentosum",
+      "ratio": 0.97,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "ru-xiang-resin",
+      "ours": "Boswellia carterii",
+      "gbif": "Boswellia carteri",
+      "ratio": 0.97,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "korean-bellflower",
+      "ours": "Platycodon grandiflorum",
+      "gbif": "Platycodon grandiflorus",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "94286",
+      "ncbi_name": "Platycodon grandiflorus",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "pau-d-arco",
+      "ours": "Handroanthus impetiginosus",
+      "gbif": "Handroanthus impetiginosum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "429701",
+      "ncbi_name": "Handroanthus impetiginosus",
+      "verdict": "CONTRADICTED"
+    },
+    {
+      "slug": "corynanthe-yohimbe",
+      "ours": "Pausinystalia yohimbe",
+      "gbif": "Pausinystalia yohimba",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "kayu-manis-jamu",
+      "ours": "Cinnamomum burmanii",
+      "gbif": "Cinnamomum burmanni",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "kumarahou",
+      "ours": "Pomaderris kumerahou",
+      "gbif": "Pomaderris kumarahou",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "thyme-moroccan",
+      "ours": "Thymus satureioides",
+      "gbif": "Thymus saturejoides",
+      "ratio": 0.95,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "751874",
+      "ncbi_name": "Thymus saturejoides",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "condurango",
+      "ours": "Gonolobus condurango",
+      "gbif": "Gonolobus cundurango",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "samambaia-amazonian",
+      "ours": "Polypodium leucotomos",
+      "gbif": "Polypodium leucatomos",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "artemisia-genepi",
+      "ours": "Artemisia genepi",
+      "gbif": "Artemisia genipi",
+      "ratio": 0.94,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "entada-seed",
+      "ours": "Entada rheedii",
+      "gbif": "Entada rheedei",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 1,
+      "ncbi_taxid": "204974",
+      "ncbi_name": "Entada rheedei",
+      "verdict": "corroborated"
+    },
+    {
+      "slug": "tamanu",
+      "ours": "Calophyllum inophyllatum",
+      "gbif": "Calophyllum inophyllum",
+      "ratio": 0.96,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "hawthorn-small-leaf",
+      "ours": "Crataegus cuneatiformis",
+      "gbif": "Crataegus cuneiformis",
+      "ratio": 0.95,
+      "kind": "synonym",
+      "edit_distance": 2,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "boneset",
+      "ours": "Eupatorium perfolidum",
+      "gbif": "Eupatorium perfoliatum",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": null,
+      "ncbi_name": null,
+      "verdict": "no NCBI record"
+    },
+    {
+      "slug": "spanish-sage",
+      "ours": "Salvia lavandulaefolia",
+      "gbif": "Salvia lavandulifolia",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": "3110498",
+      "ncbi_name": "Salvia officinalis subsp. lavandulifolia",
+      "verdict": "third form: Salvia officinalis subsp. lavandulifolia"
+    },
+    {
+      "slug": "strobilanthes-crispus",
+      "ours": "Strobilanthes crispus",
+      "gbif": "Strobilanthes crispa",
+      "ratio": 0.93,
+      "kind": "name_mismatch",
+      "edit_distance": 2,
+      "ncbi_taxid": "946018",
+      "ncbi_name": null,
+      "verdict": "no name returned"
+    }
+  ],
+  "second_pass_summary": {
+    "corroborated": 7,
+    "contradicted_reverted": 1,
+    "third_form": 2,
+    "single_source_no_ncbi_record": 13,
+    "no_name_returned": 1
+  }
 }
