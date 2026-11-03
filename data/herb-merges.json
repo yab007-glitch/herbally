@@ -60,6 +60,136 @@
       "from": "coffea-excelsa",
       "to": "coffea-liberica",
       "carry_note": "Coffea liberica var. dewevrei is the rarer Excelsa variety, with a distinct flavour and the same caffeine and antioxidant profile."
+    },
+    {
+      "from": "anatolian-fenugreek",
+      "to": "fenugreek",
+      "carry_note": "Fenugreek widely cultivated in Turkey used in Ottoman medicine for digestive, metabolic, and hormonal conditions."
+    },
+    {
+      "from": "argan-nut",
+      "to": "argan-tree",
+      "carry_note": ""
+    },
+    {
+      "from": "gan-jiang",
+      "to": "ginger",
+      "carry_note": "Dried form of ginger used in TCM \u2014 more warming and less dispersing than fresh ginger (Sheng Jiang); specifically for cold in the middle burner."
+    },
+    {
+      "from": "hawthorn-korean",
+      "to": "hawthorn-berry-chinese",
+      "carry_note": "Larger-fruited Korean variety of Chinese hawthorn cultivated and used medicinally in Korean Hanbang medicine for digestion and cardiovascular health."
+    },
+    {
+      "from": "indian-kalonji-seed",
+      "to": "black-seed",
+      "carry_note": "Black seed widely used in Indian Unani and folk medicine as immune tonic, respiratory herb, and metabolic support."
+    },
+    {
+      "from": "kesar",
+      "to": "saffron",
+      "carry_note": "Premium Kashmiri-grown saffron used in Ayurveda for skin, mood, and reproductive health."
+    },
+    {
+      "from": "libyan-thyme",
+      "to": "lebanese-thyme",
+      "carry_note": "Pungent thyme variety from North African coastal areas used in Libyan folk medicine for respiratory and digestive conditions."
+    },
+    {
+      "from": "long-gu-nervine",
+      "to": "long-gu-fossil",
+      "carry_note": ""
+    },
+    {
+      "from": "maca-yellow",
+      "to": "maca",
+      "carry_note": "Most common and widely studied maca variety, used for energy and general hormonal balance."
+    },
+    {
+      "from": "mu-li-nervine",
+      "to": "mu-li",
+      "carry_note": ""
+    },
+    {
+      "from": "nigella-sativa-seed",
+      "to": "black-seed",
+      "carry_note": "Whole seed form of black seed used as a condiment and complete medicine in Prophetic and folk medicine."
+    },
+    {
+      "from": "okinawan-turmeric",
+      "to": "turmeric",
+      "carry_note": "Turmeric variety grown in Okinawa used in local folk medicine for liver support and longevity."
+    },
+    {
+      "from": "persian-fenugreek",
+      "to": "fenugreek",
+      "carry_note": "Persian variety of fenugreek central to Unani and Persian medicine for blood sugar, digestion, and male health."
+    },
+    {
+      "from": "polish-calendula",
+      "to": "calendula",
+      "carry_note": "Calendula variety cultivated in Poland used extensively in European folk medicine for skin, anti-inflammatory, and wound healing."
+    },
+    {
+      "from": "pueraria-root",
+      "to": "ge-gen-root",
+      "carry_note": "Major TCM herb that releases the muscle layer, raises yang and body fluids, treats fever and stiff neck, and reduces alcohol cravings. Now studied extensively for alcohol use disorder."
+    },
+    {
+      "from": "red-yeast-rice-cardiovasc",
+      "to": "red-yeast-rice",
+      "carry_note": ""
+    },
+    {
+      "from": "reishi-spore",
+      "to": "reishi",
+      "carry_note": "Cracked Reishi mushroom spores with highest concentration of ganoderic acids for potency."
+    },
+    {
+      "from": "royal-sun-immune",
+      "to": "agaricus-blazei",
+      "carry_note": ""
+    },
+    {
+      "from": "schisandra-black",
+      "to": "schisandra",
+      "carry_note": "Fresh or differently processed schisandra berries used in specific TCM preparations for different clinical applications."
+    },
+    {
+      "from": "serbian-juniper",
+      "to": "juniper-communis",
+      "carry_note": "Juniper widespread across Balkans and Southeastern Europe used for urinary, digestive, and antimicrobial conditions."
+    },
+    {
+      "from": "serrapeptase-source",
+      "to": "serrapeptase",
+      "carry_note": ""
+    },
+    {
+      "from": "sri-lankan-siddha-pepper",
+      "to": "black-pepper",
+      "carry_note": "Black pepper variety native to Sri Lanka used in Siddha medicine as a bioavailability enhancer and digestive tonic."
+    },
+    {
+      "from": "tibetan-valerian",
+      "to": "valerian",
+      "carry_note": "A calming sedative herb used in Tibetan medicine for sleep disorders and nervous conditions."
+    },
+    {
+      "from": "tongan-turmeric",
+      "to": "turmeric",
+      "carry_note": "Turmeric variety grown throughout Polynesia used in Tongan traditional medicine for anti-inflammatory and digestive conditions."
+    },
+    {
+      "from": "tunisian-harmel",
+      "to": "harmel",
+      "carry_note": ""
+    },
+    {
+      "from": "venezuelan-passionflower",
+      "to": "passionflower",
+      "carry_note": "Native passionflower from South American highlands used for anxiety, insomnia, and nervous conditions."
     }
   ]
 }

@@ -46,5 +46,109 @@
  {
   "from": "/herbs/coffea-excelsa",
   "to": "/herbs/coffea-liberica"
+ },
+ {
+  "from": "/herbs/anatolian-fenugreek",
+  "to": "/herbs/fenugreek"
+ },
+ {
+  "from": "/herbs/argan-nut",
+  "to": "/herbs/argan-tree"
+ },
+ {
+  "from": "/herbs/gan-jiang",
+  "to": "/herbs/ginger"
+ },
+ {
+  "from": "/herbs/hawthorn-korean",
+  "to": "/herbs/hawthorn-berry-chinese"
+ },
+ {
+  "from": "/herbs/indian-kalonji-seed",
+  "to": "/herbs/black-seed"
+ },
+ {
+  "from": "/herbs/kesar",
+  "to": "/herbs/saffron"
+ },
+ {
+  "from": "/herbs/libyan-thyme",
+  "to": "/herbs/lebanese-thyme"
+ },
+ {
+  "from": "/herbs/long-gu-nervine",
+  "to": "/herbs/long-gu-fossil"
+ },
+ {
+  "from": "/herbs/maca-yellow",
+  "to": "/herbs/maca"
+ },
+ {
+  "from": "/herbs/mu-li-nervine",
+  "to": "/herbs/mu-li"
+ },
+ {
+  "from": "/herbs/nigella-sativa-seed",
+  "to": "/herbs/black-seed"
+ },
+ {
+  "from": "/herbs/okinawan-turmeric",
+  "to": "/herbs/turmeric"
+ },
+ {
+  "from": "/herbs/persian-fenugreek",
+  "to": "/herbs/fenugreek"
+ },
+ {
+  "from": "/herbs/polish-calendula",
+  "to": "/herbs/calendula"
+ },
+ {
+  "from": "/herbs/pueraria-root",
+  "to": "/herbs/ge-gen-root"
+ },
+ {
+  "from": "/herbs/red-yeast-rice-cardiovasc",
+  "to": "/herbs/red-yeast-rice"
+ },
+ {
+  "from": "/herbs/reishi-spore",
+  "to": "/herbs/reishi"
+ },
+ {
+  "from": "/herbs/royal-sun-immune",
+  "to": "/herbs/agaricus-blazei"
+ },
+ {
+  "from": "/herbs/schisandra-black",
+  "to": "/herbs/schisandra"
+ },
+ {
+  "from": "/herbs/serbian-juniper",
+  "to": "/herbs/juniper-communis"
+ },
+ {
+  "from": "/herbs/serrapeptase-source",
+  "to": "/herbs/serrapeptase"
+ },
+ {
+  "from": "/herbs/sri-lankan-siddha-pepper",
+  "to": "/herbs/black-pepper"
+ },
+ {
+  "from": "/herbs/tibetan-valerian",
+  "to": "/herbs/valerian"
+ },
+ {
+  "from": "/herbs/tongan-turmeric",
+  "to": "/herbs/turmeric"
+ },
+ {
+  "from": "/herbs/tunisian-harmel",
+  "to": "/herbs/harmel"
+ },
+ {
+  "from": "/herbs/venezuelan-passionflower",
+  "to": "/herbs/passionflower"
  }
 ]
