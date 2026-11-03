@@ -286,5 +286,69 @@
  {
   "from": "/herbs/qing-hao-aerial",
   "to": "/herbs/sweet-annie"
+ },
+ {
+  "from": "/herbs/mastic-resin",
+  "to": "/herbs/chios-mastic-v2"
+ },
+ {
+  "from": "/herbs/romanian-wormwood",
+  "to": "/herbs/wormwood"
+ },
+ {
+  "from": "/herbs/rosmarinus-prostratus",
+  "to": "/herbs/rosemary"
+ },
+ {
+  "from": "/herbs/samento-amazonian",
+  "to": "/herbs/cats-claw"
+ },
+ {
+  "from": "/herbs/schizandra-berry",
+  "to": "/herbs/schisandra"
+ },
+ {
+  "from": "/herbs/shbbet-mriouh",
+  "to": "/herbs/fennel"
+ },
+ {
+  "from": "/herbs/snail-vine-skin",
+  "to": "/herbs/gotu-kola"
+ },
+ {
+  "from": "/herbs/suan-zao-ren-seed",
+  "to": "/herbs/zizyphus-jujube-seed"
+ },
+ {
+  "from": "/herbs/tarragon",
+  "to": "/herbs/artemisia-dracunculus"
+ },
+ {
+  "from": "/herbs/tarragon-wild",
+  "to": "/herbs/artemisia-dracunculus"
+ },
+ {
+  "from": "/herbs/temu-putih",
+  "to": "/herbs/zedoary"
+ },
+ {
+  "from": "/herbs/turmeric-curcumin",
+  "to": "/herbs/turmeric"
+ },
+ {
+  "from": "/herbs/vietnamese-pennywort",
+  "to": "/herbs/gotu-kola"
+ },
+ {
+  "from": "/herbs/wild-celery",
+  "to": "/herbs/apium-graveolens"
+ },
+ {
+  "from": "/herbs/xia-ku-cao",
+  "to": "/herbs/heal-all-spica"
+ },
+ {
+  "from": "/herbs/yasthimadhu",
+  "to": "/herbs/yashtimadhu"
  }
 ]
