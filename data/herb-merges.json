@@ -190,6 +190,56 @@
       "from": "venezuelan-passionflower",
       "to": "passionflower",
       "carry_note": "Native passionflower from South American highlands used for anxiety, insomnia, and nervous conditions."
+    },
+    {
+      "from": "ahcc-source",
+      "to": "shiitake",
+      "carry_note": "Proprietary shiitake mycelium extract for NK cell activity and immune surveillance."
+    },
+    {
+      "from": "allium-sativum-hardneck",
+      "to": "garlic",
+      "carry_note": "Hardneck garlic varieties with higher allicin content and more complex flavor profiles than softneck garlic."
+    },
+    {
+      "from": "aloe-barbadensis",
+      "to": "aloe-vera",
+      "carry_note": "The inner leaf gel of this succulent is one of the most studied topical herbs globally; contains polysaccharides that soothe burns, sunburn, eczema, and accelerate wound healing."
+    },
+    {
+      "from": "amalaki-rasayana",
+      "to": "phyllanthus-emblica",
+      "carry_note": "Ayurvedic rejuvenation formulation of amalaki prepared with ghee and honey as a rasayana."
+    },
+    {
+      "from": "ashwagandha-ksm66",
+      "to": "ashwagandha",
+      "carry_note": "Withania somnifera (L.) Dunal, family Solanaceae, is a perennial shrub native to the Indian subcontinent and parts of Africa and the Mediterranean. KSM-66 is a standardized hydroethanolic root extract of the species, prepared to concentrate the withanolide class of steroidal lactones, the principal bioactive constituents. Additional constituent classes include withanolide glycosides, sitoindosides, steroidal saponins, phenolic compounds, and withanine-type alkaloids. Pharmacologically, Withania somnifera extracts have been characterized predominantly in preclinical models demonstrating antioxidant activity, modulation of hypothalamic-pituitary-adrenal axis markers, and neuroprotective effects; a peer-reviewed study (PMID 34765761) demonstrated neuroprotective activity in the SH-SY5Y Parkinson's disease cell model. A ninety-day repeated-dose toxicity study in Wistar rats (PMID 37711361) evaluated the safety profile of the root extract in an animal model. Clinical scope in humans, including effects on stress markers, thyroid function, and cognitive outcomes, has been investigated in trials reported in the primary literature; however, the citations supplied for this monograph are preclinical (in vitro) and animal toxicology studies, and do not themselves establish human clinical dosage, contraindications, or adverse effect profiles. Claims regarding human efficacy should therefore be evaluated against trial-level human sources rather than extrapolated from animal data."
+    },
+    {
+      "from": "bawang",
+      "to": "garlic",
+      "carry_note": "Filipino garlic variety with similar but distinct chemistry from Western garlic; officially approved by Philippine DOH for hypertension and hyperlipidemia."
+    },
+    {
+      "from": "black-maca",
+      "to": "maca",
+      "carry_note": "The black variant of maca specifically studied for spermatogenesis and memory."
+    },
+    {
+      "from": "centella-indian",
+      "to": "gotu-kola",
+      "carry_note": "Indian variety of gotu kola used in classical Ayurveda as Mandukparni for cognitive enhancement, wound healing, and as a Rasayana tonic."
+    },
+    {
+      "from": "centella-taiwan",
+      "to": "gotu-kola",
+      "carry_note": "Taiwanese variety of gotu kola used in Taiwanese folk medicine for liver conditions, skin diseases, and as cooling food medicine."
+    },
+    {
+      "from": "cerasee",
+      "to": "bitter-melon-metabolic",
+      "carry_note": "Caribbean wild bitter vine widely consumed as tea in Jamaica for blood cleansing and diabetes."
     }
   ]
 }

@@ -150,5 +150,45 @@
  {
   "from": "/herbs/venezuelan-passionflower",
   "to": "/herbs/passionflower"
+ },
+ {
+  "from": "/herbs/ahcc-source",
+  "to": "/herbs/shiitake"
+ },
+ {
+  "from": "/herbs/allium-sativum-hardneck",
+  "to": "/herbs/garlic"
+ },
+ {
+  "from": "/herbs/aloe-barbadensis",
+  "to": "/herbs/aloe-vera"
+ },
+ {
+  "from": "/herbs/amalaki-rasayana",
+  "to": "/herbs/phyllanthus-emblica"
+ },
+ {
+  "from": "/herbs/ashwagandha-ksm66",
+  "to": "/herbs/ashwagandha"
+ },
+ {
+  "from": "/herbs/bawang",
+  "to": "/herbs/garlic"
+ },
+ {
+  "from": "/herbs/black-maca",
+  "to": "/herbs/maca"
+ },
+ {
+  "from": "/herbs/centella-indian",
+  "to": "/herbs/gotu-kola"
+ },
+ {
+  "from": "/herbs/centella-taiwan",
+  "to": "/herbs/gotu-kola"
+ },
+ {
+  "from": "/herbs/cerasee",
+  "to": "/herbs/bitter-melon-metabolic"
  }
 ]
