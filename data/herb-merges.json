@@ -1,0 +1,65 @@
+{
+  "_comment": "Reviewed duplicate merges. Every entry was checked against both records' content before being added: same species, same plant part or preparation, and no unique clinical claim that would be lost. `carry_note` is a sentence from the duplicate that the canonical record was missing.",
+  "merges": [
+    {
+      "from": "ladies-bedstraw",
+      "to": "ladys-bedstraw",
+      "carry_note": ""
+    },
+    {
+      "from": "maca-red",
+      "to": "red-maca",
+      "carry_note": "The red ecotype is also the one studied for prostate health and bone density in male populations."
+    },
+    {
+      "from": "licorice-dgl-digestive",
+      "to": "licorice-dgl",
+      "carry_note": ""
+    },
+    {
+      "from": "long-yan-rou-fruit",
+      "to": "longan-fruit",
+      "carry_note": ""
+    },
+    {
+      "from": "afghan-ashwagandha",
+      "to": "ashwagandha",
+      "carry_note": "Withania somnifera var. afghana grows wild in Afghanistan and Pakistan and is used in Unani medicine as a rejuvenating adaptogen."
+    },
+    {
+      "from": "andhra-ashwagandha-root",
+      "to": "ashwagandha",
+      "carry_note": ""
+    },
+    {
+      "from": "czech-valerian",
+      "to": "valerian",
+      "carry_note": "Valeriana officinalis var. bohemica is the Central European variety used in Czech and Slovak folk medicine for sleep, anxiety and nervous conditions."
+    },
+    {
+      "from": "kashmiri-saffron",
+      "to": "saffron",
+      "carry_note": "The Kashmiri variety (Crocus sativus var. cashmirianus) grown around Pampore is used in Unani medicine for mood, cognition and inflammatory conditions."
+    },
+    {
+      "from": "globe-artichoke",
+      "to": "artichoke",
+      "carry_note": "Cynarin and luteolin in the leaf extract stimulate bile production, which is the mechanism behind its choleretic use."
+    },
+    {
+      "from": "lemon-grass-whole",
+      "to": "lemongrass",
+      "carry_note": "The whole plant, stalk and leaf, is used in Thai, Malaysian and Caribbean medicine for fever, digestion and antimicrobial purposes."
+    },
+    {
+      "from": "hwanggi-korean-astragalus",
+      "to": "astragalus",
+      "carry_note": "Astragalus membranaceus var. koreanus is the Korean variety used in Hanbang medicine as a qi and immune tonic."
+    },
+    {
+      "from": "coffea-excelsa",
+      "to": "coffea-liberica",
+      "carry_note": "Coffea liberica var. dewevrei is the rarer Excelsa variety, with a distinct flavour and the same caffeine and antioxidant profile."
+    }
+  ]
+}

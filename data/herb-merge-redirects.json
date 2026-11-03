@@ -1,0 +1,50 @@
+[
+ {
+  "from": "/herbs/ladies-bedstraw",
+  "to": "/herbs/ladys-bedstraw"
+ },
+ {
+  "from": "/herbs/maca-red",
+  "to": "/herbs/red-maca"
+ },
+ {
+  "from": "/herbs/licorice-dgl-digestive",
+  "to": "/herbs/licorice-dgl"
+ },
+ {
+  "from": "/herbs/long-yan-rou-fruit",
+  "to": "/herbs/longan-fruit"
+ },
+ {
+  "from": "/herbs/afghan-ashwagandha",
+  "to": "/herbs/ashwagandha"
+ },
+ {
+  "from": "/herbs/andhra-ashwagandha-root",
+  "to": "/herbs/ashwagandha"
+ },
+ {
+  "from": "/herbs/czech-valerian",
+  "to": "/herbs/valerian"
+ },
+ {
+  "from": "/herbs/kashmiri-saffron",
+  "to": "/herbs/saffron"
+ },
+ {
+  "from": "/herbs/globe-artichoke",
+  "to": "/herbs/artichoke"
+ },
+ {
+  "from": "/herbs/lemon-grass-whole",
+  "to": "/herbs/lemongrass"
+ },
+ {
+  "from": "/herbs/hwanggi-korean-astragalus",
+  "to": "/herbs/astragalus"
+ },
+ {
+  "from": "/herbs/coffea-excelsa",
+  "to": "/herbs/coffea-liberica"
+ }
+]
