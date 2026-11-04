@@ -374,5 +374,17 @@
   {
     "from": "/herbs/curcuma-longa",
     "to": "/herbs/turmeric"
+  },
+  {
+    "from": "/herbs/terminalia-chebula-yellow",
+    "to": "/herbs/haritaki-digestive"
+  },
+  {
+    "from": "/herbs/zhu-li-bamboo-juice",
+    "to": "/herbs/bambusa-tuldoides"
+  },
+  {
+    "from": "/herbs/lemon-basil",
+    "to": "/herbs/kemangi-indo"
   }
 ]

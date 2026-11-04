@@ -470,6 +470,21 @@
       "from": "curcuma-longa",
       "to": "turmeric",
       "carry_note": ""
+    },
+    {
+      "from": "terminalia-chebula-yellow",
+      "to": "haritaki-digestive",
+      "carry_note": "Regional or trade name for the same plant and part."
+    },
+    {
+      "from": "zhu-li-bamboo-juice",
+      "to": "bambusa-tuldoides",
+      "carry_note": "Regional or trade name for the same plant and part."
+    },
+    {
+      "from": "lemon-basil",
+      "to": "kemangi-indo",
+      "carry_note": "Regional or trade name for the same plant and part."
     }
   ]
 }
