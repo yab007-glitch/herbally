@@ -1,548 +1,193 @@
 {
- "generated_at": "2026-11-04T11:29:51.590Z",
+ "generated_at": "2026-11-04T12:19:08.306Z",
  "report": [
   {
-   "slug": "agrimonia-eupatoria-herb",
+   "slug": "african-dream-root",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "agropyron-repens",
+   "slug": "apricot-kernel-sweet",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "aloe-vera",
+   "slug": "bai-zi-ren-seed",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "aloysia-citriodora",
+   "slug": "buchu-betulina-leaf",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "anise-green",
+   "slug": "chrysanthemum-bai-ju",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "arnica",
+   "slug": "cowberry-leaf",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "artichoke",
+   "slug": "damakese-ethiopian",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "asteraceae-blessed-thistle",
+   "slug": "dulawali",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "betula-pendula-bark",
+   "slug": "fo-ti-prepared",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "bittersweet-nightshade",
+   "slug": "garcinia",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "black-cohosh",
+   "slug": "gujarati-methi-herb",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "boldo-leaf",
+   "slug": "heal-all-spica",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "burdock-seed",
+   "slug": "hedyotis-herb",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "butchers-broom",
+   "slug": "korean-red-peony",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "capsella-bursa-pastoris-herb",
+   "slug": "koseret-ethiopian",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "carum-carvi-herb",
+   "slug": "ku-xing-ren-seed",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "centaurium-minus-herb",
+   "slug": "lian-zi-xin-heart",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "chamomile-roman",
+   "slug": "lotus-leaf",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "cherry-stalk",
+   "slug": "mango-leaf",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "chicory",
+   "slug": "matico",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "cinnamon",
+   "slug": "mulberry-fruit",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "clove",
+   "slug": "mulberry-root-bark",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "comfrey",
+   "slug": "nectandra-rodioei",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "commiphora-molmol",
+   "slug": "puerh-tea",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "cowslip",
+   "slug": "puerto-rican-breadfruit",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "cranberry",
+   "slug": "qing-pi",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "da-huang",
+   "slug": "rosmarinus-officinalis-var",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "dandelion",
+   "slug": "rou-gui",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "devils-claw",
+   "slug": "rwandan-imvaho-herb",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "echinacea",
+   "slug": "securidaca-longepedunculata",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "echinacea-angustifolia",
+   "slug": "si-gua-luo",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "echinacea-pallida",
+   "slug": "stillingia-sebifera",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "eleuthero",
+   "slug": "sweet-flag-chinese",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "epilobium-angustifolium",
+   "slug": "tamanu-skin",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "eschscholzia-californica-herb",
+   "slug": "thai-basil",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "eucalyptus",
+   "slug": "vibhitaki-seed",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "evening-primrose",
+   "slug": "white-tea",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "fennel",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "fenugreek-seed",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "feverfew",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "flaxseed-oil-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "frangula-alnus",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "frangula-purshiana",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "fraxinus-excelsior-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "fumitory-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "gan-jiang-root",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "garlic",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "ginseng",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "goldenrod-solidago",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "gotu-kola",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "green-tea",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "guarana-seed",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "hawthorn",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "hieracium-pilosella",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "hops",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "horse-chestnut",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "iceland-moss",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "java-turmeric",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "juglans-regia-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "juniper-communis",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "kola-nut",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "lavender",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "lemon-balm",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "licorice-dgl",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "lovage-root",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "mallow",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "marjoram",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "marshmallow-root",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "matricaria-recutita",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "meadowsweet",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "melilot",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "menyanthes-trifoliata",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "misai-kucing",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "motherwort-european",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "mullein",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "oak-bark",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "oat-straw",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "olive-leaf",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "origanum-dictamnus",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "orthosiphon-stamineus",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "phaseolus-vulgaris",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "plantago-lanceolata",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "psyllium",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "pumpkin-seed",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "raspberry-ketone",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "restharrow",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "rhamnus-frangula",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "rhodiola",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "ribes-nigrum",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "rosa-centifolia",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "rupturewort",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "senna-leaf",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "sideritis",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "st-johns-wort",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "swedish-nettle-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "tea-tree",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "thyme",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "tilia-cordata-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "turmeric",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "umckaloabo",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "valerian",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "viola-tricolor-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "vitex",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "wild-strawberry",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "witch-hazel",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "wormwood",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "yarrow",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "yellow-gentian-root",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "yerba-mate",
+   "slug": "zhi-gan-cao-processed",
    "ok": true,
    "status": "204/201"
   }
