@@ -1,293 +1,98 @@
 {
- "generated_at": "2026-11-04T01:41:49.625Z",
+ "generated_at": "2026-11-04T11:00:07.861Z",
  "report": [
   {
-   "slug": "ladies-bedstraw",
+   "slug": "abies-balsamea",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "lemon-balm-toronjil",
+   "slug": "acorus-gramineus",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "lemon-grass-whole",
+   "slug": "arnebia-euchroma",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "lemon-thyme",
+   "slug": "carlina-acaulis",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "libyan-thyme",
+   "slug": "centipeda-minima",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "licorice-dgl-digestive",
+   "slug": "corydalis-bungeana",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "long-gu-nervine",
+   "slug": "cynanchum-wilfordii",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "long-yan-rou-fruit",
+   "slug": "eriocaulon-buergerianum",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "lu-rong",
+   "slug": "erodium-stephanianum",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "maca-red",
+   "slug": "fraxinus-ornus",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "maca-yellow",
+   "slug": "glehnia-littoralis",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "mandukaparni",
+   "slug": "lophatherum-gracile",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "mastic-resin",
+   "slug": "menispermum-dauricum",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "melao-sao-caetano",
+   "slug": "mentha-canadensis",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "melissa-romana",
+   "slug": "microcos-paniculata",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "mu-li-nervine",
+   "slug": "nepeta-tenuifolia",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "nattokinase-source",
+   "slug": "paeonia-anomala",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "nigella-sativa-seed",
+   "slug": "prunus-cerasus",
    "ok": true,
    "status": "204/201"
   },
   {
-   "slug": "nordic-yarrow",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "norse-yarrow",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "okinawan-turmeric",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "pegaga",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "peppermint-spanish",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "persian-fenugreek",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "phosphatidylserine-herb",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "polish-calendula",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "propolis",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "prunus-avium",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "pueraria-root",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "qing-hao-aerial",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "rauwolfia-cardio",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "red-yeast-rice-cardiovasc",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "reishi-spore",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "romanian-wormwood",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "rosemary-extract",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "rosmarinus-prostratus",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "royal-sun-immune",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "samento-amazonian",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "schisandra-black",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "schizandra-berry",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "serbian-juniper",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "serrapeptase-source",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "shbbet-mriouh",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "snail-vine-skin",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "sri-lankan-siddha-pepper",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "suan-zao-ren-seed",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "tarragon",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "tarragon-wild",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "temu-putih",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "tibetan-valerian",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "tongan-turmeric",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "tunisian-harmel",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "turmeric-curcumin",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "venezuelan-passionflower",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "vietnamese-pennywort",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "wild-celery",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "xia-ku-cao",
-   "ok": true,
-   "status": "204/201"
-  },
-  {
-   "slug": "yasthimadhu",
+   "slug": "viscum-coloratum",
    "ok": true,
    "status": "204/201"
   }
