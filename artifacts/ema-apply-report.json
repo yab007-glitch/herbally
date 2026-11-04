@@ -10,7 +10,7 @@
  },
  {
   "binomial": "achillea millefolium",
-  "slug": "achillea-millefolium-var",
+  "slug": "yarrow",
   "status": "applied"
  },
  {
@@ -25,31 +25,31 @@
  },
  {
   "binomial": "artemisia absinthium",
-  "slug": "romanian-wormwood",
+  "slug": "wormwood",
   "status": "applied"
  },
  {
   "binomial": "avena sativa",
-  "slug": "milk-oat",
+  "slug": "oat-straw",
   "status": "applied"
  },
  {
   "binomial": "barbados aloes",
-  "status": "no herb"
+  "status": "ambiguous (4 pages share this plant: aloe-vera-leaf, aloe-vera-l-burm-f, aloe-vera-chinensis, barbadian-aloe)"
  },
  {
   "binomial": "camellia sinensis",
-  "slug": "camellia-sinensis-purple-tea-cultivar",
+  "slug": "green-tea",
   "status": "applied"
  },
  {
   "binomial": "centaurium erythraea",
-  "slug": "centaury-european",
+  "slug": "centaurium-minus-herb",
   "status": "applied"
  },
  {
   "binomial": "chamaemelum nobile",
-  "slug": "asteraceae-roman-chamomile",
+  "slug": "chamomile-roman",
   "status": "applied"
  },
  {
@@ -59,11 +59,13 @@
  },
  {
   "binomial": "cimicifuga racemosa",
-  "status": "no herb"
+  "slug": "black-cohosh",
+  "status": "applied"
  },
  {
   "binomial": "crataegus spp",
-  "status": "no herb"
+  "slug": "hawthorn",
+  "status": "applied"
  },
  {
   "binomial": "cucurbita pepo",
@@ -72,7 +74,7 @@
  },
  {
   "binomial": "curcuma longa",
-  "slug": "curcumin",
+  "slug": "turmeric",
   "status": "applied"
  },
  {
@@ -82,7 +84,8 @@
  },
  {
   "binomial": "cynara scolymus",
-  "status": "no herb"
+  "slug": "artichoke",
+  "status": "applied"
  },
  {
   "binomial": "echinacea pallida",
@@ -96,11 +99,12 @@
  },
  {
   "binomial": "echinaceae angustifolia",
-  "status": "no herb"
+  "slug": "echinacea-angustifolia",
+  "status": "applied"
  },
  {
   "binomial": "eleutherococcus senticosus",
-  "slug": "korean-acanthopanax",
+  "slug": "eleuthero",
   "status": "applied"
  },
  {
@@ -110,17 +114,18 @@
  },
  {
   "binomial": "filipendula ulmaria",
-  "slug": "spiraea-ulmaria-root",
+  "slug": "meadowsweet",
   "status": "applied"
  },
  {
   "binomial": "foeniculum vulgare",
-  "slug": "foeniculum-vulgare-subsp-vulgare-var-vulgare",
+  "slug": "fennel",
   "status": "applied"
  },
  {
   "binomial": "frangula bark",
-  "status": "no herb"
+  "slug": "frangula-alnus",
+  "status": "applied"
  },
  {
   "binomial": "fraxinus excelsior",
@@ -129,7 +134,7 @@
  },
  {
   "binomial": "glycyrrhiza glabra",
-  "slug": "unani-mulethi-root",
+  "slug": "licorice-dgl",
   "status": "applied"
  },
  {
@@ -149,7 +154,7 @@
  },
  {
   "binomial": "hypericum perforatum",
-  "slug": "st-johns-wort-oil",
+  "slug": "st-johns-wort",
   "status": "applied"
  },
  {
@@ -159,11 +164,12 @@
  },
  {
   "binomial": "ispaghula husk",
-  "status": "no herb"
+  "slug": "psyllium",
+  "status": "applied"
  },
  {
   "binomial": "juniperus communis",
-  "slug": "serbian-juniper",
+  "slug": "juniper-communis",
   "status": "applied"
  },
  {
@@ -188,17 +194,16 @@
  },
  {
   "binomial": "melissa officinalis",
-  "slug": "melissa-romana",
+  "slug": "lemon-balm",
   "status": "applied"
  },
  {
   "binomial": "mentha x",
-  "slug": "chocolate-mint",
-  "status": "applied"
+  "status": "no herb"
  },
  {
   "binomial": "olea europaea",
-  "slug": "zatoun",
+  "slug": "olive-leaf",
   "status": "applied"
  },
  {
@@ -233,7 +238,8 @@
  },
  {
   "binomial": "plantaginis lanceolatae",
-  "status": "no herb"
+  "slug": "plantago-lanceolata",
+  "status": "applied"
  },
  {
   "binomial": "primula veris",
@@ -242,7 +248,8 @@
  },
  {
   "binomial": "psyllium seed",
-  "status": "no herb"
+  "slug": "psyllium",
+  "status": "applied"
  },
  {
   "binomial": "rhodiola rosea",
@@ -256,12 +263,12 @@
  },
  {
   "binomial": "rosa centifolia",
-  "status": "no herb"
+  "slug": "rosa-centifolia",
+  "status": "applied"
  },
  {
   "binomial": "rosmarinus officinalis",
-  "slug": "moroccan-rosemary",
-  "status": "applied"
+  "status": "ambiguous (3 pages share this plant: rosmarinus-officinalis-rosemary-leaf-extract, rosmarinus-officinalis-l, moroccan-rosemary)"
  },
  {
   "binomial": "rubus idaeus",
@@ -275,11 +282,12 @@
  },
  {
   "binomial": "senna leaf",
-  "status": "no herb"
+  "slug": "senna-leaf",
+  "status": "applied"
  },
  {
   "binomial": "senna pods",
-  "status": "no herb"
+  "status": "ambiguous (2 pages share this plant: senna-leaf, senna-pods)"
  },
  {
   "binomial": "solanum dulcamara",
@@ -293,12 +301,12 @@
  },
  {
   "binomial": "syzygium aromaticum",
-  "slug": "eugenia-caryophyllata",
+  "slug": "clove",
   "status": "applied"
  },
  {
   "binomial": "tanacetum parthenium",
-  "slug": "tanacetum-parthenium-l-sch-bip",
+  "slug": "feverfew",
   "status": "applied"
  },
  {
@@ -322,29 +330,32 @@
  },
  {
   "binomial": "valeriana officinalis",
-  "slug": "czech-valerian",
+  "slug": "valerian",
   "status": "applied"
  },
  {
   "binomial": "verbascum thapsus",
-  "slug": "mullein-flower",
+  "slug": "mullein",
   "status": "applied"
  },
  {
   "binomial": "zingiberis",
-  "status": "no herb"
+  "slug": "gan-jiang-root",
+  "status": "applied"
  },
  {
-  "binomial": "draft european",
-  "status": "no herb"
+  "binomial": "aesculus hippocastanum",
+  "slug": "horse-chestnut",
+  "status": "applied"
  },
  {
   "binomial": "draft public",
   "status": "no herb"
  },
  {
-  "binomial": "european herbal",
-  "status": "no herb"
+  "binomial": "gentiana lutea",
+  "slug": "yellow-gentian-root",
+  "status": "applied"
  },
  {
   "binomial": "aesculus hippocastanum",
@@ -358,7 +369,7 @@
  },
  {
   "binomial": "centella asiatica",
-  "slug": "gotu-kola-leaf",
+  "slug": "gotu-kola",
   "status": "applied"
  },
  {
@@ -382,7 +393,7 @@
  },
  {
   "binomial": "trigonella foenum",
-  "slug": "fenugreek",
+  "slug": "fenugreek-seed",
   "status": "applied"
  },
  {
@@ -436,7 +447,7 @@
  },
  {
   "binomial": "linum usitatissimum",
-  "slug": "linum-usitatissimum-l",
+  "slug": "flaxseed-oil-herb",
   "status": "applied"
  },
  {
@@ -466,7 +477,7 @@
  },
  {
   "binomial": "allium sativum",
-  "slug": "allium-sativum-hardneck",
+  "slug": "garlic",
   "status": "applied"
  },
  {
@@ -500,7 +511,8 @@
  },
  {
   "binomial": "cnicus benedictus",
-  "status": "no herb"
+  "slug": "asteraceae-blessed-thistle",
+  "status": "applied"
  },
  {
   "binomial": "cynara cardunculus",
@@ -519,8 +531,7 @@
  },
  {
   "binomial": "glycine max",
-  "slug": "phosphatidylserine-noot",
-  "status": "applied"
+  "status": "ambiguous (3 pages share this plant: glycine-max, phosphatidylserine-herb, phosphatidylserine-noot)"
  },
  {
   "binomial": "harpagophytum procumbens",
@@ -554,7 +565,8 @@
  },
  {
   "binomial": "onechinacea purpurea",
-  "status": "no herb"
+  "slug": "echinacea",
+  "status": "applied"
  },
  {
   "binomial": "origanum majorana",
@@ -573,7 +585,8 @@
  },
  {
   "binomial": "pilosella officinarum",
-  "status": "no herb"
+  "slug": "hieracium-pilosella",
+  "status": "applied"
  },
  {
   "binomial": "pistacia lentiscus",
@@ -587,7 +600,8 @@
  },
  {
   "binomial": "rhamnus purshiana",
-  "status": "no herb"
+  "slug": "frangula-purshiana",
+  "status": "applied"
  },
  {
   "binomial": "rheum palmatum",
@@ -600,8 +614,7 @@
  },
  {
   "binomial": "sambucus nigra",
-  "slug": "elder-bark",
-  "status": "applied"
+  "status": "ambiguous (7 pages share this plant: sambucol, sambucus-nigra-subsp-canadensis, elderberry, elderflower)"
  },
  {
   "binomial": "senna alexandrina",
@@ -641,8 +654,7 @@
  },
  {
   "binomial": "vaccinium myrtillus",
-  "slug": "vaccinium-myrtillus-l",
-  "status": "applied"
+  "status": "ambiguous (4 pages share this plant: vaccinium-myrtillus, bilberry, bilberry-leaf, vaccinium-myrtillus-l)"
  },
  {
   "binomial": "vitex agnus",
@@ -651,8 +663,7 @@
  },
  {
   "binomial": "vitis vinifera",
-  "slug": "vitis-vinifera-var-tinctoria",
-  "status": "applied"
+  "status": "ambiguous (4 pages share this plant: grape-seed, vitis-vinifera, vitis-vinifera-grape-seed-extract, vitis-vinifera-var-tinctoria)"
  },
  {
   "binomial": "zingiber officinale",
@@ -660,15 +671,17 @@
   "status": "applied"
  },
  {
-  "binomial": "superseded community",
-  "status": "no herb"
+  "binomial": "agropyron repens",
+  "slug": "agropyron-repens",
+  "status": "applied"
  },
  {
   "binomial": "superseded european",
   "status": "no herb"
  },
  {
-  "binomial": "superseded final",
-  "status": "no herb"
+  "binomial": "achillea millefolium",
+  "slug": "yarrow",
+  "status": "applied"
  }
 ]
