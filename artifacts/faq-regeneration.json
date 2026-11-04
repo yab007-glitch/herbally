@@ -1,0 +1,510 @@
+{
+ "generated_at": "2026-11-04T00:26:50.143Z",
+ "report": [
+  {
+   "slug": "achillea-millefolium-var",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "agrimonia-eupatoria-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "agropyron-repens",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "aloe-vera",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "aloysia-citriodora",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "anise-green",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "arnica",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "artichoke",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "asteraceae-roman-chamomile",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "betula-pendula-bark",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "bittersweet-nightshade",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "boldo-leaf",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "burdock-seed",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "butchers-broom",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "camellia-sinensis-purple-tea-cultivar",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "capsella-bursa-pastoris-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "carum-carvi-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "centaury-european",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "cherry-stalk",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "chicory",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "chocolate-mint",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "cinnamon",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "comfrey",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "commiphora-molmol",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "cowslip",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "cranberry",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "curcumin",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "da-huang",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "dandelion",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "devils-claw",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "echinacea",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "echinacea-angustifolia",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "echinacea-pallida",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "elder-bark",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "epilobium-angustifolium",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "eschscholzia-californica-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "eucalyptus",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "eugenia-caryophyllata",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "evening-primrose",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "fenugreek",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "foeniculum-vulgare-subsp-vulgare-var-vulgare",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "fraxinus-excelsior-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "fumitory-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "gan-jiang-root",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "ginseng",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "goldenrod-solidago",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "guarana-seed",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "hieracium-pilosella",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "hops",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "horse-chestnut",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "iceland-moss",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "java-turmeric",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "juglans-regia-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "kola-nut",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "korean-acanthopanax",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "lavender",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "linum-usitatissimum-l",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "lovage-root",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "mallow",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "marjoram",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "marshmallow-root",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "matricaria-recutita",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "melilot",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "menyanthes-trifoliata",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "milk-oat",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "misai-kucing",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "moroccan-rosemary",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "motherwort-european",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "mullein-flower",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "oak-bark",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "origanum-dictamnus",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "orthosiphon-stamineus",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "phaseolus-vulgaris",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "phosphatidylserine-noot",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "psyllium",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "pumpkin-seed",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "raspberry-ketone",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "restharrow",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "rhamnus-frangula",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "rhodiola",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "ribes-nigrum",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "rupturewort",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "senna-leaf",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "sideritis",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "spiraea-ulmaria-root",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "st-johns-wort-oil",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "swedish-nettle-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "tanacetum-parthenium-l-sch-bip",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "tea-tree",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "thyme",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "tilia-cordata-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "umckaloabo",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "unani-mulethi-root",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "vaccinium-myrtillus-l",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "viola-tricolor-herb",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "vitex",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "vitis-vinifera-var-tinctoria",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "wild-strawberry",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "witch-hazel",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "yerba-mate",
+   "ok": true,
+   "status": "204/201"
+  },
+  {
+   "slug": "zatoun",
+   "ok": true,
+   "status": "204/201"
+  }
+ ]
+}
