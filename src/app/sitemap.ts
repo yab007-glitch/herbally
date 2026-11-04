@@ -475,18 +475,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency: "weekly" as const,
           priority: 0.7,
         });
-        const t = herb.translations as Record<string, unknown> | null;
-        const hasFr = !!t && typeof t === "object" && "fr" in t && t.fr != null;
-        if (hasFr) {
-          herbPages.push({
-            url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
-            lastModified: herb.updated_at
-              ? new Date(herb.updated_at)
-              : new Date(),
-            changeFrequency: "weekly" as const,
-            priority: 0.7,
-          });
-        }
+        // Every herb has a live French URL: /fr/herbs/<slug> returns 200 for all
+        // of them, and generateMetadata already declares it as the fr hreflang
+        // alternate. Listing only the 2,603 rows with a `translations.fr` block
+        // left 648 live pages out of the sitemap while telling Google they exist.
+        herbPages.push({
+          url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
+          lastModified: herb.updated_at
+            ? new Date(herb.updated_at)
+            : new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        });
       }
 
       if (herbsBatch.length < batchSize) break;

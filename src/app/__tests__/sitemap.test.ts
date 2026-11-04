@@ -98,12 +98,13 @@ describe("sitemap", () => {
     const result = await sitemap();
     const urls = result.map((entry) => entry.url);
 
-    // Healthy behaviour is unchanged: translated herbs get a FR URL, the
-    // untranslated one does not.
+    // Every published herb has a live /fr page (200 for all 3,251) and the page
+    // metadata already advertises it as the fr hreflang alternate, so both
+    // locales are listed whether or not a translations.fr block exists.
     expect(urls).toContain(`${BASE_URL}/herbs/ginger`);
     expect(urls).toContain(`${BASE_URL}/fr/herbs/ginger`);
     expect(urls).toContain(`${BASE_URL}/herbs/turmeric`);
-    expect(urls).not.toContain(`${BASE_URL}/fr/herbs/turmeric`);
+    expect(urls).toContain(`${BASE_URL}/fr/herbs/turmeric`);
 
     // Pair URLs, both locales (hasFr = true).
     expect(urls).toContain(`${BASE_URL}/interactions/ginger/warfarin`);
@@ -116,10 +117,11 @@ describe("sitemap", () => {
 
     // Static pages still lead, and herbs remain last (output order unchanged).
     expect(urls[0]).toBe(BASE_URL);
-    expect(urls.slice(-3)).toEqual([
+    expect(urls.slice(-4)).toEqual([
       `${BASE_URL}/herbs/ginger`,
       `${BASE_URL}/fr/herbs/ginger`,
       `${BASE_URL}/herbs/turmeric`,
+      `${BASE_URL}/fr/herbs/turmeric`,
     ]);
   });
 
