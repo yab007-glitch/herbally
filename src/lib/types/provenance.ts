@@ -63,7 +63,7 @@ export const ProvenanceSchema = z.object({
    * a person read the page.
    */
   verification_status: z
-    .enum(["verified", "single_source", "unverified", "formula"])
+    .enum(["verified", "single_source", "unverified", "formula", "non_plant"])
     .nullable()
     .catch(null)
     .default(null),

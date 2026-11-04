@@ -349,7 +349,9 @@
     "identityVerified": "Identity verified · {count} sources",
     "identityVerifiedTooltip": "The plant's name is confirmed by {count} independent taxonomic sources ({sources}). No government regulator has published a monograph for this herb, so nothing beyond its identity is claimed here.",
     "formula": "Multi-herb formula",
-    "formulaTooltip": "This entry is a multi-herb product, not a single plant, so there is no botanical name to cross-check. Its ingredients are listed on the page; the formula itself has no taxonomic identity."
+    "formulaTooltip": "This entry is a multi-herb product, not a single plant, so there is no botanical name to cross-check. Its ingredients are listed on the page; the formula itself has no taxonomic identity.",
+    "nonPlant": "Non-plant ingredient",
+    "nonPlantTooltip": "This entry is a mineral, animal product, vitamin or isolate, not a plant. There is no botanical name to cross-check, and its record is presented as a materia medica entry."
   },
   "donate": {
     "title": "Support HerbAlly",

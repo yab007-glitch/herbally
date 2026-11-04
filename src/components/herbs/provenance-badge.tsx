@@ -5,6 +5,7 @@ import {
   AlertCircle,
   AlertTriangle,
   Layers,
+  FlaskConical,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -53,6 +54,21 @@ export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
       >
         <AlertTriangle className="mr-1 size-3" aria-hidden="true" />
         {t("needsReReview")}
+      </Badge>
+    );
+  }
+
+  // Minerals, animal products, vitamins and isolates sit in the same library but are
+  // not plants: there is no binomial to check and no herbarium record to find.
+  if (provenance.verification_status === "non_plant") {
+    return (
+      <Badge
+        variant="outline"
+        className="border-stone-300 bg-stone-50 text-stone-700 dark:border-stone-700 dark:bg-stone-900/50 dark:text-stone-300"
+        title={t("nonPlantTooltip")}
+      >
+        <FlaskConical className="mr-1 size-3" aria-hidden="true" />
+        {t("nonPlant")}
       </Badge>
     );
   }
