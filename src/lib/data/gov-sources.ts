@@ -170,7 +170,7 @@ export function getGovSources(slug: string, displayName?: string): GovSource[] {
   out.push({
     id: "medlineplus",
     label: "Search MedlinePlus (NIH)",
-    url: `https://medlineplus.gov/search/?q=${query}`,
+    url: `https://vsearch.nlm.nih.gov/vivisimo/cgi-bin/query-meta?v%3Aproject=medlineplus&query=${query}`,
     kind: "search",
     authoritative: false,
   });

@@ -1,0 +1,4880 @@
+{
+ "generated_at": "2026-11-04T00:41:55Z",
+ "summary": {
+  "pages": 30,
+  "non_200": [],
+  "placeholders": [
+   "abelmoschus-manihot",
+   "abelmoschus-moschatus-herb",
+   "abies-alba",
+   "abies-balsamea",
+   "abies-nigra",
+   "abies-sibirica",
+   "abroma-augusta",
+   "abrus-cantoniensis",
+   "abrus-precatorius",
+   "abuta-grandifolia",
+   "abutilon-indicum",
+   "acacia",
+   "acacia-arabica",
+   "acacia-catechu",
+   "acacia-confusa",
+   "acacia-nilotica",
+   "acacia-obtusifolia",
+   "acacia-senegal",
+   "acai-berry-antioxidant",
+   "acalypha-indica",
+   "acanthopanax-gracilistylus",
+   "acanthopanax-sessiliflorus",
+   "acapulco",
+   "acer-campestre",
+   "acer-saccharum-herb",
+   "achillea-biebersteinii",
+   "achillea-ligustica",
+   "achillea-millefolium-var",
+   "achillea-nobilis",
+   "achillea-pannonica"
+  ],
+  "no_uses": [],
+  "no_dose": [],
+  "no_sources": [],
+  "dead_links": [
+   {
+    "url": "https://medlineplus.gov/search/?q=Abelmoschus%20Moschatus%20Herb",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abelmoschus%20manihot",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abies%20alba",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abies%20nigra",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abies%20sibirica",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abroma%20augusta",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abrus%20cantoniensis",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abrus%20precatorius",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abuta%20Grandifolia",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Abutilon%20indicum",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acacia",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acacia%20arabica",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acacia%20catechu",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acacia%20confusa",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acacia%20nilotica",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acacia%20obtusifolia",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acacia%20senegal",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acai%20Berry%20Antioxidant",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acalypha%20indica",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acanthopanax%20Sessiliflorus",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acanthopanax%20gracilistylus",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acapulco",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acer%20Saccharum%20Herb",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Acer%20campestre",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Achillea%20Millefolium%20Var",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Achillea%20biebersteinii",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Achillea%20ligustica",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Achillea%20nobilis",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Achillea%20pannonica",
+    "status": 404
+   },
+   {
+    "url": "https://medlineplus.gov/search/?q=Balsam%20Fir",
+    "status": 404
+   },
+   {
+    "url": "https://ods.od.nih.gov/factsheets/list-all/",
+    "status": 403
+   },
+   {
+    "url": "https://pnvltmyixympgammxvoo.supabase.co",
+    "status": 404
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10418326/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10540158/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10794124/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10798248/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10804285/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10821961/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/11429256/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/11531084/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/11557077/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/11582545/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/11736775/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12135097/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12372869/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12510834/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12622219/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12648812/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/12872918/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/1367783/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/1501489/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/15138013/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/15181663/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/15952532/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16028974/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16041646/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16118043/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16141563/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16203117/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16248248/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16366708/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16713157/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16804326/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16813462/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16910724/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/17178202/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/17238063/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/17357388/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/17694473/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/1794977/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/18254591/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/18267216/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/18636384/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/18656937/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/18963490/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19327382/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19379797/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19430614/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19546149/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19570644/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19610024/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/19613450/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20047272/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20355025/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/2045522/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20645814/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20806936/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20845778/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21075144/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21350667/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21356341/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21615036/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21705837/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21823479/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21849051/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/21999427/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22032697/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/2203870/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22230193/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22253099/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22262935/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22282602/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22529650/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22866283/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/22881142/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23119600/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23172095/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23470333/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/2379649/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23901209/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/23903060/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24006802/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24022265/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24186640/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24382449/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24427958/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24495394/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24511757/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24695415/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24739926/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24910407/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25005060/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25089582/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25103502/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25183095/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25183125/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25242871/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25278440/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25324932/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25338180/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25422029/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25551188/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25567761/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25665064/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25701144/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25802170/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25911964/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25983510/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26220633/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26327332/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26357662/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26448818/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26587004/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26960511/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26994888/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27057124/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27103988/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27104031/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27165527/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27293452/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27486360/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27538998/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27656192/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27693833/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27756448/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27771627/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/27879146/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28049349/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28096612/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28119891/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28150592/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28182104/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28345393/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28348971/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28390831/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28515607/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28789702/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28917858/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/28939025/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29023061/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29027937/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29039503/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29301264/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29438273/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29441952/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29442051/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29466809/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29495560/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29503478/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29558953/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29621196/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29659603/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29671829/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29743936/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/29966007/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30008135/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30166872/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30186180/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30196468/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30243779/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30302324/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30361961/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30417583/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30561299/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30714201/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/30968605/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31057125/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31192352/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31217262/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31249468/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31280417/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31316836/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31456429/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31460786/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31717801/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31779993/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32003002/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32188508/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32206055/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32295006/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32319765/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32349421/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32367766/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32428654/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32430960/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32466439/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32475191/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32524386/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32655655/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32685725/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32722270/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32817615/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32846601/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32891160/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32984610/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33050554/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33164294/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33183092/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33188566/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33229157/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33303153/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33424268/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33435475/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33555024/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33610746/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33615691/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33670416/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33919561/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33976489/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34119540/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34180070/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34371601/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34436446/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34572966/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34596780/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34645930/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34697741/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34707350/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34810393/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34906808/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34967059/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34986959/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35085724/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35141205/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35161314/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35208961/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35325199/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35330187/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35335326/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35339624/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35343656/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35363843/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35448782/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35453303/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35630603/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35672366/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35714881/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35861729/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35910160/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35913613/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35954235/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35998213/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36016534/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36080243/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36172199/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36189534/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36235451/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36290625/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36294262/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36405951/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36432824/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36524851/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36615418/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36634650/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36641105/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36671523/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36684487/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36816058/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36839349/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36959155/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36973339/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37059249/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37089397/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37107172/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37110667/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37133312/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37144218/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37152134/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37174108/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37273369/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37303858/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37324839/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37359892/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37375903/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37430935/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37439007/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37443721/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37444264/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37459705/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37513607/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37571016/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37634270/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37683990/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37764339/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37803612/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37836226/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37893489/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/37986445/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38021797/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38058645/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38167214/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38186405/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38219632/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38272848/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38278399/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38290997/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38300819/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38325681/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38389921/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38392894/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38410133/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38428258/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38463881/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38485254/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38490239/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38513827/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38543166/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38633273/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38710375/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38773358/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38817355/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38845567/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/3889455/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38916807/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38972441/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/38994879/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39097211/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39135883/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39274964/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39312451/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39323672/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39360533/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39381590/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39407837/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39410081/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39439926/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39470961/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39505327/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39530083/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39550385/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39669170/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39770900/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39771185/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39860265/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/39997853/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40222954/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40348832/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40470307/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40509346/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40527374/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40554287/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40660070/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40709743/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40733225/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41161438/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41241211/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41440699/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41448365/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41578724/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41751128/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42016028/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42082794/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42274742/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/7358945/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/7623478/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/8850132/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/9666883/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/9860236/",
+    "status": 203
+   },
+   {
+    "url": "https://pubmed.ncbi.nlm.nih.gov/9863147/",
+    "status": 203
+   }
+  ],
+  "slowest": [
+   {
+    "slug": "acanthopanax-sessiliflorus",
+    "url": "https://herbally.app/herbs/acanthopanax-sessiliflorus",
+    "status": 200,
+    "ms": 1409,
+    "bytes": 209192,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 1883,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acanthopanax%20Sessiliflorus",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/12135097/",
+     "https://pubmed.ncbi.nlm.nih.gov/23470333/",
+     "https://pubmed.ncbi.nlm.nih.gov/23903060/",
+     "https://pubmed.ncbi.nlm.nih.gov/25005060/",
+     "https://pubmed.ncbi.nlm.nih.gov/25324932/",
+     "https://pubmed.ncbi.nlm.nih.gov/26587004/",
+     "https://pubmed.ncbi.nlm.nih.gov/27103988/",
+     "https://pubmed.ncbi.nlm.nih.gov/28049349/",
+     "https://pubmed.ncbi.nlm.nih.gov/28182104/",
+     "https://pubmed.ncbi.nlm.nih.gov/31460786/",
+     "https://pubmed.ncbi.nlm.nih.gov/32295006/",
+     "https://pubmed.ncbi.nlm.nih.gov/33183092/",
+     "https://pubmed.ncbi.nlm.nih.gov/33188566/",
+     "https://pubmed.ncbi.nlm.nih.gov/33615691/",
+     "https://pubmed.ncbi.nlm.nih.gov/34436446/",
+     "https://pubmed.ncbi.nlm.nih.gov/34572966/",
+     "https://pubmed.ncbi.nlm.nih.gov/35141205/",
+     "https://pubmed.ncbi.nlm.nih.gov/37430935/",
+     "https://pubmed.ncbi.nlm.nih.gov/37764339/",
+     "https://pubmed.ncbi.nlm.nih.gov/37893489/",
+     "https://pubmed.ncbi.nlm.nih.gov/38167214/",
+     "https://pubmed.ncbi.nlm.nih.gov/38219632/",
+     "https://pubmed.ncbi.nlm.nih.gov/38389921/",
+     "https://pubmed.ncbi.nlm.nih.gov/38710375/",
+     "https://pubmed.ncbi.nlm.nih.gov/39505327/",
+     "https://pubmed.ncbi.nlm.nih.gov/39860265/",
+     "https://pubmed.ncbi.nlm.nih.gov/40222954/",
+     "https://pubmed.ncbi.nlm.nih.gov/40554287/",
+     "https://pubmed.ncbi.nlm.nih.gov/41448365/",
+     "https://pubmed.ncbi.nlm.nih.gov/41578724/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/search?query=Acanthopanax%20Sessiliflorus",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "abies-balsamea",
+    "url": "https://herbally.app/herbs/abies-balsamea",
+    "status": 200,
+    "ms": 1354,
+    "bytes": 124945,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": true,
+    "words": 1010,
+    "links": [
+     "https://medlineplus.gov/search/?q=Balsam%20Fir",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/health/herbsataglance",
+     "https://www.nccih.nih.gov/search?query=Balsam%20Fir",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "acacia-nilotica",
+    "url": "https://herbally.app/herbs/acacia-nilotica",
+    "status": 200,
+    "ms": 1224,
+    "bytes": 216053,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 2256,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acacia%20nilotica",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/10794124/",
+     "https://pubmed.ncbi.nlm.nih.gov/23119600/",
+     "https://pubmed.ncbi.nlm.nih.gov/26448818/",
+     "https://pubmed.ncbi.nlm.nih.gov/26994888/",
+     "https://pubmed.ncbi.nlm.nih.gov/27486360/",
+     "https://pubmed.ncbi.nlm.nih.gov/28096612/",
+     "https://pubmed.ncbi.nlm.nih.gov/28119891/",
+     "https://pubmed.ncbi.nlm.nih.gov/28390831/",
+     "https://pubmed.ncbi.nlm.nih.gov/28917858/",
+     "https://pubmed.ncbi.nlm.nih.gov/29621196/",
+     "https://pubmed.ncbi.nlm.nih.gov/29743936/",
+     "https://pubmed.ncbi.nlm.nih.gov/30008135/",
+     "https://pubmed.ncbi.nlm.nih.gov/31192352/",
+     "https://pubmed.ncbi.nlm.nih.gov/32206055/",
+     "https://pubmed.ncbi.nlm.nih.gov/32524386/",
+     "https://pubmed.ncbi.nlm.nih.gov/34596780/",
+     "https://pubmed.ncbi.nlm.nih.gov/34810393/",
+     "https://pubmed.ncbi.nlm.nih.gov/35672366/",
+     "https://pubmed.ncbi.nlm.nih.gov/36016534/",
+     "https://pubmed.ncbi.nlm.nih.gov/36189534/",
+     "https://pubmed.ncbi.nlm.nih.gov/36634650/",
+     "https://pubmed.ncbi.nlm.nih.gov/37089397/",
+     "https://pubmed.ncbi.nlm.nih.gov/37375903/",
+     "https://pubmed.ncbi.nlm.nih.gov/37439007/",
+     "https://pubmed.ncbi.nlm.nih.gov/38290997/",
+     "https://pubmed.ncbi.nlm.nih.gov/38773358/",
+     "https://pubmed.ncbi.nlm.nih.gov/39550385/",
+     "https://pubmed.ncbi.nlm.nih.gov/39770900/",
+     "https://pubmed.ncbi.nlm.nih.gov/40527374/",
+     "https://pubmed.ncbi.nlm.nih.gov/41161438/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/search?query=Acacia%20nilotica",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "acacia-arabica",
+    "url": "https://herbally.app/herbs/acacia-arabica",
+    "status": 200,
+    "ms": 1104,
+    "bytes": 166505,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 1385,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acacia%20arabica",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/2045522/",
+     "https://pubmed.ncbi.nlm.nih.gov/21350667/",
+     "https://pubmed.ncbi.nlm.nih.gov/22866283/",
+     "https://pubmed.ncbi.nlm.nih.gov/25983510/",
+     "https://pubmed.ncbi.nlm.nih.gov/27693833/",
+     "https://pubmed.ncbi.nlm.nih.gov/28150592/",
+     "https://pubmed.ncbi.nlm.nih.gov/30166872/",
+     "https://pubmed.ncbi.nlm.nih.gov/35343656/",
+     "https://pubmed.ncbi.nlm.nih.gov/36671523/",
+     "https://pubmed.ncbi.nlm.nih.gov/37059249/",
+     "https://pubmed.ncbi.nlm.nih.gov/37133312/",
+     "https://pubmed.ncbi.nlm.nih.gov/38058645/",
+     "https://pubmed.ncbi.nlm.nih.gov/38410133/",
+     "https://pubmed.ncbi.nlm.nih.gov/41440699/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/search?query=Acacia%20arabica",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "acacia-confusa",
+    "url": "https://herbally.app/herbs/acacia-confusa",
+    "status": 200,
+    "ms": 1068,
+    "bytes": 171136,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 1414,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acacia%20confusa",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/16028974/",
+     "https://pubmed.ncbi.nlm.nih.gov/1794977/",
+     "https://pubmed.ncbi.nlm.nih.gov/18254591/",
+     "https://pubmed.ncbi.nlm.nih.gov/19327382/",
+     "https://pubmed.ncbi.nlm.nih.gov/20047272/",
+     "https://pubmed.ncbi.nlm.nih.gov/20806936/",
+     "https://pubmed.ncbi.nlm.nih.gov/21075144/",
+     "https://pubmed.ncbi.nlm.nih.gov/29442051/",
+     "https://pubmed.ncbi.nlm.nih.gov/30302324/",
+     "https://pubmed.ncbi.nlm.nih.gov/35998213/",
+     "https://pubmed.ncbi.nlm.nih.gov/37110667/",
+     "https://pubmed.ncbi.nlm.nih.gov/3889455/",
+     "https://pubmed.ncbi.nlm.nih.gov/39470961/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/search?query=Acacia%20confusa",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "acai-berry-antioxidant",
+    "url": "https://herbally.app/herbs/acai-berry-antioxidant",
+    "status": 200,
+    "ms": 1064,
+    "bytes": 220486,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 2525,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acai%20Berry%20Antioxidant",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/29466809/",
+     "https://pubmed.ncbi.nlm.nih.gov/29966007/",
+     "https://pubmed.ncbi.nlm.nih.gov/30561299/",
+     "https://pubmed.ncbi.nlm.nih.gov/31057125/",
+     "https://pubmed.ncbi.nlm.nih.gov/31280417/",
+     "https://pubmed.ncbi.nlm.nih.gov/31717801/",
+     "https://pubmed.ncbi.nlm.nih.gov/32367766/",
+     "https://pubmed.ncbi.nlm.nih.gov/32430960/",
+     "https://pubmed.ncbi.nlm.nih.gov/32466439/",
+     "https://pubmed.ncbi.nlm.nih.gov/32846601/",
+     "https://pubmed.ncbi.nlm.nih.gov/33555024/",
+     "https://pubmed.ncbi.nlm.nih.gov/35861729/",
+     "https://pubmed.ncbi.nlm.nih.gov/35954235/",
+     "https://pubmed.ncbi.nlm.nih.gov/36290625/",
+     "https://pubmed.ncbi.nlm.nih.gov/36405951/",
+     "https://pubmed.ncbi.nlm.nih.gov/36839349/",
+     "https://pubmed.ncbi.nlm.nih.gov/37144218/",
+     "https://pubmed.ncbi.nlm.nih.gov/37324839/",
+     "https://pubmed.ncbi.nlm.nih.gov/37513607/",
+     "https://pubmed.ncbi.nlm.nih.gov/37803612/",
+     "https://pubmed.ncbi.nlm.nih.gov/37986445/",
+     "https://pubmed.ncbi.nlm.nih.gov/38428258/",
+     "https://pubmed.ncbi.nlm.nih.gov/38485254/",
+     "https://pubmed.ncbi.nlm.nih.gov/38916807/",
+     "https://pubmed.ncbi.nlm.nih.gov/39312451/",
+     "https://pubmed.ncbi.nlm.nih.gov/39410081/",
+     "https://pubmed.ncbi.nlm.nih.gov/39669170/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/health/acai",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "acacia-catechu",
+    "url": "https://herbally.app/herbs/acacia-catechu",
+    "status": 200,
+    "ms": 1038,
+    "bytes": 177307,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 1971,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acacia%20catechu",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/22282602/",
+     "https://pubmed.ncbi.nlm.nih.gov/23901209/",
+     "https://pubmed.ncbi.nlm.nih.gov/24695415/",
+     "https://pubmed.ncbi.nlm.nih.gov/25242871/",
+     "https://pubmed.ncbi.nlm.nih.gov/25802170/",
+     "https://pubmed.ncbi.nlm.nih.gov/26960511/",
+     "https://pubmed.ncbi.nlm.nih.gov/33976489/",
+     "https://pubmed.ncbi.nlm.nih.gov/36432824/",
+     "https://pubmed.ncbi.nlm.nih.gov/37059249/",
+     "https://pubmed.ncbi.nlm.nih.gov/38290997/",
+     "https://pubmed.ncbi.nlm.nih.gov/40660070/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/health/herbsataglance",
+     "https://www.nccih.nih.gov/search?query=Acacia%20catechu",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "achillea-biebersteinii",
+    "url": "https://herbally.app/herbs/achillea-biebersteinii",
+    "status": 200,
+    "ms": 1038,
+    "bytes": 193013,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 1770,
+    "links": [
+     "https://medlineplus.gov/search/?q=Achillea%20biebersteinii",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/19546149/",
+     "https://pubmed.ncbi.nlm.nih.gov/19613450/",
+     "https://pubmed.ncbi.nlm.nih.gov/20355025/",
+     "https://pubmed.ncbi.nlm.nih.gov/21615036/",
+     "https://pubmed.ncbi.nlm.nih.gov/22262935/",
+     "https://pubmed.ncbi.nlm.nih.gov/22881142/",
+     "https://pubmed.ncbi.nlm.nih.gov/24495394/",
+     "https://pubmed.ncbi.nlm.nih.gov/24739926/",
+     "https://pubmed.ncbi.nlm.nih.gov/25567761/",
+     "https://pubmed.ncbi.nlm.nih.gov/25665064/",
+     "https://pubmed.ncbi.nlm.nih.gov/26357662/",
+     "https://pubmed.ncbi.nlm.nih.gov/27104031/",
+     "https://pubmed.ncbi.nlm.nih.gov/27165527/",
+     "https://pubmed.ncbi.nlm.nih.gov/27293452/",
+     "https://pubmed.ncbi.nlm.nih.gov/27771627/",
+     "https://pubmed.ncbi.nlm.nih.gov/28348971/",
+     "https://pubmed.ncbi.nlm.nih.gov/29023061/",
+     "https://pubmed.ncbi.nlm.nih.gov/30196468/",
+     "https://pubmed.ncbi.nlm.nih.gov/30968605/",
+     "https://pubmed.ncbi.nlm.nih.gov/32722270/",
+     "https://pubmed.ncbi.nlm.nih.gov/32984610/",
+     "https://pubmed.ncbi.nlm.nih.gov/33670416/",
+     "https://pubmed.ncbi.nlm.nih.gov/35335326/",
+     "https://pubmed.ncbi.nlm.nih.gov/41241211/",
+     "https://pubmed.ncbi.nlm.nih.gov/42016028/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/search?query=Achillea%20biebersteinii",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "acapulco",
+    "url": "https://herbally.app/herbs/acapulco",
+    "status": 200,
+    "ms": 1027,
+    "bytes": 203043,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 1629,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acapulco",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/10821961/",
+     "https://pubmed.ncbi.nlm.nih.gov/11429256/",
+     "https://pubmed.ncbi.nlm.nih.gov/1367783/",
+     "https://pubmed.ncbi.nlm.nih.gov/15138013/",
+     "https://pubmed.ncbi.nlm.nih.gov/2203870/",
+     "https://pubmed.ncbi.nlm.nih.gov/25183125/",
+     "https://pubmed.ncbi.nlm.nih.gov/27538998/",
+     "https://pubmed.ncbi.nlm.nih.gov/30417583/",
+     "https://pubmed.ncbi.nlm.nih.gov/31779993/",
+     "https://pubmed.ncbi.nlm.nih.gov/32685725/",
+     "https://pubmed.ncbi.nlm.nih.gov/35630603/",
+     "https://pubmed.ncbi.nlm.nih.gov/36080243/",
+     "https://pubmed.ncbi.nlm.nih.gov/36816058/",
+     "https://pubmed.ncbi.nlm.nih.gov/38543166/",
+     "https://pubmed.ncbi.nlm.nih.gov/38845567/",
+     "https://pubmed.ncbi.nlm.nih.gov/39360533/",
+     "https://pubmed.ncbi.nlm.nih.gov/39381590/",
+     "https://pubmed.ncbi.nlm.nih.gov/40709743/",
+     "https://pubmed.ncbi.nlm.nih.gov/42082794/",
+     "https://pubmed.ncbi.nlm.nih.gov/7623478/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/search?query=Acapulco",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   },
+   {
+    "slug": "acacia",
+    "url": "https://herbally.app/herbs/acacia",
+    "status": 200,
+    "ms": 1003,
+    "bytes": 237429,
+    "has_uses": true,
+    "has_dose": true,
+    "has_safety": true,
+    "has_sources": true,
+    "placeholder": true,
+    "empty_uses": false,
+    "words": 3250,
+    "links": [
+     "https://medlineplus.gov/search/?q=Acacia",
+     "https://ods.od.nih.gov/factsheets/list-all/",
+     "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+     "https://pnvltmyixympgammxvoo.supabase.co",
+     "https://pubmed.ncbi.nlm.nih.gov/16804326/",
+     "https://pubmed.ncbi.nlm.nih.gov/18267216/",
+     "https://pubmed.ncbi.nlm.nih.gov/18963490/",
+     "https://pubmed.ncbi.nlm.nih.gov/2379649/",
+     "https://pubmed.ncbi.nlm.nih.gov/24022265/",
+     "https://pubmed.ncbi.nlm.nih.gov/24511757/",
+     "https://pubmed.ncbi.nlm.nih.gov/29558953/",
+     "https://pubmed.ncbi.nlm.nih.gov/31316836/",
+     "https://pubmed.ncbi.nlm.nih.gov/32003002/",
+     "https://pubmed.ncbi.nlm.nih.gov/32188508/",
+     "https://pubmed.ncbi.nlm.nih.gov/32891160/",
+     "https://pubmed.ncbi.nlm.nih.gov/33229157/",
+     "https://pubmed.ncbi.nlm.nih.gov/33424268/",
+     "https://pubmed.ncbi.nlm.nih.gov/33435475/",
+     "https://pubmed.ncbi.nlm.nih.gov/33610746/",
+     "https://pubmed.ncbi.nlm.nih.gov/34645930/",
+     "https://pubmed.ncbi.nlm.nih.gov/35208961/",
+     "https://pubmed.ncbi.nlm.nih.gov/35913613/",
+     "https://pubmed.ncbi.nlm.nih.gov/36671523/",
+     "https://pubmed.ncbi.nlm.nih.gov/36973339/",
+     "https://pubmed.ncbi.nlm.nih.gov/37359892/",
+     "https://pubmed.ncbi.nlm.nih.gov/37444264/",
+     "https://pubmed.ncbi.nlm.nih.gov/37836226/",
+     "https://pubmed.ncbi.nlm.nih.gov/38272848/",
+     "https://pubmed.ncbi.nlm.nih.gov/38278399/",
+     "https://pubmed.ncbi.nlm.nih.gov/38325681/",
+     "https://pubmed.ncbi.nlm.nih.gov/39407837/",
+     "https://pubmed.ncbi.nlm.nih.gov/39439926/",
+     "https://pubmed.ncbi.nlm.nih.gov/39997853/",
+     "https://pubmed.ncbi.nlm.nih.gov/7358945/",
+     "https://pubmed.ncbi.nlm.nih.gov/9666883/",
+     "https://pubmed.ncbi.nlm.nih.gov/9860236/",
+     "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+     "https://www.nccih.nih.gov/search?query=Acacia",
+     "https://www.who.int/publications/i/item/9241545178"
+    ]
+   }
+  ],
+  "median_ms": 603
+ },
+ "pages": [
+  {
+   "slug": "abelmoschus-manihot",
+   "url": "https://herbally.app/herbs/abelmoschus-manihot",
+   "status": 200,
+   "ms": 166,
+   "bytes": 120062,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 828,
+   "links": [
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=26066625&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28338609&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=8359416&amp;lang=en&amp;type=json",
+    "https://medlineplus.gov/search/?q=Abelmoschus%20manihot",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abelmoschus%20manihot",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abelmoschus-moschatus-herb",
+   "url": "https://herbally.app/herbs/abelmoschus-moschatus-herb",
+   "status": 200,
+   "ms": 198,
+   "bytes": 194454,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 2084,
+   "links": [
+    "https://medlineplus.gov/search/?q=Abelmoschus%20Moschatus%20Herb",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/11557077/",
+    "https://pubmed.ncbi.nlm.nih.gov/16041646/",
+    "https://pubmed.ncbi.nlm.nih.gov/16203117/",
+    "https://pubmed.ncbi.nlm.nih.gov/17694473/",
+    "https://pubmed.ncbi.nlm.nih.gov/18656937/",
+    "https://pubmed.ncbi.nlm.nih.gov/19610024/",
+    "https://pubmed.ncbi.nlm.nih.gov/21849051/",
+    "https://pubmed.ncbi.nlm.nih.gov/24006802/",
+    "https://pubmed.ncbi.nlm.nih.gov/25551188/",
+    "https://pubmed.ncbi.nlm.nih.gov/25701144/",
+    "https://pubmed.ncbi.nlm.nih.gov/27057124/",
+    "https://pubmed.ncbi.nlm.nih.gov/30417583/",
+    "https://pubmed.ncbi.nlm.nih.gov/32428654/",
+    "https://pubmed.ncbi.nlm.nih.gov/32655655/",
+    "https://pubmed.ncbi.nlm.nih.gov/33303153/",
+    "https://pubmed.ncbi.nlm.nih.gov/35325199/",
+    "https://pubmed.ncbi.nlm.nih.gov/35339624/",
+    "https://pubmed.ncbi.nlm.nih.gov/35363843/",
+    "https://pubmed.ncbi.nlm.nih.gov/36172199/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abelmoschus%20Moschatus%20Herb",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abies-alba",
+   "url": "https://herbally.app/herbs/abies-alba",
+   "status": 200,
+   "ms": 167,
+   "bytes": 187580,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1821,
+   "links": [
+    "https://medlineplus.gov/search/?q=Abies%20alba",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/19430614/",
+    "https://pubmed.ncbi.nlm.nih.gov/26220633/",
+    "https://pubmed.ncbi.nlm.nih.gov/27756448/",
+    "https://pubmed.ncbi.nlm.nih.gov/29441952/",
+    "https://pubmed.ncbi.nlm.nih.gov/30361961/",
+    "https://pubmed.ncbi.nlm.nih.gov/31217262/",
+    "https://pubmed.ncbi.nlm.nih.gov/33050554/",
+    "https://pubmed.ncbi.nlm.nih.gov/34371601/",
+    "https://pubmed.ncbi.nlm.nih.gov/34986959/",
+    "https://pubmed.ncbi.nlm.nih.gov/35161314/",
+    "https://pubmed.ncbi.nlm.nih.gov/35330187/",
+    "https://pubmed.ncbi.nlm.nih.gov/35453303/",
+    "https://pubmed.ncbi.nlm.nih.gov/36615418/",
+    "https://pubmed.ncbi.nlm.nih.gov/37107172/",
+    "https://pubmed.ncbi.nlm.nih.gov/37571016/",
+    "https://pubmed.ncbi.nlm.nih.gov/38392894/",
+    "https://pubmed.ncbi.nlm.nih.gov/38463881/",
+    "https://pubmed.ncbi.nlm.nih.gov/39771185/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abies%20alba",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abies-balsamea",
+   "url": "https://herbally.app/herbs/abies-balsamea",
+   "status": 200,
+   "ms": 1354,
+   "bytes": 124945,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 1010,
+   "links": [
+    "https://medlineplus.gov/search/?q=Balsam%20Fir",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/health/herbsataglance",
+    "https://www.nccih.nih.gov/search?query=Balsam%20Fir",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abies-nigra",
+   "url": "https://herbally.app/herbs/abies-nigra",
+   "status": 200,
+   "ms": 114,
+   "bytes": 116192,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 678,
+   "links": [
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=19956495&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=5253378&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=5992857&amp;lang=en&amp;type=json",
+    "https://medlineplus.gov/search/?q=Abies%20nigra",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abies%20nigra",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abies-sibirica",
+   "url": "https://herbally.app/herbs/abies-sibirica",
+   "status": 200,
+   "ms": 130,
+   "bytes": 122107,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 845,
+   "links": [
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=23566764&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=8076315&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=8572278&amp;lang=en&amp;type=json",
+    "https://medlineplus.gov/search/?q=Abies%20sibirica",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abies%20sibirica",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abroma-augusta",
+   "url": "https://herbally.app/herbs/abroma-augusta",
+   "status": 200,
+   "ms": 345,
+   "bytes": 115651,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 664,
+   "links": [
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=26613327&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28481154&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28520037&amp;lang=en&amp;type=json",
+    "https://medlineplus.gov/search/?q=Abroma%20augusta",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abroma%20augusta",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abrus-cantoniensis",
+   "url": "https://herbally.app/herbs/abrus-cantoniensis",
+   "status": 200,
+   "ms": 135,
+   "bytes": 119008,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 722,
+   "links": [
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=21301878&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=21383739&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=22717266&amp;lang=en&amp;type=json",
+    "https://medlineplus.gov/search/?q=Abrus%20cantoniensis",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abrus%20cantoniensis",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abrus-precatorius",
+   "url": "https://herbally.app/herbs/abrus-precatorius",
+   "status": 200,
+   "ms": 132,
+   "bytes": 208759,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1974,
+   "links": [
+    "https://medlineplus.gov/search/?q=Abrus%20precatorius",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/11736775/",
+    "https://pubmed.ncbi.nlm.nih.gov/15181663/",
+    "https://pubmed.ncbi.nlm.nih.gov/17357388/",
+    "https://pubmed.ncbi.nlm.nih.gov/21705837/",
+    "https://pubmed.ncbi.nlm.nih.gov/24382449/",
+    "https://pubmed.ncbi.nlm.nih.gov/25089582/",
+    "https://pubmed.ncbi.nlm.nih.gov/25183095/",
+    "https://pubmed.ncbi.nlm.nih.gov/28515607/",
+    "https://pubmed.ncbi.nlm.nih.gov/29027937/",
+    "https://pubmed.ncbi.nlm.nih.gov/29438273/",
+    "https://pubmed.ncbi.nlm.nih.gov/29495560/",
+    "https://pubmed.ncbi.nlm.nih.gov/31249468/",
+    "https://pubmed.ncbi.nlm.nih.gov/31456429/",
+    "https://pubmed.ncbi.nlm.nih.gov/32349421/",
+    "https://pubmed.ncbi.nlm.nih.gov/32475191/",
+    "https://pubmed.ncbi.nlm.nih.gov/33164294/",
+    "https://pubmed.ncbi.nlm.nih.gov/33919561/",
+    "https://pubmed.ncbi.nlm.nih.gov/34707350/",
+    "https://pubmed.ncbi.nlm.nih.gov/35714881/",
+    "https://pubmed.ncbi.nlm.nih.gov/36959155/",
+    "https://pubmed.ncbi.nlm.nih.gov/37273369/",
+    "https://pubmed.ncbi.nlm.nih.gov/37459705/",
+    "https://pubmed.ncbi.nlm.nih.gov/38490239/",
+    "https://pubmed.ncbi.nlm.nih.gov/38513827/",
+    "https://pubmed.ncbi.nlm.nih.gov/38817355/",
+    "https://pubmed.ncbi.nlm.nih.gov/39323672/",
+    "https://pubmed.ncbi.nlm.nih.gov/39530083/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abrus%20precatorius",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abuta-grandifolia",
+   "url": "https://herbally.app/herbs/abuta-grandifolia",
+   "status": 200,
+   "ms": 140,
+   "bytes": 158378,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1249,
+   "links": [
+    "https://medlineplus.gov/search/?q=Abuta%20Grandifolia",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/10418326/",
+    "https://pubmed.ncbi.nlm.nih.gov/1501489/",
+    "https://pubmed.ncbi.nlm.nih.gov/16713157/",
+    "https://pubmed.ncbi.nlm.nih.gov/17178202/",
+    "https://pubmed.ncbi.nlm.nih.gov/22230193/",
+    "https://pubmed.ncbi.nlm.nih.gov/23172095/",
+    "https://pubmed.ncbi.nlm.nih.gov/30186180/",
+    "https://pubmed.ncbi.nlm.nih.gov/37174108/",
+    "https://pubmed.ncbi.nlm.nih.gov/37443721/",
+    "https://pubmed.ncbi.nlm.nih.gov/8850132/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abuta%20Grandifolia",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "abutilon-indicum",
+   "url": "https://herbally.app/herbs/abutilon-indicum",
+   "status": 200,
+   "ms": 121,
+   "bytes": 183153,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1832,
+   "links": [
+    "https://medlineplus.gov/search/?q=Abutilon%20indicum",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/10798248/",
+    "https://pubmed.ncbi.nlm.nih.gov/18636384/",
+    "https://pubmed.ncbi.nlm.nih.gov/20645814/",
+    "https://pubmed.ncbi.nlm.nih.gov/21999427/",
+    "https://pubmed.ncbi.nlm.nih.gov/22529650/",
+    "https://pubmed.ncbi.nlm.nih.gov/25422029/",
+    "https://pubmed.ncbi.nlm.nih.gov/30714201/",
+    "https://pubmed.ncbi.nlm.nih.gov/34697741/",
+    "https://pubmed.ncbi.nlm.nih.gov/36235451/",
+    "https://pubmed.ncbi.nlm.nih.gov/36684487/",
+    "https://pubmed.ncbi.nlm.nih.gov/37303858/",
+    "https://pubmed.ncbi.nlm.nih.gov/38021797/",
+    "https://pubmed.ncbi.nlm.nih.gov/38186405/",
+    "https://pubmed.ncbi.nlm.nih.gov/39097211/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Abutilon%20indicum",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acacia",
+   "url": "https://herbally.app/herbs/acacia",
+   "status": 200,
+   "ms": 1003,
+   "bytes": 237429,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 3250,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acacia",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/16804326/",
+    "https://pubmed.ncbi.nlm.nih.gov/18267216/",
+    "https://pubmed.ncbi.nlm.nih.gov/18963490/",
+    "https://pubmed.ncbi.nlm.nih.gov/2379649/",
+    "https://pubmed.ncbi.nlm.nih.gov/24022265/",
+    "https://pubmed.ncbi.nlm.nih.gov/24511757/",
+    "https://pubmed.ncbi.nlm.nih.gov/29558953/",
+    "https://pubmed.ncbi.nlm.nih.gov/31316836/",
+    "https://pubmed.ncbi.nlm.nih.gov/32003002/",
+    "https://pubmed.ncbi.nlm.nih.gov/32188508/",
+    "https://pubmed.ncbi.nlm.nih.gov/32891160/",
+    "https://pubmed.ncbi.nlm.nih.gov/33229157/",
+    "https://pubmed.ncbi.nlm.nih.gov/33424268/",
+    "https://pubmed.ncbi.nlm.nih.gov/33435475/",
+    "https://pubmed.ncbi.nlm.nih.gov/33610746/",
+    "https://pubmed.ncbi.nlm.nih.gov/34645930/",
+    "https://pubmed.ncbi.nlm.nih.gov/35208961/",
+    "https://pubmed.ncbi.nlm.nih.gov/35913613/",
+    "https://pubmed.ncbi.nlm.nih.gov/36671523/",
+    "https://pubmed.ncbi.nlm.nih.gov/36973339/",
+    "https://pubmed.ncbi.nlm.nih.gov/37359892/",
+    "https://pubmed.ncbi.nlm.nih.gov/37444264/",
+    "https://pubmed.ncbi.nlm.nih.gov/37836226/",
+    "https://pubmed.ncbi.nlm.nih.gov/38272848/",
+    "https://pubmed.ncbi.nlm.nih.gov/38278399/",
+    "https://pubmed.ncbi.nlm.nih.gov/38325681/",
+    "https://pubmed.ncbi.nlm.nih.gov/39407837/",
+    "https://pubmed.ncbi.nlm.nih.gov/39439926/",
+    "https://pubmed.ncbi.nlm.nih.gov/39997853/",
+    "https://pubmed.ncbi.nlm.nih.gov/7358945/",
+    "https://pubmed.ncbi.nlm.nih.gov/9666883/",
+    "https://pubmed.ncbi.nlm.nih.gov/9860236/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acacia",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acacia-arabica",
+   "url": "https://herbally.app/herbs/acacia-arabica",
+   "status": 200,
+   "ms": 1104,
+   "bytes": 166505,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1385,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acacia%20arabica",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/2045522/",
+    "https://pubmed.ncbi.nlm.nih.gov/21350667/",
+    "https://pubmed.ncbi.nlm.nih.gov/22866283/",
+    "https://pubmed.ncbi.nlm.nih.gov/25983510/",
+    "https://pubmed.ncbi.nlm.nih.gov/27693833/",
+    "https://pubmed.ncbi.nlm.nih.gov/28150592/",
+    "https://pubmed.ncbi.nlm.nih.gov/30166872/",
+    "https://pubmed.ncbi.nlm.nih.gov/35343656/",
+    "https://pubmed.ncbi.nlm.nih.gov/36671523/",
+    "https://pubmed.ncbi.nlm.nih.gov/37059249/",
+    "https://pubmed.ncbi.nlm.nih.gov/37133312/",
+    "https://pubmed.ncbi.nlm.nih.gov/38058645/",
+    "https://pubmed.ncbi.nlm.nih.gov/38410133/",
+    "https://pubmed.ncbi.nlm.nih.gov/41440699/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acacia%20arabica",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acacia-catechu",
+   "url": "https://herbally.app/herbs/acacia-catechu",
+   "status": 200,
+   "ms": 1038,
+   "bytes": 177307,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1971,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acacia%20catechu",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/22282602/",
+    "https://pubmed.ncbi.nlm.nih.gov/23901209/",
+    "https://pubmed.ncbi.nlm.nih.gov/24695415/",
+    "https://pubmed.ncbi.nlm.nih.gov/25242871/",
+    "https://pubmed.ncbi.nlm.nih.gov/25802170/",
+    "https://pubmed.ncbi.nlm.nih.gov/26960511/",
+    "https://pubmed.ncbi.nlm.nih.gov/33976489/",
+    "https://pubmed.ncbi.nlm.nih.gov/36432824/",
+    "https://pubmed.ncbi.nlm.nih.gov/37059249/",
+    "https://pubmed.ncbi.nlm.nih.gov/38290997/",
+    "https://pubmed.ncbi.nlm.nih.gov/40660070/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/health/herbsataglance",
+    "https://www.nccih.nih.gov/search?query=Acacia%20catechu",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acacia-confusa",
+   "url": "https://herbally.app/herbs/acacia-confusa",
+   "status": 200,
+   "ms": 1068,
+   "bytes": 171136,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1414,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acacia%20confusa",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/16028974/",
+    "https://pubmed.ncbi.nlm.nih.gov/1794977/",
+    "https://pubmed.ncbi.nlm.nih.gov/18254591/",
+    "https://pubmed.ncbi.nlm.nih.gov/19327382/",
+    "https://pubmed.ncbi.nlm.nih.gov/20047272/",
+    "https://pubmed.ncbi.nlm.nih.gov/20806936/",
+    "https://pubmed.ncbi.nlm.nih.gov/21075144/",
+    "https://pubmed.ncbi.nlm.nih.gov/29442051/",
+    "https://pubmed.ncbi.nlm.nih.gov/30302324/",
+    "https://pubmed.ncbi.nlm.nih.gov/35998213/",
+    "https://pubmed.ncbi.nlm.nih.gov/37110667/",
+    "https://pubmed.ncbi.nlm.nih.gov/3889455/",
+    "https://pubmed.ncbi.nlm.nih.gov/39470961/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acacia%20confusa",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acacia-nilotica",
+   "url": "https://herbally.app/herbs/acacia-nilotica",
+   "status": 200,
+   "ms": 1224,
+   "bytes": 216053,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 2256,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acacia%20nilotica",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/10794124/",
+    "https://pubmed.ncbi.nlm.nih.gov/23119600/",
+    "https://pubmed.ncbi.nlm.nih.gov/26448818/",
+    "https://pubmed.ncbi.nlm.nih.gov/26994888/",
+    "https://pubmed.ncbi.nlm.nih.gov/27486360/",
+    "https://pubmed.ncbi.nlm.nih.gov/28096612/",
+    "https://pubmed.ncbi.nlm.nih.gov/28119891/",
+    "https://pubmed.ncbi.nlm.nih.gov/28390831/",
+    "https://pubmed.ncbi.nlm.nih.gov/28917858/",
+    "https://pubmed.ncbi.nlm.nih.gov/29621196/",
+    "https://pubmed.ncbi.nlm.nih.gov/29743936/",
+    "https://pubmed.ncbi.nlm.nih.gov/30008135/",
+    "https://pubmed.ncbi.nlm.nih.gov/31192352/",
+    "https://pubmed.ncbi.nlm.nih.gov/32206055/",
+    "https://pubmed.ncbi.nlm.nih.gov/32524386/",
+    "https://pubmed.ncbi.nlm.nih.gov/34596780/",
+    "https://pubmed.ncbi.nlm.nih.gov/34810393/",
+    "https://pubmed.ncbi.nlm.nih.gov/35672366/",
+    "https://pubmed.ncbi.nlm.nih.gov/36016534/",
+    "https://pubmed.ncbi.nlm.nih.gov/36189534/",
+    "https://pubmed.ncbi.nlm.nih.gov/36634650/",
+    "https://pubmed.ncbi.nlm.nih.gov/37089397/",
+    "https://pubmed.ncbi.nlm.nih.gov/37375903/",
+    "https://pubmed.ncbi.nlm.nih.gov/37439007/",
+    "https://pubmed.ncbi.nlm.nih.gov/38290997/",
+    "https://pubmed.ncbi.nlm.nih.gov/38773358/",
+    "https://pubmed.ncbi.nlm.nih.gov/39550385/",
+    "https://pubmed.ncbi.nlm.nih.gov/39770900/",
+    "https://pubmed.ncbi.nlm.nih.gov/40527374/",
+    "https://pubmed.ncbi.nlm.nih.gov/41161438/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acacia%20nilotica",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acacia-obtusifolia",
+   "url": "https://herbally.app/herbs/acacia-obtusifolia",
+   "status": 200,
+   "ms": 584,
+   "bytes": 124472,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 734,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acacia%20obtusifolia",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/24186640/",
+    "https://pubmed.ncbi.nlm.nih.gov/29503478/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acacia%20obtusifolia",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acacia-senegal",
+   "url": "https://herbally.app/herbs/acacia-senegal",
+   "status": 200,
+   "ms": 132,
+   "bytes": 185058,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1999,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acacia%20senegal",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/16804326/",
+    "https://pubmed.ncbi.nlm.nih.gov/18267216/",
+    "https://pubmed.ncbi.nlm.nih.gov/24022265/",
+    "https://pubmed.ncbi.nlm.nih.gov/27656192/",
+    "https://pubmed.ncbi.nlm.nih.gov/29558953/",
+    "https://pubmed.ncbi.nlm.nih.gov/29659603/",
+    "https://pubmed.ncbi.nlm.nih.gov/31316836/",
+    "https://pubmed.ncbi.nlm.nih.gov/32188508/",
+    "https://pubmed.ncbi.nlm.nih.gov/33435475/",
+    "https://pubmed.ncbi.nlm.nih.gov/34119540/",
+    "https://pubmed.ncbi.nlm.nih.gov/36671523/",
+    "https://pubmed.ncbi.nlm.nih.gov/38272848/",
+    "https://pubmed.ncbi.nlm.nih.gov/39407837/",
+    "https://pubmed.ncbi.nlm.nih.gov/39997853/",
+    "https://pubmed.ncbi.nlm.nih.gov/40470307/",
+    "https://pubmed.ncbi.nlm.nih.gov/42274742/",
+    "https://pubmed.ncbi.nlm.nih.gov/9860236/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acacia%20senegal",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acai-berry-antioxidant",
+   "url": "https://herbally.app/herbs/acai-berry-antioxidant",
+   "status": 200,
+   "ms": 1064,
+   "bytes": 220486,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 2525,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acai%20Berry%20Antioxidant",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/29466809/",
+    "https://pubmed.ncbi.nlm.nih.gov/29966007/",
+    "https://pubmed.ncbi.nlm.nih.gov/30561299/",
+    "https://pubmed.ncbi.nlm.nih.gov/31057125/",
+    "https://pubmed.ncbi.nlm.nih.gov/31280417/",
+    "https://pubmed.ncbi.nlm.nih.gov/31717801/",
+    "https://pubmed.ncbi.nlm.nih.gov/32367766/",
+    "https://pubmed.ncbi.nlm.nih.gov/32430960/",
+    "https://pubmed.ncbi.nlm.nih.gov/32466439/",
+    "https://pubmed.ncbi.nlm.nih.gov/32846601/",
+    "https://pubmed.ncbi.nlm.nih.gov/33555024/",
+    "https://pubmed.ncbi.nlm.nih.gov/35861729/",
+    "https://pubmed.ncbi.nlm.nih.gov/35954235/",
+    "https://pubmed.ncbi.nlm.nih.gov/36290625/",
+    "https://pubmed.ncbi.nlm.nih.gov/36405951/",
+    "https://pubmed.ncbi.nlm.nih.gov/36839349/",
+    "https://pubmed.ncbi.nlm.nih.gov/37144218/",
+    "https://pubmed.ncbi.nlm.nih.gov/37324839/",
+    "https://pubmed.ncbi.nlm.nih.gov/37513607/",
+    "https://pubmed.ncbi.nlm.nih.gov/37803612/",
+    "https://pubmed.ncbi.nlm.nih.gov/37986445/",
+    "https://pubmed.ncbi.nlm.nih.gov/38428258/",
+    "https://pubmed.ncbi.nlm.nih.gov/38485254/",
+    "https://pubmed.ncbi.nlm.nih.gov/38916807/",
+    "https://pubmed.ncbi.nlm.nih.gov/39312451/",
+    "https://pubmed.ncbi.nlm.nih.gov/39410081/",
+    "https://pubmed.ncbi.nlm.nih.gov/39669170/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/health/acai",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acalypha-indica",
+   "url": "https://herbally.app/herbs/acalypha-indica",
+   "status": 200,
+   "ms": 756,
+   "bytes": 115836,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 665,
+   "links": [
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=15710136&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=20577999&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28135224&amp;lang=en&amp;type=json",
+    "https://medlineplus.gov/search/?q=Acalypha%20indica",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acalypha%20indica",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acanthopanax-gracilistylus",
+   "url": "https://herbally.app/herbs/acanthopanax-gracilistylus",
+   "status": 200,
+   "ms": 704,
+   "bytes": 200142,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1879,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acanthopanax%20gracilistylus",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/10540158/",
+    "https://pubmed.ncbi.nlm.nih.gov/10804285/",
+    "https://pubmed.ncbi.nlm.nih.gov/12372869/",
+    "https://pubmed.ncbi.nlm.nih.gov/12510834/",
+    "https://pubmed.ncbi.nlm.nih.gov/16248248/",
+    "https://pubmed.ncbi.nlm.nih.gov/16813462/",
+    "https://pubmed.ncbi.nlm.nih.gov/20845778/",
+    "https://pubmed.ncbi.nlm.nih.gov/21356341/",
+    "https://pubmed.ncbi.nlm.nih.gov/21823479/",
+    "https://pubmed.ncbi.nlm.nih.gov/25338180/",
+    "https://pubmed.ncbi.nlm.nih.gov/28345393/",
+    "https://pubmed.ncbi.nlm.nih.gov/28939025/",
+    "https://pubmed.ncbi.nlm.nih.gov/29039503/",
+    "https://pubmed.ncbi.nlm.nih.gov/29301264/",
+    "https://pubmed.ncbi.nlm.nih.gov/29671829/",
+    "https://pubmed.ncbi.nlm.nih.gov/30243779/",
+    "https://pubmed.ncbi.nlm.nih.gov/32319765/",
+    "https://pubmed.ncbi.nlm.nih.gov/35085724/",
+    "https://pubmed.ncbi.nlm.nih.gov/35910160/",
+    "https://pubmed.ncbi.nlm.nih.gov/36524851/",
+    "https://pubmed.ncbi.nlm.nih.gov/36641105/",
+    "https://pubmed.ncbi.nlm.nih.gov/37634270/",
+    "https://pubmed.ncbi.nlm.nih.gov/37683990/",
+    "https://pubmed.ncbi.nlm.nih.gov/38633273/",
+    "https://pubmed.ncbi.nlm.nih.gov/38972441/",
+    "https://pubmed.ncbi.nlm.nih.gov/41751128/",
+    "https://pubmed.ncbi.nlm.nih.gov/9863147/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acanthopanax%20gracilistylus",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acanthopanax-sessiliflorus",
+   "url": "https://herbally.app/herbs/acanthopanax-sessiliflorus",
+   "status": 200,
+   "ms": 1409,
+   "bytes": 209192,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1883,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acanthopanax%20Sessiliflorus",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/12135097/",
+    "https://pubmed.ncbi.nlm.nih.gov/23470333/",
+    "https://pubmed.ncbi.nlm.nih.gov/23903060/",
+    "https://pubmed.ncbi.nlm.nih.gov/25005060/",
+    "https://pubmed.ncbi.nlm.nih.gov/25324932/",
+    "https://pubmed.ncbi.nlm.nih.gov/26587004/",
+    "https://pubmed.ncbi.nlm.nih.gov/27103988/",
+    "https://pubmed.ncbi.nlm.nih.gov/28049349/",
+    "https://pubmed.ncbi.nlm.nih.gov/28182104/",
+    "https://pubmed.ncbi.nlm.nih.gov/31460786/",
+    "https://pubmed.ncbi.nlm.nih.gov/32295006/",
+    "https://pubmed.ncbi.nlm.nih.gov/33183092/",
+    "https://pubmed.ncbi.nlm.nih.gov/33188566/",
+    "https://pubmed.ncbi.nlm.nih.gov/33615691/",
+    "https://pubmed.ncbi.nlm.nih.gov/34436446/",
+    "https://pubmed.ncbi.nlm.nih.gov/34572966/",
+    "https://pubmed.ncbi.nlm.nih.gov/35141205/",
+    "https://pubmed.ncbi.nlm.nih.gov/37430935/",
+    "https://pubmed.ncbi.nlm.nih.gov/37764339/",
+    "https://pubmed.ncbi.nlm.nih.gov/37893489/",
+    "https://pubmed.ncbi.nlm.nih.gov/38167214/",
+    "https://pubmed.ncbi.nlm.nih.gov/38219632/",
+    "https://pubmed.ncbi.nlm.nih.gov/38389921/",
+    "https://pubmed.ncbi.nlm.nih.gov/38710375/",
+    "https://pubmed.ncbi.nlm.nih.gov/39505327/",
+    "https://pubmed.ncbi.nlm.nih.gov/39860265/",
+    "https://pubmed.ncbi.nlm.nih.gov/40222954/",
+    "https://pubmed.ncbi.nlm.nih.gov/40554287/",
+    "https://pubmed.ncbi.nlm.nih.gov/41448365/",
+    "https://pubmed.ncbi.nlm.nih.gov/41578724/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acanthopanax%20Sessiliflorus",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acapulco",
+   "url": "https://herbally.app/herbs/acapulco",
+   "status": 200,
+   "ms": 1027,
+   "bytes": 203043,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1629,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acapulco",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/10821961/",
+    "https://pubmed.ncbi.nlm.nih.gov/11429256/",
+    "https://pubmed.ncbi.nlm.nih.gov/1367783/",
+    "https://pubmed.ncbi.nlm.nih.gov/15138013/",
+    "https://pubmed.ncbi.nlm.nih.gov/2203870/",
+    "https://pubmed.ncbi.nlm.nih.gov/25183125/",
+    "https://pubmed.ncbi.nlm.nih.gov/27538998/",
+    "https://pubmed.ncbi.nlm.nih.gov/30417583/",
+    "https://pubmed.ncbi.nlm.nih.gov/31779993/",
+    "https://pubmed.ncbi.nlm.nih.gov/32685725/",
+    "https://pubmed.ncbi.nlm.nih.gov/35630603/",
+    "https://pubmed.ncbi.nlm.nih.gov/36080243/",
+    "https://pubmed.ncbi.nlm.nih.gov/36816058/",
+    "https://pubmed.ncbi.nlm.nih.gov/38543166/",
+    "https://pubmed.ncbi.nlm.nih.gov/38845567/",
+    "https://pubmed.ncbi.nlm.nih.gov/39360533/",
+    "https://pubmed.ncbi.nlm.nih.gov/39381590/",
+    "https://pubmed.ncbi.nlm.nih.gov/40709743/",
+    "https://pubmed.ncbi.nlm.nih.gov/42082794/",
+    "https://pubmed.ncbi.nlm.nih.gov/7623478/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acapulco",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acer-campestre",
+   "url": "https://herbally.app/herbs/acer-campestre",
+   "status": 200,
+   "ms": 568,
+   "bytes": 119457,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": true,
+   "words": 771,
+   "links": [
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=10072296&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=6731322&amp;lang=en&amp;type=json",
+    "https://health-products.canada.ca/api/natural-licences/productlicence/?id=7389447&amp;lang=en&amp;type=json",
+    "https://medlineplus.gov/search/?q=Acer%20campestre",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acer%20campestre",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "acer-saccharum-herb",
+   "url": "https://herbally.app/herbs/acer-saccharum-herb",
+   "status": 200,
+   "ms": 603,
+   "bytes": 164552,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1457,
+   "links": [
+    "https://medlineplus.gov/search/?q=Acer%20Saccharum%20Herb",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/15952532/",
+    "https://pubmed.ncbi.nlm.nih.gov/22032697/",
+    "https://pubmed.ncbi.nlm.nih.gov/28789702/",
+    "https://pubmed.ncbi.nlm.nih.gov/32817615/",
+    "https://pubmed.ncbi.nlm.nih.gov/34180070/",
+    "https://pubmed.ncbi.nlm.nih.gov/34906808/",
+    "https://pubmed.ncbi.nlm.nih.gov/34967059/",
+    "https://pubmed.ncbi.nlm.nih.gov/36294262/",
+    "https://pubmed.ncbi.nlm.nih.gov/37152134/",
+    "https://pubmed.ncbi.nlm.nih.gov/39135883/",
+    "https://pubmed.ncbi.nlm.nih.gov/40348832/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Acer%20Saccharum%20Herb",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "achillea-biebersteinii",
+   "url": "https://herbally.app/herbs/achillea-biebersteinii",
+   "status": 200,
+   "ms": 1038,
+   "bytes": 193013,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1770,
+   "links": [
+    "https://medlineplus.gov/search/?q=Achillea%20biebersteinii",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/19546149/",
+    "https://pubmed.ncbi.nlm.nih.gov/19613450/",
+    "https://pubmed.ncbi.nlm.nih.gov/20355025/",
+    "https://pubmed.ncbi.nlm.nih.gov/21615036/",
+    "https://pubmed.ncbi.nlm.nih.gov/22262935/",
+    "https://pubmed.ncbi.nlm.nih.gov/22881142/",
+    "https://pubmed.ncbi.nlm.nih.gov/24495394/",
+    "https://pubmed.ncbi.nlm.nih.gov/24739926/",
+    "https://pubmed.ncbi.nlm.nih.gov/25567761/",
+    "https://pubmed.ncbi.nlm.nih.gov/25665064/",
+    "https://pubmed.ncbi.nlm.nih.gov/26357662/",
+    "https://pubmed.ncbi.nlm.nih.gov/27104031/",
+    "https://pubmed.ncbi.nlm.nih.gov/27165527/",
+    "https://pubmed.ncbi.nlm.nih.gov/27293452/",
+    "https://pubmed.ncbi.nlm.nih.gov/27771627/",
+    "https://pubmed.ncbi.nlm.nih.gov/28348971/",
+    "https://pubmed.ncbi.nlm.nih.gov/29023061/",
+    "https://pubmed.ncbi.nlm.nih.gov/30196468/",
+    "https://pubmed.ncbi.nlm.nih.gov/30968605/",
+    "https://pubmed.ncbi.nlm.nih.gov/32722270/",
+    "https://pubmed.ncbi.nlm.nih.gov/32984610/",
+    "https://pubmed.ncbi.nlm.nih.gov/33670416/",
+    "https://pubmed.ncbi.nlm.nih.gov/35335326/",
+    "https://pubmed.ncbi.nlm.nih.gov/41241211/",
+    "https://pubmed.ncbi.nlm.nih.gov/42016028/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Achillea%20biebersteinii",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "achillea-ligustica",
+   "url": "https://herbally.app/herbs/achillea-ligustica",
+   "status": 200,
+   "ms": 803,
+   "bytes": 167955,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1381,
+   "links": [
+    "https://medlineplus.gov/search/?q=Achillea%20ligustica",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/16141563/",
+    "https://pubmed.ncbi.nlm.nih.gov/16366708/",
+    "https://pubmed.ncbi.nlm.nih.gov/16910724/",
+    "https://pubmed.ncbi.nlm.nih.gov/19379797/",
+    "https://pubmed.ncbi.nlm.nih.gov/19570644/",
+    "https://pubmed.ncbi.nlm.nih.gov/22253099/",
+    "https://pubmed.ncbi.nlm.nih.gov/24427958/",
+    "https://pubmed.ncbi.nlm.nih.gov/24910407/",
+    "https://pubmed.ncbi.nlm.nih.gov/25278440/",
+    "https://pubmed.ncbi.nlm.nih.gov/25911964/",
+    "https://pubmed.ncbi.nlm.nih.gov/26327332/",
+    "https://pubmed.ncbi.nlm.nih.gov/35448782/",
+    "https://pubmed.ncbi.nlm.nih.gov/38300819/",
+    "https://pubmed.ncbi.nlm.nih.gov/39274964/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Achillea%20ligustica",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "achillea-millefolium-var",
+   "url": "https://herbally.app/herbs/achillea-millefolium-var",
+   "status": 200,
+   "ms": 119,
+   "bytes": 121126,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 750,
+   "links": [
+    "https://medlineplus.gov/search/?q=Achillea%20Millefolium%20Var",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/health/herbsataglance",
+    "https://www.nccih.nih.gov/search?query=Achillea%20Millefolium%20Var",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "achillea-nobilis",
+   "url": "https://herbally.app/herbs/achillea-nobilis",
+   "status": 200,
+   "ms": 512,
+   "bytes": 154098,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 1149,
+   "links": [
+    "https://medlineplus.gov/search/?q=Achillea%20nobilis",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/12622219/",
+    "https://pubmed.ncbi.nlm.nih.gov/12648812/",
+    "https://pubmed.ncbi.nlm.nih.gov/16118043/",
+    "https://pubmed.ncbi.nlm.nih.gov/17238063/",
+    "https://pubmed.ncbi.nlm.nih.gov/25103502/",
+    "https://pubmed.ncbi.nlm.nih.gov/27879146/",
+    "https://pubmed.ncbi.nlm.nih.gov/38994879/",
+    "https://pubmed.ncbi.nlm.nih.gov/40509346/",
+    "https://pubmed.ncbi.nlm.nih.gov/40733225/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Achillea%20nobilis",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  },
+  {
+   "slug": "achillea-pannonica",
+   "url": "https://herbally.app/herbs/achillea-pannonica",
+   "status": 200,
+   "ms": 697,
+   "bytes": 140883,
+   "has_uses": true,
+   "has_dose": true,
+   "has_safety": true,
+   "has_sources": true,
+   "placeholder": true,
+   "empty_uses": false,
+   "words": 926,
+   "links": [
+    "https://medlineplus.gov/search/?q=Achillea%20pannonica",
+    "https://ods.od.nih.gov/factsheets/list-all/",
+    "https://pnvltmyixympgammxvoo.supabase.co",
+    "https://pubmed.ncbi.nlm.nih.gov/11531084/",
+    "https://pubmed.ncbi.nlm.nih.gov/11582545/",
+    "https://pubmed.ncbi.nlm.nih.gov/12872918/",
+    "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+    "https://www.nccih.nih.gov/search?query=Achillea%20pannonica",
+    "https://www.who.int/publications/i/item/9241545178"
+   ]
+  }
+ ],
+ "links": [
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=10072296&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=15710136&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=19956495&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=20577999&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=21301878&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=21383739&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=22717266&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=23566764&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=26066625&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=26613327&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28135224&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28338609&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28481154&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=28520037&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=5253378&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=5992857&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=6731322&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=7389447&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=8076315&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=8359416&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://health-products.canada.ca/api/natural-licences/productlicence/?id=8572278&amp;lang=en&amp;type=json",
+   "status": 200
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abelmoschus%20Moschatus%20Herb",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abelmoschus%20manihot",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abies%20alba",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abies%20nigra",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abies%20sibirica",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abroma%20augusta",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abrus%20cantoniensis",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abrus%20precatorius",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abuta%20Grandifolia",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Abutilon%20indicum",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acacia",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acacia%20arabica",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acacia%20catechu",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acacia%20confusa",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acacia%20nilotica",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acacia%20obtusifolia",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acacia%20senegal",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acai%20Berry%20Antioxidant",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acalypha%20indica",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acanthopanax%20Sessiliflorus",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acanthopanax%20gracilistylus",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acapulco",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acer%20Saccharum%20Herb",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Acer%20campestre",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Achillea%20Millefolium%20Var",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Achillea%20biebersteinii",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Achillea%20ligustica",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Achillea%20nobilis",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Achillea%20pannonica",
+   "status": 404
+  },
+  {
+   "url": "https://medlineplus.gov/search/?q=Balsam%20Fir",
+   "status": 404
+  },
+  {
+   "url": "https://ods.od.nih.gov/factsheets/list-all/",
+   "status": 403
+  },
+  {
+   "url": "https://open.canada.ca/data/en/dataset/ef546c83-43a8-4404-943e-ab324164eeb3",
+   "status": 200
+  },
+  {
+   "url": "https://pnvltmyixympgammxvoo.supabase.co",
+   "status": 404
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10418326/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10540158/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10794124/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10798248/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10804285/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/10821961/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/11429256/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/11531084/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/11557077/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/11582545/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/11736775/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12135097/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12372869/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12510834/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12622219/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12648812/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/12872918/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/1367783/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/1501489/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15138013/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15181663/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/15952532/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16028974/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16041646/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16118043/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16141563/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16203117/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16248248/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16366708/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16713157/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16804326/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16813462/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/16910724/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17178202/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17238063/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17357388/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/17694473/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/1794977/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18254591/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18267216/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18636384/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18656937/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18963490/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19327382/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19379797/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19430614/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19546149/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19570644/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19610024/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19613450/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20047272/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20355025/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/2045522/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20645814/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20806936/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/20845778/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21075144/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21350667/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21356341/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21615036/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21705837/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21823479/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21849051/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/21999427/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22032697/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/2203870/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22230193/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22253099/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22262935/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22282602/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22529650/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22866283/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/22881142/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23119600/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23172095/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23470333/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/2379649/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23901209/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/23903060/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24006802/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24022265/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24186640/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24382449/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24427958/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24495394/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24511757/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24695415/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24739926/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/24910407/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25005060/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25089582/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25103502/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25183095/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25183125/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25242871/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25278440/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25324932/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25338180/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25422029/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25551188/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25567761/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25665064/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25701144/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25802170/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25911964/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25983510/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26220633/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26327332/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26357662/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26448818/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26587004/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26960511/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/26994888/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27057124/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27103988/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27104031/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27165527/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27293452/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27486360/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27538998/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27656192/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27693833/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27756448/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27771627/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/27879146/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28049349/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28096612/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28119891/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28150592/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28182104/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28345393/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28348971/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28390831/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28515607/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28789702/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28917858/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/28939025/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29023061/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29027937/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29039503/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29301264/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29438273/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29441952/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29442051/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29466809/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29495560/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29503478/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29558953/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29621196/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29659603/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29671829/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29743936/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/29966007/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30008135/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30166872/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30186180/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30196468/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30243779/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30302324/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30361961/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30417583/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30561299/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30714201/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30968605/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31057125/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31192352/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31217262/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31249468/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31280417/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31316836/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31456429/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31460786/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31717801/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31779993/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32003002/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32188508/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32206055/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32295006/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32319765/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32349421/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32367766/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32428654/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32430960/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32466439/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32475191/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32524386/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32655655/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32685725/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32722270/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32817615/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32846601/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32891160/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32984610/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33050554/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33164294/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33183092/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33188566/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33229157/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33303153/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33424268/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33435475/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33555024/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33610746/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33615691/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33670416/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33919561/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/33976489/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34119540/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34180070/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34371601/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34436446/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34572966/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34596780/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34645930/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34697741/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34707350/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34810393/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34906808/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34967059/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/34986959/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35085724/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35141205/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35161314/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35208961/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35325199/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35330187/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35335326/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35339624/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35343656/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35363843/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35448782/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35453303/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35630603/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35672366/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35714881/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35861729/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35910160/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35913613/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35954235/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/35998213/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36016534/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36080243/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36172199/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36189534/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36235451/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36290625/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36294262/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36405951/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36432824/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36524851/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36615418/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36634650/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36641105/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36671523/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36684487/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36816058/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36839349/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36959155/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/36973339/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37059249/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37089397/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37107172/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37110667/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37133312/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37144218/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37152134/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37174108/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37273369/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37303858/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37324839/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37359892/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37375903/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37430935/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37439007/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37443721/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37444264/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37459705/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37513607/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37571016/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37634270/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37683990/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37764339/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37803612/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37836226/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37893489/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/37986445/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38021797/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38058645/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38167214/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38186405/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38219632/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38272848/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38278399/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38290997/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38300819/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38325681/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38389921/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38392894/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38410133/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38428258/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38463881/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38485254/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38490239/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38513827/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38543166/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38633273/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38710375/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38773358/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38817355/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38845567/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/3889455/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38916807/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38972441/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38994879/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39097211/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39135883/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39274964/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39312451/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39323672/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39360533/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39381590/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39407837/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39410081/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39439926/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39470961/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39505327/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39530083/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39550385/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39669170/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39770900/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39771185/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39860265/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39997853/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40222954/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40348832/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40470307/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40509346/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40527374/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40554287/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40660070/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40709743/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/40733225/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41161438/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41241211/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41440699/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41448365/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41578724/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41751128/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/42016028/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/42082794/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/42274742/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/7358945/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/7623478/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/8850132/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/9666883/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/9860236/",
+   "status": 203
+  },
+  {
+   "url": "https://pubmed.ncbi.nlm.nih.gov/9863147/",
+   "status": 203
+  },
+  {
+   "url": "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/health/acai",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/health/herbsataglance",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abelmoschus%20Moschatus%20Herb",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abelmoschus%20manihot",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abies%20alba",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abies%20nigra",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abies%20sibirica",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abroma%20augusta",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abrus%20cantoniensis",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abrus%20precatorius",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abuta%20Grandifolia",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Abutilon%20indicum",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acacia",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acacia%20arabica",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acacia%20catechu",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acacia%20confusa",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acacia%20nilotica",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acacia%20obtusifolia",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acacia%20senegal",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acalypha%20indica",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acanthopanax%20Sessiliflorus",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acanthopanax%20gracilistylus",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acapulco",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acer%20Saccharum%20Herb",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Acer%20campestre",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Achillea%20Millefolium%20Var",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Achillea%20biebersteinii",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Achillea%20ligustica",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Achillea%20nobilis",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Achillea%20pannonica",
+   "status": 200
+  },
+  {
+   "url": "https://www.nccih.nih.gov/search?query=Balsam%20Fir",
+   "status": 200
+  },
+  {
+   "url": "https://www.who.int/publications/i/item/9241545178",
+   "status": 200
+  }
+ ]
+}
