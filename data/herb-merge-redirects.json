@@ -370,5 +370,9 @@
   {
     "from": "/herbs/rauwolfia-cardio",
     "to": "/herbs/rauwolfia-root"
+  },
+  {
+    "from": "/herbs/curcuma-longa",
+    "to": "/herbs/turmeric"
   }
 ]

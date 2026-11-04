@@ -465,6 +465,11 @@
       "from": "rauwolfia-cardio",
       "to": "rauwolfia-root",
       "carry_note": ""
+    },
+    {
+      "from": "curcuma-longa",
+      "to": "turmeric",
+      "carry_note": ""
     }
   ]
 }

@@ -26,7 +26,8 @@ OUT = os.path.join(ROOT, "artifacts", "page-audit.json")
 BASE_SITE = "https://herbally.app"
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126 Safari/537.36"
 LIMIT = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else 0
-CONC = int(sys.argv[sys.argv.index("--concurrency") + 1]) if "--concurrency" in sys.argv else 8
+CONC = int(sys.argv[sys.argv.index("--concurrency") + 1]) if "--concurrency" in sys.argv else 2
+SKIP_LINKS = "--skip-links" in sys.argv
 
 
 def load_env():
@@ -119,10 +120,14 @@ def main():
             if i % 200 == 0:
                 print(f"[audit] {i}/{len(work)}")
 
-    links = sorted({l for r in results for l in r.get("links", [])})
-    print(f"[audit] {len(links)} distinct external links to resolve")
-    with ThreadPoolExecutor(max_workers=10) as ex:
-        link_results = list(ex.map(resolve, links))
+    if SKIP_LINKS:
+        link_results = []
+        print("[audit] link resolution skipped")
+    else:
+        links = sorted({l for r in results for l in r.get("links", [])})
+        print(f"[audit] {len(links)} distinct external links to resolve")
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            link_results = list(ex.map(resolve, links))
 
     summary = {
         "pages": len(results),
