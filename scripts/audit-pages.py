@@ -86,7 +86,7 @@ def check(slug):
         has_dose=("dose" in t or "dosage" in t),
         has_safety=("avoid" in t or "caution" in t or "pregnancy" in t),
         has_sources=("health canada" in t or "european medicines" in t or "source" in t),
-        placeholder=any(x in t for x in ("undefined", "nan", "[object object]", "todo:", "lorem ipsum")),
+        placeholder=bool(re.search(r"\b(undefined|nan|null)\b|\[object object\]|todo:|lorem ipsum", t)),
         empty_uses=("no specific therapeutic indication" in t),
         words=len(t.split()),
     )

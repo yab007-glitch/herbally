@@ -96,7 +96,7 @@ async function main() {
   const herbs = [];
   for (let off = 0; ; off += 1000) {
     const res = await fetch(
-      `${BASE}/rest/v1/herbs?select=id,slug,name,scientific_name,traditional_uses,dosage_adult,contraindications,provenance${process.argv.includes('--include-unpublished') ? '' : '&is_published=eq.true'}&order=slug&limit=1000&offset=${off}`,
+      `${BASE}/rest/v1/herbs?select=id,slug,name,scientific_name,traditional_uses,dosage_adult,contraindications,provenance${process.argv.includes("--include-unpublished") ? "" : "&is_published=eq.true"}&order=slug&limit=1000&offset=${off}`,
       { headers: H }
     );
     const page = await res.json();
