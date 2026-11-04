@@ -76,6 +76,13 @@ afterEach(() => {
   cleanup();
 });
 
+// Rate limiting must not reach a shared backend in tests. With UPSTASH_* present in
+// .env.local the limiter talks to the real Redis and its counters survive between
+// runs, so API route tests start already rate-limited and fail with 429s. Deleting
+// the credentials forces the in-memory limiter, which resets with each process.
+delete process.env.UPSTASH_REDIS_REST_URL;
+delete process.env.UPSTASH_REDIS_REST_TOKEN;
+
 // Mock @sentry/nextjs globally in tests. Importing the real module registers
 // OpenTelemetry instrumentation (module.register) whose @sentry/server-utils
 // orchestrion loader chokes in the vitest transform pipeline with
