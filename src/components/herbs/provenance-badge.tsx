@@ -4,6 +4,7 @@ import {
   Sparkles,
   AlertCircle,
   AlertTriangle,
+  Layers,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -52,6 +53,22 @@ export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
       >
         <AlertTriangle className="mr-1 size-3" aria-hidden="true" />
         {t("needsReReview")}
+      </Badge>
+    );
+  }
+
+  // A multi-herb product is not a plant: there is no binomial to check, so the
+  // "AI-Generated" label (which reads as a warning about unverified prose) is the
+  // wrong signal. Say what it is instead.
+  if (provenance.verification_status === "formula") {
+    return (
+      <Badge
+        variant="outline"
+        className="border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300"
+        title={t("formulaTooltip")}
+      >
+        <Layers className="mr-1 size-3" aria-hidden="true" />
+        {t("formula")}
       </Badge>
     );
   }

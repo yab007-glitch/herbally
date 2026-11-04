@@ -347,7 +347,9 @@
     "sourceVerified": "Verified · {count} sources",
     "sourceVerifiedTooltip": "Cross-checked against {count} independent sources: {sources}. This confirms the plant identity and its regulator record — it is not a claim that a person has read this page.",
     "identityVerified": "Identity verified · {count} sources",
-    "identityVerifiedTooltip": "The plant's name is confirmed by {count} independent taxonomic sources ({sources}). No government regulator has published a monograph for this herb, so nothing beyond its identity is claimed here."
+    "identityVerifiedTooltip": "The plant's name is confirmed by {count} independent taxonomic sources ({sources}). No government regulator has published a monograph for this herb, so nothing beyond its identity is claimed here.",
+    "formula": "Multi-herb formula",
+    "formulaTooltip": "This entry is a multi-herb product, not a single plant, so there is no botanical name to cross-check. Its ingredients are listed on the page; the formula itself has no taxonomic identity."
   },
   "donate": {
     "title": "Support HerbAlly",

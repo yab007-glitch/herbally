@@ -347,7 +347,9 @@
     "sourceVerified": "Vérifié · {count} sources",
     "sourceVerifiedTooltip": "Recoupé auprès de {count} sources indépendantes : {sources}. Cela confirme l'identité de la plante et son dossier réglementaire — ce n'est pas une affirmation qu'une personne a relu cette fiche.",
     "identityVerified": "Identité vérifiée · {count} sources",
-    "identityVerifiedTooltip": "Le nom de la plante est confirmé par {count} sources taxonomiques indépendantes ({sources}). Aucun organisme de réglementation n'a publié de monographie pour cette plante; rien d'autre que son identité n'est affirmé ici."
+    "identityVerifiedTooltip": "Le nom de la plante est confirmé par {count} sources taxonomiques indépendantes ({sources}). Aucun organisme de réglementation n'a publié de monographie pour cette plante; rien d'autre que son identité n'est affirmé ici.",
+    "formula": "Formule multi-herbes",
+    "formulaTooltip": "Cette fiche décrit un produit multi-herbes et non une plante unique : il n'y a donc pas de nom botanique à recouper. Les ingrédients sont listés sur la page; la formule elle-même n'a pas d'identité taxonomique."
   },
   "donate": {
     "title": "Soutenir HerbAlly",
