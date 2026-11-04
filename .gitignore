@@ -73,3 +73,7 @@ artifacts/lnhpd-matches.json
 artifacts/lnhpd-enrichment.json
 artifacts/lnhpd-new-candidates.json
 artifacts/ncbi-verify-all.json
+
+# Run reports: rewritten on every FAQ regeneration, so they churned the diff of
+# unrelated commits. Keep them locally, not in history.
+artifacts/faq-regeneration.json
