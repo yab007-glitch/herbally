@@ -92,7 +92,28 @@ export const UNVERIFIED: Provenance = {
  * fall back to UNVERIFIED so the UI never crashes on bad data.
  */
 export function parseProvenance(raw: unknown): Provenance {
-  const result = ProvenanceSchema.safeParse(raw ?? {});
+  // `sources` arrives in two shapes: legacy string labels, and the richer objects
+  // written by the data pipeline ({type, name, licence, url}). The schema wants
+  // strings, so a single object-shaped entry used to fail the whole parse and drop
+  // the record to UNVERIFIED — which is why 3,251 cross-checked herbs still showed
+  // the amber "AI-Generated" badge. Normalise before validating.
+  const input: Record<string, unknown> =
+    typeof raw === "object" && raw !== null
+      ? { ...(raw as Record<string, unknown>) }
+      : {};
+  if (Array.isArray(input.sources)) {
+    input.sources = (input.sources as unknown[])
+      .map((s) => {
+        if (typeof s === "string") return s;
+        if (s && typeof s === "object") {
+          const o = s as Record<string, unknown>;
+          return String(o.name ?? o.type ?? o.url ?? "");
+        }
+        return "";
+      })
+      .filter(Boolean);
+  }
+  const result = ProvenanceSchema.safeParse(input);
   return result.success ? result.data : UNVERIFIED;
 }
 
