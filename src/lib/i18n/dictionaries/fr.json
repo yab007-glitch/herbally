@@ -585,7 +585,8 @@
     "askHerbalist": "Demander à l'herboriste",
     "calculatorCtaTitle": "Calculer une dose sûre de {name}",
     "calculatorCtaBody": "Calculateur gratuit de posologie — doses de référence adultes selon le poids.",
-    "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement."
+    "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement.",
+    "noStatedDose": "Les dossiers d'homologation à l'origine de cette fiche ({source}) n'indiquent aucune quantité. Consultez l'étiquette du produit ou un pharmacien — aucun dosage n'a été inventé ici."
   },
   "search": {
     "placeholder": "Rechercher des herbes par nom, symptôme ou utilisation...",

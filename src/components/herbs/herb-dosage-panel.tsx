@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
 interface HerbDosagePanelProps {
+  /** Name of the regulator behind this entry, when one exists. */
+  regulatorName?: string | null;
   herb: {
     slug: string;
     dosage_forms?: string[] | null;
@@ -19,7 +21,7 @@ interface HerbDosagePanelProps {
   };
 }
 
-export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
+export function HerbDosagePanel({ herb, regulatorName }: HerbDosagePanelProps) {
   const t = useTranslations();
 
   return (
@@ -46,6 +48,18 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
                 </dd>
               </div>
             )}
+            {!herb.dosage_adult &&
+              !(herb.dosage_forms && herb.dosage_forms.length > 0) &&
+              regulatorName && (
+                <div className="sm:col-span-2">
+                  <dt className="text-sm font-medium text-foreground">
+                    {t("herbDetail.adultDosage")}
+                  </dt>
+                  <dd className="mt-1 text-sm text-muted-foreground">
+                    {t("herbDetail.noStatedDose", { source: regulatorName })}
+                  </dd>
+                </div>
+              )}
             {herb.dosage_adult && (
               <div>
                 <dt className="text-sm font-medium text-foreground">

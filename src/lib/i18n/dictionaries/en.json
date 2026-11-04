@@ -585,7 +585,8 @@
     "askHerbalist": "Ask Herbalist",
     "calculatorCtaTitle": "Calculate a safe dose of {name}",
     "calculatorCtaBody": "Free herbal dosage calculator — adult reference doses by weight.",
-    "adultOnlyNote": "Dose calculator: adults aged 18 and older only."
+    "adultOnlyNote": "Dose calculator: adults aged 18 and older only.",
+    "noStatedDose": "The licensing records behind this entry ({source}) do not state a quantity. Use the product label or ask a pharmacist — no amount has been invented here."
   },
   "search": {
     "placeholder": "Search herbs by name, symptom, or use...",

@@ -571,6 +571,18 @@ export default async function HerbDetailPage({ params }: Props) {
           year: "numeric",
         })
       : undefined;
+  // Which regulator, if any, backs this entry. Used to explain a missing dose
+  // honestly instead of leaving the panel silent.
+  const regulatorName =
+    (
+      (herb.provenance as { sources?: unknown[] } | null)?.sources?.find(
+        (src) =>
+          typeof src === "object" &&
+          src !== null &&
+          (src as { type?: string }).type === "regulator"
+      ) as { name?: string } | undefined
+    )?.name ?? null;
+
   const reviewedBy = registeredReviewer?.name;
   const reviewerCredentials = registeredReviewer?.credentials;
 
@@ -741,7 +753,12 @@ export default async function HerbDetailPage({ params }: Props) {
               key: "science",
               content: <HerbSciencePanel herb={herb} monograph={monograph} />,
             },
-            { key: "dosage", content: <HerbDosagePanel herb={herb} /> },
+            {
+              key: "dosage",
+              content: (
+                <HerbDosagePanel herb={herb} regulatorName={regulatorName} />
+              ),
+            },
             {
               key: "safety",
               content: (
