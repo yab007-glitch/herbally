@@ -489,7 +489,7 @@ export default async function HerbDetailPage({ params }: Props) {
         answer: r.translations?.fr?.answer || r.answer,
       }));
     },
-    [`herb-faqs-${slug}`],
+    [`herb-faqs-v2-${slug}`],
     { revalidate: 86400, tags: [`herb-faqs-${slug}`] }
   );
 
