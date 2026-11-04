@@ -54,6 +54,21 @@ export const ProvenanceSchema = z.object({
     .catch(null)
     .default(null),
   review_notes: z.string().optional(),
+  /**
+   * Cross-check state: how many independent sources attest to this entry.
+   *
+   * This is NOT human review. It says the plant identity and regulator record were
+   * confirmed by two or more named sources, which is what the "Verified · N
+   * sources" badge claims. `review_status` above stays the only field that can say
+   * a person read the page.
+   */
+  verification_status: z
+    .enum(["verified", "single_source", "unverified", "formula"])
+    .nullable()
+    .catch(null)
+    .default(null),
+  verified_source_count: z.number().catch(0).default(0),
+  verified_sources: z.array(z.string()).catch([]).default([]),
 });
 export type Provenance = z.infer<typeof ProvenanceSchema>;
 
@@ -66,6 +81,9 @@ export const UNVERIFIED: Provenance = {
   review_status: null,
   reviewed_by_name: null,
   reviewed_on: null,
+  verification_status: null,
+  verified_source_count: 0,
+  verified_sources: [],
 };
 
 /**
