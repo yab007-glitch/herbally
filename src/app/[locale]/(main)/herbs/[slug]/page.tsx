@@ -815,6 +815,18 @@ export default async function HerbDetailPage({ params }: Props) {
         </section>
       )}
 
+      {/* NCCIH text is shown for every herb we have it for, above the tabs.
+          It used to sit inside the no-monograph branch, which silently hid it on
+          exactly the herbs people search most (ashwagandha, turmeric, ginger). */}
+      {nccih ? (
+        <NccihSummary
+          claims={nccih.claims as unknown as string[]}
+          safety={nccih.safety_notes as unknown as string[]}
+          url={(nccih.provenance as { url?: string } | null)?.url ?? null}
+          title={herb.name}
+        />
+      ) : null}
+
       {/* Tabbed Content — only hand-written monographs show the narrative
           tabs; every other herb renders the government-sourced view (Option B)
           so no AI-generated content is displayed. */}
@@ -862,14 +874,7 @@ export default async function HerbDetailPage({ params }: Props) {
               exists, show it (AI-assisted, every claim cited to a PubMed
               article). Otherwise show the government-sources stub. Either
               way, curated (non-AI) interaction data is shown when present. */}
-          {nccih ? (
-            <NccihSummary
-              claims={nccih.claims as unknown as string[]}
-              safety={nccih.safety_notes as unknown as string[]}
-              url={(nccih.provenance as { url?: string } | null)?.url ?? null}
-              title={herb.name}
-            />
-          ) : null}
+
           {pubmedSheet?.content ? (
             <PubmedMonographSheet
               content={pubmedSheet.content as unknown as SheetContent}
