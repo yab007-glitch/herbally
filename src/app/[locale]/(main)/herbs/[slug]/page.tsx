@@ -58,6 +58,7 @@ import {
 } from "@/components/herbs/regulatory-evidence";
 import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
 import { PubmedMonographSheet } from "@/components/herbs/pubmed-monograph-sheet";
+import { NccihSummary } from "@/components/herbs/nccih-summary";
 import type {
   SheetContent,
   Citation,
@@ -371,7 +372,7 @@ export default async function HerbDetailPage({ params }: Props) {
       const { data: dbMonograph } = await supabase
         .from("herb_monographs")
         .select(
-          "summary, mechanism, claims, safety_notes, drug_interactions, pregnancy_category, key_citations, status"
+          "summary, mechanism, claims, safety_notes, drug_interactions, pregnancy_category, key_citations, status, generation_method, provenance"
         )
         .eq("herb_slug", herbSlug)
         .eq("status", "published")
@@ -408,6 +409,14 @@ export default async function HerbDetailPage({ params }: Props) {
     getMonographCached(slug),
     getPubmedSheetCached(slug),
   ]);
+
+  // The NCCIH import stores public-domain NIH text in the same table, tagged by
+  // generation_method so it can never be mistaken for a hand-written monograph.
+  const nccih =
+    (dbMonograph as { generation_method?: string } | null)
+      ?.generation_method === "imported-public-domain"
+      ? dbMonograph
+      : null;
 
   // Parse provenance to determine if this herb's content has been verified
   const provenance = parseProvenance(
@@ -853,6 +862,14 @@ export default async function HerbDetailPage({ params }: Props) {
               exists, show it (AI-assisted, every claim cited to a PubMed
               article). Otherwise show the government-sources stub. Either
               way, curated (non-AI) interaction data is shown when present. */}
+          {nccih ? (
+            <NccihSummary
+              claims={nccih.claims as unknown as string[]}
+              safety={nccih.safety_notes as unknown as string[]}
+              url={(nccih.provenance as { url?: string } | null)?.url ?? null}
+              title={herb.name}
+            />
+          ) : null}
           {pubmedSheet?.content ? (
             <PubmedMonographSheet
               content={pubmedSheet.content as unknown as SheetContent}

@@ -1,0 +1,397 @@
+[
+ {
+  "url": "https://www.nccih.nih.gov/health/acai",
+  "title": "Acai",
+  "slug": "acai-berry-antioxidant",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/aloe-vera",
+  "title": "Aloe Vera",
+  "slug": "aloe-vera",
+  "status": "imported",
+  "bullets": 19
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/ashwagandha",
+  "title": "Ashwagandha",
+  "slug": "ashwagandha",
+  "status": "imported",
+  "bullets": 15
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/asian-ginseng",
+  "title": "Asian Ginseng",
+  "slug": "ginseng",
+  "status": "imported",
+  "bullets": 18
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/astragalus",
+  "title": "Astragalus",
+  "slug": "astragalus",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/bilberry",
+  "title": "Bilberry",
+  "slug": "bilberry",
+  "status": "imported",
+  "bullets": 10
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/bitter-orange",
+  "title": "Bitter Orange",
+  "slug": "bitter-orange",
+  "status": "imported",
+  "bullets": 15
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/black-cohosh",
+  "title": "Black Cohosh",
+  "slug": "black-cohosh",
+  "status": "imported",
+  "bullets": 13
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/boswellia",
+  "title": "Boswellia",
+  "slug": "boswellia",
+  "status": "imported",
+  "bullets": 17
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/bromelain",
+  "title": "Bromelain",
+  "latin": [
+   "(pineapple plant) Ananas comosus"
+  ],
+  "status": "no matching herb"
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/butterbur",
+  "title": "Butterbur",
+  "slug": "butterbur",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/cats-claw",
+  "title": "Cat's Claw",
+  "slug": "cats-claw",
+  "status": "imported",
+  "bullets": 9
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/chamomile",
+  "title": "Chamomile",
+  "slug": "chamomile",
+  "status": "imported",
+  "bullets": 13
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/chasteberry",
+  "title": "Chasteberry",
+  "slug": "vitex",
+  "status": "imported",
+  "bullets": 11
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/cinnamon",
+  "title": "Cinnamon",
+  "slug": "cinnamon",
+  "status": "imported",
+  "bullets": 14
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/cranberry",
+  "title": "Cranberry",
+  "slug": "cranberry",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/dandelion",
+  "title": "Dandelion",
+  "slug": "dandelion",
+  "status": "imported",
+  "bullets": 9
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/echinacea",
+  "title": "Echinacea",
+  "slug": "echinacea",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/elderberry",
+  "title": "Elderberry",
+  "slug": "elderberry",
+  "status": "imported",
+  "bullets": 9
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/ephedra",
+  "title": "Ephedra",
+  "slug": "ephedra-sinica",
+  "status": "imported",
+  "bullets": 8
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/european-mistletoe",
+  "title": "European Mistletoe",
+  "slug": "european-mistletoe",
+  "status": "imported",
+  "bullets": 10
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/evening-primrose-oil",
+  "title": "Evening Primrose Oil",
+  "slug": "evening-primrose",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/fenugreek",
+  "title": "Fenugreek",
+  "slug": "fenugreek",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/feverfew",
+  "title": "Feverfew",
+  "slug": "feverfew",
+  "status": "imported",
+  "bullets": 13
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/flaxseed-and-flaxseed-oil",
+  "title": "Flaxseed and Flaxseed Oil",
+  "slug": "flaxseed-oil-herb",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/garcinia-cambogia",
+  "title": "Garcinia Cambogia",
+  "slug": "garcinia-gummi-gutta",
+  "status": "imported",
+  "bullets": 8
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/garlic",
+  "title": "Garlic",
+  "slug": "garlic",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/ginger",
+  "title": "Ginger",
+  "slug": "ginger",
+  "status": "imported",
+  "bullets": 13
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/ginkgo",
+  "title": "Ginkgo",
+  "slug": "ginkgo-biloba",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/goldenseal",
+  "title": "Goldenseal",
+  "slug": "goldenseal",
+  "status": "imported",
+  "bullets": 9
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/grape-seed-extract",
+  "title": "Grape Seed Extract",
+  "slug": "grape-seed",
+  "status": "imported",
+  "bullets": 9
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/green-tea",
+  "title": "Green Tea",
+  "slug": "green-tea",
+  "status": "imported",
+  "bullets": 14
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/hawthorn",
+  "title": "Hawthorn",
+  "slug": "hawthorn",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/herblist-app",
+  "title": "HerbList App",
+  "status": "skipped (no honest match)"
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/hoodia",
+  "title": "Hoodia",
+  "slug": "hoodia",
+  "status": "imported",
+  "bullets": 6
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/horse-chestnut",
+  "title": "Horse Chestnut",
+  "slug": "horse-chestnut",
+  "status": "imported",
+  "bullets": 8
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/kava",
+  "title": "Kava",
+  "slug": "kava",
+  "status": "imported",
+  "bullets": 9
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/lavender",
+  "title": "Lavender",
+  "slug": "lavender",
+  "status": "imported",
+  "bullets": 14
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/licorice-root",
+  "title": "Licorice Root",
+  "slug": "licorice-root",
+  "status": "imported",
+  "bullets": 16
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/milk-thistle",
+  "title": "Milk Thistle",
+  "slug": "milk-thistle",
+  "status": "imported",
+  "bullets": 13
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/mugwort",
+  "title": "Mugwort",
+  "slug": "mugwort-european",
+  "status": "imported",
+  "bullets": 7
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/noni",
+  "title": "Noni",
+  "slug": "noni-tahitian",
+  "status": "imported",
+  "bullets": 10
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/passionflower",
+  "title": "Passionflower",
+  "slug": "passionflower",
+  "status": "imported",
+  "bullets": 11
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/peppermint-oil",
+  "title": "Peppermint Oil",
+  "slug": "peppermint",
+  "status": "imported",
+  "bullets": 19
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/pomegranate",
+  "title": "Pomegranate",
+  "status": "skipped (no honest match)"
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/red-clover",
+  "title": "Red Clover",
+  "slug": "red-clover",
+  "status": "imported",
+  "bullets": 7
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/rhodiola",
+  "title": "Rhodiola",
+  "slug": "rhodiola",
+  "status": "imported",
+  "bullets": 7
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/sage",
+  "title": "Sage",
+  "slug": "sage",
+  "status": "imported",
+  "bullets": 7
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/saw-palmetto",
+  "title": "Saw Palmetto",
+  "slug": "saw-palmetto",
+  "status": "imported",
+  "bullets": 10
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/soy",
+  "title": "Soy",
+  "status": "skipped (no honest match)"
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/st-johns-wort",
+  "title": "St. John’s Wort",
+  "slug": "st-johns-wort",
+  "status": "imported",
+  "bullets": 21
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/tea-tree-oil",
+  "title": "Tea Tree Oil",
+  "slug": "tea-tree",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/thunder-god-vine",
+  "title": "Thunder God Vine",
+  "slug": "tripterygium-wilfordii",
+  "status": "imported",
+  "bullets": 11
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/turmeric",
+  "title": "Turmeric",
+  "slug": "turmeric",
+  "status": "imported",
+  "bullets": 14
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/valerian",
+  "title": "Valerian",
+  "slug": "valerian",
+  "status": "imported",
+  "bullets": 11
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/white-mulberry-leaf",
+  "title": "White Mulberry Leaf",
+  "slug": "mulberry-leaf",
+  "status": "imported",
+  "bullets": 12
+ },
+ {
+  "url": "https://www.nccih.nih.gov/health/yohimbe",
+  "title": "Yohimbe",
+  "latin": [
+   "Pausinystalia yohimbe"
+  ],
+  "status": "no matching herb"
+ }
+]

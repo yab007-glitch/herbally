@@ -1,0 +1,89 @@
+Title: Ginger: Usefulness and Safety
+
+URL Source: https://www.nccih.nih.gov/health/ginger
+
+Published Time: Thu, 05 Nov 2026 17:35:24 GMT
+
+Markdown Content:
+*   [Home](https://www.nccih.nih.gov/)
+*   [Health Information](https://www.nccih.nih.gov/health)
+*   Ginger
+
+![Image 1: Ginger](https://files.nccih.nih.gov/ginger-thinkstockphotos-531052216-square.jpg)
+
+© Thinkstock
+
+**Common Names:**ginger
+
+**Latin Names:**_Zingiber officinale_
+
+## Background
+
+*   Ginger is native to the warm parts of Asia and is now grown in parts of South America, Africa, and the Middle East. Its rhizome (underground stem) is used in food and for health purposes.
+*   Ginger has been used in folk medicine since ancient times. It was traditionally used for a variety of conditions such as asthma, flu, indigestion, and gastrointestinal discomfort.
+*   Ginger is currently promoted for nausea and vomiting, osteoarthritis, menstrual cramps, and other conditions.
+
+## How Much Do We Know?
+
+*   There have been many studies on the use of ginger for health purposes in people, but some of them have not been of high quality.
+
+## What Have We Learned?
+
+*   Ginger has been studied for several types of nausea and vomiting. Most of the studies tested dietary supplements rather than foods.
+    *   Research shows that ginger may be helpful for nausea and vomiting associated with pregnancy.
+    *   Most studies of ginger for motion sickness haven’t shown it to be helpful.
+    *   It’s uncertain whether ginger is a helpful addition to standard treatments for nausea and vomiting associated with cancer chemotherapy and whether it’s helpful for nausea and vomiting after surgery.
+
+*   Research suggests that ginger dietary supplements might be helpful for reducing the severity of menstrual cramps.
+*   Ginger dietary supplements might be helpful for symptoms of knee osteoarthritis, but much of the research has been of poor quality. Ginger used topically (applied to the skin) has not been shown to be helpful for knee osteoarthritis symptoms.
+
+## What Do We Know About Safety?
+
+*   Ginger has been used safely in many research studies where it was taken orally (by mouth) as a dietary supplement. Ginger products may also be safe for topical use.
+*   Ginger can have side effects such as abdominal discomfort, heartburn, diarrhea, and mouth and throat irritation when taken orally.
+*   If you take any type of medicine, talk with your health care provider before using ginger or any other herbal products; some herbs and medicines interact in harmful ways.
+*   The use of ginger dietary supplements during pregnancy may be safe. As with all herbal supplements, if you’re considering using ginger while pregnant, consult your health care provider. Little is known about whether it’s safe to use ginger while breastfeeding.
+
+## Keep in Mind
+
+*   Take charge of your health—talk with your health care providers about any complementary health approaches you use. Together, you can make shared, well-informed decisions.
+*   **Federal Regulation of Herbal Products**
+    *   Depending on what’s in them, how they’re intended to be used, and how they’re administered (orally or topically), herbal products are regulated in a variety of ways. Many herbal products intended for oral use are marketed as dietary supplements. The rules for making and distributing dietary supplements are less strict than those for drugs.
+    *   Unlike drugs, dietary supplements are not approved by the U.S. Food and Drug Administration (FDA) before they are sold to the public. When public health concerns arise about the safety of a dietary supplement or an ingredient including an herb, the FDA can take action to protect the public.Manufacturers and distributors of supplements are responsible for evaluating the safety and labeling of their products before marketing to ensure that they meet all regulatory requirements.
+
+### NCCIH Clearinghouse
+
+The NCCIH Clearinghouse provides information on NCCIH and complementary and integrative health approaches, including publications and searches of Federal databases of scientific and medical literature. The Clearinghouse does not provide medical advice, treatment recommendations, or referrals to practitioners.
+
+**Toll-free in the U.S.:**1-888-644-6226
+
+**Telecommunications relay service (TRS):**7-1-1
+
+**Website:**[https://www.nccih.nih.gov](https://www.nccih.nih.gov/)
+
+**Email:**[info@nccih.nih.gov](mailto:info@nccih.nih.gov) (link sends email)
+
+### Office of Dietary Supplements (ODS), National Institutes of Health (NIH)
+
+ODS seeks to strengthen knowledge and understanding of dietary supplements by evaluating scientific information, supporting research, sharing research results, and educating the public. Its resources include publications (such as _[Dietary Supplements: What You Need To Know](https://ods.od.nih.gov/factsheets/WYNTK-Consumer/)_) and fact sheets on a variety of specific supplement ingredients and products (such as vitamin D and multivitamin/mineral supplements).
+
+**Website:**[https://ods.od.nih.gov](https://ods.od.nih.gov/)
+
+**Email:**[ods@nih.gov](mailto:ods@nih.gov) (link sends email)
+
+## Key References
+
+*   Araya-Quintanilla F, Gutiérrez-Espinoza H, Muñoz-Yanez MJ, et al. [Effectiveness of ginger on pain and function in knee osteoarthritis: a PRISMA systematic review and meta-analysis](https://pubmed.ncbi.nlm.nih.gov/32214292/). _Pain Physician._ 2020;23(2):E151-E161.
+*   Choi J, Lee J, Kim K, et al.[Effects of ginger intake on chemotherapy-induced nausea and vomiting: a systematic review of randomized clinical trials](https://pubmed.ncbi.nlm.nih.gov/36501010/). _Nutrients._ 2022;14(23):4982.
+*   Ginger. NatMed Pro website. Accessed at naturalmedicines.therapeuticresearch.com on December 7, 2023. [Database subscription].
+*   Hu Y, Amoah AA, Zhang H, et al.[Effect of ginger in the treatment of nausea and vomiting compared with vitamin B6 and placebo during pregnancy: a meta-analysis](https://pubmed.ncbi.nlm.nih.gov/31937153/). _Journal of Maternal-Fetal & Neonatal Medicine._ 2022;35(1):187-196.
+*   Nassif MS, Costa ICP, Ribeiro PM, et al. [Integrative and complementary practices to control nausea and vomiting in pregnant women: a systematic review](https://pubmed.ncbi.nlm.nih.gov/36300661/). _Revista da Escola de Enfermagen da USP._ 2022;56:e20210515.
+*   Negi R, Sharma SK, Gaur R, et al. [Efficacy of ginger in the treatment of primary dysmenorrhea: a systematic review and meta-analysis](https://pubmed.ncbi.nlm.nih.gov/33842121/). _Cureus._ 2021;13(3):e13743.
+*   Shaukat MN, Nazir A, Fallico B. [Ginger bioactives: a comprehensive review of health benefits and potential food applications](https://pubmed.ncbi.nlm.nih.gov/38001868/). _Antioxidants (Basel)._ 2023;12(11):2015.
+*   Tóth B, Lantos T, Hegyi P, et al. [Ginger _(Zingiber officinale):_ an alternative for the prevention of postoperative nausea and vomiting. A meta-analysis](https://pubmed.ncbi.nlm.nih.gov/30466995/). _Phytomedicine._ 2018;50:8-18.
+
+This publication is not copyrighted and is in the public domain. Duplication is encouraged.
+
+NCCIH has provided this material for your information. It is not intended to substitute for the medical expertise and advice of your health care provider(s). We encourage you to discuss any decisions about treatment or care with your health care provider. The mention of any product, service, or therapy is not an endorsement by NCCIH.
+
+**Last Updated:**February 2025
