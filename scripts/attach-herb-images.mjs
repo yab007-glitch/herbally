@@ -24,8 +24,13 @@ for (const line of readFileSync(`${ROOT}.env.local`, "utf8").split("\n")) {
 }
 const BASE = env.NEXT_PUBLIC_SUPABASE_URL;
 const KEY = env.SUPABASE_SERVICE_ROLE_KEY;
-const H = { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" };
-const UA = "HerbAlly/1.0 (https://herbally.app; botanical images with attribution)";
+const H = {
+  apikey: KEY,
+  Authorization: `Bearer ${KEY}`,
+  "Content-Type": "application/json",
+};
+const UA =
+  "HerbAlly/1.0 (https://herbally.app; botanical images with attribution)";
 const APPLY = process.argv.includes("--apply");
 const LIMIT = (() => {
   const i = process.argv.indexOf("--limit");
@@ -33,16 +38,29 @@ const LIMIT = (() => {
 })();
 const SLUGS = (() => {
   const i = process.argv.indexOf("--slugs");
-  return i >= 0 ? new Set(String(process.argv[i + 1] || "").split(",").filter(Boolean)) : null;
+  return i >= 0
+    ? new Set(
+        String(process.argv[i + 1] || "")
+          .split(",")
+          .filter(Boolean)
+      )
+    : null;
 })();
 
-const ALLOWED = /^(cc0|cc[- ]by(-sa)?[- ]?\d|public domain|pd-|no restrictions)/i;
+const ALLOWED =
+  /^(cc0|cc[- ]by(-sa)?[- ]?\d|public domain|pd-|no restrictions)/i;
 const SLEEP = 350;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function api(host, params) {
-  const qs = new URLSearchParams({ format: "json", origin: "*", ...params }).toString();
-  const r = await fetch(`https://${host}/w/api.php?${qs}`, { headers: { "User-Agent": UA } });
+  const qs = new URLSearchParams({
+    format: "json",
+    origin: "*",
+    ...params,
+  }).toString();
+  const r = await fetch(`https://${host}/w/api.php?${qs}`, {
+    headers: { "User-Agent": UA },
+  });
   if (!r.ok) throw new Error(`${host} ${r.status}`);
   return r.json();
 }
@@ -78,7 +96,11 @@ async function licenceInfo(fileName) {
   const info = page.imageinfo?.[0];
   if (!info) return null;
   const meta = info.extmetadata ?? {};
-  const strip = (v) => (v?.value ?? "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+  const strip = (v) =>
+    (v?.value ?? "")
+      .replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   return {
     url: info.url,
     descriptionUrl: info.descriptionurl,
@@ -108,7 +130,9 @@ async function main() {
 
   const report = [];
   for (const herb of work) {
-    const sci = String(herb.scientific_name).replace(/\s*\(.*?\)\s*/g, " ").trim();
+    const sci = String(herb.scientific_name)
+      .replace(/\s*\(.*?\)\s*/g, " ")
+      .trim();
     let lead = null;
     try {
       lead = await leadImage(sci);
@@ -127,7 +151,10 @@ async function main() {
     try {
       info = await licenceInfo(lead.file);
     } catch (e) {
-      report.push({ slug: herb.slug, status: `licence lookup failed: ${e.message}` });
+      report.push({
+        slug: herb.slug,
+        status: `licence lookup failed: ${e.message}`,
+      });
       await sleep(SLEEP);
       continue;
     }
@@ -137,11 +164,17 @@ async function main() {
       continue;
     }
     if (info.restrictions && /non-free|fair use/i.test(info.restrictions)) {
-      report.push({ slug: herb.slug, status: `restricted: ${info.restrictions}` });
+      report.push({
+        slug: herb.slug,
+        status: `restricted: ${info.restrictions}`,
+      });
       continue;
     }
     if (!ALLOWED.test(info.licence)) {
-      report.push({ slug: herb.slug, status: `licence not allowed: ${info.licence || "none"}` });
+      report.push({
+        slug: herb.slug,
+        status: `licence not allowed: ${info.licence || "none"}`,
+      });
       continue;
     }
     const record = {
@@ -165,16 +198,33 @@ async function main() {
         report.push({ slug: herb.slug, status: `patch ${patch.status}` });
         continue;
       }
+      // PostgREST answers 204 even when the filter matched no rows, so the write is
+      // only real if a read-back shows it. This is how the first run "applied" nine
+      // images and left every image_url null.
+      const check = await fetch(
+        `${BASE}/rest/v1/herbs?select=image_url&id=eq.${herb.id}`,
+        { headers: H }
+      );
+      const rows = await check.json();
+      if (!rows[0]?.image_url) {
+        report.push({ slug: herb.slug, status: "patch did not persist" });
+        continue;
+      }
     }
     report.push({ slug: herb.slug, status: "image", ...record });
   }
 
   const counts = {};
-  for (const r of report) counts[r.status.split(":")[0]] = (counts[r.status.split(":")[0]] || 0) + 1;
+  for (const r of report)
+    counts[r.status.split(":")[0]] = (counts[r.status.split(":")[0]] || 0) + 1;
   console.log("[img] done:", JSON.stringify(counts));
   writeFileSync(
     `${ROOT}artifacts/herb-images.json`,
-    JSON.stringify({ generated_at: new Date().toISOString(), applied: APPLY, report }, null, 1)
+    JSON.stringify(
+      { generated_at: new Date().toISOString(), applied: APPLY, report },
+      null,
+      1
+    )
   );
   for (const r of report.filter((x) => x.status === "image").slice(0, 5)) {
     console.log(`  ${r.slug}: ${r.licence} — ${r.credit.slice(0, 60)}`);
