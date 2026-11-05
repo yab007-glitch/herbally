@@ -166,7 +166,14 @@ export function HerbSafetyPanel({
         <Button
           variant="outline"
           size="lg"
-          render={<Link href={`/herbalist?herb=${herb.slug}`} />}
+          render={
+            <Link
+              href={`/herbalist?herb=${herb.slug}`}
+              // 2,198 ?herb= URLs were being crawled as duplicates of /herbalist.
+              // The parameter is a client-side preselection, not a different page.
+              rel="nofollow"
+            />
+          }
           className="rounded-full"
         >
           <AlertTriangle className="mr-2 size-4" />
