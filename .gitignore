@@ -87,3 +87,4 @@ artifacts/interaction-review-queue.json
 
 # Backfill reports: rewritten on every run, not source.
 artifacts/herb-images.json
+artifacts/related-herbs-plan.json
