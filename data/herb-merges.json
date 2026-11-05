@@ -485,6 +485,61 @@
       "from": "lemon-basil",
       "to": "kemangi-indo",
       "carry_note": "Regional or trade name for the same plant and part."
+    },
+    {
+      "from": "/herbs/vaccinium-myrtillus",
+      "to": "/herbs/bilberry",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/rhodiola-rosea",
+      "to": "/herbs/rhodiola",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/apium-graveolens-var-dulce",
+      "to": "/herbs/apium-graveolens",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/vigna-radiata-var-radiata",
+      "to": "/herbs/vigna-radiata",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/coffea-canephora-robusta",
+      "to": "/herbs/coffea-canephora",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/vigna-unguiculata-subsp-cylindrica",
+      "to": "/herbs/vigna-unguiculata",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/angelica-polymorpha-var-sinensis",
+      "to": "/herbs/angelica-polymorpha",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/tagetes-erecta-l",
+      "to": "/herbs/tagetes-erecta",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/fagus-sylvatica-flos",
+      "to": "/herbs/fagus-sylvatica",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/fraxinus-chinensis-subsp-rhynchophylla",
+      "to": "/herbs/fraxinus-chinensis",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/lactuca-sativa-var-longifolia",
+      "to": "/herbs/lactuca-sativa",
+      "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
     }
   ]
 }
