@@ -168,7 +168,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     async (herbSlug: string, locale: string) => {
       return loadHerb(herbSlug, locale as Locale);
     },
-    ["herb-meta-" + slug],
+    ["herb-meta-v2-" + slug],
     { revalidate: 86400, tags: ["herb-meta-" + slug] }
   );
 
@@ -286,17 +286,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       images: [`${baseUrl}/twitter-image`],
     },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
+    // An untranslated French URL is the English page under French chrome. It stays
+    // crawlable (follow) so links are discovered, but it must not be indexed as a
+    // French page of its own.
+    robots: untranslatedFr
+      ? { index: false, follow: true }
+      : {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+          },
+        },
   };
 }
 
@@ -344,7 +349,7 @@ export default async function HerbDetailPage({ params }: Props) {
     async (herbSlug: string, locale: Locale) => {
       return loadHerb(herbSlug, locale);
     },
-    ["herb-v3-" + slug],
+    ["herb-v4-" + slug],
     { revalidate: 86400, tags: ["herb-" + slug] }
   );
 
@@ -422,16 +427,10 @@ export default async function HerbDetailPage({ params }: Props) {
   // the rich narrative. Every other herb renders the government-sourced view
   // (government sources + PubMed citations) instead of AI-generated text.
   const isManualMonograph = hasManualMonograph(slug);
-  // Effective human-review status for this render. The hero badge and the
-  // "Reviewed by" attribution below must agree with what is actually shown:
-  // an unreviewed PubMed sheet vetoes a "Verified" claim from the herb row,
-  // and an unverified entry must not borrow the editorial-team fallback as
-  // its reviewer. No production data is changed — this is a rendering gate.
-  const sheetNotReviewed =
-    !isManualMonograph &&
-    !!pubmedSheet?.content &&
-    pubmedSheet.status !== "reviewed";
-  const humanReviewed = isVerified(provenance) && !sheetNotReviewed;
+  // The "Verified" veto for an unreviewed PubMed sheet lives in the hero
+  // component (herb-hero-v2.tsx), which is what actually renders the badge.
+  // Computing it here too left the result unused — an ESLint warning and a
+  // second, silently divergent copy of the trust rule.
   if (dbMonograph) {
     // Option B: the rich narrative is only RENDERED for herbs with a
     // hand-written monograph (see the tabs gate). The monograph object is
