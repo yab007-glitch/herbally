@@ -142,6 +142,14 @@ const nextConfig: NextConfig = {
         destination: "/:locale/interactions/:herb/:drug",
         statusCode: 301,
       },
+      // Search Console reported /pharmacist as a 404: it was a real URL people
+      // followed, and the herbalist page is what it meant.
+      { source: "/pharmacist", destination: "/herbalist", permanent: true },
+      {
+        source: "/:locale(en|fr)/pharmacist",
+        destination: "/:locale/herbalist",
+        permanent: true,
+      },
       // Merged duplicate herbs. Each pair was reviewed (same species, same part
       // or preparation) and the duplicate was unpublished rather than deleted,
       // so the old URL still resolves through a permanent redirect instead of
