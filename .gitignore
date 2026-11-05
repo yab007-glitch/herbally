@@ -80,3 +80,6 @@ artifacts/faq-regeneration.json
 
 # Slug-rename backups hold full table rows; keep them on disk, not in history.
 artifacts/slug-rename-pubmed-backup.json
+
+# Citation run report: regenerated on every pass.
+artifacts/interaction-citations.json
