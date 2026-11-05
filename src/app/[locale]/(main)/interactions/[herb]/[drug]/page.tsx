@@ -469,6 +469,23 @@ export default async function InteractionPairPage({ params }: Props) {
         </p>
       </section>
 
+      {/* What the cited paper actually found, when it qualifies the severity
+          above. Ten pairs cite a study whose abstract reports no change — the page
+          has to say that rather than let the reader assume the paper supports the
+          warning. */}
+      {pair.evidenceNote && (
+        <section className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <h3 className="text-sm font-semibold text-foreground">
+            {fr
+              ? "Ce que dit précisément l'étude citée"
+              : "What the cited study actually found"}
+          </h3>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            {pair.evidenceNote}
+          </p>
+        </section>
+      )}
+
       {/* What to do — scaled by severity so the advice is about THIS pair,
           not boilerplate repeated across every page. */}
       <section className="space-y-3">
