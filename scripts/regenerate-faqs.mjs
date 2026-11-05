@@ -89,6 +89,58 @@ function buildFaqs(herb) {
   ];
 }
 
+/**
+ * French counterparts, built from the French record rather than translated from the
+ * English answers. herb_faqs had 13,392 answers and no French translation at all, so
+ * French pages either showed English or showed nothing. Composing from the fr fields
+ * keeps every statement traceable to the same source as the English one.
+ */
+function buildFaqsFr(herb) {
+  const fr = (herb.translations && herb.translations.fr) || null;
+  if (!fr) return [];
+  const name = fr.name || herb.name || herb.scientific_name;
+  const p = herb.provenance || {};
+  const sources = (p.verified_sources || []).filter(Boolean);
+  const sourceText = sources.length
+    ? sources.join(" ; ")
+    : "Aucune source indépendante n'est enregistrée pour cette fiche.";
+
+  const uses = (fr.traditional_uses || [])
+    .map(sent)
+    .filter((s) => s.length > 12);
+  const contra = (fr.contraindications || [])
+    .map(sent)
+    .filter((s) => s.length > 8);
+  const dose = (fr.dosage_adult || "").trim();
+
+  return [
+    {
+      question: `À quoi sert ${name} ?`,
+      answer: uses.length
+        ? `${uses.slice(0, 3).join(" ")} (Relevé dans les monographies et les produits homologués : ${sourceText}.)`
+        : `Aucune indication thérapeutique précise n'est enregistrée pour ${name} dans les sources rattachées à cette fiche. Santé Canada homologue des produits qui en contiennent, mais les dossiers consultés ne donnent pas d'indication par produit; rien n'est donc affirmé ici.`,
+    },
+    {
+      question: `Quelle posologie de ${name} est utilisée ?`,
+      answer: dose
+        ? `${sent(dose)} Il s'agit de la posologie figurant sur l'étiquette ou la monographie, et non d'une recommandation personnelle. (${sourceText}.)`
+        : `Aucune posologie n'est indiquée pour ${name} : les étiquettes consultées ne précisent aucune quantité. La posologie doit être établie par un professionnel.`,
+    },
+    {
+      question: `Qui doit éviter ${name} ?`,
+      answer: contra.length
+        ? `${contra.slice(0, 3).join(" ")} Ces mises en garde proviennent des étiquettes et des monographies rattachées à cette fiche.`
+        : `Aucune contre-indication précise n'est enregistrée dans les sources de cette fiche. Cela ne prouve pas l'innocuité : demandez conseil à un pharmacien, surtout en cas de traitement concomitant ou de grossesse.`,
+    },
+    {
+      question: `D'où viennent ces informations sur ${name} ?`,
+      answer: sources.length
+        ? `Cette fiche a été recoupée auprès de : ${sourceText}. Chaque affirmation est attribuée à l'une de ces sources, et les champs sans source restent vides plutôt que remplis.`
+        : `Aucune source indépendante n'est encore rattachée à cette fiche; son contenu doit donc être considéré comme non vérifié.`,
+    },
+  ];
+}
+
 async function main() {
   const limArg = process.argv.indexOf("--limit");
   const limit = limArg >= 0 ? Number(process.argv[limArg + 1]) || 0 : 0;
@@ -96,7 +148,7 @@ async function main() {
   const herbs = [];
   for (let off = 0; ; off += 1000) {
     const res = await fetch(
-      `${BASE}/rest/v1/herbs?select=id,slug,name,scientific_name,traditional_uses,dosage_adult,contraindications,provenance${process.argv.includes("--include-unpublished") ? "" : "&is_published=eq.true"}&order=slug&limit=1000&offset=${off}`,
+      `${BASE}/rest/v1/herbs?select=id,slug,name,scientific_name,traditional_uses,dosage_adult,contraindications,provenance,translations${process.argv.includes("--include-unpublished") ? "" : "&is_published=eq.true"}&order=slug&limit=1000&offset=${off}`,
       { headers: H }
     );
     const page = await res.json();
@@ -138,11 +190,19 @@ async function main() {
       method: "DELETE",
       headers: H,
     });
+    const faqsFr = buildFaqsFr(h);
     const rows = faqs.map((f, i) => ({
       herb_id: h.id,
       question: f.question,
       answer: f.answer,
       category: f.category,
+      ...(faqsFr[i]
+        ? {
+            translations: {
+              fr: { question: faqsFr[i].question, answer: faqsFr[i].answer },
+            },
+          }
+        : {}),
       source: "verified-data",
       confidence_score: 1,
       is_featured: i === 0,
