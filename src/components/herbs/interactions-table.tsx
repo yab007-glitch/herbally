@@ -63,9 +63,12 @@ export function InteractionsTable({
           rows named Natural Medicines (commercial), WHO (all rights reserved) or
           "Clinical Studies" with no link. The attributions are gone from the data,
           so the page has to say plainly that no primary citation backs these. */}
-      <p className="mb-4 text-sm text-muted-foreground">
-        {t("interactions.uncitedNote")}
-      </p>
+      {/* Only warn about missing citations when some rows actually lack one. */}
+      {interactions.some((i) => !i.source_url) && (
+        <p className="mb-4 text-sm text-muted-foreground">
+          {t("interactions.uncitedNote")}
+        </p>
+      )}
 
       {/* Severity Summary */}
       <div className="mb-4 flex flex-wrap gap-2">
