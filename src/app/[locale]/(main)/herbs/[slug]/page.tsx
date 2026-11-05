@@ -503,11 +503,19 @@ export default async function HerbDetailPage({ params }: Props) {
         } | null;
       }>;
       if (faqLocale !== "fr") return rows;
-      return rows.map((r) => ({
-        ...r,
-        question: r.translations?.fr?.question || r.question,
-        answer: r.translations?.fr?.answer || r.answer,
-      }));
+      // No FAQ row carries a French translation yet, and falling back to English
+      // put an English Q&A block in the middle of otherwise French pages. Drop the
+      // untranslated rows until the translation pass lands: a French page with
+      // fewer answers beats one that switches language halfway down.
+      return rows
+        .filter(
+          (r) => r.translations?.fr?.question && r.translations?.fr?.answer
+        )
+        .map((r) => ({
+          ...r,
+          question: r.translations!.fr!.question!,
+          answer: r.translations!.fr!.answer!,
+        }));
     },
     [`herb-faqs-v2-${slug}`],
     { revalidate: 86400, tags: [`herb-faqs-${slug}`] }
