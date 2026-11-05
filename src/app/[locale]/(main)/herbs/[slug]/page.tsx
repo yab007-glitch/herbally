@@ -657,7 +657,7 @@ export default async function HerbDetailPage({ params }: Props) {
       if (!categoryHerbs) return [];
       return getComparisonHerbs(herbSlug, categoryHerbs, 3);
     },
-    ["related-herbs-" + slug],
+    ["related-herbs-v2-" + slug],
     { revalidate: 86400, tags: ["related-herbs-" + slug] }
   );
 
