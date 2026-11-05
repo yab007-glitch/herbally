@@ -621,9 +621,29 @@ export default async function HerbDetailPage({ params }: Props) {
   // every daily regeneration. `getComparisonHerbs` is a pure in-memory ranker,
   // so it runs inside the cache to cache the final ranked result.
   const getRelatedHerbs = unstable_cache(
-    async (herbSlug: string, categoryId: string | null) => {
+    async (
+      herbSlug: string,
+      categoryId: string | null,
+      curatedSlugs: string[]
+    ) => {
       const supabaseClient = getAnonClient();
       if (!supabaseClient) return [];
+      // Precomputed neighbours (same genus, then a shared specific indication) beat
+      // a category roll-up: "other Curcuma species" is more useful than "another
+      // herb filed under Digestive".
+      if (curatedSlugs.length) {
+        const { data } = await supabaseClient
+          .from("herbs")
+          .select("name, slug, scientific_name")
+          .in("slug", curatedSlugs)
+          .eq("is_published", true);
+        if (data?.length)
+          return data as Array<{
+            name: string;
+            slug: string;
+            scientific_name: string;
+          }>;
+      }
       let relatedQuery = supabaseClient
         .from("herbs")
         .select(
@@ -649,7 +669,13 @@ export default async function HerbDetailPage({ params }: Props) {
     scientific_name: string;
   }> = [];
   try {
-    relatedHerbs = await getRelatedHerbs(slug, herb.category_id ?? null);
+    relatedHerbs = await getRelatedHerbs(
+      slug,
+      herb.category_id ?? null,
+      (
+        (herb as { related_slugs?: string[] | null }).related_slugs ?? []
+      ).filter(Boolean)
+    );
   } catch {
     // swallow — related herbs are non-critical
   }
