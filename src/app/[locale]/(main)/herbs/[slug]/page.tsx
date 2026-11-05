@@ -29,7 +29,7 @@ import { truncateDescription } from "@/lib/seo/truncate-description";
 import { hasDistinctCommonName } from "@/lib/seo/herb-naming";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
-import { parseProvenance, isVerified } from "@/lib/types/provenance";
+import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
