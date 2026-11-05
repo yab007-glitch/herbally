@@ -56,8 +56,13 @@ misrepresent the source's conclusions.
 `SOURCE_HOST_ALLOWLIST` predates this register and stays as a technical
 boundary. Being on it does **not** mean a host may be cited:
 
-- `who.int` — CC BY-NC-SA 3.0 IGO. Non-commercial and share-alike; blocked by
-  `LICENCE_NOT_COMMERCIAL_USE`. There is also no `SOURCE_VALUES` entry for WHO.
+- `who.int` — two regimes, checked 2026-11-04 against the publications themselves.
+  The monograph volumes (_WHO monographs on selected medicinal plants_ vols 1–3,
+  1999/2003/2007) print **"All rights reserved"** on the copyright page and require
+  permission even for non-commercial distribution (`permissions@who.int`) — stricter
+  than the NC-SA terms below, not equivalent to them. Newer WHO publications use
+  CC BY-NC-SA 3.0 IGO. Neither permits commercial reuse, so the verdict is unchanged:
+  blocked by `LICENCE_NOT_COMMERCIAL_USE`. There is also no `SOURCE_VALUES` entry for WHO.
 - `cochrane.org` — the Cochrane abstract licence permits non-commercial reuse of
   abstracts with attribution; blocked by `LICENCE_NOT_COMMERCIAL_USE`, and there
   is no `SOURCE_VALUES` entry for Cochrane.
