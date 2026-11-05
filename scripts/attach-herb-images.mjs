@@ -52,17 +52,42 @@ const ALLOWED =
 const SLEEP = 350;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function api(host, params) {
+async function api(host, params, tries = 4) {
   const qs = new URLSearchParams({
     format: "json",
     origin: "*",
     ...params,
   }).toString();
-  const r = await fetch(`https://${host}/w/api.php?${qs}`, {
-    headers: { "User-Agent": UA },
-  });
-  if (!r.ok) throw new Error(`${host} ${r.status}`);
-  return r.json();
+  // MediaWiki sometimes answers with a plain-text upstream error instead of JSON
+  // ("upstream request timeout"), which used to abort the entire backfill. That is
+  // retryable, not fatal.
+  for (let attempt = 1; ; attempt++) {
+    let body = "";
+    try {
+      const r = await fetch(`https://${host}/w/api.php?${qs}`, {
+        headers: { "User-Agent": UA },
+      });
+      if (r.status === 429 || r.status >= 500) {
+        if (attempt < tries) {
+          await sleep(1500 * attempt);
+          continue;
+        }
+        throw new Error(`${host} ${r.status}`);
+      }
+      body = await r.text();
+      if (!r.ok) throw new Error(`${host} ${r.status}`);
+      return JSON.parse(body);
+    } catch (err) {
+      const retryable =
+        /JSON|Unexpected token/i.test(String(err.message)) ||
+        /^upstream/i.test(body.trim());
+      if (retryable && attempt < tries) {
+        await sleep(1500 * attempt);
+        continue;
+      }
+      throw err;
+    }
+  }
 }
 
 /** Lead image for a Wikipedia article, if one exists. */
