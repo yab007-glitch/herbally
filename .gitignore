@@ -83,3 +83,4 @@ artifacts/slug-rename-pubmed-backup.json
 
 # Citation run report: regenerated on every pass.
 artifacts/interaction-citations.json
+artifacts/interaction-review-queue.json
