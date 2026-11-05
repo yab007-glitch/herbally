@@ -131,6 +131,16 @@ export function InteractionsTable({
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {interaction.description}
+                  {interaction.source_url && (
+                    <a
+                      href={interaction.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 block text-xs text-primary hover:underline"
+                    >
+                      {t("interactions.sourceLink")}
+                    </a>
+                  )}
                 </td>
               </tr>
             ))}

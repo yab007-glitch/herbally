@@ -633,7 +633,8 @@
       "severity": "Sévérité",
       "description": "Description"
     },
-    "uncitedNote": "Ces associations ne sont pas encore liées à une source primaire. Considérez-les comme une invitation à consulter un pharmacien, non comme une référence."
+    "uncitedNote": "Ces associations ne sont pas encore liées à une source primaire. Considérez-les comme une invitation à consulter un pharmacien, non comme une référence.",
+    "sourceLink": "Source : notice PubMed"
   },
   "interactionExplainer": {
     "title": "Qu'est-ce qu'une interaction plante-médicament ?",
