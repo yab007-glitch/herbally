@@ -105,7 +105,9 @@ async function main() {
   for (const h of rows) {
     const slug = String(h.slug).toLowerCase();
     for (const [part, words] of Object.entries(PARTS)) {
-      if (!new RegExp(`(^|-)${part}(-|$)`).test(slug)) continue;
+      // Plurals matter: "hawthorn-flowers" was skipped because the slug says
+      // "flowers" and the pattern only matched "flower".
+      if (!new RegExp(`(^|-)${part}s?(-|$)`).test(slug)) continue;
       const fname = (h.image_url || "").split("/").pop().toLowerCase();
       if (!words.some((w) => fname.includes(w)))
         targets.push({ herb: h, part, words });
