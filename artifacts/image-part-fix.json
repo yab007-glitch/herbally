@@ -5,15 +5,13 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "black-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Nigella sativa seeds.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "buchu-betulina-leaf",
   "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "pumpkin-seed",
+  "part": "seed",
   "status": "no part-specific file"
  },
  {
@@ -37,16 +35,41 @@
   "status": "no part-specific file"
  },
  {
+  "slug": "fo-ti-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
   "slug": "zizyphus-jujube-seed",
   "part": "seed",
   "status": "no part-specific file"
  },
  {
-  "slug": "morus-fruit",
-  "part": "fruit",
+  "slug": "nettle-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "elecampane-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "cardamom-seeds",
+  "part": "seed",
   "status": "replaced",
-  "file": "Morus alba - fruit and leaves.jpg",
+  "file": "Elettaria cardamomum Capsules and seeds.jpg",
   "licence": "CC BY-SA 4.0"
+ },
+ {
+  "slug": "bamboo-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "bayberry-bark",
+  "part": "bark",
+  "status": "no part-specific file"
  },
  {
   "slug": "tanzanian-bark-herb",
@@ -54,15 +77,38 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "ipomoea-batatas-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Ipomoea batatas leaf.jpg",
-  "licence": "CC0"
+  "slug": "wahoo-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "dipsacus-root",
+  "part": "root",
+  "status": "no part-specific file"
  },
  {
   "slug": "musta-root",
   "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "fenugreek-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "licorice-root-tcm",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "fenugreek-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "sumac-bark",
+  "part": "bark",
   "status": "no part-specific file"
  },
  {
@@ -71,30 +117,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "white-oak-bark",
-  "part": "bark",
-  "status": "replaced",
-  "file": "White Oak Quercus alba Tree Bark 3264px.jpg",
-  "licence": "CC BY-SA 2.5"
- },
- {
-  "slug": "cowberry-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "EB1911 - Ericaceae - Fig. 1.—Vaccinium vitis-idaea, with leaf and flower.jpg",
-  "licence": "Public domain"
- },
- {
   "slug": "cuscuta-seed",
   "part": "seed",
   "status": "no part-specific file"
- },
- {
-  "slug": "seagrape-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Sea Grape Coccoloba Uvifera Leaf The Lucayan National Park of the Bahamas in Grand Bahama.jpg",
-  "licence": "CC BY-SA 4.0"
  },
  {
   "slug": "borage-leaf",
@@ -107,11 +132,11 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "coltsfoot-leaf",
-  "part": "leaf",
+  "slug": "hawthorn-flowers",
+  "part": "flower",
   "status": "replaced",
-  "file": "Tussilago-farfara-leaf.JPG",
-  "licence": "CC BY-SA 3.0"
+  "file": "(MHNT) Crataegus monogyna - flowers and buds.jpg",
+  "licence": "CC BY-SA 4.0"
  },
  {
   "slug": "hawthorn-leaf-flower-berry",
@@ -124,30 +149,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "grape-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Vitis vinifera - 2-year-old grape vine grown from seed.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "longan-fruit",
-  "part": "fruit",
-  "status": "replaced",
-  "file": "Longan (Dimocarpus longan) baby fruits and leaves.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "butea-superba-root",
   "part": "root",
   "status": "no part-specific file"
- },
- {
-  "slug": "calamus-root",
-  "part": "root",
-  "status": "replaced",
-  "file": "130. Acorus calamus, flag-root, sweet flag, calamus-root - DPLA - 80bd16e4960273a3f8d1b4a8903945ca.jpg",
-  "licence": "Public domain"
  },
  {
   "slug": "lotus-root",
@@ -160,20 +164,6 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "hemp-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Cannabis sativa leaf (1).jpg",
-  "licence": "Public domain"
- },
- {
-  "slug": "lucuma-fruit",
-  "part": "fruit",
-  "status": "replaced",
-  "file": "മുട്ടപ്പഴം Egg Fruit (Pouteria campechiana)).jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "bee-pollen",
   "part": "pollen",
   "status": "no part-specific file"
@@ -182,13 +172,6 @@
   "slug": "magnolia-flower-bud",
   "part": "flower",
   "status": "no part-specific file"
- },
- {
-  "slug": "taro-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Colocasia esculenta leaf size.jpg",
-  "licence": "CC BY-SA 4.0"
  },
  {
   "slug": "lodhra-bark",
@@ -201,13 +184,6 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "mango-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "A leaf beetle (Chrysomelidae) captured on a leaf of Mangifera indica.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "hydrangea-root",
   "part": "root",
   "status": "no part-specific file"
@@ -216,20 +192,6 @@
   "slug": "african-dream-root",
   "part": "root",
   "status": "no part-specific file"
- },
- {
-  "slug": "matico-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Starr-090623-1473-Piper aduncum-leaf veins-Nahiku-Maui (24848640382).jpg",
-  "licence": "CC BY 3.0 us"
- },
- {
-  "slug": "morinda-citrifolia-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Morinda citrifolia leaf.jpg",
-  "licence": "CC BY-SA 3.0"
  },
  {
   "slug": "chitrak-root",
@@ -252,30 +214,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "mullein-flower",
-  "part": "flower",
-  "status": "replaced",
-  "file": "Flowers of multi-stemmed mullein plant, Verbascum thapsus - geograph.org.uk - 965483.jpg",
-  "licence": "CC BY-SA 2.0"
- },
- {
   "slug": "korean-angelica-root",
   "part": "root",
   "status": "no part-specific file"
- },
- {
-  "slug": "nigerian-uziza-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Starr-091104-8939-Piper postelsianum-leaves-Kahanu Gardens NTBG Kaeleku Hana-Maui (24361499443).jpg",
-  "licence": "CC BY 3.0 us"
- },
- {
-  "slug": "bitter-gourd-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Grasshopper on Momordica charantia (Bitter melon) leaf at Rajbiraj, Saptari, Nepal.jpg",
-  "licence": "CC BY-SA 4.0"
  },
  {
   "slug": "bitter-orange-flower",
@@ -293,23 +234,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "olive-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Olea europaea leaf epidermis and stomata 100x.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "padauk-bark",
   "part": "bark",
   "status": "no part-specific file"
- },
- {
-  "slug": "pandan-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Pandan Leaf (Pandanus amaryllifolius).jpg",
-  "licence": "CC BY-SA 3.0"
  },
  {
   "slug": "pandanus-root",
@@ -347,34 +274,8 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "aloe-vera-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Cut Aloe Vera Leaf.jpg",
-  "licence": "CC BY 2.0"
- },
- {
   "slug": "damiana-leaf",
   "part": "leaf",
-  "status": "no part-specific file"
- },
- {
-  "slug": "danshen-root",
-  "part": "root",
-  "status": "replaced",
-  "file": "HK sliced herbal 丹参 Salvia miltiorrhiza root October 2025 N13P 04.jpg",
-  "licence": "CC0"
- },
- {
-  "slug": "tamarindus-indica-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Tamarindus indica leaf.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "fo-ti-root",
-  "part": "root",
   "status": "no part-specific file"
  },
  {
@@ -384,11 +285,6 @@
  },
  {
   "slug": "polygonatum-root",
-  "part": "root",
-  "status": "no part-specific file"
- },
- {
-  "slug": "nettle-root",
   "part": "root",
   "status": "no part-specific file"
  },
@@ -408,24 +304,12 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "marshmallow-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Althaea officinalis, Marshmallow leaf.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "durian-leaf",
   "part": "leaf",
   "status": "no part-specific file"
  },
  {
   "slug": "curculigo-root",
-  "part": "root",
-  "status": "no part-specific file"
- },
- {
-  "slug": "elecampane-root",
   "part": "root",
   "status": "no part-specific file"
  },
@@ -450,56 +334,8 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "bamboo-leaf",
-  "part": "leaf",
-  "status": "no part-specific file"
- },
- {
-  "slug": "bael-fruit",
-  "part": "fruit",
-  "status": "replaced",
-  "file": "Bael fruit (Aegle marmelos) seeds.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "bayberry-bark",
-  "part": "bark",
-  "status": "no part-specific file"
- },
- {
-  "slug": "pumpkin-seed",
-  "part": "seed",
-  "status": "no part-specific file"
- },
- {
   "slug": "butterfly-pea-flower",
   "part": "flower",
-  "status": "no part-specific file"
- },
- {
-  "slug": "lotus-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Libellulidae Brachythemis contaminata on Nelumbo nucifera leaf with water drops, in a pond.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "chaenomeles-fruit",
-  "part": "fruit",
-  "status": "replaced",
-  "file": "Chaenomeles speciosa - fruit 2026101 various 2.jpg",
-  "licence": "CC BY 4.0"
- },
- {
-  "slug": "chrysanthemum-flower",
-  "part": "flower",
-  "status": "replaced",
-  "file": "Chrysanthemum morifolium Flower.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "wahoo-bark",
-  "part": "bark",
   "status": "no part-specific file"
  },
  {
@@ -511,39 +347,6 @@
   "slug": "citrus-peel-tcm",
   "part": "peel",
   "status": "no part-specific file"
- },
- {
-  "slug": "poplar-bark",
-  "part": "bark",
-  "status": "replaced",
-  "file": "Bark close-up - American Aspen - Populus tremuloides.jpg",
-  "licence": "CC0"
- },
- {
-  "slug": "dipsacus-root",
-  "part": "root",
-  "status": "no part-specific file"
- },
- {
-  "slug": "senna-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Dried senna alexandrina leaf.jpg",
-  "licence": "CC0"
- },
- {
-  "slug": "yellow-dock-root",
-  "part": "root",
-  "status": "replaced",
-  "file": "Tetrads of bacterium Micrococcus luteus in root cells of plant Rumex crispus.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "loquat-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Starr-080326-3721-Eriobotrya japonica-leaf showing veins-Olinda Rd-Maui (24880018426).jpg",
-  "licence": "CC BY 3.0 us"
  },
  {
   "slug": "zimbabwean-bitter-leaf",
@@ -566,18 +369,6 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "fenugreek-leaf",
-  "part": "leaf",
-  "status": "no part-specific file"
- },
- {
-  "slug": "jobs-tears-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Seeds of Coix lacryma-jobi.jpg",
-  "licence": "CC BY-SA 3.0"
- },
- {
   "slug": "bilberry-leaf",
   "part": "leaf",
   "status": "no part-specific file"
@@ -588,20 +379,6 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "karela-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Grasshopper on Momordica charantia (Bitter melon) leaf at Rajbiraj, Saptari, Nepal.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "ku-xing-ren-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Prunus armeniaca dry and imbibed seed.jpg",
-  "licence": "CC BY-SA 3.0 rs"
- },
- {
   "slug": "pollen-extract-rye",
   "part": "pollen",
   "status": "no part-specific file"
@@ -609,18 +386,6 @@
  {
   "slug": "lemon-peel",
   "part": "peel",
-  "status": "no part-specific file"
- },
- {
-  "slug": "hawthorn-leaf-flower",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Crataegus laevigata leaf.jpg",
-  "licence": "CC BY-SA 3.0"
- },
- {
-  "slug": "licorice-root-tcm",
-  "part": "root",
   "status": "no part-specific file"
  },
  {
@@ -639,47 +404,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "achyranthes-root",
-  "part": "root",
-  "status": "replaced",
-  "file": "Achyranthes japonica root.jpg",
-  "licence": "CC BY-SA 3.0"
- },
- {
-  "slug": "chia-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Seed of chia (Salvia hispanica)Salvia hispanica group.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "fenugreek-seed",
-  "part": "seed",
-  "status": "no part-specific file"
- },
- {
-  "slug": "burdock-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Burdock (Arctium lappa) seed head, River Ayr, Overmills, Scotland.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "oak-bark",
   "part": "bark",
   "status": "licence refused: GFDL 1.2"
- },
- {
-  "slug": "arjuna-bark",
-  "part": "bark",
-  "status": "replaced",
-  "file": "Bark of Terminalia arjuna.jpg",
-  "licence": "Public domain"
- },
- {
-  "slug": "sumac-bark",
-  "part": "bark",
-  "status": "no part-specific file"
  },
  {
   "slug": "she-gan-rhizome",
@@ -692,24 +419,10 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "kudzu-flower",
-  "part": "flower",
+  "slug": "citrullus-lanatus-seeds",
+  "part": "seed",
   "status": "replaced",
-  "file": "Starr-021012-0065-Pueraria montana var lobata-flowers-Wailua-Maui (23924785754).jpg",
-  "licence": "CC BY 3.0 us"
- },
- {
-  "slug": "breadfruit-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Starr-120606-6998-Artocarpus altilis-leaf on ground-Kahanu Gardens Hana-Maui (25118304516).jpg",
-  "licence": "CC BY 3.0 us"
- },
- {
-  "slug": "sweet-basil-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Ocimum Basilicum leaf lighted by the left.jpg",
+  "file": "Citrullus lanatus var. citroides - seed colours 1.jpg",
   "licence": "CC BY-SA 4.0"
  },
  {
@@ -726,20 +439,6 @@
   "slug": "wild-indigo-root",
   "part": "root",
   "status": "no part-specific file"
- },
- {
-  "slug": "wild-oat-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Avena fatua seeds.jpg",
-  "licence": "Public domain"
- },
- {
-  "slug": "aspen-bark",
-  "part": "bark",
-  "status": "replaced",
-  "file": "Populus tremula bark Siemianowice.jpg",
-  "licence": "CC BY-SA 4.0"
  },
  {
   "slug": "bistort-root",
@@ -767,30 +466,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "rosy-periwinkle-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Caterpillar feeding on Catharanthus roseus leaf WSC2025 Rahim Pinjari.jpg",
-  "licence": "CC BY 4.0"
- },
- {
   "slug": "psoralea-seed",
   "part": "seed",
   "status": "no part-specific file"
- },
- {
-  "slug": "betel-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "'Paan' or Betel or Piper betle leaf.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "betula-pendula-bark",
-  "part": "bark",
-  "status": "replaced",
-  "file": "Betula pendula bark TK 2023-04-16 1.jpg",
-  "licence": "CC BY-SA 4.0"
  },
  {
   "slug": "blue-cohosh-root",
@@ -803,37 +481,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "boldo-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Peumus boldus leaf.jpeg",
-  "licence": "Public domain"
- },
- {
   "slug": "finger-root",
   "part": "root",
   "status": "no part-specific file"
- },
- {
-  "slug": "marshmallow-root",
-  "part": "root",
-  "status": "replaced",
-  "file": "Althaeae radix 149012.jpg",
-  "licence": "CC BY-SA 3.0 de"
- },
- {
-  "slug": "dita-bark",
-  "part": "bark",
-  "status": "replaced",
-  "file": "Alstonia scholaris - bark 07.JPG",
-  "licence": "CC0"
- },
- {
-  "slug": "papaya-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Carica papaya leaf 14072012.JPG",
-  "licence": "CC BY-SA 3.0"
  },
  {
   "slug": "varuna-bark",
@@ -851,23 +501,9 @@
   "status": "no part-specific file"
  },
  {
-  "slug": "birch-bark",
-  "part": "bark",
-  "status": "replaced",
-  "file": "A Paper bark birch (Betula papyrifera) - geograph.org.uk - 6059346.jpg",
-  "licence": "CC BY-SA 2.0"
- },
- {
   "slug": "catuaba-bark",
   "part": "bark",
   "status": "no part-specific file"
- },
- {
-  "slug": "rauwolfia-root",
-  "part": "root",
-  "status": "replaced",
-  "file": "Indian Snakeroot or Java Devilpepper (Rauvolfia serpentina ( Wellcome V0042670.jpg",
-  "licence": "CC BY 4.0"
  },
  {
   "slug": "babchi-seed",
@@ -875,48 +511,20 @@
   "status": "no part-specific file"
  },
  {
+  "slug": "hibiscus-flowers",
+  "part": "flower",
+  "status": "replaced",
+  "file": "Chinese hibiscus (Hibiscus × rosa-sinensis) flower, Estufa Fria, Lisbon, Portugal julesvernex2.jpg",
+  "licence": "CC BY-SA 4.0"
+ },
+ {
   "slug": "calumba-root",
   "part": "root",
   "status": "no part-specific file"
  },
  {
-  "slug": "basil-holy-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Starr-110330-3688-Ocimum tenuiflorum-flowers and seeds-Garden of Eden Keanae-Maui (24449956384).jpg",
-  "licence": "CC BY 3.0 us"
- },
- {
-  "slug": "mulberry-fruit",
-  "part": "fruit",
-  "status": "replaced",
-  "file": "Morus alba - fruit and leaves.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "jatamansi-root",
-  "part": "root",
-  "status": "replaced",
-  "file": "Figure 2. A sketch of seed fruit and whole plant of Nardostachys jatamansi with infloresence leaves and rhizome with root Line drawing from Ph D Thesis N C SHAH 1987.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
-  "slug": "bai-zi-ren-seed",
-  "part": "seed",
-  "status": "replaced",
-  "file": "Platycladus orientalis seeds, by Omar Hoftun.jpg",
-  "licence": "CC BY-SA 4.0"
- },
- {
   "slug": "bai-bian-dou-seed",
   "part": "seed",
   "status": "no part-specific file"
- },
- {
-  "slug": "psidium-guajava-leaf",
-  "part": "leaf",
-  "status": "replaced",
-  "file": "Psidium guajava leaf LR.jpg",
-  "licence": "CC BY-SA 4.0"
  }
 ]

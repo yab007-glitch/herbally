@@ -349,7 +349,7 @@ export default async function HerbDetailPage({ params }: Props) {
     async (herbSlug: string, locale: Locale) => {
       return loadHerb(herbSlug, locale);
     },
-    ["herb-v7-" + slug],
+    ["herb-v8-" + slug],
     { revalidate: 86400, tags: ["herb-" + slug] }
   );
 
