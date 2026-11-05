@@ -77,3 +77,6 @@ artifacts/ncbi-verify-all.json
 # Run reports: rewritten on every FAQ regeneration, so they churned the diff of
 # unrelated commits. Keep them locally, not in history.
 artifacts/faq-regeneration.json
+
+# Slug-rename backups hold full table rows; keep them on disk, not in history.
+artifacts/slug-rename-pubmed-backup.json

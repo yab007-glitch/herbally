@@ -1,5 +1,5 @@
 {
-  "activation": "deferred",
+  "activation": "active",
   "activation_note": "Apply the database rename first with scripts/apply-herb-slug-renames.mjs. Wire these redirects and flip activation to \"active\" in a separate deploy, only after node scripts/verify-slug-renames.mjs --require-ready exits 0; see kanban card t_4aba63c3.",
   "renames": [
     {

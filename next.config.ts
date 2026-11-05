@@ -4,6 +4,7 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 import createNextIntlPlugin from "next-intl/plugin";
 import { buildSecurityHeaders } from "./src/lib/security/csp";
 import herbMergeRedirects from "./data/herb-merge-redirects.json";
+import herbSlugRenames from "./data/herb-slug-renames.json";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -139,6 +140,15 @@ const nextConfig: NextConfig = {
       // or preparation) and the duplicate was unpublished rather than deleted,
       // so the old URL still resolves through a permanent redirect instead of
       // 404ing on a page that has real historical traffic.
+      // Corrected species names: the old slug was a misspelling of the accepted
+      // name, so the URL moved once the name was fixed. Same permanent-redirect
+      // treatment as the merges — the old URL has traffic and should not 404.
+      ...(herbSlugRenames.activation === "active"
+        ? herbSlugRenames.renames.flatMap(({ from, to }) => [
+            { source: from, destination: to, permanent: true },
+            { source: `/fr${from}`, destination: `/fr${to}`, permanent: true },
+          ])
+        : []),
       ...herbMergeRedirects.flatMap(({ from, to }) => [
         { source: from, destination: to, permanent: true },
         {

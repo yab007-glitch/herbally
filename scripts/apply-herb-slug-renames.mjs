@@ -300,6 +300,11 @@ async function applyRename(item) {
 
   let childRowsDeleted = false;
   let parentRenamed = false;
+  // Declared outside the try: the return statement reads them, so declaring these
+  // inside the try block made every rename throw ReferenceError after the work was
+  // already committed — the rename landed but the run reported a guard failure.
+  let dependentRowsMoved = 0;
+  const moved = new Map();
   try {
     if (snapshot.length) {
       appendBackup({
@@ -332,8 +337,6 @@ async function applyRename(item) {
       byTable.set(dep.table, tableDeps);
     }
 
-    const moved = new Map();
-    let dependentRowsMoved = 0;
     for (const [table, tableDeps] of byTable) {
       const rows = await moveDependents(table, tableDeps, sourceSlug, destSlug);
       dependentRowsMoved += rows.length;
