@@ -436,18 +436,25 @@ export default async function InteractionPairPage({ params }: Props) {
           </div>
         )}
         <p className="text-xs text-muted-foreground">
-          {fr ? "Source : " : "Source: "}
           {pair.sourceUrl ? (
-            <a
-              href={pair.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-foreground"
-            >
-              {pair.source || pair.sourceUrl}
-            </a>
+            <>
+              {fr ? "Source : " : "Source: "}
+              <a
+                href={pair.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                {pair.source || pair.sourceUrl}
+              </a>
+            </>
+          ) : // "HerbAlly database" read like a citation. It is not one: these pairs
+          // came from sources the licence register refuses to cite, so the page
+          // has to say plainly that no primary citation backs the claim.
+          fr ? (
+            "Aucune source primaire n'est enregistrée pour cette association. La gravité reflète la pharmacologie connue, pas une étude précise — à vérifier avec un pharmacien."
           ) : (
-            pair.source || (fr ? "Base HerbAlly" : "HerbAlly database")
+            "No primary citation is recorded for this pair. The severity reflects known pharmacology rather than a specific study — confirm with a pharmacist."
           )}
           {pair.updatedAt && (
             <>
