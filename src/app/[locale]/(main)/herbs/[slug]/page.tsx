@@ -788,6 +788,10 @@ export default async function HerbDetailPage({ params }: Props) {
           (herb.provenance as { image?: { source?: string } } | null)?.image
             ?.source
         }
+        publisher={
+          (herb.provenance as { image?: { publisher?: string } } | null)?.image
+            ?.publisher
+        }
         licence={
           (herb.provenance as { image?: { licence?: string } } | null)?.image
             ?.licence

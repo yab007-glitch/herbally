@@ -22,6 +22,7 @@ export function HerbPhoto({
   creditUrl,
   licence,
   licenceUrl,
+  publisher,
 }: {
   slug: string;
   name: string;
@@ -32,6 +33,8 @@ export function HerbPhoto({
   creditUrl?: string | null;
   licence?: string | null;
   licenceUrl?: string | null;
+  /** Where the photo came from: Wikimedia Commons, iNaturalist, GBIF. */
+  publisher?: string | null;
 }) {
   // The record stores "Artist — Licence" and the caption appends the licence, so
   // strip the trailing pair or the line reads "Public domain · Public domain".
@@ -87,7 +90,8 @@ export function HerbPhoto({
         ) : (
           photo.licence
         )}
-        {" · via Wikimedia Commons"}
+        {" · via "}
+        {publisher || "Wikimedia Commons"}
       </figcaption>
     </figure>
   );
