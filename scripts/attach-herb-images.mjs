@@ -178,11 +178,21 @@ async function licenceInfo(fileName) {
 async function main() {
   const herbs = [];
   for (let off = 0; ; off += 1000) {
-    const r = await fetch(
-      `${BASE}/rest/v1/herbs?select=id,slug,name,scientific_name,image_url,provenance&is_published=eq.true&order=slug&limit=1000&offset=${off}`,
-      { headers: H }
-    );
-    const page = await r.json();
+    let page = null;
+    for (let attempt = 1; attempt <= 4; attempt++) {
+      try {
+        const r = await fetch(
+          `${BASE}/rest/v1/herbs?select=id,slug,name,scientific_name,image_url,provenance&is_published=eq.true&order=slug&limit=1000&offset=${off}`,
+          { headers: H }
+        );
+        if (!r.ok) throw new Error(`supabase ${r.status}`);
+        page = await r.json();
+        break;
+      } catch (err) {
+        if (attempt === 4) throw err;
+        await sleep(3000 * attempt);
+      }
+    }
     herbs.push(...page);
     if (page.length < 1000) break;
   }
@@ -194,99 +204,104 @@ async function main() {
   const report = [];
   let processed = 0;
   for (const herb of work) {
-    processed++;
-    if (processed % 50 === 0) {
-      console.log(
-        `[img] ${processed}/${work.length} | ${report.filter((r) => r.status === "image").length} images`
-      );
-      await sleep(5000);
-    }
-    const sci = String(herb.scientific_name)
-      .replace(/\s*\(.*?\)\s*/g, " ")
-      .trim();
-    let lead = null;
     try {
-      lead = await leadImage(sci);
-      if (!lead) lead = await leadImage(herb.name);
-      if (!lead) {
+      processed++;
+      if (processed % 50 === 0) {
+        console.log(
+          `[img] ${processed}/${work.length} | ${report.filter((r) => r.status === "image").length} images`
+        );
+        await sleep(5000);
+      }
+      const sci = String(herb.scientific_name)
+        .replace(/\s*\(.*?\)\s*/g, " ")
+        .trim();
+      let lead = null;
+      try {
+        lead = await leadImage(sci);
+        if (!lead) lead = await leadImage(herb.name);
+        if (!lead) {
+          await sleep(SLEEP);
+          lead = await commonsSearch(sci);
+        }
+      } catch (e) {
+        report.push({ slug: herb.slug, status: `lookup failed: ${e.message}` });
         await sleep(SLEEP);
-        lead = await commonsSearch(sci);
-      }
-    } catch (e) {
-      report.push({ slug: herb.slug, status: `lookup failed: ${e.message}` });
-      await sleep(SLEEP);
-      continue;
-    }
-    await sleep(SLEEP);
-    if (!lead) {
-      report.push({ slug: herb.slug, status: "no image" });
-      continue;
-    }
-    let info = null;
-    try {
-      info = await licenceInfo(lead.file);
-    } catch (e) {
-      report.push({
-        slug: herb.slug,
-        status: `licence lookup failed: ${e.message}`,
-      });
-      await sleep(SLEEP);
-      continue;
-    }
-    await sleep(SLEEP);
-    if (!info) {
-      report.push({ slug: herb.slug, status: "no licence metadata" });
-      continue;
-    }
-    if (info.restrictions && /non-free|fair use/i.test(info.restrictions)) {
-      report.push({
-        slug: herb.slug,
-        status: `restricted: ${info.restrictions}`,
-      });
-      continue;
-    }
-    if (!ALLOWED.test(info.licence)) {
-      report.push({
-        slug: herb.slug,
-        status: `licence not allowed: ${info.licence || "none"}`,
-      });
-      continue;
-    }
-    const record = {
-      url: info.url,
-      credit: `${info.artist} — ${info.licence}`,
-      licence: info.licence,
-      licence_url: info.licenceUrl || null,
-      source: info.descriptionUrl,
-      file: lead.file,
-      retrieved_at: new Date().toISOString().slice(0, 10),
-    };
-    if (APPLY) {
-      const prov = herb.provenance || {};
-      prov.image = record;
-      const patch = await fetch(`${BASE}/rest/v1/herbs?id=eq.${herb.id}`, {
-        method: "PATCH",
-        headers: { ...H, Prefer: "return=minimal" },
-        body: JSON.stringify({ image_url: info.url, provenance: prov }),
-      });
-      if (!patch.ok) {
-        report.push({ slug: herb.slug, status: `patch ${patch.status}` });
         continue;
       }
-      // PostgREST answers 204 even when the filter matched no rows, so the write is
-      // only real if a read-back shows it. This is how the first run "applied" nine
-      // images and left every image_url null.
-      const check = await fetch(
-        `${BASE}/rest/v1/herbs?select=image_url&id=eq.${herb.id}`,
-        { headers: H }
-      );
-      const rows = await check.json();
-      if (!rows[0]?.image_url) {
-        report.push({ slug: herb.slug, status: "patch did not persist" });
+      await sleep(SLEEP);
+      if (!lead) {
+        report.push({ slug: herb.slug, status: "no image" });
         continue;
       }
+      let info = null;
+      try {
+        info = await licenceInfo(lead.file);
+      } catch (e) {
+        report.push({
+          slug: herb.slug,
+          status: `licence lookup failed: ${e.message}`,
+        });
+        await sleep(SLEEP);
+        continue;
+      }
+      await sleep(SLEEP);
+      if (!info) {
+        report.push({ slug: herb.slug, status: "no licence metadata" });
+        continue;
+      }
+      if (info.restrictions && /non-free|fair use/i.test(info.restrictions)) {
+        report.push({
+          slug: herb.slug,
+          status: `restricted: ${info.restrictions}`,
+        });
+        continue;
+      }
+      if (!ALLOWED.test(info.licence)) {
+        report.push({
+          slug: herb.slug,
+          status: `licence not allowed: ${info.licence || "none"}`,
+        });
+        continue;
+      }
+      const record = {
+        url: info.url,
+        credit: `${info.artist} — ${info.licence}`,
+        licence: info.licence,
+        licence_url: info.licenceUrl || null,
+        source: info.descriptionUrl,
+        file: lead.file,
+        retrieved_at: new Date().toISOString().slice(0, 10),
+      };
+      if (APPLY) {
+        const prov = herb.provenance || {};
+        prov.image = record;
+        const patch = await fetch(`${BASE}/rest/v1/herbs?id=eq.${herb.id}`, {
+          method: "PATCH",
+          headers: { ...H, Prefer: "return=minimal" },
+          body: JSON.stringify({ image_url: info.url, provenance: prov }),
+        });
+        if (!patch.ok) {
+          report.push({ slug: herb.slug, status: `patch ${patch.status}` });
+          continue;
+        }
+        // PostgREST answers 204 even when the filter matched no rows, so the write is
+        // only real if a read-back shows it. This is how the first run "applied" nine
+        // images and left every image_url null.
+        const check = await fetch(
+          `${BASE}/rest/v1/herbs?select=image_url&id=eq.${herb.id}`,
+          { headers: H }
+        );
+        const rows = await check.json();
+        if (!rows[0]?.image_url) {
+          report.push({ slug: herb.slug, status: "patch did not persist" });
+          continue;
+        }
+      }
+      report.push({ slug: herb.slug, status: "image", ...record });
+    } catch (err) {
+      // A single DNS blip or socket reset used to abort the whole backfill.
+      report.push({ slug: herb.slug, status: `error: ${err.message}` });
     }
-    report.push({ slug: herb.slug, status: "image", ...record });
   }
 
   const counts = {};
