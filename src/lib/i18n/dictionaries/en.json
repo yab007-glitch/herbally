@@ -632,7 +632,8 @@
       "drug": "Drug",
       "severity": "Severity",
       "description": "Description"
-    }
+    },
+    "uncitedNote": "These pairs are not yet linked to a primary source. Treat them as a prompt to ask a pharmacist, not as a citation."
   },
   "interactionExplainer": {
     "title": "What is a herb–drug interaction?",

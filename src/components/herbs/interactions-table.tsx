@@ -56,9 +56,16 @@ export function InteractionsTable({
 
   return (
     <section>
-      <h2 className="mb-4 text-xl font-semibold text-foreground">
+      <h2 className="mb-2 text-xl font-semibold text-foreground">
         {t("interactions.title")} ({interactions.length})
       </h2>
+      {/* Every pair here came from a source that could not be cited: the legacy
+          rows named Natural Medicines (commercial), WHO (all rights reserved) or
+          "Clinical Studies" with no link. The attributions are gone from the data,
+          so the page has to say plainly that no primary citation backs these. */}
+      <p className="mb-4 text-sm text-muted-foreground">
+        {t("interactions.uncitedNote")}
+      </p>
 
       {/* Severity Summary */}
       <div className="mb-4 flex flex-wrap gap-2">

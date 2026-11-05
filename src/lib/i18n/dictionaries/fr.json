@@ -632,7 +632,8 @@
       "drug": "Médicament",
       "severity": "Sévérité",
       "description": "Description"
-    }
+    },
+    "uncitedNote": "Ces associations ne sont pas encore liées à une source primaire. Considérez-les comme une invitation à consulter un pharmacien, non comme une référence."
   },
   "interactionExplainer": {
     "title": "Qu'est-ce qu'une interaction plante-médicament ?",

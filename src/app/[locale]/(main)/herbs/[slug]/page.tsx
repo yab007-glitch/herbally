@@ -187,6 +187,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   const herb = result.data;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
+  // Only herbs with a real French record count as French. Pages under /fr render
+  // French chrome around English content when no translation exists, so declaring
+  // those as the fr alternate invites Google to treat them as duplicates.
+  const frRecord = (herb.translations as Record<string, unknown> | null)?.fr;
+  const hasFr =
+    !!frRecord &&
+    typeof frRecord === "object" &&
+    Object.keys(frRecord).length > 0;
   const keywords = [
     herb.name,
     herb.scientific_name,
@@ -232,21 +240,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           })
   );
 
+  const untranslatedFr = metaLocale === "fr" && !hasFr;
+
   return {
     title,
     description,
     keywords,
-    alternates: {
-      canonical:
-        metaLocale === "fr"
-          ? `${baseUrl}/fr/herbs/${slug}`
-          : `${baseUrl}/herbs/${slug}`,
-      languages: {
-        en: `${baseUrl}/herbs/${slug}`,
-        fr: `${baseUrl}/fr/herbs/${slug}`,
-        "x-default": `${baseUrl}/herbs/${slug}`,
-      },
-    },
+    ...(untranslatedFr ? { robots: { index: false, follow: true } } : {}),
+    alternates: hasFr
+      ? {
+          canonical:
+            metaLocale === "fr"
+              ? `${baseUrl}/fr/herbs/${slug}`
+              : `${baseUrl}/herbs/${slug}`,
+          languages: {
+            en: `${baseUrl}/herbs/${slug}`,
+            fr: `${baseUrl}/fr/herbs/${slug}`,
+            "x-default": `${baseUrl}/herbs/${slug}`,
+          },
+        }
+      : {
+          // No French record: point every French request at the English page and
+          // claim no fr alternate, so the untranslated copy is not indexed twice.
+          canonical: `${baseUrl}/herbs/${slug}`,
+          languages: {
+            en: `${baseUrl}/herbs/${slug}`,
+            "x-default": `${baseUrl}/herbs/${slug}`,
+          },
+        },
     openGraph: {
       title,
       description,

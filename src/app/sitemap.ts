@@ -475,18 +475,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           changeFrequency: "weekly" as const,
           priority: 0.7,
         });
-        // Every herb has a live French URL: /fr/herbs/<slug> returns 200 for all
-        // of them, and generateMetadata already declares it as the fr hreflang
-        // alternate. Listing only the 2,603 rows with a `translations.fr` block
-        // left 648 live pages out of the sitemap while telling Google they exist.
-        herbPages.push({
-          url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
-          lastModified: herb.updated_at
-            ? new Date(herb.updated_at)
-            : new Date(),
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-        });
+        // Only list a French URL when the herb actually has a French record.
+        // /fr/herbs/<slug> resolves for every slug, but without `translations.fr`
+        // it renders French chrome around English content — listing that as the
+        // French page is how a site gets a section treated as duplicate content.
+        const t = herb.translations as Record<string, unknown> | null;
+        const frRecord =
+          t && typeof t === "object" ? (t as { fr?: unknown }).fr : null;
+        const hasFr =
+          !!frRecord &&
+          typeof frRecord === "object" &&
+          Object.keys(frRecord).length > 0;
+        if (hasFr) {
+          herbPages.push({
+            url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
+            lastModified: herb.updated_at
+              ? new Date(herb.updated_at)
+              : new Date(),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+          });
+        }
       }
 
       if (herbsBatch.length < batchSize) break;
