@@ -49,7 +49,10 @@ const SLUGS = (() => {
 
 const ALLOWED =
   /^(cc0|cc[- ]by(-sa)?[- ]?\d|public domain|pd-|no restrictions)/i;
-const SLEEP = 350;
+// Wikimedia tolerates ~200 req/min and this script makes three per herb; 900ms
+// between calls keeps it near a third of that, because the first run at 350ms got
+// "upstream request timeout" pages back from the API.
+const SLEEP = 900;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function api(host, params, tries = 4) {
@@ -102,9 +105,44 @@ async function leadImage(title) {
   const pages = j.query?.pages ?? {};
   const page = Object.values(pages)[0];
   if (!page || page.missing !== undefined) return null;
-  const file = page.pageimage;
+  // `pageimage` is absent on many responses even when `original` is present, which
+  // made the first backfill skip plants that do have a lead photo. Fall back to the
+  // filename inside the original URL.
+  const originalUrl = (page.original?.source ?? "").split("?")[0];
+  const file =
+    page.pageimage ||
+    (originalUrl
+      ? decodeURIComponent(originalUrl.split("/").pop() || "")
+      : null);
   if (!file) return null;
-  return { file, url: page.original?.source ?? null };
+  return { file, url: originalUrl || null };
+}
+
+/**
+ * Fallback for plants with no English Wikipedia article: search Commons itself.
+ *
+ * The search is restricted to the File namespace and the file name must contain the
+ * genus and the epithet, so a paper titled "Abrus precatorius seeds" cannot be
+ * mistaken for Abrus cantoniensis.
+ */
+async function commonsSearch(sci) {
+  const parts = String(sci).toLowerCase().split(/\s+/).slice(0, 2);
+  const j = await api("commons.wikimedia.org", {
+    action: "query",
+    list: "search",
+    srsearch: `filetype:bitmap ${sci}`,
+    srnamespace: "6",
+    srlimit: "5",
+  });
+  const hits = j.query?.search ?? [];
+  for (const hit of hits) {
+    const title = String(hit.title || "").replace(/^File:/, "");
+    const lower = title.toLowerCase();
+    if (parts.every((p) => p && lower.includes(p))) {
+      return { file: title, url: null };
+    }
+  }
+  return null;
 }
 
 /** Licence + author for a Commons file. */
@@ -154,7 +192,15 @@ async function main() {
   console.log(`[img] ${work.length} herbs to try${APPLY ? "" : " (dry run)"}`);
 
   const report = [];
+  let processed = 0;
   for (const herb of work) {
+    processed++;
+    if (processed % 50 === 0) {
+      console.log(
+        `[img] ${processed}/${work.length} | ${report.filter((r) => r.status === "image").length} images`
+      );
+      await sleep(5000);
+    }
     const sci = String(herb.scientific_name)
       .replace(/\s*\(.*?\)\s*/g, " ")
       .trim();
@@ -162,6 +208,10 @@ async function main() {
     try {
       lead = await leadImage(sci);
       if (!lead) lead = await leadImage(herb.name);
+      if (!lead) {
+        await sleep(SLEEP);
+        lead = await commonsSearch(sci);
+      }
     } catch (e) {
       report.push({ slug: herb.slug, status: `lookup failed: ${e.message}` });
       await sleep(SLEEP);

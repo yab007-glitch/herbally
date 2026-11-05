@@ -33,12 +33,17 @@ export function HerbPhoto({
   licence?: string | null;
   licenceUrl?: string | null;
 }) {
+  // The record stores "Artist — Licence" and the caption appends the licence, so
+  // strip the trailing pair or the line reads "Public domain · Public domain".
+  const artist = (credit || "")
+    .replace(/\s+—\s+(CC[^—]*|Public domain|GFDL[^—]*)$/i, "")
+    .trim();
   const photo: HerbPhotoCredit | null = imageUrl
     ? {
         src: imageUrl,
         licence: licence || "",
         licenceUrl: licenceUrl || null,
-        artist: credit || "Wikimedia Commons",
+        artist: artist || "Wikimedia Commons",
         commonsPage: creditUrl || null,
       }
     : (HERB_PHOTOS[slug] ?? null);
