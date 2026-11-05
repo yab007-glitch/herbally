@@ -1,0 +1,105 @@
+{
+ "generated_at": "2026-11-05T08:02:23.952Z",
+ "applied": true,
+ "report": [
+  {
+   "slug": "ashwagandha",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/WithaniaFruit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "Wowbobwow12 — CC BY-SA 3.0",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "source": "https://commons.wikimedia.org/wiki/File:WithaniaFruit.jpg",
+   "file": "WithaniaFruit.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "chamomile",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Matricaria_February_2008-1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "Alvesgaspar — CC BY-SA 3.0",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "source": "https://commons.wikimedia.org/wiki/File:Matricaria_February_2008-1.jpg",
+   "file": "Matricaria_February_2008-1.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "echinacea",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Echinacea_purpurea_Grandview_Prairie.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "Eric Hunt — CC BY-SA 4.0",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "source": "https://commons.wikimedia.org/wiki/File:Echinacea_purpurea_Grandview_Prairie.jpg",
+   "file": "Echinacea_purpurea_Grandview_Prairie.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "garlic",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/3/39/Allium_sativum_Woodwill_1793.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "Unknown — Public domain",
+   "licence": "Public domain",
+   "licence_url": null,
+   "source": "https://commons.wikimedia.org/wiki/File:Allium_sativum_Woodwill_1793.jpg",
+   "file": "Allium_sativum_Woodwill_1793.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "ginger",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/1/18/Koeh-146-no_text.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "Franz Eugen Köhler, Köhler's Medizinal-Pflanzen — Public domain",
+   "licence": "Public domain",
+   "licence_url": null,
+   "source": "https://commons.wikimedia.org/wiki/File:Koeh-146-no_text.jpg",
+   "file": "Koeh-146-no_text.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "ginkgo-biloba",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/e/e0/GINKGOBAUM-2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "EecherplazGinkgo06.jpg: Cayambe derivative work: Ginkgotree (talk) — CC BY-SA 3.0",
+   "licence": "CC BY-SA 3.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/3.0",
+   "source": "https://commons.wikimedia.org/wiki/File:GINKGOBAUM-2.jpg",
+   "file": "GINKGOBAUM-2.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "st-johns-wort",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/c/cf/%28MHNT%29_Hypericum_perforatum_flower_and_buttons.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "Didier Descouens — CC BY-SA 4.0",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "source": "https://commons.wikimedia.org/wiki/File:(MHNT)_Hypericum_perforatum_flower_and_buttons.jpg",
+   "file": "(MHNT)_Hypericum_perforatum_flower_and_buttons.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "turmeric",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Turmeric_inflorescence.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "SKsiddhartthan — CC BY-SA 4.0",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "source": "https://commons.wikimedia.org/wiki/File:Turmeric_inflorescence.jpg",
+   "file": "Turmeric_inflorescence.jpg",
+   "retrieved_at": "2026-11-05"
+  },
+  {
+   "slug": "valerian",
+   "status": "image",
+   "url": "https://upload.wikimedia.org/wikipedia/commons/a/af/Valeriana_officinalis_inflorescence_-_Niitv%C3%A4lja.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "credit": "Ivar Leidus — CC BY-SA 4.0",
+   "licence": "CC BY-SA 4.0",
+   "licence_url": "https://creativecommons.org/licenses/by-sa/4.0",
+   "source": "https://commons.wikimedia.org/wiki/File:Valeriana_officinalis_inflorescence_-_Niitv%C3%A4lja.jpg",
+   "file": "Valeriana_officinalis_inflorescence_-_Niitvälja.jpg",
+   "retrieved_at": "2026-11-05"
+  }
+ ]
+}

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { HERB_PHOTOS } from "@/lib/herbs/photo-credits";
+import { HERB_PHOTOS, type HerbPhotoCredit } from "@/lib/herbs/photo-credits";
 
 /**
  * Botanical photograph for a herb page, with the attribution its licence
@@ -17,12 +17,31 @@ export function HerbPhoto({
   slug,
   name,
   className,
+  imageUrl,
+  credit,
+  creditUrl,
+  licence,
+  licenceUrl,
 }: {
   slug: string;
   name: string;
   className?: string;
+  /** Image from the herb record (Commons), preferred over the static map. */
+  imageUrl?: string | null;
+  credit?: string | null;
+  creditUrl?: string | null;
+  licence?: string | null;
+  licenceUrl?: string | null;
 }) {
-  const photo = HERB_PHOTOS[slug];
+  const photo: HerbPhotoCredit | null = imageUrl
+    ? {
+        src: imageUrl,
+        licence: licence || "",
+        licenceUrl: licenceUrl || null,
+        artist: credit || "Wikimedia Commons",
+        commonsPage: creditUrl || null,
+      }
+    : (HERB_PHOTOS[slug] ?? null);
   if (!photo) return null;
 
   return (

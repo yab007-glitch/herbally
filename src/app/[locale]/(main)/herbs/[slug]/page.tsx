@@ -740,7 +740,28 @@ export default async function HerbDetailPage({ params }: Props) {
       />
 
       {/* Only the twelve herbs with a licensed photograph render anything. */}
-      <HerbPhoto slug={slug} name={herb.name} className="mt-2" />
+      <HerbPhoto
+        slug={slug}
+        name={herb.name}
+        className="mt-2"
+        imageUrl={herb.image_url}
+        credit={
+          (herb.provenance as { image?: { credit?: string } } | null)?.image
+            ?.credit
+        }
+        creditUrl={
+          (herb.provenance as { image?: { source?: string } } | null)?.image
+            ?.source
+        }
+        licence={
+          (herb.provenance as { image?: { licence?: string } } | null)?.image
+            ?.licence
+        }
+        licenceUrl={
+          (herb.provenance as { image?: { licence_url?: string } } | null)
+            ?.image?.licence_url
+        }
+      />
 
       {/* Personalized interaction warning (H1). Client component so the ISR
           page stays static for anonymous traffic; signed-in users get a

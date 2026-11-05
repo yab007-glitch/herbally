@@ -49,6 +49,12 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.supabase.co",
       },
+      // Botanical photographs come from Wikimedia Commons; every one carries its
+      // author and licence in provenance.image and is credited under the figure.
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
     ],
   },
   compress: true,
