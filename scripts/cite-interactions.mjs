@@ -26,11 +26,7 @@ for (const line of readFileSync(`${ROOT}.env.local`, "utf8").split("\n")) {
 }
 const BASE = env.NEXT_PUBLIC_SUPABASE_URL;
 const KEY = env.SUPABASE_SERVICE_ROLE_KEY;
-const H = {
-  apikey: KEY,
-  Authorization: `Bearer ${KEY}`,
-  "Content-Type": "application/json",
-};
+const H = { apikey: KEY, Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" };
 const UA = "HerbAlly/1.0 (https://herbally.app)";
 const APPLY = process.argv.includes("--apply");
 const limArg = process.argv.indexOf("--limit");
@@ -63,28 +59,17 @@ async function esearch(term) {
 
 async function esummary(ids) {
   if (!ids.length) return {};
-  return (
-    (
-      await get(
-        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=" +
-          ids.join(",")
-      )
-    ).result ?? {}
-  );
+  return (await get(
+    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&retmode=json&id=" + ids.join(",")
+  )).result ?? {};
 }
 
-const drugTerm = (n) =>
-  String(n || "")
-    .replace(/\s*\([^)]*\)\s*$/, "")
-    .trim();
+const drugTerm = (n) => String(n || "").replace(/\s*\([^)]*\)\s*$/, "").trim();
 
 async function main() {
   const herbs = [];
   for (let off = 0; ; off += 1000) {
-    const r = await fetch(
-      `${BASE}/rest/v1/herbs?select=id,name,scientific_name&limit=1000&offset=${off}`,
-      { headers: H }
-    );
+    const r = await fetch(`${BASE}/rest/v1/herbs?select=id,name,scientific_name&limit=1000&offset=${off}`, { headers: H });
     const page = await r.json();
     herbs.push(...page);
     if (page.length < 1000) break;
@@ -102,9 +87,7 @@ async function main() {
     if (page.length < 500) break;
   }
   const work = LIMIT ? rows.slice(0, LIMIT) : rows;
-  console.log(
-    `[cite] ${work.length} pairs, strict title rule, ${APPLY ? "APPLY" : "dry run"}`
-  );
+  console.log(`[cite] ${work.length} pairs, strict title rule, ${APPLY ? "APPLY" : "dry run"}`);
 
   const report = [];
   for (const row of work) {
@@ -116,79 +99,42 @@ async function main() {
     try {
       ids = await esearch(`("${herbName}"[Title]) AND ("${drug}"[Title])`);
     } catch (e) {
-      report.push({
-        id: row.id,
-        herb: herbName,
-        drug,
-        status: `search failed: ${e.message}`,
-      });
+      report.push({ id: row.id, herb: herbName, drug, status: `search failed: ${e.message}` });
       await sleep(1200);
       continue;
     }
     await sleep(1100);
     if (!ids.length) {
-      report.push({
-        id: row.id,
-        herb: herbName,
-        drug,
-        status: "no title match",
-      });
+      report.push({ id: row.id, herb: herbName, drug, status: "no title match" });
       continue;
     }
     const sum = await esummary(ids.slice(0, 5));
     await sleep(1100);
-    const hit = ids
-      .slice(0, 5)
-      .find((i) => INTERACTION_TERM.test(sum[i]?.title || ""));
+    const hit = ids.slice(0, 5).find((i) => INTERACTION_TERM.test(sum[i]?.title || ""));
     if (!hit) {
-      report.push({
-        id: row.id,
-        herb: herbName,
-        drug,
-        status: "title match, not an interaction study",
-      });
+      report.push({ id: row.id, herb: herbName, drug, status: "title match, not an interaction study" });
       continue;
     }
     const meta = sum[hit];
     const citation = {
       pmid: hit,
-      title: String(meta.title || "")
-        .replace(/\s+/g, " ")
-        .slice(0, 300),
+      title: String(meta.title || "").replace(/\s+/g, " ").slice(0, 300),
       journal: meta.source || "",
       year: String(meta.pubdate || "").slice(0, 4),
       url: `https://pubmed.ncbi.nlm.nih.gov/${hit}/`,
     };
     if (APPLY) {
-      const patch = await fetch(
-        `${BASE}/rest/v1/drug_interactions?id=eq.${row.id}`,
-        {
-          method: "PATCH",
-          headers: { ...H, Prefer: "return=minimal" },
-          body: JSON.stringify({
-            source: "PubMed",
-            source_url: citation.url,
-            evidence_level: "title-match",
-          }),
-        }
-      );
+      const patch = await fetch(`${BASE}/rest/v1/drug_interactions?id=eq.${row.id}`, {
+        method: "PATCH",
+        headers: { ...H, Prefer: "return=minimal" },
+        body: JSON.stringify({ source: "PubMed", source_url: citation.url, evidence_level: "title-match" }),
+      });
       if (!patch.ok) {
-        report.push({
-          id: row.id,
-          herb: herbName,
-          drug,
-          status: `patch ${patch.status}`,
-        });
+        report.push({ id: row.id, herb: herbName, drug, status: `patch ${patch.status}` });
         continue;
       }
     }
-    report.push({
-      id: row.id,
-      herb: herbName,
-      drug,
-      status: "cited",
-      citation,
-    });
+    report.push({ id: row.id, herb: herbName, drug, status: "cited", citation });
   }
 
   const counts = {};
@@ -196,16 +142,10 @@ async function main() {
   console.log("[cite] done:", JSON.stringify(counts));
   writeFileSync(
     `${ROOT}artifacts/interaction-citations.json`,
-    JSON.stringify(
-      { generated_at: new Date().toISOString(), applied: APPLY, report },
-      null,
-      1
-    )
+    JSON.stringify({ generated_at: new Date().toISOString(), applied: APPLY, report }, null, 1)
   );
   for (const r of report.filter((x) => x.status === "cited").slice(0, 6)) {
-    console.log(
-      `  ${r.herb} + ${r.drug}: ${r.citation.year} ${r.citation.journal} — ${r.citation.title.slice(0, 90)}`
-    );
+    console.log(`  ${r.herb} + ${r.drug}: ${r.citation.year} ${r.citation.journal} — ${r.citation.title.slice(0, 90)}`);
   }
 }
 
