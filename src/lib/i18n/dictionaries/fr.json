@@ -1529,7 +1529,70 @@
       "privacy": "Lire notre politique de confidentialité",
       "donate": "Faire un don volontaire"
     },
-    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela."
+    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela.",
+    "audience": {
+      "title": "Qui lit HerbAlly",
+      "description": "Un public modeste, décrit honnêtement. Nous préférons vous montrer les chiffres réels plutôt qu'un argumentaire que vous pourriez vérifier et trouver gonflé.",
+      "stats": {
+        "visitors": {
+          "value": "1 800",
+          "label": "visiteurs sur les 30 derniers jours"
+        },
+        "pageviews": {
+          "value": "2 300",
+          "label": "pages vues sur les 30 derniers jours"
+        },
+        "languages": {
+          "value": "EN + FR",
+          "label": "chaque page entièrement traduite"
+        },
+        "markets": {
+          "value": "CA · FR · monde",
+          "label": "où se trouvent les lecteurs"
+        }
+      },
+      "note": "Chiffres bruts de notre propre analytique pour les 30 jours précédant le 29 octobre 2026. Environ la moitié des sessions récentes semblent automatisées : le public humain est donc plus petit que le chiffre affiché. Nous vous le disons ici plutôt que de vous le laisser découvrir plus tard.",
+      "fit": "HerbAlly convient à un commanditaire dont les clients se demandent ce que fait une plante, si elle est compatible avec leurs médicaments, ou quelle quantité prendre — et qui veut associer son nom à cette réponse sans acheter d'influence sur elle."
+    },
+    "packages": {
+      "title": "Formules de commandite",
+      "description": "Tarifs publiés, sans enchère, sans article commandité, et sans mot à dire sur ce que le site affirme au sujet d'une plante. Annulable en tout temps.",
+      "currency": "Tous les prix sont en dollars canadiens.",
+      "items": {
+        "supporter": {
+          "name": "Soutien",
+          "price": "25 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Votre nom et un lien dans le pied de page",
+            "Mention sur cette page",
+            "Annulable en tout temps"
+          ]
+        },
+        "sponsor": {
+          "name": "Commanditaire",
+          "price": "50 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Tout ce que comprend Soutien",
+            "Une ligne « Soutenu par » sur les pages de plantes",
+            "Un bilan trimestriel de ce que votre soutien a payé"
+          ]
+        },
+        "launch": {
+          "name": "Partenaire de lancement",
+          "price": "150 $ CA",
+          "cadence": "par an",
+          "features": [
+            "Tout ce que comprend Commanditaire",
+            "Votre logo sur la page d'accueil",
+            "Une entrée nommée dans notre registre public de commanditaires"
+          ]
+        }
+      },
+      "cta": "Se renseigner sur cette formule",
+      "note": "Nous publions qui nous soutient. Les commanditaires ne révisent, ne modifient, n'approuvent ni ne bloquent jamais le contenu santé, et aucune formule n'achète une mention favorable d'une plante."
+    }
   },
   "meta": {
     "herbsDatabase": "Base de Données de Plantes Médicinales",
