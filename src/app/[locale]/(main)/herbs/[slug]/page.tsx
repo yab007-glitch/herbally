@@ -151,7 +151,9 @@ const loadHerbPageBundle = unstable_cache(
     if (!supabase) return null;
     // The generated database types predate this function; the call is typed here
     // instead of hand-editing the generated file.
-    const rpc = supabase.rpc as unknown as (
+    // Bind the method: supabase-js' rpc reads `this.rest`, so a detached
+    // reference throws "Cannot read properties of undefined (reading 'rest')".
+    const rpc = supabase.rpc.bind(supabase) as unknown as (
       fn: string,
       args: Record<string, unknown>
     ) => Promise<{ data: unknown; error: { message?: string } | null }>;
