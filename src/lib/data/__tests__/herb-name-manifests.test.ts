@@ -62,6 +62,7 @@ const corrections = correctionsJson as unknown as {
   skipped: SkippedEntry[];
   display_name_alignments: DisplayAlignment[];
   slug_decisions: Record<string, SlugDecision>;
+  resolutions?: Record<string, string>;
 };
 const renames: SlugRename[] = renamesJson.renames;
 const mergeRedirects = mergeRedirectsJson as Array<{
@@ -101,6 +102,15 @@ describe("herb name corrections manifest", () => {
       const entry = applied.get(alignment.slug);
       expect(entry, alignment.slug).toBeDefined();
       expect(alignment.new_name, alignment.slug).toBe(targetOf(entry!));
+    }
+  });
+
+  it("only resolves applied corrections", () => {
+    const appliedSlugs = new Set(
+      corrections.applied.map((entry) => entry.slug)
+    );
+    for (const slug of Object.keys(corrections.resolutions ?? {})) {
+      expect(appliedSlugs.has(slug), slug).toBe(true);
     }
   });
 });
