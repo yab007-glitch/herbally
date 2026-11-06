@@ -43,7 +43,7 @@ const genusOf = (sci) =>
  * Only a specific indication counts as a match. Short strings like "digestive"
  * matched half the library and produced nonsense neighbours.
  */
-const useKey = (uses) => {
+const primaryUseKey = (uses) => {
   const first = (uses || [])
     .map((u) =>
       String(u)
@@ -73,7 +73,7 @@ async function main() {
   for (const h of herbs) {
     const g = genusOf(h.scientific_name);
     if (g) byGenus.set(g, [...(byGenus.get(g) || []), h]);
-    const u = useKey(h.traditional_uses);
+    const u = primaryUseKey(h.traditional_uses);
     if (u) byUse.set(u, [...(byUse.get(u) || []), h]);
   }
 
@@ -91,10 +91,9 @@ async function main() {
     ))
       push(sib.slug);
     // then herbs that claim the same leading indication
-    for (const sib of (byUse.get(useKey(h.traditional_uses)) || []).slice(
-      0,
-      PER_REASON + 1
-    ))
+    for (const sib of (
+      byUse.get(primaryUseKey(h.traditional_uses)) || []
+    ).slice(0, PER_REASON + 1))
       push(sib.slug);
     plan.push({ id: h.id, slug: h.slug, related: picks });
   }

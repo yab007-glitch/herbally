@@ -124,18 +124,52 @@ const loadHerb = cache((slug: string, locale: Locale) =>
  * Canada, and those pages must render without the section rather than with an
  * empty shell.
  */
-const loadRegulatoryEvidence = unstable_cache(
-  async (slug: string): Promise<RegulatoryEvidence | null> => {
+/**
+ * One round trip per herb page instead of six.
+ *
+ * Supabase charges Disk IO, and this page used to issue a separate query for the
+ * herb, its monograph, PubMed sheet, FAQs, regulator evidence and related herbs.
+ * A cold cache after a deploy turned ~3,200 pages into ~19,000 queries and the
+ * project ran out of IO budget twice. herb_page_bundle() returns the whole page
+ * payload as one jsonb, so a render costs one query.
+ *
+ * The individual shapes are unchanged: each section still receives exactly the
+ * columns it used to select.
+ */
+type HerbPageBundle = {
+  herb: Record<string, unknown> | null;
+  regulatory: RegulatoryEvidence | null;
+  monograph: Record<string, unknown> | null;
+  pubmed: Record<string, unknown> | null;
+  faqs: Array<Record<string, unknown>>;
+  related: Array<{ name: string; slug: string; scientific_name: string }>;
+};
+
+const loadHerbPageBundle = unstable_cache(
+  async (slug: string): Promise<HerbPageBundle | null> => {
     const supabase = getAnonClient();
     if (!supabase) return null;
-    const { data } = await supabase
-      .from("herb_regulatory_evidence")
-      .select(
-        "herb_slug,source,source_licence,purposes,doses,risks,products_sampled,source_urls,retrieved_at"
-      )
-      .eq("herb_slug", slug)
-      .maybeSingle();
-    return (data as RegulatoryEvidence | null) ?? null;
+    // The generated database types predate this function; the call is typed here
+    // instead of hand-editing the generated file.
+    const rpc = supabase.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>
+    ) => Promise<{ data: unknown; error: { message?: string } | null }>;
+    const { data, error } = await rpc("herb_page_bundle", { p_slug: slug });
+    if (error || !data) {
+      logger.warn("herb_page_bundle failed", { slug, error: error?.message });
+      return null;
+    }
+    return data as HerbPageBundle;
+  },
+  ["herb-page-bundle-v1"],
+  { revalidate: 86400, tags: ["herb-page-bundle"] }
+);
+
+const loadRegulatoryEvidence = unstable_cache(
+  async (slug: string): Promise<RegulatoryEvidence | null> => {
+    const bundle = await loadHerbPageBundle(slug);
+    return (bundle?.regulatory as RegulatoryEvidence | null) ?? null;
   },
   ["herb-regulatory-evidence"],
   { revalidate: 86400, tags: ["herb-regulatory-evidence"] }
@@ -367,17 +401,22 @@ export default async function HerbDetailPage({ params }: Props) {
   // Define cached fetcher
   const getMonographCached = unstable_cache(
     async (herbSlug: string) => {
-      const supabase = getAnonClient();
-      if (!supabase) return null;
-      const { data: dbMonograph } = await supabase
-        .from("herb_monographs")
-        .select(
-          "summary, mechanism, claims, safety_notes, drug_interactions, pregnancy_category, key_citations, status, generation_method, provenance"
-        )
-        .eq("herb_slug", herbSlug)
-        .eq("status", "published")
-        .single();
-      return dbMonograph;
+      const bundle = await loadHerbPageBundle(herbSlug);
+      if (!bundle?.monograph) return null;
+      const m = bundle.monograph as Record<string, unknown>;
+      // Only the columns this page reads, so the callers keep their old shape.
+      return {
+        summary: m.summary,
+        mechanism: m.mechanism,
+        claims: m.claims,
+        safety_notes: m.safety_notes,
+        drug_interactions: m.drug_interactions,
+        pregnancy_category: m.pregnancy_category,
+        key_citations: m.key_citations,
+        status: m.status,
+        generation_method: m.generation_method,
+        provenance: m.provenance,
+      };
     },
     [`monograph-${slug}`],
     { revalidate: 86400, tags: [`monograph-${slug}`] }
@@ -387,13 +426,17 @@ export default async function HerbDetailPage({ params }: Props) {
   // monograph). Cached like the monograph; anon-readable via RLS.
   const getPubmedSheetCached = unstable_cache(
     async (herbSlug: string) => {
-      const supabase = getAnonClient();
-      if (!supabase) return null;
-      const { data } = await supabase
-        .from("herb_pubmed_monographs")
-        .select("content, citations, pmids, article_count, model, status")
-        .eq("slug", herbSlug)
-        .single();
+      const bundle = await loadHerbPageBundle(herbSlug);
+      if (!bundle?.pubmed) return null;
+      const p = bundle.pubmed as Record<string, unknown>;
+      const data = {
+        content: (p.content as string | null) ?? null,
+        citations: (p.citations as unknown[] | null) ?? null,
+        pmids: (p.pmids as string[] | null) ?? null,
+        article_count: (p.article_count as number | null) ?? 0,
+        model: (p.model as string | null) ?? null,
+        status: (p.status as string | null) ?? null,
+      };
       return data;
     },
     [`pubmed-sheet-${slug}`],
@@ -444,10 +487,10 @@ export default async function HerbDetailPage({ params }: Props) {
     // Option B: the rich narrative is only RENDERED for herbs with a
     // hand-written monograph (see the tabs gate). The monograph object is
     // still built so references/SEO metadata stay consistent.
-    monograph = {
+    const builtMonograph: Monograph = {
       slug,
-      summary: dbMonograph.summary,
-      mechanism: dbMonograph.mechanism,
+      summary: (dbMonograph.summary as string) ?? "",
+      mechanism: (dbMonograph.mechanism as string) ?? "",
       claims: dbMonograph.claims as Monograph["claims"],
       safetyNotes: dbMonograph.safety_notes as Monograph["safetyNotes"],
       drugInteractions:
@@ -456,24 +499,25 @@ export default async function HerbDetailPage({ params }: Props) {
         dbMonograph.pregnancy_category as Monograph["pregnancyCategory"],
       keyCitations: dbMonograph.key_citations as Monograph["keyCitations"],
     };
+    monograph = builtMonograph;
 
     // For herbs without manual verification, override the fabricated
     // mechanism text with an honest disclosure. The stored DB monographs
     // were AI-generated with specific molecular pathway claims (e.g.
     // "modulates NF-κB, COX-2") that were never verified against primary
     // literature. Don't present them as fact.
-    if (isNotManuallyVerified && monograph.mechanism) {
-      monograph.mechanism = `The specific molecular targets and pharmacokinetic pathways by which the active compounds of ${herb.name} exert their reported effects have not been verified against primary literature for this entry. This monograph was generated by AI and has not yet been reviewed against authoritative sources. Consult PubMed or a qualified pharmacognosist for evidence-based mechanism data.`;
+    if (isNotManuallyVerified && builtMonograph.mechanism) {
+      builtMonograph.mechanism = `The specific molecular targets and pharmacokinetic pathways by which the active compounds of ${herb.name} exert their reported effects have not been verified against primary literature for this entry. This monograph was generated by AI and has not yet been reviewed against authoritative sources. Consult PubMed or a qualified pharmacognosist for evidence-based mechanism data.`;
     }
     // Also override the summary if it contains specific clinical claims
     // that weren't verified
-    if (isNotManuallyVerified && monograph.summary) {
+    if (isNotManuallyVerified && builtMonograph.summary) {
       // Only prepend the disclaimer if the summary doesn't already mention it
       if (
-        !/not been verified/i.test(monograph.summary) &&
-        !/AI-generated/i.test(monograph.summary)
+        !/not been verified/i.test(builtMonograph.summary) &&
+        !/AI-generated/i.test(builtMonograph.summary)
       ) {
-        monograph.summary = `${monograph.summary} (This summary was AI-generated and has not been verified against primary sources.)`;
+        builtMonograph.summary = `${builtMonograph.summary} (This summary was AI-generated and has not been verified against primary sources.)`;
       }
     }
   }
@@ -494,15 +538,9 @@ export default async function HerbDetailPage({ params }: Props) {
   // Locale is a parameter (not a closure over the later `locale` const) and
   // part of the cache key so EN/FR entries can't poison each other.
   const getFaqsCached = unstable_cache(
-    async (herbId: string, faqLocale: string) => {
-      const supabase = getAnonClient();
-      if (!supabase) return [];
-      const { data } = await supabase
-        .from("herb_faqs")
-        .select("question, answer, category, translations")
-        .eq("herb_id", herbId)
-        .order("sort_order", { ascending: true })
-        .limit(6);
+    async (herbSlug: string, faqLocale: string) => {
+      const bundle = await loadHerbPageBundle(herbSlug);
+      const data = bundle?.faqs ?? [];
       const rows = (data || []) as unknown as Array<{
         question: string;
         answer: string;
@@ -530,7 +568,7 @@ export default async function HerbDetailPage({ params }: Props) {
     { revalidate: 86400, tags: [`herb-faqs-${slug}`] }
   );
 
-  const preGeneratedFaqs = await getFaqsCached(herb.id, await getLocale());
+  const preGeneratedFaqs = await getFaqsCached(slug, await getLocale());
 
   const severityCounts = {
     contraindicated: interactions.filter(
@@ -641,17 +679,20 @@ export default async function HerbDetailPage({ params }: Props) {
       // a category roll-up: "other Curcuma species" is more useful than "another
       // herb filed under Digestive".
       if (curatedSlugs.length) {
-        const { data } = await supabaseClient
-          .from("herbs")
-          .select("name, slug, scientific_name")
-          .in("slug", curatedSlugs)
-          .eq("is_published", true);
-        if (data?.length)
-          return data as Array<{
-            name: string;
-            slug: string;
-            scientific_name: string;
-          }>;
+        const bundle = await loadHerbPageBundle(herbSlug);
+        if (bundle?.related?.length) {
+          // Preserve the curated order rather than the database's.
+          const bySlug = new Map(bundle.related.map((r) => [r.slug, r]));
+          const ordered = curatedSlugs
+            .map((s) => bySlug.get(s))
+            .filter(
+              (
+                r
+              ): r is { name: string; slug: string; scientific_name: string } =>
+                Boolean(r)
+            );
+          if (ordered.length) return ordered;
+        }
       }
       let relatedQuery = supabaseClient
         .from("herbs")
