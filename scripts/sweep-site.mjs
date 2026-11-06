@@ -13,7 +13,12 @@
  *
  * Read-only. Prints a summary and writes the failures to artifacts/site-sweep.json.
  *
- * Usage: node scripts/sweep-site.mjs [--limit N] [--concurrency 4]
+ * Usage: node scripts/sweep-site.mjs [--limit N] [--concurrency 2]
+ *
+ * Keep concurrency low. Right after a deploy every page is cold, so each request
+ * regenerates from the database; a 4-wide sweep of 3,240 pages is a sustained
+ * write-through burst that has wedged the free-tier Supabase instance twice. The
+ * sweep is a crawl, not a load test.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 
@@ -103,7 +108,8 @@ async function main() {
       results.push(await check(list[idx]));
       if (results.length % 250 === 0)
         console.log(`[sweep] ${results.length}/${list.length}`);
-      await sleep(60);
+      // Pause between pages so a cold sweep cannot saturate the database.
+      await sleep(200);
     }
   });
   await Promise.all(workers);
