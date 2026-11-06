@@ -92,11 +92,30 @@ export function FloatingChatButton() {
         return;
     }
 
-    const show = window.setTimeout(() => {
+    // On a phone the homepage's primary button sits low on the first screen, and
+    // a bubble parked over it is worse than no bubble. So a small screen waits
+    // until the visitor has scrolled past that button (240px) before speaking;
+    // a wide screen has room to speak immediately.
+    // jsdom has no matchMedia; treat that as a wide screen so the component
+    // behaves predictably in tests.
+    const isNarrow =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 767px)").matches;
+    let show: number | undefined;
+    const reveal = () => {
       setTeaser(true);
       writeStorage(() => window.sessionStorage.setItem(TEASER_SEEN_KEY, "1"));
-    }, TEASER_DELAY_MS);
-
+    };
+    if (isNarrow) {
+      const onScroll = () => {
+        if (window.scrollY < 240) return;
+        window.removeEventListener("scroll", onScroll);
+        reveal();
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }
+    show = window.setTimeout(reveal, TEASER_DELAY_MS);
     return () => window.clearTimeout(show);
   }, [isHome, open, hasOpened]);
 
