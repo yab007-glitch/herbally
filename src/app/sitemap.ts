@@ -11,6 +11,7 @@ import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { withTimeout } from "@/lib/utils/with-timeout";
 import { publishedGuides } from "@/lib/guides/guides";
+import { isIndexable } from "@/lib/seo/indexable";
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
@@ -62,9 +63,13 @@ const SPONSORSHIP_PAGE_MODIFIED = new Date("2026-10-28T00:00:00Z");
 const HERB_BATCH_SIZE = 500;
 
 type HerbSitemapRow = {
+  id: string;
   slug: string;
   updated_at: string | null;
   translations: unknown;
+  description: string | null;
+  traditional_uses: string[] | null;
+  dosage_adult: string | null;
 };
 
 /**
@@ -84,7 +89,9 @@ async function fetchHerbBatch(
     const { data, error } = await withTimeout(
       supabase
         .from("herbs")
-        .select("slug, updated_at, translations")
+        .select(
+          "id, slug, updated_at, translations, description, traditional_uses, dosage_adult"
+        )
         .eq("is_published", true)
         .order("slug", { ascending: true })
         .range(from, from + size - 1),
@@ -109,6 +116,93 @@ async function fetchHerbBatch(
     });
     return null;
   }
+}
+
+/**
+ * Ids of herbs that carry a published monograph.
+ *
+ * The page counts a monograph as 400 characters of substance, so the sitemap
+ * has to see the same rows. One small read beats embedding `herb_monographs`
+ * in every herb batch. A failed read is treated as "no monograph": the sitemap
+ * then lists a subset of the indexable pages, which is safe. Listing a page that
+ * renders noindex is not — that mismatch is what Google reported 2,711 times as
+ * "crawled, currently not indexed".
+ */
+async function fetchPublishedMonographIds(
+  supabase: NonNullable<ReturnType<typeof getAnonClient>>,
+  timeoutMs: number
+): Promise<Set<string>> {
+  try {
+    const { data, error } = await withTimeout(
+      supabase
+        .from("herb_monographs")
+        .select("herb_id")
+        .eq("status", "published"),
+      "sitemap_monographs",
+      timeoutMs
+    );
+    if (error) {
+      logger.error("sitemap_monographs_query_error", {
+        error: error.message,
+        code: error.code,
+      });
+      return new Set();
+    }
+    return new Set(
+      (data ?? [])
+        .map((row) => row.herb_id)
+        .filter((id): id is string => typeof id === "string")
+    );
+  } catch (error) {
+    logger.error("sitemap_monographs_query_failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return new Set();
+  }
+}
+
+/**
+ * Slugs with a regulator record — the other 300 characters of substance the
+ * page counts. ~1,180 rows today, so it pages past PostgREST's 1,000-row cap.
+ */
+async function fetchRegulatorySlugs(
+  supabase: NonNullable<ReturnType<typeof getAnonClient>>,
+  timeoutMs: number
+): Promise<Set<string>> {
+  const slugs = new Set<string>();
+  const pageSize = 1000;
+  let from = 0;
+  try {
+    while (true) {
+      const { data, error } = await withTimeout(
+        supabase
+          .from("herb_regulatory_evidence")
+          .select("herb_slug")
+          .range(from, from + pageSize - 1),
+        "sitemap_regulatory",
+        timeoutMs
+      );
+      if (error) {
+        logger.error("sitemap_regulatory_query_error", {
+          error: error.message,
+          code: error.code,
+          from,
+        });
+        break;
+      }
+      const rows = data ?? [];
+      for (const row of rows) {
+        if (typeof row.herb_slug === "string") slugs.add(row.herb_slug);
+      }
+      if (rows.length < pageSize) break;
+      from += pageSize;
+    }
+  } catch (error) {
+    logger.error("sitemap_regulatory_query_failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+  return slugs;
 }
 
 /**
@@ -436,6 +530,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // published herb. Four of them (bloodPressure, hormonal, prostate,
     // diabetes) match nothing, so they were indexable pages whose whole body
     // was "no herbs found yet" — the soft-404 shape.
+    // The substance inputs the rule needs beyond the herb row itself. Two small
+    // reads, bounded by the same deadline, fetched once for the whole route.
+    const flagsRemainingMs = remainingBudgetMs();
+    const [monographIds, regulatorySlugs] =
+      flagsRemainingMs > 0
+        ? await Promise.all([
+            fetchPublishedMonographIds(supabase, flagsRemainingMs),
+            fetchRegulatorySlugs(supabase, flagsRemainingMs),
+          ])
+        : [new Set<string>(), new Set<string>()];
+
     let from = 0;
     let batchSize = HERB_BATCH_SIZE;
     while (true) {
@@ -467,6 +572,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (herbsBatch.length === 0) break;
 
       for (const herb of herbsBatch) {
+        // Offer Google only what the page itself is willing to have indexed.
+        // The two used to disagree: every published herb was listed here while
+        // the page rendered noindex below the substance line. That is the shape
+        // Google reported 2,711 times as "crawled, currently not indexed", and
+        // the evidence behind the AdSense "low-value content" refusal.
+        const indexable = isIndexable({
+          description: herb.description,
+          traditional_uses: herb.traditional_uses,
+          dosage_adult: herb.dosage_adult,
+          hasMonograph: monographIds.has(herb.id),
+          hasRegulatory: regulatorySlugs.has(herb.slug),
+        });
+        if (!indexable) continue;
         herbPages.push({
           url: `${baseUrl}/herbs/${herb.slug}`,
           lastModified: herb.updated_at

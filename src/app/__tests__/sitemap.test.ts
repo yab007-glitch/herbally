@@ -7,7 +7,9 @@ vi.mock("@/lib/symptoms/hub-coverage", () => ({
   getEmptySymptomHubs: () => getEmptySymptomHubsMock(),
 }));
 
-const rangeMock = vi.fn();
+const herbsRangeMock = vi.fn();
+const regulatoryRangeMock = vi.fn();
+const monographEqMock = vi.fn();
 const fromMock = vi.fn();
 const getInteractionPairsMock = vi.fn();
 
@@ -41,15 +43,27 @@ describe("sitemap", () => {
     process.env.NEXT_PUBLIC_APP_URL = BASE_URL;
     delete process.env.NEXT_PHASE;
 
-    fromMock.mockReturnValue({
-      select: () => ({
-        eq: () => ({
-          order: () => ({
-            range: rangeMock,
+    fromMock.mockImplementation((table: string) => {
+      if (table === "herb_monographs") {
+        // Awaited straight after .eq — the published-monograph read.
+        return { select: () => ({ eq: monographEqMock }) };
+      }
+      if (table === "herb_regulatory_evidence") {
+        // Paged with .range — the regulator-record read.
+        return { select: () => ({ range: regulatoryRangeMock }) };
+      }
+      return {
+        select: () => ({
+          eq: () => ({
+            order: () => ({
+              range: herbsRangeMock,
+            }),
           }),
         }),
-      }),
+      };
     });
+    monographEqMock.mockResolvedValue({ data: [], error: null });
+    regulatoryRangeMock.mockResolvedValue({ data: [], error: null });
   });
 
   afterEach(() => {
@@ -58,21 +72,50 @@ describe("sitemap", () => {
   });
 
   it("returns herb and interaction-pair URLs from a healthy database", async () => {
-    rangeMock.mockResolvedValue({
+    herbsRangeMock.mockResolvedValue({
       data: [
         {
+          // Sourced detail with no long description: indexable because a
+          // published monograph counts as substance.
+          id: "h-ginger",
           slug: "ginger",
           updated_at: "2026-01-02T00:00:00.000Z",
           translations: { fr: { name: "Gingembre" } },
+          description: "Ginger root.",
+          traditional_uses: null,
+          dosage_adult: null,
           symptom_keywords: ["anxiety"],
         },
         {
+          // Long curated prose: indexable on its own substance.
+          id: "h-turmeric",
           slug: "turmeric",
           updated_at: null,
           translations: null,
+          description: "x".repeat(420),
+          traditional_uses: null,
+          dosage_adult: null,
           symptom_keywords: null,
         },
+        {
+          // Thin record with crawler-inflated views. It used to be listed here
+          // and rendered noindex on the page itself — the mismatch Google
+          // reported 2,711 times and refused as "low-value content".
+          id: "h-rue",
+          slug: "eritrean-rue",
+          updated_at: null,
+          translations: { fr: { name: "Rue" } },
+          description: "y".repeat(260),
+          traditional_uses: null,
+          dosage_adult: null,
+          symptom_keywords: null,
+          view_count: 323,
+        },
       ],
+      error: null,
+    });
+    monographEqMock.mockResolvedValue({
+      data: [{ herb_id: "h-ginger" }],
       error: null,
     });
     getEmptySymptomHubsMock.mockResolvedValue([UNPOPULATED_HUB]);
@@ -106,6 +149,11 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/herbs/turmeric`);
     expect(urls).not.toContain(`${BASE_URL}/fr/herbs/turmeric`);
 
+    // A thin page is not offered to Google even when its view counter is high:
+    // that counter is crawler traffic, and the page itself renders noindex.
+    expect(urls).not.toContain(`${BASE_URL}/herbs/eritrean-rue`);
+    expect(urls).not.toContain(`${BASE_URL}/fr/herbs/eritrean-rue`);
+
     // Pair URLs, both locales (hasFr = true).
     expect(urls).toContain(`${BASE_URL}/interactions/ginger/warfarin`);
     expect(urls).toContain(`${BASE_URL}/fr/interactions/ginger/warfarin`);
@@ -125,7 +173,7 @@ describe("sitemap", () => {
   });
 
   it("stamps static pages with a build date, not a frozen one", async () => {
-    rangeMock.mockResolvedValue({ data: [], error: null });
+    herbsRangeMock.mockResolvedValue({ data: [], error: null });
     getEmptySymptomHubsMock.mockResolvedValue([]);
     getInteractionPairsMock.mockResolvedValue([]);
 
@@ -142,7 +190,7 @@ describe("sitemap", () => {
 
   it("returns only static pages when a query never settles", async () => {
     vi.useFakeTimers();
-    rangeMock.mockReturnValue(new Promise(() => {}));
+    herbsRangeMock.mockReturnValue(new Promise(() => {}));
     getEmptySymptomHubsMock.mockResolvedValue([]);
     getInteractionPairsMock.mockResolvedValue([]);
 

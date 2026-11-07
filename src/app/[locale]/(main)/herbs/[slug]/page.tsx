@@ -314,13 +314,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Which pages Google is asked to index is decided in one place, shared with the
   // sitemap: see src/lib/seo/indexable.ts for the measurement behind the numbers.
+  // Views are not an input: the counter is crawler-inflated, so a thin page can
+  // never buy its way into the index with bot traffic.
   const thin = !isIndexable({
     description: herb.description,
     traditional_uses: herb.traditional_uses,
     dosage_adult: herb.dosage_adult,
     hasMonograph: Boolean(bundle?.monograph),
     hasRegulatory: Boolean(bundle?.regulatory),
-    views: bundle?.popularity?.views ?? 0,
   });
 
   return {
