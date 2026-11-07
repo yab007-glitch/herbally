@@ -173,6 +173,9 @@ type HerbPageBundle = {
   related: Array<{ name: string; slug: string; scientific_name: string }>;
 };
 
+// The data cache survives a deploy: entries written by the previous build keep
+// being served until their TTL expires, even when the RPC's shape changes. Bump
+// this key whenever the bundle's fields change, or new fields read as undefined.
 const loadHerbPageBundle = unstable_cache(
   async (slug: string): Promise<HerbPageBundle | null> => {
     const supabase = getAnonClient();
@@ -192,7 +195,7 @@ const loadHerbPageBundle = unstable_cache(
     }
     return data as HerbPageBundle;
   },
-  ["herb-page-bundle-v1"],
+  ["herb-page-bundle-v2"],
   { revalidate: HERB_PAGE_TTL, tags: ["herb-page-bundle"] }
 );
 
