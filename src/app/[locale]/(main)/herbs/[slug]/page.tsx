@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { unstable_cache } from "next/cache";
+import { isIndexable } from "@/lib/seo/indexable";
 import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -113,7 +114,6 @@ const HERB_PAGE_TTL = 259200;
  * detail even when the prose is short. The rule is computed, so a page becomes
  * indexable the moment its content crosses the line — nothing to remember to undo.
  */
-const MIN_INDEXABLE_SUBSTANCE = 400;
 
 /**
  * Request-scoped memo around the herb fetch.
@@ -310,19 +310,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const untranslatedFr = metaLocale === "fr" && !hasFr;
 
-  // Substance, not word count: recorded uses are sentences, a dosage is a
-  // paragraph, and a monograph or a regulator record is sourced detail.
   const bundle = await loadHerbPageBundle(slug);
-  const substance =
-    (herb.description?.length ?? 0) +
-    (herb.traditional_uses ?? []).reduce((n, u) => n + u.length, 0) +
-    (herb.dosage_adult?.length ?? 0) +
-    (bundle?.monograph ? 400 : 0) +
-    (bundle?.regulatory ? 300 : 0);
-  // A thin page that people actually open stays indexable: it is earning its
-  // place, and noindexing it would throw away the only traffic the entry has.
-  const views = bundle?.popularity?.views ?? 0;
-  const thin = substance < MIN_INDEXABLE_SUBSTANCE && views < 78;
+
+  // Which pages Google is asked to index is decided in one place, shared with the
+  // sitemap: see src/lib/seo/indexable.ts for the measurement behind the numbers.
+  const thin = !isIndexable({
+    description: herb.description,
+    traditional_uses: herb.traditional_uses,
+    dosage_adult: herb.dosage_adult,
+    hasMonograph: Boolean(bundle?.monograph),
+    hasRegulatory: Boolean(bundle?.regulatory),
+    views: bundle?.popularity?.views ?? 0,
+  });
 
   return {
     title,
