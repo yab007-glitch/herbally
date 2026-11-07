@@ -46,5 +46,15 @@
   "yarrow": "generic yarrow must not be absorbed by a flower-colour variety",
   "yashtimadhu": "licorice root vs deglycyrrhizinated extract",
   "yokukansan-kampo": "two different Kampo formulas",
-  "zao-jiao-ci": "thorn vs fruit; abscesses vs phlegm"
+  "zao-jiao-ci": "thorn vs fruit; abscesses vs phlegm",
+  "fenugreek-seed": "different plant parts (trigonella foenum)",
+  "fenugreek-leaf": "different plant parts (trigonella foenum)",
+  "ku-xing-ren-seed": "different plant parts (prunus armeniaca)",
+  "lian-zi-xin-tcm": "different plant parts (nelumbo nucifera)",
+  "lian-zi": "different plant parts (nelumbo nucifera)",
+  "lian-zi-xin-heart": "different plant parts (nelumbo nucifera)",
+  "perilla": "different plant parts (perilla frutescens)",
+  "perilla-seed-tcm": "different plant parts (perilla frutescens)",
+  "vitis-vinifera": "different plant parts (vitis vinifera)",
+  "vitis-vinifera-grape-seed-extract": "different plant parts (vitis vinifera)"
 }
