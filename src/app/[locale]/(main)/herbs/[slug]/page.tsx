@@ -13,7 +13,6 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
 import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
-import { ChipLegend } from "@/components/herbs/chip-legend";
 import { AuthorByline } from "@/components/herbs/author-byline";
 import { HerbPhoto } from "@/components/herbs/herb-photo";
 import { InternalLinkRail } from "@/components/herbs/internal-link-rail";
@@ -866,10 +865,18 @@ export default async function HerbDetailPage({ params }: Props) {
         safetyHref="#interactions"
       />
 
-      {/* The hero's chips read "Evidence: A" next to "Not human-reviewed";
-          they measure different things. This is the explanation, collapsed so
-          it costs one line on a page where safety leads. */}
-      <ChipLegend className="-mt-4" />
+      {/* The explanation of these labels lives on /methodology. It used to be a
+          collapsed block here, which put the same ~60 lines of text in the HTML
+          of all 3,238 entries. A link carries the reader there without
+          duplicating the template three thousand times. */}
+      <p className="-mt-4 text-sm text-muted-foreground">
+        <Link
+          href="/methodology"
+          className="underline-offset-4 hover:text-foreground hover:underline"
+        >
+          How to read the evidence and review labels
+        </Link>
+      </p>
 
       {/* Accountable author. Health pages are judged on who stands behind
           them, and this site's byline previously read "Editorial Team". */}
