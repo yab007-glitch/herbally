@@ -325,9 +325,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     keywords,
-    ...(untranslatedFr || thin
-      ? { robots: { index: false, follow: true } }
-      : {}),
     alternates: hasFr
       ? {
           canonical:
@@ -370,19 +367,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // An untranslated French URL is the English page under French chrome. It stays
     // crawlable (follow) so links are discovered, but it must not be indexed as a
     // French page of its own.
-    robots: untranslatedFr
-      ? { index: false, follow: true }
-      : {
-          index: true,
-          follow: true,
-          googleBot: {
+    // ONE decision for robots. A second `robots` key anywhere in this object
+    // silently wins, which is how the untranslated-FR noindex was lost once
+    // already and how the thin-page rule would be lost now.
+    robots:
+      untranslatedFr || thin
+        ? { index: false, follow: true }
+        : {
             index: true,
             follow: true,
-            "max-video-preview": -1,
-            "max-image-preview": "large",
-            "max-snippet": -1,
+            googleBot: {
+              index: true,
+              follow: true,
+              "max-video-preview": -1,
+              "max-image-preview": "large",
+              "max-snippet": -1,
+            },
           },
-        },
   };
 }
 
