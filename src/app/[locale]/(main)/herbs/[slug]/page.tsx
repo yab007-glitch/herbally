@@ -42,6 +42,7 @@ import { type Locale } from "@/lib/i18n/config";
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
 import { HerbDetailTabs } from "@/components/herbs/herb-detail-tabs";
+import { HerbNarrative } from "@/components/herbs/herb-narrative";
 import { HerbOverviewPanel } from "@/components/herbs/herb-overview-panel";
 import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
 import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
@@ -949,6 +950,12 @@ export default async function HerbDetailPage({ params }: Props) {
           title={herb.name}
         />
       ) : null}
+
+      {/* The recorded facts, in full sentences, before the tabs. Every paragraph
+          restates a field the entry already holds — see lib/herbs/narrative — so
+          a reader gets an answer without opening anything, and the page reads as
+          prose rather than a column of fragments. */}
+      <HerbNarrative herb={herb} interactionCount={interactions.length} />
 
       {/* Tabbed Content — only hand-written monographs show the narrative
           tabs; every other herb renders the government-sourced view (Option B)
