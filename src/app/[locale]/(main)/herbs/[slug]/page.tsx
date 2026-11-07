@@ -88,6 +88,16 @@ type Props = { params: Promise<{ slug: string }> };
  * and DB load.
  */
 const PRERENDER_HERB_LIMIT = 0;
+/**
+ * How long a rendered herb page stays cached.
+ *
+ * Every expiry costs two database round trips. At 3,240 pages a one-day window is
+ * roughly 6,500 revalidation queries a day on top of real traffic, and the free-tier
+ * instance ran out of Disk IO budget three times in a week. Three days cuts that by
+ * two thirds; on-demand revalidation (`revalidateTag`) still handles edits that must
+ * appear immediately.
+ */
+const HERB_PAGE_TTL = 259200;
 
 /**
  * Request-scoped memo around the herb fetch.
@@ -166,7 +176,7 @@ const loadHerbPageBundle = unstable_cache(
     return data as HerbPageBundle;
   },
   ["herb-page-bundle-v1"],
-  { revalidate: 86400, tags: ["herb-page-bundle"] }
+  { revalidate: HERB_PAGE_TTL, tags: ["herb-page-bundle"] }
 );
 
 const loadRegulatoryEvidence = unstable_cache(
@@ -175,7 +185,7 @@ const loadRegulatoryEvidence = unstable_cache(
     return (bundle?.regulatory as RegulatoryEvidence | null) ?? null;
   },
   ["herb-regulatory-evidence"],
-  { revalidate: 86400, tags: ["herb-regulatory-evidence"] }
+  { revalidate: HERB_PAGE_TTL, tags: ["herb-regulatory-evidence"] }
 );
 
 export async function generateStaticParams() {
@@ -207,7 +217,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       return loadHerb(herbSlug, locale as Locale);
     },
     ["herb-meta-v2-" + slug],
-    { revalidate: 86400, tags: ["herb-meta-" + slug] }
+    { revalidate: HERB_PAGE_TTL, tags: ["herb-meta-" + slug] }
   );
 
   const result = await getHerbMetaCached(slug, metaLocale);
@@ -388,7 +398,7 @@ export default async function HerbDetailPage({ params }: Props) {
       return loadHerb(herbSlug, locale);
     },
     ["herb-v8-" + slug],
-    { revalidate: 86400, tags: ["herb-" + slug] }
+    { revalidate: HERB_PAGE_TTL, tags: ["herb-" + slug] }
   );
 
   const result = await getHerbCached(slug, pageLocale as Locale);
@@ -422,7 +432,7 @@ export default async function HerbDetailPage({ params }: Props) {
       };
     },
     [`monograph-${slug}`],
-    { revalidate: 86400, tags: [`monograph-${slug}`] }
+    { revalidate: HERB_PAGE_TTL, tags: [`monograph-${slug}`] }
   );
 
   // PubMed-compiled information sheet (for herbs with no hand-written
@@ -582,7 +592,7 @@ export default async function HerbDetailPage({ params }: Props) {
         }));
     },
     [`herb-faqs-v3-${slug}`],
-    { revalidate: 86400, tags: [`herb-faqs-${slug}`] }
+    { revalidate: HERB_PAGE_TTL, tags: [`herb-faqs-${slug}`] }
   );
 
   const preGeneratedFaqs = await getFaqsCached(slug, await getLocale());
@@ -725,7 +735,7 @@ export default async function HerbDetailPage({ params }: Props) {
       return getComparisonHerbs(herbSlug, categoryHerbs, 3);
     },
     ["related-herbs-v2-" + slug],
-    { revalidate: 86400, tags: ["related-herbs-" + slug] }
+    { revalidate: HERB_PAGE_TTL, tags: ["related-herbs-" + slug] }
   );
 
   const regulatoryEvidence = await loadRegulatoryEvidence(slug);
