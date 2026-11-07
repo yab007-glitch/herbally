@@ -1,0 +1,104 @@
+{
+ "plan": [
+  {
+   "species": "sambucus nigra",
+   "keep": "elderberry",
+   "drop": "sambucol",
+   "keep_score": 21.5,
+   "drop_score": 10.0,
+   "reason": "richer entry survives"
+  },
+  {
+   "species": "nelumbo nucifera",
+   "keep": "lian-zi-xin-tcm",
+   "drop": "lian-zi-xin-heart",
+   "keep_score": 9.0,
+   "drop_score": 8.0,
+   "reason": "richer entry survives"
+  }
+ ],
+ "refused": [
+  {
+   "group": "trigonella foenum",
+   "why": "different plant parts",
+   "rows": [
+    "fenugreek-seed",
+    "fenugreek-leaf"
+   ],
+   "parts": {
+    "seed": [
+     "fenugreek-seed"
+    ],
+    "leaf": [
+     "fenugreek-leaf"
+    ]
+   }
+  },
+  {
+   "group": "prunus armeniaca",
+   "why": "different plant parts",
+   "rows": [
+    "xing-ren",
+    "ku-xing-ren-seed"
+   ],
+   "parts": {
+    "(none)": [
+     "xing-ren"
+    ],
+    "seed": [
+     "ku-xing-ren-seed"
+    ]
+   }
+  },
+  {
+   "group": "nelumbo nucifera",
+   "why": "different plant parts",
+   "rows": [
+    "lian-zi-xin-tcm",
+    "lian-zi",
+    "lian-zi-xin-heart"
+   ],
+   "parts": {
+    "xin": [
+     "lian-zi-xin-tcm",
+     "lian-zi-xin-heart"
+    ],
+    "(none)": [
+     "lian-zi"
+    ]
+   }
+  },
+  {
+   "group": "perilla frutescens",
+   "why": "different plant parts",
+   "rows": [
+    "perilla",
+    "perilla-seed-tcm"
+   ],
+   "parts": {
+    "(none)": [
+     "perilla"
+    ],
+    "seed": [
+     "perilla-seed-tcm"
+    ]
+   }
+  },
+  {
+   "group": "vitis vinifera",
+   "why": "different plant parts",
+   "rows": [
+    "vitis-vinifera",
+    "vitis-vinifera-grape-seed-extract"
+   ],
+   "parts": {
+    "(none)": [
+     "vitis-vinifera"
+    ],
+    "seed": [
+     "vitis-vinifera-grape-seed-extract"
+    ]
+   }
+  }
+ ]
+}

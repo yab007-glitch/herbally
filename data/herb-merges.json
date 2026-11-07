@@ -540,6 +540,16 @@
       "from": "/herbs/lactuca-sativa-var-longifolia",
       "to": "/herbs/lactuca-sativa",
       "carry_note": "Same species; this slug was an empty duplicate (no recorded uses or dose)."
+    },
+    {
+      "from": "/herbs/sambucol",
+      "to": "/herbs/elderberry",
+      "carry_note": "Same species; the richer entry survives."
+    },
+    {
+      "from": "/herbs/lian-zi-xin-heart",
+      "to": "/herbs/lian-zi-xin-tcm",
+      "carry_note": "Same species; the richer entry survives."
     }
   ]
 }

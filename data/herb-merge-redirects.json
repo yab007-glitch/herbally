@@ -430,5 +430,13 @@
   {
     "from": "/herbs/lactuca-sativa-var-longifolia",
     "to": "/herbs/lactuca-sativa"
+  },
+  {
+    "from": "/herbs/sambucol",
+    "to": "/herbs/elderberry"
+  },
+  {
+    "from": "/herbs/lian-zi-xin-heart",
+    "to": "/herbs/lian-zi-xin-tcm"
   }
 ]
