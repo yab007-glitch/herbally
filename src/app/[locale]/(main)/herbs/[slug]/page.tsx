@@ -100,6 +100,22 @@ const PRERENDER_HERB_LIMIT = 0;
 const HERB_PAGE_TTL = 259200;
 
 /**
+ * Below this much substance a page is not submitted for indexing.
+ *
+ * Measured across the 3,238 published herbs: median 322 characters of substance
+ * (description + recorded uses + dosage), 1,868 pages under 400, and only 259 that
+ * a reader would call substantial. Google reached the same verdict independently —
+ * 2,711 pages "crawled, currently not indexed", and AdSense refused the site for
+ * "low-value content". Asking Google to index pages we cannot stand behind wastes
+ * crawl budget and feeds that verdict.
+ *
+ * A monograph or a regulator record counts as substance: those pages carry sourced
+ * detail even when the prose is short. The rule is computed, so a page becomes
+ * indexable the moment its content crosses the line — nothing to remember to undo.
+ */
+const MIN_INDEXABLE_SUBSTANCE = 400;
+
+/**
  * Request-scoped memo around the herb fetch.
  *
  * generateMetadata and the page component both need this row, with identical
@@ -152,6 +168,7 @@ type HerbPageBundle = {
   regulatory: RegulatoryEvidence | null;
   monograph: Record<string, unknown> | null;
   pubmed: Record<string, unknown> | null;
+  popularity: { views?: number | null } | null;
   faqs: Array<Record<string, unknown>>;
   related: Array<{ name: string; slug: string; scientific_name: string }>;
 };
@@ -290,11 +307,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const untranslatedFr = metaLocale === "fr" && !hasFr;
 
+  // Substance, not word count: recorded uses are sentences, a dosage is a
+  // paragraph, and a monograph or a regulator record is sourced detail.
+  const bundle = await loadHerbPageBundle(slug);
+  const substance =
+    (herb.description?.length ?? 0) +
+    (herb.traditional_uses ?? []).reduce((n, u) => n + u.length, 0) +
+    (herb.dosage_adult?.length ?? 0) +
+    (bundle?.monograph ? 400 : 0) +
+    (bundle?.regulatory ? 300 : 0);
+  // A thin page that people actually open stays indexable: it is earning its
+  // place, and noindexing it would throw away the only traffic the entry has.
+  const views = bundle?.popularity?.views ?? 0;
+  const thin = substance < MIN_INDEXABLE_SUBSTANCE && views < 78;
+
   return {
     title,
     description,
     keywords,
-    ...(untranslatedFr ? { robots: { index: false, follow: true } } : {}),
+    ...(untranslatedFr || thin
+      ? { robots: { index: false, follow: true } }
+      : {}),
     alternates: hasFr
       ? {
           canonical:
