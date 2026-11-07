@@ -59,6 +59,7 @@ import {
 import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
 import { PubmedMonographSheet } from "@/components/herbs/pubmed-monograph-sheet";
 import { NccihSummary } from "@/components/herbs/nccih-summary";
+import { HerbSources } from "@/components/herbs/herb-sources";
 import type {
   SheetContent,
   Citation,
@@ -467,6 +468,20 @@ export default async function HerbDetailPage({ params }: Props) {
   const provenance = parseProvenance(
     herb.provenance as Record<string, unknown> | null
   );
+  // Visible evidence trail: verified_sources is the current field, `sources` is
+  // what older rows carry, so fall back rather than rendering nothing.
+  const verifiedSources: string[] = (() => {
+    const raw = herb.provenance as {
+      verified_sources?: unknown;
+      sources?: unknown;
+    } | null;
+    const pick = (v: unknown): string[] =>
+      Array.isArray(v)
+        ? v.filter((x): x is string => typeof x === "string")
+        : [];
+    const list = pick(raw?.verified_sources);
+    return list.length ? list : pick(raw?.sources);
+  })();
   // Only manually reviewed or primary-source-backed herbs have verified
   // mechanism text. Both "unverified" (no sources, no citations) and
   // "ai_summarized" (has PubMed citations but no authoritative monograph
@@ -865,6 +880,14 @@ export default async function HerbDetailPage({ params }: Props) {
       {/* NCCIH text is shown for every herb we have it for, above the tabs.
           It used to sit inside the no-monograph branch, which silently hid it on
           exactly the herbs people search most (ashwagandha, turmeric, ginger). */}
+      <HerbSources
+        sources={verifiedSources}
+        lastChecked={
+          (herb.provenance as { last_verified_at?: string } | null)
+            ?.last_verified_at ?? null
+        }
+      />
+
       {nccih ? (
         <NccihSummary
           claims={nccih.claims as unknown as string[]}

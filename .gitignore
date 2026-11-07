@@ -89,3 +89,6 @@ artifacts/interaction-review-queue.json
 artifacts/herb-images.json
 artifacts/related-herbs-plan.json
 artifacts/site-sweep.json
+
+# Search Console snapshots (local monitoring history)
+artifacts/gsc-index-history.json
