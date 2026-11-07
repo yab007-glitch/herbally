@@ -1,0 +1,9 @@
+{
+  "site": "herbally.app",
+  "status": "Review requested",
+  "request_time": "07 Nov 2026 06:44",
+  "sitemap_urls": 3152,
+  "sitemap_urls_before": 6948,
+  "checked_at": "2026-11-07T11:45:00-05:00",
+  "notes": "Thin herb pages (substance < 400 chars) now render noindex and are excluded from the sitemap; review requested after the fix deployed."
+}

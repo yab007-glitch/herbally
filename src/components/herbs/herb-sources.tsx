@@ -39,7 +39,7 @@ export function HerbSources({
   label = "Sources checked for this entry",
   checkedLabel = "Last checked",
   countLabel = (n: number) => `${n} independent sources`,
-  note = "Identity and regulator records were cross-checked against these sources. A source being listed does not mean it covers every claim on the page — where nothing was found, the page says so rather than filling the gap.",
+  note = "Cross-checked against these sources; where nothing was found, the page says so rather than filling the gap.",
 }: {
   sources: string[];
   lastChecked?: string | null;
