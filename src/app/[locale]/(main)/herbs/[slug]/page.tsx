@@ -505,11 +505,15 @@ export default async function HerbDetailPage({ params }: Props) {
 
   // The NCCIH import stores public-domain NIH text in the same table, tagged by
   // generation_method so it can never be mistaken for a hand-written monograph.
+  const importedMethod = (dbMonograph as { generation_method?: string } | null)
+    ?.generation_method;
   const nccih =
-    (dbMonograph as { generation_method?: string } | null)
-      ?.generation_method === "imported-public-domain"
-      ? dbMonograph
-      : null;
+    importedMethod === "imported-public-domain" ? dbMonograph : null;
+  // Health Canada publishes under the Open Government Licence – Canada, which
+  // allows commercial reuse with acknowledgement. Stored separately from the
+  // public-domain import so the attribution shown is always the right one.
+  const healthCanada =
+    importedMethod === "imported-ogl-canada" ? dbMonograph : null;
 
   // Parse provenance to determine if this herb's content has been verified
   const provenance = parseProvenance(
@@ -949,6 +953,22 @@ export default async function HerbDetailPage({ params }: Props) {
           safety={nccih.safety_notes as unknown as string[]}
           url={(nccih.provenance as { url?: string } | null)?.url ?? null}
           title={herb.name}
+        />
+      ) : null}
+
+      {healthCanada ? (
+        <NccihSummary
+          claims={healthCanada.claims as unknown as string[]}
+          safety={healthCanada.safety_notes as unknown as string[]}
+          url={
+            (healthCanada.provenance as { url?: string } | null)?.url ?? null
+          }
+          title={herb.name}
+          heading={`What Health Canada says about ${herb.name}`}
+          sourceLabel="Health Canada's Natural Health Products Ingredients Database"
+          licenceText="Contains information licensed under the Open Government Licence – Canada."
+          claimsHeading="Approved uses"
+          safetyHeading="Cautions, contraindications and adverse reactions"
         />
       ) : null}
 

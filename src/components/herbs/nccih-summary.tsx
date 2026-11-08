@@ -16,11 +16,22 @@ export function NccihSummary({
   safety,
   url,
   title,
+  heading,
+  sourceLabel = "National Center for Complementary and Integrative Health",
+  licenceText = "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
+  claimsHeading = "Background and evidence",
+  safetyHeading = "Safety, in the NIH's words",
 }: {
   claims: (string | { claim?: string })[] | null;
   safety: (string | { note?: string })[] | null;
   url: string | null;
   title: string;
+  /** Override the block heading, e.g. for a different regulator. */
+  heading?: string;
+  sourceLabel?: string;
+  licenceText?: string;
+  claimsHeading?: string;
+  safetyHeading?: string;
 }) {
   const text = (v: string | { claim?: string; note?: string }): string =>
     typeof v === "string" ? v : (v.claim ?? v.note ?? "");
@@ -43,14 +54,14 @@ export function NccihSummary({
             id="nccih-heading"
             className="text-xl font-semibold text-neutral-900 dark:text-neutral-100"
           >
-            What the NIH says about {title}
+            {heading ?? `What the NIH says about ${title}`}
           </h2>
         </div>
 
         {background.length > 0 && (
           <div className="mb-5">
             <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">
-              Background and evidence
+              {claimsHeading}
             </h3>
             <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
               {background.map((line, i) => (
@@ -64,7 +75,7 @@ export function NccihSummary({
           <div className="mb-5">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-neutral-500">
               <ShieldAlert className="h-4 w-4" aria-hidden="true" />
-              Safety, in the NIH&apos;s words
+              {safetyHeading}
             </h3>
             <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
               {safetyNotes.map((line, i) => (
@@ -75,7 +86,7 @@ export function NccihSummary({
         )}
 
         <p className="border-t border-neutral-200 pt-4 text-sm text-neutral-500 dark:border-neutral-800">
-          Reproduced verbatim from the{" "}
+          Reproduced verbatim from{" "}
           {url ? (
             <a
               href={url}
@@ -83,15 +94,13 @@ export function NccihSummary({
               rel="noopener noreferrer nofollow"
               className="inline-flex items-center gap-1 text-emerald-700 underline hover:text-emerald-800 dark:text-emerald-400"
             >
-              National Center for Complementary and Integrative Health
+              {sourceLabel}
               <ExternalLink className="h-3 w-3" aria-hidden="true" />
             </a>
           ) : (
-            "National Center for Complementary and Integrative Health"
+            sourceLabel
           )}
-          , part of the US National Institutes of Health. US government works
-          are not subject to copyright, so this text is reproduced in full
-          rather than summarised.
+          . {licenceText}
         </p>
       </div>
     </section>
