@@ -429,7 +429,9 @@ async function main() {
       doses,
       generation_method: "imported-ogl-canada",
       monograph_date: toDate(
-        lines.find((l) => /^\d{4}-\d{2}-\d{2}$|^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(l))
+        lines.find((l) =>
+          /^\d{4}-\d{2}-\d{2}$|^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(l)
+        )
       ),
       retrieved_at: new Date().toISOString().slice(0, 10),
     };
