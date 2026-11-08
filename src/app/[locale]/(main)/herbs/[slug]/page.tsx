@@ -461,6 +461,36 @@ export default async function HerbDetailPage({ params }: Props) {
   // visitor/slug/day and writes through a slug-addressed RPC.
 
   // Define cached fetcher
+  // Read the imported sources directly rather than through the page bundle: the
+  // bundle is one big cached object, and a single build-time hiccup froze an empty
+  // sources array into the HTML for three days.
+  const getSourcesCached = unstable_cache(
+    async (herbSlug: string) => {
+      const supabase = getAnonClient();
+      if (!supabase) return [];
+      const { data, error } = await supabase
+        .from("herb_monograph_sources" as never)
+        .select(
+          "source, licence, attribution, url, claims, safety, doses, monograph_date"
+        )
+        .eq("herb_slug", herbSlug)
+        .order("source", { ascending: true });
+      if (error) return [];
+      return (data ?? []) as unknown as Array<{
+        source: string;
+        licence: string | null;
+        attribution: string | null;
+        url: string | null;
+        claims: unknown;
+        safety: unknown;
+        doses: unknown;
+        monograph_date: string | null;
+      }>;
+    },
+    [`sources-v1-${slug}`],
+    { revalidate: HERB_PAGE_TTL, tags: [`sources-${slug}`] }
+  );
+
   const getMonographCached = unstable_cache(
     async (herbSlug: string) => {
       const bundle = await loadHerbPageBundle(herbSlug);
@@ -513,7 +543,7 @@ export default async function HerbDetailPage({ params }: Props) {
 
   // Independent reads — firing them together removes a serial round trip from
   // every cold render (i.e. from every prerender and every ISR regeneration).
-  const pageBundle = await loadHerbPageBundle(slug);
+  const sources = await getSourcesCached(slug);
   const [dbMonograph, pubmedSheet] = await Promise.all([
     getMonographCached(slug),
     getPubmedSheetCached(slug),
@@ -958,7 +988,7 @@ export default async function HerbDetailPage({ params }: Props) {
       {/* Every imported regulator excerpt, each in its own block with its own
           licence. Health Canada and NCCIH can both speak about the same plant;
           the page shows both instead of one overwriting the other. */}
-      {(pageBundle?.sources ?? []).map((source) => (
+      {sources.map((source) => (
         <NccihSummary
           key={source.source}
           claims={source.claims as unknown as (string | { text?: string })[]}
