@@ -22,8 +22,8 @@ export function NccihSummary({
   claimsHeading = "Background and evidence",
   safetyHeading = "Safety, in the NIH's words",
 }: {
-  claims: (string | { claim?: string })[] | null;
-  safety: (string | { note?: string })[] | null;
+  claims: (string | { claim?: string; text?: string })[] | null;
+  safety: (string | { note?: string; text?: string })[] | null;
   url: string | null;
   title: string;
   /** Override the block heading, e.g. for a different regulator. */
@@ -33,8 +33,13 @@ export function NccihSummary({
   claimsHeading?: string;
   safetyHeading?: string;
 }) {
-  const text = (v: string | { claim?: string; note?: string }): string =>
-    typeof v === "string" ? v : (v.claim ?? v.note ?? "");
+  // Imported rows carry either a bare string or an object: NCCIH stores
+  // {claim}/{note}, Health Canada stores {section, text}. Reading only the first
+  // two made every Health Canada block render empty.
+  const text = (
+    v: string | { claim?: string; note?: string; text?: string }
+  ): string =>
+    typeof v === "string" ? v : (v.claim ?? v.note ?? v.text ?? "");
   const background = (claims ?? []).map(text).filter(Boolean);
   const safetyNotes = (safety ?? []).map(text).filter(Boolean);
   if (!background.length && !safetyNotes.length) return null;
