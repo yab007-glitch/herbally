@@ -469,7 +469,10 @@ export default async function HerbDetailPage({ params }: Props) {
         provenance: m.provenance,
       };
     },
-    [`monograph-${slug}`],
+    // Versioned: the Data Cache outlives a deploy, so an unversioned key keeps
+    // serving yesterday's monograph. Popular pages were still showing their old
+    // source hours after the import because only they had a warm entry.
+    [`monograph-v2-${slug}`],
     { revalidate: HERB_PAGE_TTL, tags: [`monograph-${slug}`] }
   );
 
