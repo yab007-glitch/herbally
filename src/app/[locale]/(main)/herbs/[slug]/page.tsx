@@ -169,6 +169,16 @@ type HerbPageBundle = {
   monograph: Record<string, unknown> | null;
   pubmed: Record<string, unknown> | null;
   popularity: { views?: number | null } | null;
+  sources: Array<{
+    source: string;
+    licence: string | null;
+    attribution: string | null;
+    url: string | null;
+    claims: unknown;
+    safety: unknown;
+    doses: unknown;
+    monograph_date: string | null;
+  }>;
   faqs: Array<Record<string, unknown>>;
   related: Array<{ name: string; slug: string; scientific_name: string }>;
 };
@@ -321,7 +331,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: herb.description,
     traditional_uses: herb.traditional_uses,
     dosage_adult: herb.dosage_adult,
-    hasMonograph: Boolean(bundle?.monograph),
+    hasMonograph:
+      Boolean(bundle?.monograph) || (bundle?.sources?.length ?? 0) > 0,
     hasRegulatory: Boolean(bundle?.regulatory),
   });
 
@@ -502,22 +513,15 @@ export default async function HerbDetailPage({ params }: Props) {
 
   // Independent reads — firing them together removes a serial round trip from
   // every cold render (i.e. from every prerender and every ISR regeneration).
+  const pageBundle = await loadHerbPageBundle(slug);
   const [dbMonograph, pubmedSheet] = await Promise.all([
     getMonographCached(slug),
     getPubmedSheetCached(slug),
   ]);
 
-  // The NCCIH import stores public-domain NIH text in the same table, tagged by
-  // generation_method so it can never be mistaken for a hand-written monograph.
-  const importedMethod = (dbMonograph as { generation_method?: string } | null)
-    ?.generation_method;
-  const nccih =
-    importedMethod === "imported-public-domain" ? dbMonograph : null;
-  // Health Canada publishes under the Open Government Licence – Canada, which
-  // allows commercial reuse with acknowledgement. Stored separately from the
-  // public-domain import so the attribution shown is always the right one.
-  const healthCanada =
-    importedMethod === "imported-ogl-canada" ? dbMonograph : null;
+  // Imported regulator text lives in herb_monograph_sources now — many rows per
+  // herb, one per source — and is rendered from the bundle below. herb_monographs
+  // holds only authored entries.
 
   // Parse provenance to determine if this herb's content has been verified
   const provenance = parseProvenance(
@@ -951,30 +955,36 @@ export default async function HerbDetailPage({ params }: Props) {
         }
       />
 
-      {nccih ? (
+      {/* Every imported regulator excerpt, each in its own block with its own
+          licence. Health Canada and NCCIH can both speak about the same plant;
+          the page shows both instead of one overwriting the other. */}
+      {(pageBundle?.sources ?? []).map((source) => (
         <NccihSummary
-          claims={nccih.claims as unknown as string[]}
-          safety={nccih.safety_notes as unknown as string[]}
-          url={(nccih.provenance as { url?: string } | null)?.url ?? null}
+          key={source.source}
+          claims={source.claims as unknown as (string | { text?: string })[]}
+          safety={source.safety as unknown as (string | { text?: string })[]}
+          url={source.url}
           title={herb.name}
+          {...(source.source === "Health Canada"
+            ? {
+                heading: `What Health Canada says about ${herb.name}`,
+                sourceLabel:
+                  "Health Canada's Natural Health Products Ingredients Database",
+                licenceText:
+                  "Contains information licensed under the Open Government Licence – Canada.",
+                claimsHeading: "Approved uses",
+                safetyHeading:
+                  "Cautions, contraindications and adverse reactions",
+              }
+            : {
+                heading: `What the NIH says about ${herb.name}`,
+                sourceLabel:
+                  "National Center for Complementary and Integrative Health",
+                licenceText:
+                  "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
+              })}
         />
-      ) : null}
-
-      {healthCanada ? (
-        <NccihSummary
-          claims={healthCanada.claims as unknown as string[]}
-          safety={healthCanada.safety_notes as unknown as string[]}
-          url={
-            (healthCanada.provenance as { url?: string } | null)?.url ?? null
-          }
-          title={herb.name}
-          heading={`What Health Canada says about ${herb.name}`}
-          sourceLabel="Health Canada's Natural Health Products Ingredients Database"
-          licenceText="Contains information licensed under the Open Government Licence – Canada."
-          claimsHeading="Approved uses"
-          safetyHeading="Cautions, contraindications and adverse reactions"
-        />
-      ) : null}
+      ))}
 
       {/* The recorded facts, in full sentences, before the tabs. Every paragraph
           restates a field the entry already holds — see lib/herbs/narrative — so

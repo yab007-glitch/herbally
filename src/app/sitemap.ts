@@ -162,6 +162,67 @@ async function fetchPublishedMonographIds(
 }
 
 /**
+ * Slugs carrying an imported regulator excerpt (Health Canada, NCCIH).
+ *
+ * These used to live in herb_monographs, so the substance score found them through
+ * the monograph set. They now live in herb_monograph_sources, one row per source —
+ * forgetting this set would silently drop ~120 pages back under the line.
+ */
+async function fetchImportedSourceSlugs(
+  supabase: NonNullable<ReturnType<typeof getAnonClient>>,
+  timeoutMs: number
+): Promise<Set<string>> {
+  const slugs = new Set<string>();
+  const pageSize = 1000;
+  let from = 0;
+  try {
+    while (true) {
+      // The generated types predate this table; cast rather than hand-edit them.
+      const loose = supabase as unknown as {
+        from: (t: string) => {
+          select: (c: string) => {
+            range: (
+              a: number,
+              b: number
+            ) => Promise<{
+              data: Array<{ herb_slug?: string }> | null;
+              error: { message?: string; code?: string } | null;
+            }>;
+          };
+        };
+      };
+      const { data, error } = await withTimeout(
+        loose
+          .from("herb_monograph_sources")
+          .select("herb_slug")
+          .range(from, from + pageSize - 1),
+        "sitemap_monograph_sources",
+        timeoutMs
+      );
+      if (error) {
+        logger.error("sitemap_source_query_error", {
+          error: error.message,
+          code: error.code,
+          from,
+        });
+        break;
+      }
+      const rows = data ?? [];
+      for (const row of rows) {
+        if (typeof row.herb_slug === "string") slugs.add(row.herb_slug);
+      }
+      if (rows.length < pageSize) break;
+      from += pageSize;
+    }
+  } catch (error) {
+    logger.error("sitemap_source_query_failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+  return slugs;
+}
+
+/**
  * Slugs with a regulator record — the other 300 characters of substance the
  * page counts. ~1,180 rows today, so it pages past PostgREST's 1,000-row cap.
  */
@@ -533,13 +594,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // The substance inputs the rule needs beyond the herb row itself. Two small
     // reads, bounded by the same deadline, fetched once for the whole route.
     const flagsRemainingMs = remainingBudgetMs();
-    const [monographIds, regulatorySlugs] =
+    const [monographSlugs, sourceSlugs, regulatorySlugs] =
       flagsRemainingMs > 0
         ? await Promise.all([
             fetchPublishedMonographIds(supabase, flagsRemainingMs),
+            fetchImportedSourceSlugs(supabase, flagsRemainingMs),
             fetchRegulatorySlugs(supabase, flagsRemainingMs),
           ])
-        : [new Set<string>(), new Set<string>()];
+        : [new Set<string>(), new Set<string>(), new Set<string>()];
 
     let from = 0;
     let batchSize = HERB_BATCH_SIZE;
@@ -581,7 +643,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           description: herb.description,
           traditional_uses: herb.traditional_uses,
           dosage_adult: herb.dosage_adult,
-          hasMonograph: monographIds.has(herb.id),
+          hasMonograph:
+            monographSlugs.has(herb.id) || sourceSlugs.has(herb.slug),
           hasRegulatory: regulatorySlugs.has(herb.slug),
         });
         if (!indexable) continue;

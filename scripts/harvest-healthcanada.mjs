@@ -189,11 +189,12 @@ function names(lines) {
   return [...new Set(proper)];
 }
 
-function pregnancyCategory(text) {
-  const t = text.toLowerCase();
-  if (!/pregnan/.test(t)) return "insufficient";
-  if (/do not use|must not|contraindicat/.test(t)) return "unsafe";
-  return "caution";
+/** "May 29, 2026" or "2026-05-29" -> ISO date, or null. */
+function toDate(value) {
+  if (!value) return null;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toISOString().slice(0, 10);
 }
 
 async function fetchCached(id) {
@@ -416,30 +417,21 @@ async function main() {
       ...new Set([...cautions, ...contraindications, ...adverse]),
     ];
     const row = {
-      herb_id: herb.id,
       herb_slug: herb.slug,
-      summary: uses.slice(0, 3).join(" ").slice(0, 1200),
-      mechanism: "",
+      // One row per source: Health Canada and NCCIH can both describe the same
+      // plant. Writing to herb_monographs made the newer import overwrite the older.
+      source: "Health Canada",
+      licence: "ogl-canada",
+      attribution: ATTRIBUTION,
+      url: PAGE(entry.id),
       claims: uses.map((text) => ({ section: "Use(s) or Purpose(s)", text })),
-      safety_notes: safety,
-      drug_interactions: [],
-      pregnancy_category: pregnancyCategory(safety.join(" ")),
-      key_citations: [],
-      status: "published",
+      safety,
+      doses,
       generation_method: "imported-ogl-canada",
-      provenance: {
-        source: "Health Canada — Natural Health Products Ingredients Database",
-        regulator: "Health Canada",
-        licence: "ogl-canada",
-        attribution: ATTRIBUTION,
-        url: PAGE(entry.id),
-        retrieved_at: new Date().toISOString().slice(0, 10),
-        monograph_date:
-          lines.find((l) =>
-            /^\d{4}-\d{2}-\d{2}$|^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(l)
-          ) ?? null,
-        doses,
-      },
+      monograph_date: toDate(
+        lines.find((l) => /^\d{4}-\d{2}-\d{2}$|^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(l))
+      ),
+      retrieved_at: new Date().toISOString().slice(0, 10),
     };
     usedSlugs.add(herb.slug);
     rows.push(row);
@@ -470,7 +462,7 @@ async function main() {
     const failures = [];
     for (const row of rows) {
       const res = await fetch(
-        `${BASE}/rest/v1/herb_monographs?on_conflict=herb_slug`,
+        `${BASE}/rest/v1/herb_monograph_sources?on_conflict=herb_slug,source`,
         {
           method: "POST",
           headers: {

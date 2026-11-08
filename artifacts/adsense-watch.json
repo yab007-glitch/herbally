@@ -1,9 +1,10 @@
 {
   "site": "herbally.app",
-  "status": "Review requested",
+  "status": "Getting ready",
+  "reason": null,
   "request_time": "07 Nov 2026 06:44",
   "sitemap_urls": 3152,
   "sitemap_urls_before": 6948,
-  "checked_at": "2026-11-07T11:45:00-05:00",
-  "notes": "Thin herb pages (substance < 400 chars) now render noindex and are excluded from the sitemap; review requested after the fix deployed."
+  "checked_at": "2026-11-08T09:01:08-05:00",
+  "notes": "Site row reads 'Getting ready' with 'Verify site ownership' and 'Review requested' both ticked; no policy violations shown and no request-time line on the page (request time carried forward from the 2026-11-07 snapshot). Same underlying state as the previous entry, which recorded the review item's wording."
 }

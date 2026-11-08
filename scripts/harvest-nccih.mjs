@@ -218,47 +218,25 @@ async function main() {
     }
 
     const row = {
-      herb_id: herb.id,
       herb_slug: herb.slug,
-      // NOT NULL in the table; NCCIH has no mechanism section, and this row is
-      // never rendered as a hand-written monograph, so it stays empty on purpose.
-      mechanism: "",
-      // Same reason: NOT NULL. NCCIH does not grade pregnancy risk, and inventing a
-      // grade would be the exact failure this project keeps correcting.
-      pregnancy_category: "insufficient",
-      summary:
-        [...background, ...learned].slice(0, 12).join(" ").slice(0, 4000) ||
-        null,
+      // Imported sources live in their own table, one row per source, so a second
+      // regulator can describe the same herb without overwriting this one.
+      source: "NCCIH",
+      licence: "us-federal-public-domain",
+      attribution:
+        "US government work, not subject to copyright (17 U.S.C. §105).",
+      url,
       claims: background,
-      safety_notes: safety,
-      key_citations: [
-        {
-          title: `NCCIH — ${p.title}`,
-          url,
-          publisher:
-            "National Center for Complementary and Integrative Health (NIH)",
-          licence: "us-federal-public-domain",
-        },
-      ],
-      status: "published",
+      safety,
+      doses: [],
       generation_method: "imported-public-domain",
-      provenance: {
-        source: "NCCIH",
-        licence: "us-federal-public-domain",
-        url,
-        retrieved_at: new Date().toISOString().slice(0, 10),
-        sections: {
-          background: background.length,
-          learned: learned.length,
-          safety: safety.length,
-          knowledge: know.length,
-        },
-      },
+      monograph_date: null,
+      retrieved_at: new Date().toISOString().slice(0, 10),
     };
 
     if (APPLY) {
       const res = await fetch(
-        `${BASE}/rest/v1/herb_monographs?on_conflict=herb_slug`,
+        `${BASE}/rest/v1/herb_monograph_sources?on_conflict=herb_slug,source`,
         {
           method: "POST",
           headers: {
