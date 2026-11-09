@@ -499,7 +499,11 @@ export default async function HerbDetailPage({ params }: Props) {
         monograph_date: string | null;
       }>;
     },
-    [`sources-v1-${slug}`],
+    // Versioned like the monograph key: the Data Cache outlives a deploy, so a
+    // v1 entry written before the LiverTox import kept popular pages showing
+    // only their NCCIH row for up to three days. Bumping the key retires every
+    // stale entry at once.
+    [`sources-v2-${slug}`],
     { revalidate: HERB_PAGE_TTL, tags: [`sources-${slug}`] }
   );
 
