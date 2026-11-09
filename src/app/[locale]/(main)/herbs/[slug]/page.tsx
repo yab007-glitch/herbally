@@ -1031,27 +1031,26 @@ export default async function HerbDetailPage({ params }: Props) {
                 licenceText:
                   "LiverTox is a US government work and the source chapter carries no copyright statement, so this text is reproduced with attribution.",
                 claimsHeading: "Background",
-                safetyHeading:
-                  "Hepatotoxicity and likelihood of liver injury",
+                safetyHeading: "Hepatotoxicity and likelihood of liver injury",
               }
             : source.source === "Health Canada"
-            ? {
-                heading: `What Health Canada says about ${herb.name}`,
-                sourceLabel:
-                  "Health Canada's Natural Health Products Ingredients Database",
-                licenceText:
-                  "Contains information licensed under the Open Government Licence – Canada.",
-                claimsHeading: "Approved uses",
-                safetyHeading:
-                  "Cautions, contraindications and adverse reactions",
-              }
-            : {
-                heading: `What the NIH says about ${herb.name}`,
-                sourceLabel:
-                  "National Center for Complementary and Integrative Health",
-                licenceText:
-                  "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
-              })}
+              ? {
+                  heading: `What Health Canada says about ${herb.name}`,
+                  sourceLabel:
+                    "Health Canada's Natural Health Products Ingredients Database",
+                  licenceText:
+                    "Contains information licensed under the Open Government Licence – Canada.",
+                  claimsHeading: "Approved uses",
+                  safetyHeading:
+                    "Cautions, contraindications and adverse reactions",
+                }
+              : {
+                  heading: `What the NIH says about ${herb.name}`,
+                  sourceLabel:
+                    "National Center for Complementary and Integrative Health",
+                  licenceText:
+                    "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
+                })}
         />
       ))}
 

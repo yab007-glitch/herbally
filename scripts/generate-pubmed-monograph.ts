@@ -598,7 +598,10 @@ async function main() {
         const i = next++;
         if (i >= n) return;
         const herb = todo[i];
-        const r = await generateForSlug(herb, { write: doWrite, revalidate: false });
+        const r = await generateForSlug(herb, {
+          write: doWrite,
+          revalidate: false,
+        });
         const isDbFailure = !!r.error?.startsWith("DB upsert failed");
         if (r.ok) {
           consecutiveDbFailures = 0;
