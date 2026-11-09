@@ -7,6 +7,12 @@
  * Google reached the same verdict twice — 2,711 pages "crawled, currently not
  * indexed" and an AdSense refusal for "low-value content".
  *
+ * A PubMed-compiled information sheet counts as a monograph. Those sheets are
+ * built from real abstracts with a PMID on every claim, average ~3,200
+ * characters, and are what the page renders for the 2,500 herbs that have no
+ * hand-written monograph — counting them (2026-11-08) lifted the indexable set
+ * from 1,347 to ~2,594.
+ *
  * **Views do not exempt a page any more.** Until 2026-11-07 a page with 78 views
  * was submitted regardless of substance, on the theory that an entry people
  * opened had earned its place. The counter is polluted: of those 1,898 thin
@@ -27,7 +33,10 @@ export interface IndexableInput {
   description?: string | null;
   traditional_uses?: string[] | null;
   dosage_adult?: string | null;
-  /** A published monograph counts: sourced detail even when the prose is short. */
+  /**
+   * A published monograph or a PubMed-compiled sheet counts: sourced detail
+   * even when the prose is short.
+   */
   hasMonograph?: boolean;
   /** A regulator record counts, for the same reason. */
   hasRegulatory?: boolean;

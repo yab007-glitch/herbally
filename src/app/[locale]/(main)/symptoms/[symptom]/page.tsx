@@ -26,7 +26,9 @@ import { JsonLd } from "@/components/seo/json-ld";
 
 // ISR. The locale is a root param, so static generation no longer throws; the
 // slug set is finite (SYMPTOM_SLUGS), and unknown slugs still render notFound.
-export const revalidate = 86400;
+// Three days: symptom hubs change only when their herbs change, and admin
+// edits revalidate this path on demand.
+export const revalidate = 259200;
 
 type Props = { params: Promise<{ symptom: string }> };
 

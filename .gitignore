@@ -92,3 +92,6 @@ artifacts/site-sweep.json
 
 # Search Console snapshots (local monitoring history)
 artifacts/gsc-index-history.json
+
+# Python bytecode from the import scripts
+__pycache__/

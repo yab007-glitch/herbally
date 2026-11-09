@@ -19,8 +19,11 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 
 // ISR. The locale is a root param now, so on-demand generation is safe and
-// comparisons outside the prerendered set still render (not 500).
-export const revalidate = 86400;
+// comparisons outside the prerendered set still render (not 500). Three days
+// matches the herb page's data cache: every revalidation is a billed ISR write
+// plus a database read, and comparison data changes only when herbs are edited
+// (admin edits revalidate this path on demand).
+export const revalidate = 259200;
 
 /**
  * Canonical list of popular comparisons. Exported so the sitemap derives its

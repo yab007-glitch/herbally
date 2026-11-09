@@ -223,6 +223,59 @@ async function fetchImportedSourceSlugs(
 }
 
 /**
+ * Slugs carrying a PubMed-compiled information sheet with content.
+ *
+ * These sheets are compiled from real abstracts, cite a PMID for every claim,
+ * and average ~3,200 characters — more sourced detail than the 400-character
+ * monograph allowance stands in for. They render in place of the narrative tabs
+ * on every herb without a hand-written monograph, so counting them is what makes
+ * the page's own substance claim true. Roughly 1,250 pages cross the line.
+ */
+async function fetchPubmedSheetSlugs(
+  supabase: NonNullable<ReturnType<typeof getAnonClient>>,
+  timeoutMs: number
+): Promise<Set<string>> {
+  const slugs = new Set<string>();
+  const pageSize = 1000;
+  let from = 0;
+  try {
+    while (true) {
+      const { data, error } = await withTimeout(
+        // Slug only: the sheet body averages ~3 KB, and transferring 2,500 of
+        // them would spend the sitemap's database budget on payloads it never
+        // reads.
+        supabase
+          .from("herb_pubmed_monographs")
+          .select("slug")
+          .not("content", "is", null)
+          .range(from, from + pageSize - 1),
+        "sitemap_pubmed_sheets",
+        timeoutMs
+      );
+      if (error) {
+        logger.error("sitemap_pubmed_sheets_query_error", {
+          error: error.message,
+          code: error.code,
+          from,
+        });
+        break;
+      }
+      const rows = data ?? [];
+      for (const row of rows) {
+        if (typeof row.slug === "string") slugs.add(row.slug);
+      }
+      if (rows.length < pageSize) break;
+      from += pageSize;
+    }
+  } catch (error) {
+    logger.error("sitemap_pubmed_sheets_query_failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+  return slugs;
+}
+
+/**
  * Slugs with a regulator record — the other 300 characters of substance the
  * page counts. ~1,180 rows today, so it pages past PostgREST's 1,000-row cap.
  */
@@ -594,14 +647,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // The substance inputs the rule needs beyond the herb row itself. Two small
     // reads, bounded by the same deadline, fetched once for the whole route.
     const flagsRemainingMs = remainingBudgetMs();
-    const [monographSlugs, sourceSlugs, regulatorySlugs] =
+    const [monographSlugs, sourceSlugs, regulatorySlugs, pubmedSlugs] =
       flagsRemainingMs > 0
         ? await Promise.all([
             fetchPublishedMonographIds(supabase, flagsRemainingMs),
             fetchImportedSourceSlugs(supabase, flagsRemainingMs),
             fetchRegulatorySlugs(supabase, flagsRemainingMs),
+            fetchPubmedSheetSlugs(supabase, flagsRemainingMs),
           ])
-        : [new Set<string>(), new Set<string>(), new Set<string>()];
+        : [
+            new Set<string>(),
+            new Set<string>(),
+            new Set<string>(),
+            new Set<string>(),
+          ];
 
     let from = 0;
     let batchSize = HERB_BATCH_SIZE;
@@ -644,7 +703,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           traditional_uses: herb.traditional_uses,
           dosage_adult: herb.dosage_adult,
           hasMonograph:
-            monographSlugs.has(herb.id) || sourceSlugs.has(herb.slug),
+            monographSlugs.has(herb.id) ||
+            sourceSlugs.has(herb.slug) ||
+            pubmedSlugs.has(herb.slug),
           hasRegulatory: regulatorySlugs.has(herb.slug),
         });
         if (!indexable) continue;

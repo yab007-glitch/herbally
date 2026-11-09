@@ -2,10 +2,19 @@ import { createClient } from "@supabase/supabase-js";
 import { generateMonograph } from "../src/lib/data/generate-monograph";
 
 /**
- * Batch monograph generator
+ * Batch monograph generator — DRAFT ONLY.
  *
- * Generates monographs for ALL published herbs that don't already have one.
- * Uses the auto-generator to create structured content from DB data.
+ * Generates structured text for published herbs that have no PUBLISHED
+ * monograph, purely from fields already in the herbs row. It does not consult
+ * any source, so its output must never be published as-is: this script is what
+ * produced the 2,585 archived monographs in June 2026 whose mechanism claims
+ * and citations were never checked against literature (see migration-era notes
+ * and the page's Option B gate). Rows are therefore always written with
+ * status = 'draft' and render nowhere.
+ *
+ * For content that can be shown to readers, use the grounded pipeline:
+ *   npx tsx scripts/generate-pubmed-monograph.ts --batch --write
+ * which cites a validated PMID for every claim.
  *
  * Usage: NEXT_PUBLIC_SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... npx tsx scripts/batch-generate-monographs.ts [batch-size]
  */
@@ -50,9 +59,12 @@ async function getExistingMonographSlugs(): Promise<Set<string>> {
   const batchSize = 500;
 
   while (true) {
+    // Only a PUBLISHED row means the catalog already has displayable content.
+    // An archived/draft row (the June 2026 batch) must not block a fresh draft.
     const { data, error } = await supabase
       .from("herb_monographs")
       .select("herb_slug")
+      .eq("status", "published")
       .range(offset, offset + batchSize - 1);
 
     if (error || !data || data.length === 0) break;
@@ -157,13 +169,8 @@ async function main() {
         continue;
       }
 
-      // Determine status based on data quality
-      const hasGoodData =
-        (herb.evidence_level && ["A", "B"].includes(herb.evidence_level)) ||
-        (herb.modern_uses?.length || 0) + (herb.traditional_uses?.length || 0) >
-          3;
-
-      // Store in database
+      // Store in database. Always draft: this text has no source behind it and
+      // must be reviewed before it can be shown (see the file header).
       const { error } = await supabase.from("herb_monographs").upsert(
         {
           herb_id: herb.id,
@@ -175,7 +182,7 @@ async function main() {
           drug_interactions: monograph.drugInteractions,
           pregnancy_category: monograph.pregnancyCategory,
           key_citations: monograph.keyCitations,
-          status: hasGoodData ? "published" : "draft",
+          status: "draft",
           generation_method: "auto-generated",
           reviewed_by: null,
           reviewer_credentials: null,

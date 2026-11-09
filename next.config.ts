@@ -42,6 +42,15 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "react-markdown"],
   },
   images: {
+    // Constrain the variant matrix. The defaults are 8 device widths × 7 icon
+    // widths × 2 formats, so one photo can produce up to 30 derivatives; every
+    // derivative is a billed transformation and a billed cache write. The app
+    // has only three <Image> call sites, and their `sizes` props resolve to
+    // widths covered by these breakpoints. `qualities` is required in Next 16;
+    // 75 is the global default and no call site overrides it.
+    deviceSizes: [640, 1080, 1920],
+    imageSizes: [96, 128, 256, 384],
+    qualities: [75],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
@@ -180,8 +189,6 @@ export default bundleAnalyzer(
     org: process.env.SENTRY_ORG || "",
     project: process.env.SENTRY_PROJECT || "",
     authToken: process.env.SENTRY_AUTH_TOKEN,
-    // Upload wider set of client source files for better stack trace resolution
-    widenClientFileUpload: true,
     // Create a proxy API route to bypass ad-blockers
     tunnelRoute: "/monitoring",
     // Suppress non-CI output

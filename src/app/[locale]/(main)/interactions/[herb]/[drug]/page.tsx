@@ -31,8 +31,9 @@ import { cn } from "@/lib/utils";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
-// set are generated on demand and cached.
-export const revalidate = 86400;
+// set are generated on demand and cached. Three days: interaction data changes
+// only through imports, and each revalidation costs an ISR write plus DB reads.
+export const revalidate = 259200;
 
 type Props = { params: Promise<{ herb: string; drug: string }> };
 

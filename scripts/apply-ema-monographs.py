@@ -236,7 +236,12 @@ def main():
     key = env["SUPABASE_SERVICE_ROLE_KEY"]
     H = {"apikey": key, "Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
-    urls = json.load(open(URLS))
+    # /tmp is volatile; fall back to the checked-in map so a cleaned /tmp does
+    # not silently turn the importer into a no-op.
+    if os.path.exists(URLS):
+        urls = json.load(open(URLS))
+    else:
+        urls = json.load(open(os.path.join(ROOT, "data", "ema-monograph-map.json")))["ema_urls"]
     # prefer the final monograph when a draft exists for the same binomial
     chosen = {}
     for u in urls:
@@ -367,7 +372,9 @@ def main():
             return {"binomial": b, "slug": herb["slug"], "status": f"patch failed {exc}"}
         return {"binomial": b, "slug": herb["slug"], "status": "applied" if ok else "patch rejected"}
 
-    with ThreadPoolExecutor(max_workers=4) as ex:
+    # Two writers maximum: four concurrent PATCHes is how the Free-tier Nano was
+    # saturated on 2026-11-09 (see scripts/generate-pubmed-monograph.ts).
+    with ThreadPoolExecutor(max_workers=2) as ex:
         results = list(ex.map(work, chosen.items()))
 
     counts = {}

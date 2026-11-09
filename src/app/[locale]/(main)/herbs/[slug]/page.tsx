@@ -73,8 +73,8 @@ import { getReviewer } from "@/lib/data/reviewers";
 // generation, which is what turned unlisted slugs into 500s on 2026-10-08.
 // The locale is now a root param and no page-level code reads a request API,
 // so on-demand generation is safe. Revalidate aligns with the unstable_cache
-// TTLs below (24 h).
-export const revalidate = 86400;
+// TTLs below (3 days); admin edits still invalidate on demand.
+export const revalidate = 259200;
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -230,11 +230,21 @@ export async function generateStaticParams() {
     return [];
   }
 
-  const { data: herbs } = await supabase
+  // NOTE: herb_popularity is service_role-only (migration 00069); the anon
+  // client below cannot read it. Raising the limit therefore requires a
+  // service-role client here. The error is logged rather than swallowed so that
+  // mistake shows up as an empty prerender set instead of a silent one.
+  const { data: herbs, error } = await supabase
     .from("herb_popularity")
     .select("slug")
     .order("views", { ascending: false })
     .limit(PRERENDER_HERB_LIMIT);
+
+  if (error) {
+    logger.error("generateStaticParams: herb_popularity unavailable", {
+      error: error.message,
+    });
+  }
 
   return (herbs ?? []).map((h) => ({ slug: h.slug }));
 }
@@ -332,7 +342,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     traditional_uses: herb.traditional_uses,
     dosage_adult: herb.dosage_adult,
     hasMonograph:
-      Boolean(bundle?.monograph) || (bundle?.sources?.length ?? 0) > 0,
+      Boolean(bundle?.monograph) ||
+      Boolean((bundle?.pubmed as { content?: unknown } | null)?.content) ||
+      (bundle?.sources?.length ?? 0) > 0,
     hasRegulatory: Boolean(bundle?.regulatory),
   });
 
@@ -507,6 +519,7 @@ export default async function HerbDetailPage({ params }: Props) {
         key_citations: m.key_citations,
         status: m.status,
         generation_method: m.generation_method,
+        reviewed_by: m.reviewed_by,
         provenance: m.provenance,
       };
     },
@@ -581,10 +594,17 @@ export default async function HerbDetailPage({ params }: Props) {
     provenance.verification_method === "ai_summarized";
 
   let monograph: Monograph | null = null;
-  // Option B: only herbs with a hand-written (human-authored) monograph show
-  // the rich narrative. Every other herb renders the government-sourced view
-  // (government sources + PubMed citations) instead of AI-generated text.
-  const isManualMonograph = hasManualMonograph(slug);
+  // Option B: only herbs with a hand-written (human-authored) or reviewed
+  // monograph show the rich narrative. Every other herb renders the
+  // government/PubMed-sourced view instead of AI-generated text. The hardcoded
+  // set covers the monographs that ship in code; the DB branch lets an admin
+  // publish a reviewed monograph without a deploy, while still refusing to
+  // render an unreviewed auto-generated row (the archived 2026-06 batch).
+  const isManualMonograph =
+    hasManualMonograph(slug) ||
+    (dbMonograph?.status === "published" &&
+      (dbMonograph.generation_method === "manual" ||
+        Boolean(dbMonograph.reviewed_by)));
   // The "Verified" veto for an unreviewed PubMed sheet lives in the hero
   // component (herb-hero-v2.tsx), which is what actually renders the badge.
   // Computing it here too left the result unused — an ESLint warning and a
@@ -995,7 +1015,18 @@ export default async function HerbDetailPage({ params }: Props) {
           safety={source.safety as unknown as (string | { text?: string })[]}
           url={source.url}
           title={herb.name}
-          {...(source.source === "Health Canada"
+          {...(source.source === "LiverTox"
+            ? {
+                heading: `What LiverTox says about ${herb.name}`,
+                sourceLabel:
+                  "LiverTox — National Institute of Diabetes and Digestive and Kidney Diseases",
+                licenceText:
+                  "LiverTox is a US government work and the source chapter carries no copyright statement, so this text is reproduced with attribution.",
+                claimsHeading: "Background",
+                safetyHeading:
+                  "Hepatotoxicity and likelihood of liver injury",
+              }
+            : source.source === "Health Canada"
             ? {
                 heading: `What Health Canada says about ${herb.name}`,
                 sourceLabel:
