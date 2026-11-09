@@ -187,6 +187,10 @@ type HerbPageBundle = {
 // being served until their TTL expires, even when the RPC's shape changes. Bump
 // this key whenever the bundle's fields change, or new fields read as undefined.
 // v3: imported Health Canada monographs were invisible until the key moved.
+// v4: the bundle also carries `faqs`, so a corrected herb_faqs row stayed hidden
+//     on every page whose bundle was still warm. A data-only correction cannot
+//     reach it otherwise: the faqs cache wraps this one, so purging
+//     `herb-faqs-<slug>` re-runs the wrapper and still reads this stale entry.
 const loadHerbPageBundle = unstable_cache(
   async (slug: string): Promise<HerbPageBundle | null> => {
     const supabase = getAnonClient();
@@ -206,7 +210,7 @@ const loadHerbPageBundle = unstable_cache(
     }
     return data as HerbPageBundle;
   },
-  ["herb-page-bundle-v3"],
+  ["herb-page-bundle-v4"],
   { revalidate: HERB_PAGE_TTL, tags: ["herb-page-bundle"] }
 );
 
@@ -694,7 +698,7 @@ export default async function HerbDetailPage({ params }: Props) {
           answer: r.translations!.fr!.answer!,
         }));
     },
-    [`herb-faqs-v3-${slug}`],
+    [`herb-faqs-v4-${slug}`],
     { revalidate: HERB_PAGE_TTL, tags: [`herb-faqs-${slug}`] }
   );
 
