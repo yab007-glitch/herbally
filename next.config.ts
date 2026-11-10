@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 import createNextIntlPlugin from "next-intl/plugin";
-import { buildSecurityHeaders } from "./src/lib/security/csp";
 import herbMergeRedirects from "./data/herb-merge-redirects.json";
 import herbSlugRenames from "./data/herb-slug-renames.json";
 
@@ -69,19 +68,33 @@ const nextConfig: NextConfig = {
   compress: true,
   trailingSlash: false,
   // L15 (audit 2026-06-22): the proxy (middleware) matcher excludes static
-  // asset extensions, so those responses never received CSP/HSTS/X-Frame-Options
+  // asset extensions, so those responses never received HSTS/X-Frame-Options
   // and could be framed/fetched without the same protections. Apply the same
   // baseline security headers to static assets here at the config level so the
   // protection is uniform regardless of the proxy matcher.
-  // NOTE (embed framing): the framing directive and X-Frame-Options are
-  // deliberately ABSENT here — they are owned exclusively by src/proxy.ts,
-  // which must exempt /embed/* (partner iframes). Config-level headers are
-  // applied after the proxy, so emitting them here would re-block embeds.
+  //
+  // Content-Security-Policy is deliberately NOT set here. Two policies on one
+  // response are enforced as an intersection, so a config-level policy would
+  // silently veto any directive the proxy widens for an ad-eligible document
+  // (see src/lib/ads/csp.ts) — ads would fail to load even with the gate on,
+  // while every sensitive page still looked correctly locked down. The proxy
+  // is the only layer that can decide per request, so it owns the document
+  // CSP outright; it covers every document route (its matcher only skips
+  // non-document asset paths). CSP is not enforced on non-document responses,
+  // so nothing is lost for statics.
+  //
+  // NOTE (embed framing): X-Frame-Options and CSP frame-ancestors are
+  // likewise owned exclusively by src/proxy.ts, which must exempt /embed/*
+  // (partner iframes). Config-level headers merge over middleware deletions,
+  // so allowlisting there is the only way to un-frame a route.
   async headers() {
     const securityHeaders = [
-      ...Object.entries(buildSecurityHeaders({ framing: "omit" })).map(
-        ([key, value]) => ({ key, value })
-      ),
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      {
+        key: "Permissions-Policy",
+        value: "camera=(), microphone=(), geolocation=()",
+      },
       ...(process.env.NODE_ENV === "production"
         ? [
             {

@@ -10,24 +10,46 @@ import {
 } from "@/lib/i18n/routing";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import { detectLocaleFromAcceptLanguage } from "@/lib/i18n/detect-locale";
-import { buildSecurityHeaders } from "@/lib/security/csp";
+import { ADS_LAUNCH_GATE } from "@/lib/ads/policy";
+import { adsCspHosts, buildContentSecurityPolicy } from "@/lib/ads/csp";
+
+function securityHeaders(opts?: {
+  frameable?: boolean;
+  adHosts?: readonly string[];
+}): Record<string, string> {
+  return {
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "X-DNS-Prefetch-Control": "on",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Content-Security-Policy": buildContentSecurityPolicy({
+      adHosts: opts?.adHosts ?? [],
+      frameable: opts?.frameable,
+      dev: process.env.NODE_ENV !== "production",
+    }),
+  };
+}
 
 function applySecurityHeaders(
   response: NextResponse,
-  opts?: { frameable?: boolean }
+  opts?: { frameable?: boolean; adHosts?: readonly string[] }
 ): NextResponse {
-  const securityHeaders = buildSecurityHeaders({
-    framing: opts?.frameable ? "allow" : "deny",
-  });
-  for (const [key, value] of Object.entries(securityHeaders)) {
+  const baseSecurityHeaders = securityHeaders(opts);
+  for (const [key, value] of Object.entries(baseSecurityHeaders)) {
+    // /embed/* tools are designed to run inside third-party iframes: allow
+    // framing and drop X-Frame-Options there. The CSP already carries
+    // frame-ancestors * for that mode. The embeds contain no auth or
+    // state-changing actions (search inputs + outbound links only), so the
+    // clickjacking exposure is minimal. Everything else keeps DENY.
+    // NOTE: next.config.ts headers() does not set X-Frame-Options; if another
+    // layer adds it, delete it explicitly rather than skipping .set().
+    if (key === "X-Frame-Options" && opts?.frameable) {
+      response.headers.delete("X-Frame-Options");
+      continue;
+    }
     response.headers.set(key, value);
   }
-  // /embed/* tools are designed to run inside third-party iframes: allow
-  // framing and drop X-Frame-Options there. buildSecurityHeaders already
-  // omits it for the "allow" mode; delete defensively in case another layer
-  // added it. The embeds contain no auth or state-changing actions (search
-  // inputs + outbound links only), so the clickjacking exposure is minimal.
-  // Everything else keeps DENY.
   if (opts?.frameable) {
     response.headers.delete("X-Frame-Options");
   }
@@ -106,7 +128,13 @@ export default async function proxy(request: NextRequest) {
         ? pathname.slice(3)
         : stripLocalePrefix(pathname);
   const frameable = publicPath === "/embed" || publicPath.startsWith("/embed/");
-  const frameOpts = frameable ? { frameable: true } : undefined;
+  // CSP-wide ad permission is granted ONLY to an ad-eligible public herb
+  // document and only when the hard launch gate is on. Sensitive documents
+  // (chat, checker, calculator, garden, auth, API) never list an ad origin.
+  const securityOpts = {
+    frameable,
+    adHosts: adsCspHosts(ADS_LAUNCH_GATE, publicPath),
+  };
 
   // Internal pass guard. Next re-enters the proxy with the rewritten path
   // (`/en/...`), and without this marker the "public /en/* redirects" rule
@@ -123,7 +151,7 @@ export default async function proxy(request: NextRequest) {
     requestHeaders.set("x-pathname", stripLocalePrefix(pathname));
     return applySecurityHeaders(
       NextResponse.next({ request: { headers: requestHeaders } }),
-      frameOpts
+      securityOpts
     );
   }
 
@@ -230,7 +258,7 @@ export default async function proxy(request: NextRequest) {
         response.cookies.set(cookie.name, cookie.value, cookie);
       });
 
-      return applySecurityHeaders(response, frameOpts);
+      return applySecurityHeaders(response, securityOpts);
     }
 
     // Unprefixed path — redirect to /fr/* only if the user prefers French
@@ -282,7 +310,7 @@ export default async function proxy(request: NextRequest) {
       response.cookies.set(cookie.name, cookie.value, cookie);
     });
 
-    return applySecurityHeaders(response, frameOpts);
+    return applySecurityHeaders(response, securityOpts);
   }
 
   // Excluded paths (API, auth callback, static metadata) — no locale rewrite.
@@ -316,7 +344,7 @@ export default async function proxy(request: NextRequest) {
   // metadata, which can be tampered with). No middleware-level check here
   // to avoid relying on client-controllable JWT claims.
 
-  return applySecurityHeaders(response, frameOpts);
+  return applySecurityHeaders(response, securityOpts);
 }
 
 export const config = {

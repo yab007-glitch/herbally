@@ -2,17 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { FloatingChatButton } from "../floating-chat-button";
 
+const nav = vi.hoisted(() => ({ pathname: "/", push: vi.fn() }));
+
 vi.mock("next-intl", () => ({
   useLocale: () => "en",
   useTranslations: () => (key: string) => key,
 }));
 
-const push = vi.fn();
-let pathname = "/";
-
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
-  usePathname: () => pathname,
+  usePathname: () => nav.pathname,
+  useRouter: () => ({ push: nav.push }),
 }));
 
 const TEASER = "herbalistPage.greeting.bubbleText";
@@ -23,11 +22,22 @@ function advance(ms: number) {
   });
 }
 
-describe("FloatingChatButton", () => {
+/** Production shape: gate closed, so the launcher behaves exactly as before. */
+describe("FloatingChatButton — launch gate off (production)", () => {
+  it.each(["/herbs/ginger", "/herbalist", "/"])("renders on %s", (pathname) => {
+    nav.pathname = pathname;
+    render(<FloatingChatButton />);
+    expect(
+      screen.getByRole("button", { name: "herbalistPage.widgetOpen" })
+    ).toBeInTheDocument();
+  });
+});
+
+describe("FloatingChatButton — teaser", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
-    pathname = "/";
+    nav.pathname = "/";
     window.localStorage.clear();
     window.sessionStorage.clear();
   });
@@ -46,7 +56,7 @@ describe("FloatingChatButton", () => {
   });
 
   it("stays silent on interior pages", () => {
-    pathname = "/herbs";
+    nav.pathname = "/herbs";
     render(<FloatingChatButton />);
 
     advance(10_000);
@@ -63,7 +73,7 @@ describe("FloatingChatButton", () => {
     expect(screen.queryByText(TEASER)).toBeNull();
   });
 
-  it("goes quiet for a week once dismissed", () => {
+  it("goes quiet for a day once dismissed", () => {
     const first = render(<FloatingChatButton />);
     advance(2_500);
     fireEvent.click(
@@ -88,7 +98,7 @@ describe("FloatingChatButton", () => {
 
     expect(screen.getByText("herbalistPage.title")).toBeTruthy();
     expect(screen.queryByText(TEASER)).toBeNull();
-    expect(push).not.toHaveBeenCalled();
+    expect(nav.push).not.toHaveBeenCalled();
   });
 
   it("stops showing the bubble if nobody engages", () => {

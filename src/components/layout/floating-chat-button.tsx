@@ -7,6 +7,7 @@ import { MessageCircle, X, Send, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { ADS_LAUNCH_GATE, isAdEligiblePath } from "@/lib/ads/policy";
 
 /** Session flag: the teaser has already been shown this visit. */
 const TEASER_SEEN_KEY = "herbally.chat.teaser.seen";
@@ -153,6 +154,14 @@ export function FloatingChatButton() {
     if (e.key === "Enter") handleSend();
     if (e.key === "Escape") setOpen(false);
   }
+
+  // Ad-bearing documents must not also carry a health-query input. Once the
+  // launch gate is on, an ad-eligible herb document (the only page class that
+  // can render an ad) drops this launcher entirely, so no document can ever
+  // hold an ad unit and a chat input at the same time. Ads and the chat then
+  // only ever meet across a real document navigation.
+  // While the gate is off this branch is dead: the launcher behaves as before.
+  if (ADS_LAUNCH_GATE && isAdEligiblePath(pathname)) return null;
 
   return (
     <>
