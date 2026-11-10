@@ -143,6 +143,15 @@ const EN_WARN =
 const FR_WARN =
   "\n\n⚠️ Ceci est une information éducative — pas un avis médical. Vérifiez avec un professionnel de santé avant d'agir.";
 
+/**
+ * The localized refusal used whenever model output cannot be verified as safe
+ * — including when the guard itself fails. Callers must fail closed rather than
+ * fall back to unguarded model text.
+ */
+export function getSafetyRefusal(locale: "en" | "fr" = "en"): string {
+  return locale === "fr" ? FR_BLOCK : EN_BLOCK;
+}
+
 // ---------------------------------------------------------------------------
 // Normalization helpers for adversarial pattern matching
 // ---------------------------------------------------------------------------
