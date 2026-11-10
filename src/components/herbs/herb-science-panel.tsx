@@ -49,55 +49,57 @@ export function HerbSciencePanel({
       )}
 
       {/* Evidence by Claim */}
-      {monograph && monograph.claims.length > 0 && (() => {
-        // Claim wording is authored in English. On /fr it opens collapsed
-        // behind a notice so the page reads in French first.
-        const claims = (
-          <div className="space-y-3">
-            {monograph.claims.map((claim) => (
-              <div
-                key={claim.claim}
-                className="flex items-start justify-between gap-4 rounded-2xl border p-4"
-              >
-                <div className="flex-1">
-                  <p className="font-medium text-foreground">{claim.claim}</p>
-                  {claim.note && (
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {claim.note}
-                    </p>
-                  )}
+      {monograph &&
+        monograph.claims.length > 0 &&
+        (() => {
+          // Claim wording is authored in English. On /fr it opens collapsed
+          // behind a notice so the page reads in French first.
+          const claims = (
+            <div className="space-y-3">
+              {monograph.claims.map((claim) => (
+                <div
+                  key={claim.claim}
+                  className="flex items-start justify-between gap-4 rounded-2xl border p-4"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium text-foreground">{claim.claim}</p>
+                    {claim.note && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {claim.note}
+                      </p>
+                    )}
+                  </div>
+                  <EvidenceGrade
+                    level={claim.evidence as "A" | "B" | "C" | "D" | "trad"}
+                    showLabel={false}
+                  />
                 </div>
-                <EvidenceGrade
-                  level={claim.evidence as "A" | "B" | "C" | "D" | "trad"}
-                  showLabel={false}
-                />
-              </div>
-            ))}
-          </div>
-        );
-        return (
-          <section>
-            <h2 className="mb-4 text-xl font-semibold text-foreground">
-              {t("herbDetail.evidenceByClaim")}
-            </h2>
-            {copy.monographEnglishNotice ? (
-              <>
-                <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
-                  {copy.monographEnglishNotice}
-                </p>
-                <details className="rounded-2xl border border-border/60">
-                  <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-foreground">
-                    {copy.verbatimExpandLabel}
-                  </summary>
-                  <div className="px-3 pb-3">{claims}</div>
-                </details>
-              </>
-            ) : (
-              claims
-            )}
-          </section>
-        );
-      })()}
+              ))}
+            </div>
+          );
+          return (
+            <section>
+              <h2 className="mb-4 text-xl font-semibold text-foreground">
+                {t("herbDetail.evidenceByClaim")}
+              </h2>
+              {copy.monographEnglishNotice ? (
+                <>
+                  <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+                    {copy.monographEnglishNotice}
+                  </p>
+                  <details className="rounded-2xl border border-border/60">
+                    <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-foreground">
+                      {copy.verbatimExpandLabel}
+                    </summary>
+                    <div className="px-3 pb-3">{claims}</div>
+                  </details>
+                </>
+              ) : (
+                claims
+              )}
+            </section>
+          );
+        })()}
     </div>
   );
 }
