@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ArrowLeft, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
@@ -12,13 +12,18 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
-import { notFound } from "next/navigation";
+import { truncateDescription } from "@/lib/seo/truncate-description";
+import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { addLocalePrefix } from "@/lib/i18n/routing";
 
 // ISR. The locale is a root param now, so on-demand generation is safe and
-// comparisons outside the prerendered set still render (not 500).
-export const revalidate = 86400;
+// comparisons outside the prerendered set still render (not 500). Three days
+// matches the herb page's data cache: every revalidation is a billed ISR write
+// plus a database read, and comparison data changes only when herbs are edited
+// (admin edits revalidate this path on demand).
+export const revalidate = 259200;
 
 /**
  * Canonical list of popular comparisons. Exported so the sitemap derives its
@@ -55,12 +60,17 @@ export const POPULAR_COMPARISONS = [
 ] as const;
 
 /**
- * How many comparisons to pre-render at build time. Small on purpose: the
- * build shares the 0.5 GB production database, and each pair costs two herb
- * queries (plus related pairs on render). The rest — including every pair the
- * sitemap lists — is generated on demand and cached for 24 h.
+ * How many comparisons to pre-render at build time.
+ *
+ * Zero on purpose, and the same choice herbs/[slug] and interactions/[herb]/[drug]
+ * already make. A build must not depend on the production database's mood: on
+ * 2026-10-30 a slow minute there tripped the fetch breaker mid-build and the
+ * deploy died on /en/compare/ashwagandha/vs/rhodiola, taking every unrelated
+ * change behind it down with it. These pages render on demand and cache for
+ * 24 h (see `revalidate`), so the only cost is that the first visitor — or
+ * the first crawl — pays the render instead of the deploy.
  */
-const PRERENDER_COMPARE_LIMIT = 6;
+const PRERENDER_COMPARE_LIMIT = 0;
 
 export async function generateStaticParams() {
   return [...POPULAR_COMPARISONS].slice(0, PRERENDER_COMPARE_LIMIT);
@@ -80,6 +90,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     getHerbBySlug(slug2, { locale: metaLocale, skipCookies: true }),
   ]);
 
+  if (!resultA.success && resultA.reason === "unavailable") {
+    herbUnavailable(resultA.error);
+  }
+  if (!resultB.success && resultB.reason === "unavailable") {
+    herbUnavailable(resultB.error);
+  }
+
   const herbA = resultA.success ? resultA.data : null;
   const herbB = resultB.success ? resultB.data : null;
 
@@ -90,13 +107,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  // Localized so /fr/compare/* does not ship an English title and description.
+  const cmpT = await getTranslations({
+    locale: metaLocale,
+    namespace: "compareMeta",
+  });
+  const title = cmpT("title", { a: herbA.name, b: herbB.name });
+  const description = truncateDescription(
+    cmpT("desc", { a: herbA.name, b: herbB.name })
+  );
+
   return {
-    title: `${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`,
-    description:
-      `Compare ${herbA.name} vs ${herbB.name}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator.`.slice(
-        0,
-        158
-      ),
+    title,
+    description,
     alternates: {
       canonical:
         metaLocale === "fr"
@@ -120,41 +143,43 @@ export default async function ComparePage({ params }: Props) {
     getHerbBySlug(slug2, { locale, skipCookies: true }),
   ]);
 
-  if (!resultA.success || !resultB.success || !resultA.data || !resultB.data) {
-    notFound();
-  }
-
-  const herbA = resultA.data;
-  const herbB = resultB.data;
+  const herbA = resolveHerbOr404(resultA);
+  const herbB = resolveHerbOr404(resultB);
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
-  const compareUrl = `${baseUrl}/compare/${slug1}/vs/${slug2}`;
+  const compareUrl = `${baseUrl}${addLocalePrefix(
+    `/compare/${slug1}/vs/${slug2}`,
+    locale
+  )}`;
+  // Localized headline for the JSON-LD: an English schema name on a French page
+  // is the same defect as an English <title>.
+  const tCompare = await getTranslations({ locale, namespace: "compareMeta" });
+  const compareTitle = tCompare("title", { a: herbA.name, b: herbB.name });
+  const compareDescription = tCompare("desc", {
+    a: herbA.name,
+    b: herbB.name,
+  });
+  const compareCrumbs = [
+    {
+      name: t("seo.breadcrumbHome"),
+      url: `${baseUrl}${addLocalePrefix("/", locale)}`,
+    },
+    {
+      name: t("nav.herbs"),
+      url: `${baseUrl}${addLocalePrefix("/herbs", locale)}`,
+    },
+    { name: `${herbA.name} vs ${herbB.name}`, url: compareUrl },
+  ];
 
   return (
     <div className="space-y-8">
       <WebPageSchema
-        title={`${herbA.name} vs ${herbB.name}: Difference, Benefits & Which Is Better?`}
-        description={`Compare ${herbA.name} vs ${herbB.name}: uses, dosage, safety & interactions.`}
+        title={compareTitle}
+        description={compareDescription}
         url={compareUrl}
-        breadcrumbs={[
-          { name: "Home", url: baseUrl },
-          { name: "Herbs", url: `${baseUrl}/herbs` },
-          {
-            name: `${herbA.name} vs ${herbB.name}`,
-            url: compareUrl,
-          },
-        ]}
+        breadcrumbs={compareCrumbs}
       />
-      <BreadcrumbListSchema
-        items={[
-          { name: "Home", url: baseUrl },
-          { name: "Herbs", url: `${baseUrl}/herbs` },
-          {
-            name: `${herbA.name} vs ${herbB.name}`,
-            url: compareUrl,
-          },
-        ]}
-      />
+      <BreadcrumbListSchema items={compareCrumbs} />
       <FAQSchema
         items={[
           {
@@ -367,10 +392,10 @@ export default async function ComparePage({ params }: Props) {
         </CardContent>
       </Card>
 
-      {/* Sources */}
+      {/* Sources. No reviewer attribution: "HerbAlly Editorial Team" is not a
+          person, and a comparison page cannot claim a review that no registered
+          reviewer performed. Sources stay, the byline claim goes. */}
       <SourceAttribution
-        reviewedBy={t("herbDetailContent.editorialTeam")}
-        reviewerCredentials={t("herbDetailContent.editorialCredentials")}
         sources={[
           t("herbDetailContent.sources.who"),
           t("herbDetailContent.sources.nccih"),

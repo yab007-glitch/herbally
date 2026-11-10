@@ -60,7 +60,8 @@
     "copyResponseLabel": "Copy response",
     "chatInputlabel": "Chat message input",
     "stopGeneratingLabel": "Stop generating",
-    "sendMessageLabel": "Send message"
+    "sendMessageLabel": "Send message",
+    "home": "Home"
   },
   "nav": {
     "symptoms": "By Symptom",
@@ -85,11 +86,11 @@
     "calc": "Calc"
   },
   "home": {
-    "heroTitle": "Check herb-drug interactions",
-    "heroSubtitle": "Type any herb and medication to see if they're safe together. Evidence-based answers in seconds.",
+    "heroTitle": "Check herb‑drug interactions",
+    "heroSubtitle": "Type any herb and medication to check the HerbAlly database first. If a pair isn't recorded, the Virtual Herbalist can explain more.",
     "heroButton": "Browse all herbs",
-    "herbPlaceholder": "Herb name (e.g. Turmeric, St. John's Wort)",
-    "medPlaceholder": "Medication (e.g. warfarin, sertraline)",
+    "herbPlaceholder": "Turmeric, St. John's Wort…",
+    "medPlaceholder": "warfarin, sertraline…",
     "checkButton": "Check interaction",
     "suggestionsTitle": "Common checks",
     "suggestion1": "St. John's Wort + antidepressants",
@@ -108,7 +109,27 @@
     "featureInteractionsTitle": "Interaction checker",
     "featureInteractionsDescription": "Check for herb-drug interactions before combining supplements with medications.",
     "featureAiTitle": "Virtual herbalist",
-    "featureAiDescription": "Ask questions about herbs, remedies, and safety. Evidence-based answers with citations."
+    "featureAiDescription": "Ask questions about herbs, remedies, and safety. Evidence-based answers with citations.",
+    "checkerChecking": "Checking the database…",
+    "checkerFoundTitle": "Database result",
+    "checkerAskHerbalist": "Ask the Virtual Herbalist",
+    "checkerViewPair": "View full interaction",
+    "checkerViewHerb": "View herb page",
+    "checkerDisclaimer": "Educational information only, not medical advice. Confirm with your doctor or pharmacist before changing any medication.",
+    "checkerNotFoundTitle": "No structured record found",
+    "checkerNotFoundBody": "No structured interaction record found for {herb} + {drug} in the HerbAlly database.",
+    "checkerAiNote": "The Virtual Herbalist can explain more, but its answer is AI-generated educational information — not a database result — and should be verified independently.",
+    "checkerError": "The database check could not run. Try again, or ask the Virtual Herbalist.",
+    "checkerSource": "Source",
+    "checkerEvidence": "Evidence",
+    "checkerMechanism": "How it works",
+    "explainerTitle": "Your trusted guide to medicinal herbs",
+    "explainerBody": "HerbAlly is a free medicinal-herb database with 2,700+ herbs. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
+    "explainerNote": "Educational purposes only. Not medical advice. Always confirm with your doctor or pharmacist before combining a herb with a medication.",
+    "popularTitle": "Popular herbs",
+    "herbLabel": "Herb",
+    "medLabel": "Medication",
+    "eyebrow": "A reference for what you take together"
   },
   "embed": {
     "title": "Check an herb + drug combo",
@@ -133,15 +154,24 @@
     "tryDifferent": "Try a different search term",
     "popularSearches": "Popular Searches",
     "resultsFound": "{count, plural, one {Found # herb matching \"{query}\"} other {Found # herbs matching \"{query}\"}}",
+    "resultsInCategory": "{count} herbs in {category}",
+    "sortLabel": "Sort",
+    "sortName": "Name A-Z",
+    "sortEvidence": "Strongest evidence",
     "noHerbsQuery": "No herbs found for \"{query}\"",
     "trySearching": "Try a single keyword like \"anxiety\", \"inflammation\", or \"sleep\". You can also browse by symptom category.",
+    "loadError": "We couldn't load the herb list. Please try again.",
     "browseAll": "Browse All Herbs",
     "browseSymptoms": "Browse by Symptom",
     "pagination": {
       "previous": "Previous",
       "next": "Next",
       "page": "Page",
-      "of": "of"
+      "of": "of",
+      "first": "First",
+      "last": "Last",
+      "goToPage": "Go to page",
+      "pageInputLabel": "Page number"
     },
     "safety": {
       "safe": "Generally Safe",
@@ -235,14 +265,14 @@
       "consult": "Always consult a healthcare provider before starting any herbal regimen."
     },
     "cardTitle": "Dose Calculator",
-    "cardDesc": "Enter the herb information and patient details to calculate an age-appropriate dose.",
+    "cardDesc": "Enter the herb information and adult details to calculate an adult reference dose.",
     "calculatingFor": "Calculating dose for {name}",
     "standardAdultDose": "Standard adult dose: {dose}",
     "referenceChildDose": "Reference child dose: {dose}",
     "forHerb": "for {name}",
     "enterPrompt": "Enter details and click \"Calculate Dose\" to see results",
     "patientHeightCm": "Patient Height (cm)",
-    "description": "Enter the herb information and patient details to calculate an age-appropriate dose."
+    "description": "Enter the herb information and adult details to calculate an adult reference dose."
   },
   "pharmacist": {
     "title": "AI Herbalist",
@@ -307,7 +337,21 @@
     "verifiedTooltip": "This entry was reviewed by a human against a primary source.",
     "aiSummarizedTooltip": "Summarized by AI. See the citations block for the underlying sources.",
     "primarySourceTooltip": "Cites a primary source. Not yet manually reviewed.",
-    "unverifiedTooltip": "This entry was generated by AI and has not yet been verified against primary sources. Cross-check with a qualified healthcare provider before relying on this information."
+    "notHumanReviewed": "Not human-reviewed",
+    "notHumanReviewedTooltip": "This entry has not been human-reviewed. Do not treat it as a verified monograph.",
+    "humanReviewed": "Human-reviewed",
+    "humanReviewedTooltip": "Reviewed by {reviewer} on {date}. Only pages a named person has actually read carry this label.",
+    "needsReReview": "Needs re-review",
+    "needsReReviewTooltip": "This page was reviewed before and has changed since. Treat it as unreviewed until someone reads it again.",
+    "unverifiedTooltip": "This entry was generated by AI and has not yet been verified against primary sources. Cross-check with a qualified healthcare provider before relying on this information.",
+    "sourceVerified": "Verified · {count} sources",
+    "sourceVerifiedTooltip": "Cross-checked against {count} independent sources: {sources}. This confirms the plant identity and its regulator record — it is not a claim that a person has read this page.",
+    "identityVerified": "Identity verified · {count} sources",
+    "identityVerifiedTooltip": "The plant's name is confirmed by {count} independent taxonomic sources ({sources}). No government regulator has published a monograph for this herb, so nothing beyond its identity is claimed here.",
+    "formula": "Multi-herb formula",
+    "formulaTooltip": "This entry is a multi-herb product, not a single plant, so there is no botanical name to cross-check. Its ingredients are listed on the page; the formula itself has no taxonomic identity.",
+    "nonPlant": "Non-plant ingredient",
+    "nonPlantTooltip": "This entry is a mineral, animal product, vitamin or isolate, not a plant. There is no botanical name to cross-check, and its record is presented as a materia medica entry."
   },
   "donate": {
     "title": "Support HerbAlly",
@@ -408,22 +452,36 @@
       "text": "HerbAlly provides educational information only. This is not medical advice. Always consult a qualified healthcare provider before using any herbal remedy."
     }
   },
+  "contact": {
+    "title": "Contact us",
+    "intro": "Email is the way to reach us — HerbAlly has no support form. Please do not send personal health information by email; for medical questions, talk to a qualified healthcare professional.",
+    "generalTitle": "General questions and sponsorship",
+    "generalText": "For general questions, corrections, and sponsorship inquiries, email:",
+    "privacyTitle": "Privacy questions",
+    "privacyText": "For privacy questions, account deletion requests, and data requests, email:",
+    "termsTitle": "Terms questions",
+    "termsText": "For questions about the Terms of Service, email:",
+    "linksTitle": "Helpful pages"
+  },
   "footer": {
     "product": "Product",
     "resources": "Resources",
     "company": "Company",
     "legal": "Legal",
     "privacy": "Privacy Policy",
+    "contact": "Contact",
     "terms": "Terms of Service",
     "disclaimer": "Medical Disclaimer",
     "copyright": "Educational purposes only. Not medical advice.",
     "madeWith": "Made with care for the herbal community",
     "followUs": "Follow Us",
     "faq": "FAQ",
+    "guides": "Guides",
     "methodology": "Methodology",
     "sponsorship": "Sponsorship",
     "herbDrugInteractions": "Herb–Drug Interactions",
-    "symptoms": "Symptoms"
+    "symptoms": "Symptoms",
+    "editorialPolicy": "Editorial policy"
   },
   "errors": {
     "404": {
@@ -528,13 +586,16 @@
     "herbsAtAGlance": "Herbs at a Glance",
     "askHerbalist": "Ask Herbalist",
     "calculatorCtaTitle": "Calculate a safe dose of {name}",
-    "calculatorCtaBody": "Free herbal dosage calculator — adult & child doses by weight."
+    "calculatorCtaBody": "Free herbal dosage calculator — adult reference doses by weight.",
+    "adultOnlyNote": "Dose calculator: adults aged 18 and older only.",
+    "noStatedDose": "The licensing records behind this entry ({source}) do not state a quantity. Use the product label or ask a pharmacist — no amount has been invented here."
   },
   "search": {
     "placeholder": "Search herbs by name, symptom, or use...",
     "searching": "Searching...",
     "search": "Search",
-    "surpriseMe": "Surprise Me"
+    "surpriseMe": "Surprise Me",
+    "randomError": "Couldn't load a random herb. Please try again."
   },
   "commandPalette": {
     "placeholder": "Search herbs, pages, or actions...",
@@ -571,7 +632,9 @@
       "drug": "Drug",
       "severity": "Severity",
       "description": "Description"
-    }
+    },
+    "uncitedNote": "These pairs are not yet linked to a primary source. Treat them as a prompt to ask a pharmacist, not as a citation.",
+    "sourceLink": "Source: PubMed record"
   },
   "interactionExplainer": {
     "title": "What is a herb–drug interaction?",
@@ -584,7 +647,7 @@
     "ex3Name": "Kava",
     "ex3Effect": "can amplify sedation when taken with anxiety or sleep medications (also valerian).",
     "riskLine": "The risk is highest for older adults, anyone taking several medications, and people with chronic conditions.",
-    "actionLine": "Always tell your doctor and pharmacist about every herb and supplement you take — and check below before combining."
+    "actionLine": "Always tell your doctor and pharmacist about every herb and supplement you take — and check a combination before you take it."
   },
   "herbDrugInteractionsPage": {
     "heading": "Herb–Drug Interactions",
@@ -604,7 +667,10 @@
     "embedTitle": "Embed this checker on your site",
     "embedBody": "Free for clinics, schools, and health blogs. Paste the snippet below — includes a HerbAlly attribution link.",
     "embedCopy": "Copy snippet",
-    "embedCopied": "Copied!"
+    "embedCopied": "Copied!",
+    "checkerCtaTitle": "Check a combination",
+    "checkerCtaBody": "Use the interaction checker on the homepage — it checks the HerbAlly database first and shows a structured result when a pair is recorded.",
+    "checkerCtaButton": "Use the homepage checker"
   },
   "auth": {
     "login": {
@@ -837,7 +903,8 @@
     "consult": "Always consult your physician or qualified healthcare provider before starting any herbal supplement, especially if you are pregnant, nursing, taking medication, or have a medical condition.",
     "fda": "These statements have not been evaluated by the Food and Drug Administration. HerbAlly is not intended to diagnose, treat, cure, or prevent any disease.",
     "emergency": "If you think you may have a medical emergency, call your doctor, go to the emergency department, or call emergency services immediately.",
-    "reliance": "HerbAlly does not endorse or recommend any specific herbs, products, procedures, or opinions. Reliance on any information provided by HerbAlly is solely at your own risk."
+    "reliance": "HerbAlly does not endorse or recommend any specific herbs, products, procedures, or opinions. Reliance on any information provided by HerbAlly is solely at your own risk.",
+    "canada": "In Canada, natural health products are regulated by Health Canada under the Natural Health Products Regulations. A product carrying an NPN (or DIN-HM for homeopathic products) has been licensed for sale, which is not the same as having been proven clinically effective. HerbAlly is not affiliated with Health Canada and this page is not a regulatory filing."
   },
   "aboutContent": {
     "header": "About HerbAlly",
@@ -935,7 +1002,7 @@
     "dosage": {
       "calculator": {
         "q": "How does the dosage calculator work?",
-        "a": "HerbAlly's dosage calculator is for adults aged 18 and older. It supports Clark's Rule (weight-based), Young's Rule (age-based), Body Surface Area (BSA), and Fried's Rule (infants) as reference methods. It does not calculate doses for children or adolescents; consult a qualified paediatric healthcare professional instead."
+        "a": "HerbAlly's dosage calculator is for adults aged 18 and older. It supports Clark's Rule (weight-based), Young's Rule (age-based), and Body Surface Area (BSA) as reference methods. It does not calculate doses for children or adolescents; consult a qualified paediatric healthcare professional instead."
       },
       "multiple": {
         "q": "Can I take multiple herbs at the same time?",
@@ -1092,7 +1159,14 @@
       "I keep getting colds and my immune system feels weak",
       "I have brain fog and trouble concentrating"
     ],
-    "evidenceLabel": "Evidence"
+    "evidenceLabel": "Evidence",
+    "matchReasonSymptom": "Matched: {symptoms}",
+    "matchReasonSymptomGeneral": "Matched your symptoms",
+    "matchReasonName": "Matched by name or description",
+    "alsoListedAs": "Also listed as: {names}",
+    "orderingNote": "Results are ordered by how many of your symptoms match, then by evidence grade.",
+    "allSymptomsHeading": "Every symptom in the database",
+    "allSymptomsIntro": "Each page lists the herbs recorded for that symptom, their evidence grade, pregnancy and nursing flags, and a link to the full profile. Start with the condition that matches what you are dealing with."
   },
   "herbDetailContent": {
     "herbNotFound": "Herb Not Found",
@@ -1114,7 +1188,10 @@
     "title": "Page Not Found",
     "message": "The page you are looking for does not exist or may have been moved.",
     "goHome": "Go home",
-    "browseHerbs": "Browse herbs"
+    "browseHerbs": "Browse herbs",
+    "checkInteractions": "Check herb–drug interactions",
+    "browseSymptoms": "Browse herbs by symptom",
+    "askHerbalist": "Ask the virtual herbalist"
   },
   "evidence": {
     "prefix": "Evidence:",
@@ -1168,7 +1245,41 @@
     "reviewedBy": "Reviewed by: ",
     "lastUpdated": "Last updated: ",
     "sources": "Sources: ",
-    "researchProfile": "Research profile"
+    "researchProfile": "Research profile",
+    "viewSource": "Source",
+    "viewSourceLabel": "Open source: {source}"
+  },
+  "safetyGlance": {
+    "title": "Safety at a glance",
+    "pregnancy": "Pregnancy",
+    "nursing": "Nursing",
+    "safe": "Generally considered safe",
+    "unsafe": "Not recommended",
+    "unknown": "Unknown — not enough data",
+    "interactions": "Drug interactions",
+    "interactionCount": "{count, plural, one {# known interaction} other {# known interactions}}",
+    "interactionCountNone": "No known interactions listed",
+    "mostSerious": "Most serious: {drug} — {severity}",
+    "seeList": "See the full list",
+    "avoidIf": "Not recommended in these cases",
+    "footnote": "A summary, not a complete list — check every medication you take with your pharmacist.",
+    "severityCount": {
+      "contraindicated": "{count, plural, one {# contraindicated} other {# contraindicated}}",
+      "severe": "{count, plural, one {# severe} other {# severe}}",
+      "moderate": "{count, plural, one {# moderate} other {# moderate}}",
+      "mild": "{count, plural, one {# mild} other {# mild}}"
+    },
+    "orally": "Orally",
+    "topically": "Topically"
+  },
+  "chipLegend": {
+    "title": "How to read the evidence and review labels",
+    "evidence": "Evidence strength",
+    "review": "Review status",
+    "verifiedDesc": "A person checked this entry against a primary source.",
+    "aiSummarizedDesc": "An AI summarized the cited sources; no person has reviewed it yet.",
+    "notHumanReviewedDesc": "Cites a source, but no person has checked this entry against it.",
+    "unverifiedDesc": "Written by AI and not checked against primary sources."
   },
   "govSources": {
     "title": "Government sources",
@@ -1259,6 +1370,19 @@
     "medsAutoQuery": "I'm taking: {meds}. Check for any known interactions between these medications and common herbal supplements. Flag any dangerous combinations.",
     "herbAutoQuery": "What are the key drug interactions and safety concerns for {name} ({scientific})? List the most important interactions, severity, and who should avoid it.",
     "emptyStateTitle": "Ask me anything about herbs",
+    "greeting": {
+      "intro": "Hi — I'm the HerbAlly assistant. I check herbs against the medications you're taking, and show you the evidence behind each answer.",
+      "question": "What would you like to check — an herb, or something you're taking?",
+      "quickCheckHerb": "An herb I'm taking",
+      "quickInteractions": "Safe with my medication?",
+      "quickCapabilities": "What can you help with?",
+      "quickCheckHerbPrompt": "I want to check a herb I'm taking. Can you help me figure out what to look for?",
+      "quickInteractionsPrompt": "Is this herb safe with my medication? I'll tell you what I'm taking.",
+      "quickCapabilitiesPrompt": "What can you help me with?",
+      "bubbleText": "Need a hand? I can check an herb against your medications.",
+      "bubbleOpen": "Start chat",
+      "bubbleDismiss": "No thanks"
+    },
     "browseHerbs": "Browse herb catalog",
     "learnInteractions": "Learn about herb–drug interactions",
     "widgetPlaceholder": "Ask about herbs, interactions, dosage…",
@@ -1405,7 +1529,70 @@
       "privacy": "Read our privacy policy",
       "donate": "Make a voluntary donation"
     },
-    "pageNote": "HerbAlly provides educational information, not medical advice. Sponsorship does not change that."
+    "pageNote": "HerbAlly provides educational information, not medical advice. Sponsorship does not change that.",
+    "audience": {
+      "title": "Who reads HerbAlly",
+      "description": "A small audience, described honestly. We would rather show you the real numbers than a pitch you could check and find inflated.",
+      "stats": {
+        "visitors": {
+          "value": "1,800",
+          "label": "visitors in the last 30 days"
+        },
+        "pageviews": {
+          "value": "2,300",
+          "label": "page views in the last 30 days"
+        },
+        "languages": {
+          "value": "EN + FR",
+          "label": "every page fully translated"
+        },
+        "markets": {
+          "value": "CA · FR · global",
+          "label": "where readers are"
+        }
+      },
+      "note": "Raw figures from our own analytics for the 30 days to 29 October 2026. Around half of recent sessions look automated, so the human audience is smaller than the headline number. We tell you that here rather than let you discover it later.",
+      "fit": "HerbAlly suits a sponsor whose customers ask what a herb does, whether it is safe with their medication, or how much of it to take — and who wants their name attached to that answer without buying influence over it."
+    },
+    "packages": {
+      "title": "Sponsorship packages",
+      "description": "Published rates, no auction, no sponsored articles, and no say over what the site states about any herb. Cancel whenever you like.",
+      "currency": "All prices in Canadian dollars.",
+      "items": {
+        "supporter": {
+          "name": "Supporter",
+          "price": "C$25",
+          "cadence": "per month",
+          "features": [
+            "Your name and link in the site footer",
+            "Listed on this page",
+            "Cancel any time"
+          ]
+        },
+        "sponsor": {
+          "name": "Sponsor",
+          "price": "C$50",
+          "cadence": "per month",
+          "features": [
+            "Everything in Supporter",
+            "A “Supported by” line on herb pages",
+            "A quarterly note on what your support paid for"
+          ]
+        },
+        "launch": {
+          "name": "Launch partner",
+          "price": "C$150",
+          "cadence": "per year",
+          "features": [
+            "Everything in Sponsor",
+            "Your logo on the home page",
+            "A named entry in our public sponsorship record"
+          ]
+        }
+      },
+      "cta": "Ask about this package",
+      "note": "We publish who supports us. Sponsors never review, edit, approve or veto health content, and no package buys a favourable mention of any herb."
+    }
   },
   "meta": {
     "herbsDatabase": "Medicinal Herbs Database",
@@ -1418,9 +1605,12 @@
     "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
     "privacyPolicy": "Privacy Policy",
     "medicalDisclaimer": "Medical Disclaimer",
-    "medicalDisclaimerDesc": "Read the full medical and FDA disclaimer for HerbAlly.",
+    "medicalDisclaimerDesc": "Read the full medical disclaimer for HerbAlly, including how the FDA and Health Canada regulate herbal products.",
     "faq": "Frequently Asked Questions",
+    "faqDesc": "Answers to common questions about HerbAlly: our sources, our methods, herb safety, dosage and drug interactions.",
     "methodology": "Our Methodology",
+    "methodologyDesc": "How HerbAlly writes and checks a herb profile: the sources used, what each evidence grade means, how AI is used, and how corrections are made.",
+    "privacyDesc": "How HerbAlly handles your data: what is collected, cookies, analytics, and how to exercise your rights.",
     "termsOfService": "Terms of Service",
     "termsDesc": "HerbAlly terms of service and conditions of use.",
     "supportUs": "Support Us - Keep Herbal Medicine Free",
@@ -1431,11 +1621,13 @@
     "herbComparisonNotFound": "Herb Comparison Not Found",
     "about": "About",
     "aboutDesc": "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
+    "contact": "Contact us",
+    "contactDesc": "How to contact HerbAlly: general, privacy, and terms email addresses.",
     "herbDrugInteractions": "Herb–Drug Interactions",
     "herbDrugInteractionsDesc": "What herb–drug interactions are, why they matter, and how to check them. High-risk examples (St. John's Wort, garlic, ginkgo, turmeric, kava, warfarin) and how to stay safe.",
-    "appDescription": "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions with our AI-powered virtual herbalist.",
+    "appDescription": "Check any herb against your medication in seconds. 2,700+ herb profiles with cited sources, evidence grades and an adult dosage calculator. Free, no account required.",
     "herbsFor": "Herbs for {symptom}",
-    "homeTitle": "Your Trusted Guide to Medicinal Herbs",
+    "homeTitle": "Herb-Drug Interaction Checker: 2,700 Herbs",
     "gardenPageTitle": "My Garden",
     "gardenSubtitle": "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
     "profileTitle": "My Profile",
@@ -1450,8 +1642,8 @@
     "months": "Months",
     "calculationFormula": "Calculation Formula",
     "calculatedDose": "Calculated Dose",
-    "childAge": "Patient Age",
-    "childWeight": "Patient Weight",
+    "childAge": "Adult age",
+    "childWeight": "Adult weight",
     "childDoseResult": "Reference Dose",
     "selectHerb": "Select an herb...",
     "selectUnit": "Select unit",
@@ -1504,10 +1696,18 @@
     "toggleAgeUnit": "Toggle age unit (years/months)",
     "toggleWeightUnit": "Toggle weight unit (kg/lbs)",
     "unverifiedHerbNotice": "This herb's monograph is AI-generated and has not been reviewed against authoritative sources. No validated reference dose is available, so the adult dose field is left blank. Enter a dose from a trusted source yourself, and confirm any result with a qualified healthcare provider.",
+    "unverifiedStatedRange": "Herb page's stated adult dose — not a validated reference dose: {dose}",
     "pediatricDoseBlockedTitle": "No dose calculated for this age",
     "pediatricDoseBlocked": "HerbAlly does not calculate herbal doses for anyone under {age}. Herbal products vary widely in concentration and are not validated for dosing in children or adolescents. Please speak with a qualified pediatric healthcare professional (for example, a paediatrician, pharmacist or the child's doctor) before giving any herbal product to a person under {age}.",
     "ageRequiredForAdultDose": "Enter the patient's age before calculating. HerbAlly only calculates doses for people aged {age} or older, and it must be able to confirm that age.",
-    "pediatricDoseBlockedRationale": "Why this limit exists: the classic pediatric formulas (Clark's, Young's, Fried's) were designed to scale prescription-drug doses and have never been validated for herbal extracts. HerbAlly therefore does not show a number for minors rather than present an unverified pediatric dose that could be mistaken for medical advice."
+    "pediatricDoseBlockedRationale": "Why this limit exists: the classic pediatric formulas (Clark's, Young's, Fried's) were designed to scale prescription-drug doses and have never been validated for herbal extracts. HerbAlly therefore does not show a number for minors rather than present an unverified pediatric dose that could be mistaken for medical advice.",
+    "adultDosePlaceholder": "e.g. 500",
+    "adultOnlyNotice": "This calculator is for adults aged 18 and older only. It does not calculate doses for anyone under 18.",
+    "rangePickerTitle": "Choose a dose from the standard adult range",
+    "rangePickerNote": "Choosing a value fills the adult dose field — it is not a personal recommendation. Confirm with a qualified healthcare provider.",
+    "rangeLow": "Low",
+    "rangeMiddle": "Middle",
+    "rangeHigh": "High"
   },
   "symptomMeta": {
     "anxiety": {
@@ -1624,14 +1824,27 @@
     "compareDesc": "See side-by-side comparisons of effectiveness, safety, and interactions.",
     "askHerbalist": "Ask the AI Herbalist"
   },
+  "herbMeta": {
+    "title": "{name} ({scientific}): Benefits, Dosage, Safety & Evidence",
+    "titleBinomial": "{scientific}: Benefits, Dosage, Safety & Evidence",
+    "descWithNames": "{name}, also called {common}: uses, dosage, pregnancy safety and drug interactions, with PubMed-cited evidence, safety ratings and a free dosage calculator.",
+    "descFromBody": "{body} Uses, dosage, pregnancy safety & interactions. Free calculator included.",
+    "descFallback": "{name} ({scientific}): uses, dosage, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and a free dosage calculator.",
+    "usesFallback": "traditional wellness"
+  },
+  "compareMeta": {
+    "title": "{a} vs {b}: Difference, Benefits & Which Is Better?",
+    "desc": "Compare {a} vs {b}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator."
+  },
   "seo": {
     "safePregnancy": "Generally safe during pregnancy",
     "notSafePregnancy": "Not recommended during pregnancy",
     "safeNursing": "Generally safe while nursing",
     "notSafeNursing": "Not recommended while nursing",
     "nccihSource": "Herbs at a Glance",
+    "breadcrumbHome": "Home",
     "orgName": "HerbAlly",
-    "orgDesc": "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions."
+    "orgDesc": "A reference library of 2,700+ medicinal herbs with cited sources, evidence grades, an adult dosage calculator and an herb-drug interaction checker."
   },
   "brand": {
     "full": "HerbAlly"

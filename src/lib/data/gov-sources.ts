@@ -49,7 +49,7 @@ export const GOV_SOURCES: Record<string, SourceDef> = {
   nccih: {
     id: "nccih",
     label: "NCCIH (NIH)",
-    indexUrl: "https://www.nccih.nih.gov/health/herbsataglance.htm",
+    indexUrl: "https://www.nccih.nih.gov/health/herbsataglance",
   },
   medlineplus: {
     id: "medlineplus",
@@ -65,13 +65,12 @@ export const GOV_SOURCES: Record<string, SourceDef> = {
     id: "ema",
     label: "EMA HMPC Monographs",
     indexUrl:
-      "https://www.ema.europa.eu/en/medicines/field_26/herbal-medicines",
+      "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
   },
   who: {
     id: "who",
     label: "WHO Monographs",
-    indexUrl:
-      "https://www.who.int/publications/who-monographs-on-selected-medicinal-plants",
+    indexUrl: "https://www.who.int/publications/i/item/9241545178",
   },
 };
 
@@ -171,7 +170,7 @@ export function getGovSources(slug: string, displayName?: string): GovSource[] {
   out.push({
     id: "medlineplus",
     label: "Search MedlinePlus (NIH)",
-    url: `https://medlineplus.gov/search/?q=${query}`,
+    url: `https://vsearch.nlm.nih.gov/vivisimo/cgi-bin/query-meta?v%3Aproject=medlineplus&query=${query}`,
     kind: "search",
     authoritative: false,
   });

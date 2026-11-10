@@ -1,5 +1,5 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import {
   BookOpen,
   FlaskConical,
@@ -9,12 +9,18 @@ import {
   FileCheck,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { ChipLegend } from "@/components/herbs/chip-legend";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const generateMetadata = () =>
-  buildPageMetadata({ titleKey: "methodology", path: "/methodology" });
+  buildPageMetadata({
+    titleKey: "methodology",
+    descKey: "methodologyDesc",
+    path: "/methodology",
+  });
 
 const sectionKeys = [
   { key: "evidenceGrading", icon: Scale },
@@ -35,8 +41,19 @@ export default async function MethodologyPage() {
     content: t(`methodologyContent.${key}.content`),
   }));
 
+  const url =
+    locale === "fr"
+      ? `${siteUrl()}/fr/methodology`
+      : `${siteUrl()}/methodology`;
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("methodologyContent.title"), url: "/methodology" },
+        ]}
+      />
       {/* Schema */}
       <script
         type="application/ld+json"
@@ -44,16 +61,15 @@ export default async function MethodologyPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "AboutPage",
-            name: "HerbAlly Methodology",
-            description:
-              "How HerbAlly grades evidence, sources citations, and ensures accuracy",
-            url: `${siteUrl()}/methodology`,
+            name: t("methodologyContent.title"),
+            description: t("methodologyContent.subtitle"),
+            url,
             publisher: {
               "@type": "Organization",
               name: "HerbAlly",
               url: siteUrl(),
             },
-          }).replace(/</g, "\\u003c"),
+          }).replace(/</g, "\u003c"),
         }}
       />
 
@@ -64,6 +80,12 @@ export default async function MethodologyPage() {
         <p className="mt-4 text-lg text-muted-foreground">
           {t("methodologyContent.subtitle")}
         </p>
+      </div>
+
+      {/* The label key that used to sit in a collapsed block on every herb entry.
+          Same explanations, one address, and the entries link here. */}
+      <div className="mb-8">
+        <ChipLegend defaultOpen />
       </div>
 
       <div className="space-y-8">
@@ -140,12 +162,12 @@ export default async function MethodologyPage() {
           >
             {t("methodologyContent.viewFaq")}
           </Link>
-          <a
-            href="mailto:yab007@gmail.com"
+          <Link
+            href="/contact"
             className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
           >
             {t("methodologyContent.contactUs")}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -3,16 +3,23 @@ import { Badge } from "@/components/ui/badge";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { useTranslations } from "next-intl";
 import type { Monograph } from "@/lib/data/monographs";
+import { herbPageCopy, type CopyLocale } from "@/lib/i18n/herb-page-copy";
 
 interface HerbSciencePanelProps {
   herb: {
     active_compounds?: string[] | null;
   };
   monograph: Monograph | null;
+  locale?: CopyLocale;
 }
 
-export function HerbSciencePanel({ herb, monograph }: HerbSciencePanelProps) {
+export function HerbSciencePanel({
+  herb,
+  monograph,
+  locale = "en",
+}: HerbSciencePanelProps) {
   const t = useTranslations();
+  const copy = herbPageCopy(locale);
 
   return (
     <div className="space-y-8">
@@ -42,11 +49,10 @@ export function HerbSciencePanel({ herb, monograph }: HerbSciencePanelProps) {
       )}
 
       {/* Evidence by Claim */}
-      {monograph && monograph.claims.length > 0 && (
-        <section>
-          <h2 className="mb-4 text-xl font-semibold text-foreground">
-            {t("herbDetail.evidenceByClaim")}
-          </h2>
+      {monograph && monograph.claims.length > 0 && (() => {
+        // Claim wording is authored in English. On /fr it opens collapsed
+        // behind a notice so the page reads in French first.
+        const claims = (
           <div className="space-y-3">
             {monograph.claims.map((claim) => (
               <div
@@ -68,8 +74,30 @@ export function HerbSciencePanel({ herb, monograph }: HerbSciencePanelProps) {
               </div>
             ))}
           </div>
-        </section>
-      )}
+        );
+        return (
+          <section>
+            <h2 className="mb-4 text-xl font-semibold text-foreground">
+              {t("herbDetail.evidenceByClaim")}
+            </h2>
+            {copy.monographEnglishNotice ? (
+              <>
+                <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+                  {copy.monographEnglishNotice}
+                </p>
+                <details className="rounded-2xl border border-border/60">
+                  <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-foreground">
+                    {copy.verbatimExpandLabel}
+                  </summary>
+                  <div className="px-3 pb-3">{claims}</div>
+                </details>
+              </>
+            ) : (
+              claims
+            )}
+          </section>
+        );
+      })()}
     </div>
   );
 }

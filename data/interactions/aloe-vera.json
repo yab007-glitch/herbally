@@ -1,0 +1,35 @@
+{
+  "herb_slug": "aloe-vera",
+  "pairs": [
+    {
+      "drug_name": "Digoxin",
+      "severity": "severe",
+      "description": "Chronic use of stimulant aloe latex laxatives causes potassium depletion, dramatically sensitizing the heart to fatal digoxin arrhythmias.",
+      "mechanism": "Aloin-induced enteric electrolyte wasting leading to systemic hypokalemia and elevated cardiac glycoside sensitivity.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/aloe-vera"
+    },
+    {
+      "drug_name": "Hydrochlorothiazide",
+      "severity": "severe",
+      "description": "Concomitant oral ingestion of aloe latex with thiazide diuretics causes synergistic potassium wasting and acute severe hypokalemia.",
+      "mechanism": "Dual potassium-wasting effects across the renal distal convoluted tubule and enteric colonic mucosa.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/aloe-vera"
+    },
+    {
+      "drug_name": "Insulin",
+      "severity": "moderate",
+      "description": "Oral aloe vera inner leaf preparations possess hypoglycemic properties that may compound insulin therapy, risking hypoglycemic episodes.",
+      "mechanism": "Stimulation of pancreatic insulin synthesis and secretion alongside enhanced peripheral glucose utilization.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/aloe-vera"
+    }
+  ]
+}

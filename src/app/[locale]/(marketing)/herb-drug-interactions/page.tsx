@@ -1,14 +1,16 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { InteractionExplainer } from "@/components/herbs/interaction-explainer";
 import { EmbedSnippet } from "@/components/embed/embed-snippet";
 import { Button } from "@/components/ui/button";
+import { InteractionChecker } from "../interaction-checker";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -22,7 +24,7 @@ const COMMON_HERBS = [
   { slug: "garlic", nameKey: "cGarlic" },
   { slug: "turmeric", nameKey: "cTurmeric" },
   { slug: "ginger", nameKey: "cGinger" },
-  { slug: "ginkgo", nameKey: "cGinkgo" },
+  { slug: "ginkgo-biloba", nameKey: "cGinkgo" },
   { slug: "kava", nameKey: "cKava" },
   { slug: "milk-thistle", nameKey: "cMilkThistle" },
   { slug: "ashwagandha", nameKey: "cAshwagandha" },
@@ -35,7 +37,7 @@ export default async function HerbDrugInteractionsPage() {
     namespace: "herbDrugInteractionsPage",
   });
   const tCommon = await getTranslations({ locale, namespace: "common" });
-  const url = `${siteUrl()}/herb-drug-interactions`;
+  const url = `${siteUrl()}${locale === "fr" ? "/fr" : ""}/herb-drug-interactions`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
@@ -44,8 +46,14 @@ export default async function HerbDrugInteractionsPage() {
         description={t("intro")}
         url={url}
         breadcrumbs={[
-          { name: "Home", url: siteUrl() },
+          { name: tCommon("home"), url: siteUrl() },
           { name: t("heading"), url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("heading"), url: "/herb-drug-interactions" },
         ]}
       />
 
@@ -68,6 +76,17 @@ export default async function HerbDrugInteractionsPage() {
         </h1>
         <p className="text-lg text-muted-foreground">{t("intro")}</p>
       </header>
+
+      {/* The checker itself, on the page.
+          This used to be a card explaining that the checker lives on the
+          homepage, with a button that sent the visitor there — on the one page
+          whose subject is checking a combination. */}
+      <section className="mt-8">
+        <h2 className="mb-3 text-xl font-semibold text-foreground">
+          {t("checkerCtaTitle")}
+        </h2>
+        <InteractionChecker showBrowseLink={false} />
+      </section>
 
       <div className="mt-8">
         <InteractionExplainer />

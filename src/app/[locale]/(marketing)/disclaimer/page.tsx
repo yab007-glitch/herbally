@@ -34,6 +34,9 @@ export default async function DisclaimerPage() {
           {t("disclaimer.fda")}
         </p>
         <p className="text-muted-foreground leading-relaxed">
+          {t("disclaimer.canada")}
+        </p>
+        <p className="text-muted-foreground leading-relaxed">
           {t("disclaimer.emergency")}
         </p>
         <p className="text-muted-foreground leading-relaxed">

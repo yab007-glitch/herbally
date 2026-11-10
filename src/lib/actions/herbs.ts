@@ -11,6 +11,7 @@ import {
 } from "@/lib/utils/localize-herb";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
+import { rankHerbSearchResults } from "@/lib/search/herb-search-union";
 import type {
   ActionResponse,
   Herb,
@@ -34,6 +35,15 @@ async function resolveLocale(locale?: string): Promise<string> {
 const ITEMS_PER_PAGE = 20;
 const MAX_QUERY_LENGTH = 200;
 
+/** True while Next prerenders the route table at build time. */
+const IS_PRODUCTION_BUILD = process.env.NEXT_PHASE === "phase-production-build";
+
+/**
+ * How many times a build-time herb lookup may retry a database failure.
+ * Runtime lookups get exactly one attempt — see the comment in getHerbBySlug.
+ */
+const BUILD_LOOKUP_ATTEMPTS = 3;
+
 export async function getHerbs(
   params: {
     query?: string;
@@ -41,6 +51,7 @@ export async function getHerbs(
     pregnancySafe?: boolean;
     nursingSafe?: boolean;
     page?: number;
+    sort?: "name" | "evidence";
   },
   locale?: string
 ): Promise<ActionResponse<{ herbs: HerbWithCategory[]; total: number }>> {
@@ -63,64 +74,140 @@ export async function getHerbs(
       .eq("is_published", true)
       .range(from, to);
 
+    // Search path (union): keyword matches and name/description matches are
+    // combined, de-duplicated, and ranked with exact name matches first
+    // (see src/lib/search/herb-search-union.ts). Previously this was
+    // keyword-first: any keyword match hid the name fallback entirely, so
+    // an exact herb name could vanish from the list. Pagination is applied
+    // to the ranked id list, so an exact match is always on page 1.
+    const trimmedQuery = params.query?.trim().slice(0, MAX_QUERY_LENGTH);
+    if (trimmedQuery) {
+      const qWords = trimmedQuery.split(/\s+/).filter(Boolean);
+      // Resolve the category first so both match queries honour it, the
+      // same way the main query below does.
+      let categoryId: string | null = null;
+      if (params.category) {
+        const { data: cat } = await supabase
+          .from("herb_categories")
+          .select("id")
+          .eq("slug", params.category)
+          .single();
+        if (cat) categoryId = cat.id;
+      }
+      const buildMatchQuery = (select: string) => {
+        let qb = supabase.from("herbs").select(select).eq("is_published", true);
+        if (categoryId) qb = qb.eq("category_id", categoryId);
+        if (params.pregnancySafe) qb = qb.eq("pregnancy_safe", true);
+        if (params.nursingSafe) qb = qb.eq("nursing_safe", true);
+        return qb;
+      };
+      const expandedKeywords = expandQueryToKeywords(trimmedQuery);
+      const keywordQuery = buildMatchQuery("id, name, evidence_level")
+        .overlaps("symptom_keywords", expandedKeywords)
+        .limit(500);
+      const nameConditions = qWords
+        .flatMap((w) => {
+          const safe = sanitizeFilterValue(w);
+          return [
+            `name.ilike.%${safe}%`,
+            `scientific_name.ilike.%${safe}%`,
+            `description.ilike.%${safe}%`,
+          ];
+        })
+        .join(",");
+      const nameQuery = buildMatchQuery("id, name")
+        .or(nameConditions)
+        .limit(500);
+      const [keywordRes, nameRes] = await Promise.all([
+        keywordQuery,
+        nameQuery,
+      ]);
+      if (keywordRes.error && nameRes.error) {
+        logger.error("herbs_get_herbs_search_failed", {
+          error: keywordRes.error.message,
+        });
+        return {
+          success: false,
+          error: keywordRes.error.message || "Failed to fetch herbs",
+        };
+      }
+      if (keywordRes.error) {
+        logger.error("herbs_get_herbs_keyword_failed", {
+          error: keywordRes.error.message,
+        });
+      }
+      if (nameRes.error) {
+        logger.error("herbs_get_herbs_name_failed", {
+          error: nameRes.error.message,
+        });
+      }
+      // Supabase string selects type `data` as GenericStringError, so cast
+      // the rows to their known shapes before mapping (the queries above
+      // select exactly these columns).
+      const keywordRows =
+        (keywordRes.data as Array<{
+          id: string;
+          name: string;
+          evidence_level: string | null;
+        }> | null) || [];
+      const nameRows =
+        (nameRes.data as Array<{
+          id: string;
+          name: string;
+        }> | null) || [];
+      const rankedIds = rankHerbSearchResults({
+        query: trimmedQuery,
+        keywordMatches: keywordRows.map((h) => ({
+          id: h.id,
+          name: h.name,
+          evidence_level: h.evidence_level,
+        })),
+        nameMatches: nameRows.map((h) => ({ id: h.id, name: h.name })),
+        sort: params.sort === "evidence" ? "evidence" : "name",
+      });
+      const pageIds = rankedIds.slice(from, to + 1);
+      let pageRows: Array<Record<string, unknown>> = [];
+      if (pageIds.length > 0) {
+        const { data, error } = await supabase
+          .from("herbs")
+          .select("*, herb_categories(*)")
+          .eq("is_published", true)
+          .in("id", pageIds);
+        if (error) {
+          logger.error("herbs_get_herbs_failed", {
+            error:
+              error instanceof Error ? error.message : JSON.stringify(error),
+          });
+          return { success: false, error: error.message };
+        }
+        const rows =
+          (data as Array<Record<string, unknown> & { id: string }> | null) ||
+          [];
+        const byId = new Map(rows.map((h) => [h.id, h]));
+        pageRows = pageIds
+          .map((id) => byId.get(id))
+          .filter((h): h is Record<string, unknown> & { id: string } =>
+            Boolean(h)
+          );
+      }
+      const resolvedLocale = await resolveLocale(locale);
+      const localizedHerbs = pageRows.map((h) =>
+        localizeHerb(h as HerbWithCategory, resolvedLocale)
+      );
+      return {
+        success: true,
+        data: {
+          herbs: localizedHerbs as HerbWithCategory[],
+          total: rankedIds.length,
+        },
+      };
+    }
+
     // When keyword matches are found we order by evidence level (A→B→C→D→trad)
     // instead of name, so the strongest-evidence herbs surface first. The flag
     // is applied AFTER filters below (Supabase accumulates all modifiers into
     // one query, so call order doesn't affect the final SQL).
     let orderByEvidence = false;
-
-    if (params.query) {
-      const q = params.query.trim().slice(0, MAX_QUERY_LENGTH);
-      const words = q.split(/\s+/).filter(Boolean);
-      if (words.length > 0) {
-        const expandedKeywords = expandQueryToKeywords(q);
-
-        const { data: keywordResults } = await supabase
-          .from("herbs")
-          .select("id, evidence_level")
-          .eq("is_published", true)
-          .overlaps("symptom_keywords", expandedKeywords)
-          .limit(500);
-
-        let matchedIds: string[] = (keywordResults || []).map(
-          (h: { id: string }) => h.id
-        );
-        if (matchedIds.length > 0) {
-          const evidenceOrder: Record<string, number> = {
-            A: 0,
-            B: 1,
-            C: 2,
-            D: 3,
-            trad: 4,
-          };
-          const sortedResults = (keywordResults || []).sort(
-            (
-              a: { evidence_level: string | null },
-              b: { evidence_level: string | null }
-            ) => {
-              const ea = evidenceOrder[a.evidence_level || "C"] ?? 2;
-              const eb = evidenceOrder[b.evidence_level || "C"] ?? 2;
-              return ea - eb;
-            }
-          );
-          matchedIds = sortedResults.map((h: { id: string }) => h.id);
-          query = query.in("id", matchedIds);
-          orderByEvidence = true;
-        } else {
-          const conditions = words
-            .flatMap((w) => {
-              const safe = sanitizeFilterValue(w);
-              return [
-                `name.ilike.%${safe}%`,
-                `scientific_name.ilike.%${safe}%`,
-                `description.ilike.%${safe}%`,
-              ];
-            })
-            .join(",");
-          query = query.or(conditions);
-        }
-      }
-    }
 
     if (params.category) {
       const { data: cat } = await supabase
@@ -140,6 +227,12 @@ export async function getHerbs(
     if (params.nursingSafe) {
       query = query.eq("nursing_safe", true);
     }
+
+    // Explicit sort (Phase 3) overrides the implicit keyword behaviour:
+    // "evidence" always orders strongest-evidence first, "name" always
+    // orders A-Z even when the query matched symptom keywords.
+    if (params.sort === "evidence") orderByEvidence = true;
+    if (params.sort === "name") orderByEvidence = false;
 
     // Apply ordering now that all filters are known. evidence_level asc gives
     // A,B,C,D,trad (uppercase before lowercase) — the desired evidence rank.
@@ -181,51 +274,80 @@ export async function getHerbBySlug(
     const supabase = opts?.skipCookies ? getAnonClient() : await createClient();
 
     if (!supabase) {
-      return { success: false, error: "Supabase client not configured" };
-    }
-
-    const { data, error } = await supabase
-      .from("herbs")
-      .select("*, herb_categories(*), drug_interactions(*)")
-      .eq("slug", slug)
-      .eq("is_published", true)
-      .single();
-
-    if (error) {
-      // PGRST116 (0 rows) means the slug simply doesn't exist (or isn't
-      // published). That's an expected "not found" -> the caller renders a
-      // 404 via notFound(). Only log genuine server/DB errors, not misses,
-      // so build-time prerendering of a stale slug doesn't spam error logs.
-      const code = (error as { code?: string }).code;
-      const isNotFound =
-        code === "PGRST116" || /0 rows|contains 0 rows/i.test(error.message);
-      if (!isNotFound) {
-        logger.error("herbs_get_herb_by_slug_failed", {
-          error: error instanceof Error ? error.message : JSON.stringify(error),
-        });
-      }
       return {
         success: false,
-        error: isNotFound ? "Herb not found" : error.message,
+        error: "Supabase client not configured",
+        reason: "unavailable",
       };
     }
 
-    const locale =
-      opts?.locale ?? (opts?.skipCookies ? "en" : await resolveLocale());
-    const herb = localizeHerb(data as HerbWithInteractions, locale);
-    const interactions = (herb.drug_interactions || []).map((ix) =>
-      localizeInteraction(ix, locale)
-    );
-    return {
-      success: true,
-      data: {
-        ...herb,
-        drug_interactions: interactions,
-      } as HerbWithInteractions,
-    };
+    // At build time a single slow minute on the database used to fail the
+    // whole deploy. Retry there — nobody is waiting, and a blip deserves a
+    // second look. At runtime the first failure still surfaces immediately:
+    // a user is waiting and the breaker exists precisely to fail fast.
+    const attempts = IS_PRODUCTION_BUILD ? BUILD_LOOKUP_ATTEMPTS : 1;
+
+    for (let attempt = 1; ; attempt++) {
+      const { data, error } = await supabase
+        .from("herbs")
+        .select("*, herb_categories(*), drug_interactions(*)")
+        .eq("slug", slug)
+        .eq("is_published", true)
+        .single();
+
+      if (error) {
+        // PGRST116 (0 rows) means the slug simply doesn't exist (or isn't
+        // published). That's an expected "not found" -> the caller renders a
+        // 404 via notFound(). Only log genuine server/DB errors, not misses,
+        // so build-time prerendering of a stale slug doesn't spam error logs.
+        const code = (error as { code?: string }).code;
+        const isNotFound =
+          code === "PGRST116" || /0 rows|contains 0 rows/i.test(error.message);
+
+        if (!isNotFound && attempt < attempts) {
+          logger.warn("herbs_get_herb_by_slug_retry", {
+            slug,
+            attempt,
+            error: error.message,
+          });
+          await new Promise((resolve) => setTimeout(resolve, 1_000 * attempt));
+          continue;
+        }
+
+        if (!isNotFound) {
+          logger.error("herbs_get_herb_by_slug_failed", {
+            error:
+              error instanceof Error ? error.message : JSON.stringify(error),
+          });
+        }
+        return {
+          success: false,
+          error: isNotFound ? "Herb not found" : error.message,
+          reason: isNotFound ? "not_found" : "unavailable",
+        };
+      }
+
+      const locale =
+        opts?.locale ?? (opts?.skipCookies ? "en" : await resolveLocale());
+      const herb = localizeHerb(data as HerbWithInteractions, locale);
+      const interactions = (herb.drug_interactions || []).map((ix) =>
+        localizeInteraction(ix, locale)
+      );
+      return {
+        success: true,
+        data: {
+          ...herb,
+          drug_interactions: interactions,
+        } as HerbWithInteractions,
+      };
+    }
   } catch (error) {
     logger.error("herbs.getHerbBySlug_failed", { error: String(error) });
-    return { success: false, error: "Failed to fetch herb" };
+    return {
+      success: false,
+      error: "Failed to fetch herb",
+      reason: "unavailable",
+    };
   }
 }
 

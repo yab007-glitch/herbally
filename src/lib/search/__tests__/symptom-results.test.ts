@@ -1,0 +1,233 @@
+import { describe, it, expect } from "vitest";
+import {
+  dedupeSymptomResults,
+  sortSymptomResultsByRelevance,
+  normalizeScientificName,
+  localizeSymptomHerb,
+  type DedupeableHerbResult,
+} from "../symptom-results";
+
+const herb = (
+  overrides: Partial<DedupeableHerbResult> & { name: string }
+): DedupeableHerbResult => ({
+  id: overrides.id ?? "1",
+  slug: "slug",
+  scientific_name: null,
+  evidence_level: "C",
+  ...overrides,
+});
+
+describe("normalizeScientificName", () => {
+  it("ignores case, spacing and punctuation", () => {
+    expect(normalizeScientificName("  Stachys   betonica. ")).toBe(
+      "stachys betonica"
+    );
+    expect(normalizeScientificName(null)).toBeNull();
+    expect(normalizeScientificName("")).toBeNull();
+  });
+});
+
+describe("dedupeSymptomResults", () => {
+  it("collapses the walkthrough duplicate: two names, one scientific name", () => {
+    const results = dedupeSymptomResults([
+      herb({
+        id: "a",
+        slug: "stachys-betonica",
+        name: "Stachys Betonica",
+        scientific_name: "Stachys betonica",
+        matchedBy: "symptom",
+        matchedKeywords: ["sleep"],
+        matchedInputs: ["sleep"],
+      }),
+      herb({
+        id: "b",
+        slug: "lamiaceae-betony",
+        name: "Lamiaceae Betony",
+        scientific_name: "Stachys betonica",
+        matchedBy: "symptom",
+        matchedKeywords: ["anxiety"],
+        matchedInputs: ["anxiety"],
+      }),
+    ]);
+    expect(results).toHaveLength(1);
+    // First (best-evidenced) row keeps the canonical slug/link.
+    expect(results[0].slug).toBe("stachys-betonica");
+    // Nothing is silently dropped: inputs are unioned, alias is kept.
+    expect(results[0].matchedInputs).toEqual(["sleep", "anxiety"]);
+    expect(results[0].aliases).toEqual(["Lamiaceae Betony"]);
+  });
+
+  it("prefers a symptom match over a name match for the merged row", () => {
+    const results = dedupeSymptomResults([
+      herb({
+        id: "a",
+        slug: "x",
+        name: "Betony",
+        scientific_name: "Stachys betonica",
+        matchedBy: "name",
+      }),
+      herb({
+        id: "b",
+        slug: "y",
+        name: "Betony",
+        scientific_name: "Stachys betonica",
+        matchedBy: "symptom",
+      }),
+    ]);
+    expect(results).toHaveLength(1);
+    expect(results[0].matchedBy).toBe("symptom");
+  });
+
+  it("falls back to slug when no scientific name exists", () => {
+    const results = dedupeSymptomResults([
+      herb({ id: "a", slug: "same", name: "One", scientific_name: null }),
+      herb({ id: "b", slug: "same", name: "One", scientific_name: null }),
+      herb({ id: "c", slug: "other", name: "Two", scientific_name: null }),
+    ]);
+    expect(results.map((h) => h.id)).toEqual(["a", "c"]);
+  });
+
+  it("collapses the hand-curated betony Latin synonyms into one plant", () => {
+    const results = dedupeSymptomResults([
+      herb({
+        id: "a",
+        slug: "stachys-betonica",
+        name: "Stachys Betonica",
+        scientific_name: "Betonica officinalis",
+        matchedBy: "symptom",
+        matchedInputs: ["anxiety"],
+      }),
+      herb({
+        id: "b",
+        slug: "lamiaceae-betony",
+        name: "Lamiaceae Betony",
+        scientific_name: "Stachys betonica",
+        matchedBy: "symptom",
+        matchedInputs: ["sleep"],
+      }),
+      herb({
+        id: "c",
+        slug: "betony-third",
+        name: "Betony",
+        scientific_name: "Stachys officinalis",
+        matchedBy: "symptom",
+        matchedInputs: ["anxiety"],
+      }),
+    ]);
+    expect(results).toHaveLength(1);
+    expect(results[0].slug).toBe("stachys-betonica");
+    expect(results[0].matchedInputs).toEqual(["anxiety", "sleep"]);
+    expect(results[0].aliases).toEqual(["Lamiaceae Betony", "Betony"]);
+  });
+
+  it("keeps genuinely different plants separate", () => {
+    const results = dedupeSymptomResults([
+      herb({
+        id: "a",
+        slug: "a",
+        name: "A",
+        scientific_name: "Stachys sylvatica",
+      }),
+      herb({
+        id: "b",
+        slug: "b",
+        name: "B",
+        scientific_name: "Betonica officinalis",
+      }),
+    ]);
+    expect(results).toHaveLength(2);
+  });
+});
+
+describe("sortSymptomResultsByRelevance", () => {
+  it("orders by matched inputs first, then evidence grade", () => {
+    const sorted = sortSymptomResultsByRelevance([
+      herb({
+        id: "a",
+        name: "A",
+        evidence_level: "A",
+        matchedInputs: ["sleep"],
+      }),
+      herb({
+        id: "b",
+        name: "B",
+        evidence_level: "C",
+        matchedInputs: ["sleep", "anxiety"],
+      }),
+      herb({
+        id: "c",
+        name: "C",
+        evidence_level: "B",
+        matchedInputs: ["sleep"],
+      }),
+      herb({ id: "d", name: "D", evidence_level: "A", matchedInputs: [] }),
+    ]);
+    expect(sorted.map((h) => h.id)).toEqual(["b", "a", "c", "d"]);
+  });
+
+  it("is stable for equal relevance and evidence", () => {
+    const sorted = sortSymptomResultsByRelevance([
+      herb({ id: "a", name: "A", matchedInputs: ["sleep"] }),
+      herb({ id: "b", name: "B", matchedInputs: ["sleep"] }),
+    ]);
+    expect(sorted.map((h) => h.id)).toEqual(["a", "b"]);
+  });
+});
+
+describe("localizeSymptomHerb", () => {
+  const row = {
+    name: "Turmeric",
+    scientific_name: "Curcuma longa",
+    traditional_uses: ["Inflammation"],
+    modern_uses: ["Digestive complaints"],
+    translations: {
+      fr: {
+        name: "Curcuma",
+        traditional_uses: ["Inflammation"],
+      },
+    },
+  };
+
+  it("returns the row untouched for English", () => {
+    expect(localizeSymptomHerb(row, "en")).toBe(row);
+  });
+
+  it("overlays the French name and uses on /fr pages", () => {
+    const out = localizeSymptomHerb(row, "fr");
+    expect(out.name).toBe("Curcuma");
+    expect(out.traditional_uses).toEqual(["Inflammation"]);
+  });
+
+  it("keeps the English value for a field the translation omits", () => {
+    // modern_uses has no French translation: blanking it would drop a use
+    // tag from the card, which is worse than showing the English wording.
+    const out = localizeSymptomHerb(row, "fr");
+    expect(out.modern_uses).toEqual(["Digestive complaints"]);
+    expect(out.scientific_name).toBe("Curcuma longa");
+  });
+
+  it("falls back when translations are missing or not an object", () => {
+    expect(localizeSymptomHerb({ name: "Ginger" }, "fr").name).toBe("Ginger");
+    expect(
+      localizeSymptomHerb({ name: "Ginger", translations: [] }, "fr").name
+    ).toBe("Ginger");
+    expect(
+      localizeSymptomHerb({ name: "Ginger", translations: { fr: null } }, "fr")
+        .name
+    ).toBe("Ginger");
+  });
+
+  it("coerces a translation emitted as a bare string into an array", () => {
+    // The AI translation pipeline emitted single strings for some array
+    // fields; a bare string passed through as-is crashes every `.join()`.
+    const out = localizeSymptomHerb(
+      {
+        name: "Ginger",
+        modern_uses: ["Nausea"],
+        translations: { fr: { modern_uses: "Nausees" } },
+      },
+      "fr"
+    );
+    expect(out.modern_uses).toEqual(["Nausees"]);
+  });
+});

@@ -20,6 +20,11 @@
  *
  * Usage:
  *   npx tsx scripts/generate-pubmed-monograph.ts <slug> [--out file.json] [--max 80] [--write]
+ *   npx tsx scripts/generate-pubmed-monograph.ts --batch [--write] [--limit N] [--concurrency 2]
+ *
+ * Batch mode hard-caps concurrency at 2 and halts after 3 consecutive database
+ * write failures: the Free-tier database cannot absorb a write burst (see
+ * 2026-11-09 incident in the worker-pool comment).
  *
  * Env: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OLLAMA_CLOUD_API_KEY,
  *      OLLAMA_CLOUD_URL (default https://ollama.com/v1), OLLAMA_CLOUD_MODEL,
@@ -64,6 +69,42 @@ function getSupabase() {
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
+}
+
+/**
+ * Transient database failures.
+ *
+ * The Free-tier Nano answers a burst of concurrent upserts with 502/504s from
+ * the REST gateway or "fetch failed"/"upstream request timeout" in supabase-js.
+ * Those are back-pressure, not bad data: retry with a wide exponential backoff
+ * instead of treating the herb as failed. A real constraint violation (duplicate
+ * key, RLS, check) does not match this and fails immediately.
+ */
+const TRANSIENT_DB_ERROR =
+  /timeout|timed out|fetch failed|upstream|connection|ECONN|ETIMEDOUT|50[234]/i;
+
+async function upsertSheetWithRetry(
+  record: Record<string, unknown>,
+  attempts = 4
+): Promise<void> {
+  const sb = getSupabase();
+  for (let attempt = 1; ; attempt++) {
+    const { error } = await sb
+      .from("herb_pubmed_monographs")
+      .upsert(record, { onConflict: "slug" });
+    if (!error) return;
+
+    const message = `DB upsert failed: ${error.message}`;
+    if (attempt >= attempts || !TRANSIENT_DB_ERROR.test(error.message)) {
+      throw new Error(message);
+    }
+
+    const wait = 5_000 * 3 ** (attempt - 1) + Math.floor(Math.random() * 1_000);
+    console.warn(
+      `  ⏳ ${message} — retry ${attempt}/${attempts - 1} in ${Math.round(wait / 1000)}s`
+    );
+    await sleep(wait);
+  }
 }
 
 /** Best-effort on-demand revalidation of a herb's PubMed sheet cache. */
@@ -442,7 +483,7 @@ async function existingSheetSlugs(): Promise<Set<string>> {
 
 async function generateForSlug(
   herb: Herb,
-  opts: { write: boolean }
+  opts: { write: boolean; revalidate?: boolean }
 ): Promise<{ ok: boolean; cited: number; articles: number; error?: string }> {
   try {
     const term = buildSearchTerm(herb);
@@ -477,14 +518,12 @@ async function generateForSlug(
       status: "compiled",
     };
     if (opts.write) {
-      const sb = getSupabase();
-      const { error } = await sb
-        .from("herb_pubmed_monographs")
-        .upsert(record, { onConflict: "slug" });
-      if (error) throw new Error(`DB upsert failed: ${error.message}`);
+      await upsertSheetWithRetry(record);
       // On-demand revalidation so the new sheet appears on the herb page
       // instantly (instead of waiting for the 1h cache). Best-effort.
-      await revalidateSheet(herb.slug);
+      // Batch mode passes revalidate: false — one POST per row to a page that
+      // rebuilds from the same database is pointless load; ISR picks it up.
+      if (opts.revalidate !== false) await revalidateSheet(herb.slug);
     }
     return { ok: true, cited: citedPmids.length, articles: articles.length };
   } catch (e) {
@@ -504,10 +543,25 @@ async function main() {
   const limitIdx = args.indexOf("--limit");
   const limit = limitIdx >= 0 ? Number(args[limitIdx + 1]) : 0;
   const concIdx = args.indexOf("--concurrency");
-  const concurrency =
+  const requestedConcurrency =
     concIdx >= 0 && Number(args[concIdx + 1]) > 0
       ? Number(args[concIdx + 1])
       : 8;
+  // Batch writes go to the Free-tier Nano. On 2026-11-09 six concurrent upserts
+  // drove the instance to 98% CPU: 104 failed writes, then hours of
+  // unresponsive connections. Compiles are slow (~10-15s) and eutils is
+  // serialized below, so two workers is already most of the throughput. Cap
+  // hard regardless of the flag.
+  const MAX_BATCH_CONCURRENCY = 2;
+  const concurrency = isBatch
+    ? Math.min(requestedConcurrency, MAX_BATCH_CONCURRENCY)
+    : requestedConcurrency;
+  if (isBatch && requestedConcurrency > MAX_BATCH_CONCURRENCY) {
+    console.warn(
+      `--concurrency ${requestedConcurrency} capped to ${MAX_BATCH_CONCURRENCY}: ` +
+        `the Free-tier database cannot absorb more concurrent writes.`
+    );
+  }
   const outIdx = args.indexOf("--out");
   const outPath = outIdx >= 0 ? args[outIdx + 1] : null;
 
@@ -533,23 +587,46 @@ async function main() {
     let failed = 0;
     let next = 0;
     const failedList: string[] = [];
+    // Circuit breaker: if the database stops accepting writes, stop the whole
+    // batch instead of queueing hundreds of doomed attempts against a database
+    // that is already struggling. The run is resumable, so halting is safe.
+    const MAX_CONSECUTIVE_DB_FAILURES = 3;
+    let consecutiveDbFailures = 0;
+    let halted = false;
     async function worker(workerId: number) {
-      while (true) {
+      while (!halted) {
         const i = next++;
         if (i >= n) return;
         const herb = todo[i];
-        const r = await generateForSlug(herb, { write: doWrite });
+        const r = await generateForSlug(herb, {
+          write: doWrite,
+          revalidate: false,
+        });
+        const isDbFailure = !!r.error?.startsWith("DB upsert failed");
         if (r.ok) {
+          consecutiveDbFailures = 0;
           ok++;
           console.log(
             `[${i + 1}/${n}] ${herb.slug} ok (${r.articles} abstracts, ${r.cited} cited) [w${workerId}]`
           );
+          // Brief pause after each write so the Nano's checkpointer keeps up.
+          await sleep(250);
         } else {
           failed++;
           failedList.push(`${herb.slug}: ${r.error}`);
           console.log(
             `[${i + 1}/${n}] ${herb.slug} FAIL (${r.error}) [w${workerId}]`
           );
+          if (isDbFailure) {
+            consecutiveDbFailures++;
+            if (consecutiveDbFailures >= MAX_CONSECUTIVE_DB_FAILURES) {
+              halted = true;
+              console.error(
+                `\n⛔ ${consecutiveDbFailures} consecutive database write failures — ` +
+                  `halting batch. The database is refusing writes; re-run when it recovers.`
+              );
+            }
+          }
         }
       }
     }
@@ -567,7 +644,7 @@ async function main() {
   const slug = args[0];
   if (!slug) {
     console.error(
-      "Usage:\n  npx tsx scripts/generate-pubmed-monograph.ts <slug> [--out file.json] [--max 80] [--write]\n  npx tsx scripts/generate-pubmed-monograph.ts --batch --write [--limit N]"
+      "Usage:\n  npx tsx scripts/generate-pubmed-monograph.ts <slug> [--out file.json] [--max 80] [--write]\n  npx tsx scripts/generate-pubmed-monograph.ts --batch --write [--limit N] [--concurrency 2]"
     );
     process.exit(1);
   }
@@ -636,11 +713,7 @@ async function main() {
   }
 
   if (doWrite) {
-    const sb = getSupabase();
-    const { error } = await sb
-      .from("herb_pubmed_monographs")
-      .upsert(record, { onConflict: "slug" });
-    if (error) throw new Error(`DB upsert failed: ${error.message}`);
+    await upsertSheetWithRetry(record);
     console.log(`✓ upserted herb_pubmed_monographs for ${herb.slug}`);
   }
 

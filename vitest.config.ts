@@ -20,6 +20,12 @@ export default defineConfig({
       "**/dist/**",
       "**/cypress/**",
       "**/e2e/**",
+      // Nested git worktrees (git worktree add .worktrees/<branch>) each carry
+      // a full src/ tree, so vitest would otherwise discover and run every
+      // sibling branch's test files: 6 stale worktrees turned 65 real test
+      // files into 462 (549 failures) and 14s into 189s. CI is unaffected
+      // (fresh checkouts have no .worktrees/), but local runs must stay honest.
+      "**/.worktrees/**",
       "**/.{idea,git,cache,output,temp}/**",
       "**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*",
     ],

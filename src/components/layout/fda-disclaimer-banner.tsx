@@ -1,8 +1,16 @@
 "use client";
 
-import { AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+/**
+ * The statutory disclaimer.
+ *
+ * It has to be on the page; it does not have to look like an error. The
+ * previous version was an amber gradient with a warning icon across the full
+ * width — the loudest thing above the fold on a site whose whole promise is
+ * calm. Here it is a hairline rule and small print: present, readable, quiet.
+ * The text itself is unchanged.
+ */
 export function FDADisclaimerBanner() {
   const t = useTranslations();
 
@@ -10,11 +18,10 @@ export function FDADisclaimerBanner() {
     <div
       role="region"
       aria-label={t("common.medicalDisclaimerLabel")}
-      className="w-full border-b border-amber-200/50 bg-gradient-to-r from-amber-50 via-amber-50/80 to-amber-50 px-4 py-2 text-center text-xs leading-relaxed text-amber-800 dark:from-amber-950/50 dark:via-amber-950/30 dark:to-amber-950/50 dark:border-amber-900/50 dark:text-amber-200"
+      className="w-full border-b border-border bg-background px-4 py-1 text-center sm:py-1.5"
     >
-      <p className="mx-auto flex max-w-7xl items-center justify-center gap-2">
-        <AlertCircle className="size-3.5 shrink-0" />
-        <span>{t("fda.disclaimer")}</span>
+      <p className="mx-auto max-w-5xl text-[11px] leading-snug text-muted-foreground sm:text-xs sm:leading-relaxed">
+        {t("fda.disclaimer")}
       </p>
     </div>
   );

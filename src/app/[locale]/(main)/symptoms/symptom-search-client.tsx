@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Search, Loader2, Leaf, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import {
+  dedupeSymptomResults,
+  sortSymptomResultsByRelevance,
+} from "@/lib/search/symptom-results";
 
 interface HerbResult {
   id: string;
@@ -13,6 +17,9 @@ interface HerbResult {
   scientific_name: string;
   evidence_level: string | null;
   matchedBy: string;
+  matchedKeywords?: string[];
+  matchedInputs?: string[];
+  aliases?: string[];
 }
 
 export function SymptomSearchClient() {
@@ -33,8 +40,13 @@ export function SymptomSearchClient() {
     setHasSearched(true);
 
     try {
-      // First try AI-powered keyword extraction
-      let keywords: string[] = [q.trim().toLowerCase()];
+      // First try AI-powered keyword extraction. The AI keywords are
+      // UNIONED with the user's own words, never used to replace them:
+      // replacing dropped user terms (e.g. the AI returning "insomnia"
+      // for a user who typed "sleep"), and with the one-way synonym map
+      // that silently lost the sleep match entirely.
+      const originalWords = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      let keywords: string[] = originalWords;
 
       try {
         const aiRes = await fetch("/api/interpret-search", {
@@ -45,11 +57,14 @@ export function SymptomSearchClient() {
         if (aiRes.ok) {
           const data = await aiRes.json();
           if (data.keywords?.length > 0) {
-            keywords = data.keywords;
+            const aiKeywords = (data.keywords as string[]).map((k) =>
+              k.toLowerCase()
+            );
+            keywords = Array.from(new Set([...originalWords, ...aiKeywords]));
           }
         }
       } catch {
-        // Fall back to raw query
+        // Fall back to raw query words
       }
 
       // Search herbs by keywords
@@ -60,7 +75,13 @@ export function SymptomSearchClient() {
         body: JSON.stringify({ q: searchTerm }),
       });
       const data = await res.json();
-      setResults(Array.isArray(data) ? data.slice(0, 12) : []);
+      // De-duplicate by plant and order by relevance (matched search
+      // terms first, then evidence grade) before capping at 12, so a
+      // duplicate can never displace a distinct herb from the list.
+      const processed = Array.isArray(data)
+        ? sortSymptomResultsByRelevance(dedupeSymptomResults(data))
+        : [];
+      setResults(processed.slice(0, 12));
     } catch {
       setResults([]);
     } finally {
@@ -144,6 +165,9 @@ export function SymptomSearchClient() {
                 <Sparkles className="inline size-3.5 -mt-0.5 mr-1 text-primary" />
                 {t("symptomsPage.foundHerbs", { count: results.length })}
               </p>
+              <p className="mb-4 text-xs text-muted-foreground">
+                {t("symptomsPage.orderingNote")}
+              </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 {results.map((herb) => (
                   <Link
@@ -161,6 +185,22 @@ export function SymptomSearchClient() {
                       <p className="text-xs italic text-muted-foreground truncate">
                         {herb.scientific_name}
                       </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {herb.matchedInputs && herb.matchedInputs.length > 0
+                          ? t("symptomsPage.matchReasonSymptom", {
+                              symptoms: herb.matchedInputs.join(", "),
+                            })
+                          : herb.matchedBy === "symptom"
+                            ? t("symptomsPage.matchReasonSymptomGeneral")
+                            : t("symptomsPage.matchReasonName")}
+                      </p>
+                      {herb.aliases && herb.aliases.length > 0 && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {t("symptomsPage.alsoListedAs", {
+                            names: herb.aliases.join(", "),
+                          })}
+                        </p>
+                      )}
                       {herb.evidence_level && (
                         <span className="mt-1 inline-flex items-center rounded-full bg-primary/5 px-2 py-0.5 text-[10px] font-medium text-primary">
                           {t("symptomsPage.evidenceLabel")}:{" "}

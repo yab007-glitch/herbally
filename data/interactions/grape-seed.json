@@ -1,0 +1,35 @@
+{
+  "herb_slug": "grape-seed",
+  "pairs": [
+    {
+      "drug_name": "Warfarin",
+      "severity": "moderate",
+      "description": "Oligomeric proanthocyanidins in grape seed extract possess antiplatelet properties and may increase bleeding risks in patients on warfarin.",
+      "mechanism": "Inhibition of platelet adhesion, platelet aggregation, and endothelial prostaglandin generation.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/grape-seed-extract"
+    },
+    {
+      "drug_name": "Aspirin",
+      "severity": "moderate",
+      "description": "Concomitant use of grape seed extract and aspirin results in additive antiplatelet effects, potentially increasing bruising and bleeding episodes.",
+      "mechanism": "Complementary suppression of platelet activation pathways by proanthocyanidins and cyclooxygenase-1 blockade.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/grape-seed-extract"
+    },
+    {
+      "drug_name": "Phenacetin",
+      "severity": "mild",
+      "description": "Grape seed polyphenols can alter cytochrome P450 1A2 activity, influencing systemic clearance and metabolism of CYP1A2 substrate drugs.",
+      "mechanism": "Inhibition of hepatic cytochrome P450 1A2 enzymatic biotransformation by flavonoid procyanidins.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/grape-seed-extract"
+    }
+  ]
+}

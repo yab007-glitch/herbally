@@ -4,6 +4,15 @@ import { Leaf, Home, Users, AlertTriangle } from "lucide-react";
 import { ClipboardCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Every admin route reads the signed-in user's session and a live role from
+ * the database. Prerendering them at build time is both useless — nobody sees
+ * a cached admin shell without a session — and harmful: it makes the whole
+ * build depend on the database answering, and a slow minute there took the
+ * admin page past Next's 60s prerender ceiling and failed the deploy.
+ */
+export const dynamic = "force-dynamic";
+
 const adminNavItems = [
   { href: "/admin", label: "Overview", icon: Home },
   { href: "/admin/herbs", label: "Herbs", icon: Leaf },

@@ -1,0 +1,35 @@
+{
+  "herb_slug": "garlic",
+  "pairs": [
+    {
+      "drug_name": "Saquinavir",
+      "severity": "severe",
+      "description": "Garlic supplements substantially decrease the plasma concentrations of saquinavir by approximately 50 percent in healthy human volunteers.",
+      "mechanism": "Induction of intestinal P-glycoprotein transport and cytochrome P450 3A4 enzymes by garlic constituents.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/garlic"
+    },
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "severe",
+      "description": "High-dose garlic intake inhibits platelet aggregation and may prolong bleeding time, intensifying bleeding hazards in patients receiving warfarin.",
+      "mechanism": "Allicin and ajoene inhibit platelet aggregation and thromboxane synthesis, enhancing anticoagulant hazards.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/garlic"
+    },
+    {
+      "drug_name": "Atazanavir",
+      "severity": "moderate",
+      "description": "Garlic supplements may decrease circulating levels of protease inhibitors including atazanavir, risking suboptimal antiretroviral suppression.",
+      "mechanism": "Modulation of enteric P-glycoprotein transport proteins reducing systemic protease inhibitor bioavailability.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/garlic"
+    }
+  ]
+}

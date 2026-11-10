@@ -28,6 +28,45 @@ const REMOVED_TOMBSTONE_MAX = 100;
 const SYNCED_KEY = "herbally-garden-synced";
 const SYNCED_MAX = 200;
 
+// ---------------------------------------------------------------------------
+// Change notification
+// ---------------------------------------------------------------------------
+// Garden membership is an external store (localStorage). Components read it
+// through `useSyncExternalStore(..., isInGarden, ...)` rather than a mount
+// effect that calls setState: a synchronous setState inside an effect body
+// triggers a cascading render and is rejected by react-hooks/set-state-in-effect.
+// Subscribing also keeps every card in sync when one of them is toggled, and
+// across tabs.
+type GardenListener = () => void;
+const gardenListeners = new Set<GardenListener>();
+
+function emitGardenChange(): void {
+  for (const listener of gardenListeners) listener();
+}
+
+/**
+ * Subscribe to garden membership changes. Fires for same-tab writes (via
+ * emitGardenChange) and for writes made in another tab (the `storage` event
+ * only reaches the tabs that did not perform the write).
+ */
+export function subscribeGarden(listener: GardenListener): () => void {
+  gardenListeners.add(listener);
+  if (typeof window === "undefined") {
+    return () => {
+      gardenListeners.delete(listener);
+    };
+  }
+  const onStorage = (event: StorageEvent) => {
+    // key === null means the whole store was cleared.
+    if (event.key === null || event.key === GARDEN_KEY) listener();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => {
+    gardenListeners.delete(listener);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
 export function getGarden(): GardenHerb[] {
   if (typeof window === "undefined") return [];
   try {
@@ -123,6 +162,7 @@ export function setGarden(herbs: GardenHerb[]): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(GARDEN_KEY, JSON.stringify(herbs));
+    emitGardenChange();
   } catch {
     // Storage full or unavailable
   }
@@ -134,6 +174,7 @@ export function addToGarden(herb: Omit<GardenHerb, "savedAt">): GardenHerb[] {
   if (garden.some((h) => h.slug === herb.slug)) return garden;
   const updated = [{ ...herb, savedAt: new Date().toISOString() }, ...garden];
   localStorage.setItem(GARDEN_KEY, JSON.stringify(updated));
+  emitGardenChange();
   // Re-adding clears any prior removal tombstone for this slug.
   clearRemovedSlug(herb.slug);
 
@@ -149,6 +190,7 @@ export function removeFromGarden(slug: string): GardenHerb[] {
   if (typeof window === "undefined") return [];
   const garden = getGarden().filter((h) => h.slug !== slug);
   localStorage.setItem(GARDEN_KEY, JSON.stringify(garden));
+  emitGardenChange();
   // Record the removal so mergeServerGarden won't resurrect this slug.
   addRemovedSlug(slug);
 
@@ -160,9 +202,31 @@ export function removeFromGarden(slug: string): GardenHerb[] {
   return garden;
 }
 
+// `useSyncExternalStore` calls the snapshot getter on every render and treats
+// each call as a potential change, so it must be cheap and return a stable
+// value. Parsing the garden JSON per call would be neither: cache the slug set
+// against the raw stored string.
+let cachedRaw: string | null = null;
+let cachedSlugs = new Set<string>();
+let cachePrimed = false;
+
+function gardenSlugSet(): Set<string> {
+  let raw: string | null = null;
+  try {
+    raw = localStorage.getItem(GARDEN_KEY);
+  } catch {
+    raw = null;
+  }
+  if (cachePrimed && raw === cachedRaw) return cachedSlugs;
+  cachedRaw = raw;
+  cachePrimed = true;
+  cachedSlugs = new Set(getGarden().map((h) => h.slug));
+  return cachedSlugs;
+}
+
 export function isInGarden(slug: string): boolean {
   if (typeof window === "undefined") return false;
-  return getGarden().some((h) => h.slug === slug);
+  return gardenSlugSet().has(slug);
 }
 
 export function getGardenNote(slug: string): string {
@@ -318,6 +382,7 @@ export async function mergeServerGarden(): Promise<GardenHerb[]> {
     if (removedRemotely.length > 0 || newHerbs.length > 0) {
       const merged = [...reconciled, ...newHerbs];
       localStorage.setItem(GARDEN_KEY, JSON.stringify(merged));
+      emitGardenChange();
       return merged;
     }
 

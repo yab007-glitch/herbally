@@ -1,0 +1,35 @@
+{
+  "herb_slug": "ashwagandha",
+  "pairs": [
+    {
+      "drug_name": "Sedatives and CNS depressants",
+      "severity": "severe",
+      "description": "Ashwagandha enhances central nervous system depression when combined with benzodiazepines, z-drugs, or barbiturates.",
+      "mechanism": "GABA-mimetic activity of withanolides augmenting central inhibitory neurotransmission.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ashwagandha"
+    },
+    {
+      "drug_name": "Levothyroxine (Synthroid)",
+      "severity": "moderate",
+      "description": "Ashwagandha stimulates thyroid hormone production and can increase serum T3 and T4 levels, potentially causing thyrotoxicosis with levothyroxine.",
+      "mechanism": "Direct stimulation of thyroid follicular gland synthesis and release of thyroxine.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ashwagandha"
+    },
+    {
+      "drug_name": "Immunosuppressants (general)",
+      "severity": "moderate",
+      "description": "Ashwagandha exhibits immunostimulant activity which can counteract the therapeutic efficacy of immunosuppressive agents.",
+      "mechanism": "Proliferation of immune cells and stimulation of pro-inflammatory cytokines opposing immunosuppressant drugs.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ashwagandha"
+    }
+  ]
+}

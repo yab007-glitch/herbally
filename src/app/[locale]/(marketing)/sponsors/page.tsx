@@ -1,5 +1,5 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import {
   BadgeCheck,
   Bot,
@@ -54,6 +54,10 @@ const supportTypes = [
 
 const SPONSOR_EMAIL = "info@herbally.app";
 
+const audienceKeys = ["visitors", "pageviews", "languages", "markets"] as const;
+
+const packageKeys = ["supporter", "sponsor", "launch"] as const;
+
 export default async function SponsorsPage() {
   const locale = await getLocale();
   const t = await getTranslations({ locale });
@@ -61,6 +65,9 @@ export default async function SponsorsPage() {
   const mailtoHref = `mailto:${SPONSOR_EMAIL}?subject=${encodeURIComponent(
     t("sponsorship.contact.emailSubject")
   )}`;
+
+  const packageFeatures = (key: (typeof packageKeys)[number]): string[] =>
+    t.raw(`sponsorship.packages.items.${key}.features`) as string[];
   const donateHref = addLocalePrefix("/donate", locale);
   const methodologyHref = addLocalePrefix("/methodology", locale);
   const privacyHref = addLocalePrefix("/privacy", locale);
@@ -187,6 +194,98 @@ export default async function SponsorsPage() {
 
         <p className="mt-4 rounded-xl border border-border/60 bg-muted/40 p-4 text-sm leading-6 text-muted-foreground">
           {t("sponsorship.costs.terms")}
+        </p>
+      </section>
+
+      <section className="mt-14" aria-labelledby="audience-heading">
+        <h2
+          id="audience-heading"
+          className="text-2xl font-bold tracking-tight text-foreground"
+        >
+          {t("sponsorship.audience.title")}
+        </h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+          {t("sponsorship.audience.description")}
+        </p>
+
+        <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {audienceKeys.map((key) => (
+            <div
+              key={key}
+              className="rounded-2xl border border-border/60 bg-card p-5 ring-1 ring-foreground/5"
+            >
+              <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {t(`sponsorship.audience.stats.${key}.label`)}
+              </dt>
+              <dd className="mt-2 text-2xl font-bold tracking-tight text-foreground">
+                {t(`sponsorship.audience.stats.${key}.value`)}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <p className="mt-4 max-w-3xl text-xs leading-5 text-muted-foreground">
+          {t("sponsorship.audience.note")}
+        </p>
+        <p className="mt-4 max-w-3xl text-sm leading-6 text-muted-foreground">
+          {t("sponsorship.audience.fit")}
+        </p>
+      </section>
+
+      <section className="mt-14" aria-labelledby="packages-heading">
+        <h2
+          id="packages-heading"
+          className="text-2xl font-bold tracking-tight text-foreground"
+        >
+          {t("sponsorship.packages.title")}
+        </h2>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+          {t("sponsorship.packages.description")}
+        </p>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {packageKeys.map((key) => (
+            <article
+              key={key}
+              className="flex flex-col rounded-2xl border border-border/60 bg-card p-5 ring-1 ring-foreground/5"
+            >
+              <h3 className="text-sm font-semibold text-foreground">
+                {t(`sponsorship.packages.items.${key}.name`)}
+              </h3>
+              <p className="mt-2 flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold tracking-tight text-foreground">
+                  {t(`sponsorship.packages.items.${key}.price`)}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {t(`sponsorship.packages.items.${key}.cadence`)}
+                </span>
+              </p>
+              <ul className="mt-4 flex-1 space-y-2 text-sm leading-6 text-muted-foreground">
+                {packageFeatures(key).map((feature, index) => (
+                  <li key={index} className="flex gap-2">
+                    <CheckCircle2
+                      className="mt-1 size-4 shrink-0 text-primary"
+                      aria-hidden="true"
+                    />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={mailtoHref}
+                className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                {t("sponsorship.packages.cta")}
+              </a>
+            </article>
+          ))}
+        </div>
+
+        <p className="mt-4 text-xs leading-5 text-muted-foreground">
+          {t("sponsorship.packages.currency")}
+        </p>
+        <p className="mt-3 rounded-xl border border-border/60 bg-muted/40 p-4 text-sm leading-6 text-muted-foreground">
+          {t("sponsorship.packages.note")}
         </p>
       </section>
 

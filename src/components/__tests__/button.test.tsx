@@ -67,9 +67,12 @@ describe("Button Component", () => {
   });
 
   it("renders as anchor when asChild with Link", () => {
-    // Test that Button can wrap other components
+    // Test that Button can wrap other components.
+    // Deliberately a raw <a>: this asserts Button can wrap a non-Link child
+    // (e.g. an external anchor), so next/link is not the point here.
     render(
       <Button data-testid="anchor-button">
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/test">Link Button</a>
       </Button>
     );

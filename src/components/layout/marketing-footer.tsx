@@ -66,11 +66,25 @@ export function MarketingFooter() {
               {t("footer.faq")}
             </Link>
             <Link
+              href="/guides"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.guides")}
+            </Link>
+            <Link
               href="/methodology"
               prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.methodology")}
+            </Link>
+            <Link
+              href="/editorial-policy"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.editorialPolicy")}
             </Link>
             <Link
               href="/sponsors"
@@ -104,6 +118,12 @@ export function MarketingFooter() {
               className="hover:text-foreground transition-colors"
             >
               {t("footer.privacy")}
+            </Link>
+            <Link
+              href="/contact"
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.contact")}
             </Link>
             <Link
               href="/donate"

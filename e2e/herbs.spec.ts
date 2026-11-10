@@ -61,9 +61,13 @@ test.describe("Herbs Catalog", () => {
   test("should have an accessible heading and focusable search", async ({
     page,
   }) => {
-    await page.goto("/herbs");
+    // Wait for hydration before focusing: React re-renders the controlled input
+    // after load and steals focus back, which made this test flaky in CI
+    // (retry 1 of 2 failed on a run where every other test passed).
+    await page.goto("/herbs", { waitUntil: "networkidle" });
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     const search = page.getByPlaceholder(/Search herbs by name/i);
+    await expect(search).toBeEnabled();
     await search.focus();
     await expect(search).toBeFocused();
   });

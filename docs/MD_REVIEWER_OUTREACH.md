@@ -27,7 +27,7 @@ Secure a named MD with herbal medicine credentials to officially review HerbAlly
    - Email: info@lowdogfoundation.org
    - Website: https://www.lowdogfoundation.org
    - Why: Federal advisory role = instant credibility
-   - Approach: Highlight nonprofit/charitable angle, free educational resource
+   - Approach: Highlight free public-education angle, no paywall
 
 ### Tier 2
 
@@ -54,7 +54,7 @@ Subject: Medical Review Board Opportunity - HerbAlly (2.7K Evidence-Based Herb M
 
 Dear Dr. [Name],
 
-I hope this finds you well. I'm writing to invite you to join the Medical Advisory Board of HerbAlly (herbally.app), a nonprofit educational platform I've built to provide evidence-based herbal medicine information.
+I hope this finds you well. I'm writing to invite you to join the Medical Advisory Board of HerbAlly (herbally.app), a free educational platform I've built to provide evidence-based herbal medicine information.
 
 What we've built:
 • 2,700 evidence-graded herb monographs (A/B/C/trad evidence levels)
@@ -71,7 +71,7 @@ Your role would be:
 • Lend your name/ credentials to the editorial board
 • Optional: Quarterly review of new/updated monographs
 
-This is currently a volunteer/charitable commitment (we're self-funded), though we hope to secure grants for honoraria.
+This is currently a volunteer commitment (we're self-funded), though we hope to secure grants for honoraria.
 
 I'd be honored by 15 minutes of your time for a call to show you the platform.
 

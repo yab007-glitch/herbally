@@ -1,5 +1,5 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import {
   Heart,
   Server,
@@ -60,11 +60,13 @@ export default async function DonatePage({
     monthly: t(`donateContent.breakdown.${key}.monthly`),
   }));
 
-  const testimonials = [0, 1, 2].map((i) => ({
-    quote: t(`donateContent.testimonials.${i}.quote`),
-    author: t(`donateContent.testimonials.${i}.author`),
-    location: t(`donateContent.testimonials.${i}.location`),
-  }));
+  // No testimonials section: the previous quotes were shown with only a
+  // first name + initial + city and no source or date, so they were
+  // unverifiable as presented. No source for them exists in the repo, so
+  // they are removed rather than re-attributed. The
+  // donateContent.testimonials dictionary keys are left in place, unused,
+  // so real, sourced testimonials can be restored later without a
+  // re-translation round.
 
   return (
     <div className="mx-auto max-w-4xl space-y-12 py-8">
@@ -195,30 +197,6 @@ export default async function DonatePage({
           </div>
         </CardContent>
       </Card>
-
-      {/* Testimonials */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-center">
-          {t("donateContent.loveHerbAlly")}
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {testimonials.map((testimonial, i) => (
-            <Card key={i} className="border-border/50">
-              <CardContent className="pt-6">
-                <p className="text-sm italic text-muted-foreground">
-                  &ldquo;{testimonial.quote}&rdquo;
-                </p>
-                <p className="mt-3 text-sm font-medium">
-                  — {testimonial.author}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {testimonial.location}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
 
       {/* How We Operate */}
       <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">

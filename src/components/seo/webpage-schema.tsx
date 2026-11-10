@@ -4,6 +4,7 @@ interface WebPageSchemaProps {
   title: string;
   description: string;
   url: string;
+  type?: string;
   datePublished?: string;
   dateModified?: string;
   author?: string;
@@ -14,6 +15,7 @@ export function WebPageSchema({
   title,
   description,
   url,
+  type = "WebPage",
   datePublished,
   dateModified,
   author,
@@ -21,7 +23,7 @@ export function WebPageSchema({
 }: WebPageSchemaProps) {
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
+    "@type": type,
     name: title,
     description,
     url,

@@ -1,3 +1,4 @@
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import {
   Leaf,
@@ -9,6 +10,9 @@ import {
   BookOpen,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
@@ -44,8 +48,25 @@ export default async function AboutPage() {
     },
   ];
 
+  const url = locale === "fr" ? `${siteUrl()}/fr/about` : `${siteUrl()}/about`;
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <WebPageSchema
+        title={t("aboutContent.header")}
+        description={t("aboutContent.subtitle")}
+        url={url}
+        breadcrumbs={[
+          { name: "Home", url: siteUrl() },
+          { name: t("aboutContent.header"), url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("aboutContent.header"), url: "/about" },
+        ]}
+      />
       {/* Header */}
       <div className="mb-16 text-center">
         <div className="mb-4 inline-flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -168,23 +189,23 @@ export default async function AboutPage() {
                 {locale === "en" ? (
                   <>
                     If HerbAlly has been helpful to you, please consider{" "}
-                    <a
+                    <Link
                       href="/donate"
                       className="font-medium text-primary underline hover:no-underline"
                     >
                       making a donation
-                    </a>{" "}
+                    </Link>{" "}
                     to help us keep this resource available for everyone.
                   </>
                 ) : (
                   <>
                     {t("aboutContent.freeText3")}{" "}
-                    <a
+                    <Link
                       href="/donate"
                       className="font-medium text-primary underline hover:no-underline"
                     >
                       {t("aboutContent.freeLink")}
-                    </a>
+                    </Link>
                   </>
                 )}
               </>
@@ -195,12 +216,12 @@ export default async function AboutPage() {
                     t("aboutContent.freeLink")
                   )[0]
                 }
-                <a
+                <Link
                   href="/donate"
                   className="font-medium text-primary underline hover:no-underline"
                 >
                   {t("aboutContent.freeLink")}
-                </a>
+                </Link>
                 {
                   t("aboutContent.freeText3").split(
                     t("aboutContent.freeLink")
@@ -218,6 +239,37 @@ export default async function AboutPage() {
           {t("aboutContent.team.title")}
         </h2>
         <p className="text-muted-foreground">{t("aboutContent.team.text")}</p>
+      </section>
+
+      {/* Contact Section */}
+      <section className="mt-16">
+        <h2 className="mb-4 text-2xl font-bold text-foreground">
+          {t("contact.title")}
+        </h2>
+        <p className="text-muted-foreground">{t("contact.intro")}</p>
+        <p className="mt-4 text-muted-foreground">
+          <a
+            href="mailto:info@herbally.app"
+            className="font-medium text-primary underline hover:no-underline"
+          >
+            info@herbally.app
+          </a>{" "}
+          ·{" "}
+          <a
+            href="mailto:privacy@herbally.app"
+            className="font-medium text-primary underline hover:no-underline"
+          >
+            privacy@herbally.app
+          </a>
+        </p>
+        <p className="mt-2">
+          <Link
+            href="/contact"
+            className="font-medium text-primary underline hover:no-underline"
+          >
+            {t("contact.title")}
+          </Link>
+        </p>
       </section>
     </div>
   );

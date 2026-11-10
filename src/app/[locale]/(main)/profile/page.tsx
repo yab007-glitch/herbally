@@ -4,12 +4,17 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileClient } from "./profile-client";
 
-export const generateMetadata = () =>
-  buildPageMetadata({
+export const generateMetadata = async () => {
+  const meta = await buildPageMetadata({
     titleKey: "profileTitle",
     descKey: "profileSubtitle",
     path: "/profile",
   });
+  return {
+    ...meta,
+    robots: { index: false, follow: false },
+  };
+};
 
 export default async function ProfilePage() {
   const locale = await getLocale();

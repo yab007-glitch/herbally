@@ -10,6 +10,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string) => key,
 }));
 

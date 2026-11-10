@@ -1,0 +1,510 @@
+{
+  "new": [
+    {
+      "name": "Prunus davidiana",
+      "tcm_products": 15,
+      "sample_ids": [8053812, 8083335, 8083491, 8083608, 8083764],
+      "powo": "Prunus davidiana"
+    },
+    {
+      "name": "Chrysanthemum x morifolium",
+      "tcm_products": 11,
+      "sample_ids": [8083296, 20375823, 20399769, 20403786, 21097947],
+      "powo": "Chrysanthemum x morifolium"
+    },
+    {
+      "name": "Curcuma kwangsiensis",
+      "tcm_products": 9,
+      "sample_ids": [20331987, 21047559, 21047559, 28768038, 29313492],
+      "powo": "Curcuma kwangsiensis"
+    },
+    {
+      "name": "Gentiana manshurica",
+      "tcm_products": 8,
+      "sample_ids": [8069412, 8083491, 20399574, 20400783, 20384169],
+      "powo": "Gentiana manshurica"
+    },
+    {
+      "name": "Arisaema erubescens",
+      "tcm_products": 5,
+      "sample_ids": [5857683, 5857683, 5857683, 5857683, 5978076],
+      "powo": "Arisaema erubescens"
+    },
+    {
+      "name": "Bambusa beecheyana",
+      "tcm_products": 5,
+      "sample_ids": [8069334, 20332572, 20400978, 21032661, 28729233],
+      "powo": "Bambusa beecheyana"
+    },
+    {
+      "name": "Fraxinus chinensis",
+      "tcm_products": 5,
+      "sample_ids": [8082360, 20398404, 20326527, 21030750, 28745340],
+      "powo": "Fraxinus chinensis"
+    },
+    {
+      "name": "Iris domestica",
+      "tcm_products": 5,
+      "sample_ids": [22538295, 22721868, 28679469, 29771274, 29771274],
+      "powo": "Iris domestica"
+    },
+    {
+      "name": "Ranunculus ternatus",
+      "tcm_products": 5,
+      "sample_ids": [29313492, 29313492, 29313492, 29313492, 29313492],
+      "powo": "Ranunculus ternatus"
+    },
+    {
+      "name": "Rosa laevigata",
+      "tcm_products": 4,
+      "sample_ids": [8750430, 8750625, 20375745, 21038823],
+      "powo": "Rosa laevigata"
+    },
+    {
+      "name": "Angelica decursiva",
+      "tcm_products": 4,
+      "sample_ids": [20404176, 21031413, 22946703, 28607787],
+      "powo": "Angelica decursiva"
+    },
+    {
+      "name": "Corydalis turtschaninovii",
+      "tcm_products": 4,
+      "sample_ids": [20331792, 22944129, 23377965, 28724670],
+      "powo": "Corydalis turtschaninovii"
+    },
+    {
+      "name": "Dictamnus dasycarpus",
+      "tcm_products": 4,
+      "sample_ids": [20332962, 21023379, 21023379, 28689414],
+      "powo": "Dictamnus dasycarpus"
+    },
+    {
+      "name": "Amomum longiligulare",
+      "tcm_products": 4,
+      "sample_ids": [21028878, 21028878, 23482056, 28673931],
+      "powo": "Wurfbainia longiligularis"
+    },
+    {
+      "name": "Artemisia anomala",
+      "tcm_products": 4,
+      "sample_ids": [22557990, 22557990, 22717617, 22717617],
+      "powo": "Artemisia anomala"
+    },
+    {
+      "name": "Vitex rotundifolia",
+      "tcm_products": 3,
+      "sample_ids": [4780464, 20317713, 22717851],
+      "powo": "Vitex rotundifolia"
+    },
+    {
+      "name": "Stemona japonica",
+      "tcm_products": 3,
+      "sample_ids": [7538622, 8164338, 28655523],
+      "powo": "Stemona japonica"
+    },
+    {
+      "name": "Sparganium eurycarpum",
+      "tcm_products": 3,
+      "sample_ids": [7532616, 21029112, 21029112],
+      "powo": "Sparganium eurycarpum"
+    },
+    {
+      "name": "Sargentodoxa cuneata",
+      "tcm_products": 3,
+      "sample_ids": [20340528, 21041787, 21041787],
+      "powo": "Sargentodoxa cuneata"
+    },
+    {
+      "name": "Cynanchum glaucescens",
+      "tcm_products": 3,
+      "sample_ids": [20332845, 21023223, 28607709],
+      "powo": "Vincetoxicum glaucescens"
+    },
+    {
+      "name": "Dolomiaea souliei",
+      "tcm_products": 3,
+      "sample_ids": [20333820, 21032622, 21032622],
+      "powo": "Dolomiaea souliei"
+    },
+    {
+      "name": "Lycopodium japonicum",
+      "tcm_products": 3,
+      "sample_ids": [20328555, 21028722, 21028722],
+      "powo": "Lycopodium japonicum"
+    },
+    {
+      "name": "Descurainia sophia",
+      "tcm_products": 3,
+      "sample_ids": [20385573, 21027435, 21027435],
+      "powo": "Descurainia sophia"
+    },
+    {
+      "name": "Uncaria hirsuta",
+      "tcm_products": 3,
+      "sample_ids": [21042840, 21042840, 28755480],
+      "powo": "Uncaria hirsuta"
+    },
+    {
+      "name": "Arisaema amurense",
+      "tcm_products": 3,
+      "sample_ids": [22525035, 22677681, 28737774],
+      "powo": "Arisaema amurense"
+    },
+    {
+      "name": "Vincetoxicum atratum",
+      "tcm_products": 3,
+      "sample_ids": [22561266, 22536579, 28617498],
+      "powo": "Vincetoxicum atratum"
+    },
+    {
+      "name": "Prunus humilis",
+      "tcm_products": 3,
+      "sample_ids": [22530651, 22723428, 28674087],
+      "powo": "Prunus humilis"
+    },
+    {
+      "name": "Lindera aggregata",
+      "tcm_products": 3,
+      "sample_ids": [22538607, 22722687, 28767999],
+      "powo": "Lindera aggregata"
+    },
+    {
+      "name": "Stellaria dichotoma var. lanceolata",
+      "tcm_products": 3,
+      "sample_ids": [22540206, 22723389, 28735785],
+      "powo": "Mesostemma dichotomum var. lanceolatum"
+    },
+    {
+      "name": "Selaginella tamariscina",
+      "tcm_products": 2,
+      "sample_ids": [4817241, 8163402],
+      "powo": "Selaginella tamariscina"
+    },
+    {
+      "name": "Senecio scandens",
+      "tcm_products": 2,
+      "sample_ids": [4817241, 8163402],
+      "powo": "Delairea odorata"
+    },
+    {
+      "name": "Spirodela polyrhiza",
+      "tcm_products": 2,
+      "sample_ids": [20381400, 28689375],
+      "powo": "Spirodela polyrhiza"
+    },
+    {
+      "name": "Viola philippica var. philippica",
+      "tcm_products": 2,
+      "sample_ids": [20332611, 21018855],
+      "powo": "Viola philippica var. philippica"
+    },
+    {
+      "name": "Homalomena occulta",
+      "tcm_products": 2,
+      "sample_ids": [20326254, 21031374],
+      "powo": "Homalomena occulta"
+    },
+    {
+      "name": "Cistanche salsa",
+      "tcm_products": 2,
+      "sample_ids": [20972172, 20972172],
+      "powo": "Cistanche salsa"
+    },
+    {
+      "name": "Alpinia hainanensis",
+      "tcm_products": 2,
+      "sample_ids": [22524762, 22677252],
+      "powo": "Alpinia hainanensis"
+    },
+    {
+      "name": "Sigesbeckia glabrescens",
+      "tcm_products": 2,
+      "sample_ids": [22538646, 22722726],
+      "powo": "Sigesbeckia glabrescens"
+    },
+    {
+      "name": "Vincetoxicum pycnostelma",
+      "tcm_products": 2,
+      "sample_ids": [22538841, 22723116],
+      "powo": "Vincetoxicum bungei"
+    },
+    {
+      "name": "Abrus cantoniensis",
+      "tcm_products": 2,
+      "sample_ids": [22533498, 22717266],
+      "powo": "Abrus melanospermus subsp. melanospermus"
+    },
+    {
+      "name": "Mosla chinensis",
+      "tcm_products": 2,
+      "sample_ids": [22540167, 22723272],
+      "powo": "Mosla chinensis"
+    },
+    {
+      "name": "Paris polyphylla var. chinensis",
+      "tcm_products": 2,
+      "sample_ids": [22718124, 22718124],
+      "powo": "Paris chinensis"
+    },
+    {
+      "name": "Cynanchum atratum",
+      "tcm_products": 1,
+      "sample_ids": [4783896],
+      "powo": "Vincetoxicum atratum"
+    },
+    {
+      "name": "Clematis montana",
+      "tcm_products": 1,
+      "sample_ids": [8146320],
+      "powo": "Clematis montana"
+    },
+    {
+      "name": "Amomum krervanh",
+      "tcm_products": 1,
+      "sample_ids": [20334834],
+      "powo": "Wurfbainia vera"
+    },
+    {
+      "name": "Schizostachyum chinense",
+      "tcm_products": 1,
+      "sample_ids": [20329842],
+      "powo": "Cephalostachyum chinense"
+    },
+    {
+      "name": "Achyranthes aspera",
+      "tcm_products": 1,
+      "sample_ids": [20283783],
+      "powo": "Achyranthes aspera"
+    },
+    {
+      "name": "Lithospermum erythrorhizon",
+      "tcm_products": 1,
+      "sample_ids": [21019011],
+      "powo": "Lithospermum erythrorhizon"
+    },
+    {
+      "name": "Polygonatum kingianum",
+      "tcm_products": 1,
+      "sample_ids": [21270756],
+      "powo": "Polygonatum kingianum"
+    },
+    {
+      "name": "Typhonium giganteum",
+      "tcm_products": 1,
+      "sample_ids": [22526010],
+      "powo": "Sauromatum giganteum"
+    },
+    {
+      "name": "Rhaponticum uniflorum",
+      "tcm_products": 1,
+      "sample_ids": [22536696],
+      "powo": "Rhaponticum uniflorum"
+    },
+    {
+      "name": "Pteris multifida",
+      "tcm_products": 1,
+      "sample_ids": [22537749],
+      "powo": "Hemionitis ludens"
+    },
+    {
+      "name": "Typha orientalis",
+      "tcm_products": 1,
+      "sample_ids": [22537944],
+      "powo": "Typha orientalis"
+    },
+    {
+      "name": "Salvia chinensis",
+      "tcm_products": 1,
+      "sample_ids": [22538490],
+      "powo": "Salvia chinensis"
+    },
+    {
+      "name": "Scaphium lychnophorum",
+      "tcm_products": 1,
+      "sample_ids": [22557249],
+      "powo": "Scaphium affine"
+    },
+    {
+      "name": "Pyrola calliantha",
+      "tcm_products": 1,
+      "sample_ids": [22558068],
+      "powo": "Pyrola calliantha"
+    },
+    {
+      "name": "Vigna angularis",
+      "tcm_products": 1,
+      "sample_ids": [22677486],
+      "powo": "Vigna angularis"
+    },
+    {
+      "name": "Schefflera arboricola",
+      "tcm_products": 1,
+      "sample_ids": [24214164],
+      "powo": "Heptapleurum arboricola"
+    },
+    {
+      "name": "Flemingia philippinensis",
+      "tcm_products": 1,
+      "sample_ids": [24214203],
+      "powo": "Flemingia prostrata"
+    },
+    {
+      "name": "Sarcandra glabra",
+      "tcm_products": 1,
+      "sample_ids": [24214398],
+      "powo": "Sarcandra glabra"
+    },
+    {
+      "name": "Canarium album",
+      "tcm_products": 1,
+      "sample_ids": [28745223],
+      "powo": "Canarium album"
+    }
+  ],
+  "duplicates": [
+    {
+      "name": "Ligusticum sinense cv. chuanxiong",
+      "tcm_products": 29,
+      "sample_ids": [8069451, 8163402, 8083335, 8083491, 8083608],
+      "powo": "Conioselinum anthriscoides"
+    },
+    {
+      "name": "Reynoutria multiflora",
+      "tcm_products": 12,
+      "sample_ids": [8054436, 8054631, 20332728, 20399613, 21041982],
+      "powo": "Pleuropterus multiflorus"
+    },
+    {
+      "name": "Crataegus cuneata",
+      "tcm_products": 10,
+      "sample_ids": [8053695, 8053890, 20400588, 20328477, 20403708],
+      "powo": "Crataegus monogyna"
+    },
+    {
+      "name": "Stephania tetrandra",
+      "tcm_products": 7,
+      "sample_ids": [8069373, 8083491, 20381049, 20399379, 20400783],
+      "powo": "Botryodiscia tetrandra"
+    },
+    {
+      "name": "Amomum villosum",
+      "tcm_products": 5,
+      "sample_ids": [4796025, 7532967, 20285265, 20286669, 21009495],
+      "powo": "Wurfbainia villosa"
+    },
+    {
+      "name": "Inula britannica",
+      "tcm_products": 5,
+      "sample_ids": [4780464, 20331714, 21026031, 21026031, 28668549],
+      "powo": "Pentanema britannica"
+    },
+    {
+      "name": "Anemone chinensis",
+      "tcm_products": 4,
+      "sample_ids": [8082360, 20398404, 20332923, 28748616],
+      "powo": "Pulsatilla chinensis"
+    },
+    {
+      "name": "Pueraria lobata",
+      "tcm_products": 3,
+      "sample_ids": [4783506, 4783506, 4783506],
+      "powo": "Pueraria montana var. lobata"
+    },
+    {
+      "name": "Phragmites communis",
+      "tcm_products": 3,
+      "sample_ids": [4783506, 4783506, 4783506],
+      "powo": "Phragmites australis subsp. australis"
+    },
+    {
+      "name": "Daemonorops draco",
+      "tcm_products": 2,
+      "sample_ids": [4783584, 22558224],
+      "powo": "Calamus draco"
+    },
+    {
+      "name": "Ledebouriella divaricata",
+      "tcm_products": 2,
+      "sample_ids": [4780464, 4798365],
+      "powo": "Saposhnikovia divaricata"
+    },
+    {
+      "name": "Adenophora tetraphylla",
+      "tcm_products": 1,
+      "sample_ids": [4783896],
+      "powo": "Adenophora triphylla"
+    },
+    {
+      "name": "Cassia obtusifolia",
+      "tcm_products": 1,
+      "sample_ids": [4817241],
+      "powo": "Senna obtusifolia"
+    },
+    {
+      "name": "Alisma orientale",
+      "tcm_products": 1,
+      "sample_ids": [7074249],
+      "powo": "Alisma plantago-aquatica subsp. orientale"
+    },
+    {
+      "name": "Selinum striatum",
+      "tcm_products": 1,
+      "sample_ids": [20961681],
+      "powo": "Oreocome striata"
+    },
+    {
+      "name": "Achyranthes longifolia",
+      "tcm_products": 1,
+      "sample_ids": [24214320],
+      "powo": "Achyranthes bidentata"
+    },
+    {
+      "name": "Codonopsis tangshen",
+      "tcm_products": 1,
+      "sample_ids": [28429284],
+      "powo": "Codonopsis pilosula subsp. tangshen"
+    }
+  ],
+  "unresolved": [
+    {
+      "name": "Archidoskodon planifrons",
+      "tcm_products": 5,
+      "sample_ids": [22903101, 22833408, 23563683, 23563683, 28613091]
+    },
+    {
+      "name": "Clematis Armandii",
+      "tcm_products": 4,
+      "sample_ids": [8069412, 20399574, 20385105, 28739100]
+    },
+    {
+      "name": "Vaccaria hispanica subsp. hispanica",
+      "tcm_products": 4,
+      "sample_ids": [20330193, 21027162, 21027162, 28739022]
+    },
+    {
+      "name": "Ecklonia kurome",
+      "tcm_products": 4,
+      "sample_ids": [21038628, 22535331, 22944129, 22944129]
+    },
+    {
+      "name": "Anemarrhena asphodeloidis",
+      "tcm_products": 1,
+      "sample_ids": [4783896]
+    },
+    {
+      "name": "Coriolus Versicolor",
+      "tcm_products": 1,
+      "sample_ids": [5699616]
+    },
+    {
+      "name": "Poria",
+      "tcm_products": 1,
+      "sample_ids": [7074483]
+    },
+    {
+      "name": "Ligusticum sinense var sinense",
+      "tcm_products": 1,
+      "sample_ids": [20373873]
+    }
+  ]
+}

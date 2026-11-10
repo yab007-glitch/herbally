@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { AlertTriangle, ShieldCheck, ShieldX } from "lucide-react";
 import {
   Card,
@@ -34,12 +34,19 @@ interface HerbSafetyPanelProps {
     moderate: number;
     mild: number;
   };
+  /**
+   * The interaction table also renders inline, above the tabs, so it is
+   * visible without opening this panel. Set false here to avoid printing the
+   * same table twice on one page.
+   */
+  showInteractions?: boolean;
 }
 
 export function HerbSafetyPanel({
   herb,
   interactions,
   severityCounts,
+  showInteractions = true,
 }: HerbSafetyPanelProps) {
   const t = useTranslations();
 
@@ -140,15 +147,33 @@ export function HerbSafetyPanel({
       </Card>
 
       {/* Interactions Table */}
-      <InteractionExplainer />
-      <InteractionsTable interactions={interactions} herbSlug={herb.slug} />
+      {showInteractions ? (
+        <>
+          <InteractionExplainer />
+          <InteractionsTable interactions={interactions} herbSlug={herb.slug} />
+        </>
+      ) : (
+        <a
+          href="#interactions"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+        >
+          {t("herbDetail.knownInteractions", { count: interactions.length })} ↑
+        </a>
+      )}
 
       {/* CTA */}
       <div className="flex justify-center">
         <Button
           variant="outline"
           size="lg"
-          render={<Link href={`/herbalist?herb=${herb.slug}`} />}
+          render={
+            <Link
+              href={`/herbalist?herb=${herb.slug}`}
+              // 2,198 ?herb= URLs were being crawled as duplicates of /herbalist.
+              // The parameter is a client-side preselection, not a different page.
+              rel="nofollow"
+            />
+          }
           className="rounded-full"
         >
           <AlertTriangle className="mr-2 size-4" />

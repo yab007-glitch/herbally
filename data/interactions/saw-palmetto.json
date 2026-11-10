@@ -1,0 +1,35 @@
+{
+  "herb_slug": "saw-palmetto",
+  "pairs": [
+    {
+      "drug_name": "Finasteride (Proscar/Propecia)",
+      "severity": "moderate",
+      "description": "Combining saw palmetto with finasteride yields additive 5-alpha-reductase inhibition, potentially magnifying anti-androgenic side effects.",
+      "mechanism": "Dual inhibition of 5-alpha-reductase isoenzymes 1 and 2, suppressing dihydrotestosterone conversion.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/saw-palmetto"
+    },
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "moderate",
+      "description": "Saw palmetto has been associated with isolated reports of increased INR values and intraoperative hemorrhage when combined with warfarin.",
+      "mechanism": "Potential mild antiplatelet activity and modulation of hepatic metabolic enzymes altering clearance.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/saw-palmetto"
+    },
+    {
+      "drug_name": "Oral Contraceptives",
+      "severity": "mild",
+      "description": "Theoretical interaction whereby antiandrogenic and estrogen receptor-modulating effects of saw palmetto could alter hormonal contraceptive therapy.",
+      "mechanism": "Competitive binding to estrogen and androgen receptors by liposterolic constituents of Serenoa repens.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/saw-palmetto"
+    }
+  ]
+}

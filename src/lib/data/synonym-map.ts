@@ -8,6 +8,13 @@ export const SYNONYM_MAP: Record<string, string[]> = {
   stress: ["stress", "anxiety", "adaptogen", "calm"],
   depression: ["depression", "mood", "anxiety"],
   sleep: ["sleep", "insomnia", "calm", "relax", "sedative"],
+  // Bidirectional with sleep: previously only sleep -> insomnia existed,
+  // so an AI-normalised "insomnia" query never matched sleep-tagged herbs.
+  // sedative/nervine are the same pattern: they only appeared as expansion
+  // targets, never as keys, so a query using them matched nothing.
+  insomnia: ["insomnia", "sleep", "calm", "relax", "sedative"],
+  sedative: ["sedative", "sleep", "insomnia", "calm", "relax"],
+  nervine: ["nervine", "calm", "anxiety", "relax", "sleep"],
   calm: ["calm", "anxiety", "relax", "sleep", "nervine"],
   relax: ["relax", "calm", "sleep", "anxiety", "muscle"],
   focus: ["focus", "cognitive", "memory", "concentration", "brain"],

@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck, Sparkles, MessageCircle } from "lucide-react";
 
 type Labels = {
+  herbLabel: string;
+  medLabel: string;
   herbPlaceholder: string;
   medPlaceholder: string;
   checkButton: string;
@@ -19,6 +22,23 @@ type Labels = {
   symptomsLink: string;
   emptyCheckError: string;
   sameCheckError: string;
+  checking: string;
+  checkerFoundTitle: string;
+  checkerAskHerbalist: string;
+  checkerViewPair: string;
+  checkerViewHerb: string;
+  checkerDisclaimer: string;
+  checkerNotFoundTitle: string;
+  checkerNotFoundBody: string;
+  checkerAiNote: string;
+  checkerError: string;
+  checkerSource: string;
+  checkerEvidence: string;
+  checkerMechanism: string;
+  severityMild: string;
+  severityModerate: string;
+  severitySevere: string;
+  severityContraindicated: string;
 };
 
 interface HerbResult {
@@ -27,6 +47,39 @@ interface HerbResult {
   slug: string;
   scientific_name: string;
 }
+
+interface CheckPair {
+  id: string;
+  drugName: string;
+  severity: "mild" | "moderate" | "severe" | "contraindicated";
+  description: string;
+  mechanism: string | null;
+  evidenceLevel: string | null;
+  source: string | null;
+  sourceUrl: string | null;
+  pairUrl: string;
+}
+
+type CheckResult =
+  | {
+      found: true;
+      herb: { slug: string; name: string };
+      pair: CheckPair;
+    }
+  | {
+      found: false;
+      herb: { slug: string; name: string } | null;
+      unavailable?: boolean;
+    };
+
+const SEVERITY_STYLES: Record<CheckPair["severity"], string> = {
+  mild: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  moderate:
+    "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  severe: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  contraindicated:
+    "bg-red-200 text-red-900 dark:bg-red-900/50 dark:text-red-200",
+};
 
 const SUGGESTIONS = [
   {
@@ -59,16 +112,13 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   const [herbResults, setHerbResults] = useState<HerbResult[]>([]);
   const [showHerbResults, setShowHerbResults] = useState(false);
   const [activeHerbIndex, setActiveHerbIndex] = useState(-1);
+  const [checking, setChecking] = useState(false);
+  const [checkResult, setCheckResult] = useState<CheckResult | null>(null);
   const herbRef = useRef<HTMLInputElement>(null);
   const medRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
-  // Abort the in-flight herb search when a newer term supersedes it, so a
-  // slow earlier response can't overwrite a faster newer one (race).
   const searchAbort = useRef<AbortController | null>(null);
-  // Name set by selectHerb — suppresses the re-search triggered by the
-  // herbInput change to the selected name, which would otherwise reopen
-  // the dropdown over the Check button immediately after selection.
   const justSelected = useRef<string | null>(null);
 
   const searchHerbs = useCallback(async (term: string) => {
@@ -88,16 +138,13 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     try {
       const res = await fetch(
         `/api/herbs/search?q=${encodeURIComponent(term)}`,
-        {
-          signal: controller.signal,
-        }
+        { signal: controller.signal }
       );
       const data = await res.json();
       setHerbResults(Array.isArray(data) ? data.slice(0, 5) : []);
       setShowHerbResults(true);
       setActiveHerbIndex(-1);
     } catch (error) {
-      // Aborted requests are expected when a newer term supersedes this one.
       if (error instanceof DOMException && error.name === "AbortError") return;
       setHerbResults([]);
     }
@@ -111,7 +158,6 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     };
   }, [herbInput, searchHerbs]);
 
-  // Abort any in-flight search on unmount.
   useEffect(() => () => searchAbort.current?.abort(), []);
 
   useEffect(() => {
@@ -129,17 +175,14 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  function handleCheck() {
+  async function handleCheck(herbOverride?: string, medOverride?: string) {
     setShowHerbResults(false);
-    const herbName = herbInput.trim();
-    const medName = medInput.trim();
-    // Empty submit used to silently do nothing — surface a hint instead.
+    const herbName = (herbOverride ?? herbInput).trim();
+    const medName = (medOverride ?? medInput).trim();
     if (!herbName && !medName) {
       setCheckError(labels.emptyCheckError);
       return;
     }
-    // Same product in both fields ("warfarin" + "warfarin") builds a
-    // nonsense query and burns an AI call — stop it at the form.
     if (
       herbName &&
       medName &&
@@ -149,15 +192,36 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       return;
     }
     setCheckError(null);
-    let query = "";
-    if (herbName && medName) {
-      query = `Is ${herbName} safe to take with ${medName}?`;
-    } else if (herbName) {
-      query = `Tell me about ${herbName}`;
-    } else {
-      query = `Tell me about ${medName}`;
+    setCheckResult(null);
+
+    if (!herbName || !medName) {
+      const query = herbName
+        ? `Tell me about ${herbName}`
+        : `Tell me about ${medName}`;
+      router.push(`/herbalist?q=${encodeURIComponent(query)}`);
+      return;
     }
-    router.push(`/herbalist?q=${encodeURIComponent(query)}`);
+
+    setChecking(true);
+    try {
+      const res = await fetch(
+        `/api/interactions/check?herb=${encodeURIComponent(herbName)}&drug=${encodeURIComponent(medName)}`
+      );
+      const data = (await res.json()) as CheckResult & {
+        unavailable?: boolean;
+      };
+      if (!res.ok || data.unavailable) {
+        setCheckError(labels.checkerError);
+        setCheckResult(null);
+        return;
+      }
+      setCheckResult(data);
+    } catch {
+      setCheckError(labels.checkerError);
+      setCheckResult(null);
+    } finally {
+      setChecking(false);
+    }
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -170,7 +234,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
         selectHerb(herbResults[activeHerbIndex]);
         return;
       }
-      handleCheck();
+      void handleCheck();
       return;
     }
     if (e.key === "ArrowDown" && showHerbResults) {
@@ -195,13 +259,23 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     medRef.current?.focus();
   }
 
+  const severityLabel: Record<CheckPair["severity"], string> = {
+    mild: labels.severityMild,
+    moderate: labels.severityModerate,
+    severe: labels.severitySevere,
+    contraindicated: labels.severityContraindicated,
+  };
+
   return (
-    <div className="flex min-h-[80dvh] flex-col items-center justify-center px-4">
-      <div className="w-full max-w-lg text-center">
-        {/* Two-input interaction checker */}
-        <div className="mt-8 space-y-3">
-          <div className="relative">
+    <div className="w-full">
+      <div className="w-full text-left">
+        <div className="space-y-3">
+          <div className="relative text-left">
+            <label htmlFor="home-herb" className="eyebrow mb-1.5 block">
+              {labels.herbLabel}
+            </label>
             <input
+              id="home-herb"
               ref={herbRef}
               type="text"
               value={herbInput}
@@ -212,7 +286,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
               onKeyDown={handleKeyDown}
               onFocus={() => herbInput.length >= 2 && setShowHerbResults(true)}
               placeholder={labels.herbPlaceholder}
-              className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+              className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
               autoComplete="off"
             />
             {showHerbResults && herbResults.length > 0 && (
@@ -243,32 +317,34 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             )}
           </div>
 
-          <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-            <span className="block h-px flex-1 bg-border" />
-            <span className="px-2">+</span>
-            <span className="block h-px flex-1 bg-border" />
+          <div className="relative text-left">
+            <label htmlFor="home-med" className="eyebrow mb-1.5 block">
+              {labels.medLabel}
+            </label>
+            <input
+              id="home-med"
+              ref={medRef}
+              type="text"
+              value={medInput}
+              onChange={(e) => {
+                setMedInput(e.target.value);
+                setCheckError(null);
+              }}
+              onKeyDown={(e) => e.key === "Enter" && void handleCheck()}
+              placeholder={labels.medPlaceholder}
+              className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
+            />
           </div>
 
-          <input
-            ref={medRef}
-            type="text"
-            value={medInput}
-            onChange={(e) => {
-              setMedInput(e.target.value);
-              setCheckError(null);
-            }}
-            onKeyDown={(e) => e.key === "Enter" && handleCheck()}
-            placeholder={labels.medPlaceholder}
-            className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
-          />
-
           <Button
-            onClick={handleCheck}
-            className="w-full rounded-xl py-3 text-sm font-medium"
+            onClick={() => void handleCheck()}
+            disabled={checking}
+            aria-busy={checking}
+            className="h-12 w-full rounded-md text-sm font-medium"
             size="lg"
           >
             <ShieldCheck className="size-4" />
-            {labels.checkButton}
+            {checking ? labels.checking : labels.checkButton}
           </Button>
           {checkError && (
             <p
@@ -278,21 +354,139 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
               {checkError}
             </p>
           )}
+
+          {checkResult && checkResult.found && (
+            <div
+              role="status"
+              className="rounded-xl border bg-card p-4 text-left shadow-sm"
+            >
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {labels.checkerFoundTitle}
+              </p>
+              <p className="mt-2 text-base font-semibold text-foreground">
+                {checkResult.herb.name} + {checkResult.pair.drugName}
+              </p>
+              <span
+                className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${SEVERITY_STYLES[checkResult.pair.severity]}`}
+              >
+                {severityLabel[checkResult.pair.severity]}
+              </span>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {checkResult.pair.description}
+              </p>
+              {checkResult.pair.mechanism && (
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  <span className="font-medium text-foreground">
+                    {labels.checkerMechanism}:{" "}
+                  </span>
+                  {checkResult.pair.mechanism}
+                </p>
+              )}
+              <p className="mt-2 text-xs text-muted-foreground">
+                {checkResult.pair.evidenceLevel && (
+                  <span>
+                    {labels.checkerEvidence}: {checkResult.pair.evidenceLevel}
+                    {" · "}
+                  </span>
+                )}
+                {checkResult.pair.source && (
+                  <span>
+                    {labels.checkerSource}:{" "}
+                    {checkResult.pair.sourceUrl ? (
+                      <a
+                        href={checkResult.pair.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {checkResult.pair.source}
+                      </a>
+                    ) : (
+                      checkResult.pair.source
+                    )}
+                  </span>
+                )}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  render={<Link href={checkResult.pair.pairUrl} />}
+                >
+                  {labels.checkerViewPair}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  render={<Link href={`/herbs/${checkResult.herb.slug}`} />}
+                >
+                  {labels.checkerViewHerb}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  render={
+                    <Link
+                      href={`/herbalist?q=${encodeURIComponent(`Is ${checkResult.herb.name} safe to take with ${checkResult.pair.drugName}?`)}`}
+                    />
+                  }
+                >
+                  <MessageCircle className="mr-1 size-3" />
+                  {labels.checkerAskHerbalist}
+                </Button>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                {labels.checkerDisclaimer}
+              </p>
+            </div>
+          )}
+
+          {checkResult && !checkResult.found && (
+            <div
+              role="status"
+              className="rounded-xl border bg-card p-4 text-left shadow-sm"
+            >
+              <p className="text-base font-semibold text-foreground">
+                {labels.checkerNotFoundTitle}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {labels.checkerNotFoundBody
+                  .replace("{herb}", herbInput.trim())
+                  .replace("{drug}", medInput.trim())}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {labels.checkerAiNote}
+              </p>
+              <div className="mt-3">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  render={
+                    <Link
+                      href={`/herbalist?q=${encodeURIComponent(`Is ${herbInput.trim()} safe to take with ${medInput.trim()}?`)}`}
+                    />
+                  }
+                >
+                  <MessageCircle className="mr-1 size-3" />
+                  {labels.checkerAskHerbalist}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Quick suggestions */}
         <div className="mt-8">
-          <p className="mb-3 text-xs font-medium text-muted-foreground">
-            {labels.suggestionsTitle}
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
+          <p className="eyebrow mb-3">{labels.suggestionsTitle}</p>
+          <div className="flex flex-wrap justify-start gap-2">
             {SUGGESTIONS.map((s, i) => (
               <button
                 key={i}
-                onClick={() =>
-                  router.push(`/herbalist?q=${encodeURIComponent(s.query)}`)
-                }
-                className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
+                disabled={checking}
+                onClick={() => {
+                  setHerbInput(s.herb);
+                  setMedInput(s.med);
+                  void handleCheck(s.herb, s.med);
+                }}
+                className="min-h-11 rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-foreground transition-colors hover:border-primary hover:bg-accent disabled:opacity-50"
               >
                 {labels[`suggestion${i + 1}` as keyof Labels] || s.query}
               </button>
@@ -300,7 +494,6 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
           </div>
         </div>
 
-        {/* Quick link to symptom search */}
         <div className="mt-6">
           <button
             onClick={() => router.push("/symptoms")}
@@ -311,7 +504,6 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
           </button>
         </div>
 
-        {/* Trust line */}
         <p className="mt-8 text-xs text-muted-foreground">
           <ShieldCheck className="inline size-3 -mt-0.5 mr-1" />
           {labels.trustLine}

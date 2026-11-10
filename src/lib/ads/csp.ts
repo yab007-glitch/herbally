@@ -33,14 +33,17 @@ export function buildContentSecurityPolicy(options: {
   const adsSuffix = ads ? ` ${ads}` : "";
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${options.dev ? " 'unsafe-eval'" : ""} *.stripe.com${adsSuffix}`,
-    `connect-src 'self' *.supabase.co https://ollama.com *.stripe.com${adsSuffix}`,
+    `script-src 'self' 'unsafe-inline'${options.dev ? " 'unsafe-eval'" : ""} blob: *.stripe.com${adsSuffix}`,
+    `connect-src 'self' *.supabase.co *.stripe.com${adsSuffix}`,
     // Scope img-src to the only remote image hosts actually used: Supabase
     // Storage plus the ad creative hosts when (and only when) ads are on.
     `img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com${adsSuffix}`,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     `frame-src *.stripe.com${adsSuffix}`,
+    // PDF and other blob-backed workers need an explicit worker-src; the
+    // browser does not fall back to script-src for them.
+    "worker-src 'self' blob:",
     `frame-ancestors ${options.frameable ? "*" : "'none'"}`,
     "object-src 'none'",
     "base-uri 'self'",

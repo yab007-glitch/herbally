@@ -38,16 +38,20 @@ function applySecurityHeaders(
   const baseSecurityHeaders = securityHeaders(opts);
   for (const [key, value] of Object.entries(baseSecurityHeaders)) {
     // /embed/* tools are designed to run inside third-party iframes: allow
-    // framing and drop X-Frame-Options there. The embeds contain no auth or
+    // framing and drop X-Frame-Options there. The CSP already carries
+    // frame-ancestors * for that mode. The embeds contain no auth or
     // state-changing actions (search inputs + outbound links only), so the
     // clickjacking exposure is minimal. Everything else keeps DENY.
-    // NOTE: next.config.ts headers() also sets X-Frame-Options: DENY, and
-    // skipping .set() here does NOT remove it — delete explicitly.
+    // NOTE: next.config.ts headers() does not set X-Frame-Options; if another
+    // layer adds it, delete it explicitly rather than skipping .set().
     if (key === "X-Frame-Options" && opts?.frameable) {
       response.headers.delete("X-Frame-Options");
       continue;
     }
     response.headers.set(key, value);
+  }
+  if (opts?.frameable) {
+    response.headers.delete("X-Frame-Options");
   }
   if (process.env.NODE_ENV === "production") {
     response.headers.set(
@@ -345,6 +349,8 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!monitoring|_next/static|_next/image|favicon.ico|robots.txt|ads.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Static media is excluded by path *and* by extension: the locale rewrite
+    // would otherwise turn /media/x.mp4 into /en/media/x.mp4 and 404 it.
+    "/((?!monitoring|media/|_next/static|_next/image|favicon.ico|robots.txt|ads.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|mp4|webm|ogg|mp3|wav|m4a|pdf|txt|html)$).*)",
   ],
 };
