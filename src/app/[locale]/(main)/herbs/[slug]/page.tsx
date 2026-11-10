@@ -38,6 +38,7 @@ import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { type Locale } from "@/lib/i18n/config";
+import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
 
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
@@ -717,6 +718,10 @@ export default async function HerbDetailPage({ params }: Props) {
 
   // Default locale for static generation; client-side locale switching handles user prefs
   const locale = await getLocale();
+  // Copy for the sections composed in code (source blocks, evidence trail,
+  // records narrative). Without this the page was French down to the first
+  // regulator block and English below it.
+  const copy = herbPageCopy(locale === "fr" ? "fr" : "en");
   const t = await getTranslations({ locale });
   const tFaq = await getTranslations({ locale, namespace: "herbFaq" });
   // Same `herbMeta` title the <title> tag uses, so the JSON-LD name and the
@@ -946,7 +951,7 @@ export default async function HerbDetailPage({ params }: Props) {
           href="/methodology"
           className="underline-offset-4 hover:text-foreground hover:underline"
         >
-          How to read the evidence and review labels
+          {copy.evidenceLabelsLink}
         </Link>
       </p>
 
@@ -1011,6 +1016,10 @@ export default async function HerbDetailPage({ params }: Props) {
           (herb.provenance as { last_verified_at?: string } | null)
             ?.last_verified_at ?? null
         }
+        label={copy.sources.label}
+        checkedLabel={copy.sources.checkedLabel}
+        countLabel={copy.sources.count}
+        note={copy.sources.note}
       />
 
       {/* Every imported regulator excerpt, each in its own block with its own
@@ -1023,33 +1032,31 @@ export default async function HerbDetailPage({ params }: Props) {
           safety={source.safety as unknown as (string | { text?: string })[]}
           url={source.url}
           title={herb.name}
+          verbatimNote={copy.verbatimQuoteNote}
+          expandLabel={copy.verbatimExpandLabel}
+          reproducedLabel={copy.reproducedLabel}
           {...(source.source === "LiverTox"
             ? {
-                heading: `What LiverTox says about ${herb.name}`,
-                sourceLabel:
-                  "LiverTox — National Institute of Diabetes and Digestive and Kidney Diseases",
-                licenceText:
-                  "LiverTox is a US government work and the source chapter carries no copyright statement, so this text is reproduced with attribution.",
-                claimsHeading: "Background",
-                safetyHeading: "Hepatotoxicity and likelihood of liver injury",
+                heading: copy.liverTox.heading(herb.name),
+                sourceLabel: copy.liverTox.sourceLabel,
+                licenceText: copy.liverTox.licenceText,
+                claimsHeading: copy.liverTox.claimsHeading,
+                safetyHeading: copy.liverTox.safetyHeading,
               }
             : source.source === "Health Canada"
               ? {
-                  heading: `What Health Canada says about ${herb.name}`,
-                  sourceLabel:
-                    "Health Canada's Natural Health Products Ingredients Database",
-                  licenceText:
-                    "Contains information licensed under the Open Government Licence – Canada.",
-                  claimsHeading: "Approved uses",
-                  safetyHeading:
-                    "Cautions, contraindications and adverse reactions",
+                  heading: copy.healthCanada.heading(herb.name),
+                  sourceLabel: copy.healthCanada.sourceLabel,
+                  licenceText: copy.healthCanada.licenceText,
+                  claimsHeading: copy.healthCanada.claimsHeading,
+                  safetyHeading: copy.healthCanada.safetyHeading,
                 }
               : {
-                  heading: `What the NIH says about ${herb.name}`,
-                  sourceLabel:
-                    "National Center for Complementary and Integrative Health",
-                  licenceText:
-                    "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
+                  heading: copy.nccih.heading(herb.name),
+                  sourceLabel: copy.nccih.sourceLabel,
+                  licenceText: copy.nccih.licenceText,
+                  claimsHeading: copy.nccih.claimsHeading,
+                  safetyHeading: copy.nccih.safetyHeading,
                 })}
         />
       ))}
@@ -1058,7 +1065,11 @@ export default async function HerbDetailPage({ params }: Props) {
           restates a field the entry already holds — see lib/herbs/narrative — so
           a reader gets an answer without opening anything, and the page reads as
           prose rather than a column of fragments. */}
-      <HerbNarrative herb={herb} interactionCount={interactions.length} />
+      <HerbNarrative
+        herb={herb}
+        interactionCount={interactions.length}
+        locale={locale === "fr" ? "fr" : "en"}
+      />
 
       {/* Tabbed Content — only hand-written monographs show the narrative
           tabs; every other herb renders the government-sourced view (Option B)
@@ -1074,13 +1085,20 @@ export default async function HerbDetailPage({ params }: Props) {
                   monograph={monograph}
                   lastReviewed={lastReviewed}
                   reviewedBy={reviewedBy}
+                  locale={locale === "fr" ? "fr" : "en"}
                 />
               ),
             },
             { key: "uses", content: <HerbUsesPanel herb={herb} /> },
             {
               key: "science",
-              content: <HerbSciencePanel herb={herb} monograph={monograph} />,
+              content: (
+                <HerbSciencePanel
+                  herb={herb}
+                  monograph={monograph}
+                  locale={locale === "fr" ? "fr" : "en"}
+                />
+              ),
             },
             {
               key: "dosage",
@@ -1109,13 +1127,43 @@ export default async function HerbDetailPage({ params }: Props) {
               way, curated (non-AI) interaction data is shown when present. */}
 
           {pubmedSheet?.content ? (
-            <PubmedMonographSheet
-              content={pubmedSheet.content as unknown as SheetContent}
-              citations={(pubmedSheet.citations as unknown as Citation[]) ?? []}
-              articleCount={pubmedSheet.article_count ?? 0}
-              model={pubmedSheet.model}
-              status={pubmedSheet.status}
-            />
+            // The sheet is compiled from English-language publications and is
+            // stored in English. On /fr it is labelled and collapsed rather
+            // than dropped: the content stays in the DOM and one click away,
+            // but a French page no longer opens with a wall of English.
+            locale === "fr" ? (
+              <div className="space-y-3">
+                <p className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+                  {copy.verbatimQuoteNote}
+                </p>
+                <details className="rounded-xl border border-border">
+                  <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-foreground">
+                    {copy.verbatimExpandLabel}
+                  </summary>
+                  <div className="px-4 pb-4">
+                    <PubmedMonographSheet
+                      content={pubmedSheet.content as unknown as SheetContent}
+                      citations={
+                        (pubmedSheet.citations as unknown as Citation[]) ?? []
+                      }
+                      articleCount={pubmedSheet.article_count ?? 0}
+                      model={pubmedSheet.model}
+                      status={pubmedSheet.status}
+                    />
+                  </div>
+                </details>
+              </div>
+            ) : (
+              <PubmedMonographSheet
+                content={pubmedSheet.content as unknown as SheetContent}
+                citations={
+                  (pubmedSheet.citations as unknown as Citation[]) ?? []
+                }
+                articleCount={pubmedSheet.article_count ?? 0}
+                model={pubmedSheet.model}
+                status={pubmedSheet.status}
+              />
+            )
           ) : (
             <GovSourcedBanner />
           )}

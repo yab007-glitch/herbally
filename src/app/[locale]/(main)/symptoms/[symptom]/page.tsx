@@ -18,6 +18,7 @@ import {
   SYMPTOM_SLUGS,
   symptomMatchKeyword,
   symptomMeta,
+  symptomQueryKeywords,
 } from "@/lib/symptoms/symptom-meta";
 import { isSymptomHubPopulated } from "@/lib/symptoms/hub-coverage";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
@@ -82,7 +83,7 @@ const loadSymptomHerbs = cache(
             "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
           )
           .eq("is_published", true)
-          .overlaps("symptom_keywords", [meta.dbKeyword])
+          .overlaps("symptom_keywords", symptomQueryKeywords(symptom))
           .order("evidence_level", { ascending: true })
           .limit(20),
         QUERY_TIMEOUT_MS

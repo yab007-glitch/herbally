@@ -6,6 +6,15 @@ type SymptomMeta = {
   keywords: string[];
   dbKeyword: string;
   frKeyword: string;
+  /**
+   * Additional `herbs.symptom_keywords` values this hub matches.
+   *
+   * The stored taxonomy uses plain words ("blood pressure", "diabetes"), while
+   * `dbKeyword` also doubles as the readable match-reason line and keeps its
+   * hyphenated display form. Without this list the blood-pressure and
+   * blood-sugar hubs matched nothing despite hundreds of tagged herbs.
+   */
+  queryKeywords?: string[];
 };
 
 /**
@@ -152,6 +161,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "hibiscus for blood pressure",
     ],
     dbKeyword: "blood-pressure",
+    queryKeywords: ["blood pressure"],
     frKeyword: "tension artérielle",
   },
   cholesterol: {
@@ -258,6 +268,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "maca for hormone balance",
     ],
     dbKeyword: "hormonal",
+    queryKeywords: ["hormonal"],
     frKeyword: "hormones",
   },
   skin: {
@@ -324,6 +335,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "pygeum benefits",
     ],
     dbKeyword: "prostate",
+    queryKeywords: ["prostate"],
     frKeyword: "prostate",
   },
   diabetes: {
@@ -337,6 +349,7 @@ export const symptomMeta: Record<string, SymptomMeta> = {
       "fenugreek for glucose",
     ],
     dbKeyword: "blood-sugar",
+    queryKeywords: ["blood sugar", "diabetes"],
     frKeyword: "glycémie",
   },
   constipation: {
@@ -377,6 +390,13 @@ export const SYMPTOM_SLUGS = Object.keys(symptomMeta);
 
 export type { SymptomMeta };
 
+/** Every stored keyword a hub matches: the display key plus its synonyms. */
+export function symptomQueryKeywords(slug: string): string[] {
+  const meta = symptomMeta[slug];
+  if (!meta) return [];
+  return [meta.dbKeyword, ...(meta.queryKeywords ?? [])];
+}
+
 /** Locale-aware href for a symptom hub (`/symptoms/x` or `/fr/symptoms/x`). */
 export function symptomHref(slug: string, locale: Locale): string {
   return locale === "fr" ? `/fr/symptoms/${slug}` : `/symptoms/${slug}`;
@@ -386,8 +406,9 @@ export function symptomHref(slug: string, locale: Locale): string {
  * Keyword to display in the symptom hub's match-reason line. The line used to
  * render `dbKeyword` directly, so French pages showed the English database
  * keyword and English pages showed a slug shape for the hyphenated ones
- * ("blood-pressure", "blood-sugar"). `dbKeyword` stays untouched because the
- * Supabase query matches on it.
+ * ("blood-pressure", "blood-sugar"). `dbKeyword` keeps that display spelling;
+ * the query matches on `symptomQueryKeywords()`, which also knows the stored
+ * plain-word synonyms.
  */
 export function symptomMatchKeyword(slug: string, locale: Locale): string {
   const meta = symptomMeta[slug];

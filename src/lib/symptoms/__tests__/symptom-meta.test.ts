@@ -3,6 +3,7 @@ import {
   SYMPTOM_SLUGS,
   symptomMatchKeyword,
   symptomMeta,
+  symptomQueryKeywords,
 } from "../symptom-meta";
 
 describe("symptom meta", () => {
@@ -33,5 +34,23 @@ describe("symptom meta", () => {
 
   it("falls back to the slug for an unknown symptom", () => {
     expect(symptomMatchKeyword("unknown", "fr")).toBe("unknown");
+  });
+});
+
+describe("symptomQueryKeywords", () => {
+  it("includes the stored plain-word form of hyphenated display keys", () => {
+    expect(symptomQueryKeywords("bloodPressure")).toContain("blood pressure");
+    expect(symptomQueryKeywords("diabetes")).toContain("diabetes");
+    expect(symptomQueryKeywords("diabetes")).toContain("blood sugar");
+  });
+
+  it("matches every hub on at least one stored keyword", () => {
+    for (const slug of SYMPTOM_SLUGS) {
+      expect(symptomQueryKeywords(slug).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("returns nothing for an unknown hub", () => {
+    expect(symptomQueryKeywords("unknown")).toEqual([]);
   });
 });
