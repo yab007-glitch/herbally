@@ -30,10 +30,11 @@ export function LanguageSelector() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        aria-label={t("common.changeLanguage")}
-        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full h-11 min-w-11 px-2.5 hover:bg-muted hover:text-foreground transition-all outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-      >
+      {/* No aria-label on purpose: WCAG 2.5.3 (Label in Name) requires the
+          visible locale code to be part of the accessible name, so a voice
+          control user can say "click en". The name is composed from the
+          visible code plus the screen-reader-only description below. */}
+      <DropdownMenuTrigger className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full h-11 min-w-11 px-2.5 hover:bg-muted hover:text-foreground transition-all outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50">
         <Globe className="size-5" aria-hidden="true" />
         <span className="text-xs font-semibold uppercase tracking-wide hidden sm:inline">
           {locale}
