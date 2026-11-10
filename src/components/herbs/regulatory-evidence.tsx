@@ -39,6 +39,8 @@ const COPY = {
       `Drawn from ${n} licensed product${n === 1 ? "" : "s"}.`,
     attribution: "Health Canada, Licensed Natural Health Products Database",
     retrieved: "retrieved",
+    verbatimNote: null as string | null,
+    expandLabel: "Show source text",
   },
   fr: {
     heading: "Ce que déclarent les produits homologués",
@@ -52,6 +54,11 @@ const COPY = {
     attribution:
       "Santé Canada, Base de données des produits de santé naturels homologués",
     retrieved: "consultée le",
+    // The licensed-product wording is English data; saying so beats a silent
+    // language switch, and collapsing it keeps the French page readable.
+    verbatimNote:
+      "Ces mentions sont reproduites dans leur langue d'origine (anglais), sans traduction : il s'agit de citations de produits homologués.",
+    expandLabel: "Afficher les mentions originales en anglais",
   },
 } as const;
 
@@ -97,59 +104,86 @@ export function RegulatoryEvidenceSection({
         {c.intro}
       </p>
 
-      {evidence.purposes?.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-foreground">
-            {c.purposes}
-          </h3>
-          <ul className="mt-2 space-y-1.5">
-            {evidence.purposes.slice(0, 6).map((p) => (
-              <li
-                key={p}
-                className="border-l-2 border-primary/30 pl-3 text-sm leading-relaxed text-muted-foreground"
-              >
-                {p}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {(() => {
+        const lists = (
+          <>
+            {evidence.purposes?.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold text-foreground">
+                  {c.purposes}
+                </h3>
+                <ul className="mt-2 space-y-1.5">
+                  {evidence.purposes.slice(0, 6).map((p) => (
+                    <li
+                      key={p}
+                      className="border-l-2 border-primary/30 pl-3 text-sm leading-relaxed text-muted-foreground"
+                    >
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-      {evidence.doses?.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-foreground">{c.doses}</h3>
-          <ul className="mt-2 flex flex-wrap gap-2">
-            {evidence.doses.slice(0, 6).map((d) => (
-              <li
-                key={`${d.text}-${d.population ?? ""}`}
-                className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
-              >
-                {d.text}
-                {d.population ? ` · ${d.population}` : ""}
-                {typeof d.age_minimum === "number" && d.age_minimum > 0
-                  ? ` · ${d.age_minimum}+`
-                  : ""}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+            {evidence.doses?.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold text-foreground">
+                  {c.doses}
+                </h3>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {evidence.doses.slice(0, 6).map((d) => (
+                    <li
+                      key={`${d.text}-${d.population ?? ""}`}
+                      className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
+                    >
+                      {d.text}
+                      {d.population ? ` · ${d.population}` : ""}
+                      {typeof d.age_minimum === "number" && d.age_minimum > 0
+                        ? ` · ${d.age_minimum}+`
+                        : ""}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-      {evidence.risks?.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-sm font-semibold text-foreground">{c.risks}</h3>
-          <ul className="mt-2 space-y-1.5">
-            {evidence.risks.slice(0, 5).map((r) => (
-              <li
-                key={r}
-                className="border-l-2 border-amber-500/40 pl-3 text-sm leading-relaxed text-muted-foreground"
-              >
-                {r}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+            {evidence.risks?.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold text-foreground">
+                  {c.risks}
+                </h3>
+                <ul className="mt-2 space-y-1.5">
+                  {evidence.risks.slice(0, 5).map((r) => (
+                    <li
+                      key={r}
+                      className="border-l-2 border-amber-500/40 pl-3 text-sm leading-relaxed text-muted-foreground"
+                    >
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        );
+        // On /fr the quoted indications, doses and risk statements stay in
+        // their source language; the notice says so and the text opens on
+        // demand rather than leading the page in English.
+        if (!c.verbatimNote) return lists;
+        return (
+          <>
+            <p className="mt-3 rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+              {c.verbatimNote}
+            </p>
+            <details className="mt-3 rounded-lg border border-border/60">
+              <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-foreground">
+                {c.expandLabel}
+              </summary>
+              <div className="px-3 pb-1">{lists}</div>
+            </details>
+          </>
+        );
+      })()}
 
       <p className="mt-4 text-xs text-muted-foreground">
         {c.products(evidence.products_sampled)}{" "}
