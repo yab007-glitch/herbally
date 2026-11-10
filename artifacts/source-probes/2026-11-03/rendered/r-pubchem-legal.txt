@@ -1,0 +1,5 @@
+title: Checking your browser - reCAPTCHA
+final_url: https://pubchem.ncbi.nlm.nih.gov/docs/legal-notices
+
+Checking your browser before accessing pubchem.ncbi.nlm.nih.gov ...
+Click here if you are not automatically redirected after 5 seconds.

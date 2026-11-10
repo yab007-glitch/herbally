@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { ChipLegend } from "@/components/herbs/chip-legend";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
@@ -79,6 +80,12 @@ export default async function MethodologyPage() {
         <p className="mt-4 text-lg text-muted-foreground">
           {t("methodologyContent.subtitle")}
         </p>
+      </div>
+
+      {/* The label key that used to sit in a collapsed block on every herb entry.
+          Same explanations, one address, and the entries link here. */}
+      <div className="mb-8">
+        <ChipLegend defaultOpen />
       </div>
 
       <div className="space-y-8">

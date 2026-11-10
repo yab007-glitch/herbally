@@ -4,6 +4,7 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 import createNextIntlPlugin from "next-intl/plugin";
 import { buildSecurityHeaders } from "./src/lib/security/csp";
 import herbMergeRedirects from "./data/herb-merge-redirects.json";
+import herbSlugRenames from "./data/herb-slug-renames.json";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -41,12 +42,27 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react", "react-markdown"],
   },
   images: {
+    // Constrain the variant matrix. The defaults are 8 device widths × 7 icon
+    // widths × 2 formats, so one photo can produce up to 30 derivatives; every
+    // derivative is a billed transformation and a billed cache write. The app
+    // has only three <Image> call sites, and their `sizes` props resolve to
+    // widths covered by these breakpoints. `qualities` is required in Next 16;
+    // 75 is the global default and no call site overrides it.
+    deviceSizes: [640, 1080, 1920],
+    imageSizes: [96, 128, 256, 384],
+    qualities: [75],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: "https",
         hostname: "*.supabase.co",
+      },
+      // Botanical photographs come from Wikimedia Commons; every one carries its
+      // author and licence in provenance.image and is credited under the figure.
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
       },
     ],
   },
@@ -135,10 +151,27 @@ const nextConfig: NextConfig = {
         destination: "/:locale/interactions/:herb/:drug",
         statusCode: 301,
       },
+      // Search Console reported /pharmacist as a 404: it was a real URL people
+      // followed, and the herbalist page is what it meant.
+      { source: "/pharmacist", destination: "/herbalist", permanent: true },
+      {
+        source: "/:locale(en|fr)/pharmacist",
+        destination: "/:locale/herbalist",
+        permanent: true,
+      },
       // Merged duplicate herbs. Each pair was reviewed (same species, same part
       // or preparation) and the duplicate was unpublished rather than deleted,
       // so the old URL still resolves through a permanent redirect instead of
       // 404ing on a page that has real historical traffic.
+      // Corrected species names: the old slug was a misspelling of the accepted
+      // name, so the URL moved once the name was fixed. Same permanent-redirect
+      // treatment as the merges — the old URL has traffic and should not 404.
+      ...(herbSlugRenames.activation === "active"
+        ? herbSlugRenames.renames.flatMap(({ from, to }) => [
+            { source: from, destination: to, permanent: true },
+            { source: `/fr${from}`, destination: `/fr${to}`, permanent: true },
+          ])
+        : []),
       ...herbMergeRedirects.flatMap(({ from, to }) => [
         { source: from, destination: to, permanent: true },
         {
@@ -156,8 +189,6 @@ export default bundleAnalyzer(
     org: process.env.SENTRY_ORG || "",
     project: process.env.SENTRY_PROJECT || "",
     authToken: process.env.SENTRY_AUTH_TOKEN,
-    // Upload wider set of client source files for better stack trace resolution
-    widenClientFileUpload: true,
     // Create a proxy API route to bypass ad-blockers
     tunnelRoute: "/monitoring",
     // Suppress non-CI output

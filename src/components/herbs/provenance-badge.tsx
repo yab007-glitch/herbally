@@ -4,6 +4,8 @@ import {
   Sparkles,
   AlertCircle,
   AlertTriangle,
+  Layers,
+  FlaskConical,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -52,6 +54,72 @@ export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
       >
         <AlertTriangle className="mr-1 size-3" aria-hidden="true" />
         {t("needsReReview")}
+      </Badge>
+    );
+  }
+
+  // Minerals, animal products, vitamins and isolates sit in the same library but are
+  // not plants: there is no binomial to check and no herbarium record to find.
+  if (provenance.verification_status === "non_plant") {
+    return (
+      <Badge
+        variant="outline"
+        className="border-stone-300 bg-stone-50 text-stone-700 dark:border-stone-700 dark:bg-stone-900/50 dark:text-stone-300"
+        title={t("nonPlantTooltip")}
+      >
+        <FlaskConical className="mr-1 size-3" aria-hidden="true" />
+        {t("nonPlant")}
+      </Badge>
+    );
+  }
+
+  // A multi-herb product is not a plant: there is no binomial to check, so the
+  // "AI-Generated" label (which reads as a warning about unverified prose) is the
+  // wrong signal. Say what it is instead.
+  if (provenance.verification_status === "formula") {
+    return (
+      <Badge
+        variant="outline"
+        className="border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300"
+        title={t("formulaTooltip")}
+      >
+        <Layers className="mr-1 size-3" aria-hidden="true" />
+        {t("formula")}
+      </Badge>
+    );
+  }
+
+  // Cross-checked against two or more independent sources. Deliberately checked
+  // before verification_method: "how the prose was produced" is a different
+  // question from "do two registries agree on this plant", and 3,251 of the
+  // library's entries clear the second bar.
+  if (
+    provenance.verification_status === "verified" &&
+    provenance.verified_source_count >= 2
+  ) {
+    const count = provenance.verified_source_count;
+    // 409 entries are confirmed only by taxonomic registries (GBIF, ITIS, NCBI):
+    // the plant's name is agreed on, but no regulator ever wrote a monograph for
+    // it. Claiming "and its regulator record" there would be a lie, so the badge
+    // and tooltip switch wording.
+    const regulator =
+      /health canada|european medicines|\bema\b|\btga\b|\bmhra\b|\bfda\b|\bwho\b/i.test(
+        provenance.verified_sources.join(" ")
+      );
+    return (
+      <Badge
+        variant="secondary"
+        className="border-green-300 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-300"
+        title={t(
+          regulator ? "sourceVerifiedTooltip" : "identityVerifiedTooltip",
+          {
+            count,
+            sources: provenance.verified_sources.join(", "),
+          }
+        )}
+      >
+        <CheckCircle2 className="mr-1 size-3" aria-hidden="true" />
+        {t(regulator ? "sourceVerified" : "identityVerified", { count })}
       </Badge>
     );
   }

@@ -56,9 +56,19 @@ export function InteractionsTable({
 
   return (
     <section>
-      <h2 className="mb-4 text-xl font-semibold text-foreground">
+      <h2 className="mb-2 text-xl font-semibold text-foreground">
         {t("interactions.title")} ({interactions.length})
       </h2>
+      {/* Every pair here came from a source that could not be cited: the legacy
+          rows named Natural Medicines (commercial), WHO (all rights reserved) or
+          "Clinical Studies" with no link. The attributions are gone from the data,
+          so the page has to say plainly that no primary citation backs these. */}
+      {/* Only warn about missing citations when some rows actually lack one. */}
+      {interactions.some((i) => !i.source_url) && (
+        <p className="mb-4 text-sm text-muted-foreground">
+          {t("interactions.uncitedNote")}
+        </p>
+      )}
 
       {/* Severity Summary */}
       <div className="mb-4 flex flex-wrap gap-2">
@@ -124,6 +134,16 @@ export function InteractionsTable({
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {interaction.description}
+                  {interaction.source_url && (
+                    <a
+                      href={interaction.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 block text-xs text-primary hover:underline"
+                    >
+                      {t("interactions.sourceLink")}
+                    </a>
+                  )}
                 </td>
               </tr>
             ))}

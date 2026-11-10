@@ -18,6 +18,7 @@ import {
   SYMPTOM_SLUGS,
   symptomMatchKeyword,
   symptomMeta,
+  symptomQueryKeywords,
 } from "@/lib/symptoms/symptom-meta";
 import { isSymptomHubPopulated } from "@/lib/symptoms/hub-coverage";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
@@ -26,7 +27,9 @@ import { JsonLd } from "@/components/seo/json-ld";
 
 // ISR. The locale is a root param, so static generation no longer throws; the
 // slug set is finite (SYMPTOM_SLUGS), and unknown slugs still render notFound.
-export const revalidate = 86400;
+// Three days: symptom hubs change only when their herbs change, and admin
+// edits revalidate this path on demand.
+export const revalidate = 259200;
 
 type Props = { params: Promise<{ symptom: string }> };
 
@@ -80,7 +83,7 @@ const loadSymptomHerbs = cache(
             "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
           )
           .eq("is_published", true)
-          .overlaps("symptom_keywords", [meta.dbKeyword])
+          .overlaps("symptom_keywords", symptomQueryKeywords(symptom))
           .order("evidence_level", { ascending: true })
           .limit(20),
         QUERY_TIMEOUT_MS

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<!--[if gt IE 8]><!-->
+<!--[if lt IE 9]><html class="no-js lt-ie9" dir="ltr"><![endif]-->
+<html xmlns="http://www.w3.org/1999/xhtml" class="no-js" lang="en" dir="ltr" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--<![endif]-->
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW)
+         wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+    
+    <title>Temporary title</title>
+    <meta content="width=device-width,initial-scale=1" name="viewport" />
+    <!-- Additional analytics, if required. -->
+     <!-- Add analytics here -->
+ 
+    <!-- Load closure template scripts -->
+    <script type="text/javascript" src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/cdts/compiled/soyutils.js"></script>
+    <script type="text/javascript" src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/cdts/compiled/wet-en.js"></script>
+    <noscript>
+      <!-- Write closure fall-back static file -->
+      
+      <!-- Close the tag in the template -->
+      </noscript>
+      <link href="/nhpid-bdipsn/css/main.css" rel="stylesheet" />
+      <script src="/nhpid-bdipsn/webjars/jquery/3.5.1/jquery.min.js"></script>
+      <script src="/nhpid-bdipsn/webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+      <script src="/nhpid-bdipsn/js/app.js"></script>
+      <script>
+  		$( document ).ready(function() {
+  			// Set page title as the same as h1 text
+  			var header = $('h1').html();
+  			if (header != undefined) {
+  				var regX = /(<([^>]+)>)/ig;
+  				$('title').html(header.replace(regX, ""));
+  			}
+  		});
+  		</script><!--[if gte IE 9 | !IE ]><!-->
+
+<link
+	href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/wet-boew/assets/favicon.ico"
+	rel="icon" type="image/x-icon" />
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+	integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+	crossorigin="anonymous" />
+<link rel="stylesheet"
+	href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/wet-boew/css/theme.min.css" />
+<link rel="stylesheet"
+	href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/cdts/cdtsfixes.css" />
+
+<!--<![endif]-->
+<!--[if lt IE 9]>
+<link href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/wet-boew/assets/favicon.ico" rel="shortcut icon"></link>
+<link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/wet-boew/css/ie8-theme.min.css"></link>
+
+<![endif]-->
+<!--[if lte IE 9]><![endif]-->
+<!-- Are you using the application templates? If so add the following CSS file -->
+<!-- <link rel="stylesheet" href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/cdts/cdtsapps.css">-->
+<link rel="stylesheet"
+	href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/css/noscript.min.css" />
+<link rel="stylesheet"
+	href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/cdts/cdtsnoscript.css" />
+    </noscript>
+    <!-- Write closure template -->
+    <script>
+      /*<![CDATA[*/
+      document.write(wet.builder.refTop({
+          cdnEnv: "Akamai",
+          jqueryEnv: "false"
+      }));
+      /*]]>*/
+    </script>
+    <!-- Write custom CSS elements here. Added through 'cssIncludes' model attribute. -->
+             
+    <!-- Write external CSS elements here. Added through 'externalCssIncludes' model attribute. -->
+            
+  </head>
+  <body vocab="http://schema.org/" typeof="WebPage">
+    <!-- Insert session timeout here. -->
+      
+    <div id="def-top">
+      <!-- Write closure fall-back static file -->
+      <div><nav aria-label="Skip Links">
+	<ul id="wb-tphp">
+		<li class="wb-slc"><a class="wb-sl" href="#wb-cont">Skip to
+				main content</a></li>
+		<li class="wb-slc visible-xs visible-sm visible-md visible-lg"><a
+			class="wb-sl" href="#wb-info">Skip to "About government"</a></li>
+	</ul>
+</nav>
+<header>
+	<div id="wb-bnr" class="container">
+		<div class="row">
+			<div class="brand col-xs-9 col-sm-5 col-md-4" property="publisher"
+				typeof="GovernmentOrganization">
+				<a href="https://www.canada.ca/en.html" property="url"><img
+					src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/wet-boew/assets/sig-blk-en.svg"
+					alt="Government of Canada" property="logo" /><span class="wb-inv">
+						/ <span lang="fr">Gouvernement du Canada</span>
+				</span></a>
+				<meta property="name" content="Government of Canada" />
+				<meta property="areaServed" typeof="Country" content="Canada" />
+				<link id="StdIssueWasHere1" property="logo"
+					href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/wet-boew/assets/wmms-blk.svg" />
+			</div>
+			<section id="wb-srch"
+				class="col-lg-offset-4 col-md-offset-4 col-sm-offset-2 col-xs-12 col-sm-5 col-md-4">
+				<h2>Search</h2>
+				<form action="https://www.canada.ca/en/sr/srb.html" method="get"
+					name="cse-search-box" role="search">
+					<div class="form-group wb-srch-qry">
+						<label for="wb-srch-q" class="wb-inv">Search Canada.ca</label> <input
+							id="wb-srch-q" list="wb-srch-q-ac" class="wb-srch-q form-control"
+							name="q" type="search" value="" size="34" maxlength="170"
+							placeholder="Search Canada.ca" /> <input type="hidden"
+							name="_charset_" value="UTF-8" />
+						<datalist id="wb-srch-q-ac">
+						</datalist>
+					</div>
+					<div class="form-group submit">
+						<button type="submit" id="wb-srch-sub"
+							class="btn btn-primary btn-small" name="wb-srch-sub">
+							<span class="glyphicon-search glyphicon"></span><span
+								class="wb-inv">Search</span>
+						</button>
+					</div>
+				</form>
+			</section>
+		</div>
+	</div>
+	<nav class="gcweb-menu" typeof="SiteNavigationElement"
+		aria-labelledby="gcwebMenu">
+		<div class="container">
+			<h2 class="wb-inv" id="gcwebMenu">Menu</h2>
+			<button type="button" aria-haspopup="true" aria-expanded="false">
+				<span class="wb-inv">Main </span>Menu <span
+					class="expicon glyphicon glyphicon-chevron-down"></span>
+			</button>
+			<ul role="menu" aria-orientation="vertical"
+				data-ajax-replace="//www.canada.ca/content/dam/canada/sitemenu/sitemenu-v2-en.html">
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/jobs.html">Jobs and the
+						workplace</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/immigration-citizenship.html">Immigration
+						and citizenship</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://travel.gc.ca/">Travel and tourism</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/business.html">Business
+						and industry</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/benefits.html">Benefits</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/health.html">Health</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/taxes.html">Taxes</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/environment.html">Environment
+						and natural resources</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/defence.html">National
+						security and defence</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/culture.html">Culture,
+						history and sport</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/policing.html">Policing,
+						justice and emergencies</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/transport.html">Transport
+						and infrastructure</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://international.gc.ca/world-monde/index.aspx?lang=eng">Canada
+						and the world</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/finance.html">Money and
+						finances</a></li>
+				<li role="presentation"><a role="menuitem"
+					href="https://www.canada.ca/en/services/science.html">Science
+						and innovation</a></li>
+			</ul>
+		</div>
+	</nav>
+	<nav id="wb-bc" property="breadcrumb"
+		aria-labelledby="breadcrumbPosition">
+		<h2 id="breadcrumbPosition">You are here:</h2>
+		<div class="container">
+			<ol class="breadcrumb">
+				<li><a href="https://www.canada.ca/en.html">Canada.ca</a></li>
+			</ol>
+		</div>
+	</nav>
+</header>
+</div>
+    </div>    
+    <!-- Write closure template -->
+    <script>
+      /*<![CDATA[*/
+      var defTop = document.getElementById("def-top");
+      defTop.outerHTML = wet.builder.top({
+          cdnEnv: "Akamai",
+          search: false,
+          lngLinks: [{
+              lang: "fr",
+              href: "?atid=nigella.sativa\u0026lang=fre",
+              text: "Fran\u0026ccedil;ais"
+          }],
+          showPreContent: true,
+          breadcrumbs: [{"title":"Health Canada","titleEN":null,"titleFR":null,"href":"http:\/\/www.hc-sc.gc.ca\/index-eng.php","viewName":null,"acronym":null},{"title":"Drugs \u0026amp; Health Products","titleEN":null,"titleFR":null,"href":"http:\/\/www.hc-sc.gc.ca\/dhp-mps\/index-eng.php","viewName":null,"acronym":null},{"title":"Natural Health Products","titleEN":null,"titleFR":null,"href":"http:\/\/www.hc-sc.gc.ca\/dhp-mps\/prodnatur\/index-eng.php","viewName":null,"acronym":null},{"title":"Natural Health Products Ingredients Database","titleEN":null,"titleFR":null,"href":"\/nhpid-bdipsn\/","viewName":null,"acronym":null}]
+      });
+      /*]]>*/
+    </script>
+    <main role="main" property="mainContentOfPage" class="container">
+      <!-- the main content -->
+      <div>
+			<input type="hidden" id="_csrf" value="dd5ab4b5-64a2-49e0-9a24-3e5d9192fc5f"/>
+			<div><span class="wb-sessto" data-wb-sessto='{"inactivity": 7200000, "reactionTime": 300000, "sessionalive": 7200000, "logouturl": "/nhpid-bdipsn"}'></span></div>
+			<div>
+
+	<div id='wb-cont'><!-- CONTENT BEGINS | DEBUT DU CONTENU -->
+<h1>NIGELLA OIL - <em>NIGELLA SATIVA</em></h1>
+	<div class="icon">
+		<a href="dbImages/mono_nigella-sativa_english.pdf" title="NIGELLA SATIVA"><img src="http://webprod.hc-sc.gc.ca/nhpid-bdipsn/images/pdf_big.gif" alt="Portable Document Format" width="22" height="21" />(PDF Version - 62 KB)</a>
+	</div>
+	<p>This monograph is intended to serve as a guide to industry for the preparation of Product Licence Applications (PLAs) and labels for natural health product market authorization. It is not intended to be a comprehensive review of the medicinal ingredient.</p>
+	<p><strong>Notes</strong>
+		<ul>
+			<li>Text in parentheses is additional optional information which can be included on the label at the applicant&apos;s discretion.</li>
+			<li>The solidus (/) indicates that either term and/or statement may be selected on the label.</li>
+			<li>This monograph supports the <strong>fixed oil of <em>Nigella sativa</em> seed</strong> which is the non-volatile lipid fraction obtained from the seeds. It consists mainly of triglycerides (fatty acids) such as linoleic acid, oleic acid, and palmitic acid, along with minor components like sterols, tocopherols, and phenolic compounds. Essential/volatile oil preparations (e.g., those prepared by distillation) are not within the scope of this monograph.</li>
+		</ul>
+	</p>
+
+	<section aria-labelledby="date">
+		<h2 id="date">Date</h2>
+			<p>October 30, 2026</p>
+	</section>
+
+	<section aria-labelledby="properNameCommonNameSourceInformation">
+		<h2 id="properNameCommonNameSourceInformation">Proper name(s), Common name(s), Source information</h2>
+			<table id="ref1" class="subject">
+				<caption>Table 1. Proper name(s), Common name(s), Source information</caption>
+				<thead>
+					<tr>
+						<th rowspan="2">Proper name(s)</th>
+						<th rowspan="2">Common name(s)</th>
+						<th colspan="2">Source information</th>
+					</tr>
+					<tr>
+						<th>Source material(s)</th>
+						<th>Part(s)</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><em>Nigella sativa</em></td>
+						<td>
+							<ul>
+								<li>Black cumin oil
+								<li>Black cumin seed oil</li>
+								<li>Nigella oil</li>
+								<li>Nigella seed oil</li>
+								<li>Nigella sativa seed oil</li>
+							</ul>
+						</td>
+						<td><em>Nigella sativa</em></td>
+						<td>Seed</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>References: NHPID 2026.</p>
+	</section>
+
+	<section aria-labelledby="routeOfAdministration">
+		<h2 id="routeOfAdministration">Route of administration</h2>
+			<p>Oral</p>
+	</section>
+
+	<section aria-labelledby="dosgaeForm">
+		<h2 id="dosgaeForm">Dosage form(s)</h2>
+			<p>This monograph excludes foods or food-like dosage forms as indicated in the Natural Health Products Management of Applications Policy.</p>
+				<p>Acceptable dosage forms for oral use are indicated in the dosage form drop-down list of the web-based Product Licence Application form for Compendial applications.</p>
+	</section>
+
+	<section aria-labelledby="useOrPurpose">
+		<h2 id="useOrPurpose">Use(s) or Purpose(s)</h2>
+			<ul>
+				<li>Source of antioxidants/Provides antioxidants (Tavakoli-Rouzbehani et al. 2022&semi; Namazi et al. 2015&semi; Singh et al. 2014).</li>
+				<li>Source of antioxidants/Provides antioxidants that help fight/protect (cell) against/reduce (the oxidative effect of/the oxidative damage caused by/cell damage caused by) free radicals (Tavakoli-Rouzbehani et al. 2022&semi; Namazi et al. 2015&semi; Singh et al. 2014).</li>
+				<li>Helps support liver function (Khonche et al. 2019&semi; Rashidmayvan et al. 2019).</li>  
+				<li>Helps support/maintain normal low density lipoprotein (LDL) cholesterol levels (Kooshki et al. 2020&semi; Rashidmayvan et al. 2019).</li>
+				<li>Helps support/maintain normal (blood) triglyceride/triacylglycerol levels (Rashidmayvan et al. 2019).</li>
+				<li>Helps support/maintain (normal) heart/cardiovascular health (Kooshki et al. 2020&semi; Huseini et al. 2013).</li>
+				<li>Helps support/maintain healthy blood pressure levels (Shoaei-Hagh et al. 2021&semi; Huseini et al. 2013).</li>
+				<li>Source of linoleic acid (LA) for the maintenance of good health (HC 2025).</li>
+				<li>Source of an omega-6 fatty acid for the maintenance of good health (HC 2025).</li>
+				<li>Source of an essential fatty acid for the maintenance of good health (HC 2025).</li>
+				<li>Source of oleic acid (OA) (HC 2025).</li>
+			</ul>
+			<p><strong>Notes</strong>
+				<ul>
+					<li>The recommended uses can be combined on the product label (e.g., Helps support liver function and cardiovascular health).</li>
+					<li>The terms &lsquo;Helps&rsquo; or &lsquo;Helps to&rsquo; can be used interchangeably on the label.</li>
+				</ul>
+			</p>
+	</section>
+
+	<section aria-labelledby="dose">
+		<h2 id="dose">Dose(s)</h2>
+			<h3>Subpopulation(s)</h3>
+				<p>Adults 18 years and older</p>
+			<h3>Quantity(ies)</h3>
+				<p><strong>Method of preparation:</strong> Oil fixed&semi; Oil fixed standardized</p>
+					<p><em>Antioxidants</em></p>
+						<p>Up to 5 grams of seed oil per day&semi; Not to exceed 2.5 grams per single dose (Shoaei-Hagh et al. 2021&semi; Khonche et al. 2019&semi; Hosseini et al. 2013&semi; Huseini et al. 2013).</p>
+					<p><em>Liver function&semi; Cholesterol levels&semi; Triglyceride levels&semi; Cardiovascular health</em></p>
+						<p>1 - 5 grams of seed oil per day&semi; Not to exceed 2.5 grams per single dose (Kooshki et al. 2020&semi; Khonche et al. 2019&semi; Rashidmayvan et al. 2019&semi; Huseini et al. 2013).</p>
+					<p><em>Healthy blood pressure</em></p>
+						<p>4.6 grams (5 mL) - 5 grams (5.4 mL) of seed oil per day&semi; Not to exceed 2.5 grams (2.7 mL) per single dose (Mohtashami et al. 2011&semi; Shoaei-Hagh et al. 2021&semi; Huseini et al. 2013).</p>
+				<p><strong>Method of preparation:</strong> Oil fixed standardized</p>
+					<p><em>Source of linoleic acid&semi; Source of an omega-6 fatty acid&semi; Source of an essential fatty acid</em></p>
+						<p>Up to 5 grams of seed oil per day&semi; Not to exceed 2.5 grams per single dose, providing at least 850 milligrams linoleic acid per day (HC 2025&semi; Shoaei-Hagh et al. 2021&semi; Khonche et al. 2019&semi; Hosseini et al. 2013&semi; Huseini et al. 2013).</p>
+					<p><em>Source of oleic acid</em></p>
+						<p>Up to 5 grams of seed oil per day&semi; Not to exceed 2.5 grams per single dose, providing at least 100 milligrams oleic acid per day (HC 2025&semi; Shoaei-Hagh et al. 2021&semi; Khonche et al. 2019&semi; Hosseini et al. 2013&semi; Huseini et al. 2013).</p>
+					<p><em>All products</em></p>
+						<p><strong>Notes</strong>
+							<ul>
+								<li>The amount of the Nigella fixed oil may also be represented as a volumetric quantity (i.e., mL). Reported densities for Nigella seed oil vary in the literature&semi; using an average density of approximately 0.92 g/mL, 5 g corresponds to approximately 5.43 mL and 5 mL corresponds to approximately 4.6 g.</li>
+								<li><strong>Optional potency information:</strong> Thymoquinone may also be declared. Thymoquinone content in Nigella fixed oils may vary depending on the source material and manufacturing conditions. Conventional cold-pressed fixed oils generally contain lower thymoquinone concentrations, whereas higher concentrations have also been reported in fixed oils evaluated in clinical studies reviewed for this monograph. This information is provided for ingredient characterization purposes only and is not intended as a safety limit.</li>
+							</ul>
+						</p>
+			<h3>Direction(s) for use</h3>
+				<p><em>Optional</em></p>
+					<p>Take with/after a meal/food (Tavakoli-Rouzbehani et al. 2021&semi; Hosseini et al. 2013&semi; Huseini et al. 2013).</p>
+	</section>
+
+	<section aria-labelledby="durationOfUse">
+		<h2 id="durationOfUse">Duration(s) of use</h2>
+			<p><em>All products</em></p>
+				<p>Ask a health care practitioner/health care provider/health care professional/doctor/physician for use beyond 12 weeks (Khonche et al. 2019&semi; Hosseini et al. 2013).</p>
+			<p><em>Cholesterol levels&semi; Triglyceride levels&semi; Healthy blood pressure</em></p>
+				<p>Use for at least 8 weeks to see beneficial effects (Shoaei-Hagh et al. 2021&semi; Kooshki et al. 2020&semi; Rashidmayvan et al. 2019).</p>
+	</section>
+
+	<section aria-labelledby="riskInformation">
+		<h2 id="riskInformation">Risk information</h2>
+			<h3>Caution(s) and warning(s)</h3>
+				<ul>
+					<li>Ask a health care practitioner/health care provider/health care professional/doctor/physician before use if you have an immune or blood pressure disorder, or diabetes (Ciesielska-Figlon et al. 2023&semi; Salem et al. 2023&semi; Moustafa et al. 2019&semi; Huseini et al. 2013).</li>
+					<li>Ask a health care practitioner/health care provider/health care professional/doctor/physician before use if you are breastfeeding.</li>
+				</ul>
+			<h3>Contraindication(s)</h3>
+				<p>Do not use if you are pregnant (Mohammadi et al. 2024).</p>
+			<h3>Known adverse reaction(s)</h3>
+				<ul>
+					<li>When using this product you may experience gastrointestinal discomfort/disturbances (Tavakoli-Rouzbehani et al. 2021&semi; Hosseini et al. 2013&semi; Huseini et al. 2013).</li>
+					<li>Stop use if hypersensitivity/allergy occurs (Ali and Blunden 2003&semi; Al-Sheikh and Gad el-Rab 1996).</li>
+				</ul>
+	</section>
+
+	<section aria-labelledby="nonMedicinalIngredients">
+		<h2 id="nonMedicinalIngredients">Non-medicinal ingredients</h2>
+			<p>Must be chosen from the current Natural Health Products Ingredients Database (NHPID) and must meet the limitations outlined in the database.</p>
+	</section>
+
+	<section aria-labelledby="storageConditions">
+		<h2 id="storageConditions">Storage conditions</h2>
+			<p>Must be established in accordance with the requirements described in the <em>Natural Health Products Regulations</em>.</p>
+	</section>
+
+	<section aria-labelledby="specifications">
+		<h2 id="specifications">Specifications</h2>
+			<ul>
+				<li>The finished product specifications must be established in accordance with the requirements described in the Natural and Non-prescription Health Products Directorate (NNHPD) Quality of Natural Health Products Guide.</li>
+				<li>The medicinal ingredient must comply with the requirements outlined in the NHPID.</li>
+			</ul>
+	</section>
+
+	<section aria-labelledby="exampleOfProductFacts">
+		<h2 id="exampleOfProductFacts">EXAMPLE OF PRODUCT FACTS:</h2>
+			<p><strong>Consult the Guidance Document, <a href=https://www.canada.ca/en/health-canada/services/drugs-health-products/natural-non-prescription/legislation-guidelines/guidance-documents/labelling.html>Labelling of Natural Health Products</a> for more details.</strong></p>
+			<p class="alignCenter"><img src="/nhpid-bdipsn/dbImages/NIGELLA_SATIVA_E.gif" alt="Product Facts Table" style="width:700px"/></p>
+	</section>
+
+	<section aria-labelledby="referencesCited">
+		<h2 id="referencesCited">References cited</h2>
+			<ul>
+				<li>Ali BH, Blunden G. Pharmacological and toxicological properties of <em>Nigella sativa</em>. Phytotherapy Research 2003&semi;17(4):299-305.</li>
+				<li>Al-Sheikh OA, Gad el-Rab MO. Allergic contact dermatitis: Clinical features and profile of sensitizing allergens in Riyadh, Saudi Arabia. International Journal of Dermatology 1996&semi;35:493-497.</li>
+				<li>Ciesielska-Figlon K, Wojciechowicz K, Wardowska A, Lisowska KA. The Immunomodulatory Effect of <em>Nigella sativa</em>. Antioxidants (Basel) 2023&semi;12(7):1340.</li>
+				<li>HC 2025: Health Canada, Natural and Non-Prescription Health Products Directorate Fixed Oil Products - Oral monograph 2025. [Accessed 2026-06-02]. Available from: https://webprod.hc-sc.gc.ca/nhpid-bdipsn/atReq?atid=multiple.oil3&lang=eng</li>
+				<li>Hosseini MS, Mirkarimi SA, Amini M, Mohtashami R. Effects of <em>Nigella sativa</em> L. seed oil in type II diabetic patients: A randomized, double-blind, placebo-controlled clinical trial. Journal of Medicinal Plants 2013&semi;12(47):93-99.</li>
+				<li>Huseini HF, Amini M, Mohtashami R, Ghamarchehre ME, Sadeqhi Z, Kianbakht S, Huseini AF. Blood pressure lowering effect of <em>Nigella sativa</em> L. seed oil in healthy volunteers: A randomized, double-blind, placebo-controlled clinical trial. Phytotherapy Research 2013&semi;27(12):1849-1853.</li>
+				<li>Khonche A, Huseini HF, Gholamian M, Mohtashami R, Nabati F, Kianbakht S. Standardized <em>Nigella sativa</em> seed oil ameliorates hepatic steatosis, aminotransferase and lipid levels in non-alcoholic fatty liver disease: A randomized, double-blind, placebo-controlled clinical trial. Journal of Ethnopharmacology 2019&semi;234:106-111.</li>
+				<li>Kooshki A, Tofighiyan T, Rastgoo N, Rakhshani MH, Miri M. Effect of <em>Nigella sativa</em> oil supplement on risk factors for cardiovascular diseases in patients with type 2 diabetes mellitus. Phytotherapy Research 2020&semi;34(10):2706-2711.</li>
+				<li>Mohammadi B, Robati LN, Tavakol Z, Movahhed M. Evaluation of the effect of <em>Nigella sativa</em> oil on the outcome of missed abortion in women: A randomized double-blind clinical trial. Health Science Reports 2024&semi;7(4):e2029.</li>
+				<li>Mohtashami R, Amini M, Fallah Huseini H, Ghamarchehre M, Sadeqhi Z, Hajiagaee R, et al. Blood glucose lowering effects of <em>Nigella sativa</em> L. seed oil in healthy volunteers: A randomized, double-blind, placebo-controlled clinical trial. Journal of Medicinal Plants 2011&semi;10(39):90-94.</li>
+				<li>Moustafa HAM, El Wakeel LM, Halawa MR, Sabri NA, El-Bahy AZ, Singab AN. Effect of <em>Nigella sativa</em> oil versus metformin on glycemic control and biochemical parameters of newly diagnosed type 2 diabetes mellitus patients. Endocrine 2019&semi;65(2):286-294.</li>
+				<li>Namazi N, Mahdavi R, Alizadeh M, Farajnia S. Oxidative stress responses to <em>Nigella sativa</em> oil concurrent with a low-calorie diet in obese women: A randomized, double-blind controlled clinical trial. Phytotherapy Research 2015&semi;29(11):1722-1728.</li>
+				<li>NHPID 2026: Natural Health Products Ingredients Database. Health Canada. [Accessed 2026 May 31]. Available from: https://webprod.hc-sc.gc.ca/nhpid-bdipsn/</li>
+				<li>Rashidmayvan M, Mohammadshahi M, Seyedian SS, Haghighizadeh MH. The effect of <em>Nigella sativa</em> oil on serum levels of inflammatory markers, liver enzymes, lipid profile, insulin and fasting blood sugar in patients with non-alcoholic fatty liver. Journal of Diabetes and Metabolic Disorders 2019&semi;18(2):453-459.</li>
+				<li>Shoaei-Hagh P, Kamelan Kafi F, Najafi S, Zamanzadeh M, Heidari Bakavoli A, Ramezani J, Soltanian S, Asili J, Hosseinzadeh H, Eslami S, Taherzadeh Z. A randomized, double-blind, placebo-controlled clinical trial to evaluate the benefits of <em>Nigella sativa</em> seed oil in reducing cardiovascular risks in hypertensive patients. Phytotherapy Research 2021&semi;35(8):4388-4400.</li>
+				<li>Singh S, Das SS, Singh G, Schuff C, de Lampasona MP, Catalán CAN. Composition, in vitro antioxidant and antimicrobial activities of essential oil and oleoresins obtained from black cumin seeds (<em>Nigella sativa</em> L.). BioMed Research International 2014&semi;2014:918209.</li>
+				<li>Tavakoli-Rouzbehani OM, Abbasnezhad M, Kheirouri S, Alizadeh M. Efficacy of <em>Nigella sativa</em> oil on endothelial function and atherogenic indices in patients with coronary artery diseases: A randomized, double-blind, placebo-controlled clinical trial. Phytotherapy Research 2022&semi;36(12):4516-4526.</li>
+				<li>Tavakoli-Rouzbehani OM, Abbasnezhad M, Kheirouri S, Alizadeh M. Effects of <em>Nigella sativa</em> oil supplementation on selected metabolic parameters and anthropometric indices in patients with coronary artery disease: A randomized, double-blind, placebo-controlled clinical trial. Phytotherapy Research 2021&semi;35(7):3988-3999.</li>
+			</ul>
+	</section>
+
+	<section aria-labelledby="referencesReviewed">
+		<h2 id="referencesReviewed">References reviewed</h2>
+			<ul>
+				<li>Abdollahi N, Nadjarzadeh A, Salehi Abargouei A, Fallahzadeh H, Razmpoosh E, Lorzaedeh E, Safi S. The effect of <em>Nigella sativa</em> on TAC and MDA in obese and overweight women: Secondary analysis of a crossover, double blind, randomized clinical trial. Journal of Diabetes &amp; Metabolic Disorders 2022&semi;21(1):171-179.</li>
+				<li>Agah MS, Azadmard Damirchi S, Bodbodak S. Quality of oil extracted by cold press from <em>Nigella sativa</em> seeds conditioned and pre treated by microwave. Food Science &amp; Nutrition 2024&semi;12(5):3529-3537.</li>
+				<li>Ahmad A, Husain A, Mujeeb M, Khan SA, Najmi AK, Siddique NA, Damanhouri ZA, Anwar F. A review on therapeutic potential of <em>Nigella sativa</em>: A miracle herb. Asian Pacific Journal of Tropical Biomedicine 2013&semi;3(5):337-352.</li>
+				<li>Aqel M, Shaheen R. Effects of the volatile oil of <em>Nigella sativa</em> seeds on the uterine smooth muscle of rat and guinea pig. Journal of Ethnopharmacology 1996&semi;52(1):23-26.</li>
+				<li>Alghamdi F, Al Seeni MN, Ghoneim MA. Potential synergistic antioxidant effect of thymoquinone and vitamin E on cisplatin induced acute nephropathy in rats. Clinical Nutrition Experimental 2020&semi;32:29-37.</li>
+				<li>Alrashidi M, Derawi D, Salimon J, Yusoff MF. An investigation of physicochemical properties of <em>Nigella sativa</em> L. seed oil from Al Qassim by different extraction methods. Journal of King Saud University - Science 2020&semi;32(8):3337-3342.</li>
+				<li>Amini M, Fallah Huseini H, Mohtashami R, Sadeqhi Z, Ghamarchehre MA. Hypolipidemic effects of <em>Nigella sativa</em> L. seeds oil in healthy volunteers: A randomized, double blind, placebo controlled clinical trial. Journal of Medicinal Plants 2011&semi;10(40):133-138.</li>
+				<li>Ansari MA, Ahmed SP, Haider S, Ansari NA. <em>Nigella sativa</em>: A non conventional herbal option for the management of seasonal allergic rhinitis. Pakistan Journal of Pharmacology 2006&semi;23(2):31-35.</li>
+				<li>Aumeeruddy MZ, Aumeeruddy-Elalfi Z, Neetoo H, Zengin G, Fibrich B, Rademan S, Blom van Staden A, Szuman K, Lambrechts IA, Lall N, Mahomoodally MF. Biological, phytochemical, and physico-chemical properties of two commercial <em>Nigella sativa</em> seed oils: A comparative analysis. İstanbul Journal of Pharmacy 2018&semi;48(3):89-99.</li>
+				<li>Ayurvedic Pharmacopoeia of India. Part I Volume I. Government of India: Ministry of Health and Family Welfare&semi; 1986.</li>
+				<li>Barakat EM, El Wakeel LM, Hagag RS. Effects of <em>Nigella sativa</em> on outcome of hepatitis C in Egypt. World Journal of Gastroenterology 2013&semi;19(16):2529-2536.</li>
+				<li>Butt MS, Sultan MT. <em>Nigella sativa</em>: Reduces the risk of various maladies. Critical Reviews in Food Science and Nutrition 2010&semi;50(7):654-665.</li>
+				<li>Das S, Kannan R, George S, Chakrapani PS, Maliakel B, Ittiyavirah S, Krishnakumar IM. Thymoquinone rich black cumin oil improves sleep quality, alleviates anxiety/stress on healthy subjects with sleep disturbances: A pilot polysomnography study. Journal of Herbal Medicine 2022&semi;32:100507.</li>
+				<li>Dehkordi FR, Kamkhah AF. Antihypertensive effect of <em>Nigella sativa</em> seed extract in patients with mild hypertension. Fundamental &amp; Clinical Pharmacology 2008&semi;22:447-452.</li>
+				<li>El Hack ME, Alagawany M, Farag MR, Tiwari R, Karthik K, Dhama K. Nutritional, healthical and therapeutic efficacy of black cumin (<em>Nigella sativa</em>) in Animals, Poultry and Humans. International Journal of Pharmacology 2016&semi;12(3):232-248.</li>
+				<li>Hadi V, Kheirouri S, Alizadeh M, Khabbazi A, Hosseini H. Effects of <em>Nigella sativa</em> oil extract on inflammatory cytokine response and oxidative stress status in patients with rheumatoid arthritis: a randomized, double-blind, placebo-controlled clinical trial. Avicenna Journal of Phytomedicine 2016&semi;6(1):34-43.</li>
+				<li>Hannan MA, Rahman MA, Sohag AAM, Uddin MJ, Dash R, Sikder MH, Rahman MS, Timalsina B, Munni YA, Sarker PP, Alam M, Mohibbullah M, Haque MN, Jahan I, Hossain MT, Afrin T, Rahman MM, Tahjib-Ul-Arif M, Mitra S, Oktaviani DF, Khan MK, Choi HJ, Moon IS, Kim B. Black cumin (<em>Nigella sativa</em> L.): A comprehensive review on phytochemistry, health benefits, molecular pharmacology, and safety. Nutrients 2021&semi;13(6):1784.</li>
+				<li>Heshmati J, Namazi N, Memarzadeh, MR, Taghizadeh M, Kolahdooz F. <em>Nigella sativa</em> oil affects glucose metabolism and lipid concentrations in patients with type 2 diabetes: A randomized, double-blind, placebo-controlled trial. Food Research International 2015&semi;70:87-93.</li>
+				<li>Hussain N, Majid S, Abbasi MS, Hussain MA, Rehman K, Khan M, Dar MEUI, Shaheen H, Habib T. Use of black seed (<em>Nigella sativa</em> L.) oil in the management of hypertensive and hyperlipidemic individuals of district Muzaffarabad, Azad Kashmir, Pakistan. Applied Ecology and Environmental Research 2017&semi;15(4):31-48.</li>
+				<li>Isik S, Erdem SA, Kartal M. Investigation of fatty acid profile of commercial black cumin seed oils and seed oil capsules: Application to real samples. Journal of Chemical Metrology 2019&semi;13(2):53-60.</li>
+				<li>Isik H, Cevikbaş A, Gürer US, Kiran B, Uresin Y, Rayaman P, Rayaman E, Gürbüz B, Büyüköztürk S. Potential Adjuvant Effects of <em>Nigella sativa</em> Seeds to Improve Specific Immunotherapy in Allergic Rhinitis Patients. Medical Principles and Practice 2010&semi;19(3):206-211.</li>
+				<li>Kaatabi H, Bamosa AO, Badar A, Al Elq A, Abou Hozaifa B, Lebda F, Al-Khadra A, Al-Almaie S. <em>Nigella sativa</em> Improves Glycemic Control and Ameliorates Oxidative Stress in Patients with Type 2 Diabetes Mellitus: Placebo Controlled Participant Blinded Clinical Trial. PLoS One 2015&semi;10(2):e0113486.</li>
+				<li>Kalus U, Pruss A, Bystron J, Jurecka M, Smekalova A, Lichius JJ, et al. Effect of <em>Nigella sativa</em> (black seed) on subjective feeling in patients with allergic diseases. Phytotherapy Research 2003&semi;17(10):1209-1214.</li>
+				<li>Kapoor LD. CRC Handbook of Ayurvedic Medicinal Plants&semi; 2001.</li>
+				<li>Keshri G, Singh M, Lakshmi V, Kamboj V. Post-coital contraceptive efficacy of the seeds of <em>Nigella sativa</em> in rats. Indian Journal of Physiology and Pharmacology 1995&semi;39(1):59-62.</li>
+				<li>Ketenoglu O, Kiralan SS, Kiralan M, Ozkan G, Ramadan MF. Chapter 6 - Cold pressed black cumin (<em>Nigella sativa</em> L.) seed oil. Academic Press 2020&semi;53-64.</li>
+				<li>Khader M, Eckl PM. Thymoquinone: An emerging natural drug with a wide range of medical applications. Iranian Journal of Basic Medical Sciences 2014&semi;17(12):950-957.</li>
+				<li>Khare CP. Indian Medicinal Plants: An Illustrated Dictionary. Springer&semi; 2007.</li>
+				<li>Khare CP. Indian Herbal Remedies: Rational Western Therapy, Ayurvedic and Other Traditional Usage. Springer&semi; 2004.</li>
+				<li>Mashayekhi Sardoo H, Rezaee R, Karimi G. Review <em>Nigella sativa</em> (black seed) safety: An overview. Asian Biomedicine 2020&semi;14(4):127-137.</li>
+				<li>Matthaus B, Özcan MM. Fatty acids, tocopherol, and sterol contents of some Nigella species seed oil. Czech Journal of Food Sciences 2011&semi;29(2):145-150.</li>
+				<li>Mohan ME, Mohan MC, Prabhakaran P, Das SS, Krishnakumar IM, Chakrapani PS. Exploring the short-term influence of a proprietary oil extract of black cumin (<em>Nigella sativa</em>) on non-restorative sleep: a randomized, double-blinded, placebo-controlled actigraphy study. Frontiers in Nutrition 2024&semi;10:1200118.</li>
+				<li>Mohan ME, Thomas JV, Mohan MC, Das SS, Prabhakaran P, Sasidharan BC. A proprietary black cumin oil extract (<em>Nigella sativa</em>) (BlaQmax) modulates stress-sleep-immunity axis safely: Randomized double-blind placebo-controlled study. Frontiers in Nutrition 2023&semi;10:1152680.</li>
+				<li>Naghsh N, Moridpour AH, Kavyani Z, Musazadeh V, Jafarzadeh J, Safaei E, Clark CCT, Faghfouri AH. The effect of <em>Nigella sativa</em> (black seed) supplementation on body weight and body composition: A GRADE-assessed systematic review and dose-response meta-analysis of randomized controlled trials. Journal of Functional Foods 2023&semi;105:105565.</li>
+				<li>Nikakhlagh S, Rahim F, Aryani FH, Syahpoush A, Brougerdnya MG, Saki N. Herbal treatment of allergic rhinitis: The use of <em>Nigella sativa</em>. American Journal of Otolaryngology 2011&semi;32(5):402-407.</li>
+				<li>Rahim MA, Shoukat A, Khalid W, Ejaz A, Itrat N, Majeed I, Koraqi H, Imran M, Nisa MU, Nazir A, Alansari WS, Eskandrani AA, Shamlan G, Al-Farga A. A Narrative Review on Various Oil Extraction Methods, Encapsulation Processes, Fatty Acid Profiles, Oxidative Stability, and Medicinal Properties of Black Seed (<em>Nigella sativa</em>). Foods 2022&semi;11(18):2826.</li>
+				<li>Ramalingam K, Kuttan R, Sivadasan SD, Ittiyavirah S, Madhavamenon KI. Safety Assessment of a Thymoquinone-rich Black Cumin Oil (BlaQmax®): Acute and Sub-chronic Toxicity Studies. Journal of Nutrition and Food Sciences 2021&semi;11(8):811.</li>
+				<li>Razmpoosh E, Safi S, Nadjarzadeh A, Salehi Abargouei A, Mazaheri M, Mirmiran P, Meyre D. Effects of <em>Nigella sativa</em> supplementation on blood concentration and mRNA expression of TNF-&alpha;, PPAR-γ and adiponectin, as major adipogenesis-related markers, in obese and overweight women: a crossover, randomised-controlled trial. British Journal of Nutrition 2023&semi;129(4):627-636.</li>
+				<li>Razmpoosh E, Safi S, Mazaheri M, Khalesi S, Nazari M, Mirmiran P, Nadjarzadeh A. A crossover randomized controlled trial examining the effects of black seed (<em>Nigella sativa</em>) supplementation on IL-1β, IL-6 and leptin, and insulin parameters in overweight and obese women. BMC Complementary Medicine and Therapies 2024&semi;24(1):22.</li>
+				<li>Sakib R, Caruso F, Aktar S, Belli S, Kaur S, Hernandez M, Rossi M. Antioxidant Properties of Thymoquinone, Thymohydroquinone and Black Cumin (<em>Nigella sativa</em> L.) Seed Oil: Scavenging of Superoxide Radical Studied Using Cyclic Voltammetry, DFT and Single Crystal X-ray Diffraction. Antioxidants 2023&semi;12(3):607.</li>
+				<li>Salem A, Bamosa A, Alam M, Alshuraim S, Alyalak H, Alagga A, Tarabzouni F, Alisa O, Sabit H, Mohsin A, Shaikh M, Farea A, Alshammari T, Obeid O. Effect of <em>Nigella sativa</em> on general health and immune system in young healthy volunteers: A randomized, placebo-controlled, double-blinded clinical trial. F1000Research 2023&semi;18(1):1199.</li>
+				<li>Shahzad M, Yang X, Asim MRB, Sun Q, Han Y, Zhang F, Cao Y, Lu S. Black seed oil ameliorates allergic airway inflammation by inhibiting T-cell proliferation in rats. Pulmonary Pharmacology &amp; Therapeutics 2009&semi;22(1):37-43.</li>
+				<li>Sultan MT, Butt MS, Karim R, Ahmad N, Ahmad RS, Ahmad W. <em>Nigella sativa</em> fixed and essential oil improves antioxidant status through modulation of antioxidant enzymes and immunity. Pakistan Journal of Pharmaceutical Sciences 2015&semi;28(2):589-595.</li>
+				<li>Talbott S, Talbott J. Effect of ThymoQuin Black Cumin Seed Oil as a Natural Immune Modulator of Upper-Respiratory Tract Complaints and Psychological Mood State. Food Science &amp; Nutrition Research 2022&semi;5(1):1-6.</li>
+				<li>Tariq M. <em>Nigella sativa</em> seeds: Folklore treatment in modern day medicine. Saudi Journal of Gastroenterology 2008&semi;14(3):105-106.</li>
+				<li>Tavakkoli A, Mahdian V, Razavi BM, Hosseinzadeh H. Review on Clinical Trials of Black Seed (<em>Nigella sativa</em> ) and Its Active Constituent, Thymoquinone. Journal of Pharmacopuncture 2017&semi;20(3):179-193.</li>
+				<li>Thomas JV, Mohan ME, Prabhakaran P, Das SS, Maliakel B, I.M. K. A phase I clinical trial to evaluate the safety of thymoquinone-rich black cumin oil (BlaQmax®) on healthy subjects: Randomized, double-blinded, placebo-controlled prospective study. Toxicology Reports 2022&semi;9:999-1007.</li>
+				<li>Williamson EM. Major Herbs of Ayurveda. Churchill Livingstone&semi; 2002.</li>
+				<li>Yimer EM, Tuem KB, Karim A, Ur Rehman N, Anwar F. <em>Nigella sativa</em> L. (Black Cumin): A Promising Natural Remedy for Wide Range of Illnesses. Evidence Based Complementary and Alternative Medicine 2019&semi;1528635.</li>
+				<li>Zzaman W, Silvia D, Wan Nadiah WA, Yang TA. Physicochemical and quality characteristics of cold and hot press of <em>Nigella sativa</em> L seed oil using screw press. Journal of Applied Sciences Research 2014&semi;10(2):36-45.</li>
+			</ul>
+	</section>
+
+	<section aria-labelledby="versionHistory">
+		<h2 id="versionHistory">Version History</h2>
+			<table id="ver" class="subject">
+				<thead>
+					<tr>
+						<th>Publication date</th>
+						<th>Update type</th>
+						<th>Summary of main updates</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>2026-10-30</td>
+						<td>Initial version</td>
+						<td>&ndash;</td>
+					</tr>
+				</tbody>
+			</table>
+	</section>
+
+<!-- CONTENT ENDS | FIN DU CONTENU --></div>
+	<br class="clear"/>
+	
+<script type="text/javascript">
+$(document).ready(function() {
+	var header = $('h1').html();
+	if (header == undefined) {
+		header = $('#wb-cont h2').html();
+	}
+	if (header != undefined) {
+		var regX = /(<([^>]+)>)/ig;
+		$('title').html(header.replace(regX, ""));
+	}
+});
+</script>
+
+</div>
+		</div>
+      <!-- end main content -->
+      <div id="def-preFooter">
+        <!-- Write closure fall-back static file -->
+        <div><div class="pagedetails">
+	<div class="row">
+		<div class="col-sm-6 col-md-5 col-lg-4">
+			<a href="https://www.canada.ca/en/report-problem.html"
+				class="btn btn-default btn-center">Report a problem on this page</a>
+		</div>
+	</div>
+	<dl id="wb-dtmd">
+		<dt>Date modified:&#32;</dt>
+		<dd>
+			<time property="dateModified">2019-03-01</time>
+		</dd>
+	</dl>
+</div>
+</div>
+      </div>
+      <!-- Write closure template -->
+      <script>
+        /*<![CDATA[*/
+        var defPreFooter = document.getElementById("def-preFooter");
+        defPreFooter.outerHTML = wet.builder.preFooter({
+            cdnEnv: "Akamai",
+            dateModified: "2026-02-05",
+            showPostContent: true, 
+            showFeedback: false,
+            showShare: false
+        });
+        /*]]>*/
+      </script>
+    </main>    
+    <div id="def-footer">
+      <!-- Write closure fall-back static file -->
+      <div><footer id="wb-info">
+	<div id="transactFooter" class="landscape">
+		<nav class="container wb-navcurr" aria-labelledby="aboutGov">
+			<h2 class="wb-inv" id="aboutGov">About government</h2>
+			<ul class="list-unstyled colcount-sm-2 colcount-md-3">
+				<li><a href="https://www.canada.ca/en/contact.html">Contact
+						us</a></li>
+				<li><a href="https://www.canada.ca/en/government/dept.html">Departments
+						and agencies</a></li>
+				<li><a
+					href="https://www.canada.ca/en/government/publicservice.html">Public
+						service and military</a></li>
+				<li><a href="https://www.canada.ca/en/news.html">News</a></li>
+				<li><a
+					href="https://www.canada.ca/en/government/system/laws.html">Treaties,
+						laws and regulations</a></li>
+				<li><a
+					href="https://www.canada.ca/en/transparency/reporting.html">Government-wide
+						reporting</a></li>
+				<li><a href="https://pm.gc.ca/en">Prime Minister</a></li>
+				<li><a href="https://www.canada.ca/en/government/system.html">About
+						government</a></li>
+				<li><a href="https://open.canada.ca/en">Open government</a></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="brand">
+		<div class="container">
+			<div class="row">
+				<nav class="col-md-9 col-lg-10 ftr-urlt-lnk"
+					aria-labelledby="aboutSite">
+					<h2 class="wb-inv" id="aboutSite">About this site</h2>
+					<ul>
+						<li><a href="https://www.canada.ca/en/social.html">Social
+								media</a></li>
+						<li><a href="https://www.canada.ca/en/mobile.html">Mobile
+								applications</a></li>
+						<li><a href="https://www.canada.ca/en/government/about.html">About
+								Canada.ca</a></li>
+						<li><a
+							href="https://www.canada.ca/en/transparency/terms.html">Terms
+								and conditions</a></li>
+						<li><a
+							href="https://www.canada.ca/en/transparency/privacy.html">Privacy</a></li>
+					</ul>
+				</nav>
+				<div class="col-xs-6 visible-sm visible-xs tofpg">
+					<a href="#wb-cont">Top of Page <span
+						class="glyphicon glyphicon-chevron-up"></span></a>
+				</div>
+				<div id="StdIssueWasHere2" class="col-xs-6 col-md-2 text-right">
+					<img
+						src="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_47/wet-boew/assets/wmms-blk.svg"
+						alt="Symbol of the Government of Canada" />
+				</div>
+			</div>
+		</div>
+	</div>
+</footer></div>
+    </div>        
+    <!-- Write closure template -->
+    <script>
+      /*<![CDATA[*/
+      var defFooter = document.getElementById("def-footer");
+      defFooter.outerHTML = wet.builder.footer({
+          cdnEnv: "Akamai",
+          showFooter:true,
+          showFeatures: false,
+          contactLinks: null
+          //termsLink: /*null*/ "/",
+          //privacyLink: /*null*/ "/" 
+      });
+      /*]]>*/
+    </script>
+    <!-- Write closure template -->
+    <script>
+      /*<![CDATA[*/
+      document.write(wet.builder.refFooter({
+          cdnEnv: "Akamai",
+          jqueryEnv: "false",
+          exitScript: false,
+          exitURL: "",
+          exitMsg: "You are about to leave a secure site, do you wish to continue?",
+          exitDomains: ""
+      }));
+      /*]]>*/
+    </script>         
+    <!-- Additional JavaScript includes.  Added through jsLibraryIncludes model attribute. -->
+          
+    
+    <!-- Additional JavaScript includes.  Added through jsIncludes model attribute. -->
+      
+    
+    <script type="text/javascript" src="/nhpid-bdipsn/js/breadcrumbs.js" ></script>
+    
+    <!-- Additional analytics, if required. -->
+     <!-- Add analytics here -->
+     
+  </body>
+</html>

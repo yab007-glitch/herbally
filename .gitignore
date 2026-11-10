@@ -73,3 +73,25 @@ artifacts/lnhpd-matches.json
 artifacts/lnhpd-enrichment.json
 artifacts/lnhpd-new-candidates.json
 artifacts/ncbi-verify-all.json
+
+# Run reports: rewritten on every FAQ regeneration, so they churned the diff of
+# unrelated commits. Keep them locally, not in history.
+artifacts/faq-regeneration.json
+
+# Slug-rename backups hold full table rows; keep them on disk, not in history.
+artifacts/slug-rename-pubmed-backup.json
+
+# Citation run report: regenerated on every pass.
+artifacts/interaction-citations.json
+artifacts/interaction-review-queue.json
+
+# Backfill reports: rewritten on every run, not source.
+artifacts/herb-images.json
+artifacts/related-herbs-plan.json
+artifacts/site-sweep.json
+
+# Search Console snapshots (local monitoring history)
+artifacts/gsc-index-history.json
+
+# Python bytecode from the import scripts
+__pycache__/

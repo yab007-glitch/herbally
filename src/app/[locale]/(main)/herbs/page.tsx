@@ -13,17 +13,42 @@ import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { JsonLd } from "@/components/seo/json-ld";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
+import type { Metadata } from "next";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { redirect } from "next/navigation";
 
-export const generateMetadata = () =>
-  buildPageMetadata({
+export const generateMetadata = async ({
+  searchParams,
+}: {
+  searchParams?: Promise<{
+    q?: string;
+    category?: string;
+    page?: string;
+    sort?: string;
+  }>;
+}): Promise<Metadata> => {
+  const base = await buildPageMetadata({
     titleKey: "herbsDatabase",
     descKey: "herbsDatabaseDesc",
     path: "/herbs",
   });
+  // Filtered and searched views are the same page with different results. Google
+  // reported 6 of them as soft 404s (empty result sets) and crawled the templated
+  // ?q={search_term_string} URL from our own structured data. They stay usable and
+  // crawlable, but they are not pages of their own.
+  const params = (await searchParams) ?? {};
+  const filtered = Boolean(
+    params.q || params.category || params.sort || params.page
+  );
+  if (!filtered) return base;
+  return {
+    ...base,
+    robots: { index: false, follow: true },
+    alternates: { canonical: `${siteUrl()}/herbs` },
+  };
+};
 
 export default async function HerbsPage({
   searchParams,

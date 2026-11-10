@@ -1,0 +1,111 @@
+{
+  "generated_at": "2026-11-03T13:41:08.913Z",
+  "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "locale": "en-US",
+  "settle_ms": 6000,
+  "probes": [
+    {
+      "key": "r-pubchem-legal",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/docs/legal-notices",
+      "status": 200,
+      "final_url": "https://pubchem.ncbi.nlm.nih.gov/docs/legal-notices",
+      "title": "Checking your browser - reCAPTCHA",
+      "text_chars": 135,
+      "text_prefix": "Checking your browser before accessing pubchem.ncbi.nlm.nih.gov ...\nClick here if you are not automatically redirected after 5 seconds.",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-pubchem-legal.txt"
+    },
+    {
+      "key": "r-pubchem-downloads",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/docs/downloads",
+      "status": 200,
+      "final_url": "https://pubchem.ncbi.nlm.nih.gov/docs/downloads",
+      "title": "Checking your browser - reCAPTCHA",
+      "text_chars": 135,
+      "text_prefix": "Checking your browser before accessing pubchem.ncbi.nlm.nih.gov ...\nClick here if you are not automatically redirected after 5 seconds.",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-pubchem-downloads.txt"
+    },
+    {
+      "key": "r-usda-plants-home",
+      "url": "https://plants.usda.gov/",
+      "status": 200,
+      "final_url": "https://plants.sc.egov.usda.gov/",
+      "title": "USDA Plants Database",
+      "text_chars": 2294,
+      "text_prefix": "Skip to main content\n\nAn official website of the United States government\n\nHere’s how you know\nNatural Resources Conservation Service\nU.S. DEPARTMENT OF AGRICULTURE\nPLANTS Database Home\nTopics\nTeam\nDownloads\nPartners\nRelated Tools\nHelp\nRelease Notes\nSelect Search Type\nScientific Name\nCommon Name\nSymbol\nFamily\nGlobal Search\n\nChoose the search type above and then enter your search query here.\n\nSearc",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-usda-plants-home.txt"
+    },
+    {
+      "key": "r-usda-plants-profile",
+      "url": "https://plants.usda.gov/plant-profile/ZIOF",
+      "status": 200,
+      "final_url": "https://plants.sc.egov.usda.gov/plant-profile/ZIOF",
+      "title": "USDA Plants Database Plant Profile General",
+      "text_chars": 1876,
+      "text_prefix": "Skip to main content\n\nAn official website of the United States government\n\nHere’s how you know\nNatural Resources Conservation Service\nU.S. DEPARTMENT OF AGRICULTURE\nPLANTS Database Home\nTopics\nTeam\nDownloads\nPartners\nRelated Tools\nHelp\nRelease Notes\nSelect Search Type\nScientific Name\nCommon Name\nSymbol\nFamily\nGlobal Search\n\nChoose the search type above and then enter your search query here.\n\nSearc",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-usda-plants-profile.txt"
+    },
+    {
+      "key": "r-powo-home",
+      "url": "https://powo.science.kew.org/",
+      "status": 403,
+      "final_url": "https://powo.science.kew.org/",
+      "title": "Just a moment...",
+      "text_chars": 268,
+      "text_prefix": "powo.science.kew.org\nPerforming security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.\n\nRay ID: a54bca809f0ce09b\nPerformance and Security by Cloudflare\nPrivacy",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-powo-home.txt"
+    },
+    {
+      "key": "r-powo-api",
+      "url": "https://powo.science.kew.org/api/2/search?q=Zingiber%20officinale&limit=1",
+      "status": 403,
+      "final_url": "https://powo.science.kew.org/api/2/search?q=Zingiber%20officinale&limit=1",
+      "title": "Just a moment...",
+      "text_chars": 268,
+      "text_prefix": "powo.science.kew.org\nPerforming security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.\n\nRay ID: a54bcab3bda2e09b\nPerformance and Security by Cloudflare\nPrivacy",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-powo-api.txt"
+    },
+    {
+      "key": "r-kew-terms",
+      "url": "https://www.kew.org/terms-and-conditions",
+      "status": 200,
+      "final_url": "https://www.kew.org/terms-of-use",
+      "title": "Terms of use | Kew",
+      "text_chars": 13721,
+      "text_prefix": "Skip to main content\nKEW GARDENS\nWAKEHURST\nKEW SCIENCE\nREAD & WATCH\nLEARNING\nMEMBERSHIP\nSHOP\nDONATE\nTerms of use\nGeneral terms and conditions for usage of the Kew.org websites and their content.\n\nWhen you use our websites like Kew.org, and other websites we own, you are agreeing to a set of terms that apply to your interaction with those websites.\n\nThese terms cover matters like how you can use th",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-kew-terms.txt"
+    },
+    {
+      "key": "r-gbif-terms",
+      "url": "https://www.gbif.org/terms",
+      "status": 403,
+      "final_url": "https://www.gbif.org/terms",
+      "title": "Just a moment...",
+      "text_chars": 260,
+      "text_prefix": "www.gbif.org\nPerforming security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.\n\nRay ID: a54bcb1fdb418e83\nPerformance and Security by Cloudflare\nPrivacy",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-gbif-terms.txt"
+    },
+    {
+      "key": "r-gbif-backbone",
+      "url": "https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c",
+      "status": 403,
+      "final_url": "https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c",
+      "title": "Just a moment...",
+      "text_chars": 260,
+      "text_prefix": "www.gbif.org\nPerforming security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.\n\nRay ID: a54bcb543c958e83\nPerformance and Security by Cloudflare\nPrivacy",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/rendered/r-gbif-backbone.txt"
+    }
+  ]
+}

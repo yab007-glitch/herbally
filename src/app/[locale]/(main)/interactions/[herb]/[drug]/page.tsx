@@ -31,8 +31,9 @@ import { cn } from "@/lib/utils";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
-// set are generated on demand and cached.
-export const revalidate = 86400;
+// set are generated on demand and cached. Three days: interaction data changes
+// only through imports, and each revalidation costs an ISR write plus DB reads.
+export const revalidate = 259200;
 
 type Props = { params: Promise<{ herb: string; drug: string }> };
 
@@ -436,18 +437,25 @@ export default async function InteractionPairPage({ params }: Props) {
           </div>
         )}
         <p className="text-xs text-muted-foreground">
-          {fr ? "Source : " : "Source: "}
           {pair.sourceUrl ? (
-            <a
-              href={pair.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-foreground"
-            >
-              {pair.source || pair.sourceUrl}
-            </a>
+            <>
+              {fr ? "Source : " : "Source: "}
+              <a
+                href={pair.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                {pair.source || pair.sourceUrl}
+              </a>
+            </>
+          ) : // "HerbAlly database" read like a citation. It is not one: these pairs
+          // came from sources the licence register refuses to cite, so the page
+          // has to say plainly that no primary citation backs the claim.
+          fr ? (
+            "Aucune source primaire n'est enregistrée pour cette association. La gravité reflète la pharmacologie connue, pas une étude précise — à vérifier avec un pharmacien."
           ) : (
-            pair.source || (fr ? "Base HerbAlly" : "HerbAlly database")
+            "No primary citation is recorded for this pair. The severity reflects known pharmacology rather than a specific study — confirm with a pharmacist."
           )}
           {pair.updatedAt && (
             <>
@@ -461,6 +469,23 @@ export default async function InteractionPairPage({ params }: Props) {
           )}
         </p>
       </section>
+
+      {/* What the cited paper actually found, when it qualifies the severity
+          above. Ten pairs cite a study whose abstract reports no change — the page
+          has to say that rather than let the reader assume the paper supports the
+          warning. */}
+      {pair.evidenceNote && (
+        <section className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <h3 className="text-sm font-semibold text-foreground">
+            {fr
+              ? "Ce que dit précisément l'étude citée"
+              : "What the cited study actually found"}
+          </h3>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            {pair.evidenceNote}
+          </p>
+        </section>
+      )}
 
       {/* What to do — scaled by severity so the advice is about THIS pair,
           not boilerplate repeated across every page. */}

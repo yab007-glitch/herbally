@@ -5,14 +5,19 @@ import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 
-// Core Web Vitals endpoint for real user monitoring
-// Stores metrics in Supabase for analysis
+// Core Web Vitals endpoint for real user monitoring.
+//
+// Accepts one batched payload per sampled pageview instead of one request per
+// metric: the client collects CLS/FCP/INP/LCP/TTFB and sends them together when
+// the page is hidden. That is one function invocation and one INSERT statement
+// per sampled pageview, down from five of each — a real reduction in load on the
+// Free-tier Supabase instance, where write pressure is the binding constraint.
 
 // L3 (audit 2026-06-22): bound every field so a malicious or runaway client
 // can't store arbitrary-length strings / non-finite numbers in web_vitals, and
 // keep the timestamp within a plausible window (reject future-far / ancient
 // epoch values that would corrupt time-bucketed analytics).
-const webVitalsSchema = z.object({
+const webVitalSchema = z.object({
   name: z.string().min(1).max(64),
   value: z.number().finite(),
   rating: z.enum(["good", "needs-improvement", "poor"]),
@@ -35,6 +40,12 @@ const webVitalsSchema = z.object({
     ),
 });
 
+const webVitalsPayloadSchema = z.object({
+  // One entry per metric name; the client caps itself at five today. The upper
+  // bound keeps a tampered payload from turning one request into a bulk write.
+  metrics: z.array(webVitalSchema).min(1).max(10),
+});
+
 export async function POST(request: NextRequest) {
   try {
     const { success } = await rateLimit(getClientIP(request), 60, 60_000);
@@ -52,7 +63,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const parsed = webVitalsSchema.safeParse(raw);
+    const parsed = webVitalsPayloadSchema.safeParse(raw);
     if (!parsed.success) {
       // L3: don't reflect Zod issue details back to the client — they can
       // echo back the malformed payload shape and leak schema internals.
@@ -62,13 +73,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = parsed.data;
-
-    // Store in Supabase if configured — uses anon key (safe for public endpoint)
+    // Store in Supabase if configured — uses anon key (safe for public endpoint).
+    // A single insert call for the whole batch: PostgREST sends it as one
+    // statement, so the batch costs the database one write, not five.
     const supabase = getAnonClient();
 
     if (supabase) {
-      const { error } = await supabase.from("web_vitals").insert({
+      const rows = parsed.data.metrics.map((body) => ({
         metric_name: body.name,
         value: body.value,
         rating: body.rating,
@@ -76,7 +87,9 @@ export async function POST(request: NextRequest) {
         device_type: body.effectiveType || "unknown",
         device_memory: body.deviceMemory,
         recorded_at: new Date(body.timestamp).toISOString(),
-      });
+      }));
+
+      const { error } = await supabase.from("web_vitals").insert(rows);
 
       if (error) {
         logger.error("web_vital_store_failed", {

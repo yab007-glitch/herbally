@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-11-03T13:41:33.558Z",
+  "user_agent": "HerbAlly-licence-audit/1.0 (+https://herbally.app; licence compliance review)",
+  "probes": [
+    {
+      "key": "nccih-sitemap",
+      "source": "nccih",
+      "url": "https://www.nccih.nih.gov/sitemap.xml",
+      "status": 404,
+      "final_url": "https://www.nccih.nih.gov/sitemap.xml",
+      "content_type": "text/html",
+      "bytes": 480700,
+      "sha256": "bf4000879109e8febff216715cb97d4e6cedb2554f69e1fb7ada410409ee89a6",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round2/nccih-sitemap.html",
+      "title": "Page not found | NCCIH"
+    },
+    {
+      "key": "ema-herbal-index",
+      "source": "ema",
+      "url": "https://www.ema.europa.eu/en/medicines/field_26/herbal-medicines",
+      "status": 404,
+      "final_url": "https://www.ema.europa.eu/en/medicines/field_26/herbal-medicines",
+      "content_type": "text/html",
+      "bytes": 55336,
+      "sha256": "c1a00ee18331f5c9826d36791f8de11a05607106e4fd4c51c14060d5d130936d",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round2/ema-herbal-index.html",
+      "title": "Page or document not found | European Medicines Agency (EMA)"
+    },
+    {
+      "key": "ema-hmpc-overview",
+      "source": "ema",
+      "url": "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+      "status": 200,
+      "final_url": "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+      "content_type": "text/html",
+      "bytes": 72972,
+      "sha256": "1da19822cc23a4b77d0db1c15987b829da923edb7090a3d79d51ee052f01951b",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round2/ema-hmpc-overview.html",
+      "title": "Herbal medicinal products | European Medicines Agency (EMA)"
+    },
+    {
+      "key": "gbif-backbone-api",
+      "source": "gbif",
+      "url": "https://api.gbif.org/v1/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c",
+      "status": 200,
+      "final_url": "https://api.gbif.org/v1/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c",
+      "content_type": "application/json",
+      "bytes": 12987,
+      "sha256": "fcdae9d34a929218cfd8c66064cba765b8cf42953c8bfd06a0d924f3b443f5f8",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round2/gbif-backbone-api.json",
+      "title": null
+    },
+    {
+      "key": "gbif-occurrence-api",
+      "source": "gbif",
+      "url": "https://api.gbif.org/v1/occurrence/search?q=Zingiber%20officinale&limit=1",
+      "status": 200,
+      "final_url": "https://api.gbif.org/v1/occurrence/search?q=Zingiber%20officinale&limit=1",
+      "content_type": "application/json",
+      "bytes": 5696,
+      "sha256": "f488bc1e0268be54c000a20366f4d0aa2d73ff75ddb99d0812efa1e3a015857b",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round2/gbif-occurrence-api.json",
+      "title": null
+    },
+    {
+      "key": "wikipedia-copyrights",
+      "source": "wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Wikipedia:Copyrights",
+      "status": 200,
+      "final_url": "https://en.wikipedia.org/wiki/Wikipedia:Copyrights",
+      "content_type": "text/html",
+      "bytes": 226921,
+      "sha256": "be3653344ed49d11080e76fe001d69959fa9ac8df08587262e66cf108d6212a9",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round2/wikipedia-copyrights.html",
+      "title": "Wikipedia:Copyrights - Wikipedia"
+    },
+    {
+      "key": "usda-plants-mainjs",
+      "source": "usda",
+      "url": "https://plants.sc.egov.usda.gov/main.js",
+      "status": 200,
+      "final_url": "https://plants.sc.egov.usda.gov/main.js",
+      "content_type": "application/javascript",
+      "bytes": 8166361,
+      "sha256": "bf41261c0c4abb82b9355dbe6a015cdec084222fa0c3fefc0723aae112ecd385",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round2/usda-plants-mainjs.txt",
+      "title": null
+    },
+    {
+      "key": "nrcs-terms",
+      "source": "nrcs",
+      "url": "https://www.nrcs.usda.gov/about/our-agency/nrcs-policies",
+      "status": 0,
+      "final_url": null,
+      "content_type": null,
+      "bytes": 0,
+      "sha256": null,
+      "error": "TypeError: fetch failed (Stream closed with error code NGHTTP2_INTERNAL_ERROR)",
+      "saved_path": null,
+      "title": null
+    }
+  ]
+}

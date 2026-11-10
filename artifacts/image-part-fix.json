@@ -1,0 +1,530 @@
+[
+ {
+  "slug": "magnolia-bark-chinese",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "buchu-betulina-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "pumpkin-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "cornus-fruit",
+  "part": "fruit",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "perilla-seed-tcm",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "phellodendron-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "pine-bark-extract",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "fo-ti-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "zizyphus-jujube-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "nettle-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "elecampane-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "cardamom-seeds",
+  "part": "seed",
+  "status": "replaced",
+  "file": "Elettaria cardamomum Capsules and seeds.jpg",
+  "licence": "CC BY-SA 4.0"
+ },
+ {
+  "slug": "bamboo-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "bayberry-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "tanzanian-bark-herb",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "wahoo-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "dipsacus-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "musta-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "fenugreek-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "licorice-root-tcm",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "fenugreek-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "sumac-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "cotton-root-bark",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "cuscuta-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "borage-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "pine-pollen",
+  "part": "pollen",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "hawthorn-flowers",
+  "part": "flower",
+  "status": "replaced",
+  "file": "(MHNT) Crataegus monogyna - flowers and buds.jpg",
+  "licence": "CC BY-SA 4.0"
+ },
+ {
+  "slug": "hawthorn-leaf-flower-berry",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "lomatium-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "butea-superba-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "lotus-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "lovage-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "bee-pollen",
+  "part": "pollen",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "magnolia-flower-bud",
+  "part": "flower",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "lodhra-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "sarsaparilla-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "hydrangea-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "african-dream-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "chitrak-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "mulberry-root-bark",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "atractylodes-rhizome",
+  "part": "rhizome",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "cinnamomum-zeylanicum-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "korean-angelica-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "bitter-orange-flower",
+  "part": "flower",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "juniper-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "clary-sage-seed-oil",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "padauk-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "pandanus-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "picrorhiza-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "black-seed-oil",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "tule-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "snow-lotus-flower",
+  "part": "flower",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "nettle-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "solomon-seal-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "damiana-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "polygala-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "polygonatum-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "dragon-fruit",
+  "part": "fruit",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "pomegranate-peel",
+  "part": "peel",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "thanakha-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "durian-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "curculigo-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "entada-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "parkia-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "osha-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "fagara-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "butterfly-pea-flower",
+  "part": "flower",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "corn-pollen",
+  "part": "pollen",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "citrus-peel-tcm",
+  "part": "peel",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "zimbabwean-bitter-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "dog-rose-flower",
+  "part": "flower",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "guarana-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "vibhitaki-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "bilberry-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "salam-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "pollen-extract-rye",
+  "part": "pollen",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "lemon-peel",
+  "part": "peel",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "fresh-tangerine-peel",
+  "part": "peel",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "angelica-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "licorice-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "oak-bark",
+  "part": "bark",
+  "status": "licence refused: GFDL 1.2"
+ },
+ {
+  "slug": "she-gan-rhizome",
+  "part": "rhizome",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "umckaloabo-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "citrullus-lanatus-seeds",
+  "part": "seed",
+  "status": "replaced",
+  "file": "Citrullus lanatus var. citroides - seed colours 1.jpg",
+  "licence": "CC BY-SA 4.0"
+ },
+ {
+  "slug": "uziza-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "lycium-chinense-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "wild-indigo-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "bistort-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "stillingia-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "ban-xia-rhizome",
+  "part": "rhizome",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "congolese-iboga-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "ipecac-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "psoralea-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "blue-cohosh-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "evodia-fruit",
+  "part": "fruit",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "finger-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "varuna-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "stephania-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "salvia-miltiorrhiza-leaf",
+  "part": "leaf",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "catuaba-bark",
+  "part": "bark",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "babchi-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "hibiscus-flowers",
+  "part": "flower",
+  "status": "replaced",
+  "file": "Chinese hibiscus (Hibiscus × rosa-sinensis) flower, Estufa Fria, Lisbon, Portugal julesvernex2.jpg",
+  "licence": "CC BY-SA 4.0"
+ },
+ {
+  "slug": "calumba-root",
+  "part": "root",
+  "status": "no part-specific file"
+ },
+ {
+  "slug": "bai-bian-dou-seed",
+  "part": "seed",
+  "status": "no part-specific file"
+ }
+]

@@ -18,6 +18,8 @@ export interface InteractionPair {
   evidenceLevel: string | null;
   source: string | null;
   sourceUrl: string | null;
+  /** What the cited paper actually reported, when it qualifies the severity. */
+  evidenceNote: string | null;
   updatedAt: string;
   /** French translation present (translations->fr), for sitemap gating. */
   hasFr: boolean;
@@ -32,6 +34,7 @@ interface PairRow {
   evidence_level: string | null;
   source: string | null;
   source_url: string | null;
+  evidence_note?: string | null;
   updated_at: string;
   translations: Record<string, unknown> | null;
   herbs: {
@@ -91,13 +94,14 @@ function toPair(row: PairRow, locale: string = "en"): InteractionPair | null {
     evidenceLevel: row.evidence_level,
     source: row.source,
     sourceUrl: row.source_url,
+    evidenceNote: row.evidence_note ?? null,
     updatedAt: row.updated_at,
     hasFr,
   };
 }
 
 const PAIR_SELECT =
-  "id,drug_name,severity,description,mechanism,evidence_level,source,source_url,updated_at,translations,herbs!inner(slug,name,scientific_name,is_published,translations)";
+  "id,drug_name,severity,description,mechanism,evidence_level,source,source_url,evidence_note,updated_at,translations,herbs!inner(slug,name,scientific_name,is_published,translations)";
 
 // Static generation must never hang the whole build on a slow database —
 // abort stalled queries and degrade to []/null (pages render on demand,

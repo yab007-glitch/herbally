@@ -834,8 +834,8 @@
       "reason": "The slug embeds the misspelled name Cinnamomum burmannii; the destination slug cinnamomum-burmanni had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
     },
     "rauwolfia-cardio": {
-      "decision": "staged",
-      "reason": "The slug embeds the misspelled name Rauwolfia; the destination slug rauvolfia-cardio had zero rows in herbs as of 2026-11-03; the rename plus 308 redirect are tracked in t_4aba63c3."
+      "decision": "keep",
+      "reason": "This page is a duplicate stub merged into rauwolfia-root: unpublished with a 308 redirect, so the slug is deliberately not renamed."
     },
     "jatropha-gossypifolia": {
       "decision": "keep",

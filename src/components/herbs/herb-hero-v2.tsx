@@ -209,7 +209,14 @@ export function HerbHeroV2({
         <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           <Button
             size="sm"
-            render={<Link href={`/herbalist?herb=${herb.slug}`} />}
+            render={
+              <Link
+                href={`/herbalist?herb=${herb.slug}`}
+                // 2,198 ?herb= URLs were being crawled as duplicates of /herbalist.
+                // The parameter is a client-side preselection, not a different page.
+                rel="nofollow"
+              />
+            }
             className="rounded-full"
           >
             <MessageCircle className="mr-1 size-3" aria-hidden="true" />

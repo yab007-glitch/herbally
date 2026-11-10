@@ -52,12 +52,20 @@ const PROVENANCE_SAMPLES: Array<{
   },
 ];
 
-export function ChipLegend({ className }: { className?: string }) {
+export function ChipLegend({
+  className,
+  defaultOpen = false,
+}: {
+  className?: string;
+  /** Open on first paint: the methodology page is where this text belongs. */
+  defaultOpen?: boolean;
+}) {
   const t = useTranslations("chipLegend");
   const tEvidence = useTranslations("evidence");
 
   return (
     <details
+      open={defaultOpen}
       className={`group rounded-lg border border-border bg-card ${className ?? ""}`}
     >
       <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-2.5 text-sm text-foreground [&::-webkit-details-marker]:hidden">

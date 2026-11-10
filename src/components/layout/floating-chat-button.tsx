@@ -12,8 +12,9 @@ import { useTranslations } from "next-intl";
 const TEASER_SEEN_KEY = "herbally.chat.teaser.seen";
 /** localStorage timestamp of the last dismissal. */
 const TEASER_DISMISSED_KEY = "herbally.chat.teaser.dismissedAt";
-/** How long a dismissal silences the teaser. */
-const TEASER_QUIET_MS = 7 * 24 * 60 * 60 * 1000;
+/** How long a dismissal silences the teaser. One day: a "no thanks" is not a
+ *  permanent verdict, and a week of silence made the bubble look broken. */
+const TEASER_QUIET_MS = 24 * 60 * 60 * 1000;
 /** Wait before speaking: long enough not to compete with the page settling. */
 const TEASER_DELAY_MS = 2_500;
 /** Give up if nobody engages. */
@@ -68,32 +69,53 @@ export function FloatingChatButton() {
   useEffect(() => {
     if (!isHome || open || hasOpened) return;
 
-    // On a phone there is no free corner: the bubble lands on the primary
-    // "check interactions" button, and the bottom navigation already has a
-    // Chat tab. An invitation that covers the thing the visitor came to do is
-    // worse than no invitation.
-    const wideEnough =
-      typeof window.matchMedia === "function"
-        ? window.matchMedia("(min-width: 768px)").matches
-        : true;
-    if (!wideEnough) return;
+    // A phone is where the invitation matters most — it used to be suppressed
+    // below 768px, which meant most visitors never saw it at all. It now shows
+    // at every width; the bubble sits above the bottom navigation rather than
+    // over it.
+    //
+    // ?chat=teaser forces it once, for checking the thing exists without
+    // clearing storage.
+    const forced =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("chat") === "teaser";
+    if (!forced) {
+      const dismissedAt = Number(
+        readStorage(() => window.localStorage.getItem(TEASER_DISMISSED_KEY))
+      );
+      if (
+        Number.isFinite(dismissedAt) &&
+        Date.now() - dismissedAt < TEASER_QUIET_MS
+      )
+        return;
+      if (readStorage(() => window.sessionStorage.getItem(TEASER_SEEN_KEY)))
+        return;
+    }
 
-    const dismissedAt = Number(
-      readStorage(() => window.localStorage.getItem(TEASER_DISMISSED_KEY))
-    );
-    if (
-      Number.isFinite(dismissedAt) &&
-      Date.now() - dismissedAt < TEASER_QUIET_MS
-    )
-      return;
-    if (readStorage(() => window.sessionStorage.getItem(TEASER_SEEN_KEY)))
-      return;
-
-    const show = window.setTimeout(() => {
+    // On a phone the homepage's primary button sits low on the first screen, and
+    // a bubble parked over it is worse than no bubble. So a small screen waits
+    // until the visitor has scrolled past that button (240px) before speaking;
+    // a wide screen has room to speak immediately.
+    // jsdom has no matchMedia; treat that as a wide screen so the component
+    // behaves predictably in tests.
+    const isNarrow =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 767px)").matches;
+    let show: number | undefined;
+    const reveal = () => {
       setTeaser(true);
       writeStorage(() => window.sessionStorage.setItem(TEASER_SEEN_KEY, "1"));
-    }, TEASER_DELAY_MS);
-
+    };
+    if (isNarrow) {
+      const onScroll = () => {
+        if (window.scrollY < 240) return;
+        window.removeEventListener("scroll", onScroll);
+        reveal();
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }
+    show = window.setTimeout(reveal, TEASER_DELAY_MS);
     return () => window.clearTimeout(show);
   }, [isHome, open, hasOpened]);
 

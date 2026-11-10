@@ -3,35 +3,76 @@ import * as Sentry from "@sentry/nextjs";
 /**
  * Scrub PII / health data from a server-side event before upload.
  * - Redacts URL query strings and fragments (search terms, herb/symptom slugs).
- * - Truncates breadcrumb data and request bodies that may echo user health
+ * - Removes request bodies and breadcrumb data that may echo user health
  *   input from the chat API or chat-persist server actions.
  */
-function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent | null {
+type ScrubbableEvent = {
+  request?: any;
+  breadcrumbs?: any;
+  contexts?: any;
+  transaction?: string;
+};
+
+/**
+ * Best available non-concrete route: the Next.js router template when present,
+ * otherwise a "[param]" template recovered from the transaction name.
+ */
+function routeTemplate(event: ScrubbableEvent): string | undefined {
+  const fromContext = (
+    event.contexts?.nextjs as Record<string, unknown> | undefined
+  )?.router_path;
+  if (typeof fromContext === "string" && fromContext.startsWith("/"))
+    return fromContext;
+  if (typeof event.transaction === "string") {
+    const match = event.transaction.match(/(\/\S*\[[^\]]+\]\S*)$/);
+    if (match) return match[1];
+  }
+  return undefined;
+}
+
+function scrubEvent<T extends ScrubbableEvent>(event: T): T | null {
   try {
-    if (event.request?.url) {
-      try {
-        const u = new URL(event.request.url);
-        u.search = "";
-        u.hash = "";
-        event.request.url = u.toString();
-      } catch {
-        event.request.url = "[redacted]";
+    if (event.request) {
+      // Bodies, query strings, credentials and IP hints must never leave the app.
+      delete event.request.data;
+      delete event.request.query_string;
+      delete event.request.headers;
+      delete event.request.cookies;
+      delete event.request.env;
+
+      if (event.request.url) {
+        try {
+          const u = new URL(event.request.url);
+          // The concrete path is health data here (/herbs/[slug],
+          // /symptoms/[symptom], /interactions/[herb]/[drug]). Keep only the
+          // origin plus the route template.
+          const template = routeTemplate(event);
+          event.request.url = template
+            ? u.origin + template
+            : u.origin + "/[redacted-path]";
+        } catch {
+          event.request.url = "[redacted]";
+        }
       }
     }
-    if (event.request?.data && typeof event.request.data === "string") {
-      event.request.data =
-        event.request.data.length > 200 ? "[redacted]" : event.request.data;
+
+    // Next.js sets the full concrete path here; keep the template only.
+    const nextjsContext = event.contexts?.nextjs as
+      Record<string, unknown> | undefined;
+    if (nextjsContext && typeof nextjsContext.request_path === "string") {
+      nextjsContext.request_path = "[redacted]";
     }
     if (event.breadcrumbs) {
       // Breadcrumb `data` is an object map — redact it wholesale so user
       // health input captured in fetch/query breadcrumbs never leaves the app.
-      event.breadcrumbs = event.breadcrumbs.map((b) => ({
+      event.breadcrumbs = event.breadcrumbs.map((b: any) => ({
         ...b,
         data: { redacted: true },
       }));
     }
   } catch {
-    // Never let scrubbing itself throw.
+    // Drop events we cannot safely scrub.
+    return null;
   }
   return event;
 }
@@ -57,6 +98,8 @@ Sentry.init({
   includeLocalVariables: false,
   enableLogs: true,
   beforeSend: scrubEvent,
+  // Sampled transactions do NOT run beforeSend; scrub them with the same hook.
+  beforeSendTransaction: scrubEvent,
   ignoreErrors: [
     // Unactionable rejections injected by embedded Chromium (CEF/.NET)
     // clients and browser extensions — e.g.

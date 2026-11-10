@@ -1,0 +1,48 @@
+[
+ {
+  "captured_at": "2026-11-06",
+  "indexed": 3414,
+  "not_indexed": 5498,
+  "reasons": {
+   "Alternate page with proper canonical tag": {
+    "pages": 2198,
+    "validation": "Started 2026-11-05"
+   },
+   "Page with redirect": {
+    "pages": 107,
+    "validation": "Not started"
+   },
+   "Excluded by noindex tag": {
+    "pages": 98,
+    "validation": "Started 2026-11-05"
+   },
+   "Soft 404": {
+    "pages": 8,
+    "validation": "Started 2026-11-05"
+   },
+   "Not found (404)": {
+    "pages": 6,
+    "validation": "Started 2026-11-05"
+   },
+   "Duplicate without user-selected canonical": {
+    "pages": 2,
+    "validation": "Not started"
+   },
+   "Crawled - currently not indexed": {
+    "pages": 2711,
+    "validation": "Google systems - not validatable"
+   },
+   "Discovered - currently not indexed": {
+    "pages": 368,
+    "validation": "Google systems - not validatable"
+   }
+  },
+  "performance_28d": {
+   "clicks": 132,
+   "impressions": 12700,
+   "ctr": "1%",
+   "position": 11.5
+  },
+  "notes": "Baseline before Google recrawls the 2026-11-05 fixes (herbalist?herb= nofollow, filtered /herbs noindex, /pharmacist redirect, 11 duplicate merges)."
+ }
+]

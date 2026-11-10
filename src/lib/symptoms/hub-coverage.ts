@@ -1,5 +1,9 @@
 import { getAnonClient } from "@/lib/supabase/anonymous";
-import { symptomMeta, SYMPTOM_SLUGS } from "./symptom-meta";
+import {
+  symptomMeta,
+  symptomQueryKeywords,
+  SYMPTOM_SLUGS,
+} from "./symptom-meta";
 
 /**
  * Which symptom hubs have at least one published herb behind them.
@@ -72,7 +76,8 @@ export async function isSymptomHubPopulated(slug: string): Promise<boolean> {
   if (!meta) return false;
   const known = await getPopulatedSymptomKeywords();
   if (!known) return true;
-  return known.has(meta.dbKeyword);
+  // A hub is populated when any of the stored keywords it matches exists.
+  return symptomQueryKeywords(slug).some((keyword) => known.has(keyword));
 }
 
 /** Hub slugs to omit from the sitemap. Empty when coverage failed. */
@@ -80,7 +85,7 @@ export async function getEmptySymptomHubs(): Promise<string[]> {
   const known = await getPopulatedSymptomKeywords();
   if (!known) return [];
   const empty = SYMPTOM_SLUGS.filter(
-    (slug) => !known.has(symptomMeta[slug].dbKeyword)
+    (slug) => !symptomQueryKeywords(slug).some((keyword) => known.has(keyword))
   );
   // Only report the ones that actually exist in the keyword map, so a typo in
   // the metadata cannot silently drop a hub that has content.

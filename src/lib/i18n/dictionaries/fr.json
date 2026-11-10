@@ -343,7 +343,15 @@
     "humanReviewedTooltip": "Révisé par {reviewer} le {date}. Seules les fiches qu'une personne nommée a réellement lues portent cette étiquette.",
     "needsReReview": "À réviser de nouveau",
     "needsReReviewTooltip": "Cette fiche a déjà été révisée, puis modifiée. Considérez-la comme non révisée jusqu'à ce que quelqu'un la relise.",
-    "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations."
+    "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations.",
+    "sourceVerified": "Vérifié · {count} sources",
+    "sourceVerifiedTooltip": "Recoupé auprès de {count} sources indépendantes : {sources}. Cela confirme l'identité de la plante et son dossier réglementaire — ce n'est pas une affirmation qu'une personne a relu cette fiche.",
+    "identityVerified": "Identité vérifiée · {count} sources",
+    "identityVerifiedTooltip": "Le nom de la plante est confirmé par {count} sources taxonomiques indépendantes ({sources}). Aucun organisme de réglementation n'a publié de monographie pour cette plante; rien d'autre que son identité n'est affirmé ici.",
+    "formula": "Formule multi-herbes",
+    "formulaTooltip": "Cette fiche décrit un produit multi-herbes et non une plante unique : il n'y a donc pas de nom botanique à recouper. Les ingrédients sont listés sur la page; la formule elle-même n'a pas d'identité taxonomique.",
+    "nonPlant": "Ingrédient non végétal",
+    "nonPlantTooltip": "Cette fiche décrit un minéral, un produit animal, une vitamine ou un isolat, et non une plante. Il n'y a pas de nom botanique à recouper; la fiche est présentée comme entrée de matière médicale."
   },
   "donate": {
     "title": "Soutenir HerbAlly",
@@ -579,7 +587,8 @@
     "askHerbalist": "Demander à l'herboriste",
     "calculatorCtaTitle": "Calculer une dose sûre de {name}",
     "calculatorCtaBody": "Calculateur gratuit de posologie — doses de référence adultes selon le poids.",
-    "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement."
+    "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement.",
+    "noStatedDose": "Les dossiers d'homologation à l'origine de cette fiche ({source}) n'indiquent aucune quantité. Consultez l'étiquette du produit ou un pharmacien — aucun dosage n'a été inventé ici."
   },
   "search": {
     "placeholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
@@ -623,7 +632,9 @@
       "drug": "Médicament",
       "severity": "Sévérité",
       "description": "Description"
-    }
+    },
+    "uncitedNote": "Ces associations ne sont pas encore liées à une source primaire. Considérez-les comme une invitation à consulter un pharmacien, non comme une référence.",
+    "sourceLink": "Source : notice PubMed"
   },
   "interactionExplainer": {
     "title": "Qu'est-ce qu'une interaction plante-médicament ?",
@@ -1518,7 +1529,70 @@
       "privacy": "Lire notre politique de confidentialité",
       "donate": "Faire un don volontaire"
     },
-    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela."
+    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela.",
+    "audience": {
+      "title": "Qui lit HerbAlly",
+      "description": "Un public modeste, décrit honnêtement. Nous préférons vous montrer les chiffres réels plutôt qu'un argumentaire que vous pourriez vérifier et trouver gonflé.",
+      "stats": {
+        "visitors": {
+          "value": "1 800",
+          "label": "visiteurs sur les 30 derniers jours"
+        },
+        "pageviews": {
+          "value": "2 300",
+          "label": "pages vues sur les 30 derniers jours"
+        },
+        "languages": {
+          "value": "EN + FR",
+          "label": "chaque page entièrement traduite"
+        },
+        "markets": {
+          "value": "CA · FR · monde",
+          "label": "où se trouvent les lecteurs"
+        }
+      },
+      "note": "Chiffres bruts de notre propre analytique pour les 30 jours précédant le 29 octobre 2026. Environ la moitié des sessions récentes semblent automatisées : le public humain est donc plus petit que le chiffre affiché. Nous vous le disons ici plutôt que de vous le laisser découvrir plus tard.",
+      "fit": "HerbAlly convient à un commanditaire dont les clients se demandent ce que fait une plante, si elle est compatible avec leurs médicaments, ou quelle quantité prendre — et qui veut associer son nom à cette réponse sans acheter d'influence sur elle."
+    },
+    "packages": {
+      "title": "Formules de commandite",
+      "description": "Tarifs publiés, sans enchère, sans article commandité, et sans mot à dire sur ce que le site affirme au sujet d'une plante. Annulable en tout temps.",
+      "currency": "Tous les prix sont en dollars canadiens.",
+      "items": {
+        "supporter": {
+          "name": "Soutien",
+          "price": "25 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Votre nom et un lien dans le pied de page",
+            "Mention sur cette page",
+            "Annulable en tout temps"
+          ]
+        },
+        "sponsor": {
+          "name": "Commanditaire",
+          "price": "50 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Tout ce que comprend Soutien",
+            "Une ligne « Soutenu par » sur les pages de plantes",
+            "Un bilan trimestriel de ce que votre soutien a payé"
+          ]
+        },
+        "launch": {
+          "name": "Partenaire de lancement",
+          "price": "150 $ CA",
+          "cadence": "par an",
+          "features": [
+            "Tout ce que comprend Commanditaire",
+            "Votre logo sur la page d'accueil",
+            "Une entrée nommée dans notre registre public de commanditaires"
+          ]
+        }
+      },
+      "cta": "Se renseigner sur cette formule",
+      "note": "Nous publions qui nous soutient. Les commanditaires ne révisent, ne modifient, n'approuvent ni ne bloquent jamais le contenu santé, et aucune formule n'achète une mention favorable d'une plante."
+    }
   },
   "meta": {
     "herbsDatabase": "Base de Données de Plantes Médicinales",

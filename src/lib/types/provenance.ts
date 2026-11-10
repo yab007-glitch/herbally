@@ -54,6 +54,21 @@ export const ProvenanceSchema = z.object({
     .catch(null)
     .default(null),
   review_notes: z.string().optional(),
+  /**
+   * Cross-check state: how many independent sources attest to this entry.
+   *
+   * This is NOT human review. It says the plant identity and regulator record were
+   * confirmed by two or more named sources, which is what the "Verified · N
+   * sources" badge claims. `review_status` above stays the only field that can say
+   * a person read the page.
+   */
+  verification_status: z
+    .enum(["verified", "single_source", "unverified", "formula", "non_plant"])
+    .nullable()
+    .catch(null)
+    .default(null),
+  verified_source_count: z.number().catch(0).default(0),
+  verified_sources: z.array(z.string()).catch([]).default([]),
 });
 export type Provenance = z.infer<typeof ProvenanceSchema>;
 
@@ -66,6 +81,9 @@ export const UNVERIFIED: Provenance = {
   review_status: null,
   reviewed_by_name: null,
   reviewed_on: null,
+  verification_status: null,
+  verified_source_count: 0,
+  verified_sources: [],
 };
 
 /**
@@ -74,7 +92,28 @@ export const UNVERIFIED: Provenance = {
  * fall back to UNVERIFIED so the UI never crashes on bad data.
  */
 export function parseProvenance(raw: unknown): Provenance {
-  const result = ProvenanceSchema.safeParse(raw ?? {});
+  // `sources` arrives in two shapes: legacy string labels, and the richer objects
+  // written by the data pipeline ({type, name, licence, url}). The schema wants
+  // strings, so a single object-shaped entry used to fail the whole parse and drop
+  // the record to UNVERIFIED — which is why 3,251 cross-checked herbs still showed
+  // the amber "AI-Generated" badge. Normalise before validating.
+  const input: Record<string, unknown> =
+    typeof raw === "object" && raw !== null
+      ? { ...(raw as Record<string, unknown>) }
+      : {};
+  if (Array.isArray(input.sources)) {
+    input.sources = (input.sources as unknown[])
+      .map((s) => {
+        if (typeof s === "string") return s;
+        if (s && typeof s === "object") {
+          const o = s as Record<string, unknown>;
+          return String(o.name ?? o.type ?? o.url ?? "");
+        }
+        return "";
+      })
+      .filter(Boolean);
+  }
+  const result = ProvenanceSchema.safeParse(input);
   return result.success ? result.data : UNVERIFIED;
 }
 
