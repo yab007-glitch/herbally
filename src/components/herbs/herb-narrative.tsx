@@ -80,10 +80,7 @@ export function HerbNarrative({
  * Read from the entry's own provenance rather than assumed: quoting the wrong
  * authority is worse than quoting none.
  */
-function regulatorName(
-  provenance: unknown,
-  locale: CopyLocale
-): string | null {
+function regulatorName(provenance: unknown, locale: CopyLocale): string | null {
   if (!provenance || typeof provenance !== "object") return null;
   const sources = (provenance as { sources?: unknown }).sources;
   if (!Array.isArray(sources)) return null;

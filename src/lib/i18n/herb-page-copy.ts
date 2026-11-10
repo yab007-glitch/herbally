@@ -8,7 +8,11 @@
  * first source block down. They live in one typed map so a missing translation
  * is a type error rather than an English sentence on /fr.
  */
-import { NARRATIVE_EN, NARRATIVE_FR, type NarrativeCopy } from "@/lib/herbs/narrative";
+import {
+  NARRATIVE_EN,
+  NARRATIVE_FR,
+  type NarrativeCopy,
+} from "@/lib/herbs/narrative";
 
 export type CopyLocale = "en" | "fr";
 
@@ -76,8 +80,7 @@ const EN: HerbPageCopy = {
   },
   nccih: {
     heading: (name) => `What the NIH says about ${name}`,
-    sourceLabel:
-      "National Center for Complementary and Integrative Health",
+    sourceLabel: "National Center for Complementary and Integrative Health",
     licenceText:
       "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
     claimsHeading: "Background and evidence",
@@ -94,11 +97,13 @@ const EN: HerbPageCopy = {
 };
 
 const FR: HerbPageCopy = {
-  evidenceLabelsLink: "Comment lire les niveaux de preuve et les mentions de révision",
+  evidenceLabelsLink:
+    "Comment lire les niveaux de preuve et les mentions de révision",
   sources: {
     label: "Sources vérifiées pour cette fiche",
     checkedLabel: "Dernière vérification",
-    count: (n) => `${n} source${n === 1 ? "" : "s"} indépendante${n === 1 ? "" : "s"}`,
+    count: (n) =>
+      `${n} source${n === 1 ? "" : "s"} indépendante${n === 1 ? "" : "s"}`,
     note: "Ces sources ont été recoupées ; lorsque rien n'a été trouvé, la fiche le dit plutôt que de combler le vide.",
   },
   verbatimQuoteNote:
@@ -121,7 +126,8 @@ const FR: HerbPageCopy = {
     licenceText:
       "Contient de l'information visée par la Licence du gouvernement ouvert – Canada.",
     claimsHeading: "Usages approuvés",
-    safetyHeading: "Mises en garde, contre-indications et réactions indésirables",
+    safetyHeading:
+      "Mises en garde, contre-indications et réactions indésirables",
   },
   nccih: {
     heading: (name) => `Ce que dit le NIH à propos de ${name}`,

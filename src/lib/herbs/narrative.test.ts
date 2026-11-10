@@ -160,8 +160,12 @@ describe("French copy (used on /fr herb pages)", () => {
     const text = sections.map((s) => s.body).join(" ");
     expect(text).toContain("Usages traditionnels consignés pour Gingembre");
     expect(text).toContain("nausées et digestion");
-    expect(text).toContain("Les sources consignent la posologie suivante : 1 à 3 g par jour.");
-    expect(text).toContain("Les dossiers de Santé Canada indiquent : “Ne pas utiliser");
+    expect(text).toContain(
+      "Les sources consignent la posologie suivante : 1 à 3 g par jour."
+    );
+    expect(text).toContain(
+      "Les dossiers de Santé Canada indiquent : “Ne pas utiliser"
+    );
     expect(text).not.toMatch(/\bthe\b|\band\b|Dose recorded/i);
     expect(sections[0].heading).toBe("Usage traditionnel et moderne");
   });
@@ -178,16 +182,18 @@ describe("French copy (used on /fr herb pages)", () => {
       },
       NARRATIVE_FR
     );
-    expect(sections.some((s) => s.body.includes("dossiers de Santé Canada"))).toBe(
-      true
-    );
+    expect(
+      sections.some((s) => s.body.includes("dossiers de Santé Canada"))
+    ).toBe(true);
   });
 
   it("strips the French label prefix the way it strips the English one", () => {
     const quoted = quotedContraindications(
       {
         name: "Gingembre",
-        contraindications: ["Contre-indications : Ne pas utiliser avant une chirurgie"],
+        contraindications: [
+          "Contre-indications : Ne pas utiliser avant une chirurgie",
+        ],
       },
       NARRATIVE_FR
     );
