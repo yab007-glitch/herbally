@@ -54,10 +54,23 @@ describe("symptom hub coverage", () => {
       .mockResolvedValueOnce({ data: [], error: null });
 
     expect(await isSymptomHubPopulated("anxiety")).toBe(true);
-    // prostate matches zero published herbs — the soft-404 hub.
+    // No row carries any of this hub's keywords — the soft-404 shape.
     expect(await isSymptomHubPopulated("prostate")).toBe(false);
     expect(await getEmptySymptomHubs()).toContain("prostate");
     expect(await getEmptySymptomHubs()).not.toContain("anxiety");
+  });
+
+  it("counts a hub populated when a synonym keyword exists", async () => {
+    rangeMock
+      .mockResolvedValueOnce({
+        data: [{ symptom_keywords: ["blood pressure"] }],
+        error: null,
+      })
+      .mockResolvedValueOnce({ data: [], error: null });
+
+    // The hub's display key is "blood-pressure"; the stored tag has a space.
+    expect(await isSymptomHubPopulated("bloodPressure")).toBe(true);
+    expect(await getEmptySymptomHubs()).not.toContain("bloodPressure");
   });
 
   it("fails open when the database errors", async () => {
