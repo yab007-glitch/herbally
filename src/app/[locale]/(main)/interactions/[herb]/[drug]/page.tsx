@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import {
   AlertOctagon,
   AlertTriangle,
@@ -31,8 +31,9 @@ import { cn } from "@/lib/utils";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
-// set are generated on demand and cached.
-export const revalidate = 86400;
+// set are generated on demand and cached. Three days: interaction data changes
+// only through imports, and each revalidation costs an ISR write plus DB reads.
+export const revalidate = 259200;
 
 type Props = { params: Promise<{ herb: string; drug: string }> };
 
@@ -142,6 +143,79 @@ function verdictCopy(
   }
 }
 
+/**
+ * Evidence levels are stored as English enums (`well-documented`,
+ * `moderate-evidence`, `limited-evidence`) straight from the curation sheet.
+ * Rendering them raw leaked English onto every French page — the badge read
+ * "Grave · well-documented" under a French headline. Map them to reader-facing
+ * labels per locale, and fall back to the stored value for any level added
+ * later so a new enum cannot crash the page.
+ */
+const EVIDENCE_LABELS_FR: Record<string, string> = {
+  "well-documented": "preuves solides",
+  "moderate-evidence": "preuves modérées",
+  "limited-evidence": "preuves limitées",
+};
+
+const EVIDENCE_LABELS_EN: Record<string, string> = {
+  "well-documented": "well-documented",
+  "moderate-evidence": "moderate evidence",
+  "limited-evidence": "limited evidence",
+};
+
+function evidenceLabel(level: string, fr: boolean): string {
+  const table = fr ? EVIDENCE_LABELS_FR : EVIDENCE_LABELS_EN;
+  return table[level] ?? level.replace(/-/g, " ");
+}
+
+/**
+ * Severity-specific next step. Shared boilerplate ("talk to your doctor") is
+ * useless advice on a contraindicated pair, and an over-cautious warning on a
+ * mild one trains readers to ignore the page. The sentence has to match the
+ * grade the reader is looking at.
+ */
+function practicalAdvice(
+  severity: InteractionPair["severity"],
+  herb: string,
+  drug: string,
+  fr: boolean
+): string {
+  if (fr) {
+    switch (severity) {
+      case "contraindicated":
+        return `N'associez pas ${herb} et ${drug}. Si vous prenez déjà les deux, contactez votre médecin ou votre pharmacien aujourd'hui plutôt que d'attendre le prochain rendez-vous : la conduite à tenir se décide avec lui.`;
+      case "severe":
+        return `Évitez d'associer ${herb} et ${drug}, sauf si votre médecin le juge nécessaire et met en place un suivi rapproché. Si vous prenez déjà les deux, parlez-en avant toute nouvelle prise.`;
+      case "moderate":
+        return `${herb} et ${drug} peuvent être associés dans certains cas, mais pas sans surveillance. Demandez à votre pharmacien si un ajustement de dose ou un espacement des prises est indiqué dans votre situation.`;
+      default:
+        return `Aux doses habituelles, le risque est faible. Signalez tout de même la prise de ${herb} à votre pharmacien, en particulier si votre traitement change ou si vous devez être opéré.`;
+    }
+  }
+  switch (severity) {
+    case "contraindicated":
+      return `Do not combine ${herb} and ${drug}. If you already take both, contact your doctor or pharmacist today rather than waiting for your next appointment — what happens next is their call, not yours.`;
+    case "severe":
+      return `Avoid combining ${herb} and ${drug} unless your doctor judges it necessary and sets up close monitoring. If you already take both, raise it before any further dose.`;
+    case "moderate":
+      return `${herb} and ${drug} can be used together in some cases, but not unmonitored. Ask your pharmacist whether a dose adjustment or spacing the doses applies to your situation.`;
+    default:
+      return `At usual doses the risk is low. Still tell your pharmacist that you take ${herb}, especially if your medication changes or you face surgery.`;
+  }
+}
+
+function severityExplainer(fr: boolean): string {
+  return fr
+    ? "Contre-indiqué et grave signifient que l'association est à éviter ; modéré, qu'elle reste possible sous surveillance ; léger, que le risque est faible aux doses habituelles. Ce niveau décrit la gravité du risque si les deux sont pris ensemble, pas la probabilité de le ressentir."
+    : "Contraindicated and severe mean the pair should be avoided; moderate means it can be used with monitoring; mild means low risk at usual doses. The grade describes how bad the outcome could be, not how likely you are to experience it.";
+}
+
+function evidenceExplainer(fr: boolean): string {
+  return fr
+    ? "Les preuves solides viennent d'études cliniques ou de cas publiés chez l'humain ; les preuves modérées, d'études limitées ou de cas isolés ; les preuves limitées, de mécanismes connus ou de travaux chez l'animal. Un niveau de preuve faible ne veut pas dire que l'interaction est imaginaire, mais que peu de personnes ont été étudiées."
+    : "Strong evidence comes from clinical studies or published human case reports; moderate evidence from limited studies or isolated cases; limited evidence from known mechanisms or animal work. A weak evidence grade does not mean the interaction is imaginary — it means few people have been studied.";
+}
+
 function severityLabel(
   severity: InteractionPair["severity"],
   fr: boolean
@@ -227,7 +301,9 @@ export default async function InteractionPairPage({ params }: Props) {
     getRelatedPairs(pair, locale),
   ]);
   const baseUrl = siteUrl();
-  const path = `/interactions/${pair.herbSlug}/${pair.drugSlug}`;
+  // Locale-aware: a /fr page that declares the English URL competes with its
+  // own EN twin instead of pairing with it through hreflang.
+  const path = `${fr ? "/fr" : ""}/interactions/${pair.herbSlug}/${pair.drugSlug}`;
   const url = `${baseUrl}${path}`;
   const verdict = verdictCopy(pair.severity, pair.herbName, pair.drugName, fr);
   const checkerQuery = fr
@@ -264,6 +340,7 @@ export default async function InteractionPairPage({ params }: Props) {
   return (
     <div className="space-y-8">
       <WebPageSchema
+        type="MedicalWebPage"
         title={`${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`}
         description={pair.description}
         url={url}
@@ -332,7 +409,7 @@ export default async function InteractionPairPage({ params }: Props) {
               {severityLabel(pair.severity, fr)}
               {pair.evidenceLevel && (
                 <span className="ml-2 text-xs font-normal opacity-80">
-                  · {pair.evidenceLevel}
+                  · {evidenceLabel(pair.evidenceLevel, fr)}
                 </span>
               )}
             </p>
@@ -360,18 +437,25 @@ export default async function InteractionPairPage({ params }: Props) {
           </div>
         )}
         <p className="text-xs text-muted-foreground">
-          {fr ? "Source : " : "Source: "}
           {pair.sourceUrl ? (
-            <a
-              href={pair.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-foreground"
-            >
-              {pair.source || pair.sourceUrl}
-            </a>
+            <>
+              {fr ? "Source : " : "Source: "}
+              <a
+                href={pair.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                {pair.source || pair.sourceUrl}
+              </a>
+            </>
+          ) : // "HerbAlly database" read like a citation. It is not one: these pairs
+          // came from sources the licence register refuses to cite, so the page
+          // has to say plainly that no primary citation backs the claim.
+          fr ? (
+            "Aucune source primaire n'est enregistrée pour cette association. La gravité reflète la pharmacologie connue, pas une étude précise — à vérifier avec un pharmacien."
           ) : (
-            pair.source || (fr ? "Base HerbAlly" : "HerbAlly database")
+            "No primary citation is recorded for this pair. The severity reflects known pharmacology rather than a specific study — confirm with a pharmacist."
           )}
           {pair.updatedAt && (
             <>
@@ -384,6 +468,77 @@ export default async function InteractionPairPage({ params }: Props) {
             </>
           )}
         </p>
+      </section>
+
+      {/* What the cited paper actually found, when it qualifies the severity
+          above. Ten pairs cite a study whose abstract reports no change — the page
+          has to say that rather than let the reader assume the paper supports the
+          warning. */}
+      {pair.evidenceNote && (
+        <section className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
+          <h3 className="text-sm font-semibold text-foreground">
+            {fr
+              ? "Ce que dit précisément l'étude citée"
+              : "What the cited study actually found"}
+          </h3>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+            {pair.evidenceNote}
+          </p>
+        </section>
+      )}
+
+      {/* What to do — scaled by severity so the advice is about THIS pair,
+          not boilerplate repeated across every page. */}
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold text-foreground">
+          {fr ? "Que faire concrètement" : "What to do in practice"}
+        </h2>
+        <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+          {practicalAdvice(pair.severity, pair.herbName, pair.drugName, fr)}
+        </p>
+        <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
+          {(fr
+            ? [
+                "N'arrêtez jamais un médicament prescrit de vous-même : un arrêt brutal peut être plus dangereux que l'interaction.",
+                "Dites à votre pharmacien le nom exact de la plante et la forme prise (tisane, gélule, extrait, poudre), car la dose change le risque.",
+                "Apportez la liste complète de vos médicaments et produits naturels à chaque rendez-vous.",
+              ]
+            : [
+                "Never stop a prescribed medicine on your own — an abrupt stop can be more dangerous than the interaction.",
+                "Tell your pharmacist the exact herb and the form you take (tea, capsule, extract, powder); the dose changes the risk.",
+                "Bring the full list of your medicines and natural products to every appointment.",
+              ]
+          ).map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      </section>
+
+      {/* How to read the two grades. A reader cannot act on "severe · moderate
+          evidence" without knowing what each axis means, and the page never
+          explained it. */}
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold text-foreground">
+          {fr ? "Comment lire ces niveaux" : "How to read these grades"}
+        </h2>
+        <dl className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border bg-muted/40 p-4">
+            <dt className="text-sm font-semibold text-foreground">
+              {fr ? "Niveau de risque" : "Risk level"}
+            </dt>
+            <dd className="mt-1 text-sm text-muted-foreground">
+              {severityExplainer(fr)}
+            </dd>
+          </div>
+          <div className="rounded-xl border bg-muted/40 p-4">
+            <dt className="text-sm font-semibold text-foreground">
+              {fr ? "Niveau de preuve" : "Evidence level"}
+            </dt>
+            <dd className="mt-1 text-sm text-muted-foreground">
+              {evidenceExplainer(fr)}
+            </dd>
+          </div>
+        </dl>
       </section>
 
       {/* CTAs */}

@@ -1,0 +1,372 @@
+{
+  "generated_at": "2026-11-03T14:05:59.352Z",
+  "counts": {
+    "ok": 2478,
+    "name_mismatch": 119,
+    "low_confidence": 12,
+    "synonym": 10
+  },
+  "genus_only_count": 95,
+  "actionable_count": 46,
+  "applied_count": 24,
+  "skipped_count": 5,
+  "remaining": [
+    {
+      "slug": "chocolate-mint",
+      "scientific_name": "Mentha x piperita cv. chocolate",
+      "gbif_canonical_name": "Mentha piperita",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 100,
+      "detail": "ours \"Mentha x piperita cv. chocolate\" vs GBIF \"Mentha piperita\"",
+      "kind": "name_mismatch",
+      "ours_pair": {
+        "genus": "mentha",
+        "species": "piperita",
+        "pair": "mentha piperita"
+      },
+      "gbif_pair": {
+        "genus": "mentha",
+        "species": "piperita",
+        "pair": "mentha piperita"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "clivers-goosegrass",
+      "scientific_name": "Galium aparine var.",
+      "gbif_canonical_name": "Galium aparine",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 88,
+      "detail": "confidence 88 → Galium aparine",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "galium",
+        "species": "aparine",
+        "pair": "galium aparine"
+      },
+      "gbif_pair": {
+        "genus": "galium",
+        "species": "aparine",
+        "pair": "galium aparine"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "fumitory-common",
+      "scientific_name": "Fumaria officinalis var.",
+      "gbif_canonical_name": "Fumaria officinalis",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 85,
+      "detail": "confidence 85 → Fumaria officinalis",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "fumaria",
+        "species": "officinalis",
+        "pair": "fumaria officinalis"
+      },
+      "gbif_pair": {
+        "genus": "fumaria",
+        "species": "officinalis",
+        "pair": "fumaria officinalis"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "herb-bennet",
+      "scientific_name": "Geum urbanum var.",
+      "gbif_canonical_name": "Geum urbanum",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 85,
+      "detail": "confidence 85 → Geum urbanum",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "geum",
+        "species": "urbanum",
+        "pair": "geum urbanum"
+      },
+      "gbif_pair": {
+        "genus": "geum",
+        "species": "urbanum",
+        "pair": "geum urbanum"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "nattokinase-cardiovasc",
+      "scientific_name": "Bacillus subtilis ferment",
+      "gbif_canonical_name": "Bacillus subtilis",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 87,
+      "detail": "confidence 87 → Bacillus subtilis",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "bacillus",
+        "species": "subtilis",
+        "pair": "bacillus subtilis"
+      },
+      "gbif_pair": {
+        "genus": "bacillus",
+        "species": "subtilis",
+        "pair": "bacillus subtilis"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "serrapeptase",
+      "scientific_name": "Serratia marcescens derived",
+      "gbif_canonical_name": "Serratia marcescens",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 87,
+      "detail": "confidence 87 → Serratia marcescens",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "serratia",
+        "species": "marcescens",
+        "pair": "serratia marcescens"
+      },
+      "gbif_pair": {
+        "genus": "serratia",
+        "species": "marcescens",
+        "pair": "serratia marcescens"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "spirulina",
+      "scientific_name": "Arthrospira platensis",
+      "gbif_canonical_name": "Arthrospira platensis",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 88,
+      "detail": "confidence 88 → Arthrospira platensis",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "arthrospira",
+        "species": "platensis",
+        "pair": "arthrospira platensis"
+      },
+      "gbif_pair": {
+        "genus": "arthrospira",
+        "species": "platensis",
+        "pair": "arthrospira platensis"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "spirulina-platensis",
+      "scientific_name": "Spirulina platensis (Arthrospira platensis)",
+      "gbif_canonical_name": "Spirulina platensis",
+      "gbif_accepted_name": null,
+      "gbif_status": "SYNONYM",
+      "gbif_confidence": 88,
+      "detail": "confidence 88 → Spirulina platensis",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "spirulina",
+        "species": "platensis",
+        "pair": "spirulina platensis"
+      },
+      "gbif_pair": {
+        "genus": "spirulina",
+        "species": "platensis",
+        "pair": "spirulina platensis"
+      },
+      "edit_distance": 0
+    },
+    {
+      "slug": "anthonota-macrophylla",
+      "scientific_name": "Anthonota macrophylla",
+      "gbif_canonical_name": "Anthonotha macrophylla",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 89,
+      "detail": "confidence 89 → Anthonotha macrophylla",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "anthonota",
+        "species": "macrophylla",
+        "pair": "anthonota macrophylla"
+      },
+      "gbif_pair": {
+        "genus": "anthonotha",
+        "species": "macrophylla",
+        "pair": "anthonotha macrophylla"
+      },
+      "edit_distance": 1
+    },
+    {
+      "slug": "cipo-cravo",
+      "scientific_name": "Tynnanthus fasciculatus",
+      "gbif_canonical_name": "Tynanthus fasciculatus",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 89,
+      "detail": "confidence 89 → Tynanthus fasciculatus",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "tynnanthus",
+        "species": "fasciculatus",
+        "pair": "tynnanthus fasciculatus"
+      },
+      "gbif_pair": {
+        "genus": "tynanthus",
+        "species": "fasciculatus",
+        "pair": "tynanthus fasciculatus"
+      },
+      "edit_distance": 1
+    },
+    {
+      "slug": "rauwolfia-cardio",
+      "scientific_name": "Rauwolfia serpentina",
+      "gbif_canonical_name": "Rauvolfia serpentina",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 88,
+      "detail": "confidence 88 → Rauvolfia serpentina",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "rauwolfia",
+        "species": "serpentina",
+        "pair": "rauwolfia serpentina"
+      },
+      "gbif_pair": {
+        "genus": "rauvolfia",
+        "species": "serpentina",
+        "pair": "rauvolfia serpentina"
+      },
+      "edit_distance": 1
+    },
+    {
+      "slug": "varuna-bark",
+      "scientific_name": "Crataeva nurvala",
+      "gbif_canonical_name": "Crateva nurvala",
+      "gbif_accepted_name": null,
+      "gbif_status": "SYNONYM",
+      "gbif_confidence": 88,
+      "detail": "GBIF: \"Crataeva nurvala\" is a synonym of \"Crateva nurvala\"",
+      "kind": "synonym",
+      "ours_pair": {
+        "genus": "crataeva",
+        "species": "nurvala",
+        "pair": "crataeva nurvala"
+      },
+      "gbif_pair": {
+        "genus": "crateva",
+        "species": "nurvala",
+        "pair": "crateva nurvala"
+      },
+      "edit_distance": 1
+    },
+    {
+      "slug": "xanthorrhiza-simplicissima",
+      "scientific_name": "Xanthorrhiza simplicissima",
+      "gbif_canonical_name": "Xanthorhiza simplicissima",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 88,
+      "detail": "confidence 88 → Xanthorhiza simplicissima",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "xanthorrhiza",
+        "species": "simplicissima",
+        "pair": "xanthorrhiza simplicissima"
+      },
+      "gbif_pair": {
+        "genus": "xanthorhiza",
+        "species": "simplicissima",
+        "pair": "xanthorhiza simplicissima"
+      },
+      "edit_distance": 1
+    },
+    {
+      "slug": "ravintsara-malagasy",
+      "scientific_name": "Cinnamomum camphora (Madagascar)",
+      "gbif_canonical_name": "Cinnamomum camphoratum",
+      "gbif_accepted_name": null,
+      "gbif_status": "SYNONYM",
+      "gbif_confidence": 95,
+      "detail": "GBIF: \"Cinnamomum camphora (Madagascar)\" is a synonym of \"Cinnamomum camphoratum\"",
+      "kind": "synonym",
+      "ours_pair": {
+        "genus": "cinnamomum",
+        "species": "camphora",
+        "pair": "cinnamomum camphora"
+      },
+      "gbif_pair": {
+        "genus": "cinnamomum",
+        "species": "camphoratum",
+        "pair": "cinnamomum camphoratum"
+      },
+      "edit_distance": 3
+    },
+    {
+      "slug": "can-sha",
+      "scientific_name": "Bombyx mori excrement",
+      "gbif_canonical_name": "Bombyx",
+      "gbif_accepted_name": null,
+      "gbif_status": "SYNONYM",
+      "gbif_confidence": 96,
+      "detail": "GBIF: \"Bombyx mori excrement\" is a synonym of \"Bombyx\"",
+      "kind": "synonym",
+      "ours_pair": {
+        "genus": "bombyx",
+        "species": "mori",
+        "pair": "bombyx mori"
+      },
+      "gbif_pair": {
+        "genus": "bombyx",
+        "species": null,
+        "pair": "bombyx"
+      },
+      "edit_distance": 5
+    },
+    {
+      "slug": "hai-zao",
+      "scientific_name": "Sargassum pallidum",
+      "gbif_canonical_name": "Sargassum polyporum",
+      "gbif_accepted_name": null,
+      "gbif_status": "ACCEPTED",
+      "gbif_confidence": 89,
+      "detail": "confidence 89 → Sargassum polyporum",
+      "kind": "low_confidence",
+      "ours_pair": {
+        "genus": "sargassum",
+        "species": "pallidum",
+        "pair": "sargassum pallidum"
+      },
+      "gbif_pair": {
+        "genus": "sargassum",
+        "species": "polyporum",
+        "pair": "sargassum polyporum"
+      },
+      "edit_distance": 5
+    },
+    {
+      "slug": "triphala-digestive",
+      "scientific_name": "Emblica/Terminalia/Terminalia",
+      "gbif_canonical_name": "Emblica",
+      "gbif_accepted_name": null,
+      "gbif_status": "SYNONYM",
+      "gbif_confidence": 96,
+      "detail": "GBIF: \"Emblica/Terminalia/Terminalia\" is a synonym of \"Emblica\"",
+      "kind": "synonym",
+      "ours_pair": {
+        "genus": "emblica",
+        "species": "terminalia",
+        "pair": "emblica terminalia"
+      },
+      "gbif_pair": {
+        "genus": "emblica",
+        "species": null,
+        "pair": "emblica"
+      },
+      "edit_distance": 11
+    }
+  ]
+}

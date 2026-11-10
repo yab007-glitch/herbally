@@ -1,0 +1,35 @@
+{
+  "herb_slug": "ginger",
+  "pairs": [
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "moderate",
+      "description": "Ginger possesses antiplatelet properties and may potentiate bleeding tendencies in patients undergoing anticoagulation with warfarin.",
+      "mechanism": "Inhibition of thromboxane synthetase and platelet cyclooxygenase by gingerol and shogaol constituents.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ginger"
+    },
+    {
+      "drug_name": "Nifedipine",
+      "severity": "mild",
+      "description": "Concomitant administration of ginger and nifedipine produces synergistic inhibition of platelet aggregation in hypertensive volunteers.",
+      "mechanism": "Complementary antiplatelet action through dual inhibition of calcium influx and platelet activation pathways.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ginger"
+    },
+    {
+      "drug_name": "Metformin",
+      "severity": "mild",
+      "description": "Ginger extracts enhance glucose uptake in peripheral tissues, presenting a theoretical risk of additive hypoglycemia when combined with metformin.",
+      "mechanism": "Stimulation of GLUT4 glucose transporter translocation to the cell membrane by gingerols.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/ginger"
+    }
+  ]
+}

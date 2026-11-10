@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Search, X, Shuffle } from "lucide-react";
+import { useState, useCallback, useEffect, useRef, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
+import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
+import { Search, X, Shuffle, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,53 +11,94 @@ import {
   useSaveSearch,
 } from "@/components/herbs/recent-searches";
 import { useDebounce } from "@/lib/hooks/use-debounce";
+import { buildHerbListUrl } from "@/lib/search/herb-list-url";
 import { useTranslations } from "next-intl";
 import { logger } from "@/lib/utils/logger";
 
 interface SmartSearchProps {
   defaultValue?: string;
   category?: string;
+  sort?: string;
 }
 
-export function SmartSearch({ defaultValue = "", category }: SmartSearchProps) {
+export function SmartSearch({
+  defaultValue = "",
+  category,
+  sort,
+}: SmartSearchProps) {
   const t = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(defaultValue);
+  const [isPending, startTransition] = useTransition();
+  // The random-herb button fetches before navigating; without this it
+  // gave no feedback at all while the fetch resolved (the same "appeared
+  // dead" symptom as the old Surprise Me button).
+  const [randomLoading, setRandomLoading] = useState(false);
+  const [randomError, setRandomError] = useState(false);
   const saveSearch = useSaveSearch();
+  const lastNavigatedQ = useRef<string | null>(null);
 
   // Debounce the query value using the project's useDebounce hook
   const debouncedQuery = useDebounce(query, 300);
 
-  // Build search URL - extracted to avoid recreating in effect
+  // The URL query parameter, not the initial prop, is the source of truth.
+  // Without this, back/forward navigation and category links leave a stale
+  // value in the input, and the debounced effect below compares against a
+  // stale defaultValue — the combination that made the first search on a
+  // fresh page look like it did nothing.
+  const urlQuery = searchParams.get("q") ?? "";
+
+  // Mirror an externally-driven URL change (back/forward, a category link,
+  // the X-free clear) back into the input. Adjusting during render is React's
+  // documented pattern for state that depends on a prop; doing it in an effect
+  // added a cascading render and is rejected by
+  // react-hooks/set-state-in-effect.
+  const [syncedUrlQuery, setSyncedUrlQuery] = useState(urlQuery);
+  if (urlQuery !== syncedUrlQuery) {
+    setSyncedUrlQuery(urlQuery);
+    setQuery(urlQuery);
+  }
+
+  // Keep the value the debounced effect compares against aligned with the URL
+  // after any navigation, so an externally-driven change does not trigger a
+  // redundant router.replace once the debounce settles. Writing a ref is not
+  // state, so it cannot cascade a render.
+  useEffect(() => {
+    lastNavigatedQ.current = urlQuery;
+  }, [urlQuery]);
+
+  // Build the canonical search URL for a value. Searching always resets
+  // to page 1: previously the current ?page= was preserved, so searching
+  // from page 5 could land on an empty or out-of-range page.
   const buildSearchUrl = useCallback(
     (value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
       const trimmed = value.trim();
-
-      if (trimmed) {
-        params.set("q", trimmed);
-        saveSearch(trimmed);
-      } else {
-        params.delete("q");
-      }
-
-      if (category) {
-        params.set("category", category);
-      }
-
-      return `/herbs?${params.toString()}`;
+      return buildHerbListUrl({
+        q: trimmed || undefined,
+        category,
+        sort,
+        anchor: null,
+      });
     },
-    [category, searchParams, saveSearch]
+    [category, sort]
   );
 
-  // Update URL when debounced query changes (skip initial defaultValue)
+  // Live search: when the debounced value differs from the URL, replace
+  // the URL (replace, not push, so typing does not flood history). An
+  // empty debounced value clears the search — previously only the X
+  // button could clear it, and backspacing to empty did nothing.
   useEffect(() => {
-    if (debouncedQuery && debouncedQuery !== defaultValue) {
-      const url = buildSearchUrl(debouncedQuery);
-      router.push(url);
-    }
-  }, [debouncedQuery, defaultValue, buildSearchUrl, router]);
+    const trimmed = debouncedQuery.trim();
+    if (trimmed === (lastNavigatedQ.current ?? "").trim()) return;
+    const url = buildSearchUrl(debouncedQuery);
+    lastNavigatedQ.current = trimmed;
+    if (trimmed) saveSearch(trimmed);
+    startTransition(() => {
+      router.replace(url);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery]);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -64,18 +106,53 @@ export function SmartSearch({ defaultValue = "", category }: SmartSearchProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmed = query.trim();
+    if (trimmed) saveSearch(trimmed);
+    lastNavigatedQ.current = trimmed;
     const url = buildSearchUrl(query);
-    router.push(url);
+    startTransition(() => {
+      router.push(url);
+    });
   };
 
   const handleClear = () => {
     setQuery("");
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete("q");
-    if (category) {
-      params.set("category", category);
+    lastNavigatedQ.current = "";
+    const url = buildSearchUrl("");
+    startTransition(() => {
+      router.push(url);
+    });
+  };
+
+  const handleRandom = async () => {
+    setRandomLoading(true);
+    setRandomError(false);
+    try {
+      const res = await fetch("/api/herbs/random");
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.slug) {
+          router.push(`/herbs/${data.slug}`);
+        } else {
+          setRandomError(true);
+        }
+      } else {
+        // Previously there was no else branch here: a non-OK response
+        // (e.g. 429 rate limit, 500) silently reset the button to
+        // enabled with no navigation and no message. Surface it.
+        logger.error("smart_search_random_herb_failed", {
+          status: res.status,
+        });
+        setRandomError(true);
+      }
+    } catch (error) {
+      logger.error("smart_search_random_herb", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      setRandomError(true);
+    } finally {
+      setRandomLoading(false);
     }
-    router.push(`/herbs?${params.toString()}`);
   };
 
   return (
@@ -89,6 +166,7 @@ export function SmartSearch({ defaultValue = "", category }: SmartSearchProps) {
             value={query}
             onChange={handleChange}
             className="h-12 pl-10 pr-10 transition-all"
+            aria-label={t("search.placeholder")}
           />
           {query && (
             <button
@@ -101,34 +179,38 @@ export function SmartSearch({ defaultValue = "", category }: SmartSearchProps) {
             </button>
           )}
         </div>
-        <Button type="submit" className="h-12">
-          {t("search.search")}
+        <Button type="submit" className="h-12" disabled={isPending}>
+          {isPending && <Loader2 className="size-4 animate-spin" />}
+          {isPending ? t("search.searching") : t("search.search")}
         </Button>
         <Button
           type="button"
           variant="outline"
           className="h-12 gap-2"
-          onClick={async () => {
-            try {
-              const res = await fetch("/api/herbs/random");
-              if (res.ok) {
-                const data = await res.json();
-                if (data?.slug) {
-                  router.push(`/herbs/${data.slug}`);
-                }
-              }
-            } catch (error) {
-              logger.error("smart_search_random_herb", {
-                error: error instanceof Error ? error.message : String(error),
-              });
-              router.push("/herbs");
-            }
-          }}
+          disabled={isPending || randomLoading}
+          aria-busy={randomLoading}
+          onClick={handleRandom}
         >
-          <Shuffle className="size-4" />
+          {randomLoading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Shuffle className="size-4" />
+          )}
           {t("search.surpriseMe")}
         </Button>
       </form>
+      {randomError && (
+        <p role="alert" className="text-sm text-destructive">
+          {t("search.randomError")}{" "}
+          <button
+            type="button"
+            className="font-medium underline"
+            onClick={handleRandom}
+          >
+            {t("common.retry")}
+          </button>
+        </p>
+      )}
       <RecentSearches />
     </div>
   );

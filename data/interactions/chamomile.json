@@ -1,0 +1,45 @@
+{
+  "herb_slug": "chamomile",
+  "pairs": [
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "severe",
+      "description": "Chamomile contains naturally occurring coumarin constituents that can potentiate the anticoagulant effects of warfarin and cause bleeding.",
+      "mechanism": "Additive anticoagulant action combined with mild CYP2C9 metabolic inhibition by chamomile flavonoids.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/chamomile"
+    },
+    {
+      "drug_name": "Cyclosporine",
+      "severity": "moderate",
+      "description": "Chamomile can inhibit intestinal CYP3A4 enzymes, increasing blood concentrations and renal toxicity risk of cyclosporine.",
+      "mechanism": "Apigenin-mediated inhibition of CYP3A4 enzymes and enteric P-glycoprotein efflux pumps.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/chamomile"
+    },
+    {
+      "drug_name": "Aspirin",
+      "severity": "moderate",
+      "description": "Concurrent ingestion of chamomile with aspirin can increase gastric mucosal bleeding risk and antiplatelet activity.",
+      "mechanism": "Additive inhibition of platelet aggregation and synergistic gastric mucosal prostaglandin suppression.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/chamomile"
+    },
+    {
+      "drug_name": "Citalopram",
+      "severity": "mild",
+      "description": "Chamomile possesses mild central nervous system depressant and anxiolytic actions that can enhance drowsiness when combined with SSRIs.",
+      "mechanism": "Apigenin binding to central benzodiazepine receptors producing additive somnolence with psychotropic drugs.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/chamomile"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import { ChatInterface } from "@/components/pharmacist/chat-interface";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { ContinueExploring } from "@/components/shared/continue-exploring";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,7 @@ export default async function PharmacistPage({
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {t("herbalistPage.title")}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -62,6 +63,9 @@ export default async function PharmacistPage({
         autoQuery={autoQuery}
         locale={locale}
       />
+      <div className="mt-10">
+        <ContinueExploring />
+      </div>
     </div>
   );
 }

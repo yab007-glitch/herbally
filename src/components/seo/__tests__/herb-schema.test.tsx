@@ -100,4 +100,17 @@ describe("HerbSchema", () => {
     const safety = json.safetyConsideration as Record<string, unknown>;
     expect(safety.contraindication).toBe("pregnancy; liver disease");
   });
+
+  it("uses the caller's localized url instead of the English path", () => {
+    // French pages used to declare https://herbally.app/herbs/<slug> inside
+    // their own MedicalWebPage node while serving /fr/herbs/<slug>.
+    const frUrl = "https://herbally.app/fr/herbs/mentha-longifolia";
+    const markup = renderToStaticMarkup(
+      HerbSchema({
+        herb: baseHerb as unknown as Parameters<typeof HerbSchema>[0]["herb"],
+        url: frUrl,
+      }) as React.ReactElement
+    );
+    expect(extractJson(markup).url).toBe(frUrl);
+  });
 });

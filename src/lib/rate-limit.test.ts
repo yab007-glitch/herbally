@@ -1,5 +1,14 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { rateLimit } from "./rate-limit";
+
+// Force the in-memory backend. With UPSTASH_* set in .env.local the limiter talks
+// to a real Redis, so counters survive between test runs and the "over the limit"
+// case starts from a non-zero count. The unit under test here is the window logic,
+// not Redis.
+beforeEach(() => {
+  delete process.env.UPSTASH_REDIS_REST_URL;
+  delete process.env.UPSTASH_REDIS_REST_TOKEN;
+});
 
 describe("rate limiting", () => {
   it("allows requests under the limit", async () => {

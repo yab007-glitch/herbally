@@ -1,0 +1,479 @@
+{
+  "generated_at": "2026-11-03T13:51:44.451Z",
+  "user_agent": "HerbAlly-licence-audit/1.0 (+https://herbally.app; licence compliance review)",
+  "probes": [
+    {
+      "key": "nih-web-policies",
+      "source": "nih",
+      "url": "https://www.nih.gov/web-policies-notices",
+      "status": 403,
+      "final_url": "https://www.nih.gov/web-policies-notices",
+      "content_type": "text/html",
+      "bytes": 5728,
+      "sha256": "15d31a00918c519a0883bc20be8c2cbe4aff2c37ef264c6a0fc3eb2c28b1ce73",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/nih-web-policies.html",
+      "title": "Just a moment...",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "nccih-website-policies",
+      "source": "nccih",
+      "url": "https://www.nccih.nih.gov/about/nccih-website-policies",
+      "status": 404,
+      "final_url": "https://www.nccih.nih.gov/about/nccih-website-policies",
+      "content_type": "text/html",
+      "bytes": 480700,
+      "sha256": "bf4000879109e8febff216715cb97d4e6cedb2554f69e1fb7ada410409ee89a6",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/nccih-website-policies.html",
+      "title": "Page not found | NCCIH",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "nlm-copyright",
+      "source": "nlm",
+      "url": "https://www.nlm.nih.gov/copyright.html",
+      "status": 200,
+      "final_url": "https://www.nlm.nih.gov/copyright.html",
+      "content_type": "text/html",
+      "bytes": 17164,
+      "sha256": "e1541618507e6b71430670b999e49039a6397a3860bdb741a83ce43a8723311e",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/nlm-copyright.html",
+      "title": "NLM Copyright Information",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "pubmed-disclaimer",
+      "source": "pubmed",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/disclaimer/",
+      "status": 200,
+      "final_url": "https://pubmed.ncbi.nlm.nih.gov/disclaimer/",
+      "content_type": "text/html",
+      "bytes": 39680,
+      "sha256": "e5e3f323ca713d68eeee13ba978955900343f02f7e7680788e5cb1b72b42eda9",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/pubmed-disclaimer.html",
+      "title": "Disclaimer - PubMed",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "ncbi-policies",
+      "source": "ncbi",
+      "url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+      "status": 200,
+      "final_url": "https://www.ncbi.nlm.nih.gov/home/about/policies/",
+      "content_type": "text/html",
+      "bytes": 38974,
+      "sha256": "c99a36bb9daa8c6d14dc505a11a860a8a9cca7a5c94bf5c3961542decf563dad",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/ncbi-policies.html",
+      "title": "Policies and Disclaimers - NCBI",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "pubchem-ftp-readme",
+      "source": "pubchem",
+      "url": "https://ftp.ncbi.nlm.nih.gov/pubchem/README",
+      "status": 200,
+      "final_url": "https://ftp.ncbi.nlm.nih.gov/pubchem/README",
+      "content_type": "text/plain",
+      "bytes": 2245,
+      "sha256": "1e6b69ec566f1d5e76a0ab43d979a6b58129090d269ecbaea6ffb5d4aaf855cf",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/pubchem-ftp-readme.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "usda-policies",
+      "source": "usda",
+      "url": "https://www.usda.gov/policies-and-links",
+      "status": 403,
+      "final_url": "https://www.usda.gov/policies-and-links",
+      "content_type": "text/html",
+      "bytes": 390,
+      "sha256": "ec3b79dcbbdb0589ca499594ff1d45f63844e6587f736184571028270c6fd15e",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/usda-policies.html",
+      "title": "Access Denied",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "nrcs-policies",
+      "source": "nrcs",
+      "url": "https://www.nrcs.usda.gov/about/our-agency/nrcs-policies",
+      "status": 0,
+      "final_url": null,
+      "content_type": null,
+      "bytes": 0,
+      "sha256": null,
+      "error": "fetch failed (TimeoutError: The operation was aborted due to timeout); curl --http1.1 retry failed: Error: Command failed: curl -sS --http1.1 --max-time 60 -L -A HerbAlly-licence-audit/1.0 (+https://herbally.app; licence compliance review) -H Accept: text/html,application/json,application/xml;q=0.9,*/*;q=0.8 -D /var/folders/pw/7xm6002j3jbg9rpf3l95ftrr0000gn/T/herbally-probe-7Ol8lV/headers -o /var/folders/pw/7xm6002j3jbg9rpf3l95ftrr0000gn/T/herbally-probe-7Ol8lV/body -w %{http_code}\n%{url_effective}\n%{content_type} --url https://www.nrcs.usda.gov/about/our-agency/nrcs-policies\ncurl: (28) Operation timed out after 60061 milliseconds with 0 bytes received\n",
+      "saved_path": null,
+      "title": null,
+      "transport": "none",
+      "transport_attempts": [
+        "fetch",
+        "curl-http1.1"
+      ],
+      "kind": "page",
+      "fetch_error": "TimeoutError: The operation was aborted due to timeout"
+    },
+    {
+      "key": "ogl-canada",
+      "source": "ogl",
+      "url": "https://open.canada.ca/en/open-government-licence-canada",
+      "status": 200,
+      "final_url": "https://open.canada.ca/en/open-government-licence-canada",
+      "content_type": "text/html",
+      "bytes": 23088,
+      "sha256": "e62c3211e4bdc94fa4b6ca6bf541749c18b468c994ccae55e32603fafe7204cd",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/ogl-canada.html",
+      "title": "Open Government Licence - Canada | Open Government - Government of Canada",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "ema-monograph-pdf",
+      "source": "ema",
+      "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-zingiber-officinalis-rhizoma_en.pdf",
+      "status": 404,
+      "final_url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-zingiber-officinalis-rhizoma_en.pdf",
+      "content_type": "text/html",
+      "bytes": 55499,
+      "sha256": "b9cc9d8596c3920d4907deb948b63bd67afc8a410910b6fef481245d337c0b3f",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/ema-monograph-pdf.html",
+      "title": "Page or document not found | European Medicines Agency (EMA)",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "gbif-techdocs",
+      "source": "gbif",
+      "url": "https://techdocs.gbif.org/en/openapi/",
+      "status": 200,
+      "final_url": "https://techdocs.gbif.org/en/openapi/",
+      "content_type": "text/html",
+      "bytes": 23511,
+      "sha256": "9d5744bd574e711124a74a65c54e4543af2796b88858269e8518434eb7275ba3",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/gbif-techdocs.html",
+      "title": "GBIF API Reference :: Technical Documentation",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "page"
+    },
+    {
+      "key": "robots-powo",
+      "source": "robots",
+      "url": "https://powo.science.kew.org/robots.txt",
+      "status": 200,
+      "final_url": "https://powo.science.kew.org/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 2676,
+      "sha256": "3073d1e371afb3271c7666148766fedc5145f7d8440f7114062db79b7bd58add",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-powo.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "Allow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /"
+      ]
+    },
+    {
+      "key": "robots-kew",
+      "source": "robots",
+      "url": "https://www.kew.org/robots.txt",
+      "status": 200,
+      "final_url": "https://www.kew.org/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 2676,
+      "sha256": "3073d1e371afb3271c7666148766fedc5145f7d8440f7114062db79b7bd58add",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-kew.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "Allow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /"
+      ]
+    },
+    {
+      "key": "robots-gbif-www",
+      "source": "robots",
+      "url": "https://www.gbif.org/robots.txt",
+      "status": 403,
+      "final_url": "https://www.gbif.org/robots.txt",
+      "content_type": "text/html",
+      "bytes": 5529,
+      "sha256": "a6155d4e33e7156e8ab010332f2f7bbade1f4f462ee5dfd353a9574cebf48e0d",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-gbif-www.html",
+      "title": "Just a moment...",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": null
+    },
+    {
+      "key": "robots-gbif-api",
+      "source": "robots",
+      "url": "https://api.gbif.org/robots.txt",
+      "status": 200,
+      "final_url": "https://api.gbif.org/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 356,
+      "sha256": "a0b77089a46b82e21c334ba987a21af75fdb75160ccc908edea80b183f5098e8",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-gbif-api.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "Disallow: /v1/image/unsafe",
+        "# Allow message/social previews",
+        "Disallow:"
+      ]
+    },
+    {
+      "key": "robots-ncbi-eutils",
+      "source": "robots",
+      "url": "https://eutils.ncbi.nlm.nih.gov/robots.txt",
+      "status": 200,
+      "final_url": "https://eutils.ncbi.nlm.nih.gov/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 178,
+      "sha256": "ead5515bac4e17bafb45312b93ca74f15ea098086a1c678f42a8319f3b369ac8",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-ncbi-eutils.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "Disallow: /"
+      ]
+    },
+    {
+      "key": "robots-pubchem",
+      "source": "robots",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/robots.txt",
+      "status": 200,
+      "final_url": "https://pubchem.ncbi.nlm.nih.gov/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 7254,
+      "sha256": "3a8321502c59632eba0b50372ac491ee61e882045dfb2e63efc896d18845830c",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-pubchem.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "# Keep the Allow exceptions scoped to their existing subpaths.",
+        "Disallow: /",
+        "Disallow: /",
+        "Disallow: /",
+        "# Allow the public PUG tables on both the original and /interactive routes.",
+        "Crawl-delay: 5",
+        "Allow: /interactive/rest/pug/periodictable/",
+        "Allow: /interactive/rest/pug/sourcetable/",
+        "Allow: /rest/pug/periodictable/",
+        "Allow: /rest/pug/sourcetable/"
+      ]
+    },
+    {
+      "key": "robots-ncbi-www",
+      "source": "robots",
+      "url": "https://www.ncbi.nlm.nih.gov/robots.txt",
+      "status": 200,
+      "final_url": "https://www.ncbi.nlm.nih.gov/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 10819,
+      "sha256": "22843ad179efc5f6f6f71f5fd4f05dd49312274d906741227d354f32b56f42f0",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-ncbi-www.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "Disallow: /cgi-bin",
+        "Disallow: /entrez",
+        "Disallow: /stat",
+        "Disallow: /COG",
+        "Disallow: /Entrez",
+        "Disallow: /mailman",
+        "Disallow: /myncbi",
+        "Disallow: /sutils",
+        "Disallow: /Taxonomy/Selector",
+        "Disallow: /Taxonomy/CommonTree"
+      ]
+    },
+    {
+      "key": "robots-health-canada",
+      "source": "robots",
+      "url": "https://health-products.canada.ca/robots.txt",
+      "status": 404,
+      "final_url": "https://health-products.canada.ca/robots.txt",
+      "content_type": "text/html",
+      "bytes": 770,
+      "sha256": "dbf49305570a40c9c041433e79684a8303cd95471841ac063c67fb57c694b88d",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-health-canada.html",
+      "title": "HTTP Status 404 – Not Found",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": null
+    },
+    {
+      "key": "robots-ema",
+      "source": "robots",
+      "url": "https://www.ema.europa.eu/robots.txt",
+      "status": 200,
+      "final_url": "https://www.ema.europa.eu/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 2082,
+      "sha256": "10019eac449a8109c781c6ccd86769673f46a23c28965fe045a7694e925004c9",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-ema.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "Allow: /core/*.css$",
+        "Allow: /core/*.css?",
+        "Allow: /core/*.js$",
+        "Allow: /core/*.js?",
+        "Allow: /core/*.gif",
+        "Allow: /core/*.jpg",
+        "Allow: /core/*.jpeg",
+        "Allow: /core/*.png",
+        "Allow: /core/*.svg",
+        "Allow: /profiles/*.css$"
+      ]
+    },
+    {
+      "key": "robots-usda-plants",
+      "source": "robots",
+      "url": "https://plants.sc.egov.usda.gov/robots.txt",
+      "status": 200,
+      "final_url": "https://plants.sc.egov.usda.gov/robots.txt",
+      "content_type": "text/html",
+      "bytes": 710,
+      "sha256": "7efcec2ceb612761c30057418bf1333531700a704246566a837f83913bd6b95b",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-usda-plants.html",
+      "title": "USDA Plants Database",
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": null
+    },
+    {
+      "key": "robots-nccih",
+      "source": "robots",
+      "url": "https://www.nccih.nih.gov/robots.txt",
+      "status": 200,
+      "final_url": "https://www.nccih.nih.gov/robots.txt",
+      "content_type": "text/plain",
+      "bytes": 161,
+      "sha256": "7d8f7b8f4cdbab21f060cb672d02c4ea59f93f1df2fffb9ef73867d172410176",
+      "error": null,
+      "saved_path": "artifacts/source-probes/2026-11-03/pages-round3/robots-nccih.txt",
+      "title": null,
+      "transport": "fetch",
+      "transport_attempts": [
+        "fetch"
+      ],
+      "kind": "robots",
+      "robots_rules": [
+        "Allow: /",
+        "Disallow: /about/a-message-from-the-director"
+      ]
+    }
+  ]
+}

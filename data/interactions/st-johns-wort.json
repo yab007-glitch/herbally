@@ -1,0 +1,55 @@
+{
+  "herb_slug": "st-johns-wort",
+  "pairs": [
+    {
+      "drug_name": "Cyclosporine",
+      "severity": "contraindicated",
+      "description": "St. John's wort potently induces CYP3A4 and P-glycoprotein, drastically lowering cyclosporine blood concentrations and triggering acute allograft rejection.",
+      "mechanism": "Hyperforin activates the Pregnane X Receptor (PXR), profoundly upregulating intestinal and hepatic CYP3A4 and MDR1/P-gp expression.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/st-johns-wort"
+    },
+    {
+      "drug_name": "HIV Protease Inhibitors (Indinavir)",
+      "severity": "contraindicated",
+      "description": "St. John's wort induces CYP3A4-mediated clearance of indinavir, dropping plasma drug concentrations below therapeutic levels and risking viral resistance.",
+      "mechanism": "Enzymatic induction of cytochrome P450 3A4 and P-glycoprotein transport systems reducing bioavailability.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/st-johns-wort"
+    },
+    {
+      "drug_name": "Oral Contraceptives",
+      "severity": "severe",
+      "description": "St. John's wort accelerates metabolic breakdown of ethinyl estradiol and progestins, causing breakthrough bleeding and unintended pregnancy.",
+      "mechanism": "Induction of hepatic CYP3A4 enzymes responsible for oxidative estrogen and progestin metabolism.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/st-johns-wort"
+    },
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "severe",
+      "description": "St. John's wort decreases plasma concentrations of warfarin, resulting in subtherapeutic INR measurements and heightened thromboembolism risk.",
+      "mechanism": "Dual induction of hepatic CYP2C9 and CYP3A4 enzymes accelerating the oxidative clearance of warfarin isomers.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/st-johns-wort"
+    },
+    {
+      "drug_name": "Sertraline (Zoloft)",
+      "severity": "contraindicated",
+      "description": "Combining St. John's wort with SSRI antidepressants like sertraline creates a life-threatening risk of serotonin syndrome.",
+      "mechanism": "Additive inhibition of serotonin reuptake leading to hyperstimulation of central 5-HT1A and 5-HT2A receptors.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/st-johns-wort"
+    }
+  ]
+}

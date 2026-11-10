@@ -56,6 +56,15 @@ export type DosageCalculationWithHerb = DosageCalculation & {
  * The previous loose shape (`error?: string`) let failure responses omit
  * `error`, so callers reading `result.error` after a `!success` check could
  * surface `undefined` to users; the union makes that a compile error.
+ *
+ * Failed lookups may also carry a `reason` discriminant so callers can tell a
+ * genuine miss (`not_found` → 404) from a transport/DB problem
+ * (`unavailable` → retryable 500, never cached as a 404).
  */
 export type ActionResponse<T = void> =
-  { success: true; data?: T } | { success: false; error: string };
+  | { success: true; data?: T }
+  | {
+      success: false;
+      error: string;
+      reason?: "not_found" | "unavailable";
+    };

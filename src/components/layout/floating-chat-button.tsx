@@ -1,24 +1,131 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
+import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
 import { MessageCircle, X, Send, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
+/** Session flag: the teaser has already been shown this visit. */
+const TEASER_SEEN_KEY = "herbally.chat.teaser.seen";
+/** localStorage timestamp of the last dismissal. */
+const TEASER_DISMISSED_KEY = "herbally.chat.teaser.dismissedAt";
+/** How long a dismissal silences the teaser. One day: a "no thanks" is not a
+ *  permanent verdict, and a week of silence made the bubble look broken. */
+const TEASER_QUIET_MS = 24 * 60 * 60 * 1000;
+/** Wait before speaking: long enough not to compete with the page settling. */
+const TEASER_DELAY_MS = 2_500;
+/** Give up if nobody engages. */
+const TEASER_LIFETIME_MS = 15_000;
+
+function readStorage(get: () => string | null): string | null {
+  try {
+    return get();
+  } catch {
+    // Storage can throw in private browsing and in some embedded webviews.
+    return null;
+  }
+}
+
+function writeStorage(set: () => void): void {
+  try {
+    set();
+  } catch {
+    // Ignore: the teaser simply behaves as if it were never dismissed.
+  }
+}
+
+/**
+ * Floating entry point to the virtual herbalist.
+ *
+ * The assistant introduces itself once, in a small bubble, on the homepage —
+ * it does not open a panel over the page. Arriving at a site and being talked
+ * at is the fastest way to make someone leave; a bubble is an invitation the
+ * visitor can ignore. Once dismissed it stays quiet for a week, once shown it
+ * stays quiet for the rest of the visit, and it never appears on interior
+ * pages where the floating button is enough.
+ */
 export function FloatingChatButton() {
   const t = useTranslations();
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [teaser, setTeaser] = useState(false);
   const [input, setInput] = useState("");
   const [hasOpened, setHasOpened] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
   const quickQuestions = [
     t("herbalistPage.widgetQ1"),
     t("herbalistPage.widgetQ2"),
     t("herbalistPage.widgetQ3"),
   ];
+
+  // Homepage only: "/" is the English home, "/fr" the French one.
+  const isHome = pathname === "/" || pathname === "/fr";
+
+  useEffect(() => {
+    if (!isHome || open || hasOpened) return;
+
+    // A phone is where the invitation matters most — it used to be suppressed
+    // below 768px, which meant most visitors never saw it at all. It now shows
+    // at every width; the bubble sits above the bottom navigation rather than
+    // over it.
+    //
+    // ?chat=teaser forces it once, for checking the thing exists without
+    // clearing storage.
+    const forced =
+      typeof window !== "undefined" &&
+      new URLSearchParams(window.location.search).get("chat") === "teaser";
+    if (!forced) {
+      const dismissedAt = Number(
+        readStorage(() => window.localStorage.getItem(TEASER_DISMISSED_KEY))
+      );
+      if (
+        Number.isFinite(dismissedAt) &&
+        Date.now() - dismissedAt < TEASER_QUIET_MS
+      )
+        return;
+      if (readStorage(() => window.sessionStorage.getItem(TEASER_SEEN_KEY)))
+        return;
+    }
+
+    // On a phone the homepage's primary button sits low on the first screen, and
+    // a bubble parked over it is worse than no bubble. So a small screen waits
+    // until the visitor has scrolled past that button (240px) before speaking;
+    // a wide screen has room to speak immediately.
+    // jsdom has no matchMedia; treat that as a wide screen so the component
+    // behaves predictably in tests.
+    const isNarrow =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 767px)").matches;
+    let show: number | undefined;
+    const reveal = () => {
+      setTeaser(true);
+      writeStorage(() => window.sessionStorage.setItem(TEASER_SEEN_KEY, "1"));
+    };
+    if (isNarrow) {
+      const onScroll = () => {
+        if (window.scrollY < 240) return;
+        window.removeEventListener("scroll", onScroll);
+        reveal();
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }
+    show = window.setTimeout(reveal, TEASER_DELAY_MS);
+    return () => window.clearTimeout(show);
+  }, [isHome, open, hasOpened]);
+
+  // Stop hovering once it has had its moment; a bubble that never leaves is
+  // just a permanent banner.
+  useEffect(() => {
+    if (!teaser) return;
+    const hide = window.setTimeout(() => setTeaser(false), TEASER_LIFETIME_MS);
+    return () => window.clearTimeout(hide);
+  }, [teaser]);
 
   useEffect(() => {
     if (open && inputRef.current) {
@@ -26,10 +133,18 @@ export function FloatingChatButton() {
     }
   }, [open]);
 
+  const dismissTeaser = useCallback(() => {
+    setTeaser(false);
+    writeStorage(() =>
+      window.localStorage.setItem(TEASER_DISMISSED_KEY, String(Date.now()))
+    );
+  }, []);
+
   function handleSend(text?: string) {
     const q = text || input.trim();
     if (!q) return;
     setOpen(false);
+    setTeaser(false);
     setInput("");
     router.push(`/herbalist?q=${encodeURIComponent(q)}`);
   }
@@ -41,14 +156,68 @@ export function FloatingChatButton() {
 
   return (
     <>
-      {/* Toggle button */}
+      {/* The greeting bubble — shown once, on the homepage. */}
+      {teaser && !open && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-36 right-4 z-40 w-[calc(100vw-2rem)] max-w-[17rem] rounded-2xl rounded-br-md border border-border bg-background p-3.5 shadow-xl transition-all duration-300 motion-reduce:transition-none md:bottom-20"
+        >
+          <div className="flex items-start gap-2.5">
+            <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <Leaf className="size-3.5" />
+            </div>
+            <p className="text-sm leading-relaxed text-foreground">
+              {t("herbalistPage.greeting.bubbleText")}
+            </p>
+            <button
+              onClick={dismissTeaser}
+              aria-label={t("herbalistPage.greeting.bubbleDismiss")}
+              className="-mr-1 -mt-1 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <X className="size-3.5" />
+            </button>
+          </div>
+          <div className="mt-2.5 flex justify-end gap-2">
+            <button
+              onClick={dismissTeaser}
+              className="rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {t("herbalistPage.greeting.bubbleDismiss")}
+            </button>
+            <Button
+              size="sm"
+              className="h-7 rounded-md px-2.5 text-xs"
+              onClick={() => {
+                setTeaser(false);
+                setOpen(true);
+                setHasOpened(true);
+              }}
+            >
+              {t("herbalistPage.greeting.bubbleOpen")}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Toggle button. Hidden while the greeting bubble is up: the bubble has
+          its own "Start chat", and stacking both put a button on the primary
+          "Check interaction" CTA on a phone. */}
       <button
         onClick={() => {
           setOpen(!open);
+          setTeaser(false);
           if (!hasOpened) setHasOpened(true);
         }}
         className={cn(
-          "fixed bottom-20 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition-all md:bottom-6",
+          // Desktop-only: on a phone this button sits at bottom-20, which is
+          // exactly where the medication field lands on a 664px-tall screen —
+          // measured 48×38px of overlap on first paint. The bottom nav already
+          // carries a Chat tab, so the phone loses nothing.
+          "fixed bottom-20 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition-all md:bottom-6 max-md:hidden no-print",
+          // `hidden` here is a Tailwind class, not the HTML attribute: the
+          // utility's `display:flex` would beat the UA `[hidden]` rule.
+          teaser && !open && "hidden",
           open
             ? "bg-muted text-foreground rotate-90"
             : "bg-primary text-primary-foreground hover:scale-105 hover:shadow-xl"

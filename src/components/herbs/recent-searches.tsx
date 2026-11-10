@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Clock, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";

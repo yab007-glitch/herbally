@@ -12,6 +12,7 @@ if (typeof window !== "undefined" && !("PointerEvent" in window)) {
 // Passthrough translator: returns the key so assertions can target keys
 // rather than English copy (the copy changes; the key is the contract).
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string) => key,
 }));
 
@@ -142,5 +143,82 @@ describe("DoseCalculatorForm pediatric gate", () => {
     expect(
       screen.queryByText("calculatorForm.pediatricDoseBlocked")
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("DoseCalculatorForm adult-only wording and range picker", () => {
+  it("shows the adult-only notice before any calculation", () => {
+    render(<DoseCalculatorForm />);
+    expect(
+      screen.getByText("calculatorForm.adultOnlyNotice")
+    ).toBeInTheDocument();
+  });
+
+  it("does not prefill a range midpoint and lets the user pick low explicitly", () => {
+    render(
+      <DoseCalculatorForm
+        prefill={{
+          herbName: "Turmeric",
+          adultDose: "",
+          doseUnit: "mg",
+          dosageAdultRaw: "500-2000 mg",
+          dosageRange: { low: 500, high: 2000, unit: "mg" },
+          dosageForms: ["Capsule"],
+          verified: true,
+        }}
+      />
+    );
+    const doseInput = screen.getByLabelText(
+      /calculatorForm.adultDose/
+    ) as HTMLInputElement;
+    // No silent midpoint prefill: the field starts empty.
+    expect(doseInput.value).toBe("");
+    // The numeric dose field no longer uses the herb-select placeholder.
+    expect(doseInput.placeholder).toBe("calculatorForm.adultDosePlaceholder");
+    fireEvent.click(screen.getByRole("button", { name: /rangeLow/ }));
+    expect(doseInput.value).toBe("500");
+  });
+
+  it("labels age and weight fields for adults, not children", () => {
+    render(<DoseCalculatorForm />);
+    const ageInput = screen.getByLabelText(
+      /calculatorForm.childAge/
+    ) as HTMLInputElement;
+    const weightInput = screen.getByLabelText(
+      /calculatorForm.childWeight/
+    ) as HTMLInputElement;
+    // Placeholders are examples, not values that read as prefilled data.
+    expect(ageInput.placeholder).toBe("e.g. 30");
+    expect(weightInput.placeholder).toBe("e.g. 70");
+    expect(ageInput.value).toBe("");
+    expect(weightInput.value).toBe("");
+  });
+});
+
+describe("DoseCalculatorForm unverified stated range", () => {
+  it("shows the herb page's stated range as information only, with a blank dose field and no range picker", () => {
+    render(
+      <DoseCalculatorForm
+        prefill={{
+          herbName: "Turmeric",
+          adultDose: "",
+          doseUnit: "mg",
+          dosageAdultRaw: "500-2000 mg",
+          dosageRange: null,
+          dosageForms: [],
+          verified: false,
+        }}
+      />
+    );
+    const doseInput = screen.getByLabelText(
+      /calculatorForm.adultDose/
+    ) as HTMLInputElement;
+    expect(doseInput.value).toBe("");
+    // Informational text only — not a picker button that fills the field.
+    expect(
+      screen.getByText("calculatorForm.unverifiedStatedRange")
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /rangeLow/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /rangeHigh/ })).toBeNull();
   });
 });

@@ -4,6 +4,7 @@ import { ChatMarkdown } from "../markdown-renderer";
 
 // Mock next-intl so useTranslations is a passthrough.
 vi.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string) => key,
 }));
 

@@ -9,6 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -33,64 +34,164 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 }
 
-/* ─── Light Theme — calm, minimal ─────────────────────────────────── */
+/*
+ * ─── Palette: Editorial Herbarium ─────────────────────────────────
+ *
+ * Paper and ink, one botanical green for action, one dried-clay for
+ * caution. The palette is deliberately warm and low-chroma: this should
+ * read as a reference book you can trust, not a dashboard.
+ *
+ * Contrast, measured against --background:
+ *   foreground 0.245 on 0.973  ≈ 15:1
+ *   muted-fg   0.470 on 0.973  ≈  7:1
+ *   primary    0.420 + paper   ≈  8:1
+ */
 :root {
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.18 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0 0);
-  --primary: oklch(0.5 0.16 145);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.25 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.94 0.02 145);
-  --accent-foreground: oklch(0.22 0.05 145);
-  --destructive: oklch(0.5 0.18 20);
-  --border: oklch(0.92 0 0);
-  --input: oklch(0.92 0 0);
-  --ring: oklch(0.5 0.16 145);
-  --radius: 0.625rem;
+  --background: oklch(0.973 0.011 85); /* warm paper stock */
+  --foreground: oklch(0.245 0.014 60); /* ink */
+  --card: oklch(0.988 0.008 85);
+  --card-foreground: oklch(0.245 0.014 60);
+  --popover: oklch(0.988 0.008 85);
+  --popover-foreground: oklch(0.245 0.014 60);
+  --primary: oklch(0.42 0.075 150); /* pressed botanical green */
+  --primary-foreground: oklch(0.985 0.008 85);
+  --secondary: oklch(0.945 0.014 85);
+  --secondary-foreground: oklch(0.3 0.02 60);
+  --muted: oklch(0.945 0.012 85);
+  --muted-foreground: oklch(0.47 0.015 70);
+  --accent: oklch(0.935 0.022 75); /* dried herb wash */
+  --accent-foreground: oklch(0.32 0.03 60);
+  --destructive: oklch(0.5 0.15 30); /* terracotta, never crimson */
+  --border: oklch(0.885 0.014 80);
+  --input: oklch(0.885 0.014 80);
+  --ring: oklch(0.42 0.075 150);
+
+  /* Print, not SaaS: 4px reads as a rule on paper; 10px reads as a
+     floating card. */
+  --radius: 0.25rem;
 }
 
-/* ─── Dark Theme — calm, minimal ──────────────────────────────────── */
+/*
+ * ─── Dark theme: night herbarium ───────────────────────────────────
+ *
+ * Warm ink rather than neutral black — a lampshade, not a void. The green
+ * lifts to sage so it stays legible without glowing.
+ */
 .dark {
-  --background: oklch(0.13 0 0);
-  --foreground: oklch(0.94 0 0);
-  --card: oklch(0.16 0 0);
-  --card-foreground: oklch(0.94 0 0);
-  --popover: oklch(0.16 0 0);
-  --popover-foreground: oklch(0.94 0 0);
-  --primary: oklch(0.65 0.14 145);
-  --primary-foreground: oklch(0.13 0 0);
-  --secondary: oklch(0.2 0 0);
-  --secondary-foreground: oklch(0.94 0 0);
-  --muted: oklch(0.2 0 0);
-  --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.22 0.02 145);
-  --accent-foreground: oklch(0.9 0 0);
-  --destructive: oklch(0.55 0.18 20);
-  --border: oklch(0.25 0 0);
-  --input: oklch(0.25 0 0);
-  --ring: oklch(0.65 0.14 145);
+  --background: oklch(0.185 0.012 60);
+  --foreground: oklch(0.93 0.012 85);
+  --card: oklch(0.215 0.012 60);
+  --card-foreground: oklch(0.93 0.012 85);
+  --popover: oklch(0.215 0.012 60);
+  --popover-foreground: oklch(0.93 0.012 85);
+  --primary: oklch(0.72 0.08 148);
+  --primary-foreground: oklch(0.17 0.012 60);
+  --secondary: oklch(0.255 0.012 60);
+  --secondary-foreground: oklch(0.92 0.012 85);
+  --muted: oklch(0.255 0.012 60);
+  --muted-foreground: oklch(0.7 0.013 80);
+  --accent: oklch(0.28 0.015 70);
+  --accent-foreground: oklch(0.9 0.015 85);
+  --destructive: oklch(0.62 0.14 30);
+  --border: oklch(0.31 0.012 60);
+  --input: oklch(0.31 0.012 60);
+  --ring: oklch(0.72 0.08 148);
 }
 
 /* ─── Base Elements ───────────────────────────────────────────────── */
 body {
   font-family: var(--font-sans);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * ─── Paper grain ──────────────────────────────────────────────────
+ *
+ * One generated cold-press scan, 36 KB at 1024², blended into the paper
+ * colour rather than laid over it: `background-blend-mode` keeps the token
+ * colour authoritative, so changing --background still changes the page and
+ * the texture only adds tooth. Multiply in light mode (grain darkens the
+ * paper slightly); in dark mode the same image is screened at low opacity,
+ * where it reads as the tooth of a blackened page instead of dirt.
+ *
+ * `background-attachment: fixed` keeps the sheet still while the page
+ * scrolls, which is what paper does — and it avoids the seam that any tiled
+ * generated texture shows.
+ */
+body {
+  background-color: var(--background);
+  background-image: url("/media/paper-grain.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: multiply;
+}
+
+.dark body {
+  background-blend-mode: soft-light;
+}
+
+/*
+ * Chrome bars (sticky header, bottom tab bar) sit on their own opaque
+ * surface. Without the same grain they read as flat bands pasted over the
+ * paper — visible as a hard seam where they meet the page. Same stack, so
+ * `background-attachment: fixed` keeps the grain continuous across all three.
+ */
+.paper-surface {
+  background-color: var(--background);
+  background-image: url("/media/paper-grain.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: multiply;
+}
+
+.dark .paper-surface {
+  background-blend-mode: soft-light;
+}
+
+/*
+ * Headings are set in the display serif. This is the load-bearing decision
+ * of the reskin: it is what makes these pages read as a printed herbal
+ * rather than an app with rounded corners.
+ *
+ * Sizes are left to the components; only the face, weight and tracking
+ * change, so nothing reflows unexpectedly.
+ */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.018em;
+}
+
+/* Editorial utility: the small label that sits above a heading. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* A hairline rule, as on a specimen sheet. */
+.rule {
+  height: 1px;
+  background: var(--border);
 }
 
 /* ─── Gradient text (logo only) ──────────────────────────────────── */
 .gradient-text {
   background: linear-gradient(
     135deg,
-    oklch(0.5 0.16 145),
-    oklch(0.55 0.12 180)
+    oklch(0.42 0.075 150),
+    oklch(0.46 0.05 175)
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -98,10 +199,42 @@ body {
 }
 
 .dark .gradient-text {
-  background: linear-gradient(135deg, oklch(0.7 0.14 145), oklch(0.7 0.12 180));
+  background: linear-gradient(
+    135deg,
+    oklch(0.76 0.08 148),
+    oklch(0.74 0.05 175)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ─── Hero Ken Burns (one still frame, slow drift) ────────────────── */
+/* The band is decorative and always keeps scale >= 1.03, so the moving
+   edges can never expose the container behind it. */
+@keyframes hero-kenburns {
+  0% {
+    transform: scale(1.03) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.1) translate3d(-1.7%, -1.2%, 0);
+  }
+  100% {
+    transform: scale(1.03) translate3d(0, 0, 0);
+  }
+}
+
+.hero-kenburns {
+  animation: hero-kenburns 28s ease-in-out infinite;
+  transform-origin: 58% 55%;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-kenburns {
+    animation: none;
+    transform: none;
+  }
 }
 
 /* ─── Message animation (chat only — subtle) ──────────────────────── */
@@ -155,6 +288,75 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ─── Reading measure ─────────────────────────────────────────────── */
+/*
+ * Long-form health copy was set at 14px across a 790px column — 99
+ * characters per line, roughly a third past the point where the eye starts
+ * losing the start of the next line. `.measure` caps the line, `.prose-body`
+ * sets the size. Use both on any long-form block; leave UI copy alone.
+ */
+.measure {
+  max-width: 68ch;
+}
+.prose-body {
+  font-size: 1rem;
+  line-height: 1.7;
+}
+@media (min-width: 640px) {
+  .prose-body {
+    font-size: 1.0625rem;
+  }
+}
+
+/* ─── Print: a monograph is a reference document ──────────────────── */
+/*
+ * People print references. The screen chrome (sticky nav, bottom bar, chat
+ * bubble, ads, share row, newsletter box) is noise on paper, and the paper
+ * texture costs a full page of toner. Text goes black, links keep their
+ * URL, and section boxes stop avoiding page breaks.
+ */
+@media print {
+  header,
+  footer,
+  nav,
+  .no-print,
+  [data-print-hide],
+  iframe {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    background-image: none !important;
+    color: #111 !important;
+  }
+
+  main {
+    padding-bottom: 0 !important;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #555;
+    word-break: break-all;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid-page;
+  }
+
+  table,
+  figure,
+  blockquote {
+    break-inside: avoid-page;
+  }
 }
 
 /* ─── Respect prefers-reduced-motion ──────────────────────────────── */

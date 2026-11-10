@@ -69,9 +69,17 @@ export function CitationsList({ citations, className }: CitationsListProps) {
                   href={linkUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-1 inline-flex items-center gap-0.5 text-primary hover:underline"
+                  aria-label={t("citations.viewSourceLabel", {
+                    source: citation.source,
+                  })}
+                  className="ml-1 inline-flex items-center gap-0.5 text-primary underline-offset-4 hover:underline"
                 >
-                  <ExternalLink className="size-3" />
+                  {/* Visible text, not an icon alone: three icon-only links in
+                      this list were the page's only axe `link-name` failures,
+                      and "Source" also tells a sighted reader what the arrow
+                      opens. */}
+                  <span className="text-xs">{t("citations.viewSource")}</span>
+                  <ExternalLink className="size-3" aria-hidden="true" />
                 </a>
               )}
             </div>
@@ -126,6 +134,13 @@ export function SourceAttribution({
 }: SourceAttributionProps) {
   const t = useTranslations();
   const reviewer = getReviewer(reviewedBy);
+
+  // Nothing to attribute: a herb with no reviewer, no review date and no
+  // source list used to render the bordered wrapper on its own — an empty
+  // 832×34 box under the citations on every such page. An empty container is
+  // a bug, not a placeholder.
+  const hasContent = Boolean(reviewedBy || lastReviewed || sources?.length);
+  if (!hasContent) return null;
 
   return (
     <div className={cn("rounded-lg border bg-muted/50 p-4 text-sm", className)}>

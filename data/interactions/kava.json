@@ -1,0 +1,45 @@
+{
+  "herb_slug": "kava",
+  "pairs": [
+    {
+      "drug_name": "Alprazolam (Xanax)",
+      "severity": "severe",
+      "description": "Concomitant administration of kava and alprazolam has been documented to cause excessive central nervous system depression and semicomatose lethargy.",
+      "mechanism": "Synergistic potentiation of central GABA-A receptor neurotransmission combined with kavalactone-mediated CYP inhibition.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/kava"
+    },
+    {
+      "drug_name": "Levodopa",
+      "severity": "severe",
+      "description": "Kava antagonizes the therapeutic antiparkinsonian efficacy of levodopa, precipitating acute worsening of motor symptoms and parkinsonism.",
+      "mechanism": "Central dopamine D2 receptor antagonism by kavalactones interfering with striatal dopaminergic neurotransmission.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/kava"
+    },
+    {
+      "drug_name": "Sedatives and CNS depressants",
+      "severity": "severe",
+      "description": "Kava significantly intensifies the sedative, hypnotic, and motor-impairing effects of barbiturates, benzodiazepines, and central depressants.",
+      "mechanism": "Additive central nervous system depressant activity through positive allosteric modulation of GABA-A receptors.",
+      "evidence_level": "well-documented",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/kava"
+    },
+    {
+      "drug_name": "Acetaminophen (Tylenol)",
+      "severity": "severe",
+      "description": "Combining kava with hepatotoxic medications like acetaminophen dramatically increases the risk of severe drug-induced liver injury and hepatic necrosis.",
+      "mechanism": "Depletion of hepatic glutathione stores by kavalactones compounding toxic NAPQI metabolite accumulation from acetaminophen.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/kava"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "herb_slug": "bitter-orange",
+  "pairs": [
+    {
+      "drug_name": "Cyclosporine",
+      "severity": "moderate",
+      "description": "Bitter orange inhibits CYP3A4 and has been shown to increase blood levels of cyclosporine, so cyclosporine exposure may rise.",
+      "mechanism": "Bitter orange inhibits CYP3A4 activity, which leads to increased blood levels of cyclosporine.",
+      "evidence_level": "moderate-evidence",
+      "source": "NIH ODS",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/"
+    },
+    {
+      "drug_name": "Saquinavir",
+      "severity": "moderate",
+      "description": "Bitter orange inhibits CYP3A4 and has been shown to increase blood levels of saquinavir, so saquinavir exposure may rise.",
+      "mechanism": "Bitter orange inhibits CYP3A4 activity, which leads to increased blood levels of saquinavir.",
+      "evidence_level": "moderate-evidence",
+      "source": "NIH ODS",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/"
+    },
+    {
+      "drug_name": "Caffeine",
+      "severity": "severe",
+      "description": "Combining caffeine with bitter orange, another stimulant, can intensify caffeine's adverse effects, including tachycardia and seizures.",
+      "mechanism": "Bitter orange contains synephrine, an alpha-adrenergic agonist, and combining it with caffeine can add to stimulant effects.",
+      "evidence_level": "moderate-evidence",
+      "source": "NIH ODS",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://ods.od.nih.gov/factsheets/WeightLoss-HealthProfessional/"
+    }
+  ]
+}

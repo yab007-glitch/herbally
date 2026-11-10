@@ -3,7 +3,11 @@ import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 export const generateMetadata = () =>
-  buildPageMetadata({ titleKey: "privacyPolicy", path: "/privacy" });
+  buildPageMetadata({
+    titleKey: "privacyPolicy",
+    descKey: "privacyDesc",
+    path: "/privacy",
+  });
 
 export default async function PrivacyPage() {
   const locale = await getLocale();

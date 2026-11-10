@@ -115,6 +115,46 @@ describe("herbs actions", () => {
       const result = await actions.getHerbBySlug("nonexistent");
       expect(result.success).toBe(false);
     });
+
+    it("marks a database failure as unavailable", async () => {
+      fromMock.mockReturnValueOnce({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              single: () =>
+                Promise.resolve({
+                  data: null,
+                  error: { message: "db timeout" },
+                }),
+            }),
+          }),
+        }),
+      });
+
+      const result = await actions.getHerbBySlug("ginger");
+      expect(result.success).toBe(false);
+      expect(!result.success && result.reason).toBe("unavailable");
+    });
+
+    it("marks PGRST116 (0 rows) as not_found", async () => {
+      fromMock.mockReturnValueOnce({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              single: () =>
+                Promise.resolve({
+                  data: null,
+                  error: { code: "PGRST116", message: "0 rows" },
+                }),
+            }),
+          }),
+        }),
+      });
+
+      const result = await actions.getHerbBySlug("nonexistent");
+      expect(result.success).toBe(false);
+      expect(!result.success && result.reason).toBe("not_found");
+    });
   });
 
   describe("getHerbCategories", () => {

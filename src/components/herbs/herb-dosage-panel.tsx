@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Pill, Calculator } from "lucide-react";
 import {
   Card,
@@ -11,16 +11,17 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
 interface HerbDosagePanelProps {
+  /** Name of the regulator behind this entry, when one exists. */
+  regulatorName?: string | null;
   herb: {
     slug: string;
     dosage_forms?: string[] | null;
     dosage_adult?: string | null;
-    dosage_child?: string | null;
     preparation_notes?: string | null;
   };
 }
 
-export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
+export function HerbDosagePanel({ herb, regulatorName }: HerbDosagePanelProps) {
   const t = useTranslations();
 
   return (
@@ -47,6 +48,18 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
                 </dd>
               </div>
             )}
+            {!herb.dosage_adult &&
+              !(herb.dosage_forms && herb.dosage_forms.length > 0) &&
+              regulatorName && (
+                <div className="sm:col-span-2">
+                  <dt className="text-sm font-medium text-foreground">
+                    {t("herbDetail.adultDosage")}
+                  </dt>
+                  <dd className="mt-1 text-sm text-muted-foreground">
+                    {t("herbDetail.noStatedDose", { source: regulatorName })}
+                  </dd>
+                </div>
+              )}
             {herb.dosage_adult && (
               <div>
                 <dt className="text-sm font-medium text-foreground">
@@ -54,16 +67,6 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
                 </dt>
                 <dd className="mt-1 text-sm text-muted-foreground">
                   {herb.dosage_adult}
-                </dd>
-              </div>
-            )}
-            {herb.dosage_child && (
-              <div>
-                <dt className="text-sm font-medium text-foreground">
-                  {t("herbDetail.childDosage")}
-                </dt>
-                <dd className="mt-1 text-sm text-muted-foreground">
-                  {herb.dosage_child}
                 </dd>
               </div>
             )}
@@ -78,6 +81,9 @@ export function HerbDosagePanel({ herb }: HerbDosagePanelProps) {
               </div>
             )}
           </dl>
+          <p className="mt-4 text-xs text-muted-foreground">
+            {t("herbDetail.adultOnlyNote")}
+          </p>
         </CardContent>
       </Card>
 

@@ -8,6 +8,21 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app"
 ).replace(/\/$/, "");
 
+/** The "website" flavour of Next's Open Graph type, which this helper builds. */
+type WebsiteOpenGraph = Extract<
+  NonNullable<Metadata["openGraph"]>,
+  { type: "website" }
+>;
+
+/**
+ * Per-page Open Graph fields. Merged *over* the shared defaults in
+ * `buildPageMetadata`, so a page that supplies its own `openGraph` keeps
+ * `og:image` and `og:locale` unless it overrides those keys explicitly.
+ */
+export type PageOpenGraph = Partial<Omit<WebsiteOpenGraph, "type">> & {
+  type?: "website";
+};
+
 export interface PageMetaOptions {
   /** Translation key under the `meta` namespace, e.g. "herbsDatabase". */
   titleKey: string;
@@ -15,6 +30,17 @@ export interface PageMetaOptions {
   descKey?: string;
   /** Path without locale prefix, e.g. "/herbs" or "/". */
   path: string;
+  /**
+   * Keep the page out of the index. Use for account-scoped surfaces whose
+   * signed-out state is an empty shell: they add nothing to search results and
+   * spend crawl budget that belongs to the herb pages.
+   */
+  noindex?: boolean;
+  /**
+   * Extra Open Graph fields for this page. Merged over the defaults so
+   * overriding title/description cannot drop og:image or og:locale.
+   */
+  openGraph?: PageOpenGraph;
 }
 
 /**
@@ -26,6 +52,8 @@ export async function buildPageMetadata({
   titleKey,
   descKey,
   path,
+  noindex,
+  openGraph: openGraphOverrides,
 }: PageMetaOptions): Promise<Metadata> {
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "meta" });
@@ -33,9 +61,31 @@ export async function buildPageMetadata({
   const description = descKey ? t(descKey) : t("appDescription");
   const alternates = buildAlternateUrls(path, BASE_URL);
 
+  // Next does not deep-merge a page's openGraph with the layout's: whatever a
+  // page returns replaces the inherited object wholesale. These are therefore
+  // the complete defaults every page needs, and page-level overrides are
+  // spread on top of them rather than replacing them.
+  const sharedOpenGraph: WebsiteOpenGraph = {
+    title,
+    description,
+    url: alternates[locale],
+    type: "website",
+    siteName: "HerbAlly",
+    locale: locale === "fr" ? "fr_FR" : "en_US",
+    images: [
+      {
+        url: `${BASE_URL}/opengraph-image`,
+        width: 1200,
+        height: 630,
+        alt: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
+      },
+    ],
+  };
+
   return {
     title,
     description,
+    ...(noindex ? { robots: { index: false, follow: true } } : {}),
     alternates: {
       canonical: alternates[locale],
       languages: {
@@ -44,13 +94,7 @@ export async function buildPageMetadata({
         "x-default": alternates["x-default"],
       },
     },
-    openGraph: {
-      title,
-      description,
-      url: alternates[locale],
-      type: "website",
-      siteName: "HerbAlly",
-    },
+    openGraph: { ...sharedOpenGraph, ...openGraphOverrides },
     twitter: {
       card: "summary_large_image",
       title,

@@ -5,6 +5,12 @@ import { test, expect } from "@playwright/test";
  * Dosage calculator (/calculator). The form is dynamically imported on the
  * client, so we wait for the "Calculate" button (and networkidle) before
  * interacting to ensure it has hydrated.
+ *
+ * The calculator is adult-only: it refuses to produce a number for anyone
+ * under 18 and its inputs are labelled "Adult age (years)" / "Adult weight
+ * (kg)". Do not reintroduce the old pediatric "Patient weight" / "Patient
+ * age" selectors — those labels no longer exist and the resulting failures
+ * were locator timeouts that looked like flakiness.
  */
 test.describe("Dosage Calculator", () => {
   test("should load calculator page", async ({ page }) => {
@@ -22,8 +28,8 @@ test.describe("Dosage Calculator", () => {
 
     await expect(page.getByLabel(/Herb Name/i)).toBeVisible();
     await expect(page.getByLabel(/Adult Dose/i)).toBeVisible();
-    await expect(page.getByLabel(/Patient Weight/i)).toBeVisible();
-    await expect(page.getByLabel(/Patient Age/i)).toBeVisible();
+    await expect(page.getByLabel(/Adult weight/i)).toBeVisible();
+    await expect(page.getByLabel(/Adult age/i)).toBeVisible();
   });
 
   test("should calculate a reference dose for an adult", async ({ page }) => {
@@ -34,8 +40,8 @@ test.describe("Dosage Calculator", () => {
     // Clark's rule is the default and needs adult dose, weight and age.
     await page.getByLabel(/Herb Name/i).fill("Ginger");
     await page.getByLabel(/Adult Dose/i).fill("500");
-    await page.getByLabel(/Patient Weight/i).fill("70");
-    await page.getByLabel(/Patient Age/i).fill("30");
+    await page.getByLabel(/Adult weight/i).fill("70");
+    await page.getByLabel(/Adult age/i).fill("30");
     await calculateBtn.click();
 
     // The result renders a numeric dose in the large dose-value container
@@ -52,11 +58,12 @@ test.describe("Dosage Calculator", () => {
     await expect(calculateBtn).toBeVisible();
 
     // Regression: 500 mg adult dose, 60 kg, age 8 previously produced
-    // "441.2 mg" despite the under-12 warning panel.
+    // "441.2 mg" despite the under-18 block. The calculator must refuse any
+    // patient under 18 rather than emit a number.
     await page.getByLabel(/Herb Name/i).fill("Turmeric");
     await page.getByLabel(/Adult Dose/i).fill("500");
-    await page.getByLabel(/Patient Weight/i).fill("60");
-    await page.getByLabel(/Patient Age/i).fill("8");
+    await page.getByLabel(/Adult weight/i).fill("60");
+    await page.getByLabel(/Adult age/i).fill("8");
     await calculateBtn.click();
 
     await expect(

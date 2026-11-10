@@ -65,7 +65,8 @@
     "copyResponseLabel": "Copier la réponse",
     "chatInputlabel": "Saisie du message de discussion",
     "stopGeneratingLabel": "Arrêter la génération",
-    "sendMessageLabel": "Envoyer le message"
+    "sendMessageLabel": "Envoyer le message",
+    "home": "Accueil"
   },
   "nav": {
     "symptoms": "Par Symptôme",
@@ -90,11 +91,11 @@
     "calc": "Calc"
   },
   "home": {
-    "heroTitle": "Vérifiez les interactions plante-médicament",
-    "heroSubtitle": "Tapez une plante et un médicament pour savoir s'ils sont compatibles. Réponses basées sur des preuves.",
+    "heroTitle": "Vérifiez les interactions plante‑médicament",
+    "heroSubtitle": "Tapez une plante et un médicament pour vérifier d'abord la base de données HerbAlly. Si une association n'est pas enregistrée, l'Herboriste Virtuel peut expliquer davantage.",
     "heroButton": "Explorer les plantes",
-    "herbPlaceholder": "Nom de la plante (ex. Curcuma, Millepertuis)",
-    "medPlaceholder": "Médicament (ex. warfarine, sertraline)",
+    "herbPlaceholder": "Curcuma, millepertuis…",
+    "medPlaceholder": "warfarine, sertraline…",
     "checkButton": "Vérifier l'interaction",
     "suggestionsTitle": "Vérifications courantes",
     "suggestion1": "Millepertuis + antidépresseurs",
@@ -113,7 +114,27 @@
     "featureInteractionsTitle": "Vérificateur d'interactions",
     "featureInteractionsDescription": "Vérifiez les interactions avant de combiner suppléments et médicaments.",
     "featureAiTitle": "Herboriste virtuel",
-    "featureAiDescription": "Posez des questions. Réponses basées sur des preuves avec citations."
+    "featureAiDescription": "Posez des questions. Réponses basées sur des preuves avec citations.",
+    "checkerChecking": "Vérification dans la base de données…",
+    "checkerFoundTitle": "Résultat de la base de données",
+    "checkerAskHerbalist": "Demander à l'Herboriste Virtuel",
+    "checkerViewPair": "Voir l'interaction complète",
+    "checkerViewHerb": "Voir la page de la plante",
+    "checkerDisclaimer": "Informations éducatives uniquement, pas un avis médical. Confirmez auprès de votre médecin ou pharmacien avant de modifier un médicament.",
+    "checkerNotFoundTitle": "Aucun enregistrement structuré trouvé",
+    "checkerNotFoundBody": "Aucun enregistrement structuré d'interaction trouvé pour {herb} + {drug} dans la base de données HerbAlly.",
+    "checkerAiNote": "L'Herboriste Virtuel peut expliquer davantage, mais sa réponse est une information éducative générée par IA — pas un résultat de la base de données — et doit être vérifiée indépendamment.",
+    "checkerError": "La vérification dans la base de données n'a pas pu s'exécuter. Réessayez ou demandez à l'Herboriste Virtuel.",
+    "checkerSource": "Source",
+    "checkerEvidence": "Preuves",
+    "checkerMechanism": "Fonctionnement",
+    "explainerTitle": "Votre guide de confiance des plantes médicinales",
+    "explainerBody": "HerbAlly est une base de données gratuite de plantes médicinales avec plus de 2 700 plantes. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, trouver des plantes par symptôme et calculer une dose adulte — le tout sans compte. L'Herboriste Virtuel est là pour expliquer, pas pour remplacer la base de données ou votre pharmacien.",
+    "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
+    "popularTitle": "Plantes populaires",
+    "herbLabel": "Plante",
+    "medLabel": "Médicament",
+    "eyebrow": "Un ouvrage de référence sur ce que vous prenez ensemble"
   },
   "embed": {
     "title": "Vérifier une association plante + médicament",
@@ -138,14 +159,23 @@
     "tryDifferent": "Essayez un autre terme de recherche",
     "popularSearches": "Recherches Populaires",
     "resultsFound": "{count, plural, one {Trouvé # herbe correspondant à \"{query}\"} other {Trouvé # herbes correspondant à \"{query}\"}}",
+    "resultsInCategory": "{count} herbes dans {category}",
+    "sortLabel": "Trier",
+    "sortName": "Nom A-Z",
+    "sortEvidence": "Preuves les plus solides",
     "noHerbsQuery": "Aucune herbe trouvée pour \"{query}\"",
     "trySearching": "Essayez de rechercher un symptôme comme maux de tête, anxiété ou inflammation.",
+    "loadError": "Impossible de charger la liste des plantes. Veuillez réessayer.",
     "browseAll": "Parcourir Toutes les Herbes",
     "pagination": {
       "previous": "Précédent",
       "next": "Suivant",
       "page": "Page",
-      "of": "sur"
+      "of": "sur",
+      "first": "Première",
+      "last": "Dernière",
+      "goToPage": "Aller à la page",
+      "pageInputLabel": "Numéro de page"
     },
     "safety": {
       "safe": "Généralement Sûr",
@@ -240,14 +270,14 @@
       "consult": "Consultez toujours un professionnel de santé avant de commencer toute cure phytothérapique."
     },
     "cardTitle": "Calculateur de dose",
-    "cardDesc": "Entrez les informations sur la plante et les détails du patient pour calculer une dose adaptée à l'âge.",
+    "cardDesc": "Entrez les informations sur la plante et les détails de l'adulte pour calculer une dose de référence adulte.",
     "calculatingFor": "Calcul de la dose pour {name}",
     "standardAdultDose": "Dose adulte standard : {dose}",
     "referenceChildDose": "Dose enfant de référence : {dose}",
     "forHerb": "pour {name}",
     "enterPrompt": "Entrez les détails et cliquez sur « Calculer la dose » pour voir les résultats",
     "patientHeightCm": "Taille du patient (cm)",
-    "description": "Entrez les informations sur la plante et les détails du patient pour calculer une posologie adaptée à l'âge."
+    "description": "Entrez les informations sur la plante et les détails de l'adulte pour calculer une dose de référence adulte."
   },
   "pharmacist": {
     "title": "Herboriste IA",
@@ -312,7 +342,21 @@
     "verifiedTooltip": "Cette fiche a été revue par un humain à partir d'une source primaire.",
     "aiSummarizedTooltip": "Résumée par IA. Consultez les sources pour les références originales.",
     "primarySourceTooltip": "Cite une source primaire. Pas encore de revue manuelle.",
-    "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations."
+    "notHumanReviewed": "Non révisé par un humain",
+    "notHumanReviewedTooltip": "Cette fiche n'a pas été révisée par un humain. Ne la considérez pas comme une monographie vérifiée.",
+    "humanReviewed": "Révisé par un humain",
+    "humanReviewedTooltip": "Révisé par {reviewer} le {date}. Seules les fiches qu'une personne nommée a réellement lues portent cette étiquette.",
+    "needsReReview": "À réviser de nouveau",
+    "needsReReviewTooltip": "Cette fiche a déjà été révisée, puis modifiée. Considérez-la comme non révisée jusqu'à ce que quelqu'un la relise.",
+    "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations.",
+    "sourceVerified": "Vérifié · {count} sources",
+    "sourceVerifiedTooltip": "Recoupé auprès de {count} sources indépendantes : {sources}. Cela confirme l'identité de la plante et son dossier réglementaire — ce n'est pas une affirmation qu'une personne a relu cette fiche.",
+    "identityVerified": "Identité vérifiée · {count} sources",
+    "identityVerifiedTooltip": "Le nom de la plante est confirmé par {count} sources taxonomiques indépendantes ({sources}). Aucun organisme de réglementation n'a publié de monographie pour cette plante; rien d'autre que son identité n'est affirmé ici.",
+    "formula": "Formule multi-herbes",
+    "formulaTooltip": "Cette fiche décrit un produit multi-herbes et non une plante unique : il n'y a donc pas de nom botanique à recouper. Les ingrédients sont listés sur la page; la formule elle-même n'a pas d'identité taxonomique.",
+    "nonPlant": "Ingrédient non végétal",
+    "nonPlantTooltip": "Cette fiche décrit un minéral, un produit animal, une vitamine ou un isolat, et non une plante. Il n'y a pas de nom botanique à recouper; la fiche est présentée comme entrée de matière médicale."
   },
   "donate": {
     "title": "Soutenir HerbAlly",
@@ -413,22 +457,36 @@
       "text": "HerbAlly fournit des informations éducatives uniquement. Ce n'est pas un avis médical. Consultez toujours un professionnel de santé qualifié avant d'utiliser tout remède à base de plantes."
     }
   },
+  "contact": {
+    "title": "Nous contacter",
+    "intro": "Le courriel est le moyen de nous joindre — HerbAlly n'a pas de formulaire d'assistance. Veuillez ne pas envoyer de renseignements de santé personnels par courriel; pour les questions médicales, adressez-vous à un professionnel de santé qualifié.",
+    "generalTitle": "Questions générales et parrainage",
+    "generalText": "Pour les questions générales, les corrections et les demandes de parrainage, écrivez à :",
+    "privacyTitle": "Questions relatives à la confidentialité",
+    "privacyText": "Pour les questions relatives à la confidentialité, les demandes de suppression de compte et les demandes de données, écrivez à :",
+    "termsTitle": "Questions relatives aux conditions",
+    "termsText": "Pour les questions relatives aux conditions d'utilisation, écrivez à :",
+    "linksTitle": "Pages utiles"
+  },
   "footer": {
     "product": "Produit",
     "resources": "Ressources",
     "company": "Entreprise",
     "legal": "Légal",
     "privacy": "Politique de Confidentialité",
+    "contact": "Contact",
     "terms": "Conditions d'Utilisation",
     "disclaimer": "Avertissement Médical",
     "copyright": "À des fins éducatives uniquement. Pas un avis médical.",
     "madeWith": "Fait avec soin pour la communauté de la phytothérapie",
     "followUs": "Suivez-nous",
     "faq": "FAQ",
+    "guides": "Guides",
     "methodology": "Méthodologie",
     "sponsorship": "Parrainage",
     "herbDrugInteractions": "Interactions Plante-Médicament",
-    "symptoms": "Symptômes"
+    "symptoms": "Symptômes",
+    "editorialPolicy": "Politique éditoriale"
   },
   "errors": {
     "404": {
@@ -533,13 +591,16 @@
     "herbsAtAGlance": "Plantes en Bref",
     "askHerbalist": "Demander à l'herboriste",
     "calculatorCtaTitle": "Calculer une dose sûre de {name}",
-    "calculatorCtaBody": "Calculateur gratuit de posologie — doses adultes et enfants selon le poids."
+    "calculatorCtaBody": "Calculateur gratuit de posologie — doses de référence adultes selon le poids.",
+    "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement.",
+    "noStatedDose": "Les dossiers d'homologation à l'origine de cette fiche ({source}) n'indiquent aucune quantité. Consultez l'étiquette du produit ou un pharmacien — aucun dosage n'a été inventé ici."
   },
   "search": {
     "placeholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
     "searching": "Recherche...",
     "search": "Rechercher",
-    "surpriseMe": "Surprenez-moi"
+    "surpriseMe": "Surprenez-moi",
+    "randomError": "Impossible de charger une plante au hasard. Veuillez réessayer."
   },
   "commandPalette": {
     "placeholder": "Rechercher des herbes, pages ou actions...",
@@ -576,7 +637,9 @@
       "drug": "Médicament",
       "severity": "Sévérité",
       "description": "Description"
-    }
+    },
+    "uncitedNote": "Ces associations ne sont pas encore liées à une source primaire. Considérez-les comme une invitation à consulter un pharmacien, non comme une référence.",
+    "sourceLink": "Source : notice PubMed"
   },
   "interactionExplainer": {
     "title": "Qu'est-ce qu'une interaction plante-médicament ?",
@@ -589,7 +652,7 @@
     "ex3Name": "Kava",
     "ex3Effect": "peut amplifier la sédation avec les médicaments contre l'anxiété ou le sommeil (aussi la valériane).",
     "riskLine": "Le risque est plus élevé chez les personnes âgées, ceux qui prennent plusieurs médicaments et les personnes atteintes de maladies chroniques.",
-    "actionLine": "Indiquez toujours à votre médecin et à votre pharmacien toutes les plantes et compléments que vous prenez — et vérifiez ci-dessous avant toute association."
+    "actionLine": "Indiquez toujours à votre médecin et à votre pharmacien toutes les plantes et compléments que vous prenez — et vérifiez une association avant de la prendre."
   },
   "herbDrugInteractionsPage": {
     "heading": "Interactions Plante-Médicament",
@@ -609,7 +672,10 @@
     "embedTitle": "Intégrez ce vérificateur à votre site",
     "embedBody": "Gratuit pour cliniques, écoles et blogs santé. Collez le snippet ci-dessous — inclut un lien d'attribution HerbAlly.",
     "embedCopy": "Copier le snippet",
-    "embedCopied": "Copié !"
+    "embedCopied": "Copié !",
+    "checkerCtaTitle": "Vérifier une association",
+    "checkerCtaBody": "Utilisez le vérificateur d'interactions sur la page d'accueil — il vérifie d'abord la base de données HerbAlly et affiche un résultat structuré lorsqu'une association est enregistrée.",
+    "checkerCtaButton": "Utiliser le vérificateur d'accueil"
   },
   "auth": {
     "login": {
@@ -842,7 +908,8 @@
     "consult": "Consultez toujours votre médecin ou un professionnel de santé qualifié avant de commencer tout complément à base de plantes, surtout si vous êtes enceinte, allaitez, prenez des médicaments ou avez une condition médicale.",
     "fda": "Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. HerbAlly n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir toute maladie.",
     "emergency": "Si vous pensez avoir une urgence médicale, appelez votre médecin, rendez-vous aux urgences ou appelez immédiatement les services d'urgence.",
-    "reliance": "HerbAlly ne recommande ni n'approuve aucune plante, produit, procédure ou opinion spécifique. Se fier à toute information fournie par HerbAlly se fait à vos propres risques."
+    "reliance": "HerbAlly ne recommande ni n'approuve aucune plante, produit, procédure ou opinion spécifique. Se fier à toute information fournie par HerbAlly se fait à vos propres risques.",
+    "canada": "Au Canada, les produits de santé naturels relèvent de Santé Canada en vertu du Règlement sur les produits de santé naturels. Un produit portant un NPN (ou un DIN-HM pour les produits homéopathiques) a été autorisé à la vente, ce qui ne signifie pas que son efficacité a été démontrée cliniquement. HerbAlly n'est affilié ni à Santé Canada ni à la FDA, et cette page n'est pas un dépôt réglementaire."
   },
   "aboutContent": {
     "header": "À propos d'HerbAlly",
@@ -940,7 +1007,7 @@
     "dosage": {
       "calculator": {
         "q": "Comment fonctionne le calculateur de posologie ?",
-        "a": "Le calculateur de posologie d'HerbAlly est destiné aux adultes de 18 ans et plus. Il propose la Règle de Clark (basée sur le poids), la Règle de Young (basée sur l'âge), la Surface Corporelle (BSA) et la Règle de Fried (nourrissons) comme méthodes de référence. Il ne calcule pas de posologie pour les enfants ou les adolescents ; consultez plutôt un professionnel de santé pédiatrique qualifié."
+        "a": "Le calculateur de posologie d'HerbAlly est destiné aux adultes de 18 ans et plus. Il propose la Règle de Clark (basée sur le poids), la Règle de Young (basée sur l'âge) et la Surface Corporelle (BSA) comme méthodes de référence. Il ne calcule pas de posologie pour les enfants ou les adolescents ; consultez plutôt un professionnel de santé pédiatrique qualifié."
       },
       "multiple": {
         "q": "Puis-je prendre plusieurs plantes en même temps ?",
@@ -1097,7 +1164,14 @@
       "Je attrape constamment des rhumes et mon système immunitaire me semble faible",
       "J'ai du brouillard cérébral et du mal à me concentrer"
     ],
-    "evidenceLabel": "Preuve"
+    "evidenceLabel": "Preuve",
+    "matchReasonSymptom": "Correspondance : {symptoms}",
+    "matchReasonSymptomGeneral": "Correspond à vos symptômes",
+    "matchReasonName": "Correspondance par nom ou description",
+    "alsoListedAs": "Aussi répertorié sous : {names}",
+    "orderingNote": "Les résultats sont classés selon le nombre de vos symptômes correspondants, puis selon le niveau de preuve.",
+    "allSymptomsHeading": "Tous les symptômes de la base de données",
+    "allSymptomsIntro": "Chaque page répertorie les plantes enregistrées pour ce symptôme, leur niveau de preuve, les mentions grossesse et allaitement, et un lien vers la fiche complète. Commencez par la condition qui correspond à votre situation."
   },
   "herbDetailContent": {
     "herbNotFound": "Herbe Non Trouvée",
@@ -1119,7 +1193,10 @@
     "title": "Page Non Trouvée",
     "message": "La page que vous recherchez n'existe pas ou a été déplacée.",
     "goHome": "Retour à l'accueil",
-    "browseHerbs": "Parcourir les plantes"
+    "browseHerbs": "Parcourir les plantes",
+    "checkInteractions": "Vérifier les interactions plante-médicament",
+    "browseSymptoms": "Parcourir les plantes par symptôme",
+    "askHerbalist": "Demander à l'herboriste virtuel"
   },
   "evidence": {
     "prefix": "Preuves :",
@@ -1173,7 +1250,41 @@
     "reviewedBy": "Révisé par : ",
     "lastUpdated": "Dernière mise à jour : ",
     "sources": "Sources : ",
-    "researchProfile": "Profil de recherche"
+    "researchProfile": "Profil de recherche",
+    "viewSource": "Source",
+    "viewSourceLabel": "Ouvrir la source : {source}"
+  },
+  "safetyGlance": {
+    "title": "Sécurité en un coup d'œil",
+    "pregnancy": "Grossesse",
+    "nursing": "Allaitement",
+    "safe": "Généralement considéré comme sûr",
+    "unsafe": "Déconseillé",
+    "unknown": "Statut inconnu — données insuffisantes",
+    "interactions": "Interactions médicamenteuses",
+    "interactionCount": "{count, plural, one {# interaction connue} other {# interactions connues}}",
+    "interactionCountNone": "Aucune interaction connue répertoriée",
+    "mostSerious": "La plus grave : {drug} — {severity}",
+    "seeList": "Voir la liste complète",
+    "avoidIf": "Déconseillé dans ces cas",
+    "footnote": "Un résumé, pas une liste complète — vérifiez chaque médicament avec votre pharmacien.",
+    "severityCount": {
+      "contraindicated": "{count, plural, one {# contre-indiquée} other {# contre-indiquées}}",
+      "severe": "{count, plural, one {# sévère} other {# sévères}}",
+      "moderate": "{count, plural, one {# modérée} other {# modérées}}",
+      "mild": "{count, plural, one {# légère} other {# légères}}"
+    },
+    "orally": "Par voie orale",
+    "topically": "En usage local"
+  },
+  "chipLegend": {
+    "title": "Comment lire les étiquettes de preuve et de révision",
+    "evidence": "Niveau de preuve",
+    "review": "Statut de révision",
+    "verifiedDesc": "Une personne a vérifié cette fiche à partir d'une source primaire.",
+    "aiSummarizedDesc": "Une IA a résumé les sources citées ; aucune personne ne l'a encore révisée.",
+    "notHumanReviewedDesc": "Cite une source, mais personne n'a vérifié cette fiche à partir de celle-ci.",
+    "unverifiedDesc": "Rédigé par IA et non vérifié auprès de sources primaires."
   },
   "govSources": {
     "title": "Sources gouvernementales",
@@ -1264,6 +1375,19 @@
     "medsAutoQuery": "Je prends : {meds}. Vérifiez les interactions connues entre ces médicaments et les compléments phytothérapiques courants. Signalez les associations dangereuses.",
     "herbAutoQuery": "Quelles sont les principales interactions médicamenteuses et précautions de sécurité pour {name} ({scientific}) ? Listez les interactions les plus importantes, leur gravité et les personnes qui doivent l'éviter.",
     "emptyStateTitle": "Posez-moi des questions sur les plantes",
+    "greeting": {
+      "intro": "Bonjour — je suis l'assistant HerbAlly. Je vérifie les plantes contre les médicaments que vous prenez, et je vous montre les preuves derrière chaque réponse.",
+      "question": "Que voulez-vous vérifier — une plante, ou quelque chose que vous prenez ?",
+      "quickCheckHerb": "Une plante que je prends",
+      "quickInteractions": "Compatible avec mes médicaments ?",
+      "quickCapabilities": "Que pouvez-vous faire ?",
+      "quickCheckHerbPrompt": "Je veux vérifier une plante que je prends. Pouvez-vous m'aider à savoir quoi regarder ?",
+      "quickInteractionsPrompt": "Cette plante est-elle compatible avec mes médicaments ? Je vais vous dire ce que je prends.",
+      "quickCapabilitiesPrompt": "Avec quoi pouvez-vous m'aider ?",
+      "bubbleText": "Besoin d'un coup de main ? Je peux vérifier une plante contre vos médicaments.",
+      "bubbleOpen": "Discuter",
+      "bubbleDismiss": "Non merci"
+    },
     "browseHerbs": "Parcourir le catalogue",
     "learnInteractions": "En savoir plus sur les interactions plante-médicament",
     "widgetPlaceholder": "Posez votre question sur les plantes…",
@@ -1410,7 +1534,70 @@
       "privacy": "Lire notre politique de confidentialité",
       "donate": "Faire un don volontaire"
     },
-    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela."
+    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela.",
+    "audience": {
+      "title": "Qui lit HerbAlly",
+      "description": "Un public modeste, décrit honnêtement. Nous préférons vous montrer les chiffres réels plutôt qu'un argumentaire que vous pourriez vérifier et trouver gonflé.",
+      "stats": {
+        "visitors": {
+          "value": "1 800",
+          "label": "visiteurs sur les 30 derniers jours"
+        },
+        "pageviews": {
+          "value": "2 300",
+          "label": "pages vues sur les 30 derniers jours"
+        },
+        "languages": {
+          "value": "EN + FR",
+          "label": "chaque page entièrement traduite"
+        },
+        "markets": {
+          "value": "CA · FR · monde",
+          "label": "où se trouvent les lecteurs"
+        }
+      },
+      "note": "Chiffres bruts de notre propre analytique pour les 30 jours précédant le 29 octobre 2026. Environ la moitié des sessions récentes semblent automatisées : le public humain est donc plus petit que le chiffre affiché. Nous vous le disons ici plutôt que de vous le laisser découvrir plus tard.",
+      "fit": "HerbAlly convient à un commanditaire dont les clients se demandent ce que fait une plante, si elle est compatible avec leurs médicaments, ou quelle quantité prendre — et qui veut associer son nom à cette réponse sans acheter d'influence sur elle."
+    },
+    "packages": {
+      "title": "Formules de commandite",
+      "description": "Tarifs publiés, sans enchère, sans article commandité, et sans mot à dire sur ce que le site affirme au sujet d'une plante. Annulable en tout temps.",
+      "currency": "Tous les prix sont en dollars canadiens.",
+      "items": {
+        "supporter": {
+          "name": "Soutien",
+          "price": "25 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Votre nom et un lien dans le pied de page",
+            "Mention sur cette page",
+            "Annulable en tout temps"
+          ]
+        },
+        "sponsor": {
+          "name": "Commanditaire",
+          "price": "50 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Tout ce que comprend Soutien",
+            "Une ligne « Soutenu par » sur les pages de plantes",
+            "Un bilan trimestriel de ce que votre soutien a payé"
+          ]
+        },
+        "launch": {
+          "name": "Partenaire de lancement",
+          "price": "150 $ CA",
+          "cadence": "par an",
+          "features": [
+            "Tout ce que comprend Commanditaire",
+            "Votre logo sur la page d'accueil",
+            "Une entrée nommée dans notre registre public de commanditaires"
+          ]
+        }
+      },
+      "cta": "Se renseigner sur cette formule",
+      "note": "Nous publions qui nous soutient. Les commanditaires ne révisent, ne modifient, n'approuvent ni ne bloquent jamais le contenu santé, et aucune formule n'achète une mention favorable d'une plante."
+    }
   },
   "meta": {
     "herbsDatabase": "Base de Données de Plantes Médicinales",
@@ -1423,11 +1610,14 @@
     "herbsBySymptomDesc": "Trouvez les bonnes plantes pour vos symptômes. Parcourez les recommandations phytothérapiques fondées sur les preuves pour l'anxiété, le sommeil, l'inflammation, la digestion et plus encore.",
     "privacyPolicy": "Politique de Confidentialité",
     "medicalDisclaimer": "Avertissement Médical",
-    "medicalDisclaimerDesc": "Lisez l'avertissement médical et FDA complet pour HerbAlly.",
+    "medicalDisclaimerDesc": "Lisez l'avertissement médical complet de HerbAlly, y compris la façon dont la FDA et Santé Canada encadrent les produits à base de plantes.",
     "faq": "Questions Fréquemment Posées",
+    "faqDesc": "Réponses aux questions fréquentes sur HerbAlly : nos sources, nos méthodes, la sécurité des plantes, la posologie et les interactions médicamenteuses.",
     "methodology": "Notre Méthodologie",
+    "methodologyDesc": "Comment HerbAlly rédige et vérifie une fiche de plante : les sources utilisées, la signification de chaque niveau de preuve, l’usage de l’IA et les corrections.",
+    "privacyDesc": "Comment HerbAlly traite vos données : ce qui est recueilli, les témoins (cookies), la mesure d’audience et l’exercice de vos droits.",
     "termsOfService": "Conditions d'Utilisation",
-    "termsDesc": "Conditions d'utilisation et d'utilisation de HerbAlly.",
+    "termsDesc": "Conditions d’utilisation de HerbAlly.",
     "supportUs": "Soutenez-nous - Gardez la Médecine par les Plantes Gratuite",
     "supportUsDesc": "Aidez-nous à garder HerbAlly 100% gratuit. Votre don soutient l'hébergement, les coûts IA et l'accès gratuit pour tous.",
     "sponsorship": "Parrainage et partenariats",
@@ -1436,11 +1626,13 @@
     "herbComparisonNotFound": "Comparaison de Plantes Non Trouvée",
     "about": "À Propos",
     "aboutDesc": "Découvrez HerbAlly, notre mission et comment nous vous aidons à prendre des décisions éclairées sur les plantes médicinales.",
+    "contact": "Nous contacter",
+    "contactDesc": "Comment contacter HerbAlly : adresses courriel générales, de confidentialité et des conditions.",
     "herbDrugInteractions": "Interactions Plante-Médicament",
     "herbDrugInteractionsDesc": "Ce que sont les interactions plante-médicament, pourquoi elles comptent et comment les vérifier. Exemples à risque (millepertuis, ail, ginkgo, curcuma, kava, warfarine) et comment rester prudent.",
-    "appDescription": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses avec notre herboriste virtuel alimenté par l'IA.",
+    "appDescription": "Vérifiez une plante contre vos médicaments en quelques secondes. Plus de 2 700 fiches avec sources et niveaux de preuve, et un calculateur de posologie. Gratuit.",
     "herbsFor": "Plantes pour {symptom}",
-    "homeTitle": "Votre guide de confiance pour les herbes médicinales",
+    "homeTitle": "Vérificateur d'interactions plante-médicament",
     "gardenPageTitle": "Mon Jardin",
     "gardenSubtitle": "Votre collection personnelle de plantes médicinales. Suivez ce que vous avez exploré et enrichissez vos connaissances.",
     "profileTitle": "Mon Profil",
@@ -1455,8 +1647,8 @@
     "months": "Mois",
     "calculationFormula": "Formule de Calcul",
     "calculatedDose": "Posologie Calculée",
-    "childAge": "Âge du patient",
-    "childWeight": "Poids du patient",
+    "childAge": "Âge adulte",
+    "childWeight": "Poids adulte",
     "childDoseResult": "Dose de référence",
     "selectHerb": "Sélectionnez une plante...",
     "selectUnit": "Sélectionnez l'unité",
@@ -1509,10 +1701,18 @@
     "toggleAgeUnit": "Basculer l'unité d'âge (années/mois)",
     "toggleWeightUnit": "Basculer l'unité de poids (kg/lbs)",
     "unverifiedHerbNotice": "La monographie de cette plante est générée par IA et n'a pas été revue par rapport à des sources faisant autorité. Aucune dose de référence validée n'est disponible, le champ de la dose adulte est donc laissé vide. Saisissez vous-même une dose provenant d'une source fiable et confirmez tout résultat auprès d'un professionnel de santé qualifié.",
+    "unverifiedStatedRange": "Dose adulte indiquée sur la page de la plante — pas une dose de référence validée : {dose}",
     "pediatricDoseBlockedTitle": "Aucune dose calculée pour cet âge",
     "pediatricDoseBlocked": "HerbAlly ne calcule pas de posologie de plantes pour les personnes de moins de {age} ans. La concentration des produits à base de plantes varie considérablement et elle n'est pas validée pour la posologie chez les enfants ou les adolescents. Veuillez consulter un professionnel de santé pédiatrique qualifié (par exemple un pédiatre, un pharmacien ou le médecin de l'enfant) avant de donner un produit à base de plantes à une personne de moins de {age} ans.",
     "ageRequiredForAdultDose": "Saisissez l'âge du patient avant de calculer. HerbAlly ne calcule des doses que pour les personnes de {age} ans ou plus, et doit pouvoir confirmer cet âge.",
-    "pediatricDoseBlockedRationale": "Pourquoi cette limite : les formules pédiatriques classiques (Clark, Young, Fried) ont été conçues pour ajuster des doses de médicaments et n'ont jamais été validées pour les extraits de plantes. HerbAlly refuse donc d'afficher un chiffre pour les mineurs plutôt que de présenter une posologie pédiatrique non vérifiée qui pourrait être prise pour un avis médical."
+    "pediatricDoseBlockedRationale": "Pourquoi cette limite : les formules pédiatriques classiques (Clark, Young, Fried) ont été conçues pour ajuster des doses de médicaments et n'ont jamais été validées pour les extraits de plantes. HerbAlly refuse donc d'afficher un chiffre pour les mineurs plutôt que de présenter une posologie pédiatrique non vérifiée qui pourrait être prise pour un avis médical.",
+    "adultDosePlaceholder": "ex. 500",
+    "adultOnlyNotice": "Ce calculateur est réservé aux adultes de 18 ans et plus. Il ne calcule aucune dose pour les personnes de moins de 18 ans.",
+    "rangePickerTitle": "Choisissez une dose dans la plage adulte standard",
+    "rangePickerNote": "Choisir une valeur remplit le champ de la dose adulte — ce n'est pas une recommandation personnelle. Confirmez auprès d'un professionnel de santé qualifié.",
+    "rangeLow": "Faible",
+    "rangeMiddle": "Milieu",
+    "rangeHigh": "Élevée"
   },
   "symptomMeta": {
     "anxiety": {
@@ -1629,14 +1829,27 @@
     "compareDesc": "Comparez l'efficacité, la sécurité et les interactions côte à côte.",
     "askHerbalist": "Interroger l'herboriste IA"
   },
+  "herbMeta": {
+    "title": "{name} ({scientific}) : bienfaits, posologie et précautions",
+    "titleBinomial": "{scientific} : bienfaits, posologie et précautions",
+    "descWithNames": "Bienfaits, posologie, grossesse et interactions médicamenteuses de {name} ({common}). Sources PubMed et calculateur de doses gratuit.",
+    "descFromBody": "{body} Bienfaits, posologie, grossesse et interactions. Calculateur de doses gratuit inclus.",
+    "descFallback": "Bienfaits, posologie, grossesse, effets secondaires et interactions médicamenteuses de {name} ({scientific}). Fiche sourcée et calculateur de doses gratuit.",
+    "usesFallback": "le bien-être traditionnel"
+  },
+  "compareMeta": {
+    "title": "{a} ou {b} : différences, bienfaits et laquelle choisir",
+    "desc": "Comparer {a} et {b} : usages, posologie, grossesse, effets secondaires et interactions médicamenteuses. Verdict fondé sur les preuves et calculateur de doses gratuit."
+  },
   "seo": {
     "safePregnancy": "Généralement sûr pendant la grossesse",
     "notSafePregnancy": "Déconseillé pendant la grossesse",
     "safeNursing": "Généralement sûr pendant l'allaitement",
     "notSafeNursing": "Déconseillé pendant l'allaitement",
     "nccihSource": "Plantes Médicinales en Bref",
+    "breadcrumbHome": "Accueil",
     "orgName": "HerbAlly",
-    "orgDesc": "Explorez la plus grande base de données mondiale de plantes médicinales avec plus de 2 700 plantes. Calculez les posologies sûres et vérifiez les interactions médicamenteuses."
+    "orgDesc": "Une bibliothèque de référence de plus de 2 700 plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
   },
   "brand": {
     "full": "HerbAlly"

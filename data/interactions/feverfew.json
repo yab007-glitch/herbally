@@ -1,0 +1,35 @@
+{
+  "herb_slug": "feverfew",
+  "pairs": [
+    {
+      "drug_name": "Warfarin (Coumadin)",
+      "severity": "severe",
+      "description": "Feverfew contains sesquiterpene lactones that inhibit platelet aggregation, heightening bleeding hazards when taken alongside warfarin.",
+      "mechanism": "Inhibition of platelet granule secretion and thromboxane B2 formation by parthenolide.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/feverfew"
+    },
+    {
+      "drug_name": "Aspirin",
+      "severity": "moderate",
+      "description": "Combining feverfew and aspirin produces additive platelet antiaggregatory activity, increasing bruising and bleeding time.",
+      "mechanism": "Complementary suppression of platelet cyclooxygenase activity and platelet secretion mechanisms.",
+      "evidence_level": "moderate-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/feverfew"
+    },
+    {
+      "drug_name": "NSAIDs (Ibuprofen)",
+      "severity": "moderate",
+      "description": "Concomitant administration of feverfew and nonsteroidal anti-inflammatory drugs may exacerbate gastric mucosal irritation and bleeding.",
+      "mechanism": "Dual inhibition of platelet aggregation and gastric mucosal barrier prostaglandin synthesis.",
+      "evidence_level": "limited-evidence",
+      "source": "NCCIH",
+      "source_licence": "us-federal-public-domain",
+      "source_url": "https://www.nccih.nih.gov/health/feverfew"
+    }
+  ]
+}

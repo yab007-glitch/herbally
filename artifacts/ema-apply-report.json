@@ -1,0 +1,687 @@
+[
+ {
+  "binomial": "call scientific",
+  "status": "no herb"
+ },
+ {
+  "binomial": "cinnamomum verum",
+  "slug": "cinnamon",
+  "status": "applied"
+ },
+ {
+  "binomial": "achillea millefolium",
+  "slug": "yarrow",
+  "status": "applied"
+ },
+ {
+  "binomial": "agrimonia eupatoria",
+  "slug": "agrimonia-eupatoria-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "althaea officinalis",
+  "slug": "marshmallow-root",
+  "status": "applied"
+ },
+ {
+  "binomial": "artemisia absinthium",
+  "slug": "wormwood",
+  "status": "applied"
+ },
+ {
+  "binomial": "avena sativa",
+  "slug": "oat-straw",
+  "status": "applied"
+ },
+ {
+  "binomial": "barbados aloes",
+  "status": "ambiguous (4 pages share this plant: aloe-vera-leaf, aloe-vera-l-burm-f, aloe-vera-chinensis, barbadian-aloe)"
+ },
+ {
+  "binomial": "camellia sinensis",
+  "slug": "green-tea",
+  "status": "applied"
+ },
+ {
+  "binomial": "centaurium erythraea",
+  "slug": "centaurium-minus-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "chamaemelum nobile",
+  "slug": "chamomile-roman",
+  "status": "applied"
+ },
+ {
+  "binomial": "cichorium intybus",
+  "slug": "chicory",
+  "status": "applied"
+ },
+ {
+  "binomial": "cimicifuga racemosa",
+  "slug": "black-cohosh",
+  "status": "applied"
+ },
+ {
+  "binomial": "crataegus spp",
+  "slug": "hawthorn",
+  "status": "applied"
+ },
+ {
+  "binomial": "cucurbita pepo",
+  "slug": "pumpkin-seed",
+  "status": "applied"
+ },
+ {
+  "binomial": "curcuma longa",
+  "slug": "turmeric",
+  "status": "applied"
+ },
+ {
+  "binomial": "curcuma xanthorrhiza",
+  "slug": "java-turmeric",
+  "status": "applied"
+ },
+ {
+  "binomial": "cynara scolymus",
+  "slug": "artichoke",
+  "status": "applied"
+ },
+ {
+  "binomial": "echinacea pallida",
+  "slug": "echinacea-pallida",
+  "status": "applied"
+ },
+ {
+  "binomial": "echinacea purpurea",
+  "slug": "echinacea",
+  "status": "applied"
+ },
+ {
+  "binomial": "echinaceae angustifolia",
+  "slug": "echinacea-angustifolia",
+  "status": "applied"
+ },
+ {
+  "binomial": "eleutherococcus senticosus",
+  "slug": "eleuthero",
+  "status": "applied"
+ },
+ {
+  "binomial": "eschscholzia californica",
+  "slug": "eschscholzia-californica-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "filipendula ulmaria",
+  "slug": "meadowsweet",
+  "status": "applied"
+ },
+ {
+  "binomial": "foeniculum vulgare",
+  "slug": "fennel",
+  "status": "applied"
+ },
+ {
+  "binomial": "frangula bark",
+  "slug": "frangula-alnus",
+  "status": "applied"
+ },
+ {
+  "binomial": "fraxinus excelsior",
+  "slug": "fraxinus-excelsior-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "glycyrrhiza glabra",
+  "slug": "licorice-dgl",
+  "status": "applied"
+ },
+ {
+  "binomial": "hamamelis virginiana",
+  "slug": "witch-hazel",
+  "status": "applied"
+ },
+ {
+  "binomial": "hieracium pilosella",
+  "slug": "hieracium-pilosella",
+  "status": "applied"
+ },
+ {
+  "binomial": "humulus lupulus",
+  "slug": "hops",
+  "status": "applied"
+ },
+ {
+  "binomial": "hypericum perforatum",
+  "slug": "st-johns-wort",
+  "status": "applied"
+ },
+ {
+  "binomial": "ilex paraguariensis",
+  "slug": "yerba-mate",
+  "status": "applied"
+ },
+ {
+  "binomial": "ispaghula husk",
+  "slug": "psyllium",
+  "status": "applied"
+ },
+ {
+  "binomial": "juniperus communis",
+  "slug": "juniper-communis",
+  "status": "applied"
+ },
+ {
+  "binomial": "lavandula angustifolia",
+  "slug": "lavender",
+  "status": "applied"
+ },
+ {
+  "binomial": "levisticum officinale",
+  "slug": "lovage-root",
+  "status": "applied"
+ },
+ {
+  "binomial": "matricaria recutita",
+  "slug": "matricaria-recutita",
+  "status": "applied"
+ },
+ {
+  "binomial": "melaleuca alternifolia",
+  "slug": "tea-tree",
+  "status": "applied"
+ },
+ {
+  "binomial": "melissa officinalis",
+  "slug": "lemon-balm",
+  "status": "applied"
+ },
+ {
+  "binomial": "mentha x",
+  "status": "no herb"
+ },
+ {
+  "binomial": "olea europaea",
+  "slug": "olive-leaf",
+  "status": "applied"
+ },
+ {
+  "binomial": "ononis spinosa",
+  "slug": "restharrow",
+  "status": "applied"
+ },
+ {
+  "binomial": "origanum dictamnus",
+  "slug": "origanum-dictamnus",
+  "status": "applied"
+ },
+ {
+  "binomial": "orthosiphon stamineus",
+  "slug": "orthosiphon-stamineus",
+  "status": "applied"
+ },
+ {
+  "binomial": "paullinia cupana",
+  "slug": "guarana-seed",
+  "status": "applied"
+ },
+ {
+  "binomial": "pelargonium sidoides",
+  "slug": "umckaloabo",
+  "status": "applied"
+ },
+ {
+  "binomial": "pimpinella anisum",
+  "slug": "anise-green",
+  "status": "applied"
+ },
+ {
+  "binomial": "plantaginis lanceolatae",
+  "slug": "plantago-lanceolata",
+  "status": "applied"
+ },
+ {
+  "binomial": "primula veris",
+  "slug": "cowslip",
+  "status": "applied"
+ },
+ {
+  "binomial": "psyllium seed",
+  "slug": "psyllium",
+  "status": "applied"
+ },
+ {
+  "binomial": "rhodiola rosea",
+  "slug": "rhodiola",
+  "status": "applied"
+ },
+ {
+  "binomial": "ribes nigrum",
+  "slug": "ribes-nigrum",
+  "status": "applied"
+ },
+ {
+  "binomial": "rosa centifolia",
+  "slug": "rosa-centifolia",
+  "status": "applied"
+ },
+ {
+  "binomial": "rosmarinus officinalis",
+  "status": "ambiguous (3 pages share this plant: rosmarinus-officinalis-rosemary-leaf-extract, rosmarinus-officinalis-l, moroccan-rosemary)"
+ },
+ {
+  "binomial": "rubus idaeus",
+  "slug": "raspberry-ketone",
+  "status": "applied"
+ },
+ {
+  "binomial": "ruscus aculeatus",
+  "slug": "butchers-broom",
+  "status": "applied"
+ },
+ {
+  "binomial": "senna leaf",
+  "slug": "senna-leaf",
+  "status": "applied"
+ },
+ {
+  "binomial": "senna pods",
+  "status": "ambiguous (2 pages share this plant: senna-leaf, senna-pods)"
+ },
+ {
+  "binomial": "solanum dulcamara",
+  "slug": "bittersweet-nightshade",
+  "status": "applied"
+ },
+ {
+  "binomial": "solidago virgaurea",
+  "slug": "goldenrod-solidago",
+  "status": "applied"
+ },
+ {
+  "binomial": "syzygium aromaticum",
+  "slug": "clove",
+  "status": "applied"
+ },
+ {
+  "binomial": "tanacetum parthenium",
+  "slug": "feverfew",
+  "status": "applied"
+ },
+ {
+  "binomial": "thymus vulgaris",
+  "slug": "thyme",
+  "status": "applied"
+ },
+ {
+  "binomial": "tilia cordata",
+  "slug": "tilia-cordata-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "trigonella foenumgraecum",
+  "status": "no herb"
+ },
+ {
+  "binomial": "urtica dioica",
+  "slug": "swedish-nettle-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "valeriana officinalis",
+  "slug": "valerian",
+  "status": "applied"
+ },
+ {
+  "binomial": "verbascum thapsus",
+  "slug": "mullein",
+  "status": "applied"
+ },
+ {
+  "binomial": "zingiberis",
+  "slug": "gan-jiang-root",
+  "status": "applied"
+ },
+ {
+  "binomial": "aesculus hippocastanum",
+  "slug": "horse-chestnut",
+  "status": "applied"
+ },
+ {
+  "binomial": "draft public",
+  "status": "no herb"
+ },
+ {
+  "binomial": "gentiana lutea",
+  "slug": "yellow-gentian-root",
+  "status": "applied"
+ },
+ {
+  "binomial": "aesculus hippocastanum",
+  "slug": "horse-chestnut",
+  "status": "applied"
+ },
+ {
+  "binomial": "agropyron repens",
+  "slug": "agropyron-repens",
+  "status": "applied"
+ },
+ {
+  "binomial": "centella asiatica",
+  "slug": "gotu-kola",
+  "status": "applied"
+ },
+ {
+  "binomial": "epilobium angustifolium",
+  "slug": "epilobium-angustifolium",
+  "status": "applied"
+ },
+ {
+  "binomial": "orthosiphon aristatus",
+  "slug": "misai-kucing",
+  "status": "applied"
+ },
+ {
+  "binomial": "rhamnus frangula",
+  "slug": "rhamnus-frangula",
+  "status": "applied"
+ },
+ {
+  "binomial": "species digestivae",
+  "status": "no herb"
+ },
+ {
+  "binomial": "trigonella foenum",
+  "slug": "fenugreek-seed",
+  "status": "applied"
+ },
+ {
+  "binomial": "arctium lappa",
+  "slug": "burdock-seed",
+  "status": "applied"
+ },
+ {
+  "binomial": "arnica montana",
+  "slug": "arnica",
+  "status": "applied"
+ },
+ {
+  "binomial": "capsella bursa",
+  "slug": "capsella-bursa-pastoris-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "cola nitida",
+  "slug": "kola-nut",
+  "status": "applied"
+ },
+ {
+  "binomial": "commiphora molmol",
+  "slug": "commiphora-molmol",
+  "status": "applied"
+ },
+ {
+  "binomial": "echinacea angustifolia",
+  "slug": "echinacea-angustifolia",
+  "status": "applied"
+ },
+ {
+  "binomial": "eucalyptus globulus",
+  "slug": "eucalyptus",
+  "status": "applied"
+ },
+ {
+  "binomial": "grindelia robusta",
+  "status": "no herb"
+ },
+ {
+  "binomial": "juglans regia",
+  "slug": "juglans-regia-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "leonurus cardiaca",
+  "slug": "motherwort-european",
+  "status": "applied"
+ },
+ {
+  "binomial": "linum usitatissimum",
+  "slug": "flaxseed-oil-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "phaseolus vulgaris",
+  "slug": "phaseolus-vulgaris",
+  "status": "applied"
+ },
+ {
+  "binomial": "plantago ovata",
+  "slug": "psyllium",
+  "status": "applied"
+ },
+ {
+  "binomial": "quercus robur",
+  "slug": "oak-bark",
+  "status": "applied"
+ },
+ {
+  "binomial": "taraxacum officinale",
+  "slug": "dandelion",
+  "status": "applied"
+ },
+ {
+  "binomial": "viola tricolor",
+  "slug": "viola-tricolor-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "allium sativum",
+  "slug": "garlic",
+  "status": "applied"
+ },
+ {
+  "binomial": "aloe barbadensis",
+  "slug": "aloe-vera",
+  "status": "applied"
+ },
+ {
+  "binomial": "aloysia citrodora",
+  "slug": "aloysia-citriodora",
+  "status": "applied"
+ },
+ {
+  "binomial": "betula pendula",
+  "slug": "betula-pendula-bark",
+  "status": "applied"
+ },
+ {
+  "binomial": "carum carvi",
+  "slug": "carum-carvi-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "cetraria islandica",
+  "slug": "iceland-moss",
+  "status": "applied"
+ },
+ {
+  "binomial": "cisti cretici",
+  "status": "no herb"
+ },
+ {
+  "binomial": "cnicus benedictus",
+  "slug": "asteraceae-blessed-thistle",
+  "status": "applied"
+ },
+ {
+  "binomial": "cynara cardunculus",
+  "slug": "artichoke",
+  "status": "applied"
+ },
+ {
+  "binomial": "fragaria vesca",
+  "slug": "wild-strawberry",
+  "status": "applied"
+ },
+ {
+  "binomial": "fumaria officinalis",
+  "slug": "fumitory-herb",
+  "status": "applied"
+ },
+ {
+  "binomial": "glycine max",
+  "status": "ambiguous (3 pages share this plant: glycine-max, phosphatidylserine-herb, phosphatidylserine-noot)"
+ },
+ {
+  "binomial": "harpagophytum procumbens",
+  "slug": "devils-claw",
+  "status": "applied"
+ },
+ {
+  "binomial": "herniaria glabra",
+  "slug": "rupturewort",
+  "status": "applied"
+ },
+ {
+  "binomial": "malva sylvestris",
+  "slug": "mallow",
+  "status": "applied"
+ },
+ {
+  "binomial": "melilotus officinalis",
+  "slug": "melilot",
+  "status": "applied"
+ },
+ {
+  "binomial": "menyanthes trifoliata",
+  "slug": "menyanthes-trifoliata",
+  "status": "applied"
+ },
+ {
+  "binomial": "oenothera biennis",
+  "slug": "evening-primrose",
+  "status": "applied"
+ },
+ {
+  "binomial": "onechinacea purpurea",
+  "slug": "echinacea",
+  "status": "applied"
+ },
+ {
+  "binomial": "origanum majorana",
+  "slug": "marjoram",
+  "status": "applied"
+ },
+ {
+  "binomial": "panax ginseng",
+  "slug": "ginseng",
+  "status": "applied"
+ },
+ {
+  "binomial": "peumus boldus",
+  "slug": "boldo-leaf",
+  "status": "applied"
+ },
+ {
+  "binomial": "pilosella officinarum",
+  "slug": "hieracium-pilosella",
+  "status": "applied"
+ },
+ {
+  "binomial": "pistacia lentiscus",
+  "slug": "mastic-resin",
+  "status": "applied"
+ },
+ {
+  "binomial": "prunus avium",
+  "slug": "cherry-stalk",
+  "status": "applied"
+ },
+ {
+  "binomial": "rhamnus purshiana",
+  "slug": "frangula-purshiana",
+  "status": "applied"
+ },
+ {
+  "binomial": "rheum palmatum",
+  "slug": "da-huang",
+  "status": "applied"
+ },
+ {
+  "binomial": "salix various",
+  "status": "no herb"
+ },
+ {
+  "binomial": "sambucus nigra",
+  "status": "ambiguous (7 pages share this plant: sambucol, sambucus-nigra-subsp-canadensis, elderberry, elderflower)"
+ },
+ {
+  "binomial": "senna alexandrina",
+  "slug": "senna-leaf",
+  "status": "applied"
+ },
+ {
+  "binomial": "sideritis scardica",
+  "slug": "sideritis",
+  "status": "applied"
+ },
+ {
+  "binomial": "sisymbrium officinale",
+  "status": "no herb"
+ },
+ {
+  "binomial": "species amarae",
+  "status": "no herb"
+ },
+ {
+  "binomial": "species pectorales",
+  "status": "no herb"
+ },
+ {
+  "binomial": "species sedativae",
+  "status": "no herb"
+ },
+ {
+  "binomial": "symphytum officinale",
+  "slug": "comfrey",
+  "status": "applied"
+ },
+ {
+  "binomial": "vaccinium macrocarpon",
+  "slug": "cranberry",
+  "status": "applied"
+ },
+ {
+  "binomial": "vaccinium myrtillus",
+  "status": "ambiguous (4 pages share this plant: vaccinium-myrtillus, bilberry, bilberry-leaf, vaccinium-myrtillus-l)"
+ },
+ {
+  "binomial": "vitex agnus",
+  "slug": "vitex",
+  "status": "applied"
+ },
+ {
+  "binomial": "vitis vinifera",
+  "status": "ambiguous (4 pages share this plant: grape-seed, vitis-vinifera, vitis-vinifera-grape-seed-extract, vitis-vinifera-var-tinctoria)"
+ },
+ {
+  "binomial": "zingiber officinale",
+  "slug": "gan-jiang-root",
+  "status": "applied"
+ },
+ {
+  "binomial": "agropyron repens",
+  "slug": "agropyron-repens",
+  "status": "applied"
+ },
+ {
+  "binomial": "superseded european",
+  "status": "no herb"
+ },
+ {
+  "binomial": "achillea millefolium",
+  "slug": "yarrow",
+  "status": "applied"
+ }
+]

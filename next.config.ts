@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 import createNextIntlPlugin from "next-intl/plugin";
+import { buildSecurityHeaders } from "./src/lib/security/csp";
+import herbMergeRedirects from "./data/herb-merge-redirects.json";
+import herbSlugRenames from "./data/herb-slug-renames.json";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
@@ -26,16 +29,40 @@ const nextConfig: NextConfig = {
       }),
   // Don't advertise the runtime/framework in response headers.
   poweredByHeader: false,
+  // Build-time static generation is DB-backed (symptom hubs, herb pages,
+  // sitemap). Next's default per-page cap is 60s; when Supabase answers slowly
+  // a single symptom hub can exceed it, the page is retried, and the whole
+  // deploy dies with BUILD_UTILS_SPAWN_1 ("npm run build" exited with 1) —
+  // observed 2026-11-02 on commit 75eaee54, where /fr/symptoms/* took >60s and
+  // the sitemap exhausted its 40s DB budget. Give each page room to finish
+  // instead of failing the deployment; a genuinely broken query still fails,
+  // just later. Vercel's build ceiling (45 min) is the outer bound.
+  staticPageGenerationTimeout: 180,
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
   },
   images: {
+    // Constrain the variant matrix. The defaults are 8 device widths × 7 icon
+    // widths × 2 formats, so one photo can produce up to 30 derivatives; every
+    // derivative is a billed transformation and a billed cache write. The app
+    // has only three <Image> call sites, and their `sizes` props resolve to
+    // widths covered by these breakpoints. `qualities` is required in Next 16;
+    // 75 is the global default and no call site overrides it.
+    deviceSizes: [640, 1080, 1920],
+    imageSizes: [96, 128, 256, 384],
+    qualities: [75],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       {
         protocol: "https",
         hostname: "*.supabase.co",
+      },
+      // Botanical photographs come from Wikimedia Commons; every one carries its
+      // author and licence in provenance.image and is credited under the figure.
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
       },
     ],
   },
@@ -46,36 +73,15 @@ const nextConfig: NextConfig = {
   // and could be framed/fetched without the same protections. Apply the same
   // baseline security headers to static assets here at the config level so the
   // protection is uniform regardless of the proxy matcher.
-  // NOTE (embed framing): X-Frame-Options and the CSP frame-ancestors
-  // directive are deliberately ABSENT here — they are owned exclusively by
-  // src/proxy.ts, which must exempt /embed/* (partner iframes). Config-level
-  // headers merge over middleware deletions, so allowlisting there is the
-  // only way to un-frame a route.
+  // NOTE (embed framing): the framing directive and X-Frame-Options are
+  // deliberately ABSENT here — they are owned exclusively by src/proxy.ts,
+  // which must exempt /embed/* (partner iframes). Config-level headers are
+  // applied after the proxy, so emitting them here would re-block embeds.
   async headers() {
     const securityHeaders = [
-      { key: "X-Content-Type-Options", value: "nosniff" },
-      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-      {
-        key: "Permissions-Policy",
-        value: "camera=(), microphone=(), geolocation=()",
-      },
-      {
-        key: "Content-Security-Policy",
-        value: [
-          "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          "connect-src 'self' *.supabase.co https://ollama.com *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
-          "style-src 'self' 'unsafe-inline'",
-          "font-src 'self' data:",
-          "frame-src *.stripe.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://adservice.google.com https://www.google.com",
-          // No frame-ancestors here — owned by the proxy (see note above).
-          "object-src 'none'",
-          "base-uri 'self'",
-          "form-action 'self'",
-          "upgrade-insecure-requests",
-        ].join("; "),
-      },
+      ...Object.entries(buildSecurityHeaders({ framing: "omit" })).map(
+        ([key, value]) => ({ key, value })
+      ),
       ...(process.env.NODE_ENV === "production"
         ? [
             {
@@ -103,14 +109,77 @@ const nextConfig: NextConfig = {
         source: "/",
         has: [{ type: "query", key: "herb" }],
         destination: "/herbalist",
-        permanent: true,
+        statusCode: 301,
       },
       {
         source: "/",
         has: [{ type: "query", key: "medications" }],
         destination: "/herbalist",
+        statusCode: 301,
+      },
+      {
+        source: "/herbs/ginkgo",
+        destination: "/herbs/ginkgo-biloba",
+        statusCode: 301,
+      },
+      {
+        source: "/:locale(en|fr)/herbs/ginkgo",
+        destination: "/:locale/herbs/ginkgo-biloba",
+        statusCode: 301,
+      },
+      // The interaction hub has lived at /herb-drug-interactions since launch,
+      // but "interactions" is the shorter, more guessable URL — people and
+      // crawlers try it, and it 404'd. Same for the pair pattern written with
+      // the hub as its prefix.
+      {
+        source: "/interactions",
+        destination: "/herb-drug-interactions",
+        statusCode: 301,
+      },
+      {
+        source: "/:locale(en|fr)/interactions",
+        destination: "/:locale/herb-drug-interactions",
+        statusCode: 301,
+      },
+      {
+        source: "/herb-drug-interactions/:herb/:drug",
+        destination: "/interactions/:herb/:drug",
+        statusCode: 301,
+      },
+      {
+        source: "/:locale(en|fr)/herb-drug-interactions/:herb/:drug",
+        destination: "/:locale/interactions/:herb/:drug",
+        statusCode: 301,
+      },
+      // Search Console reported /pharmacist as a 404: it was a real URL people
+      // followed, and the herbalist page is what it meant.
+      { source: "/pharmacist", destination: "/herbalist", permanent: true },
+      {
+        source: "/:locale(en|fr)/pharmacist",
+        destination: "/:locale/herbalist",
         permanent: true,
       },
+      // Merged duplicate herbs. Each pair was reviewed (same species, same part
+      // or preparation) and the duplicate was unpublished rather than deleted,
+      // so the old URL still resolves through a permanent redirect instead of
+      // 404ing on a page that has real historical traffic.
+      // Corrected species names: the old slug was a misspelling of the accepted
+      // name, so the URL moved once the name was fixed. Same permanent-redirect
+      // treatment as the merges — the old URL has traffic and should not 404.
+      ...(herbSlugRenames.activation === "active"
+        ? herbSlugRenames.renames.flatMap(({ from, to }) => [
+            { source: from, destination: to, permanent: true },
+            { source: `/fr${from}`, destination: `/fr${to}`, permanent: true },
+          ])
+        : []),
+      ...herbMergeRedirects.flatMap(({ from, to }) => [
+        { source: from, destination: to, permanent: true },
+        {
+          source: `/fr${from}`,
+          destination: `/fr${to}`,
+          permanent: true,
+        },
+      ]),
     ];
   },
 };
@@ -120,8 +189,6 @@ export default bundleAnalyzer(
     org: process.env.SENTRY_ORG || "",
     project: process.env.SENTRY_PROJECT || "",
     authToken: process.env.SENTRY_AUTH_TOKEN,
-    // Upload wider set of client source files for better stack trace resolution
-    widenClientFileUpload: true,
     // Create a proxy API route to bypass ad-blockers
     tunnelRoute: "/monitoring",
     // Suppress non-CI output

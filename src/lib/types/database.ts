@@ -14,51 +14,6 @@ export type Database = {
   };
   public: {
     Tables: {
-      herb_pubmed_monographs: {
-        Row: {
-          id: string;
-          slug: string;
-          content: Record<string, unknown>;
-          citations: unknown[] | null;
-          pmids: string[] | null;
-          article_count: number | null;
-          model: string | null;
-          generated_at: string;
-          status: string | null;
-          last_reviewed: string | null;
-          reviewed_by: string | null;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          slug: string;
-          content: Record<string, unknown>;
-          citations?: unknown[] | null;
-          pmids?: string[] | null;
-          article_count?: number | null;
-          model?: string | null;
-          generated_at?: string | null;
-          status?: string | null;
-          last_reviewed?: string | null;
-          reviewed_by?: string | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          slug?: string;
-          content?: Record<string, unknown>;
-          citations?: unknown[] | null;
-          pmids?: string[] | null;
-          article_count?: number | null;
-          model?: string | null;
-          generated_at?: string | null;
-          status?: string | null;
-          last_reviewed?: string | null;
-          reviewed_by?: string | null;
-          updated_at?: string | null;
-        };
-        Relationships: [];
-      };
       ai_response_cache: {
         Row: {
           created_at: string | null;
@@ -121,7 +76,6 @@ export type Database = {
           guest_id: string | null;
           herb_context: string | null;
           id: string;
-          messages: Json;
           title: string | null;
           updated_at: string;
           user_id: string | null;
@@ -131,7 +85,6 @@ export type Database = {
           guest_id?: string | null;
           herb_context?: string | null;
           id?: string;
-          messages?: Json;
           title?: string | null;
           updated_at?: string;
           user_id?: string | null;
@@ -141,19 +94,11 @@ export type Database = {
           guest_id?: string | null;
           herb_context?: string | null;
           id?: string;
-          messages?: Json;
           title?: string | null;
           updated_at?: string;
           user_id?: string | null;
         };
         Relationships: [
-          {
-            foreignKeyName: "chat_sessions_herb_context_fkey";
-            columns: ["herb_context"];
-            isOneToOne: false;
-            referencedRelation: "herbs";
-            referencedColumns: ["id"];
-          },
           {
             foreignKeyName: "chat_sessions_user_id_fkey";
             columns: ["user_id"];
@@ -444,6 +389,7 @@ export type Database = {
           question: string;
           sort_order: number | null;
           source: string | null;
+          translations: Json | null;
           updated_at: string | null;
         };
         Insert: {
@@ -457,6 +403,7 @@ export type Database = {
           question: string;
           sort_order?: number | null;
           source?: string | null;
+          translations?: Json | null;
           updated_at?: string | null;
         };
         Update: {
@@ -470,6 +417,7 @@ export type Database = {
           question?: string;
           sort_order?: number | null;
           source?: string | null;
+          translations?: Json | null;
           updated_at?: string | null;
         };
         Relationships: [
@@ -556,6 +504,66 @@ export type Database = {
           },
         ];
       };
+      herb_pubmed_monographs: {
+        Row: {
+          article_count: number | null;
+          citations: Json | null;
+          content: Json;
+          generated_at: string;
+          id: string;
+          last_reviewed: string | null;
+          model: string | null;
+          pmids: string[] | null;
+          reviewed_by: string | null;
+          slug: string;
+          status: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          article_count?: number | null;
+          citations?: Json | null;
+          content: Json;
+          generated_at?: string;
+          id?: string;
+          last_reviewed?: string | null;
+          model?: string | null;
+          pmids?: string[] | null;
+          reviewed_by?: string | null;
+          slug: string;
+          status?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          article_count?: number | null;
+          citations?: Json | null;
+          content?: Json;
+          generated_at?: string;
+          id?: string;
+          last_reviewed?: string | null;
+          model?: string | null;
+          pmids?: string[] | null;
+          reviewed_by?: string | null;
+          slug?: string;
+          status?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "herb_pubmed_monographs_slug_fkey";
+            columns: ["slug"];
+            isOneToOne: true;
+            referencedRelation: "herb_popularity";
+            referencedColumns: ["slug"];
+          },
+          {
+            foreignKeyName: "herb_pubmed_monographs_slug_fkey";
+            columns: ["slug"];
+            isOneToOne: true;
+            referencedRelation: "herbs";
+            referencedColumns: ["slug"];
+          },
+        ];
+      };
       herb_ratings: {
         Row: {
           created_at: string;
@@ -585,6 +593,71 @@ export type Database = {
           user_id?: string | null;
         };
         Relationships: [];
+      };
+      herb_regulatory_evidence: {
+        Row: {
+          doses: Json;
+          herb_slug: string;
+          products_sampled: number;
+          purposes: Json;
+          retrieved_at: string;
+          risks: Json;
+          source: string;
+          source_licence: string;
+          source_urls: Json;
+          updated_at: string;
+        };
+        Insert: {
+          doses?: Json;
+          herb_slug: string;
+          products_sampled?: number;
+          purposes?: Json;
+          retrieved_at?: string;
+          risks?: Json;
+          source: string;
+          source_licence: string;
+          source_urls?: Json;
+          updated_at?: string;
+        };
+        Update: {
+          doses?: Json;
+          herb_slug?: string;
+          products_sampled?: number;
+          purposes?: Json;
+          retrieved_at?: string;
+          risks?: Json;
+          source?: string;
+          source_licence?: string;
+          source_urls?: Json;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      herb_view_counts: {
+        Row: {
+          herb_id: string;
+          updated_at: string;
+          views: number;
+        };
+        Insert: {
+          herb_id: string;
+          updated_at?: string;
+          views?: number;
+        };
+        Update: {
+          herb_id?: string;
+          updated_at?: string;
+          views?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "herb_view_counts_herb_id_fkey";
+            columns: ["herb_id"];
+            isOneToOne: true;
+            referencedRelation: "herbs";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       herbs: {
         Row: {
@@ -761,28 +834,52 @@ export type Database = {
       };
       newsletter_subscribers: {
         Row: {
+          confirm_token: string;
           confirmed_at: string | null;
+          consent_text: string | null;
+          consented_at: string;
           created_at: string;
           email: string;
           id: string;
+          last_sent_at: string | null;
           locale: string | null;
+          source_path: string | null;
+          status: string;
           subscribed: boolean | null;
+          unsubscribe_token: string;
+          unsubscribed_at: string | null;
         };
         Insert: {
+          confirm_token?: string;
           confirmed_at?: string | null;
+          consent_text?: string | null;
+          consented_at?: string;
           created_at?: string;
           email: string;
           id?: string;
+          last_sent_at?: string | null;
           locale?: string | null;
+          source_path?: string | null;
+          status?: string;
           subscribed?: boolean | null;
+          unsubscribe_token?: string;
+          unsubscribed_at?: string | null;
         };
         Update: {
+          confirm_token?: string;
           confirmed_at?: string | null;
+          consent_text?: string | null;
+          consented_at?: string;
           created_at?: string;
           email?: string;
           id?: string;
+          last_sent_at?: string | null;
           locale?: string | null;
+          source_path?: string | null;
+          status?: string;
           subscribed?: boolean | null;
+          unsubscribe_token?: string;
+          unsubscribed_at?: string | null;
         };
         Relationships: [];
       };
@@ -967,7 +1064,13 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      herb_popularity: {
+        Row: {
+          slug: string | null;
+          views: number | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       add_guest_chat_message: {
@@ -998,7 +1101,6 @@ export type Database = {
           guest_id: string | null;
           herb_context: string | null;
           id: string;
-          messages: Json;
           title: string | null;
           updated_at: string;
           user_id: string | null;
@@ -1037,7 +1139,6 @@ export type Database = {
           guest_id: string | null;
           herb_context: string | null;
           id: string;
-          messages: Json;
           title: string | null;
           updated_at: string;
           user_id: string | null;
@@ -1056,7 +1157,6 @@ export type Database = {
           guest_id: string | null;
           herb_context: string | null;
           id: string;
-          messages: Json;
           title: string | null;
           updated_at: string;
           user_id: string | null;
