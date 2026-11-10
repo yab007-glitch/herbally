@@ -92,7 +92,8 @@ export const NARRATIVE_FR: NarrativeCopy = {
   conjunction: "et",
   // Neutral phrasing on purpose: French herb names vary in gender, and a
   // template like "Le curcuma est utilisé" would be wrong for "la valériane".
-  uses: (name, list) => `Usages traditionnels consignés pour ${name} : ${list}.`,
+  uses: (name, list) =>
+    `Usages traditionnels consignés pour ${name} : ${list}.`,
   modern: (list) => `Les sources modernes décrivent un usage pour ${list}.`,
   dose: (dose) => `Les sources consignent la posologie suivante : ${dose}.`,
   pregnancyUnsafe:
@@ -108,7 +109,9 @@ export const NARRATIVE_FR: NarrativeCopy = {
   interactionsNone:
     "Aucune interaction médicamenteuse n'est consignée dans les sources examinées.",
   regulatorSource: (regulator) =>
-    regulator ? ` Les dossiers de ${regulator} indiquent` : " Les sources indiquent",
+    regulator
+      ? ` Les dossiers de ${regulator} indiquent`
+      : " Les sources indiquent",
   // French typography puts a space before a colon; English does not.
   colon: " :",
   labelPattern:
@@ -248,10 +251,7 @@ export function quotedContraindications(
     const body = item.replace(copy.labelPattern, "").trim();
     return `“${body.replace(/[.]$/, "")}”`;
   });
-  return `${source.trim()}${copy.colon} ${joinList(
-    quotes,
-    copy.conjunction
-  )}.`;
+  return `${source.trim()}${copy.colon} ${joinList(quotes, copy.conjunction)}.`;
 }
 
 export interface NarrativeSection {
