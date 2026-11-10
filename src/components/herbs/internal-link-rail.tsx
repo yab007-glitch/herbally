@@ -2,6 +2,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { LinkHerb } from "@/lib/data/internal-links";
 import { pairPath } from "@/lib/interactions/pair-url";
+import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
 
 const COPY = {
   en: {
@@ -44,6 +45,9 @@ export function InternalLinkRail({
   peers: LinkHerb[];
 }) {
   const c = COPY[locale];
+  // Severity is stored as an English key ("mild"); print the label the reader's
+  // language uses instead of the key.
+  const severity = herbPageCopy(locale).severity;
   const pairs = interactions.slice(0, 6);
   const hasNeighbours = Boolean(prev || next);
 
@@ -65,7 +69,7 @@ export function InternalLinkRail({
                 >
                   <span>{pair.drug_name}</span>
                   <span className="text-xs capitalize text-muted-foreground">
-                    {pair.severity}
+                    {severity[pair.severity] ?? pair.severity}
                   </span>
                 </Link>
               </li>

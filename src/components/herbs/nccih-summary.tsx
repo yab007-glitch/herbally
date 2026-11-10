@@ -21,6 +21,9 @@ export function NccihSummary({
   licenceText = "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
   claimsHeading = "Background and evidence",
   safetyHeading = "Safety, in the NIH's words",
+  verbatimNote = null,
+  expandLabel = "Show source text",
+  reproducedLabel = "Reproduced verbatim from",
 }: {
   claims: (string | { claim?: string; text?: string })[] | null;
   safety: (string | { note?: string; text?: string })[] | null;
@@ -32,6 +35,13 @@ export function NccihSummary({
   licenceText?: string;
   claimsHeading?: string;
   safetyHeading?: string;
+  /**
+   * Set on a translated page: the quoted regulator text below stays in its
+   * source language, and saying so is better than a silent language switch.
+   */
+  verbatimNote?: string | null;
+  expandLabel?: string;
+  reproducedLabel?: string;
 }) {
   // Imported rows carry either a bare string or an object: NCCIH stores
   // {claim}/{note}, Health Canada stores {section, text}. Reading only the first
@@ -63,35 +73,59 @@ export function NccihSummary({
           </h2>
         </div>
 
-        {background.length > 0 && (
-          <div className="mb-5">
-            <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">
-              {claimsHeading}
-            </h3>
-            <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
-              {background.map((line, i) => (
-                <li key={i}>{line}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {(() => {
+          const lists = (
+            <>
+              {background.length > 0 && (
+                <div className="mb-5">
+                  <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+                    {claimsHeading}
+                  </h3>
+                  <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
+                    {background.map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-        {safetyNotes.length > 0 && (
-          <div className="mb-5">
-            <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-neutral-500">
-              <ShieldAlert className="h-4 w-4" aria-hidden="true" />
-              {safetyHeading}
-            </h3>
-            <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
-              {safetyNotes.map((line, i) => (
-                <li key={i}>{line}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+              {safetyNotes.length > 0 && (
+                <div className="mb-5">
+                  <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+                    <ShieldAlert className="h-4 w-4" aria-hidden="true" />
+                    {safetyHeading}
+                  </h3>
+                  <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
+                    {safetyNotes.map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          );
+
+          // On a translated page the quotation stays in its source language,
+          // so it opens collapsed: the page reads in the reader's language and
+          // the regulator's own words are one click away, still labelled.
+          if (!verbatimNote) return lists;
+          return (
+            <>
+              <p className="mb-3 rounded-lg bg-neutral-100 px-3 py-2 text-xs leading-relaxed text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                {verbatimNote}
+              </p>
+              <details className="mb-5 rounded-lg border border-neutral-200 dark:border-neutral-800">
+                <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                  {expandLabel}
+                </summary>
+                <div className="px-3 pb-1">{lists}</div>
+              </details>
+            </>
+          );
+        })()}
 
         <p className="border-t border-neutral-200 pt-4 text-sm text-neutral-500 dark:border-neutral-800">
-          Reproduced verbatim from{" "}
+          {reproducedLabel}{" "}
           {url ? (
             <a
               href={url}

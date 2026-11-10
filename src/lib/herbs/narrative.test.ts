@@ -7,6 +7,7 @@ import {
   summariseDosage,
   summariseSafety,
   summariseUses,
+  NARRATIVE_FR,
 } from "@/lib/herbs/narrative";
 
 describe("joinList", () => {
@@ -138,5 +139,59 @@ describe("narrativeSections", () => {
       "Safety",
       "In the regulator's words",
     ]);
+  });
+});
+
+describe("French copy (used on /fr herb pages)", () => {
+  it("builds French sentences end to end", () => {
+    const sections = narrativeSections(
+      {
+        name: "Gingembre",
+        traditionalUses: ["nausées", "digestion"],
+        dosageAdult: "1 à 3 g par jour",
+        pregnancySafe: true,
+        nursingSafe: true,
+        interactionCount: 2,
+        regulator: "Santé Canada",
+        contraindications: ["Ne pas utiliser avant une chirurgie"],
+      },
+      NARRATIVE_FR
+    );
+    const text = sections.map((s) => s.body).join(" ");
+    expect(text).toContain("Usages traditionnels consignés pour Gingembre");
+    expect(text).toContain("nausées et digestion");
+    expect(text).toContain("Les sources consignent la posologie suivante : 1 à 3 g par jour.");
+    expect(text).toContain("Les dossiers de Santé Canada indiquent : “Ne pas utiliser");
+    expect(text).not.toMatch(/\bthe\b|\band\b|Dose recorded/i);
+    expect(sections[0].heading).toBe("Usage traditionnel et moderne");
+  });
+
+  it("keeps the regulator name in French in its sentence", () => {
+    const sections = narrativeSections(
+      {
+        name: "Gingembre",
+        contraindications: ["Déconseillé avant une chirurgie"],
+        regulator: "Santé Canada",
+        pregnancySafe: null,
+        nursingSafe: null,
+        interactionCount: 0,
+      },
+      NARRATIVE_FR
+    );
+    expect(sections.some((s) => s.body.includes("dossiers de Santé Canada"))).toBe(
+      true
+    );
+  });
+
+  it("strips the French label prefix the way it strips the English one", () => {
+    const quoted = quotedContraindications(
+      {
+        name: "Gingembre",
+        contraindications: ["Contre-indications : Ne pas utiliser avant une chirurgie"],
+      },
+      NARRATIVE_FR
+    );
+    expect(quoted).not.toContain("Contre-indications :");
+    expect(quoted).toContain("Ne pas utiliser avant une chirurgie");
   });
 });
