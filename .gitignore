@@ -68,6 +68,11 @@ test-results/
 .playwright-mcp/
 supabase/backups/
 
+# VPS deploy secrets (see deploy/README.md). The .example files stay tracked.
+deploy/.env
+deploy/app.env
+!deploy/.env.example
+
 # Regenerable LNHPD harvest (49 MB, rebuilt by scripts/harvest-lnhpd.mjs)
 artifacts/lnhpd-matches.json
 artifacts/lnhpd-enrichment.json

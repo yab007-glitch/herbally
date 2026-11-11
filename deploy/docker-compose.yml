@@ -1,0 +1,218 @@
+# HerbAlly — self-hosted stack.
+#
+# Trimmed from the official supabase/docker compose. Deliberately dropped:
+#   studio, meta, realtime, storage, imgproxy, functions, supavisor,
+#   logflare/vector. None of them are used by the app (0 storage calls,
+#   0 realtime channels, no edge functions, ~18 req/min of API traffic).
+#
+# Also dropped: the Envoy api-gw. The hosted project's keys are opaque
+# `sb_publishable_…`/`sb_secret_…` values that PostgREST cannot consume, which
+# is why the upstream stack needs a gateway. Here we mint our own classic HS256
+# JWTs (deploy/gen-keys.mjs), so PostgREST and GoTrue take them directly and
+# Caddy does the /rest/v1 and /auth/v1 path routing the gateway used to do.
+# One less container, one less config language to keep correct.
+
+name: herbally
+
+services:
+  db:
+    image: supabase/postgres:17.6.1.136
+    container_name: herbally-db
+    restart: unless-stopped
+    shm_size: 1gb
+    volumes:
+      # These two run only on a fresh PGDATA. They set the passwords of the
+      # roles the image already creates, and the database-level JWT expiry.
+      - ./supabase/volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:ro
+      - ./supabase/volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:ro
+      - db-data:/var/lib/postgresql/data
+      # Holds the pgsodium root key; must survive container recreation.
+      - db-config:/etc/postgresql-custom
+    environment:
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: 5432
+      POSTGRES_PORT: 5432
+      PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+      PGDATABASE: postgres
+      POSTGRES_DB: postgres
+      JWT_EXP: ${JWT_EXPIRY:-3600}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # One-shot. Puts the `auth` schema in a state GoTrue can migrate into, and
+  # is deliberately a service rather than an init script: init scripts only
+  # run on an empty PGDATA, and a half-initialised volume would then be
+  # permanently broken with no obvious cause. Idempotent, so it is harmless on
+  # every `docker compose up`.
+  db-init:
+    image: supabase/postgres:17.6.1.136
+    container_name: herbally-db-init
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+    volumes:
+      - ./supabase/volumes/db/auth-schema-ownership.sql:/sql/auth-schema-ownership.sql:ro
+    command:
+      - psql
+      - -h
+      - db
+      - -U
+      - postgres
+      - -d
+      - postgres
+      - -v
+      - ON_ERROR_STOP=1
+      - -f
+      - /sql/auth-schema-ownership.sql
+
+  rest:
+    image: postgrest/postgrest:v14.18
+    container_name: herbally-rest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_MAX_ROWS: "1000"
+      PGRST_DB_EXTRA_SEARCH_PATH: public
+      PGRST_JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in deploy/.env}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_APP_SETTINGS_JWT_EXP: ${JWT_EXPIRY:-3600}
+      # Needed by the healthcheck: `postgrest --ready` probes the admin server.
+      PGRST_ADMIN_SERVER_HOST: "localhost"
+      PGRST_ADMIN_SERVER_PORT: "3001"
+    healthcheck:
+      test: ["CMD", "postgrest", "--ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth:
+    image: supabase/gotrue:v2.197.0
+    container_name: herbally-auth
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: https://api.herbally.app/auth/v1
+
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+
+      GOTRUE_SITE_URL: https://herbally.app
+      # Locale-prefixed auth callbacks (/en/auth/callback, /fr/auth/callback).
+      GOTRUE_URI_ALLOW_LIST: https://herbally.app/auth/callback,https://herbally.app/en/auth/callback,https://herbally.app/fr/auth/callback
+
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_JWT_EXP: ${JWT_EXPIRY:-3600}
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_ISSUER: https://api.herbally.app/auth/v1
+
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: "false"
+      GOTRUE_EXTERNAL_PHONE_ENABLED: "false"
+
+      # Zoho Mail — same mailbox the hosted project uses for transactional mail.
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
+      GOTRUE_SMTP_HOST: ${SMTP_HOST}
+      # Defaulted rather than required: GoTrue fails to boot on an empty int,
+      # so an unfilled .env would crash-loop instead of reporting a mail error.
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-587}
+      GOTRUE_SMTP_USER: ${SMTP_USER}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-HerbAlly}
+      GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: /auth/v1/verify
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9999/health",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* is inlined into the client bundle at build time, so
+        # these must match the runtime values exactly.
+        NEXT_PUBLIC_SUPABASE_URL: https://api.herbally.app
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY:?run deploy/gen-keys.mjs first}
+        NEXT_PUBLIC_APP_URL: https://herbally.app
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-HerbWise}
+        NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+    image: ${APP_IMAGE:-herbally-app:local}
+    container_name: herbally-app
+    restart: unless-stopped
+    env_file: ./app.env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+    volumes:
+      # ISR / unstable_cache survive redeploys only if this is on a volume.
+      # Do NOT mount /app/.next/server/app as well: Docker seeds it from the
+      # old image and serves stale prerendered pages.
+      - next-cache:/app/.next/cache
+    depends_on:
+      rest:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2.10-alpine
+    container_name: herbally-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      app:
+        condition: service_started
+      rest:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+
+volumes:
+  db-data:
+  db-config:
+  next-cache:
+  caddy-data:
+  caddy-config:

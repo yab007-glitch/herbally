@@ -146,7 +146,9 @@ export default async function RootLayout({
         </LocaleProvider>
         <SWRegistration />
         <WebVitals />
-        <Analytics />
+        {/* Vercel-only: /_vercel/insights 404s on self-hosted builds and
+            logs a failed request on every page view. */}
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );

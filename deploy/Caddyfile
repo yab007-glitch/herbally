@@ -1,0 +1,70 @@
+# HerbAlly — TLS termination and routing.
+#
+# Replaces two Vercel features: automatic certificates and the CDN edge.
+# Replaces Kong/Envoy too — the gateway's only job was mapping opaque
+# sb_publishable_/sb_secret_ keys onto roles, and we do not use opaque keys.
+
+{
+	email info@herbally.app
+	# Caddy writes structured logs to stdout by default; `docker compose logs caddy`
+	# is then the access log. Rotate with the Docker daemon's log-opts.
+}
+
+# ── API: the Supabase surface ────────────────────────────────────────────────
+# api.herbally.app is the value of NEXT_PUBLIC_SUPABASE_URL. It must stay a
+# public name even though it resolves to the same box: NEXT_PUBLIC_* is baked
+# into the client bundle at build time, so an internal Docker hostname would
+# ship a URL browsers cannot reach.
+api.herbally.app {
+	encode zstd gzip
+
+	# supabase-js calls {url}/auth/v1/<endpoint> and {url}/rest/v1/<table>.
+	# GoTrue serves at /token, /user, ...; PostgREST at /<table>. Strip the
+	# prefix, exactly as the hosted gateway does.
+	handle_path /auth/v1/* {
+		reverse_proxy auth:9999
+	}
+
+	handle_path /rest/v1/* {
+		reverse_proxy rest:3000
+	}
+
+	# Storage, realtime and functions are not part of this deployment. Say so
+	# plainly instead of hanging or 502-ing.
+	handle /storage/v1/* {
+		respond "storage is not enabled on this deployment" 404
+	}
+	handle /realtime/v1/* {
+		respond "realtime is not enabled on this deployment" 404
+	}
+
+	respond "Not Found" 404
+}
+
+# ── Site ─────────────────────────────────────────────────────────────────────
+www.herbally.app {
+	redir https://herbally.app{uri} permanent
+}
+
+herbally.app {
+	encode zstd gzip
+
+	# If the Cloudflare proxy is ever switched on for this host, every request
+	# arrives from a Cloudflare edge IP and IP-based rate limiting silently
+	# collapses into one shared bucket. Forward the real client instead.
+	@via_cf header CF-Connecting-IP *
+	handle @via_cf {
+		reverse_proxy app:3000 {
+			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+			header_up X-Real-IP {http.request.header.CF-Connecting-IP}
+			header_up X-Forwarded-Proto https
+		}
+	}
+
+	# Direct (Cloudflare DNS-only) — the normal path. Caddy sets
+	# X-Forwarded-For to the real peer, and the app trusts it via
+	# TRUST_PROXY_HEADERS=1.
+	handle {
+		reverse_proxy app:3000
+	}
+}

@@ -1,5 +1,18 @@
 FROM node:22-alpine AS build
 WORKDIR /app
+# NEXT_PUBLIC_* is inlined into the client bundle here, at build time. The
+# build context excludes .env* (see .dockerignore), so these must arrive as
+# build args or the browser bundle ships with undefined Supabase settings.
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_APP_NAME
+ARG NEXT_PUBLIC_SENTRY_DSN
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY \
+    NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
+    NEXT_PUBLIC_APP_NAME=$NEXT_PUBLIC_APP_NAME \
+    NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .

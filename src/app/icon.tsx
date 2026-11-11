@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
-// Route segment config
-export const runtime = "edge";
+// Runs on the default Node runtime: the Edge sandbox is Vercel-specific and
+// self-hosted standalone builds do not provide it.
 
 // Image metadata
 export const size = {
