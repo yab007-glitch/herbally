@@ -74,10 +74,16 @@ and enables `ufw`, so confirm a second login works **before** closing the first.
 
 Do this while the records still point at Vercel. Nothing about the site changes.
 
-Copy all 14 records from the Vercel zone into Cloudflare, **before** switching
-nameservers, and keep the TTL at 300 on anything that will move:
+**Import `deploy/dns/herbally.app.zone`** — Cloudflare accepts that BIND format
+directly (DNS → Records → Import). It is the live zone captured from the Vercel API
+on 2026-11-10, all **16** records, with TTL 300 already set on the two that move.
+Do not retype it: the two DKIM keys are 392-character RSA blobs, and one wrong
+character drops mail into spam without failing anywhere.
 
-- apex + `*` ALIAS → `cname.vercel-dns.com` (Cloudflare: CNAME flattening at apex)
+What must be present afterwards:
+
+- apex + `*` → CNAME `a7dd14f1431f0dc6.vercel-dns-017.com` / `cname.vercel-dns-016.com`
+  (Vercel calls these ALIAS; Cloudflare flattens the apex CNAME)
 - `MX` 10/20/50 → `mx.zohocloud.ca`, `mx2`, `mx3`
 - `TXT` SPF `v=spf1 include:zohocloud.ca ~all`
 - `TXT zoho._domainkey` (DKIM), `TXT _dmarc` (p=none, rua/ruf to info@)

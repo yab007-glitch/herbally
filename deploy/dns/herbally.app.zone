@@ -1,0 +1,32 @@
+; HerbAlly — apex zone, importable into Cloudflare
+;
+; Captured from Vercel DNS on 2026-11-10 via
+;   vercel api /v4/domains/herbally.app/records --method GET
+; 16 records, none of them decorative. The mail ones especially: a
+; missing DKIM entry breaks outbound mail silently — the sender sees
+; nothing wrong, the recipient never gets the message.
+;
+; ALIAS is Vercel-only vocabulary. Here it becomes a CNAME at the apex,
+; which Cloudflare flattens to A/AAAA for the visitor. If the importer
+; refuses a root CNAME, add that one record by hand — same name, same
+; target, Proxy status DNS-only until cutover.
+;
+; TTL 300 on @ and * so the cutover flip lands in five minutes.
+; Everything else is 3600; none of it changes on cutover day.
+
+bnc.outreach             3600 IN CNAME bnc.firelet.net.
+@                        3600 IN MX 50 mx3.zohocloud.ca.
+@                        3600 IN MX 20 mx2.zohocloud.ca.
+@                        3600 IN MX 10 mx.zohocloud.ca.
+@                        3600 IN TXT "v=spf1 include:zohocloud.ca ~all"
+@                        3600 IN TXT "zoho-verification=zb28707388.zmverify.zohocloud.ca"
+@                        3600 IN TXT "google-site-verification=gXJ1TP8H2vx6t_-h4Th43u7qetPFlJRFJybws0xxcSM"
+_dmarc                   3600 IN TXT "v=DMARC1; p=none; rua=mailto:info@herbally.app; ruf=mailto:info@herbally.app; sp=none; adkim=r; aspf=r; pct=100"
+_dmarc.outreach          3600 IN TXT "v=DMARC1; p=none;"
+bk1._domainkey.outreach  3600 IN TXT "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtZrn4XKlXSfSwoMsyj7js5D0fn65ZFT0H3k3vkMdQOgZiAmLva/kDvrLD6l0pB+WuNU2IWBCcRF0ZGoerDRAlDGWwWIUkO7mCG7GZavRhucdCHzWaLxh8F413Qn2+NnUzHaxOzrQ37ts/bJy6yqBlp2jLCNY7Ox+J+BZDftQHD8xKhGrJAiyFwiF6efh49TUcYf+6QShHQnO/zW0jsdVbGrq2vHWIZhWctzj8QzDItpuA8DoD3bVRVyq7ugxmZ9PJmnN/1LpOiB1VsDm5A19YP00e2PrI0zsl+JIhZ43Wwk5wSYHmrPW9vhl1vQJDXtBzzfcf+zTSoDFhdVKaZjL3QIDAQAB"
+zoho._domainkey          3600 IN TXT "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAry5wm5SfrGbNvmi922kQdymhCGOcqGgcCg88py9xfNhbNA+kuTEga8JY6jqH6kbZTdWygkZe+9MUEXvnQqhLAzW4F7IBOcUABehhBLqWWnKRDBRkfNuGEtdlLLGHhwx9ycroZXk4bQ9L5A9rKgQkq+TRFjxG6geDNtVJZ6RJ77G8PLbxiNZwGQy7r2n4U0/9JcUY2JM2A4U61tjSQ/C9lJhTT2UzIXSuVAn+pMexgLq2Fb8dDzjs0zzFdcOcnuAcBx5HoJPYHx26YRll1pouXpt+wq35JPqJBcoT6tluj2cG8BC/dXDcS19FQNwUdrc3EceByEw+Uv5tHMMOibc0WQIDAQAB"
+@                        3600 IN CAA 0 issue "pki.goog"
+@                        3600 IN CAA 0 issue "sectigo.com"
+@                        3600 IN CAA 0 issue "letsencrypt.org"
+@                        300 IN CNAME a7dd14f1431f0dc6.vercel-dns-017.com.
+*                        300 IN CNAME cname.vercel-dns-016.com.
