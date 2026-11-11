@@ -277,7 +277,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // The page body turns this into a 404 (see resolveHerbOr404 below). There
     // is no loading.tsx above this route precisely so that the status can still
     // be set to 404; a Suspense fallback would flush a 200 shell first.
-    return { title: "Herb Not Found | HerbAlly", robots: { index: false } };
+    return {
+      // absolute: the root template would append " | HerbAlly" to a title that
+      // already carries it, giving "Herb Not Found | HerbAlly | HerbAlly".
+      title: { absolute: "Herb Not Found | HerbAlly" },
+      robots: { index: false },
+    };
   }
   const herb = result.data;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";

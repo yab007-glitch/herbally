@@ -7,7 +7,29 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/profile", "/fr/profile"],
+        disallow: [
+          "/admin/",
+          "/admin",
+          "/fr/admin/",
+          "/fr/admin",
+          "/api/",
+          "/profile",
+          "/fr/profile",
+          // Query-string URLs that select a client-side state rather than a
+          // page: /calculator?herb=, /herbalist?q=, /?herb=. Every one of them
+          // canonicalises back to its base page, so Google crawls it, reads
+          // the canonical and drops it — but only after spending crawl budget
+          // that the real pages need. 1,787 of these sat in "Alternative page
+          // with proper canonical tag", against 374 real pages waiting in
+          // "Discovered - currently not indexed".
+          //
+          // Blocking here rather than nofollowing each link also stops the
+          // next component that adds one, which is how the count grew to
+          // 2,198 the first time.
+          "/*?herb=",
+          "/*?q=",
+          "/*?medications=",
+        ],
       },
       {
         // The site runs on the Hobby plan, where function CPU is a hard

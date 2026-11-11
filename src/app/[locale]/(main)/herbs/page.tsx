@@ -45,8 +45,12 @@ export const generateMetadata = async ({
   if (!filtered) return base;
   return {
     ...base,
+    // Keep `base`'s canonical and hreflang. buildPageMetadata already resolved
+    // them for the current locale. The old override hardcoded
+    // `${siteUrl()}/herbs`, so a French filtered listing claimed the *English*
+    // page as its canonical and dropped its entire languages block — a
+    // cross-locale signal, not merely a duplicate.
     robots: { index: false, follow: true },
-    alternates: { canonical: `${siteUrl()}/herbs` },
   };
 };
 

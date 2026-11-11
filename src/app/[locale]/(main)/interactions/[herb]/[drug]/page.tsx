@@ -243,9 +243,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!pair) {
     return {
-      title: fr
-        ? "Interaction Non Trouvée | HerbAlly"
-        : "Interaction Not Found | HerbAlly",
+      title: {
+        absolute: fr
+          ? "Interaction Non Trouvée | HerbAlly"
+          : "Interaction Not Found | HerbAlly",
+      },
       robots: { index: false, follow: false },
     };
   }

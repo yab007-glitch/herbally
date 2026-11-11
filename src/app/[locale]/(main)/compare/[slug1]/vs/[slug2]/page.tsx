@@ -102,7 +102,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!herbA || !herbB) {
     return {
-      title: "Herb Comparison Not Found | HerbAlly",
+      title: { absolute: "Herb Comparison Not Found | HerbAlly" },
       robots: { index: false },
     };
   }
