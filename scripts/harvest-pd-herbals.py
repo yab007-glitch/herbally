@@ -180,13 +180,31 @@ def trim(text, limit):
 # "Aconiti Radix, Br.; Aconite Root, Monkshood ... Fr.; ... G.; ... Sp." — the
 # list of foreign names that follows the definition. It is not prose, it spans
 # several printed lines, and on a plant page it reads as line noise.
+#
+# The abbreviation is often two words: "Fr. Cod." (Codex), "Br. Pharm.". The
+# earlier pattern stopped at any period, so it never matched "Fr. Cod.;" and
+# lines whose only abbreviations were of that form slipped through. Allow
+# periods inside the abbreviation, stop at a comma or semicolon.
 SYNONYM = re.compile(
-    r"\b(Fr|G|Ger|It|Ital|Sp|Span|P|Br|Port|Dutch|Dan|Swed|Russ)\.(?:[^.;]{0,15})?[,;]"
+    r"\b(Fr|G|Ger|It|Ital|Sp|Span|P|Br|Port|Dutch|Dan|Swed|Russ)\.[^,;]{0,18}[,;]"
 )
 
 
 def is_synonym_list(text):
-    return len(SYNONYM.findall(text)) >= 2 and text.count(";") >= 2
+    """A names line: short, semicolon-separated, at least one language tag.
+
+    The lowercase test separates a names line from prose that happens to
+    mention "Br." or "Fr." The OCR mangles accents and splits words
+    ("Menthe a& épi", "Bois de'Quassie"), which puts a few lowercase tokens
+    in even a pure list, so the allowance is a quarter of the words.
+    """
+    if len(text) >= 320 or text.count(";") < 2:
+        return False
+    if not SYNONYM.findall(text):
+        return False
+    words = text.split()
+    lower = sum(1 for w in words if w[:1].islower())
+    return lower <= max(4, len(words) // 4)
 
 
 def about_the_plant(text, stem, allowed, genus):
