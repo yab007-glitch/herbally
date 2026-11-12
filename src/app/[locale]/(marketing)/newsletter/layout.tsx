@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 /**
  * Transactional confirmation screens, not pages.
@@ -16,3 +17,15 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
+
+/**
+ * Pass-through. This layout exists only to carry `metadata` down to both
+ * newsletter routes; it renders no chrome of its own.
+ */
+export default function NewsletterLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return children;
+}
