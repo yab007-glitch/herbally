@@ -513,7 +513,7 @@ export default async function HerbDetailPage({ params }: Props) {
     // v1 entry written before the LiverTox import kept popular pages showing
     // only their NCCIH row for up to three days. Bumping the key retires every
     // stale entry at once.
-    [`sources-v2-${slug}`],
+    [`sources-v3-${slug}`],
     { revalidate: HERB_PAGE_TTL, tags: [`sources-${slug}`] }
   );
 
@@ -1030,41 +1030,58 @@ export default async function HerbDetailPage({ params }: Props) {
       {/* Every imported regulator excerpt, each in its own block with its own
           licence. Health Canada and NCCIH can both speak about the same plant;
           the page shows both instead of one overwriting the other. */}
-      {sources.map((source) => (
-        <NccihSummary
-          key={source.source}
-          claims={source.claims as unknown as (string | { text?: string })[]}
-          safety={source.safety as unknown as (string | { text?: string })[]}
-          url={source.url}
-          title={herb.name}
-          verbatimNote={copy.verbatimQuoteNote}
-          expandLabel={copy.verbatimExpandLabel}
-          reproducedLabel={copy.reproducedLabel}
-          {...(source.source === "LiverTox"
-            ? {
-                heading: copy.liverTox.heading(herb.name),
-                sourceLabel: copy.liverTox.sourceLabel,
-                licenceText: copy.liverTox.licenceText,
-                claimsHeading: copy.liverTox.claimsHeading,
-                safetyHeading: copy.liverTox.safetyHeading,
-              }
-            : source.source === "Health Canada"
+      {sources.map((source) => {
+        // Public-domain books get their own copy block and render as prose.
+        // Anything without one falls through to NCCIH, which is why a book added
+        // to the database needs a matching key in historicalSources.
+        const historical = copy.historicalSources[source.source];
+        return (
+          <NccihSummary
+            key={source.source}
+            id={`source-${source.source.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+            claims={source.claims as unknown as (string | { text?: string })[]}
+            safety={source.safety as unknown as (string | { text?: string })[]}
+            url={source.url}
+            title={herb.name}
+            notice={historical?.notice ?? null}
+            renderAs={historical ? "prose" : "list"}
+            verbatimNote={copy.verbatimQuoteNote}
+            expandLabel={copy.verbatimExpandLabel}
+            reproducedLabel={copy.reproducedLabel}
+            {...(source.source === "LiverTox"
               ? {
-                  heading: copy.healthCanada.heading(herb.name),
-                  sourceLabel: copy.healthCanada.sourceLabel,
-                  licenceText: copy.healthCanada.licenceText,
-                  claimsHeading: copy.healthCanada.claimsHeading,
-                  safetyHeading: copy.healthCanada.safetyHeading,
+                  heading: copy.liverTox.heading(herb.name),
+                  sourceLabel: copy.liverTox.sourceLabel,
+                  licenceText: copy.liverTox.licenceText,
+                  claimsHeading: copy.liverTox.claimsHeading,
+                  safetyHeading: copy.liverTox.safetyHeading,
                 }
-              : {
-                  heading: copy.nccih.heading(herb.name),
-                  sourceLabel: copy.nccih.sourceLabel,
-                  licenceText: copy.nccih.licenceText,
-                  claimsHeading: copy.nccih.claimsHeading,
-                  safetyHeading: copy.nccih.safetyHeading,
-                })}
-        />
-      ))}
+              : source.source === "Health Canada"
+                ? {
+                    heading: copy.healthCanada.heading(herb.name),
+                    sourceLabel: copy.healthCanada.sourceLabel,
+                    licenceText: copy.healthCanada.licenceText,
+                    claimsHeading: copy.healthCanada.claimsHeading,
+                    safetyHeading: copy.healthCanada.safetyHeading,
+                  }
+                : historical
+                  ? {
+                      heading: historical.heading(herb.name),
+                      sourceLabel: historical.sourceLabel,
+                      licenceText: historical.licenceText,
+                      claimsHeading: historical.claimsHeading,
+                      safetyHeading: historical.safetyHeading,
+                    }
+                  : {
+                      heading: copy.nccih.heading(herb.name),
+                      sourceLabel: copy.nccih.sourceLabel,
+                      licenceText: copy.nccih.licenceText,
+                      claimsHeading: copy.nccih.claimsHeading,
+                      safetyHeading: copy.nccih.safetyHeading,
+                    })}
+          />
+        );
+      })}
 
       {/* The recorded facts, in full sentences, before the tabs. Every paragraph
           restates a field the entry already holds — see lib/herbs/narrative — so

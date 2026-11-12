@@ -21,11 +21,24 @@ export function NccihSummary({
   licenceText = "US government works are not subject to copyright, so this text is reproduced in full rather than summarised.",
   claimsHeading = "Background and evidence",
   safetyHeading = "Safety, in the NIH's words",
+  /**
+   * The section's id. Two source blocks on one page (NCCIH and Health Canada
+   * already, the public-domain books now) would otherwise both declare
+   * "nccih-heading", and a document with duplicate ids fails validation.
+   */
+  id = "nccih-heading",
+  notice = null,
+  renderAs = "list",
   verbatimNote = null,
   expandLabel = "Show source text",
   reproducedLabel = "Reproduced verbatim from",
 }: {
-  claims: (string | { claim?: string; text?: string })[] | null;
+  claims:
+    | (
+        | string
+        | { claim?: string; note?: string; text?: string; section?: string }
+      )[]
+    | null;
   safety: (string | { note?: string; text?: string })[] | null;
   url: string | null;
   title: string;
@@ -35,6 +48,18 @@ export function NccihSummary({
   licenceText?: string;
   claimsHeading?: string;
   safetyHeading?: string;
+  /** Section id, unique per source on the page. */
+  id?: string;
+  /**
+   * A standing warning printed above the text. Set for sources written before
+   * modern medicine, where the entry would otherwise read as advice.
+   */
+  notice?: string | null;
+  /**
+   * "prose" renders the claims as paragraphs instead of bullets, for sources
+   * whose entries are running text rather than a list of findings.
+   */
+  renderAs?: "list" | "prose";
   /**
    * Set on a translated page: the quoted regulator text below stays in its
    * source language, and saying so is better than a silent language switch.
@@ -50,15 +75,16 @@ export function NccihSummary({
     v: string | { claim?: string; note?: string; text?: string }
   ): string =>
     typeof v === "string" ? v : (v.claim ?? v.note ?? v.text ?? "");
-  const background = (claims ?? []).map(text).filter(Boolean);
+  const sectionOf = (v: string | { section?: string }): string | undefined =>
+    typeof v === "string" ? undefined : v.section;
+  const background = (claims ?? [])
+    .map((v) => ({ text: text(v), section: sectionOf(v) }))
+    .filter((v) => v.text);
   const safetyNotes = (safety ?? []).map(text).filter(Boolean);
   if (!background.length && !safetyNotes.length) return null;
 
   return (
-    <section
-      className="container mx-auto px-4 py-8"
-      aria-labelledby="nccih-heading"
-    >
+    <section className="container mx-auto px-4 py-8" aria-labelledby={id}>
       <div className="mx-auto max-w-4xl rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <div className="mb-4 flex items-center gap-2">
           <BookOpen
@@ -66,12 +92,18 @@ export function NccihSummary({
             aria-hidden="true"
           />
           <h2
-            id="nccih-heading"
+            id={id}
             className="text-xl font-semibold text-neutral-900 dark:text-neutral-100"
           >
             {heading ?? `What the NIH says about ${title}`}
           </h2>
         </div>
+
+        {notice && (
+          <p className="mb-5 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm leading-relaxed text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
+            {notice}
+          </p>
+        )}
 
         {(() => {
           const lists = (
@@ -81,11 +113,29 @@ export function NccihSummary({
                   <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">
                     {claimsHeading}
                   </h3>
-                  <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
-                    {background.map((line, i) => (
-                      <li key={i}>{line}</li>
-                    ))}
-                  </ul>
+                  {renderAs === "prose" ? (
+                    <div className="text-neutral-700 dark:text-neutral-300">
+                      {background.map((line, i) => {
+                        const previous = background[i - 1]?.section;
+                        return (
+                          <div key={i} className="mb-4">
+                            {line.section && line.section !== previous && (
+                              <h4 className="mb-1 text-sm font-semibold text-neutral-600 dark:text-neutral-400">
+                                {line.section}
+                              </h4>
+                            )}
+                            <p className="leading-relaxed">{line.text}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <ul className="list-disc space-y-2 pl-5 text-neutral-700 dark:text-neutral-300">
+                      {background.map((line, i) => (
+                        <li key={i}>{line.text}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               )}
 
