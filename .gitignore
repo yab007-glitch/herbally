@@ -95,3 +95,8 @@ artifacts/gsc-index-history.json
 
 # Python bytecode from the import scripts
 __pycache__/
+
+# GBIF name lookups for scripts/harvest-pd-herbals.py: a local cache, and the
+# dry-run preview it produces (one row per herb, checked before applying).
+artifacts/gbif-name-cache.json
+artifacts/pd-herbals-preview*.json
