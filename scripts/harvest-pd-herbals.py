@@ -197,8 +197,12 @@ def is_synonym_list(text):
     mention "Br." or "Fr." The OCR mangles accents and splits words
     ("Menthe a& épi", "Bois de'Quassie"), which puts a few lowercase tokens
     in even a pure list, so the allowance is a quarter of the words.
+
+    The 600-character cap covers the longest list in the book (Hydrastis,
+    405 characters, nine semicolons) while staying well below a prose
+    paragraph.
     """
-    if len(text) >= 320 or text.count(";") < 2:
+    if len(text) >= 600 or text.count(";") < 2:
         return False
     if not SYNONYM.findall(text):
         return False
