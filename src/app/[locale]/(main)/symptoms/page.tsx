@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { ArrowRight } from "lucide-react";
 import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
+import { getEmptySymptomHubs } from "@/lib/symptoms/hub-coverage";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -18,6 +19,14 @@ export default async function SymptomsPage() {
   const locale = await getLocale();
   const t = await getTranslations({ locale });
   const prefix = locale === "fr" ? "/fr" : "";
+
+  // Do not link a hub that has no herbs behind it. Those four hubs render an
+  // empty state while returning 200, which Google reports as a soft 404 —
+  // exactly 8 URLs, 4 hubs x 2 locales. They are already excluded from the
+  // sitemap and marked noindex; the leak was that this index linked them
+  // anyway, which is how Googlebot kept finding them. They reappear here on
+  // their own once herbs match their keywords, since this is a live check.
+  const emptyHubs = new Set(await getEmptySymptomHubs());
 
   return (
     <div>
@@ -52,7 +61,7 @@ export default async function SymptomsPage() {
           {t("symptomsPage.allSymptomsIntro")}
         </p>
         <ul className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {SYMPTOM_SLUGS.map((slug) => (
+          {SYMPTOM_SLUGS.filter((slug) => !emptyHubs.has(slug)).map((slug) => (
             <li key={slug}>
               <LocalizedLink
                 href={`/symptoms/${slug}`}

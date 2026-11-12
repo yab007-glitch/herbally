@@ -108,7 +108,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
   const metaLocale = await getLocale();
   if (!meta) {
-    return { title: "Not Found | HerbAlly", robots: { index: false } };
+    return {
+      title: { absolute: "Not Found | HerbAlly" },
+      robots: { index: false },
+    };
   }
   // Localize title/description from the dictionary when translations exist;
   // fall back to the English symptomMeta copy (desc is empty in en.json, so
