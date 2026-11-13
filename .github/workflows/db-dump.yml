@@ -1,0 +1,100 @@
+name: Database dump (migration)
+
+# One-off, manual. Produces an encrypted custom-format dump of `public` and
+# `auth` from the hosted project so it can be restored onto a self-hosted
+# Postgres. `auth` is deliberately included: the nightly backup job scopes
+# itself to `public`, so the user table — and with it every password hash —
+# is not in those artifacts.
+#
+# The dump runs inside the same postgres image the target stack uses, because
+# the runner's own client is 16 and pg_dump refuses to dump a 17 server.
+#
+# Nothing here decrypts anything: the artifact is AES-256 under the existing
+# BACKUP_PASSPHRASE, and it is only ever opened on the receiving box.
+
+on:
+  workflow_dispatch:
+    inputs:
+      schemas:
+        description: "Comma-separated schemas to dump"
+        required: false
+        default: "public,auth"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-dump
+  cancel-in-progress: false
+
+jobs:
+  dump:
+    name: Dump and encrypt
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Dump
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+          SCHEMAS: ${{ inputs.schemas }}
+        run: |
+          set -euo pipefail
+
+          : "${SUPABASE_DB_URL:?SUPABASE_DB_URL is not set}"
+          : "${BACKUP_PASSPHRASE:?BACKUP_PASSPHRASE is not set}"
+
+          IMAGE=supabase/postgres:17.6.1.136
+          docker pull -q "$IMAGE"
+
+          mkdir -p dumps
+          IFS=',' read -ra PARTS <<< "$SCHEMAS"
+          for schema in "${PARTS[@]}"; do
+            schema="$(echo "$schema" | xargs)"
+            echo "::group::dumping $schema"
+            docker run --rm \
+              -e "DB_URL=$SUPABASE_DB_URL" \
+              -e "SCHEMA=$schema" \
+              -v "$PWD/dumps:/out" \
+              "$IMAGE" \
+              sh -c 'pg_dump --dbname="$DB_URL" --schema="$SCHEMA" -Fc -f "/out/$SCHEMA.dump"'
+            echo "::endgroup::"
+          done
+
+          ls -lh dumps/
+          for f in dumps/*.dump; do
+            docker run --rm -v "$PWD/dumps:/out" "$IMAGE" pg_restore -l "/out/$(basename "$f")" >/dev/null
+            echo "archive ok: $f"
+          done
+
+      - name: Sanity check
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          docker run --rm -e "DB_URL=$SUPABASE_DB_URL" supabase/postgres:17.6.1.136 \
+            sh -c 'psql --dbname="$DB_URL" -v ON_ERROR_STOP=1 -At \
+              -c "SELECT '"'"'herbs='"'"' || count(*) FROM public.herbs" \
+              -c "SELECT '"'"'published='"'"' || count(*) FROM public.herbs WHERE is_published" \
+              -c "SELECT '"'"'users='"'"' || count(*) FROM auth.users"'
+
+      - name: Encrypt
+        env:
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          tar -C dumps -cf - . | \
+            openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt \
+              -pass env:BACKUP_PASSPHRASE -out dumps.tar.enc
+          rm -rf dumps
+          ls -lh dumps.tar.enc
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: herbally-dump-${{ github.run_id }}
+          path: dumps.tar.enc
+          retention-days: 7
+          if-no-files-found: error
