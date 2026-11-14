@@ -17,6 +17,7 @@ Assessment, cost table and risk list: Team Memory
 | `gen-keys.mjs` | Mints `JWT_SECRET`, `ANON_KEY`, `SERVICE_ROLE_KEY`. |
 | `bootstrap.sh` | Ubuntu 24.04 hardening, swap, firewall, Docker. |
 | `backup.sh` | pg_dump → restic → B2, plus a restore drill. |
+| `systemd/herbally-backup.{service,timer}` | Nightly backup on a Persistent timer, plus the success and failure pings. |
 | `.env.example` | Stack secrets (db, jwt, smtp). |
 | `app.env.example` | The app's runtime environment. |
 
@@ -248,20 +249,91 @@ check that `/api/chat` still rate-limits per visitor rather than globally.
 
 ## Backups
 
+`backup.sh` dumps the whole database, streams it into restic and prunes to 7
+daily, 4 weekly and 6 monthly. It is scheduled by a systemd timer rather than by
+`/etc/cron.d`, because `Persistent=true` fires a run that was missed while the
+box was down instead of skipping it silently.
+
 ```bash
 # /srv/herbally/backups/restic.env, mode 600:
 #   RESTIC_REPOSITORY=b2:herbally-backups:/db
 #   RESTIC_PASSWORD=...
 #   B2_ACCOUNT_ID=...
 #   B2_ACCOUNT_KEY=...
-
-echo '17 3 * * * root /srv/herbally/app/deploy/backup.sh >> /var/log/herbally-backup.log 2>&1' \
-  > /etc/cron.d/herbally-backup
+#   HC_PING_URL=https://hc-ping.com/your-uuid   # optional dead man switch
 ```
 
-Monthly, run `./backup.sh --restore-test` — an untested backup is not a backup.
-The GitHub Actions nightly job keeps running against the hosted project until
-it is paused; after cutover it should point at the new database instead.
+```bash
+chmod 600 /srv/herbally/backups/restic.env
+chmod +x /srv/herbally/app/deploy/backup.sh
+install -m 0644 /srv/herbally/app/deploy/systemd/herbally-backup.service /etc/systemd/system/
+install -m 0644 /srv/herbally/app/deploy/systemd/herbally-backup.timer /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable --now herbally-backup.timer
+systemctl list-timers herbally-backup.timer
+```
+
+`HC_PING_URL` is a healthchecks.io or compatible ping URL. The script pings it on
+success and pings the same URL with `/fail` appended from an `EXIT` trap on any
+non-zero exit, so a backup that stops running becomes visible instead of being
+indistinguishable from one that works. Both pings are wrapped, so a failed ping
+never fails the backup. Set the check period to one day plus a generous grace, or
+every backup looks late. If the variable is unset the pings are skipped and
+everything else works unchanged.
+
+Output and errors append to `/var/log/herbally-backup.log`, which is where cron
+used to write; the units set `StandardOutput` and `StandardError` to that file,
+and the run also shows in `journalctl -u herbally-backup.service`.
+
+### Prove the last nightly dump restores
+
+```bash
+/srv/herbally/app/deploy/backup.sh --restore-test
+```
+
+It restores the newest snapshot into a throwaway database inside the `db`
+container, with `pg_restore --exit-on-error` reached through
+`docker compose exec -T db`, so the container's local socket is used and no
+password and no Docker network name are involved. It then compares `count(*)` of
+`public.herbs` and `auth.users` between the live database and the restored copy.
+
+Counts that differ print `RESTORE DRILL FAILED`, exit 1 and leave the throwaway
+database in place so it can be inspected; a match drops it and prints the
+counts. The comparison is exact, so run the drill right after a backup, or accept
+that a signup since 03:17 UTC shows up as a mismatch. That is drift made visible
+rather than a silent pass.
+
+The drill restores with owners, exactly like a real restore, because a dump that
+had lost its `ALTER OWNER TO supabase_auth_admin` statements would pass an
+ownerless drill and still crash-loop GoTrue.
+
+### Full restore from the off-site backup, destructive
+
+```bash
+cd /srv/herbally/app
+docker compose --project-directory deploy stop auth rest app
+restic dump latest /herbally.dump | docker compose --project-directory deploy exec -T db pg_restore -U postgres -d postgres --clean --if-exists --exit-on-error
+docker compose --project-directory deploy up -d auth rest app
+```
+
+This is the same shape as the restore in Step 3, with `restic` replacing the
+dump file. `--clean` drops the objects the archive knows about before recreating
+them, and ownership travels with them, so `auth` comes back usable. It has not
+been run against a real restic repository yet: treat the drill above as the
+rehearsal and this as the emergency. The archive node name is whatever `restic
+ls latest` prints, so if that listing shows `herbally.dump` without a leading
+slash, drop the slash in the command above.
+
+### Rehearse
+
+```bash
+/srv/herbally/app/deploy/backup.sh --check
+/srv/herbally/app/deploy/backup.sh --restore-test
+```
+
+Monthly, at minimum; an untested backup is not a backup. The GitHub Actions
+nightly job keeps running against the hosted project until it is paused; after
+cutover it should point at the new database instead.
 
 ## Verified
 
@@ -280,7 +352,8 @@ Run on Docker 29.5.2 (Ubuntu 24.04 VM), from an empty volume:
 
 **Not** verified yet, because they need the box or the hosted password: the app
 image build (needs `api.herbally.app` to resolve), `pg_restore` of the real
-150 MB dump, certificate issuance, and mail delivery.
+150 MB dump, the restore drill (needs the Docker daemon and a populated restic
+repository), certificate issuance, and mail delivery.
 
 ## Known traps
 
@@ -290,7 +363,8 @@ image build (needs `api.herbally.app` to resolve), `pg_restore` of the real
 | Mounting `/app/.next/server/app` | Docker seeds it from the old image → stale pages after every deploy |
 | Restoring `auth` without `CREATE SCHEMA auth` | `pg_dump -n` does not emit `CREATE SCHEMA` |
 | Letting GoTrue migrate the image's pre-seeded `auth` schema | `must be owner of function uid` — GoTrue connects as `supabase_auth_admin`, the image's functions belong to `postgres`. `db-init` replaces the schema, but never one that came from the dump |
-| Dumping with `--no-owner` into the migration | `supabase_auth_admin` loses ownership of `auth` tables; GoTrue cannot migrate |
+| Dumping with `--no-owner` into the migration | `supabase_auth_admin` loses ownership of `auth` tables; GoTrue cannot migrate. The nightly dump and the restore drill both preserve owners for exactly this reason |
 | Missing DKIM during the DNS move | Mail keeps flowing but starts landing in spam |
 | Cancelling Vercel with DNS still there | Resolution and email go down together |
 | Forgetting Stripe's new signing secret | Webhook returns 400 and donations stop recording |
+| Scheduling the backup from `/etc/cron.d` only | A run missed while the box was down is skipped silently, while the systemd timer carries `Persistent=true` |

@@ -1,0 +1,14 @@
+# Installed from deploy/systemd by deploy/README.md, Backups.
+# OnCalendar is pinned to UTC so the schedule does not move with the host
+# timezone. Persistent=true is the part /etc/cron.d cannot give you: a run
+# missed while the box was down fires on the next boot instead of being skipped.
+[Unit]
+Description=Run the HerbAlly database backup nightly
+
+[Timer]
+OnCalendar=*-*-* 03:17:00 UTC
+Persistent=true
+Unit=herbally-backup.service
+
+[Install]
+WantedBy=timers.target
