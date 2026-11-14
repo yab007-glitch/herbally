@@ -207,11 +207,17 @@ async function fetchHerbPageBundle(
     args: Record<string, unknown>
   ) => Promise<{ data: unknown; error: { message?: string } | null }>;
   const { data, error } = await rpc("herb_page_bundle", { p_slug: slug });
-  if (error || !data) {
-    logger.warn("herb_page_bundle failed", { slug, error: error?.message });
-    return null;
+  if (error) {
+    // Throw rather than return null: unstable_cache would persist a null for the
+    // whole TTL, so one database blip (the 2026-11-14 outage served 521s for
+    // twenty minutes) would strip the monograph, FAQs and regulator sections
+    // from that herb for three days. Throwing aborts the cache write;
+    // loadHerbPageBundle turns the failure back into a per-request null.
+    throw new Error(error.message ?? "herb_page_bundle failed");
   }
-  return data as HerbPageBundle;
+  // A null payload is a genuine miss (unknown slug), not a failure: cache it so
+  // repeated 404 probes do not re-query the database.
+  return (data as HerbPageBundle | null) ?? null;
 }
 
 /**
@@ -224,13 +230,32 @@ async function fetchHerbPageBundle(
  * `herb-page-bundle-<slug>` lets /api/revalidate-herb and admin edits purge a
  * single entry. unstable_cache keys on its arguments, so the per-call wrapper
  * still shares one cache entry per slug.
+ *
+ * React's cache() memoizes it per request, which is load-bearing: generateMetadata
+ * and the page body render concurrently, so without it both miss the same entry
+ * and the RPC runs twice per cold render (measured 41 bundle calls to 19 herb
+ * calls in the minute after the 2026-11-14 deploy — the pre-fix shape, where
+ * metadata read the herb row separately, was 2 herb calls to 1 bundle).
  */
-function loadHerbPageBundle(slug: string): Promise<HerbPageBundle | null> {
-  return unstable_cache(fetchHerbPageBundle, ["herb-page-bundle-v4"], {
-    revalidate: HERB_PAGE_TTL,
-    tags: ["herb-page-bundle", `herb-page-bundle-${slug}`],
-  })(slug);
-}
+const loadHerbPageBundle = cache(
+  async (slug: string): Promise<HerbPageBundle | null> => {
+    try {
+      return await unstable_cache(
+        fetchHerbPageBundle,
+        ["herb-page-bundle-v4"],
+        {
+          revalidate: HERB_PAGE_TTL,
+          tags: ["herb-page-bundle", `herb-page-bundle-${slug}`],
+        }
+      )(slug);
+    } catch (error) {
+      // A failed read is not cached (see fetchHerbPageBundle); it is only a
+      // miss for this request, which falls back to the direct herb read.
+      logger.warn("herb_page_bundle failed", { slug, error: String(error) });
+      return null;
+    }
+  }
+);
 
 const loadRegulatoryEvidence = unstable_cache(
   async (slug: string): Promise<RegulatoryEvidence | null> => {
