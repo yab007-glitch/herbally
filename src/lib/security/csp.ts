@@ -47,11 +47,38 @@ export interface CspOptions {
   isProduction?: boolean;
 }
 
+/**
+ * The origin of the configured Supabase API.
+ *
+ * `*.supabase.co` covers Supabase Cloud, but a self-hosted or custom-domain
+ * backend (for example `https://api.herbally.app`) is a *different origin*
+ * from the site itself: `'self'` does not cover it, so every browser-side
+ * auth, session refresh and REST call would be blocked by CSP the moment the
+ * backend moves off `*.supabase.co`. Returns `""` when the variable is unset
+ * or unparseable, in which case the policy is unchanged.
+ */
+export function supabaseApiOrigin(): string {
+  try {
+    const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!raw) return "";
+    const url = new URL(raw);
+    // Only real web origins are usable as a CSP source. `new URL("data:…")`
+    // serialises its origin as the literal string "null", and ws:/ftp: are not
+    // transports this app uses, so anything but http(s) is treated as absent
+    // rather than emitted as a bogus source.
+    if (url.protocol !== "https:" && url.protocol !== "http:") return "";
+    return url.origin === "null" ? "" : url.origin;
+  } catch {
+    return "";
+  }
+}
+
 export function buildCsp(options: CspOptions = {}): string {
   const { framing = "deny" } = options;
   const isProduction =
     options.isProduction ?? process.env.NODE_ENV === "production";
   const ads = AD_SOURCES.join(" ");
+  const apiOrigin = supabaseApiOrigin();
 
   const scriptSrc = [
     "'self'",
@@ -68,7 +95,9 @@ export function buildCsp(options: CspOptions = {}): string {
     "default-src 'self'",
     `script-src ${scriptSrc}`,
     // The Ollama Cloud call is server-side only; the browser never talks to it.
-    `connect-src 'self' *.supabase.co *.stripe.com ${ads}`,
+    // `apiOrigin` is the configured Supabase host: `'self'` does not cover a
+    // custom API domain, so without it a self-hosted backend breaks sign-in.
+    `connect-src 'self'${apiOrigin ? ` ${apiOrigin}` : ""} *.supabase.co *.stripe.com ${ads}`,
     // L16 (audit 2026-06-22): scope img-src to the only remote image host we
     // actually use (Supabase Storage), matching next.config.ts remotePatterns.
     // A bare `https:` allowed any origin to be a CSP-permitted image source.

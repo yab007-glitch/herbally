@@ -15,6 +15,7 @@
  */
 
 import { AD_PROVIDER_HOSTS, isAdEligiblePath } from "./policy";
+import { supabaseApiOrigin } from "../security/csp";
 
 /** Ad origins for this request, or an empty list when ads are not allowed. */
 export function adsCspHosts(
@@ -31,10 +32,13 @@ export function buildContentSecurityPolicy(options: {
 }): string {
   const ads = (options.adHosts ?? []).join(" ");
   const adsSuffix = ads ? ` ${ads}` : "";
+  // A custom/self-hosted Supabase API domain is not covered by `'self'`.
+  const apiOrigin = supabaseApiOrigin();
+  const apiSuffix = apiOrigin ? ` ${apiOrigin}` : "";
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline'${options.dev ? " 'unsafe-eval'" : ""} blob: *.stripe.com${adsSuffix}`,
-    `connect-src 'self' *.supabase.co *.stripe.com${adsSuffix}`,
+    `connect-src 'self'${apiSuffix} *.supabase.co *.stripe.com${adsSuffix}`,
     // Scope img-src to the only remote image hosts actually used: Supabase
     // Storage plus the ad creative hosts when (and only when) ads are on.
     `img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com${adsSuffix}`,
