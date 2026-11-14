@@ -60,7 +60,14 @@ export interface CspOptions {
 export function supabaseApiOrigin(): string {
   try {
     const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    return raw ? new URL(raw).origin : "";
+    if (!raw) return "";
+    const url = new URL(raw);
+    // Only real web origins are usable as a CSP source. `new URL("data:…")`
+    // serialises its origin as the literal string "null", and ws:/ftp: are not
+    // transports this app uses, so anything but http(s) is treated as absent
+    // rather than emitted as a bogus source.
+    if (url.protocol !== "https:" && url.protocol !== "http:") return "";
+    return url.origin === "null" ? "" : url.origin;
   } catch {
     return "";
   }
