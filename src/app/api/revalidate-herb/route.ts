@@ -67,10 +67,11 @@ export async function POST(request: NextRequest) {
     // Next 16: revalidateTag takes a cache-life profile as the second argument.
     revalidateTag(`herb-${slug}`, "max");
     revalidateTag(`herb-meta-${slug}`, "max");
-    // The FAQ rows are read through `loadHerbPageBundle`, so a correction to
-    // herb_faqs only lands once the bundle key is bumped as well (see the
-    // version note on `herb-page-bundle`). Purging this tag keeps the entry
-    // from being re-served after that bump; on its own it cannot refresh it.
+    // generateMetadata reads the herb row from the page bundle, and the bundle
+    // also carries the FAQ, monograph and regulator rows. Purging the per-slug
+    // bundle tag is what makes a data-only correction land in all of them
+    // (entries written before the per-slug tag existed still expire on TTL).
+    revalidateTag(`herb-page-bundle-${slug}`, "max");
     revalidateTag(`herb-faqs-${slug}`, "max");
     // The Full Route Cache (the prerendered HTML) is keyed by path, not tag.
     revalidatePath(`/herbs/${slug}`);

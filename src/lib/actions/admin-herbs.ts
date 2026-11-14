@@ -111,6 +111,7 @@ function invalidateHerbTags(slug: string): void {
   for (const tag of [
     `herb-meta-${slug}`,
     `herb-${slug}`,
+    `herb-page-bundle-${slug}`,
     `monograph-${slug}`,
     `herb-faqs-${slug}`,
     `related-herbs-${slug}`,
