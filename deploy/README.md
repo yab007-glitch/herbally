@@ -147,7 +147,7 @@ Restore, while `auth` and `rest` are **still stopped**:
 
 ```bash
 # public — the dump carries CREATE EXTENSION for pg_trgm, so a clean slate is fine
-docker run --rm -i --network herbally_default supabase/postgres:17.6.1.136 \
+docker run --rm -i --network herbally_dbnet supabase/postgres:17.6.1.136 \
   pg_restore --dbname="postgres://postgres:$POSTGRES_PASSWORD@db:5432/postgres" \
              --clean --if-exists --exit-on-error \
   < /srv/herbally/backups/public.dump
@@ -155,7 +155,7 @@ docker run --rm -i --network herbally_default supabase/postgres:17.6.1.136 \
 # auth — pg_dump -n does NOT emit CREATE SCHEMA, so create it first
 docker compose exec -T db psql -U postgres -c \
   "CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION supabase_auth_admin;"
-docker run --rm -i --network herbally_default supabase/postgres:17.6.1.136 \
+docker run --rm -i --network herbally_dbnet supabase/postgres:17.6.1.136 \
   pg_restore --dbname="postgres://postgres:$POSTGRES_PASSWORD@db:5432/postgres" \
              --exit-on-error \
   < /srv/herbally/backups/auth.dump
@@ -181,19 +181,23 @@ Expected: 3,348 herbs, 3,238 published, 7 users, 59 policies, `pg_trgm` present.
 ## Step 4 — build and run
 
 `deploy/app.env` is the app's runtime environment. Fill it from Vercel, then
-change the three Supabase lines:
+change the Supabase lines:
 
 ```bash
 vercel env pull deploy/app.env --environment=production   # run on your own machine
 chmod 600 deploy/app.env
 # then edit:
 #   NEXT_PUBLIC_SUPABASE_URL=https://api.herbally.app
-#   NEXT_PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY from deploy/.env>
 #   SUPABASE_SERVICE_ROLE_KEY=<SERVICE_ROLE_KEY from deploy/.env>
 # and add:
 #   TRUST_PROXY_HEADERS=1
 #   RATE_LIMIT_BACKEND=memory
 ```
+
+Do **not** put `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `app.env`: it is a **build
+arg** (`ANON_KEY` in `deploy/.env`, passed by the compose `build.args`) and the
+`app` service pins it at runtime. An empty `app.env` value would shadow the one
+baked into the bundle.
 
 Then:
 

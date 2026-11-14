@@ -17,6 +17,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Cap the V8 heap so a runaway build dies inside Node instead of growing until
+# the kernel OOM-kills a live Postgres beside it (~2–3 GB peak is expected).
+ENV NODE_OPTIONS=--max-old-space-size=3072
 RUN npm run build
 
 FROM node:22-alpine AS runner
