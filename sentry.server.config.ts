@@ -106,5 +106,6 @@ Sentry.init({
     // "Object Not Found Matching Id:2, MethodName:update, ParamCount:4".
     /Object Not Found Matching Id:/,
     /MethodName:\w+,\s*ParamCount:/,
+    /Event `Event` \(type=error\) captured as promise rejection/,
   ],
 });

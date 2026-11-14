@@ -26,10 +26,18 @@ export function applyTheme(theme: Theme): void {
 }
 
 function getSnapshot(): Theme {
-  // Guard against SSR / non-browser environments (defensive — this only runs
-  // client-side via useSyncExternalStore, but jsdom tests may stub storage).
+  // Guard against SSR / non-browser environments and restricted Android
+  // WebViews where window.localStorage is null or throws SecurityError
+  // (HERBALLY-Q).
   if (typeof window === "undefined") return "system";
-  return (localStorage.getItem(THEME_STORAGE_KEY) as Theme | null) || "system";
+  try {
+    return (
+      (window.localStorage?.getItem(THEME_STORAGE_KEY) as Theme | null) ||
+      "system"
+    );
+  } catch {
+    return "system";
+  }
 }
 
 function getServerSnapshot(): Theme {
@@ -76,12 +84,17 @@ export function useTheme(): {
 
   const setTheme = useCallback((next: Theme) => {
     if (typeof window === "undefined") return;
-    localStorage.setItem(THEME_STORAGE_KEY, next);
-    // Dispatch a storage event so this tab's useSyncExternalStore re-reads
-    // (the native storage event only fires for OTHER tabs).
-    window.dispatchEvent(
-      new StorageEvent("storage", { key: THEME_STORAGE_KEY })
-    );
+    try {
+      window.localStorage?.setItem(THEME_STORAGE_KEY, next);
+      // Dispatch a storage event so this tab's useSyncExternalStore re-reads
+      // (the native storage event only fires for OTHER tabs).
+      window.dispatchEvent(
+        new StorageEvent("storage", { key: THEME_STORAGE_KEY })
+      );
+    } catch {
+      // Restricted WebViews / privacy modes may block storage; still apply to DOM.
+      applyTheme(next);
+    }
   }, []);
 
   return { theme, setTheme };

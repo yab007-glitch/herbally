@@ -107,6 +107,8 @@ Sentry.init({
     // so drop them instead of alerting.
     /Object Not Found Matching Id:/,
     /MethodName:\w+,\s*ParamCount:/,
+    // Browser <head> > <link> stylesheet/preload network blip rejected with raw DOM Event (HERBALLY-S).
+    /Event `Event` \(type=error\) captured as promise rejection/,
   ],
   integrations: [
     // Mask all text and block media in Session Replay — on-screen health
