@@ -32,6 +32,7 @@ import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
+import { localizeHerb } from "@/lib/utils/localize-herb";
 import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
@@ -119,12 +120,12 @@ const HERB_PAGE_TTL = 259200;
 /**
  * Request-scoped memo around the herb fetch.
  *
- * generateMetadata and the page component both need this row, with identical
- * arguments. They used to hit the database twice per render — and the heavier
- * of the two is a `select *` with two nested embeds. Every cold render paid
- * that twice, and a prerender is always a cold render. React's cache dedupes
- * the pair within one render pass; unstable_cache below still handles reuse
- * across requests, and the per-slug tags still drive on-demand revalidation.
+ * The page component needs this row; generateMetadata reads it from the page
+ * bundle instead and only lands here when that bundle is unavailable. This is
+ * still a `select *` with two nested embeds, and every cold render used to pay
+ * for it twice (metadata and body). React's cache dedupes callers within one
+ * render pass; unstable_cache below still handles reuse across requests, and
+ * the per-slug tags still drive on-demand revalidation.
  */
 async function fetchHerb(
   slug: string,
@@ -189,31 +190,47 @@ type HerbPageBundle = {
 // this key whenever the bundle's fields change, or new fields read as undefined.
 // v3: imported Health Canada monographs were invisible until the key moved.
 // v4: the bundle also carries `faqs`, so a corrected herb_faqs row stayed hidden
-//     on every page whose bundle was still warm. A data-only correction cannot
-//     reach it otherwise: the faqs cache wraps this one, so purging
-//     `herb-faqs-<slug>` re-runs the wrapper and still reads this stale entry.
-const loadHerbPageBundle = unstable_cache(
-  async (slug: string): Promise<HerbPageBundle | null> => {
-    const supabase = getAnonClient();
-    if (!supabase) return null;
-    // The generated database types predate this function; the call is typed here
-    // instead of hand-editing the generated file.
-    // Bind the method: supabase-js' rpc reads `this.rest`, so a detached
-    // reference throws "Cannot read properties of undefined (reading 'rest')".
-    const rpc = supabase.rpc.bind(supabase) as unknown as (
-      fn: string,
-      args: Record<string, unknown>
-    ) => Promise<{ data: unknown; error: { message?: string } | null }>;
-    const { data, error } = await rpc("herb_page_bundle", { p_slug: slug });
-    if (error || !data) {
-      logger.warn("herb_page_bundle failed", { slug, error: error?.message });
-      return null;
-    }
-    return data as HerbPageBundle;
-  },
-  ["herb-page-bundle-v4"],
-  { revalidate: HERB_PAGE_TTL, tags: ["herb-page-bundle"] }
-);
+//     on every page whose bundle was still warm. The per-slug tag below is what
+//     lets a data-only correction reach a warm entry; a key bump is still needed
+//     when the payload's shape changes.
+async function fetchHerbPageBundle(
+  slug: string
+): Promise<HerbPageBundle | null> {
+  const supabase = getAnonClient();
+  if (!supabase) return null;
+  // The generated database types predate this function; the call is typed here
+  // instead of hand-editing the generated file.
+  // Bind the method: supabase-js' rpc reads `this.rest`, so a detached
+  // reference throws "Cannot read properties of undefined (reading 'rest')".
+  const rpc = supabase.rpc.bind(supabase) as unknown as (
+    fn: string,
+    args: Record<string, unknown>
+  ) => Promise<{ data: unknown; error: { message?: string } | null }>;
+  const { data, error } = await rpc("herb_page_bundle", { p_slug: slug });
+  if (error || !data) {
+    logger.warn("herb_page_bundle failed", { slug, error: error?.message });
+    return null;
+  }
+  return data as HerbPageBundle;
+}
+
+/**
+ * Read one herb's page bundle from the data cache.
+ *
+ * The wrapper is created per call so the tags can carry the slug: metadata now
+ * reads the herb row from this bundle, so a data-only correction must refresh
+ * one herb without purging every page. `revalidateTag("herb-page-bundle")`
+ * still busts the lot (that is what a bundle-key bump wants), while
+ * `herb-page-bundle-<slug>` lets /api/revalidate-herb and admin edits purge a
+ * single entry. unstable_cache keys on its arguments, so the per-call wrapper
+ * still shares one cache entry per slug.
+ */
+function loadHerbPageBundle(slug: string): Promise<HerbPageBundle | null> {
+  return unstable_cache(fetchHerbPageBundle, ["herb-page-bundle-v4"], {
+    revalidate: HERB_PAGE_TTL,
+    tags: ["herb-page-bundle", `herb-page-bundle-${slug}`],
+  })(slug);
+}
 
 const loadRegulatoryEvidence = unstable_cache(
   async (slug: string): Promise<RegulatoryEvidence | null> => {
@@ -258,33 +275,52 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const metaLocale = await getLocale();
 
-  const getHerbMetaCached = unstable_cache(
-    async (herbSlug: string, locale: string) => {
-      return loadHerb(herbSlug, locale as Locale);
-    },
-    ["herb-meta-v2-" + slug],
-    { revalidate: HERB_PAGE_TTL, tags: ["herb-meta-" + slug] }
-  );
+  // The bundle is fetched below for isIndexable anyway, and it carries the
+  // herbs row, so metadata reads that row instead of paying a second
+  // `select *` with two nested embeds. The bundle row is the raw herbs row (no
+  // drug_interactions embed), which is everything used here.
+  const bundle = await loadHerbPageBundle(slug);
 
-  const result = await getHerbMetaCached(slug, metaLocale);
-  // Only a genuine miss becomes "Herb Not Found" metadata. A failed query is
-  // not evidence the herb doesn't exist: propagate it so the route renders a
-  // retryable 500 rather than teaching crawlers a 404.
-  if (!result.success || !result.data) {
-    if (!result.success && result.reason === "unavailable") {
-      herbUnavailable(result.error);
+  let herb: HerbWithInteractions;
+  if (bundle?.herb) {
+    // The bundle stores the raw row, so apply the same French overlay
+    // getHerbBySlug would have applied before the metadata derives from it.
+    herb = localizeHerb(
+      bundle.herb as unknown as HerbWithInteractions,
+      metaLocale
+    );
+  } else {
+    // The bundle is null on an RPC failure or when the slug has no precomputed
+    // row. Fall back to the direct read, which also keeps the miss/unavailable
+    // distinction intact.
+    const getHerbMetaCached = unstable_cache(
+      async (herbSlug: string, locale: string) => {
+        return loadHerb(herbSlug, locale as Locale);
+      },
+      ["herb-meta-v2-" + slug],
+      { revalidate: HERB_PAGE_TTL, tags: ["herb-meta-" + slug] }
+    );
+
+    const result = await getHerbMetaCached(slug, metaLocale);
+    // Only a genuine miss becomes "Herb Not Found" metadata. A failed query is
+    // not evidence the herb doesn't exist: propagate it so the route renders a
+    // retryable 500 rather than teaching crawlers a 404.
+    if (!result.success || !result.data) {
+      if (!result.success && result.reason === "unavailable") {
+        herbUnavailable(result.error);
+      }
+      // The page body turns this into a 404 (see resolveHerbOr404 below). There
+      // is no loading.tsx above this route precisely so that the status can still
+      // be set to 404; a Suspense fallback would flush a 200 shell first.
+      return {
+        // absolute: the root template would append " | HerbAlly" to a title that
+        // already carries it, giving "Herb Not Found | HerbAlly | HerbAlly".
+        title: { absolute: "Herb Not Found | HerbAlly" },
+        robots: { index: false },
+      };
     }
-    // The page body turns this into a 404 (see resolveHerbOr404 below). There
-    // is no loading.tsx above this route precisely so that the status can still
-    // be set to 404; a Suspense fallback would flush a 200 shell first.
-    return {
-      // absolute: the root template would append " | HerbAlly" to a title that
-      // already carries it, giving "Herb Not Found | HerbAlly | HerbAlly".
-      title: { absolute: "Herb Not Found | HerbAlly" },
-      robots: { index: false },
-    };
+    herb = result.data;
   }
-  const herb = result.data;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
   // Only herbs with a real French record count as French. Pages under /fr render
   // French chrome around English content when no translation exists, so declaring
@@ -340,8 +376,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   );
 
   const untranslatedFr = metaLocale === "fr" && !hasFr;
-
-  const bundle = await loadHerbPageBundle(slug);
 
   // Which pages Google is asked to index is decided in one place, shared with the
   // sitemap: see src/lib/seo/indexable.ts for the measurement behind the numbers.
