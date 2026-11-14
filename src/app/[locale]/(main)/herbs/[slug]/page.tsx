@@ -20,6 +20,7 @@ import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 import {
   getAlphabeticalNeighbours,
   getSymptomPeers,
+  type LinkHerb,
 } from "@/lib/data/internal-links";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
@@ -32,7 +33,10 @@ import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
-import { localizeHerb } from "@/lib/utils/localize-herb";
+import {
+  localizeHerb,
+  localizeInteraction,
+} from "@/lib/utils/localize-herb";
 import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
@@ -183,6 +187,8 @@ type HerbPageBundle = {
   }>;
   faqs: Array<Record<string, unknown>>;
   related: Array<{ name: string; slug: string; scientific_name: string }>;
+  neighbours?: { prev: LinkHerb | null; next: LinkHerb | null };
+  symptom_peers?: LinkHerb[];
 };
 
 // The data cache survives a deploy: entries written by the previous build keep
@@ -242,7 +248,7 @@ const loadHerbPageBundle = cache(
     try {
       return await unstable_cache(
         fetchHerbPageBundle,
-        ["herb-page-bundle-v4"],
+        ["herb-page-bundle-v5"],
         {
           revalidate: HERB_PAGE_TTL,
           tags: ["herb-page-bundle", `herb-page-bundle-${slug}`],
@@ -523,17 +529,39 @@ export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
   const pageLocale = await getLocale();
 
-  const getHerbCached = unstable_cache(
-    async (herbSlug: string, locale: Locale) => {
-      return loadHerb(herbSlug, locale);
-    },
-    ["herb-v8-" + slug],
-    { revalidate: HERB_PAGE_TTL, tags: ["herb-" + slug] }
-  );
+  // Share the request-scoped bundle with generateMetadata. Migration 00070
+  // embeds herb_categories and drug_interactions inside bundle.herb, so a warm
+  // or freshly built bundle supplies the full HerbWithInteractions row without
+  // a second PostgREST round trip.
+  const bundle = await loadHerbPageBundle(slug);
 
-  const result = await getHerbCached(slug, pageLocale as Locale);
+  let herb: HerbWithInteractions;
+  if (
+    bundle?.herb &&
+    Array.isArray((bundle.herb as Record<string, unknown>).drug_interactions)
+  ) {
+    const localized = localizeHerb(
+      bundle.herb as unknown as HerbWithInteractions,
+      pageLocale
+    );
+    herb = {
+      ...localized,
+      drug_interactions: (localized.drug_interactions || []).map((ix) =>
+        localizeInteraction(ix, pageLocale)
+      ),
+    };
+  } else {
+    const getHerbCached = unstable_cache(
+      async (herbSlug: string, locale: Locale) => {
+        return loadHerb(herbSlug, locale);
+      },
+      ["herb-v8-" + slug],
+      { revalidate: HERB_PAGE_TTL, tags: ["herb-" + slug] }
+    );
 
-  const herb = resolveHerbOr404(result);
+    const result = await getHerbCached(slug, pageLocale as Locale);
+    herb = resolveHerbOr404(result);
+  }
 
   // View tracking runs from a client beacon (ViewTracker) instead of a
   // server-side `after()` hook. The old hook fired once per dynamic render —
@@ -541,12 +569,16 @@ export default async function HerbDetailPage({ params }: Props) {
   // against a Nano instance's Disk IO budget. The beacon dedupes per
   // visitor/slug/day and writes through a slug-addressed RPC.
 
-  // Define cached fetcher
-  // Read the imported sources directly rather than through the page bundle: the
-  // bundle is one big cached object, and a single build-time hiccup froze an empty
-  // sources array into the HTML for three days.
+  // Read imported regulator sources from the precomputed bundle first (triggers
+  // on herb_monograph_sources mark the bundle dirty on any write, and
+  // fetchHerbPageBundle throws on RPC error so failed reads are never cached).
+  // Fall back to the direct table query only when the bundle is unavailable.
   const getSourcesCached = unstable_cache(
     async (herbSlug: string) => {
+      const b = await loadHerbPageBundle(herbSlug);
+      if (b && Array.isArray(b.sources)) {
+        return b.sources;
+      }
       const supabase = getAnonClient();
       if (!supabase) return [];
       const { data, error } = await supabase
@@ -568,11 +600,7 @@ export default async function HerbDetailPage({ params }: Props) {
         monograph_date: string | null;
       }>;
     },
-    // Versioned like the monograph key: the Data Cache outlives a deploy, so a
-    // v1 entry written before the LiverTox import kept popular pages showing
-    // only their NCCIH row for up to three days. Bumping the key retires every
-    // stale entry at once.
-    [`sources-v3-${slug}`],
+    [`sources-v4-${slug}`],
     { revalidate: HERB_PAGE_TTL, tags: [`sources-${slug}`] }
   );
 
@@ -876,16 +904,11 @@ export default async function HerbDetailPage({ params }: Props) {
       categoryId: string | null,
       curatedSlugs: string[]
     ) => {
-      const supabaseClient = getAnonClient();
-      if (!supabaseClient) return [];
-      // Precomputed neighbours (same genus, then a shared specific indication) beat
-      // a category roll-up: "other Curcuma species" is more useful than "another
-      // herb filed under Digestive".
-      if (curatedSlugs.length) {
-        const bundle = await loadHerbPageBundle(herbSlug);
-        if (bundle?.related?.length) {
+      const b = await loadHerbPageBundle(herbSlug);
+      if (b?.related?.length) {
+        if (curatedSlugs.length) {
           // Preserve the curated order rather than the database's.
-          const bySlug = new Map(bundle.related.map((r) => [r.slug, r]));
+          const bySlug = new Map(b.related.map((r) => [r.slug, r]));
           const ordered = curatedSlugs
             .map((s) => bySlug.get(s))
             .filter(
@@ -896,13 +919,23 @@ export default async function HerbDetailPage({ params }: Props) {
             );
           if (ordered.length) return ordered;
         }
+        return b.related.slice(0, 3);
       }
+      // Migration 00070 populates b.related from related_slugs or symptom_peers;
+      // when an enriched bundle has no related entries, do not fall back to a
+      // 2,620-row scan of the "Not Common" category bucket.
+      if (b && b.neighbours !== undefined) {
+        return [];
+      }
+      const supabaseClient = getAnonClient();
+      if (!supabaseClient) return [];
       let relatedQuery = supabaseClient
         .from("herbs")
         .select(
           "name, slug, scientific_name, symptom_keywords, traditional_uses"
         )
-        .eq("is_published", true);
+        .eq("is_published", true)
+        .limit(24);
       if (categoryId) {
         relatedQuery = relatedQuery.eq("category_id", categoryId);
       }
@@ -910,7 +943,7 @@ export default async function HerbDetailPage({ params }: Props) {
       if (!categoryHerbs) return [];
       return getComparisonHerbs(herbSlug, categoryHerbs, 3);
     },
-    ["related-herbs-v2-" + slug],
+    ["related-herbs-v3-" + slug],
     { revalidate: HERB_PAGE_TTL, tags: ["related-herbs-" + slug] }
   );
 
@@ -935,11 +968,18 @@ export default async function HerbDetailPage({ params }: Props) {
 
   // Structure rails. The A–Z neighbours are guaranteed and turn 2,700
   // otherwise-isolated pages into a crawlable chain; the symptom peers are the
-  // relevance signal that actually varies across the library.
-  const [{ prev, next }, symptomPeers] = await Promise.all([
-    getAlphabeticalNeighbours(herb.name, slug),
-    getSymptomPeers(slug, (herb.symptom_keywords as string[] | null) ?? null),
-  ]);
+  // relevance signal that actually varies across the library. Migration 00070
+  // includes both in herb_page_bundle() so cold renders pay zero extra queries.
+  const [{ prev, next }, symptomPeers] =
+    bundle?.neighbours && Array.isArray(bundle.symptom_peers)
+      ? [bundle.neighbours, bundle.symptom_peers]
+      : await Promise.all([
+          getAlphabeticalNeighbours(herb.name, slug),
+          getSymptomPeers(
+            slug,
+            (herb.symptom_keywords as string[] | null) ?? null
+          ),
+        ]);
 
   return (
     <div className="space-y-8">
