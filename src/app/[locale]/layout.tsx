@@ -9,6 +9,7 @@ import { SkipToContent } from "@/components/shared/skip-to-content";
 import { WebVitals } from "@/components/analytics/web-vitals";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { AdDocumentGuard } from "@/components/ads/ad-document-guard";
+import { DEFAULT_LOCALE } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/page-locale";
 import { locale as rootLocale } from "next/root-params";
 import { notFound } from "next/navigation";
@@ -46,7 +47,9 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   // The URL is the single source of truth: the proxy maps it onto the
   // `[locale]` segment, and we read that root param here. No request header.
-  const locale = await rootLocale();
+  const rawLocale = await rootLocale();
+  const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "meta" });
   const title = t("homeTitle");
   const description = t("appDescription");
@@ -116,6 +119,7 @@ export default async function RootLayout({
 }>) {
   const locale = await rootLocale();
   if (!isLocale(locale)) {
+    setRequestLocale(DEFAULT_LOCALE);
     notFound();
   }
 
