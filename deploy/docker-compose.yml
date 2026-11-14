@@ -14,11 +14,21 @@
 
 name: herbally
 
+# Resource ceilings. The box is 8 GB / 2 vCPU and the app is rebuilt in place
+# on it, so an unbounded `next build` (~2–3 GB) beside a live Postgres lets the
+# kernel choose the OOM victim — often Postgres. db gets 3g because the tuned
+# shared_buffers is 1–2 GB, plus connections and per-connection work_mem. Total
+# ceiling is ≈5.6 GB of 8 GB, leaving headroom for the build and page cache.
 services:
   db:
     image: supabase/postgres:17.6.1.136
     container_name: herbally-db
     restart: unless-stopped
+    mem_limit: 3g
+    cpus: 2.0
+    # Docker's 10 s default SIGKILLs a checkpointing Postgres. A fast shutdown
+    # normally finishes well inside a minute.
+    stop_grace_period: 60s
     shm_size: 1gb
     volumes:
       # These two run only on a fresh PGDATA. They set the passwords of the
@@ -41,7 +51,18 @@ services:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
       interval: 5s
       timeout: 5s
-      retries: 20
+      # The supabase image preloads 12 extensions and runs init scripts; a
+      # restore-plus-init can exceed 100 s on slow storage. rest/auth gate on
+      # service_healthy, so a short budget aborts the whole stack mid-startup.
+      retries: 60
+      start_period: 120s
+    networks:
+      - dbnet
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   # One-shot. Puts the `auth` schema in a state GoTrue can migrate into, and
   # is deliberately a service rather than an init script: init scripts only
@@ -52,6 +73,8 @@ services:
     image: supabase/postgres:17.6.1.136
     container_name: herbally-db-init
     restart: "no"
+    mem_limit: 256m
+    cpus: 1.0
     depends_on:
       db:
         condition: service_healthy
@@ -71,11 +94,20 @@ services:
       - ON_ERROR_STOP=1
       - -f
       - /sql/auth-schema-ownership.sql
+    networks:
+      - dbnet
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   rest:
     image: postgrest/postgrest:v14.18
     container_name: herbally-rest
     restart: unless-stopped
+    mem_limit: 256m
+    cpus: 1.0
     depends_on:
       db:
         condition: service_healthy
@@ -98,11 +130,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - api
+      - dbnet
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   auth:
     image: supabase/gotrue:v2.197.0
     container_name: herbally-auth
     restart: unless-stopped
+    mem_limit: 256m
+    cpus: 1.0
     depends_on:
       db:
         condition: service_healthy
@@ -159,6 +201,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - api
+      - dbnet
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   app:
     build:
@@ -175,10 +225,17 @@ services:
     image: ${APP_IMAGE:-herbally-app:local}
     container_name: herbally-app
     restart: unless-stopped
+    mem_limit: 1536m
+    cpus: 1.5
     env_file: ./app.env
     environment:
       NODE_ENV: production
       PORT: "3000"
+      # Pinned so a stale app.env cannot shadow the values baked into the
+      # client bundle at build time, or silently diverge from them. app.env
+      # must not carry the anon key at all (see app.env.example).
+      NEXT_PUBLIC_SUPABASE_URL: https://api.herbally.app
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY:?run deploy/gen-keys.mjs first}
     volumes:
       # ISR / unstable_cache survive redeploys only if this is on a volume.
       # Do NOT mount /app/.next/server/app as well: Docker seeds it from the
@@ -189,11 +246,28 @@ services:
         condition: service_healthy
       auth:
         condition: service_healthy
+    healthcheck:
+      # Runs inside the container: app publishes no ports, so a check from the
+      # host has nothing to reach. busybox wget ships with node:*-alpine.
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 6
+    networks:
+      - edge
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   caddy:
     image: caddy:2.10-alpine
     container_name: herbally-caddy
     restart: unless-stopped
+    mem_limit: 256m
+    cpus: 1.0
     ports:
       - "80:80"
       - "443:443"
@@ -209,6 +283,24 @@ services:
         condition: service_healthy
       auth:
         condition: service_healthy
+    # Caddy terminates TLS for herbally.app (edge → app) and api.herbally.app
+    # (api → rest/auth). It is deliberately NOT on dbnet: a proxy compromise
+    # must not hand the attacker db:5432.
+    networks:
+      - edge
+      - api
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  edge:
+  api:
+  # No route off the host for the database.
+  dbnet:
+    internal: true
 
 volumes:
   db-data:

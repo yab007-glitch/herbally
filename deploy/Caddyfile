@@ -6,8 +6,10 @@
 
 {
 	email info@herbally.app
-	# Caddy writes structured logs to stdout by default; `docker compose logs caddy`
-	# is then the access log. Rotate with the Docker daemon's log-opts.
+	# Access logs are opt-in: Caddy logs HTTP requests only for site blocks that
+	# declare a `log` directive. Each block below does, writing JSON to stdout,
+	# so `docker compose logs caddy` is the access log. Volume is bounded by the
+	# json-file limits on the caddy service in docker-compose.yml.
 }
 
 # ── API: the Supabase surface ────────────────────────────────────────────────
@@ -17,6 +19,22 @@
 # ship a URL browsers cannot reach.
 api.herbally.app {
 	encode zstd gzip
+
+	# Every response leaving Caddy carries HSTS, including this proxy's own
+	# 301s and 404s, which never pass through the Next app that sets it. The
+	# value matches next.config.ts and src/proxy.ts exactly. X-Frame-Options is
+	# deliberately absent: the app exempts /embed/* from framing headers and a
+	# proxy-level DENY would break those routes.
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		-Server
+	}
+
+	# Opt-in: without a `log` directive Caddy records no HTTP requests at all.
+	log {
+		output stdout
+		format json
+	}
 
 	# supabase-js calls {url}/auth/v1/<endpoint> and {url}/rest/v1/<table>.
 	# GoTrue serves at /token, /user, ...; PostgREST at /<table>. Strip the
@@ -43,11 +61,28 @@ api.herbally.app {
 
 # ── Site ─────────────────────────────────────────────────────────────────────
 www.herbally.app {
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		-Server
+	}
+	log {
+		output stdout
+		format json
+	}
 	redir https://herbally.app{uri} permanent
 }
 
 herbally.app {
 	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		-Server
+	}
+	log {
+		output stdout
+		format json
+	}
 
 	# If the Cloudflare proxy is ever switched on for this host, every request
 	# arrives from a Cloudflare edge IP and IP-based rate limiting silently
