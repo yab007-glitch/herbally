@@ -195,8 +195,9 @@ describe("sitemap", () => {
     getInteractionPairsMock.mockResolvedValue([]);
 
     const pending = sitemap();
-    // The non-build budget is 20s; the hanging query must be abandoned by then.
-    await vi.advanceTimersByTimeAsync(20_000);
+    // The default non-build budget is 35s (SITEMAP_DB_BUDGET_MS overrides it);
+    // the hanging query must be abandoned by then.
+    await vi.advanceTimersByTimeAsync(35_000);
     const result = await pending;
     const urls = result.map((entry) => entry.url);
 
