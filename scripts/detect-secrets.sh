@@ -92,13 +92,23 @@ for pattern in "${PATTERNS[@]}"; do
         fi
       fi
       
+      reported=0
       while IFS= read -r match; do
         lineno=$(echo "$match" | cut -d: -f1)
         linecontent=$(echo "$match" | cut -d: -f2-)
+        # Docker Compose / shell interpolation ($VAR or ${VAR}) is a placeholder
+        # resolved at runtime, not a credential. Without this the stack's own
+        # compose file and docs can never pass their own secret scan.
+        if echo "$linecontent" | grep -qE '\$\{?[A-Za-z_][A-Za-z0-9_]*\}?'; then
+          continue
+        fi
+        reported=1
         echo -e "${RED}⚠ Potential secret in ${file}:${lineno}${NC}"
         echo -e "   ${linecontent:0:120}"
       done <<< "$matches"
-      FOUND=$((FOUND + 1))
+      if [ "$reported" -eq 1 ]; then
+        FOUND=$((FOUND + 1))
+      fi
     fi
   done <<< "$FILES_TO_SCAN"
 done

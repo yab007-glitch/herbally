@@ -234,12 +234,17 @@ services:
     image: ${APP_IMAGE:-herbally-app:local}
     container_name: herbally-app
     restart: unless-stopped
-    mem_limit: 1536m
+    # 1.5 GB was under the heap the app actually needs: a 500-client burst
+    # ended in "Ineffective mark-compacts near heap limit" and a restart.
+    mem_limit: 3g
     cpus: 1.5
     env_file: ./app.env
     environment:
       NODE_ENV: production
       PORT: "3000"
+      # Keep the V8 heap below the container's 3 GB cap (the Dockerfile pins
+      # 3072 MB for the build, which would exceed it at runtime).
+      NODE_OPTIONS: --max-old-space-size=2560
       # Pinned so a stale app.env cannot shadow the values baked into the
       # client bundle at build time, or silently diverge from them. app.env
       # must not carry the anon key at all (see app.env.example).

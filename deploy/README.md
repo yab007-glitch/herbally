@@ -10,16 +10,16 @@ Assessment, cost table and risk list: Team Memory
 
 ## What this directory contains
 
-| File | Purpose |
-|---|---|
-| `docker-compose.yml` | db + PostgREST + GoTrue + app + Caddy. Trimmed from upstream: no studio, realtime, storage, functions, supavisor, and **no Envoy gateway**. |
-| `Caddyfile` | TLS + the `/auth/v1` and `/rest/v1` routing the gateway used to do. |
-| `gen-keys.mjs` | Mints `JWT_SECRET`, `ANON_KEY`, `SERVICE_ROLE_KEY`. |
-| `bootstrap.sh` | Ubuntu 24.04 hardening, swap, firewall, Docker. |
-| `backup.sh` | pg_dump → restic → B2, plus a restore drill. |
-| `systemd/herbally-backup.{service,timer}` | Nightly backup on a Persistent timer, plus the success and failure pings. |
-| `.env.example` | Stack secrets (db, jwt, smtp). |
-| `app.env.example` | The app's runtime environment. |
+| File                                      | Purpose                                                                                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docker-compose.yml`                      | db + PostgREST + GoTrue + app + Caddy. Trimmed from upstream: no studio, realtime, storage, functions, supavisor, and **no Envoy gateway**. |
+| `Caddyfile`                               | TLS + the `/auth/v1` and `/rest/v1` routing the gateway used to do.                                                                         |
+| `gen-keys.mjs`                            | Mints `JWT_SECRET`, `ANON_KEY`, `SERVICE_ROLE_KEY`.                                                                                         |
+| `bootstrap.sh`                            | Ubuntu 24.04 hardening, swap, firewall, Docker.                                                                                             |
+| `backup.sh`                               | pg_dump → restic → B2, plus a restore drill.                                                                                                |
+| `systemd/herbally-backup.{service,timer}` | Nightly backup on a Persistent timer, plus the success and failure pings.                                                                   |
+| `.env.example`                            | Stack secrets (db, jwt, smtp).                                                                                                              |
+| `app.env.example`                         | The app's runtime environment.                                                                                                              |
 
 ### Why there is no Kong/Envoy here
 
@@ -343,16 +343,16 @@ cutover it should point at the new database instead.
 
 Run on Docker 29.5.2 (Ubuntu 24.04 VM), from an empty volume:
 
-| Check | Result |
-|---|---|
-| `db`, `rest`, `auth` healthchecks | all healthy on a cold start |
-| JWT minted by `gen-keys.mjs` | accepted by PostgREST; a bad signature returns 401 |
-| RLS | anon key saw only `is_published = true` rows |
-| `/rest/v1/*` through Caddy | 200, prefix stripped correctly |
-| `/auth/v1/*` through Caddy | 200 |
-| Unknown path through Caddy | 404 |
-| GoTrue migration head | `20260831180000` — **identical to the hosted project**, so a restore runs zero migrations |
-| `Caddyfile` | `caddy validate` passes |
+| Check                             | Result                                                                                    |
+| --------------------------------- | ----------------------------------------------------------------------------------------- |
+| `db`, `rest`, `auth` healthchecks | all healthy on a cold start                                                               |
+| JWT minted by `gen-keys.mjs`      | accepted by PostgREST; a bad signature returns 401                                        |
+| RLS                               | anon key saw only `is_published = true` rows                                              |
+| `/rest/v1/*` through Caddy        | 200, prefix stripped correctly                                                            |
+| `/auth/v1/*` through Caddy        | 200                                                                                       |
+| Unknown path through Caddy        | 404                                                                                       |
+| GoTrue migration head             | `20260831180000` — **identical to the hosted project**, so a restore runs zero migrations |
+| `Caddyfile`                       | `caddy validate` passes                                                                   |
 
 **Not** verified yet, because they need the box or the hosted password: the app
 image build (needs `api.herbally.app` to resolve), `pg_restore` of the real
@@ -361,14 +361,14 @@ repository), certificate issuance, and mail delivery.
 
 ## Known traps
 
-| Trap | Why it bites |
-|---|---|
-| Building before `api.herbally.app` resolves | `NEXT_PUBLIC_*` is baked in; API calls fail only in the browser |
-| Mounting `/app/.next/server/app` | Docker seeds it from the old image → stale pages after every deploy |
-| Restoring `auth` without `CREATE SCHEMA auth` | `pg_dump -n` does not emit `CREATE SCHEMA` |
+| Trap                                                        | Why it bites                                                                                                                                                                                 |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Building before `api.herbally.app` resolves                 | `NEXT_PUBLIC_*` is baked in; API calls fail only in the browser                                                                                                                              |
+| Mounting `/app/.next/server/app`                            | Docker seeds it from the old image → stale pages after every deploy                                                                                                                          |
+| Restoring `auth` without `CREATE SCHEMA auth`               | `pg_dump -n` does not emit `CREATE SCHEMA`                                                                                                                                                   |
 | Letting GoTrue migrate the image's pre-seeded `auth` schema | `must be owner of function uid` — GoTrue connects as `supabase_auth_admin`, the image's functions belong to `postgres`. `db-init` replaces the schema, but never one that came from the dump |
-| Dumping with `--no-owner` into the migration | `supabase_auth_admin` loses ownership of `auth` tables; GoTrue cannot migrate. The nightly dump and the restore drill both preserve owners for exactly this reason |
-| Missing DKIM during the DNS move | Mail keeps flowing but starts landing in spam |
-| Cancelling Vercel with DNS still there | Resolution and email go down together |
-| Forgetting Stripe's new signing secret | Webhook returns 400 and donations stop recording |
-| Scheduling the backup from `/etc/cron.d` only | A run missed while the box was down is skipped silently, while the systemd timer carries `Persistent=true` |
+| Dumping with `--no-owner` into the migration                | `supabase_auth_admin` loses ownership of `auth` tables; GoTrue cannot migrate. The nightly dump and the restore drill both preserve owners for exactly this reason                           |
+| Missing DKIM during the DNS move                            | Mail keeps flowing but starts landing in spam                                                                                                                                                |
+| Cancelling Vercel with DNS still there                      | Resolution and email go down together                                                                                                                                                        |
+| Forgetting Stripe's new signing secret                      | Webhook returns 400 and donations stop recording                                                                                                                                             |
+| Scheduling the backup from `/etc/cron.d` only               | A run missed while the box was down is skipped silently, while the systemd timer carries `Persistent=true`                                                                                   |

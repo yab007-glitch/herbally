@@ -1,0 +1,99 @@
+name: Deploy
+
+# Deploys to the self-hosted runner on the laptop (WSL). The repo is public,
+# so this workflow must never run for pull_request events: only a successful
+# CI run for a push to main, or a manual dispatch, may execute on that host.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: [self-hosted, linux, herbally]
+    timeout-minutes: 45
+    steps:
+      - name: Check out the deployed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Save the current image for rollback
+        run: |
+          set -euo pipefail
+          if docker image inspect herbally-app:local >/dev/null 2>&1; then
+            docker tag herbally-app:local herbally-app:rollback
+            echo "saved herbally-app:rollback"
+          else
+            echo "no existing image"
+          fi
+
+      - name: Sync source into the deploy directory
+        run: |
+          set -euo pipefail
+          # deploy/ is excluded on purpose: it holds production secrets and
+          # stack config that must not be overwritten by a code push.
+          rsync -a \
+            --exclude .git \
+            --exclude deploy/ \
+            --exclude node_modules \
+            --exclude .next \
+            --exclude backups/ \
+            "$GITHUB_WORKSPACE/" /srv/herbally/
+
+      - name: Build image
+        working-directory: /srv/herbally/deploy
+        run: docker compose build app
+
+      - name: Deploy
+        working-directory: /srv/herbally/deploy
+        run: docker compose up -d app
+
+      - name: Wait for health
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' herbally-app 2>/dev/null || echo missing)
+            if [ "$status" = "healthy" ]; then
+              echo "healthy after $((i * 10))s"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "app did not become healthy"
+          docker logs herbally-app --tail 60
+          exit 1
+
+      - name: Smoke test the public site
+        run: |
+          set -euo pipefail
+          home=$(curl -fsS -o /dev/null -w '%{http_code}' https://herbally.app/)
+          api=$(curl -fsS -o /dev/null -w '%{http_code}' 'https://herbally.app/api/interactions/check?herb=ginger&drug=warfarin')
+          locs=$(curl -fsS https://herbally.app/sitemap.xml | grep -c '<loc>' || true)
+          echo "home=$home api=$api sitemap_urls=$locs"
+          [ "$home" = "200" ] && [ "$api" = "200" ] && [ "$locs" -ge 6000 ]
+
+      - name: Roll back on failure
+        if: failure()
+        run: |
+          set -euo pipefail
+          echo "deploy failed; restoring the previous image"
+          if docker image inspect herbally-app:rollback >/dev/null 2>&1; then
+            docker tag herbally-app:rollback herbally-app:local
+            (cd /srv/herbally/deploy && docker compose up -d app) || true
+          fi

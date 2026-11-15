@@ -600,8 +600,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // every herb URL missing for an hour — a silent SEO loss that costs more
   // than a slow response. Computed per invocation, not at module scope, so
   // tests and the build phase see their own value.
+  // Overridable at runtime so patience can be raised without a rebuild. The
+  // previous 20s ceiling was exhausted by concurrent traffic and cached a
+  // sitemap with most herb URLs missing for a full hour.
+  const configuredBudgetMs = Number(process.env.SITEMAP_DB_BUDGET_MS);
   const dbBudgetMs =
-    process.env.NEXT_PHASE === "phase-production-build" ? 40_000 : 20_000;
+    process.env.NEXT_PHASE === "phase-production-build"
+      ? 40_000
+      : Number.isFinite(configuredBudgetMs) && configuredBudgetMs > 0
+        ? configuredBudgetMs
+        : 35_000;
   const deadline = Date.now() + dbBudgetMs;
   const remainingBudgetMs = () => deadline - Date.now();
   // Degraded paths list every symptom hub: nothing here can tell which hubs are

@@ -64,8 +64,16 @@ async function resolveHerb(term: string): Promise<HerbCandidate | null> {
 export async function GET(request: NextRequest) {
   const { success } = await rateLimit(getClientIP(request), 30, 60_000);
   if (!success) {
+    // `unavailable` is the client's "we could not look" flag, but on its own it
+    // reads as a database outage. Say plainly that this is a rate limit so a
+    // caller can distinguish throttling from a real failure.
     return NextResponse.json(
-      { found: false, unavailable: true },
+      {
+        found: false,
+        unavailable: true,
+        rateLimited: true,
+        message: "Too many requests. Try again in a minute.",
+      },
       { status: 429, headers: { "Retry-After": "60" } }
     );
   }

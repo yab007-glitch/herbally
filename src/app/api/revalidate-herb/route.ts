@@ -78,5 +78,10 @@ export async function POST(request: NextRequest) {
     revalidatePath(`/fr/herbs/${slug}`);
   }
 
+  // The sitemap is a separately cached route (`revalidate = 3600`). Any
+  // correction that changes which herbs or pages are listable must refresh it
+  // too, or a degraded copy keeps being served for up to an hour.
+  revalidatePath("/sitemap.xml");
+
   return NextResponse.json({ ok: true, revalidated: slugs.length });
 }

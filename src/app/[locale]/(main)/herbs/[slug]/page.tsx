@@ -33,10 +33,7 @@ import type { Monograph } from "@/lib/data/monographs";
 import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
-import {
-  localizeHerb,
-  localizeInteraction,
-} from "@/lib/utils/localize-herb";
+import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
 import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
