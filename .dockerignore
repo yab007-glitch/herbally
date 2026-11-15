@@ -5,11 +5,9 @@ node_modules
 *.md
 .env*
 !.env.example
-deploy/.env
-deploy/app.env
-deploy/restic.env
-deploy/cloudflared/*.json
-deploy/cloudflared/cert.pem
+# Production secrets and stack config live here; nothing in deploy/ is a
+# build input, and some of it is root-only (unreadable to the build client).
+deploy
 coverage
 .claude
 # Runtime data, not build inputs. backups/local is root-only, and a build
