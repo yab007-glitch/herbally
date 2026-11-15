@@ -12,3 +12,7 @@ deploy/cloudflared/*.json
 deploy/cloudflared/cert.pem
 coverage
 .claude
+# Runtime data, not build inputs. backups/local is root-only, and a build
+# context that cannot be read fails with "error from sender: permission denied".
+backups
+artifacts
