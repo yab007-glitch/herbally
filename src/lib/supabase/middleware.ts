@@ -45,6 +45,14 @@ export async function updateSession(request: NextRequest) {
     // request fast instead of stalling the proxy invocation until the
     // platform timeout.
     global: { fetch: boundedFetch },
+    // Keep auth cookies out of JavaScript; see the matching comment in
+    // server.ts. The middleware refreshes them server-side, so HttpOnly is
+    // safe here even though the response is built by hand.
+    cookieOptions: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    },
     cookies: {
       getAll() {
         return request.cookies.getAll();

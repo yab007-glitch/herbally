@@ -13,6 +13,15 @@ export async function createClient() {
       // Time-bounded like the other clients: a hung instance must fail fast
       // so the caller's error path runs, instead of stalling the invocation.
       global: { fetch: boundedFetch },
+      // No browser Supabase client exists in this app, so the auth cookies
+      // never need to be readable from JavaScript. HttpOnly removes the
+      // easiest session-theft path for an XSS bug; Secure matters if HTTPS is
+      // ever bypassed and is gated so local dev over plain HTTP still works.
+      cookieOptions: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll();

@@ -506,8 +506,13 @@ export async function POST(request: NextRequest) {
       response = await streamChatCompletion({
         model,
         messages: chatMessages,
+        // The browser closing the tab (or the client's own Stop button)
+        // aborts the request. Cancel the upstream generation too, instead of
+        // letting it run to completion for an answer nobody will read.
+        signal: request.signal,
       });
     } catch (fetchError) {
+      if (request.signal.aborted) break;
       logger.error("api_chat_fetch_failed", {
         model,
         error:
@@ -549,6 +554,12 @@ export async function POST(request: NextRequest) {
     break;
   }
 
+  // The client disconnected during the fallback chain. There is nobody to
+  // answer and nothing to report as a server failure.
+  if (request.signal.aborted) {
+    return new Response(null, { status: 499 });
+  }
+
   if (!response || !response.ok) {
     let userMessage = "AI service is temporarily unavailable.";
     const status = lastError?.status ?? 500;
@@ -587,6 +598,14 @@ export async function POST(request: NextRequest) {
   // primary-model output only, and only when proven complete.
   const answerLocale: "en" | "fr" = locale ?? "en";
   const collected = await collectAnswer(response, getStreamIdleTimeoutMs());
+
+  // Abort while the answer was being read cancels the upstream body (the
+  // fetch signal above is shared), so `collected` is an incomplete fragment
+  // meant for a client that is no longer listening. Do not guard, log or
+  // cache it.
+  if (request.signal.aborted) {
+    return new Response(null, { status: 499 });
+  }
 
   if (!collected.text.trim()) {
     // Fail closed: an empty upstream answer is a failure, not a blank "success"

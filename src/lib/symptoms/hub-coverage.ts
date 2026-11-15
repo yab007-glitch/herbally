@@ -16,8 +16,8 @@ import {
  * hub, which saturated the connection pool during static generation and took
  * every symptom prerender down with it (deploy 9sPshC6T, 2026-11-02).
  *
- * So the answer is computed once per process from a single column, memoised on
- * the promise, and bounded by a timeout. Callers fail **open**: unknown means
+ * So the answer is computed once per ten-minute window from a single column,
+ * memoised on the promise, and bounded by a timeout. Callers fail **open**: unknown means
  * "assume populated", because hiding a real page is worse than indexing a thin
  * one.
  */
@@ -25,7 +25,16 @@ import {
 const COVERAGE_TIMEOUT_MS = 8_000;
 const PAGE_SIZE = 1000;
 
-let coverage: Promise<Set<string> | null> | null = null;
+/**
+ * The memo used to live for the whole process, so editing a herb's
+ * symptom_keywords in the database left every hub's sitemap and robots
+ * decision stale until the next restart. Ten minutes keeps the expensive
+ * full-column read rare while letting content edits take effect.
+ */
+const COVERAGE_TTL_MS = 10 * 60_000;
+
+let coverage: { at: number; promise: Promise<Set<string> | null> } | null =
+  null;
 
 async function load(): Promise<Set<string> | null> {
   const supabase = getAnonClient();
@@ -56,15 +65,19 @@ async function load(): Promise<Set<string> | null> {
 
 /** Every `symptom_keywords` value currently used by a published herb. */
 export function getPopulatedSymptomKeywords(): Promise<Set<string> | null> {
-  if (!coverage) {
-    coverage = Promise.race([
-      load(),
-      new Promise<null>((resolve) =>
-        setTimeout(() => resolve(null), COVERAGE_TIMEOUT_MS)
-      ),
-    ]).catch(() => null);
+  const now = Date.now();
+  if (!coverage || now - coverage.at >= COVERAGE_TTL_MS) {
+    coverage = {
+      at: now,
+      promise: Promise.race([
+        load(),
+        new Promise<null>((resolve) =>
+          setTimeout(() => resolve(null), COVERAGE_TIMEOUT_MS)
+        ),
+      ]).catch(() => null),
+    };
   }
-  return coverage;
+  return coverage.promise;
 }
 
 /**

@@ -40,11 +40,11 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
     serverActions: {
-      allowedOrigins: [
-        "herbally.app",
-        "www.herbally.app",
-        "*.trycloudflare.com",
-      ],
+      // Exact origins only. The Quick Tunnel era allowed
+      // "*.trycloudflare.com"; anyone can mint a free hostname there, so the
+      // wildcard widened the server-action CSRF boundary for no production
+      // benefit — the named tunnel always presents herbally.app.
+      allowedOrigins: ["herbally.app", "www.herbally.app"],
     },
   },
   images: {

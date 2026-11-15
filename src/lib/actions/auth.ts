@@ -2,6 +2,9 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { clientIPFromHeaders } from "@/lib/utils/client-ip";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { migrateGuestData } from "@/lib/actions/guest-migration";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { getTranslations } from "next-intl/server";
@@ -22,7 +25,31 @@ function safeReturnTo(fd: FormData): string {
   return safeNextPath(fd.get("returnTo") as string | null);
 }
 
+/**
+ * Per-IP cap on the credential endpoints. Without one, `login` can be
+ * brute-forced at request speed and `forgotPassword` can be used to mail-bomb
+ * an inbox. The shared Upstash limiter is the production backend; per-route
+ * keys keep these counters out of the API routes' buckets.
+ */
+async function isRateLimited(route: string, limit: number): Promise<boolean> {
+  let ip = "unknown";
+  try {
+    ip = clientIPFromHeaders(await headers());
+  } catch {
+    // Called outside a request scope (unit tests): a shared bucket is fine.
+  }
+  const { success } = await rateLimit(rateLimitKey(route, ip), limit, 60_000);
+  return !success;
+}
+
+async function rateLimitedError(): Promise<ActionResponse> {
+  const locale = await getLocaleFromRequest();
+  const t = await getTranslations({ locale, namespace: "auth" });
+  return { success: false, error: t("rateLimited") };
+}
+
 export async function login(formData: FormData): Promise<ActionResponse> {
+  if (await isRateLimited("auth-login", 10)) return rateLimitedError();
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -51,6 +78,7 @@ export async function login(formData: FormData): Promise<ActionResponse> {
 }
 
 export async function register(formData: FormData): Promise<ActionResponse> {
+  if (await isRateLimited("auth-register", 5)) return rateLimitedError();
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -127,6 +155,7 @@ export async function register(formData: FormData): Promise<ActionResponse> {
 export async function forgotPassword(
   formData: FormData
 ): Promise<ActionResponse> {
+  if (await isRateLimited("auth-forgot", 5)) return rateLimitedError();
   const supabase = await createClient();
 
   const email = formData.get("email") as string;
@@ -145,6 +174,7 @@ export async function forgotPassword(
 export async function resetPassword(
   formData: FormData
 ): Promise<ActionResponse> {
+  if (await isRateLimited("auth-reset", 5)) return rateLimitedError();
   const supabase = await createClient();
 
   const password = formData.get("password") as string;

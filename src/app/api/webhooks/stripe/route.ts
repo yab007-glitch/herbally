@@ -26,6 +26,41 @@ function getStripe(): Stripe | null {
   return stripeInstance;
 }
 
+const MAX_WEBHOOK_BODY_BYTES = 1024 * 1024;
+
+/**
+ * Read the body with a hard byte cap.
+ *
+ * `content-length` is advisory — a chunked request can omit it entirely, and
+ * `request.text()` would then buffer an unbounded body before signature
+ * verification ever ran. Reading the stream lets us cancel as soon as the cap
+ * is crossed, so an unauthenticated caller cannot spend our memory.
+ */
+async function readCappedBody(
+  request: NextRequest,
+  maxBytes: number
+): Promise<string | null> {
+  const reader = request.body?.getReader();
+  if (!reader) return "";
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        await reader.cancel().catch(() => {});
+        return null;
+      }
+      chunks.push(value);
+    }
+  } catch {
+    return null;
+  }
+  return Buffer.concat(chunks).toString("utf8");
+}
+
 /**
  * Coerce a Stripe `payment_intent` field (which may be a string id OR an
  * expanded PaymentIntent object) to its id string.
@@ -282,7 +317,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const body = await request.text();
+  const body = await readCappedBody(request, MAX_WEBHOOK_BODY_BYTES);
+  if (body === null) {
+    return NextResponse.json(
+      { error: "Request body too large" },
+      { status: 413 }
+    );
+  }
   const signature = request.headers.get("stripe-signature");
 
   if (!signature) {

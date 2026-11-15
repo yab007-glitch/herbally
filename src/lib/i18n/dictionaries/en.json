@@ -678,6 +678,7 @@
     "checkerCtaButton": "Use the homepage checker"
   },
   "auth": {
+    "rateLimited": "Too many attempts. Please wait a minute and try again.",
     "login": {
       "email": "Email",
       "password": "Password",

@@ -678,6 +678,7 @@
     "checkerCtaButton": "Utiliser le vérificateur d'accueil"
   },
   "auth": {
+    "rateLimited": "Trop de tentatives. Veuillez patienter une minute avant de réessayer.",
     "login": {
       "email": "Email",
       "password": "Mot de passe",

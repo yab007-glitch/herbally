@@ -138,6 +138,11 @@ export async function streamChatCompletion(options: {
   messages: ChatMessage[];
   temperature?: number;
   max_tokens?: number;
+  /**
+   * Caller cancellation (request.signal). Aborting it cancels the upstream
+   * generation instead of paying for tokens nobody will read.
+   */
+  signal?: AbortSignal;
 }): Promise<Response> {
   const apiKey = getApiKey();
   if (!apiKey) {
@@ -160,6 +165,8 @@ export async function streamChatCompletion(options: {
     // Bound the whole request (headers + body). The route additionally
     // enforces a 30s IDLE timeout while reading the stream (rescheduled on
     // every chunk), so a long but active answer is never truncated.
-    signal: AbortSignal.timeout(90_000),
+    signal: options.signal
+      ? AbortSignal.any([options.signal, AbortSignal.timeout(90_000)])
+      : AbortSignal.timeout(90_000),
   });
 }

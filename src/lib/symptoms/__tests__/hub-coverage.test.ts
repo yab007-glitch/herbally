@@ -82,7 +82,7 @@ describe("symptom hub coverage", () => {
     expect(await getEmptySymptomHubs()).toEqual([]);
   });
 
-  it("reads the database once per process, not once per page", async () => {
+  it("reads the database once per memo window, not once per page", async () => {
     rangeMock.mockResolvedValue({ data: [], error: null });
 
     await isSymptomHubPopulated("anxiety");
@@ -91,5 +91,23 @@ describe("symptom hub coverage", () => {
 
     // 52 hub prerenders used to mean 52 extra queries; this is the fix.
     expect(rangeMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("refreshes the memo after the ten-minute TTL", async () => {
+    vi.useFakeTimers();
+    try {
+      rangeMock.mockResolvedValue({ data: [], error: null });
+
+      await getPopulatedSymptomKeywords();
+      expect(rangeMock).toHaveBeenCalledTimes(1);
+
+      vi.setSystemTime(Date.now() + 10 * 60_000 + 1);
+
+      // Content edits must reach the sitemap/robots decision without a restart.
+      await getPopulatedSymptomKeywords();
+      expect(rangeMock).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

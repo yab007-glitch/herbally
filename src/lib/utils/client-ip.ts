@@ -19,20 +19,20 @@ import type { NextRequest } from "next/server";
  * buckets all unproxied local traffic together, which is safe (if coarse)
  * for self-hosted dev.
  */
-export function getClientIP(request: NextRequest | Request): string {
+export function clientIPFromHeaders(headers: Headers): string {
   const onVercel = process.env.VERCEL === "1";
   const trustProxyHeaders = onVercel || process.env.TRUST_PROXY_HEADERS === "1";
 
   if (onVercel) {
-    const vercelIP = request.headers.get("x-vercel-forwarded-for");
+    const vercelIP = headers.get("x-vercel-forwarded-for");
     if (vercelIP) return vercelIP.trim();
   }
 
   if (trustProxyHeaders) {
-    const cfIP = request.headers.get("cf-connecting-ip");
+    const cfIP = headers.get("cf-connecting-ip");
     if (cfIP) return cfIP.trim();
 
-    const forwarded = request.headers.get("x-forwarded-for");
+    const forwarded = headers.get("x-forwarded-for");
     if (forwarded) {
       const ips = forwarded.split(",").map((s) => s.trim());
       return ips[0] || "unknown";
@@ -40,4 +40,9 @@ export function getClientIP(request: NextRequest | Request): string {
   }
 
   return "unknown";
+}
+
+/** Request-shaped wrapper; server actions use the Headers variant above. */
+export function getClientIP(request: NextRequest | Request): string {
+  return clientIPFromHeaders(request.headers);
 }
