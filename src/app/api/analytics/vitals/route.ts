@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod/v4";
 import { logger } from "@/lib/utils/logger";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 
@@ -48,7 +48,11 @@ const webVitalsPayloadSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const { success } = await rateLimit(getClientIP(request), 60, 60_000);
+    const { success } = await rateLimit(
+      rateLimitKey("analytics-vitals", getClientIP(request)),
+      60,
+      60_000
+    );
     if (!success) {
       return NextResponse.json(
         { error: "Too many requests" },

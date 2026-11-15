@@ -4,7 +4,7 @@ import { getHerbPairs } from "@/lib/interactions/pairs";
 import { matchInteractionPair } from "@/lib/interactions/check";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { escapeForIlike } from "@/lib/utils/ilike";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 
@@ -62,7 +62,11 @@ async function resolveHerb(term: string): Promise<HerbCandidate | null> {
  * "no record" when it simply could not look.
  */
 export async function GET(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  const { success } = await rateLimit(
+    rateLimitKey("interactions-check", getClientIP(request)),
+    30,
+    60_000
+  );
   if (!success) {
     // `unavailable` is the client's "we could not look" flag, but on its own it
     // reads as a database outage. Say plainly that this is a rate limit so a

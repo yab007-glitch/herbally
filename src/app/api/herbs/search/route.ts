@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { localizeHerb } from "@/lib/utils/localize-herb";
 import { logger } from "@/lib/utils/logger";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import { rankHerbResults } from "@/lib/search/rank-results";
@@ -171,7 +171,11 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
 }
 
 export async function GET(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  const { success } = await rateLimit(
+    rateLimitKey("herbs-search", getClientIP(request)),
+    30,
+    60_000
+  );
   if (!success) return rateLimitedResponse();
   const term = request.nextUrl.searchParams.get("q");
   if (!term || term.length < 2 || term.length > 200) {
@@ -181,7 +185,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  const { success } = await rateLimit(
+    rateLimitKey("herbs-search", getClientIP(request)),
+    30,
+    60_000
+  );
   if (!success) return rateLimitedResponse();
   try {
     const contentLength = Number(request.headers.get("content-length") || "0");

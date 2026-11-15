@@ -2,7 +2,7 @@ import { z } from "zod";
 import { NextResponse, type NextRequest } from "next/server";
 import { searchDrugs } from "@/lib/utils/rxnorm-client";
 import { logger } from "@/lib/utils/logger";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 
 /**
@@ -27,7 +27,11 @@ function isTransientNetworkError(error: unknown): boolean {
 
 export async function GET(request: NextRequest) {
   try {
-    const { success } = await rateLimit(getClientIP(request), 20, 60_000);
+    const { success } = await rateLimit(
+      rateLimitKey("rxnorm", getClientIP(request)),
+      20,
+      60_000
+    );
     if (!success) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },

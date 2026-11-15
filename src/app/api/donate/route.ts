@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { logger } from "@/lib/utils/logger";
 import { z } from "zod";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -29,7 +29,11 @@ function getStripe(): Stripe | null {
 }
 
 export async function POST(req: NextRequest) {
-  const { success } = await rateLimit(getClientIP(req), 10, 60_000);
+  const { success } = await rateLimit(
+    rateLimitKey("donate", getClientIP(req)),
+    10,
+    60_000
+  );
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests. Please try again later." },

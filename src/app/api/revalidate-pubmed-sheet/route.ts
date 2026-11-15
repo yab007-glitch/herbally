@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { timingSafeEqual } from "crypto";
 import { z } from "zod";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 
@@ -15,7 +15,11 @@ import { logger } from "@/lib/utils/logger";
  * Secured by REVALIDATE_SECRET (shared with the ingestion script). Rate-limited.
  */
 export async function POST(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 20, 60_000);
+  const { success } = await rateLimit(
+    rateLimitKey("revalidate-pubmed-sheet", getClientIP(request)),
+    20,
+    60_000
+  );
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests" },

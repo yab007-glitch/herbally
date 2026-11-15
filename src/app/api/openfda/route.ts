@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/utils/logger";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 
 const OPENFDA_BASE = process.env.OPENFDA_BASE_URL || "https://api.fda.gov";
@@ -33,7 +33,7 @@ function isTransientNetworkError(error: unknown): boolean {
 
 export async function GET(request: Request) {
   const { success } = await rateLimit(
-    getClientIP(request as NextRequest),
+    rateLimitKey("openfda", getClientIP(request as NextRequest)),
     20,
     60_000
   );

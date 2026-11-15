@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { rateLimit } from "./rate-limit";
+import { rateLimit, rateLimitKey } from "./rate-limit";
 
 // Force the in-memory backend. With UPSTASH_* set in .env.local the limiter talks
 // to a real Redis, so counters survive between test runs and the "over the limit"
@@ -26,6 +26,25 @@ describe("rate limiting", () => {
     }
     const result = await rateLimit(ip, 10, 60_000);
     expect(result.success).toBe(false);
+  });
+});
+
+describe("route scoping", () => {
+  it("keeps one route's traffic out of another route's bucket", async () => {
+    const ip = "198.51.100.7";
+    for (let i = 0; i < 5; i++) {
+      await rateLimit(rateLimitKey("interactions-check", ip), 5, 60_000);
+    }
+    const blocked = await rateLimit(
+      rateLimitKey("interactions-check", ip),
+      5,
+      60_000
+    );
+    expect(blocked.success).toBe(false);
+
+    // The same client hitting a different endpoint must not inherit that count.
+    const other = await rateLimit(rateLimitKey("health", ip), 30, 60_000);
+    expect(other.success).toBe(true);
   });
 });
 

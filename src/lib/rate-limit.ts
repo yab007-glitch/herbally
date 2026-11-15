@@ -10,6 +10,18 @@ import { logger } from "@/lib/utils/logger";
 
 type RateLimitResult = { success: boolean; remaining: number };
 
+/**
+ * Namespaced limiter key.
+ *
+ * Routes used to pass the bare client IP, so every endpoint shared one counter:
+ * a burst on /api/interactions/check also throttled /api/health, and a route's
+ * own limit (5/min, 10/min, 60/min) was compared against traffic it does not
+ * own. Scoping by route makes each limit mean what its number says.
+ */
+export function rateLimitKey(route: string, ip: string): string {
+  return `${route}:${ip}`;
+}
+
 // Memory-based rate limiter (default)
 const requestLog = new Map<string, number[]>();
 const CLEANUP_INTERVAL = 60_000;

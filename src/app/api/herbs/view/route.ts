@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
@@ -21,7 +21,11 @@ const bodySchema = z.object({
  * authenticated roles (prevents view-count inflation from direct RPC calls).
  */
 export async function POST(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 30, 60_000);
+  const { success } = await rateLimit(
+    rateLimitKey("herbs-view", getClientIP(request)),
+    30,
+    60_000
+  );
   if (!success) {
     return new NextResponse(null, {
       status: 429,

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { timingSafeEqual } from "crypto";
 import { z } from "zod";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 
@@ -24,7 +24,11 @@ const Body = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const { success } = await rateLimit(getClientIP(request), 5, 60_000);
+  const { success } = await rateLimit(
+    rateLimitKey("revalidate-herb", getClientIP(request)),
+    5,
+    60_000
+  );
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests" },
