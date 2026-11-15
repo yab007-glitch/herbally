@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
+// Default Node runtime — self-hosted standalone builds have no Edge sandbox.
 export const alt = "HerbAlly - Your Trusted Guide to Medicinal Herbs";
 export const size = {
   width: 1200,

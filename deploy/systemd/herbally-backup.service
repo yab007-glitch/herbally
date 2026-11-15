@@ -1,0 +1,20 @@
+# Installed from deploy/systemd by deploy/README.md, Backups. Started by
+# herbally-backup.timer; start it by hand only to test.
+[Unit]
+Description=HerbAlly nightly database backup
+Documentation=file:///srv/herbally/app/deploy/README.md
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/herbally/app
+ExecStart=/srv/herbally/app/deploy/backup.sh
+# A 150 MB dump plus restic prune outruns the 90 s default start timeout,
+# which would SIGTERM the backup halfway through.
+TimeoutStartSec=2h
+Nice=10
+IOSchedulingClass=idle
+StandardOutput=append:/var/log/herbally-backup.log
+StandardError=append:/var/log/herbally-backup.log

@@ -68,6 +68,14 @@ test-results/
 .playwright-mcp/
 supabase/backups/
 
+# VPS deploy secrets (see deploy/README.md). The .example files stay tracked.
+deploy/.env
+deploy/app.env
+deploy/restic.env
+deploy/cloudflared/*.json
+deploy/cloudflared/cert.pem
+!deploy/.env.example
+
 # Regenerable LNHPD harvest (49 MB, rebuilt by scripts/harvest-lnhpd.mjs)
 artifacts/lnhpd-matches.json
 artifacts/lnhpd-enrichment.json
@@ -95,8 +103,3 @@ artifacts/gsc-index-history.json
 
 # Python bytecode from the import scripts
 __pycache__/
-
-# GBIF name lookups for scripts/harvest-pd-herbals.py: a local cache, and the
-# dry-run preview it produces (one row per herb, checked before applying).
-artifacts/gbif-name-cache.json
-artifacts/pd-herbals-preview*.json

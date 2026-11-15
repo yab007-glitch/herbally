@@ -5,5 +5,10 @@ node_modules
 *.md
 .env*
 !.env.example
+deploy/.env
+deploy/app.env
+deploy/restic.env
+deploy/cloudflared/*.json
+deploy/cloudflared/cert.pem
 coverage
 .claude

@@ -1,0 +1,87 @@
+# HerbAlly — plain HTTP routing behind Cloudflare Tunnel & local Docker build/SSR.
+# No ACME/TLS termination here; cloudflared terminates TLS at Cloudflare's edge.
+
+{
+	auto_https off
+}
+
+http://api.herbally.app {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		-Server
+	}
+
+	log {
+		output stdout
+		format json
+	}
+
+	handle_path /auth/v1/* {
+		reverse_proxy auth:9999
+	}
+
+	handle_path /rest/v1/* {
+		reverse_proxy rest:3000
+	}
+
+	handle /storage/v1/* {
+		respond "storage is not enabled on this deployment" 404
+	}
+	handle /realtime/v1/* {
+		respond "realtime is not enabled on this deployment" 404
+	}
+
+	respond "Not Found" 404
+}
+
+http://www.herbally.app {
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		-Server
+	}
+	log {
+		output stdout
+		format json
+	}
+	redir https://herbally.app{uri} permanent
+}
+
+http://herbally.app, :80 {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		-Server
+	}
+	log {
+		output stdout
+		format json
+	}
+
+	handle /_vercel/insights/script.js {
+		header Content-Type "application/javascript; charset=utf-8"
+		header Cache-Control "public, max-age=86400"
+		respond "/* Vercel Analytics disabled on self-hosted deployment */" 200
+	}
+
+	handle /_vercel/insights/* {
+		respond "" 204
+	}
+
+	@via_cf header CF-Connecting-IP *
+	handle @via_cf {
+		reverse_proxy app:3000 {
+			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
+			header_up X-Real-IP {http.request.header.CF-Connecting-IP}
+			header_up X-Forwarded-Proto https
+		}
+	}
+
+	handle {
+		reverse_proxy app:3000 {
+			header_up X-Forwarded-Proto https
+		}
+	}
+}

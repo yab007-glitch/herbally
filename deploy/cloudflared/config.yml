@@ -1,0 +1,20 @@
+tunnel: d793ef5a-45ed-4c2d-8a3e-8db042cca1d9
+credentials-file: /etc/cloudflared/d793ef5a-45ed-4c2d-8a3e-8db042cca1d9.json
+
+# No metrics server: the container has no need to be scraped, and port 2000
+# would be one more thing bound inside the compose network.
+no-autoupdate: true
+
+ingress:
+  # The Next.js app. Caddy routes by Host header, so it is passed through
+  # unchanged rather than rewritten here.
+  - hostname: herbally.app
+    service: http://caddy:80
+  - hostname: www.herbally.app
+    service: http://caddy:80
+  # PostgREST + GoTrue behind the same Caddy, which serves the api.herbally.app
+  # block. NEXT_PUBLIC_SUPABASE_URL is baked into the bundle at build time, so
+  # this name must exist both before the build and at runtime.
+  - hostname: api.herbally.app
+    service: http://caddy:80
+  - service: http_status:404
