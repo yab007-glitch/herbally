@@ -39,6 +39,13 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
+    serverActions: {
+      allowedOrigins: [
+        "herbally.app",
+        "www.herbally.app",
+        "*.trycloudflare.com",
+      ],
+    },
   },
   images: {
     // Constrain the variant matrix. The defaults are 8 device widths × 7 icon
@@ -57,11 +64,24 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.supabase.co",
       },
-      // Botanical photographs come from Wikimedia Commons; every one carries its
-      // author and licence in provenance.image and is credited under the figure.
+      // Botanical photographs come from Wikimedia Commons and iNaturalist;
+      // every one carries its author and licence in provenance.image and is
+      // credited under the figure.
       {
         protocol: "https",
         hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "*.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "inaturalist-open-data.s3.amazonaws.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.inaturalist.org",
       },
     ],
   },

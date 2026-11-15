@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { HERB_PHOTOS, type HerbPhotoCredit } from "@/lib/herbs/photo-credits";
 
@@ -36,20 +39,29 @@ export function HerbPhoto({
   /** Where the photo came from: Wikimedia Commons, iNaturalist, GBIF. */
   publisher?: string | null;
 }) {
+  const [failedSrcs, setFailedSrcs] = useState<string[]>([]);
+
   // The record stores "Artist — Licence" and the caption appends the licence, so
   // strip the trailing pair or the line reads "Public domain · Public domain".
   const artist = (credit || "")
     .replace(/\s+—\s+(CC[^—]*|Public domain|GFDL[^—]*)$/i, "")
     .trim();
-  const photo: HerbPhotoCredit | null = imageUrl
-    ? {
-        src: imageUrl,
-        licence: licence || "",
-        licenceUrl: licenceUrl || null,
-        artist: artist || "Wikimedia Commons",
-        commonsPage: creditUrl || null,
-      }
-    : (HERB_PHOTOS[slug] ?? null);
+  const remotePhoto: HerbPhotoCredit | null =
+    imageUrl && !failedSrcs.includes(imageUrl)
+      ? {
+          src: imageUrl,
+          licence: licence || "",
+          licenceUrl: licenceUrl || null,
+          artist: artist || "Wikimedia Commons",
+          commonsPage: creditUrl || null,
+        }
+      : null;
+  const fallbackPhoto = HERB_PHOTOS[slug] ?? null;
+  const photo =
+    remotePhoto ??
+    (fallbackPhoto && !failedSrcs.includes(fallbackPhoto.src)
+      ? fallbackPhoto
+      : null);
   if (!photo) return null;
 
   return (
@@ -62,6 +74,11 @@ export function HerbPhoto({
           sizes="(max-width: 768px) 100vw, 448px"
           className="object-cover"
           priority={false}
+          onError={() =>
+            setFailedSrcs((prev) =>
+              prev.includes(photo.src) ? prev : [...prev, photo.src]
+            )
+          }
         />
       </div>
       <figcaption className="mx-auto mt-2 max-w-md text-[11px] leading-relaxed text-muted-foreground">

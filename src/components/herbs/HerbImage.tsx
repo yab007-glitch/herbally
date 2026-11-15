@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -63,10 +66,11 @@ export function HerbImage({
   className,
   priority,
 }: HerbImageProps) {
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
   const safeName = typeof name === "string" && name ? name : "herb";
   const motif = BOTANICAL_MOTIFS[motifIndex(safeName)];
 
-  if (imageUrl) {
+  if (imageUrl && failedUrl !== imageUrl) {
     return (
       <div className={cn("relative overflow-hidden", className)}>
         <Image
@@ -76,6 +80,7 @@ export function HerbImage({
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover"
           priority={priority}
+          onError={() => setFailedUrl(imageUrl)}
         />
       </div>
     );
