@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { rateLimit } from "./rate-limit";
 
 // Force the in-memory backend. With UPSTASH_* set in .env.local the limiter talks
@@ -26,5 +26,33 @@ describe("rate limiting", () => {
     }
     const result = await rateLimit(ip, 10, 60_000);
     expect(result.success).toBe(false);
+  });
+});
+
+describe("upstash backend", () => {
+  it("reads the ZCARD reply from the pipeline shape and blocks at the limit", async () => {
+    process.env.RATE_LIMIT_BACKEND = "upstash";
+    process.env.UPSTASH_REDIS_REST_URL = "https://example.upstash.io";
+    process.env.UPSTASH_REDIS_REST_TOKEN = "test-token";
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { result: 0 },
+        { result: 10 }, // ZCARD: the window already holds 10 entries
+        { result: 1 },
+        { result: 1 },
+      ],
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await rateLimit("203.0.113.9", 10, 60_000);
+
+    expect(result.success).toBe(false);
+    expect(fetchMock).toHaveBeenCalledOnce();
+
+    vi.unstubAllGlobals();
+    delete process.env.RATE_LIMIT_BACKEND;
+    delete process.env.UPSTASH_REDIS_REST_URL;
+    delete process.env.UPSTASH_REDIS_REST_TOKEN;
   });
 });

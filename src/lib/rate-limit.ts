@@ -96,8 +96,11 @@ async function upstashRateLimit(
       return memoryRateLimit(key, limit, windowMs);
     }
 
-    const results = (await response.json()) as [null, number, null, null][];
-    const count = results[1]?.[1] ?? 0;
+    // Upstash /pipeline answers [{ "result": n }, ...]; the ZCARD reply is the
+    // second entry. Reading it as an [error, value] tuple yielded undefined on
+    // every call, so the count was always 0 and no limit was ever enforced.
+    const results = (await response.json()) as Array<{ result?: number }>;
+    const count = Number(results[1]?.result ?? 0);
 
     if (count >= limit) {
       return { success: false, remaining: 0 };
