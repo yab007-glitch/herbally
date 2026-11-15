@@ -25,6 +25,7 @@ vi.mock("@/lib/supabase/server", () => ({
 
 vi.mock("@/lib/rate-limit", () => ({
   rateLimit: async () => rateLimitResult,
+  rateLimitKey: (route: string, ip: string) => route + ":" + ip,
 }));
 
 vi.mock("@/lib/utils/client-ip", () => ({

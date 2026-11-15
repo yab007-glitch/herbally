@@ -21,7 +21,10 @@ vi.mock("stripe", () => {
   return { default: StripeMock };
 });
 
-vi.mock("@/lib/rate-limit", () => ({ rateLimit: rateLimitMock }));
+vi.mock("@/lib/rate-limit", () => ({
+  rateLimit: rateLimitMock,
+  rateLimitKey: (route: string, ip: string) => route + ":" + ip,
+}));
 vi.mock("@/lib/utils/client-ip", () => ({ getClientIP: () => "test-ip" }));
 vi.mock("@/lib/utils/logger", () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn() },

@@ -13,6 +13,7 @@ vi.mock("stripe", () => ({
 }));
 vi.mock("@/lib/rate-limit", () => ({
   rateLimit: vi.fn().mockResolvedValue({ success: true, remaining: 9 }),
+  rateLimitKey: (route: string, ip: string) => route + ":" + ip,
 }));
 vi.mock("@/lib/utils/client-ip", () => ({ getClientIP: () => "test-ip" }));
 vi.mock("@/lib/utils/logger", () => ({

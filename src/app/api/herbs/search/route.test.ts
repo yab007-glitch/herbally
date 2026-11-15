@@ -7,7 +7,10 @@ const { rateLimitMock, loggerError, createClientMock } = vi.hoisted(() => ({
   createClientMock: vi.fn(),
 }));
 
-vi.mock("@/lib/rate-limit", () => ({ rateLimit: rateLimitMock }));
+vi.mock("@/lib/rate-limit", () => ({
+  rateLimit: rateLimitMock,
+  rateLimitKey: (route: string, ip: string) => route + ":" + ip,
+}));
 vi.mock("@/lib/utils/client-ip", () => ({ getClientIP: () => "test-ip" }));
 vi.mock("@/lib/utils/logger", () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: loggerError },
