@@ -93,8 +93,6 @@ Sentry.init({
   // Health app: never send default PII (IP, cookies, user agent fingerprint).
   sendDefaultPii: false,
   tracesSampleRate: process.env.NODE_ENV === "development" ? 1.0 : 0.05,
-  replaysSessionSampleRate: 0.05,
-  replaysOnErrorSampleRate: 1.0,
   enabled: !!process.env.NEXT_PUBLIC_SENTRY_DSN,
   beforeSend: scrubEvent,
   // Sampled transactions do NOT run beforeSend; scrub them with the same hook.
@@ -110,16 +108,14 @@ Sentry.init({
     // Browser <head> > <link> stylesheet/preload network blip rejected with raw DOM Event (HERBALLY-S).
     /Event `Event` \(type=error\) captured as promise rejection/,
   ],
-  integrations: [
-    // Mask all text and block media in Session Replay — on-screen health
-    // content (herb queries, symptoms, chat messages) must not be captured.
-    Sentry.replayIntegration({
-      maskAllText: true,
-      blockAllMedia: true,
-      maskAllInputs: true,
-    }),
-  ],
 });
 
+// Session Replay was removed from this client bundle (2026-11-15 audit): the
+// integration pulls ~350 KB of rrweb code into a chunk that Next ships as an
+// async <script> on every page, for a 5 % session sample. Errors and traces
+// still arrive with scrubbed context. If replay is ever wanted back, remember
+// that on-screen health content (herb queries, symptoms, chat messages) must
+// be masked — see beforeSend/scrubEvent above for the same rule.
+//
 // Hook into App Router navigation transitions
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
