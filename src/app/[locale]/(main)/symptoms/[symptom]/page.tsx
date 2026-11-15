@@ -149,6 +149,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         metaLocale === "fr"
           ? `${baseUrl}/fr/symptoms/${symptom}`
           : `${baseUrl}/symptoms/${symptom}`,
+      // A child openGraph object replaces the root one wholesale, so the
+      // inherited 1200×630 card has to be restated here or the page ships
+      // twitter:card=summary_large_image with no image.
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    // Same inheritance problem on the Twitter side: without this block the
+    // card carried the homepage title and description.
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/twitter-image"],
     },
   };
 }

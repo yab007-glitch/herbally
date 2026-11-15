@@ -255,10 +255,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = fr
     ? `${pair.herbName} et ${pair.drugName} : interaction, gravité et conseils`
     : `${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`;
+  // 133 of 174 pairs carry no citation; the old description promised sources
+  // on every one of them while the body said "no primary citation recorded".
+  const hasCitation = Boolean(pair.source || pair.sourceUrl);
   const description = (
     fr
-      ? `Peut-on associer ${pair.herbName} (${pair.herbScientificName}) et ${pair.drugName} ? Gravité ${severityLabel(pair.severity, true).toLowerCase()}, mécanisme et conduite à tenir, avec sources.`
-      : `Can you take ${pair.herbName} (${pair.herbScientificName}) with ${pair.drugName}? ${severityLabel(pair.severity, false)} interaction — mechanism, evidence and what to do, with sources.`
+      ? `Peut-on associer ${pair.herbName} (${pair.herbScientificName}) et ${pair.drugName} ? Gravité ${severityLabel(pair.severity, true).toLowerCase()}, mécanisme et conduite à tenir${hasCitation ? ", avec sources." : "."}`
+      : `Can you take ${pair.herbName} (${pair.herbScientificName}) with ${pair.drugName}? ${severityLabel(pair.severity, false)} interaction — mechanism, evidence and what to do${hasCitation ? ", with sources." : "."}`
   ).slice(0, 158);
   const path = `/interactions/${pair.herbSlug}/${pair.drugSlug}`;
 
@@ -278,6 +281,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: `${baseUrl}${path}`,
       type: "article",
+      // Restated because a child openGraph object replaces the root one.
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    // Without this the Twitter card inherited the homepage title/description.
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/twitter-image"],
     },
   };
 }

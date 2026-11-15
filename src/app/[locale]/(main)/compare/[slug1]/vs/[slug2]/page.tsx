@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ArrowLeft, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -80,6 +81,9 @@ type Props = { params: Promise<{ slug1: string; slug2: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug1, slug2 } = await params;
+  // /compare/x/vs/x rendered "X vs X" as indexable content. It is not a
+  // comparison, and the pair space is unbounded enough without it.
+  if (slug1 === slug2) notFound();
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
   const metaLocale = await getLocale();
 
@@ -117,25 +121,50 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     cmpT("desc", { a: herbA.name, b: herbB.name })
   );
 
+  // Without an openGraph object this page inherited the root one, so every
+  // comparison shared the homepage title and description in link previews.
+  const url =
+    metaLocale === "fr"
+      ? `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`
+      : `${baseUrl}/compare/${slug1}/vs/${slug2}`;
+
   return {
     title,
     description,
     alternates: {
-      canonical:
-        metaLocale === "fr"
-          ? `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`
-          : `${baseUrl}/compare/${slug1}/vs/${slug2}`,
+      canonical: url,
       languages: {
         en: `${baseUrl}/compare/${slug1}/vs/${slug2}`,
         fr: `${baseUrl}/fr/compare/${slug1}/vs/${slug2}`,
         "x-default": `${baseUrl}/compare/${slug1}/vs/${slug2}`,
       },
     },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "article",
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/twitter-image"],
+    },
   };
 }
 
 export default async function ComparePage({ params }: Props) {
   const { slug1, slug2 } = await params;
+  if (slug1 === slug2) notFound();
   const locale = await getLocale();
   const t = await getTranslations({ locale });
   const [resultA, resultB] = await Promise.all([
