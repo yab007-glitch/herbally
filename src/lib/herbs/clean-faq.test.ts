@@ -63,6 +63,22 @@ describe("cleanFaqText", () => {
     );
   });
 
+  it("does not capitalise the word after a one-letter abbreviation", () => {
+    expect(
+      cleanFaqText(
+        "Contre-indications : Ne pas utiliser avec des anticoagulants (p. ex. warfarine). Consulter un praticien."
+      )
+    ).toBe(
+      "Ne pas utiliser avec des anticoagulants (p. ex. warfarine). Consulter un praticien."
+    );
+  });
+
+  it("still capitalises after an ordinary word ending in a period", () => {
+    expect(cleanFaqText("See the label. consult a practitioner.")).toBe(
+      "See the label. Consult a practitioner."
+    );
+  });
+
   it("closes the space the importer left before a comma", () => {
     expect(
       cleanFaqText("Do not use if pregnant or breastfeeding , do not use.")

@@ -47,7 +47,9 @@ const SENTENCE_START = /(^|[.!?]\s+)([a-zà-öø-ÿ])/g;
 
 // "e.g. blood thinners", "p. ex. anticoagulants" — a period inside an
 // abbreviation is not a sentence boundary, so the next word keeps its case.
-const ABBREVIATION = /(?:e\.g|i\.e|p\.\s?ex|vs|etc|approx|no|ex)\.\s$/i;
+// `\b[a-z]` is a one-letter abbreviation ("p.", "c.", "v."); the word boundary
+// is what stops it matching the last letter of an ordinary word ("famil.").
+const ABBREVIATION = /(?:\b[a-z]|e\.g|i\.e|p\.\s?ex|vs|etc|approx|no|ex)\.\s$/i;
 
 export function cleanFaqText(raw: string): string {
   if (!raw) return raw;
