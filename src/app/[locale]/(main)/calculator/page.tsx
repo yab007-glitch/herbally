@@ -116,26 +116,23 @@ export default async function CalculatorPage({
     <div className="space-y-8">
       <BreadcrumbListSchema
         items={[
-          { name: "Home", url: siteUrl() },
+          { name: t("common.home"), url: siteUrl() },
           { name: t("calculator.title"), url: "/calculator" },
         ]}
       />
       <FAQSchema
         items={[
           {
-            question: "Who can use the herbal dosage calculator?",
-            answer:
-              "The calculator is for adults aged 18 and older. HerbAlly does not calculate herbal doses for children or adolescents because botanical extract concentrations are not validated for pediatric dosing. Consult a qualified pediatric healthcare professional instead.",
+            question: t("calculator.faq.q1"),
+            answer: t("calculator.faq.a1"),
           },
           {
-            question: "What is Clark's rule vs Young's rule?",
-            answer:
-              "Both are reference methods. Clark's rule scales by weight (weight in kg / 68 × adult dose). Young's rule scales by age (age / (age + 12) × adult dose). HerbAlly shows both so you can compare, and caps the result at the adult reference dose.",
+            question: t("calculator.faq.q2"),
+            answer: t("calculator.faq.a2"),
           },
           {
-            question: "Is the herbal dosage calculator free?",
-            answer:
-              "Yes — free, no account required. Reference doses come from our 3,200+ herb database with PubMed, WHO and NCCIH sources.",
+            question: t("calculator.faq.q3"),
+            answer: t("calculator.faq.a3"),
           },
         ]}
       />
@@ -151,41 +148,19 @@ export default async function CalculatorPage({
           id="calculator-faq-heading"
           className="mb-3 text-xl font-semibold text-foreground"
         >
-          Frequently asked questions
+          {t("calculator.faq.heading")}
         </h2>
         <div className="divide-y rounded-2xl border">
-          <details className="px-4 py-3">
-            <summary className="cursor-pointer font-medium text-foreground">
-              Who can use the herbal dosage calculator?
-            </summary>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              The calculator is for adults aged 18 and older. HerbAlly does not
-              calculate herbal doses for children or adolescents because
-              botanical extract concentrations are not validated for pediatric
-              dosing. Consult a qualified pediatric healthcare professional
-              instead.
-            </p>
-          </details>
-          <details className="px-4 py-3">
-            <summary className="cursor-pointer font-medium text-foreground">
-              What is Clark&apos;s rule vs Young&apos;s rule?
-            </summary>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Both are reference methods. Clark&apos;s rule scales by weight
-              (weight in kg / 68 × adult dose). Young&apos;s rule scales by age
-              (age / (age + 12) × adult dose). HerbAlly shows both so you can
-              compare, and caps the result at the adult reference dose.
-            </p>
-          </details>
-          <details className="px-4 py-3">
-            <summary className="cursor-pointer font-medium text-foreground">
-              Is the herbal dosage calculator free?
-            </summary>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Yes — free, no account required. Reference doses come from our
-              3,200+ herb database with PubMed, WHO and NCCIH sources.
-            </p>
-          </details>
+          {(["1", "2", "3"] as const).map((n) => (
+            <details key={n} className="px-4 py-3">
+              <summary className="cursor-pointer font-medium text-foreground">
+                {t(`calculator.faq.q${n}`)}
+              </summary>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {t(`calculator.faq.a${n}`)}
+              </p>
+            </details>
+          ))}
         </div>
       </section>
       <ContinueExploring />

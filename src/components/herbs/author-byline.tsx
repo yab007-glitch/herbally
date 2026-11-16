@@ -40,17 +40,21 @@ export function AuthorByline({
   // UTC, so an update saved at 21:00 in Montreal (01:00 UTC the next day)
   // rendered "Last updated: November 16" on November 15 — a future date on
   // hundreds of pages, which reads as fabricated.
-  const date = lastReviewed
-    ? new Date(lastReviewed).toLocaleDateString(
-        locale === "fr" ? "fr-CA" : "en-CA",
-        {
+  //
+  // A date in the future is never shown. Some rows carry an updated_at ahead
+  // of today (data import), and "Last updated: 2027" reads as fabricated.
+  const parsedDate = lastReviewed ? new Date(lastReviewed) : null;
+  const date =
+    parsedDate &&
+    !Number.isNaN(parsedDate.getTime()) &&
+    parsedDate.getTime() <= Date.now()
+      ? parsedDate.toLocaleDateString(locale === "fr" ? "fr-CA" : "en-CA", {
           year: "numeric",
           month: "long",
           day: "numeric",
           timeZone: "America/Toronto",
-        }
-      )
-    : null;
+        })
+      : null;
 
   return (
     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 border-y border-border py-4 text-[13px] text-muted-foreground">

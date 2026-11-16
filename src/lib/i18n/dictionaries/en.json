@@ -277,7 +277,16 @@
     "forHerb": "for {name}",
     "enterPrompt": "Enter details and click \"Calculate Dose\" to see results",
     "patientHeightCm": "Patient Height (cm)",
-    "description": "Enter the herb information and adult details to calculate an adult reference dose."
+    "description": "Enter the herb information and adult details to calculate an adult reference dose.",
+    "faq": {
+      "heading": "Frequently asked questions",
+      "q1": "Who can use the herbal dosage calculator?",
+      "a1": "The calculator is for adults aged 18 and older. HerbAlly does not calculate herbal doses for children or adolescents because botanical extract concentrations are not validated for pediatric dosing. Consult a qualified pediatric healthcare professional instead.",
+      "q2": "What is Clark's rule vs Young's rule?",
+      "a2": "Both are reference methods. Clark's rule scales by weight (weight in kg / 68 × adult dose). Young's rule scales by age (age / (age + 12) × adult dose). HerbAlly shows both so you can compare, and caps the result at the adult reference dose.",
+      "q3": "Is the herbal dosage calculator free?",
+      "a3": "Yes — free, no account required. Reference doses come from our 3,200+ herb database with PubMed, WHO and NCCIH sources."
+    }
   },
   "pharmacist": {
     "title": "AI Herbalist",
@@ -1229,8 +1238,8 @@
     }
   },
   "safety": {
-    "noInteractionsTitle": "No Known Drug Interactions",
-    "noInteractionsMsg": "No clinically significant drug interactions have been documented. However, always consult your healthcare provider before combining herbs with medications.",
+    "noInteractionsTitle": "No interactions recorded",
+    "noInteractionsMsg": "Our database records no clinically significant drug interactions for this herb. Absence of data is not proof of safety — always consult your healthcare provider before combining herbs with medications.",
     "interactionCountTitle": "{count} Known Drug Interaction — Some May Be Serious",
     "interactionCountTitlePlural": "{count} Known Drug Interactions — Some May Be Serious",
     "interactionMessage": "This herb may interact with medications you are taking. Review the interactions table below and consult your healthcare provider before use.",
@@ -1265,7 +1274,7 @@
     "unknown": "Unknown — not enough data",
     "interactions": "Drug interactions",
     "interactionCount": "{count, plural, one {# known interaction} other {# known interactions}}",
-    "interactionCountNone": "No known interactions listed",
+    "interactionCountNone": "No interactions recorded in our database",
     "mostSerious": "Most serious: {drug} — {severity}",
     "seeList": "See the full list",
     "avoidIf": "Not recommended in these cases",
@@ -1914,7 +1923,7 @@
     "gardenNotes": "Garden Notes",
     "interactionWarning": "Interaction Warning",
     "interactionWarningDesc": "This herb may interact with your medications",
-    "noInteractions": "No known interactions with your medications",
+    "noInteractions": "No interactions with your medications recorded in our database",
     "autoFillNote": "Auto-filled from your default patient profile",
     "recalculateNote": "Profile updated — recalculate to see new dose",
     "welcomeRegistered": "Welcome to HerbAlly! Your account is ready.",

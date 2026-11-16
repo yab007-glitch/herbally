@@ -277,7 +277,16 @@
     "forHerb": "pour {name}",
     "enterPrompt": "Entrez les détails et cliquez sur « Calculer la dose » pour voir les résultats",
     "patientHeightCm": "Taille du patient (cm)",
-    "description": "Entrez les informations sur la plante et les détails de l'adulte pour calculer une dose de référence adulte."
+    "description": "Entrez les informations sur la plante et les détails de l'adulte pour calculer une dose de référence adulte.",
+    "faq": {
+      "heading": "Questions fréquentes",
+      "q1": "Qui peut utiliser le calculateur de posologie ?",
+      "a1": "Le calculateur est destiné aux adultes de 18 ans et plus. HerbAlly ne calcule pas de posologie de plantes pour les enfants ni les adolescents, car les concentrations des extraits végétaux ne sont pas validées pour la posologie pédiatrique. Consultez plutôt un professionnel de santé pédiatrique qualifié.",
+      "q2": "Quelle est la différence entre la règle de Clark et la règle de Young ?",
+      "a2": "Les deux sont des méthodes de référence. La règle de Clark ajuste selon le poids (poids en kg / 68 × dose adulte). La règle de Young ajuste selon l'âge (âge / (âge + 12) × dose adulte). HerbAlly affiche les deux pour comparaison et plafonne le résultat à la dose adulte de référence.",
+      "q3": "Le calculateur de posologie est-il gratuit ?",
+      "a3": "Oui — gratuit, sans compte. Les doses de référence proviennent de notre base de plus de 3 200 plantes, avec des sources PubMed, OMS et NCCIH."
+    }
   },
   "pharmacist": {
     "title": "Herboriste IA",
@@ -1229,8 +1238,8 @@
     }
   },
   "safety": {
-    "noInteractionsTitle": "Aucune interaction médicamenteuse connue",
-    "noInteractionsMsg": "Aucune interaction médicamenteuse cliniquement significative n'a été documentée. Cependant, consultez toujours votre professionnel de santé avant de combiner des plantes avec des médicaments.",
+    "noInteractionsTitle": "Aucune interaction répertoriée",
+    "noInteractionsMsg": "Notre base de données ne répertorie aucune interaction médicamenteuse cliniquement significative pour cette plante. L'absence de données ne prouve pas l'innocuité — consultez toujours votre professionnel de santé avant de combiner des plantes avec des médicaments.",
     "interactionCountTitle": "{count} interaction médicamenteuse connue — Certaines peuvent être graves",
     "interactionCountTitlePlural": "{count} interactions médicamenteuses connues — Certaines peuvent être graves",
     "interactionMessage": "Cette plante peut interagir avec les médicaments que vous prenez. Consultez le tableau des interactions ci-dessous et parlez-en à votre professionnel de santé avant l'utilisation.",
@@ -1265,7 +1274,7 @@
     "unknown": "Statut inconnu — données insuffisantes",
     "interactions": "Interactions médicamenteuses",
     "interactionCount": "{count, plural, one {# interaction connue} other {# interactions connues}}",
-    "interactionCountNone": "Aucune interaction connue répertoriée",
+    "interactionCountNone": "Aucune interaction répertoriée dans notre base",
     "mostSerious": "La plus grave : {drug} — {severity}",
     "seeList": "Voir la liste complète",
     "avoidIf": "Déconseillé dans ces cas",
@@ -1914,7 +1923,7 @@
     "gardenNotes": "Notes du Jardin",
     "interactionWarning": "Avertissement d'Interaction",
     "interactionWarningDesc": "Cette plante peut interagir avec vos médicaments",
-    "noInteractions": "Aucune interaction connue avec vos médicaments",
+    "noInteractions": "Aucune interaction répertoriée avec vos médicaments dans notre base",
     "autoFillNote": "Pré-rempli depuis votre profil de patient par défaut",
     "recalculateNote": "Profil mis à jour — recalculez pour voir la nouvelle dose",
     "welcomeRegistered": "Bienvenue sur HerbAlly ! Votre compte est prêt.",
