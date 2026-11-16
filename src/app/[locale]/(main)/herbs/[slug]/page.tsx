@@ -36,6 +36,7 @@ import { parseProvenance } from "@/lib/types/provenance";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
+import { cleanFaqText } from "@/lib/herbs/clean-faq";
 import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
@@ -800,22 +801,31 @@ export default async function HerbDetailPage({ params }: Props) {
           fr?: { question?: string; answer?: string };
         } | null;
       }>;
-      if (faqLocale !== "fr") return rows;
+      // The harvest kept regulator field names as lead-ins ("Contra-
+      // Indications: …"); on 439 English and 418 French answers that read
+      // like a database dump. Both the visible section and the JSON-LD read
+      // these rows, so the cleanup happens once, here.
+      const clean = (list: typeof rows) =>
+        list.map((r) => ({ ...r, answer: cleanFaqText(r.answer) }));
+
+      if (faqLocale !== "fr") return clean(rows);
       // No FAQ row carries a French translation yet, and falling back to English
       // put an English Q&A block in the middle of otherwise French pages. Drop the
       // untranslated rows until the translation pass lands: a French page with
       // fewer answers beats one that switches language halfway down.
-      return rows
-        .filter(
-          (r) => r.translations?.fr?.question && r.translations?.fr?.answer
-        )
-        .map((r) => ({
-          ...r,
-          question: r.translations!.fr!.question!,
-          answer: r.translations!.fr!.answer!,
-        }));
+      return clean(
+        rows
+          .filter(
+            (r) => r.translations?.fr?.question && r.translations?.fr?.answer
+          )
+          .map((r) => ({
+            ...r,
+            question: r.translations!.fr!.question!,
+            answer: r.translations!.fr!.answer!,
+          }))
+      );
     },
-    [`herb-faqs-v4-${slug}`],
+    [`herb-faqs-v5-${slug}`],
     { revalidate: HERB_PAGE_TTL, tags: [`herb-faqs-${slug}`] }
   );
 
