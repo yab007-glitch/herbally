@@ -103,3 +103,9 @@ artifacts/gsc-index-history.json
 
 # Python bytecode from the import scripts
 __pycache__/
+
+# One-off data dumps from content runs — regenerable, not source
+artifacts/fr-content-review-*.csv
+artifacts/gbif-name-cache.json
+artifacts/pd-herbals-preview-*.json
+artifacts/thin-rewrite*.jsonl

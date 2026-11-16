@@ -1,5 +1,4 @@
 import { BookOpen, Stethoscope } from "lucide-react";
-import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { useTranslations } from "next-intl";
 
 interface HerbUsesPanelProps {
@@ -25,7 +24,6 @@ export function HerbUsesPanel({ herb }: HerbUsesPanelProps) {
               <h2 className="text-xl font-semibold text-foreground">
                 {t("herbDetail.traditionalUses")}
               </h2>
-              <EvidenceGrade level="C" showLabel={false} />
             </div>
             <ul className="space-y-3">
               {herb.traditional_uses.map((use: string) => (
@@ -51,7 +49,6 @@ export function HerbUsesPanel({ herb }: HerbUsesPanelProps) {
               <h2 className="text-xl font-semibold text-foreground">
                 {t("herbDetail.modernUses")}
               </h2>
-              <EvidenceGrade level="B" showLabel={false} />
             </div>
             <ul className="space-y-3">
               {herb.modern_uses.map((use: string) => (
