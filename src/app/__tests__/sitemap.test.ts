@@ -9,7 +9,6 @@ vi.mock("@/lib/symptoms/hub-coverage", () => ({
 
 const herbsRangeMock = vi.fn();
 const regulatoryRangeMock = vi.fn();
-const pubmedSheetRangeMock = vi.fn();
 const monographEqMock = vi.fn();
 const fromMock = vi.fn();
 const getInteractionPairsMock = vi.fn();
@@ -53,14 +52,6 @@ describe("sitemap", () => {
         // Paged with .range — the regulator-record read.
         return { select: () => ({ range: regulatoryRangeMock }) };
       }
-      if (table === "herb_pubmed_monographs") {
-        // select -> not(content is null) -> not(pmids = {}) -> range
-        return {
-          select: () => ({
-            not: () => ({ not: () => ({ range: pubmedSheetRangeMock }) }),
-          }),
-        };
-      }
       return {
         select: () => ({
           eq: () => ({
@@ -73,7 +64,6 @@ describe("sitemap", () => {
     });
     monographEqMock.mockResolvedValue({ data: [], error: null });
     regulatoryRangeMock.mockResolvedValue({ data: [], error: null });
-    pubmedSheetRangeMock.mockResolvedValue({ data: [], error: null });
   });
 
   afterEach(() => {
@@ -97,7 +87,7 @@ describe("sitemap", () => {
           symptom_keywords: ["anxiety"],
         },
         {
-          // Long curated prose: indexable on its own substance.
+          // Long curated prose with a regulator record behind it.
           id: "h-turmeric",
           slug: "turmeric",
           updated_at: null,
@@ -126,6 +116,10 @@ describe("sitemap", () => {
     });
     monographEqMock.mockResolvedValue({
       data: [{ herb_id: "h-ginger" }],
+      error: null,
+    });
+    regulatoryRangeMock.mockResolvedValue({
+      data: [{ herb_slug: "turmeric" }],
       error: null,
     });
     getEmptySymptomHubsMock.mockResolvedValue([UNPOPULATED_HUB]);
@@ -249,7 +243,7 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/symptoms/${UNPOPULATED_HUB}`);
   });
 
-  it("counts only PubMed sheets that actually carry citations", async () => {
+  it("advertises only pages with a source behind them", async () => {
     const thinHerb = {
       id: "h-thin",
       slug: "thin-herb",
@@ -263,17 +257,28 @@ describe("sitemap", () => {
     getEmptySymptomHubsMock.mockResolvedValue([]);
     getInteractionPairsMock.mockResolvedValue([]);
 
-    // The query itself excludes empty-pmid sheets; an empty result therefore
-    // means "no monograph" and the thin page stays out of the sitemap, matching
-    // the noindex the page renders.
-    pubmedSheetRangeMock.mockResolvedValue({ data: [], error: null });
+    // Thin and unsourced: never offered.
     expect((await sitemap()).map((entry) => entry.url)).not.toContain(
       `${BASE_URL}/herbs/thin-herb`
     );
 
-    // A usable sheet is what makes a thin page indexable.
-    pubmedSheetRangeMock.mockResolvedValue({
-      data: [{ slug: "thin-herb" }],
+    // A long description is not a source either. Length stood in for depth and
+    // let 3,155 of 3,238 pages back into the sitemap while Google kept 2,373.
+    herbsRangeMock.mockResolvedValue({
+      data: [{ ...thinHerb, description: "z".repeat(900) }],
+      error: null,
+    });
+    expect((await sitemap()).map((entry) => entry.url)).not.toContain(
+      `${BASE_URL}/herbs/thin-herb`
+    );
+
+    // A compiled PubMed sheet is derived, not sourced: still not offered.
+    // (Asserted through the regulator read below instead — the sheet table is
+    // no longer consulted at all.)
+
+    // A regulator record is: offered.
+    regulatoryRangeMock.mockResolvedValue({
+      data: [{ herb_slug: "thin-herb" }],
       error: null,
     });
     expect((await sitemap()).map((entry) => entry.url)).toContain(
