@@ -7,8 +7,10 @@
  * are tried longest-to-shortest; the first that fits wins, and the shortest is
  * the fallback for very long botanical or drug names.
  */
-export const TITLE_SUFFIX = " | HerbAlly";
-export const TITLE_MAX = 60 - TITLE_SUFFIX.length;
+import { SITE_SUFFIX, RENDERED_TITLE_MAX } from "./fit-title";
+
+export const TITLE_SUFFIX = SITE_SUFFIX;
+export const TITLE_MAX = RENDERED_TITLE_MAX - TITLE_SUFFIX.length;
 
 export function pairTitle(
   herbName: string,

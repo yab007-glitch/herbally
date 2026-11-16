@@ -1833,6 +1833,8 @@
   "herbMeta": {
     "title": "{name} ({scientific}) : bienfaits, posologie et précautions",
     "titleBinomial": "{scientific} : bienfaits, posologie et précautions",
+    "titleShort": "{name} ({scientific}) : bienfaits et précautions",
+    "titleBinomialShort": "{scientific} : bienfaits et précautions",
     "descWithNames": "Bienfaits, posologie, grossesse et interactions médicamenteuses de {name} ({common}). Sources PubMed et calculateur de doses gratuit.",
     "descFromBody": "{body} Bienfaits, posologie, grossesse et interactions. Calculateur de doses gratuit inclus.",
     "descFallback": "Bienfaits, posologie, grossesse, effets secondaires et interactions médicamenteuses de {name} ({scientific}). Fiche sourcée et calculateur de doses gratuit.",
@@ -1840,6 +1842,7 @@
   },
   "compareMeta": {
     "title": "{a} ou {b} : différences, bienfaits et laquelle choisir",
+    "shortTitle": "{a} ou {b} : laquelle choisir",
     "desc": "Comparer {a} et {b} : usages, posologie, grossesse, effets secondaires et interactions médicamenteuses. Verdict fondé sur les preuves et calculateur de doses gratuit."
   },
   "seo": {

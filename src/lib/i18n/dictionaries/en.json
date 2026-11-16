@@ -1833,6 +1833,8 @@
   "herbMeta": {
     "title": "{name} ({scientific}): Benefits, Dosage, Safety & Evidence",
     "titleBinomial": "{scientific}: Benefits, Dosage, Safety & Evidence",
+    "titleShort": "{name} ({scientific}): Benefits & Safety",
+    "titleBinomialShort": "{scientific}: Benefits & Safety",
     "descWithNames": "{name}, also called {common}: uses, dosage, pregnancy safety and drug interactions, with PubMed-cited evidence, safety ratings and a free dosage calculator.",
     "descFromBody": "{body} Uses, dosage, pregnancy safety & interactions. Free calculator included.",
     "descFallback": "{name} ({scientific}): uses, dosage, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and a free dosage calculator.",
@@ -1840,6 +1842,7 @@
   },
   "compareMeta": {
     "title": "{a} vs {b}: Difference, Benefits & Which Is Better?",
+    "shortTitle": "{a} vs {b}: Which Is Better?",
     "desc": "Compare {a} vs {b}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator."
   },
   "seo": {

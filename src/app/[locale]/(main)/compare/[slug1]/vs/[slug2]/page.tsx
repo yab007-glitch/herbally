@@ -14,6 +14,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { truncateDescription } from "@/lib/seo/truncate-description";
+import { fitTitle } from "@/lib/seo/fit-title";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
@@ -117,6 +118,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     namespace: "compareMeta",
   });
   const title = cmpT("title", { a: herbA.name, b: herbB.name });
+  // "Ginger vs Turmeric: Difference, Benefits & Which Is Better?" is 58
+  // characters, which the layout's " | HerbAlly" suffix pushes to 70. Fall back
+  // to the short "<a> vs <b>" title when the long one no longer fits.
+  const titleMeta = fitTitle([
+    title,
+    cmpT("shortTitle", { a: herbA.name, b: herbB.name }),
+  ]);
   const description = truncateDescription(
     cmpT("desc", { a: herbA.name, b: herbB.name })
   );
@@ -129,7 +137,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : `${baseUrl}/compare/${slug1}/vs/${slug2}`;
 
   return {
-    title,
+    title: titleMeta,
     description,
     alternates: {
       canonical: url,

@@ -9,7 +9,8 @@ vi.mock("./page-locale", () => ({
 }));
 
 vi.mock("next-intl/server", () => ({
-  getTranslations: async () => (key: string) => `t:${key}`,
+  getTranslations: async () => (key: string) =>
+    key === "longTitle" ? "X".repeat(60) : `t:${key}`,
 }));
 
 import { BASE_URL, buildPageMetadata } from "./metadata";
@@ -45,6 +46,16 @@ describe("buildPageMetadata", () => {
     expect(images[0].url.endsWith("/opengraph-image")).toBe(true);
     expect(result.openGraph?.locale).toBe("fr_FR");
     expect(result.alternates?.canonical).toBe(`${BASE_URL}/fr/herbs`);
+  });
+
+  it("ships a title that would overflow 60 with the brand suffix as absolute", async () => {
+    const result = await buildPageMetadata({
+      titleKey: "longTitle",
+      path: "/calculator",
+    });
+
+    // 60 characters + " | HerbAlly" would render 72 in search results.
+    expect(result.title).toEqual({ absolute: "X".repeat(60) });
   });
 
   it("keeps og:image and og:locale when a page passes its own openGraph", async () => {

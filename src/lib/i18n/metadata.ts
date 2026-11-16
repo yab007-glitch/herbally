@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getLocale } from "./page-locale";
 import { getTranslations } from "next-intl/server";
 import { buildAlternateUrls } from "./routing";
+import { fitTitle } from "@/lib/seo/fit-title";
 import type { Locale } from "./config";
 
 const BASE_URL = (
@@ -83,7 +84,10 @@ export async function buildPageMetadata({
   };
 
   return {
-    title,
+    // The root layout appends " | HerbAlly"; when the localized title is long
+    // enough that the suffix pushes the rendered <title> past 60 characters,
+    // ship it absolute so search results do not truncate the useful part.
+    title: fitTitle([title]),
     description,
     ...(noindex ? { robots: { index: false, follow: true } } : {}),
     alternates: {

@@ -27,6 +27,7 @@ import { generateMonograph } from "@/lib/data/generate-monograph";
 import { getComparisonHerbs } from "@/lib/data/comparisons";
 import { siteUrl } from "@/lib/seo/site-url";
 import { truncateDescription } from "@/lib/seo/truncate-description";
+import { fitTitle } from "@/lib/seo/fit-title";
 import { hasDistinctCommonName } from "@/lib/seo/herb-naming";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import type { Monograph } from "@/lib/data/monographs";
@@ -383,12 +384,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // clauses ("In Ayurvedic medicine, traditional…"), so every one of the 2,700
   // pages read "Uses for In Ayurvedic medicine, traditional…". The
   // descriptions now describe the page instead of quoting a clause.
+  // The full template renders 64+ characters for a typical herb and over 70
+  // with the layout's " | HerbAlly" suffix, so search results cut off the
+  // benefit keywords. Candidates run longest to shortest; the binomial-only
+  // fallbacks exist for long plant names.
+  const scientific = herb.scientific_name;
   const title = hasDistinctCommonName(herb)
-    ? herbT("title", {
-        name: herb.name,
-        scientific: herb.scientific_name,
-      })
-    : herbT("titleBinomial", { scientific: herb.scientific_name });
+    ? herbT("title", { name: herb.name, scientific })
+    : herbT("titleBinomial", { scientific });
+  const titleMeta = fitTitle(
+    hasDistinctCommonName(herb)
+      ? [
+          title,
+          herbT("titleShort", { name: herb.name, scientific }),
+          `${herb.name} (${scientific})`,
+          herb.name,
+        ]
+      : [title, herbT("titleBinomialShort", { scientific }), scientific]
+  );
   const description = truncateDescription(
     commonNames
       ? herbT("descWithNames", {
@@ -421,7 +434,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 
   return {
-    title,
+    title: titleMeta,
     description,
     keywords,
     alternates: hasFr
