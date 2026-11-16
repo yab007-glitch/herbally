@@ -1,8 +1,22 @@
+/** Which translated explanation accompanies a result (see calculatorForm.explanations). */
+export type DoseExplanationKey = "clark" | "young" | "bsa" | "fried";
+
 export type DoseResult = {
   dose: number;
   unit: string;
   formula: string;
+  /** English-only legacy text. The UI renders the localized explanation instead. */
   explanation: string;
+  /** Localized explanation key + values, so /fr is never English. */
+  explanationKey: DoseExplanationKey;
+  explanationParams: Record<string, string | number>;
+  /**
+   * The uncapped formula result. The UI compares it with the adult reference
+   * dose: a cap within a few percent (70 kg with Clark's Rule is only 2.9 %
+   * over 68 kg) is a rounding-level no-op, and warning about it alarmed
+   * ordinary adults on every page.
+   */
+  rawDose: number;
   /**
    * True when the raw formula result was capped at the adult reference dose.
    * Pediatric dosing formulas scale the adult dose by a fraction < 1, so a
@@ -45,9 +59,12 @@ export function clarksRule(
   return {
     dose,
     clamped,
+    rawDose: raw,
     unit,
     formula: `(${weightKg} kg / 68) x ${adultDoseMg} ${unit}`,
     explanation: `Based on Clark's Rule using patient weight of ${weightKg} kg. The standard adult reference weight is 68 kg (150 lbs).`,
+    explanationKey: "clark",
+    explanationParams: { weight: weightKg },
   };
 }
 
@@ -65,9 +82,12 @@ export function youngsRule(
   return {
     dose,
     clamped,
+    rawDose: raw,
     unit,
     formula: `(${ageYears} / (${ageYears} + 12)) x ${adultDoseMg} ${unit}`,
     explanation: `Based on Young's Rule using patient age of ${ageYears} years. This is an age-based reference calculation, less accurate than weight-based methods.`,
+    explanationKey: "young",
+    explanationParams: { age: ageYears },
   };
 }
 
@@ -88,9 +108,16 @@ export function bsaMethod(
   return {
     dose,
     clamped,
+    rawDose: raw,
     unit,
     formula: `(${bsa.toFixed(3)} m² / 1.73) x ${adultDoseMg} ${unit}`,
     explanation: `Based on BSA method using body surface area of ${bsa.toFixed(3)} m² (height: ${heightCm} cm, weight: ${weightKg} kg). The standard adult BSA is 1.73 m².`,
+    explanationKey: "bsa",
+    explanationParams: {
+      bsa: bsa.toFixed(3),
+      height: heightCm,
+      weight: weightKg,
+    },
   };
 }
 
@@ -108,9 +135,12 @@ export function friedsRule(
   return {
     dose,
     clamped,
+    rawDose: raw,
     unit,
     formula: `(${ageMonths} months / 150) x ${adultDoseMg} ${unit}`,
     explanation: `Based on Fried's Rule using age of ${ageMonths} months. This method is not applicable to adults 18 and over.`,
+    explanationKey: "fried",
+    explanationParams: { months: ageMonths },
   };
 }
 

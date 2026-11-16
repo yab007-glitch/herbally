@@ -1,19 +1,25 @@
 import type { Locale } from "@/lib/i18n/config";
 import { siteUrl } from "@/lib/seo/site-url";
+import { getTranslations } from "next-intl/server";
 
-export function OrganizationSchema({ locale }: { locale: Locale }) {
+export async function OrganizationSchema({ locale }: { locale: Locale }) {
   const base = siteUrl();
   // The site `url` and the publisher logo identify the site entity rather
   // than a page, so they stay at the root on every locale.
   const searchPath = locale === "fr" ? "/fr/herbs" : "/herbs";
+  // This block is emitted on every page, French ones included. It carried a
+  // hardcoded English description that also quoted "2,700+ herbs" — two
+  // deploys out of date and the only English sentence left on a /fr page's
+  // structured data (live QA finding).
+  const t = await getTranslations({ locale, namespace: "seo" });
   const schema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "HerbAlly",
     alternateName: "Herb Ally",
     url: base,
-    description:
-      "Explore the world's largest medicinal herb database with 2,700+ herbs. Calculate safe dosages and check drug interactions.",
+    inLanguage: locale === "fr" ? "fr-CA" : "en-CA",
+    description: t("orgDesc"),
     publisher: {
       "@type": "Organization",
       name: "HerbAlly",

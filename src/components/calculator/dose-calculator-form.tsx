@@ -246,6 +246,18 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     Number.isFinite(parsedWeightKg) &&
     parsedWeightKg > 300;
 
+  // Explain a cap only when it materially changed the number. Clark's Rule at
+  // 70 kg is 2.9 % above the 68 kg adult reference, so every ordinary adult
+  // saw "the dose was capped" beside an unchanged dose (live QA finding).
+  // Above 10 % the cap is real and the explanation is worth showing.
+  const parsedAdultDose = parseFloat(adultDose);
+  const showClampWarning =
+    !!result &&
+    result.clamped &&
+    Number.isFinite(parsedAdultDose) &&
+    parsedAdultDose > 0 &&
+    result.rawDose > parsedAdultDose * 1.1;
+
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
       {/* Form */}
@@ -636,7 +648,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 )}
               </div>
 
-              {result.clamped && (
+              {showClampWarning && (
                 <div
                   role="alert"
                   className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
@@ -716,7 +728,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     {t("calculatorForm.explanation")}
                   </span>
                   <p className="mt-0.5 text-sm text-muted-foreground">
-                    {result.explanation}
+                    {t(
+                      `calculatorForm.explanations.${result.explanationKey}`,
+                      result.explanationParams
+                    )}
                   </p>
                 </div>
               </div>

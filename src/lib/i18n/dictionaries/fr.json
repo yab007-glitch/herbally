@@ -1724,7 +1724,13 @@
     "rangePickerNote": "Choisir une valeur remplit le champ de la dose adulte — ce n'est pas une recommandation personnelle. Confirmez auprès d'un professionnel de santé qualifié.",
     "rangeLow": "Faible",
     "rangeMiddle": "Milieu",
-    "rangeHigh": "Élevée"
+    "rangeHigh": "Élevée",
+    "explanations": {
+      "clark": "Selon la règle de Clark, avec un poids de {weight} kg. Le poids de référence adulte est de 68 kg (150 lb).",
+      "young": "Selon la règle de Young, avec un âge de {age} ans. Il s'agit d'une estimation fondée sur l'âge, moins précise que les méthodes fondées sur le poids.",
+      "bsa": "Selon la méthode de la surface corporelle, avec une SC de {bsa} m² (taille {height} cm, poids {weight} kg). La surface corporelle de référence adulte est de 1,73 m².",
+      "fried": "Selon la règle de Fried, avec un âge de {months} mois. Elle ne s'applique pas aux adultes de 18 ans ou plus."
+    }
   },
   "symptomMeta": {
     "anxiety": {

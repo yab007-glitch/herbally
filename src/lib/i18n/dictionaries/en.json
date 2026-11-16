@@ -1724,7 +1724,13 @@
     "rangePickerNote": "Choosing a value fills the adult dose field — it is not a personal recommendation. Confirm with a qualified healthcare provider.",
     "rangeLow": "Low",
     "rangeMiddle": "Middle",
-    "rangeHigh": "High"
+    "rangeHigh": "High",
+    "explanations": {
+      "clark": "Based on Clark's Rule using a weight of {weight} kg. The standard adult reference weight is 68 kg (150 lb).",
+      "young": "Based on Young's Rule using an age of {age} years. This is an age-based estimate and is less precise than weight-based methods.",
+      "bsa": "Based on the body-surface-area method using a BSA of {bsa} m² (height {height} cm, weight {weight} kg). The standard adult BSA is 1.73 m².",
+      "fried": "Based on Fried's Rule using an age of {months} months. It does not apply to adults 18 or over."
+    }
   },
   "symptomMeta": {
     "anxiety": {
