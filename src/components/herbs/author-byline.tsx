@@ -47,6 +47,10 @@ export function AuthorByline({
   const date =
     parsedDate &&
     !Number.isNaN(parsedDate.getTime()) &&
+    // This is a server component: the render timestamp is the right value, and
+    // there is no re-render or hydration to make it unstable. The purity rule
+    // exists for client components.
+    // eslint-disable-next-line react-hooks/purity
     parsedDate.getTime() <= Date.now()
       ? parsedDate.toLocaleDateString(locale === "fr" ? "fr-CA" : "en-CA", {
           year: "numeric",
