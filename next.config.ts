@@ -242,6 +242,31 @@ const nextConfig: NextConfig = {
             { source: `/fr${from}`, destination: `/fr${to}`, permanent: true },
           ])
         : []),
+      // Compare pages whose pair contains a merged duplicate. The herb URL
+      // itself already 308s to the surviving page, but /compare/<a>/vs/<b>
+      // had no redirect and answered 404 — two of them are still in Google's
+      // index (Search Console, 2026-11-15). Send the reader to the herb they
+      // were comparing rather than to a 404.
+      {
+        source: "/compare/boneset/vs/samento-amazonian",
+        destination: "/herbs/boneset",
+        permanent: true,
+      },
+      {
+        source: "/fr/compare/boneset/vs/samento-amazonian",
+        destination: "/fr/herbs/boneset",
+        permanent: true,
+      },
+      {
+        source: "/compare/ahcc-source/vs/agaricus-blazei",
+        destination: "/herbs/agaricus-blazei",
+        permanent: true,
+      },
+      {
+        source: "/fr/compare/ahcc-source/vs/agaricus-blazei",
+        destination: "/fr/herbs/agaricus-blazei",
+        permanent: true,
+      },
       ...herbMergeRedirects.flatMap(({ from, to }) => [
         { source: from, destination: to, permanent: true },
         {

@@ -66,6 +66,14 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: "HerbAlly Team" }],
     creator: "HerbAlly",
     publisher: "HerbAlly",
+    // AdSense ownership verification. This is a meta tag, not the AdSense
+    // loader: it loads no script, makes no request, and shows no ad. The hard
+    // launch gate (src/lib/ads/policy.ts) still controls all of that. Adding
+    // it lets Google verify the site while the account is under review —
+    // without it, the review had no ownership signal at all.
+    other: {
+      "google-adsense-account": "ca-pub-1901058826905247",
+    },
     robots: {
       index: true,
       follow: true,
