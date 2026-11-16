@@ -288,6 +288,7 @@
     "disclaimer": "This AI provides educational information only. Always consult a healthcare provider for medical advice.",
     "initialMessage": "Hello! I'm your Virtual Herbalist. I can help you with questions about medicinal herbs, their uses, safety, and proper dosages. What would you like to know?",
     "error": "I'm sorry, I encountered an error processing your request. Please try again.",
+    "rateLimited": "You've reached the chat limit for now. Please wait a moment and try again.",
     "clear": "Clear",
     "saving": "Saving...",
     "voiceStart": "Start voice input",

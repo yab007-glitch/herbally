@@ -234,11 +234,17 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     useLbs && parseFloat(weightValue)
       ? lbsToKg(parseFloat(weightValue))
       : parseFloat(weightValue);
+  // Only IMPLAUSIBLE values should raise the note. This previously compared
+  // age to `> 18`, so every adult — and a perfectly ordinary 50 kg one —
+  // triggered "these inputs look unusual" (live QA finding). Age is already
+  // gated to 18–120 by assessDoseEligibility before a result is shown, so the
+  // note is in practice about weight; 300 kg is the upper bound a reference
+  // adult dose should ever be scaled against.
   const showPlausibilityNote =
     !!result &&
     !result.clamped &&
-    ((Number.isFinite(parsedAgeYears) && parsedAgeYears > 18) ||
-      (Number.isFinite(parsedWeightKg) && parsedWeightKg > 150));
+    Number.isFinite(parsedWeightKg) &&
+    parsedWeightKg > 300;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
@@ -616,7 +622,9 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
             <CardContent className="space-y-4">
               <div className="text-center">
                 <div className="text-4xl font-bold text-primary animate-count-up">
-                  {result.dose}
+                  {/* A small adult dose scaled to a low weight rounds to 0.0
+                      and read as "0 mg" (live QA finding). It is not zero. */}
+                  {result.dose > 0 && result.dose < 0.1 ? "<0.1" : result.dose}
                   <span className="ml-1 text-lg font-normal text-muted-foreground">
                     {result.unit}
                   </span>

@@ -39,12 +39,15 @@ function parseDosage(dosageStr: string | null): {
   if (!match) return { dose: null, low: null, high: null, unit: "mg" };
   const low = parseFloat(match[1]);
   const high = match[2] ? parseFloat(match[2]) : null;
-  // Reject malformed multi-bound ranges like "500-1000-2000 mg". The
-  // regex would backtrack to "1000-2000" and silently discard the low bound.
-  // More than one range separator means malformed input — leave the prefill
-  // empty rather than surface a silently-truncated value.
-  const separatorCount = (dosageStr.match(/[-–]/g) || []).length;
-  if (separatorCount > 1)
+  // Reject malformed multi-bound chains like "500-1000-2000 mg": the regex
+  // would match only "1000-2000" and silently discard the low bound.
+  //
+  // Counting every hyphen and rejecting more than one rejected most real
+  // monographs, which often list several separate ranges ("250-500 mg twice
+  // daily; 1-2 g in divided doses"). Those ranges are each well-formed and
+  // the first is the correct prefill, so only a *contiguous* three-number
+  // chain is treated as ambiguous.
+  if (/\d\s*[-–]\s*\d+\s*[-–]\s*\d/.test(dosageStr))
     return { dose: null, low: null, high: null, unit: "mg" };
   return {
     dose: high === null ? low : null,

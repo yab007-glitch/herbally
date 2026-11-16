@@ -288,6 +288,7 @@
     "disclaimer": "Cette IA fournit des informations éducatives uniquement. Consultez toujours un professionnel de santé pour des conseils médicaux.",
     "initialMessage": "Bonjour ! Je suis votre Herboriste Virtuel. Je peux vous aider avec des questions sur les herbes médicinales, leurs utilisations, leur sécurité et les posologies appropriés. Que souhaitez-vous savoir ?",
     "error": "Je suis désolé, j'ai rencontré une erreur lors du traitement de votre demande. Veuillez réessayer.",
+    "rateLimited": "Vous avez atteint la limite de messages pour le moment. Patientez un instant puis réessayez.",
     "clear": "Effacer",
     "saving": "Enregistrement...",
     "voiceStart": "Démarrer la saisie vocale",

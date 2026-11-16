@@ -18,21 +18,21 @@ describe("HerbPagination navigation feedback", () => {
     pushMock.mockClear();
   });
 
-  it("disables First/Previous on page 1 and navigates Next without scrolling", () => {
+  it("disables First/Previous on page 1 and links Next to page 2", () => {
     render(<HerbPagination page={1} totalPages={10} />);
-    expect(
-      screen.getByRole("button", { name: "herbs.pagination.first" })
-    ).toBeDisabled();
-    expect(
-      screen.getByRole("button", { name: "herbs.pagination.previous" })
-    ).toBeDisabled();
-    fireEvent.click(
-      screen.getByRole("button", { name: "herbs.pagination.next" })
+    // Disabled controls are spans with aria-disabled, not buttons: enabled
+    // page controls are real anchors so crawlers and no-JS visitors can
+    // follow them.
+    expect(screen.getByText("herbs.pagination.first")).toHaveAttribute(
+      "aria-disabled",
+      "true"
     );
-    expect(pushMock).toHaveBeenCalledTimes(1);
-    const [url, options] = pushMock.mock.calls[0];
-    expect(url as string).toContain("page=2");
-    expect(options).toEqual({ scroll: false });
+    expect(screen.getByText("herbs.pagination.previous")).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    );
+    const next = screen.getByRole("link", { name: "herbs.pagination.next" });
+    expect(next).toHaveAttribute("href", "/herbs?page=2#herb-results");
   });
 
   it("reports aria-busy on the nav region", () => {

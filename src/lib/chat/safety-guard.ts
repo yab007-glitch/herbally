@@ -52,7 +52,17 @@ const HARD_BLOCKS_EN: RegExp[] = [
   // Unsafe dosing
   /\b(?:double|triple|quadruple) (?:the|your) (?:dose|dosage)\b/i,
   /\btake (?:more|extra|excessive) (?:of )?(?:the|your|this) (?:medication|herb|supplement)\b/i,
-  /\b(?:megadose|mega.?dose|heroic dose|overdose)\b/i,
+  // Only an INSTRUCTION to take an overdose is blocked. The bare word
+  // "overdose" is not: the correct, safest answer to "what if I overdose on
+  // X?" is "call poison control / emergency services", and blocking any reply
+  // that says "overdose" replaced that answer with a refusal (found in the
+  // live QA pass). These patterns match the advice forms only.
+  /\b(?:take|try|do|give (?:yourself )?)(?: a| an)? (?:mega.?dose|heroic dose|overdose)\b/i,
+  /\b(?:you (?:should|can|may|must|could)) (?:take )?(?:a |an )?(?:mega.?dose|heroic dose|overdose)\b/i,
+  /\bmegadose (?:yourself|it)\b/i,
+  // Claims that make an overdose sound safe are still blocked.
+  /\b(?:you )?(?:can(?:'?t| ?not)|won'?t|will not) overdose\b/i,
+  /\boverdos(?:e|ing) (?:is|would be) (?:safe|harmless|fine|okay|ok)\b/i,
   /\btake as much as you (?:want|like|can)\b/i,
 
   // Emergency misdirection
@@ -85,6 +95,13 @@ const HARD_BLOCKS_FR: RegExp[] = [
   // Unsafe dosing
   /\b(doublez|triplez|quadruplez) (?:la|votre|le) dose\b/i,
   /\bprenez (?:plus|davantage|plus que|autant que vous voulez)\b/i,
+  // Same split as EN: advice to take an overdose is blocked, the word
+  // "surdose" on its own is not — the correct answer to "et si je fais une
+  // surdose ?" is to call emergency services.
+  /\b(?:prenez|faites|essayez|avalez) (?:une |la )?(?:sur)?dose\b/i,
+  /\bvous (?:pouvez|devriez|devez) (?:prendre )?(?:une )?(?:sur)?dose\b/i,
+  /\b(?:on ne peut pas|impossible de|c'?est impossible de) (?:faire )?(?:une )?(?:sur)?dose\b/i,
+  /\b(?:surdosage|surdose) (?:est|serait) (?:sans danger|inoffensif|sans risque)\b/i,
 ];
 
 // ---------------------------------------------------------------------------

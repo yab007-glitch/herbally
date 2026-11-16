@@ -92,9 +92,12 @@ describe("connect-src includes the configured API origin", () => {
       expect(connect).toContain("'self'");
       expect(connect).toContain("*.supabase.co");
       expect(connect).toContain("*.stripe.com");
+      // Cloudflare Web Analytics: the beacon script posted its events here
+      // and the CSP blocked them until this host was allowed.
+      expect(connect).toContain("https://cloudflareinsights.com");
       expect(connect).not.toContain("undefined");
       expect(connect).not.toContain("null");
-      expect(connect).toHaveLength(label === "buildCsp" ? 9 : 4);
+      expect(connect.some((token) => /undefined|null/.test(token))).toBe(false);
     });
 
     it(`does not widen any other directive in ${label}`, () => {

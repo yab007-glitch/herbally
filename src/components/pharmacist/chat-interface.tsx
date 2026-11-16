@@ -509,16 +509,30 @@ export function ChatInterface({
       });
 
       if (!response.ok) {
-        const err = await response
-          .json()
-          .catch(() => ({ error: "Unknown error" }));
+        // Read the body as text and only trust it if it is the API's own
+        // `{ "error": "..." }` JSON. The live audit caught a rate-limit
+        // response rendered verbatim as raw JSON in the chat bubble (a proxy
+        // or CDN error page is not JSON). 429 always gets a localized,
+        // human message; anything unparseable falls back to the generic one.
+        const rawBody = await response.text().catch(() => "");
+        let apiError: string | null = null;
+        try {
+          const parsed = JSON.parse(rawBody) as { error?: unknown };
+          if (typeof parsed?.error === "string") apiError = parsed.error;
+        } catch {
+          // Not JSON — ignore it rather than showing the raw body.
+        }
         if (generationRef.current !== generation) return;
+        const content =
+          response.status === 429
+            ? t("pharmacist.rateLimited")
+            : apiError || t("pharmacist.error");
         setMessages((prev) => [
           ...prev,
           {
             id: makeId(),
             role: "assistant",
-            content: err.error || t("pharmacist.error"),
+            content,
             timestamp: new Date().toISOString(),
           },
         ]);

@@ -438,7 +438,11 @@ export async function POST(request: NextRequest) {
   // partial answer cached by the old code must not come back labelled as a
   // finished one. Those rows simply expire (7 days); the cache re-warms with
   // verified-complete answers only.
-  const CACHE_KEY_VERSION = "herbally-chat-cache-v2-complete";
+  // v3: French-name retrieval was fixed in context-fetcher. Answers cached
+  // under v2 include "this herb is not in my database" denials produced when a
+  // French herb name matched no row; they must never be served again. Old rows
+  // simply expire.
+  const CACHE_KEY_VERSION = "herbally-chat-cache-v3-fr-names";
   const promptHash = createHash("sha256")
     .update(CACHE_KEY_VERSION)
     .update(JSON.stringify(chatMessages))

@@ -129,15 +129,27 @@ async function extractHerbNames(message: string): Promise<string[]> {
     }
   }
 
-  // Also try DB search for any remaining terms
-  const words = lower.split(/[\s,.;:!?]+/).filter((w) => w.length > 3);
+  // Also try DB search for any remaining terms.
+  //
+  // Split on apostrophes as well: French herb names are commonly written with
+  // an elided article ("l'ortie", "d'ortie"), and the whole token "l'ortie"
+  // never matches a name. Splitting also handles English possessives.
+  // Cap the term count: every term adds OR clauses to one query string and a
+  // long message would otherwise build an unbounded PostgREST URL.
+  const words = Array.from(
+    new Set(lower.split(/[\s,.;:!?'’]+/).filter((w) => w.length > 3))
+  ).slice(0, 10);
   const supabase = getAnonClient();
   if (supabase && words.length > 0) {
     try {
       const conditions = words
         .map((w) => {
           const s = sanitizeFilterValue(w);
-          return `name.ilike.%${s}%,scientific_name.ilike.%${s}%`;
+          // `translations->fr->>name` is where French herb names live (see
+          // localizeHerb). Without it, a French user asking about "curcuma"
+          // or "gingembre" matched nothing and the herbalist answered that it
+          // had no database entry — 13 of 25 herbs in the live FR audit.
+          return `name.ilike.%${s}%,scientific_name.ilike.%${s}%,translations->fr->>name.ilike.%${s}%`;
         })
         .join(",");
       const { data } = await supabase
@@ -308,7 +320,9 @@ async function lookupHerb(
           const slug = sanitizeFilterValue(
             name.toLowerCase().replace(/\s+/g, "-")
           );
-          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug}`;
+          // Also match the French name: a French query resolves to the same
+          // row as its English name.
+          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`;
         })()
       )
       .eq("is_published", true)
@@ -452,7 +466,9 @@ async function batchLookupHerbs(
           const slug = sanitizeFilterValue(
             n.toLowerCase().replace(/\s+/g, "-")
           );
-          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug}`;
+          // Also match the French name so a French query resolves to the
+          // same row as its English name; localizeHerb then localizes it.
+          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`;
         })
         .join(",");
 
