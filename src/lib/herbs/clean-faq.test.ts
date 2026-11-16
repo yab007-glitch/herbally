@@ -48,9 +48,7 @@ describe("cleanFaqText", () => {
       cleanFaqText(
         "Contre-indications : Ne pas utiliser si vous êtes enceinte. Mises en garde : Consulter un praticien."
       )
-    ).toBe(
-      "Ne pas utiliser si vous êtes enceinte. Consulter un praticien."
-    );
+    ).toBe("Ne pas utiliser si vous êtes enceinte. Consulter un praticien.");
   });
 
   it("drops a sentence that repeats the previous one verbatim", () => {
