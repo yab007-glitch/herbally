@@ -2,6 +2,7 @@ import { siteUrl } from "@/lib/seo/site-url";
 import { getReviewer } from "@/lib/data/reviewers";
 import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
+import { isBucketCategory } from "@/lib/herbs/category";
 
 interface Herb {
   name: string;
@@ -76,9 +77,10 @@ export function HerbSchema({ herb, url }: HerbSchemaProps) {
       "@type": "HealthTopic",
       name: herb.name,
       description: herb.description ?? undefined,
-      ...(herb.herb_categories?.name && {
-        category: herb.herb_categories.name,
-      }),
+      ...(herb.herb_categories?.name &&
+        !isBucketCategory(herb.herb_categories.name) && {
+          category: herb.herb_categories.name,
+        }),
     },
     safetyConsideration: {
       "@type": "MedicalWarning",

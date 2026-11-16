@@ -16,6 +16,29 @@
  */
 const TERMINAL = /[.!?…]["'”’)\]]*$/;
 
+const DANGLING_END =
+  /(?:^|\s)(?:and|or|with|for|of|the|a|an|to|in|on|at|by|from|as|et|ou|avec|pour|de|du|des|la|le|un|une|à|l'|d')$/i;
+const CUT_STUB_END =
+  /(?:,\s*(?:and|or)\s+(?:a|an|the)?\s*[a-z]{1,2}|[,;:\-–—&(])$/i;
+
+function hasUnbalancedParens(text: string): boolean {
+  const opens = (text.match(/\(/g) ?? []).length;
+  const closes = (text.match(/\)/g) ?? []).length;
+  return opens > closes;
+}
+
+function isLikelyTruncated(text: string): boolean {
+  // Upstream Health Canada / EMA slices happen around 200-300 chars.
+  // Short, balanced phrases without terminal punctuation ("Hormone-sensitive
+  // cancers", "Aspirin allergy") are complete bullet labels, not cut quotes.
+  return (
+    text.length >= 120 ||
+    DANGLING_END.test(text) ||
+    CUT_STUB_END.test(text) ||
+    hasUnbalancedParens(text)
+  );
+}
+
 function closeWithEllipsis(text: string): string {
   // Remove dangling connectors first, then punctuation they leave behind
   // ("…, or a" → "…"). Repeat: removing "a" can expose another connector.
@@ -58,6 +81,8 @@ export function cleanQuotedText(raw: string): string {
   if (lastSentence > text.length * 0.5) {
     return text.slice(0, lastSentence + 1);
   }
+
+  if (!isLikelyTruncated(text)) return text;
 
   const lastSpace = text.lastIndexOf(" ");
   const cut = lastSpace > text.length * 0.5 ? text.slice(0, lastSpace) : text;

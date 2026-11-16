@@ -7,6 +7,7 @@ import { ArrowRight, Heart, ShieldCheck, ShieldX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { HerbImage } from "@/components/herbs/HerbImage";
+import { isBucketCategory } from "@/lib/herbs/category";
 import { EvidenceGradeBadge } from "@/components/herbs/evidence-grade";
 import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
@@ -111,11 +112,10 @@ export function HerbCard({ herb, className }: HerbCardProps) {
       Icon: typeof ShieldCheck;
     } => line !== null
   );
-  // "Not Common" is the bucket 91% of the library falls into. Printing it on
+  // "Not Common" is the bucket ~92% of the library falls into. Printing it on
   // a card says nothing; the evidence and provenance pills are what differ.
   const categoryName = herb.herb_categories?.name?.trim();
-  const categoryIsBucket =
-    !!categoryName && /^(not common|pas courant)$/i.test(categoryName);
+  const categoryIsBucket = isBucketCategory(categoryName);
   const evidenceLevel = EVIDENCE_LEVELS.includes(
     herb.evidence_level as (typeof EVIDENCE_LEVELS)[number]
   )

@@ -1,5 +1,8 @@
 import { unstable_cache } from "next/cache";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { BUCKET_CATEGORY, isBucketCategory } from "@/lib/herbs/category";
+
+export { BUCKET_CATEGORY, isBucketCategory };
 
 /**
  * Internal links between herb pages.
@@ -26,8 +29,7 @@ export interface LinkHerb {
   scientific_name?: string | null;
 }
 
-/** Category used as a dumping ground; membership means nothing. */
-export const BUCKET_CATEGORY = "Not Common";
+// Note: BUCKET_CATEGORY is imported from @/lib/herbs/category above so client components can share it without pulling server imports.
 
 async function fetchNeighbours(name: string) {
   const supabase = getAnonClient();

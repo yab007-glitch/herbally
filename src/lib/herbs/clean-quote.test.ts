@@ -35,4 +35,17 @@ describe("cleanQuotedText", () => {
   it("collapses whitespace", () => {
     expect(cleanQuotedText("a\n\n b   c.")).toBe("a b c.");
   });
+
+  it("preserves short complete safety labels without chopping the last word", () => {
+    expect(cleanQuotedText("Hormone-sensitive cancers")).toBe(
+      "Hormone-sensitive cancers"
+    );
+    expect(cleanQuotedText("Concurrent sedative medications")).toBe(
+      "Concurrent sedative medications"
+    );
+    expect(cleanQuotedText("Before driving or operating heavy machinery")).toBe(
+      "Before driving or operating heavy machinery"
+    );
+    expect(cleanQuotedText("Aspirin allergy")).toBe("Aspirin allergy");
+  });
 });

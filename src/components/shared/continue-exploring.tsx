@@ -1,6 +1,10 @@
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Leaf, ShieldAlert, Stethoscope } from "lucide-react";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import {
+  formatBrowseAllHerbsLabel,
+  loadPublishedHerbCount,
+} from "@/lib/data/herb-count";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 /**
@@ -79,41 +83,14 @@ async function loadPopular(
   }
 }
 
-/**
- * The label used to say "Browse all 2,700 herbs" long after the library grew
- * past 3,200 published entries. The number is read from the database so the
- * claim cannot drift again; a failed count falls back to the count-free label.
- */
-async function loadHerbCount(): Promise<number | null> {
-  const supabase = getAnonClient();
-  if (!supabase) return null;
-  try {
-    const { count, error } = await supabase
-      .from("herbs")
-      .select("id", { count: "exact", head: true })
-      .eq("is_published", true)
-      .abortSignal(AbortSignal.timeout(15_000));
-    if (error) return null;
-    return count ?? null;
-  } catch {
-    return null;
-  }
-}
-
 export async function ContinueExploring() {
   const locale = await getLocale();
   const fr = locale === "fr";
   const [popular, herbCount] = await Promise.all([
     loadPopular(fr),
-    loadHerbCount(),
+    loadPublishedHerbCount(),
   ]);
-  const browseLabel = herbCount
-    ? fr
-      ? `Parcourir les ${herbCount.toLocaleString("fr-CA")} plantes`
-      : `Browse all ${herbCount.toLocaleString("en-CA")} herbs`
-    : fr
-      ? "Parcourir toutes les plantes"
-      : "Browse all herbs";
+  const browseLabel = formatBrowseAllHerbsLabel(herbCount, fr);
 
   const clusters = [
     {

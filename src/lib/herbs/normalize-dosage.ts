@@ -14,12 +14,18 @@ export function normalizeDosage(text: string): string {
   return (
     text
       .replace(
-        /(\d+(?:[.,]\d+)?\s*[–—-]\s*(\d+(?:[.,]\d+)?))\s+granule\b/gi,
-        (match, range: string, upper: string) =>
-          Number(upper.replace(",", ".")) >= 2 ? `${range} granules` : match
+        /(\d+(?:[.,]\d+)?\s*[–—-]\s*(\d+(?:[.,]\d+)?))\s+(granule|pellet)\b/gi,
+        (match, range: string, upper: string, unit: string) =>
+          Number(upper.replace(",", ".")) >= 2
+            ? `${range} ${unit.toLowerCase()}s`
+            : match
       )
       // A standalone whole number: the leading character must not be a digit or
       // a decimal separator, otherwise the "5" of "1,75 granule" would count.
-      .replace(/(^|[^\d.,])((?:[2-9]|\d{2,}))\s+granule\b/gi, "$1$2 granules")
+      .replace(
+        /(^|[^\d.,])((?:[2-9]|\d{2,}))\s+(granule|pellet)\b/gi,
+        (_, prefix: string, count: string, unit: string) =>
+          `${prefix}${count} ${unit.toLowerCase()}s`
+      )
   );
 }

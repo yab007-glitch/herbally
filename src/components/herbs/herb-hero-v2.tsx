@@ -12,6 +12,7 @@ import {
   type GlanceInteraction,
 } from "@/components/herbs/herb-safety-glance";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
+import { isBucketCategory } from "@/lib/herbs/category";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useSyncExternalStore, useEffect } from "react";
@@ -100,12 +101,14 @@ export function HerbHeroV2({
     isManualMonograph === false &&
     pubmedSheetStatus != null &&
     pubmedSheetStatus !== "reviewed";
-  const verified = isVerified(parsedProvenance) && !sheetNotReviewed;
-  // When the sheet vetoes a "Verified" claim, show the AI-summarized badge
-  // instead so the hero agrees with the sheet's own "not yet human-reviewed"
-  // label below it.
+  // Keep pregnancy/nursing safety tied to the herb's own provenance check rather
+  // than letting an unreviewed PubMed draft below veto primary-source warnings
+  // (e.g., White Willow and Black Cohosh are primary_source verified unsafe).
+  const verified = isVerified(parsedProvenance);
+  // When the sheet vetoes a "Verified" claim, pass the adjusted method for the
+  // provenance pill below.
   const badgeProvenance =
-    sheetNotReviewed && isVerified(parsedProvenance)
+    sheetNotReviewed && verified
       ? { ...parsedProvenance, verification_method: "ai_summarized" as const }
       : parsedProvenance;
   // AI-generated pregnancy/nursing flags are not authoritative — only show a
@@ -158,11 +161,12 @@ export function HerbHeroV2({
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-              {herb.herb_categories?.name && (
-                <Badge variant="secondary" className="text-xs">
-                  {herb.herb_categories.name}
-                </Badge>
-              )}
+              {herb.herb_categories?.name &&
+                !isBucketCategory(herb.herb_categories.name) && (
+                  <Badge variant="secondary" className="text-xs">
+                    {herb.herb_categories.name}
+                  </Badge>
+                )}
               <EvidenceGrade
                 level={
                   herb.evidence_level &&

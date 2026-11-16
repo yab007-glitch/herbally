@@ -113,4 +113,13 @@ describe("HerbSchema", () => {
     );
     expect(extractJson(markup).url).toBe(frUrl);
   });
+
+  it("omits generic 'Not Common' / 'Pas courant' bucket categories", () => {
+    for (const bucket of ["Not Common", "Pas courant"]) {
+      const json = extractJson(
+        renderSchema({ ...baseHerb, herb_categories: { name: bucket } })
+      );
+      expect((json.about as Record<string, unknown>).category).toBeUndefined();
+    }
+  });
 });

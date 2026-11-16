@@ -20,6 +20,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 import { addLocalePrefix } from "@/lib/i18n/routing";
+import { isBucketCategory } from "@/lib/herbs/category";
 
 // ISR. The locale is a root param now, so on-demand generation is safe and
 // comparisons outside the prerendered set still render (not 500). Three days
@@ -262,9 +263,10 @@ export default async function ComparePage({ params }: Props) {
             {herbA.scientific_name}
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <Badge variant="secondary">
-              {herbA.herb_categories?.name || t("herbDetail.uncategorized")}
-            </Badge>
+            {herbA.herb_categories?.name &&
+              !isBucketCategory(herbA.herb_categories.name) && (
+                <Badge variant="secondary">{herbA.herb_categories.name}</Badge>
+              )}
             <EvidenceGrade
               level={
                 (herbA.evidence_level as "A" | "B" | "C" | "D" | "trad") || "C"
@@ -279,9 +281,10 @@ export default async function ComparePage({ params }: Props) {
             {herbB.scientific_name}
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <Badge variant="secondary">
-              {herbB.herb_categories?.name || t("herbDetail.uncategorized")}
-            </Badge>
+            {herbB.herb_categories?.name &&
+              !isBucketCategory(herbB.herb_categories.name) && (
+                <Badge variant="secondary">{herbB.herb_categories.name}</Badge>
+              )}
             <EvidenceGrade
               level={
                 (herbB.evidence_level as "A" | "B" | "C" | "D" | "trad") || "C"

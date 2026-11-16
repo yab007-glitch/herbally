@@ -7,6 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import {
+  formatBrowseAllHerbsLabel,
+  loadPublishedHerbCount,
+} from "@/lib/data/herb-count";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { getTranslations } from "next-intl/server";
@@ -116,7 +120,11 @@ export default async function CompareHubPage() {
   const fr = locale === "fr";
   const t = await getTranslations({ locale });
   const baseUrl = siteUrl();
-  const names = await loadNames(fr);
+  const [names, herbCount] = await Promise.all([
+    loadNames(fr),
+    loadPublishedHerbCount(),
+  ]);
+  const browseLabel = formatBrowseAllHerbsLabel(herbCount, fr);
 
   const pairs = POPULAR_COMPARISONS.map(({ slug1, slug2 }) => ({
     slug1,
@@ -215,7 +223,7 @@ export default async function CompareHubPage() {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
           <Leaf className="size-3.5" />
-          {fr ? "Parcourir les 2 700 plantes" : "Browse all 3,200 herbs"}
+          {browseLabel}
         </Link>
       </div>
     </div>

@@ -25,6 +25,13 @@ describe("normalizeDosage", () => {
     expect(normalizeDosage("12 granule daily")).toBe("12 granules daily");
   });
 
+  it("pluralises pellet ranges above one and keeps single units singular", () => {
+    expect(normalizeDosage("1–4 pellet 2–3× daily")).toBe(
+      "1–4 pellets 2–3× daily"
+    );
+    expect(normalizeDosage("1 pellet daily")).toBe("1 pellet daily");
+  });
+
   it("leaves other text untouched", () => {
     expect(normalizeDosage("500 mg twice daily")).toBe("500 mg twice daily");
   });
