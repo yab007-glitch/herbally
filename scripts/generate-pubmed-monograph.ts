@@ -299,12 +299,73 @@ function evidenceLevel(pubtypes: string[]): "A" | "B" | "C" | "D" | "trad" {
   return "D";
 }
 
-function buildSearchTerm(herb: Herb): string {
-  const names = [herb.scientific_name, herb.name, ...(herb.common_names ?? [])]
+function searchNames(herb: Herb): string[] {
+  return [herb.scientific_name, herb.name, ...(herb.common_names ?? [])]
     .map((n) => n.trim())
-    .filter(Boolean)
+    .filter((n) => n.length > 2)
     .filter((n, i, a) => a.indexOf(n) === i);
-  return names.map((n) => `"${n}"[Title/Abstract]`).join(" OR ");
+}
+
+/**
+ * Search strategies, broadest-last.
+ *
+ * The old single query restricted every name to [Title/Abstract]. That misses
+ * two common cases: literature that uses an older synonym (papers say "Aloe
+ * vera" where the catalogue says "Aloe vulgaris" — PubMed links the two
+ * through MeSH), and papers indexed under the common name only. Free-text
+ * PubMed search matches MeSH terms, which is why "Aloe vulgaris" finds 57
+ * articles there and 0 with the field restriction.
+ */
+function buildSearchTerms(herb: Herb): string[] {
+  const names = searchNames(herb);
+  return [
+    names.map((n) => `"${n}"[Title/Abstract]`).join(" OR "),
+    names.map((n) => `"${n}"`).join(" OR "),
+  ];
+}
+
+/**
+ * Search PubMed, falling back to free text when the field-restricted query
+ * finds nothing. Returns [] only when both strategies come up empty (or the
+ * free-text hits are all about a different plant).
+ */
+async function findArticles(herb: Herb): Promise<Article[]> {
+  const [fielded, freeText] = buildSearchTerms(herb);
+
+  const ids = await esearch(fielded);
+  if (ids.length > 0) {
+    await sleep(340);
+    const articles = await efetchAbstracts(ids.slice(0, MAX_ABSTRACTS));
+    if (articles.length > 0) return articles;
+  }
+
+  await sleep(340);
+  const freeIds = await esearch(freeText);
+  if (freeIds.length === 0) return [];
+  await sleep(340);
+  const freeArticles = await efetchAbstracts(freeIds.slice(0, MAX_ABSTRACTS));
+  return freeArticles.filter((a) => isRelevant(a, herb));
+}
+
+/**
+ * Drop articles that mention none of the herb's names and not even its genus.
+ *
+ * A free-text query for "Aloe vulgaris" can return papers on any Aloe species,
+ * and a common-name query ("Spring Savory") can return recipe papers. Requiring
+ * the genus (or a specific common name) in the title, abstract or MeSH terms
+ * keeps the sheet's evidence about the right plant, while still allowing
+ * synonym literature that only names the genus.
+ */
+function isRelevant(article: Article, herb: Herb): boolean {
+  const hay = `${article.title} ${article.abstract} ${article.mesh.join(" ")}`.toLowerCase();
+  const genus = (herb.scientific_name.split(/\s+/)[0] ?? "").toLowerCase();
+  const tokens = [genus, ...(herb.common_names ?? [])]
+    .map((t) => t.trim().toLowerCase())
+    .filter((t) => t.length >= 4);
+  return tokens.some((t) => {
+    const escaped = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`).test(hay);
+  });
 }
 
 function buildCompilePrompt(herb: Herb, articles: Article[]): string {
@@ -463,6 +524,13 @@ async function fetchAllHerbs() {
   return all;
 }
 
+/**
+ * Slugs that already have a usable sheet.
+ *
+ * Placeholder sheets ("No PubMed data available.", empty pmids) were written by
+ * runs that found no literature; they are not usable, so they must stay in the
+ * "to generate" set and be overwritten by the upsert.
+ */
 async function existingSheetSlugs(): Promise<Set<string>> {
   const sb = getSupabase();
   const set = new Set<string>();
@@ -470,11 +538,13 @@ async function existingSheetSlugs(): Promise<Set<string>> {
   for (;;) {
     const { data, error } = await sb
       .from("herb_pubmed_monographs")
-      .select("slug")
+      .select("slug,pmids")
       .range(from, from + 999);
     if (error) throw new Error(error.message);
     if (!data || data.length === 0) break;
-    for (const r of data as { slug: string }[]) set.add(r.slug);
+    for (const r of data as { slug: string; pmids: string[] | null }[]) {
+      if (r.pmids && r.pmids.length > 0) set.add(r.slug);
+    }
     if (data.length < 1000) break;
     from += 1000;
   }
@@ -486,15 +556,21 @@ async function generateForSlug(
   opts: { write: boolean; revalidate?: boolean }
 ): Promise<{ ok: boolean; cited: number; articles: number; error?: string }> {
   try {
-    const term = buildSearchTerm(herb);
-    const ids = await esearch(term);
-    if (ids.length === 0)
-      return { ok: false, cited: 0, articles: 0, error: "no pubmed results" };
-    await sleep(340);
-    const articles = await efetchAbstracts(ids.slice(0, MAX_ABSTRACTS));
+    const articles = await findArticles(herb);
     if (articles.length === 0)
-      return { ok: false, cited: 0, articles: 0, error: "no abstracts" };
+      return { ok: false, cited: 0, articles: 0, error: "no pubmed results" };
     const { sheet, citedPmids, model } = await compileSheet(herb, articles);
+    // A sheet with zero citations is a page of "No PubMed data available."
+    // placeholders. Writing it would put a no-content row in front of readers
+    // and let the sitemap mistake it for a monograph, so leave the herb
+    // ungenerated instead.
+    if (citedPmids.length === 0)
+      return {
+        ok: false,
+        cited: 0,
+        articles: articles.length,
+        error: "no citable evidence",
+      };
     const citations = articles
       .filter((a) => citedPmids.includes(a.pmid))
       .map((a) => ({
@@ -655,23 +731,13 @@ async function main() {
     process.exit(1);
   }
 
-  const term = buildSearchTerm(herb);
   console.log(`Herb: ${herb.name} (${herb.scientific_name})`);
-  console.log(`PubMed search: ${term.slice(0, 160)}…`);
+  console.log(`PubMed search: ${buildSearchTerms(herb)[0].slice(0, 160)}…`);
 
-  const ids = await esearch(term);
-  console.log(`esearch: ${ids.length} PubMed results`);
-  if (ids.length === 0) {
-    console.error("No PubMed results — cannot compile a sheet.");
-    process.exit(2);
-  }
-
-  await sleep(340);
-  const fetchIds = ids.slice(0, MAX_ABSTRACTS);
-  const articles = await efetchAbstracts(fetchIds);
-  console.log(`efetch: ${articles.length} abstracts (of ${fetchIds.length})`);
+  const articles = await findArticles(herb);
+  console.log(`efetch: ${articles.length} relevant abstracts`);
   if (articles.length === 0) {
-    console.error("No abstracts retrieved — cannot compile a sheet.");
+    console.error("No PubMed results — cannot compile a sheet.");
     process.exit(2);
   }
 

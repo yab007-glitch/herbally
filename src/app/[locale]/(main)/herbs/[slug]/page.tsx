@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { unstable_cache } from "next/cache";
 import { isIndexable } from "@/lib/seo/indexable";
+import { isUsablePubmedSheet } from "@/lib/pubmed/usable";
 import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -428,7 +429,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     dosage_adult: herb.dosage_adult,
     hasMonograph:
       Boolean(bundle?.monograph) ||
-      Boolean((bundle?.pubmed as { content?: unknown } | null)?.content) ||
+      isUsablePubmedSheet(
+        bundle?.pubmed as {
+          content?: unknown;
+          pmids?: unknown;
+          citations?: unknown;
+        } | null
+      ) ||
       (bundle?.sources?.length ?? 0) > 0,
     hasRegulatory: Boolean(bundle?.regulatory),
   });
@@ -1047,7 +1054,11 @@ export default async function HerbDetailPage({ params }: Props) {
       <HerbHeroV2
         herb={{ ...herb, evidence_level: evidenceLevel }}
         provenance={herb.provenance as Record<string, unknown> | null}
-        pubmedSheetStatus={pubmedSheet?.content ? pubmedSheet.status : null}
+        pubmedSheetStatus={
+          pubmedSheet && isUsablePubmedSheet(pubmedSheet)
+            ? pubmedSheet.status
+            : null
+        }
         isManualMonograph={isManualMonograph}
         interactions={interactions.map((i) => ({
           drug_name: i.drug_name,
@@ -1257,7 +1268,7 @@ export default async function HerbDetailPage({ params }: Props) {
               article). Otherwise show the government-sources stub. Either
               way, curated (non-AI) interaction data is shown when present. */}
 
-          {pubmedSheet?.content ? (
+          {pubmedSheet && isUsablePubmedSheet(pubmedSheet) ? (
             // The sheet is compiled from English-language publications and is
             // stored in English. On /fr it is labelled and collapsed rather
             // than dropped: the content stays in the DOM and one click away,

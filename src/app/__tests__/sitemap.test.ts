@@ -9,6 +9,7 @@ vi.mock("@/lib/symptoms/hub-coverage", () => ({
 
 const herbsRangeMock = vi.fn();
 const regulatoryRangeMock = vi.fn();
+const pubmedSheetRangeMock = vi.fn();
 const monographEqMock = vi.fn();
 const fromMock = vi.fn();
 const getInteractionPairsMock = vi.fn();
@@ -52,6 +53,14 @@ describe("sitemap", () => {
         // Paged with .range — the regulator-record read.
         return { select: () => ({ range: regulatoryRangeMock }) };
       }
+      if (table === "herb_pubmed_monographs") {
+        // select -> not(content is null) -> not(pmids = {}) -> range
+        return {
+          select: () => ({
+            not: () => ({ not: () => ({ range: pubmedSheetRangeMock }) }),
+          }),
+        };
+      }
       return {
         select: () => ({
           eq: () => ({
@@ -64,6 +73,7 @@ describe("sitemap", () => {
     });
     monographEqMock.mockResolvedValue({ data: [], error: null });
     regulatoryRangeMock.mockResolvedValue({ data: [], error: null });
+    pubmedSheetRangeMock.mockResolvedValue({ data: [], error: null });
   });
 
   afterEach(() => {
@@ -170,6 +180,33 @@ describe("sitemap", () => {
       `${BASE_URL}/fr/herbs/ginger`,
       `${BASE_URL}/herbs/turmeric`,
     ]);
+
+    // The sitemap names the other-language twin, so Google reads the pair as a
+    // translation rather than as duplicate URLs.
+    const gingerFr = result.find(
+      (entry) => entry.url === `${BASE_URL}/fr/herbs/ginger`
+    );
+    expect(gingerFr?.alternates?.languages).toEqual({
+      en: `${BASE_URL}/herbs/ginger`,
+      fr: `${BASE_URL}/fr/herbs/ginger`,
+      "x-default": `${BASE_URL}/herbs/ginger`,
+    });
+
+    // A page whose French twin is not listed gets no alternates: pointing at a
+    // URL this sitemap withholds would recreate the mismatch it avoids.
+    const turmeric = result.find(
+      (entry) => entry.url === `${BASE_URL}/herbs/turmeric`
+    );
+    expect(turmeric?.alternates).toBeUndefined();
+
+    // The bare /fr home is a pair with the bare home, not with a /fr/ prefix
+    // concatenation bug.
+    const home = result.find((entry) => entry.url === BASE_URL);
+    expect(home?.alternates?.languages).toEqual({
+      en: BASE_URL,
+      fr: `${BASE_URL}/fr`,
+      "x-default": BASE_URL,
+    });
   });
 
   it("stamps static pages with a build date, not a frozen one", async () => {
@@ -210,5 +247,37 @@ describe("sitemap", () => {
     // Fail open: with no herb rows to check against, every hub stays listed.
     // Dropping real URLs from a sitemap is worse than listing a thin page.
     expect(urls).toContain(`${BASE_URL}/symptoms/${UNPOPULATED_HUB}`);
+  });
+
+  it("counts only PubMed sheets that actually carry citations", async () => {
+    const thinHerb = {
+      id: "h-thin",
+      slug: "thin-herb",
+      updated_at: null,
+      translations: null,
+      description: "z".repeat(260),
+      traditional_uses: null,
+      dosage_adult: null,
+    };
+    herbsRangeMock.mockResolvedValue({ data: [thinHerb], error: null });
+    getEmptySymptomHubsMock.mockResolvedValue([]);
+    getInteractionPairsMock.mockResolvedValue([]);
+
+    // The query itself excludes empty-pmid sheets; an empty result therefore
+    // means "no monograph" and the thin page stays out of the sitemap, matching
+    // the noindex the page renders.
+    pubmedSheetRangeMock.mockResolvedValue({ data: [], error: null });
+    expect((await sitemap()).map((entry) => entry.url)).not.toContain(
+      `${BASE_URL}/herbs/thin-herb`
+    );
+
+    // A usable sheet is what makes a thin page indexable.
+    pubmedSheetRangeMock.mockResolvedValue({
+      data: [{ slug: "thin-herb" }],
+      error: null,
+    });
+    expect((await sitemap()).map((entry) => entry.url)).toContain(
+      `${BASE_URL}/herbs/thin-herb`
+    );
   });
 });

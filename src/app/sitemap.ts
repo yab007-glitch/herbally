@@ -244,10 +244,15 @@ async function fetchPubmedSheetSlugs(
         // Slug only: the sheet body averages ~3 KB, and transferring 2,500 of
         // them would spend the sitemap's database budget on payloads it never
         // reads.
+        // A sheet with no PMIDs is a placeholder ("No PubMed data available."),
+        // not a monograph. Counting it would put a no-content page back in the
+        // sitemap while the page itself renders nothing usable — the listing /
+        // indexability mismatch this file exists to prevent.
         supabase
           .from("herb_pubmed_monographs")
           .select("slug")
           .not("content", "is", null)
+          .not("pmids", "eq", "{}")
           .range(from, from + pageSize - 1),
         "sitemap_pubmed_sheets",
         timeoutMs
@@ -345,6 +350,43 @@ function symptomPagesFor(
       priority: 0.8,
     },
   ]);
+}
+
+/**
+ * Attach hreflang alternates to every entry whose other-language twin is also
+ * listed.
+ *
+ * The page already ships <link rel="alternate" hreflang> tags, but the sitemap
+ * is the one place Google treats the pairing as authoritative when it plans
+ * crawling: an entry that names its twin is read as "this is a translation",
+ * not as "another URL with the same body". Only pairs where both URLs are
+ * actually listed get alternates — pointing at a URL the sitemap itself
+ * withholds would recreate the listing/noindex mismatch this file avoids.
+ */
+function withLanguageAlternates(
+  entries: MetadataRoute.Sitemap,
+  baseUrl: string
+): MetadataRoute.Sitemap {
+  const listed = new Set(entries.map((entry) => entry.url));
+  const frPrefix = `${baseUrl}${FR_BASE}`;
+  return entries.map((entry) => {
+    const isFr =
+      entry.url === frPrefix || entry.url.startsWith(`${frPrefix}/`);
+    const suffix = entry.url.slice(frPrefix.length);
+    const enUrl = isFr ? (suffix === "" ? baseUrl : `${baseUrl}${suffix}`) : entry.url;
+    const frUrl = isFr
+      ? entry.url
+      : entry.url === baseUrl
+        ? frPrefix
+        : `${frPrefix}${entry.url.slice(baseUrl.length)}`;
+    if (!listed.has(enUrl) || !listed.has(frUrl)) return entry;
+    return {
+      ...entry,
+      alternates: {
+        languages: { en: enUrl, fr: frUrl, "x-default": enUrl },
+      },
+    };
+  });
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -615,10 +657,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Degraded paths list every symptom hub: nothing here can tell which hubs are
   // empty, and losing 52 live URLs because a query timed out is worse than
   // listing a thin page. Only the healthy path filters them.
-  const degradedPages = () => [
-    ...staticPages,
-    ...symptomPagesFor(SYMPTOM_SLUGS, baseUrl),
-  ];
+  const degradedPages = () =>
+    withLanguageAlternates(
+      [...staticPages, ...symptomPagesFor(SYMPTOM_SLUGS, baseUrl)],
+      baseUrl
+    );
   const budgetExhausted = () => {
     logger.error("sitemap_generation_error", {
       error: `sitemap database budget of ${dbBudgetMs}ms exhausted`,
@@ -829,13 +872,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return entries;
     });
 
-    return [
-      ...staticPages,
-      ...symptomPages,
-      ...comparePages,
-      ...pairPages,
-      ...herbPages,
-    ];
+    return withLanguageAlternates(
+      [
+        ...staticPages,
+        ...symptomPages,
+        ...comparePages,
+        ...pairPages,
+        ...herbPages,
+      ],
+      baseUrl
+    );
   } catch (error) {
     logger.error("sitemap_generation_error", {
       error: error instanceof Error ? error.message : String(error),
