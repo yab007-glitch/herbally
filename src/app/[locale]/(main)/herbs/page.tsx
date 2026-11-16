@@ -218,7 +218,7 @@ export default async function HerbsPage({
         >
           <Badge
             variant={!category ? "default" : "outline"}
-            className="cursor-pointer"
+            className="h-9 cursor-pointer px-3"
           >
             {t("herbs.all")}
           </Badge>
@@ -235,7 +235,7 @@ export default async function HerbsPage({
           >
             <Badge
               variant={category === cat.slug ? "default" : "outline"}
-              className="cursor-pointer"
+              className="h-9 cursor-pointer px-3"
             >
               {cat.name}
             </Badge>

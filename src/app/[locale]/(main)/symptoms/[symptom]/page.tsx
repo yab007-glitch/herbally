@@ -374,7 +374,7 @@ export default async function SymptomDetailPage({ params }: Props) {
       {/* Bottom CTA */}
       <div className="mt-8 text-center">
         <Link
-          href="/"
+          href="/herbalist"
           className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
         >
           <Stethoscope className="size-4" />
