@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { buildHerbListUrl } from "@/lib/search/herb-list-url";
+import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
 interface HerbPaginationProps {
@@ -83,28 +85,41 @@ export function HerbPagination({
     navigate(target);
   };
 
+  /**
+   * Real anchors, not buttons.
+   *
+   * These controls used to be <Button onClick={router.push}>, so the served
+   * HTML contained no link to page 2 of 158 — and a crawler saw exactly the 21
+   * herbs on page 1 of a 3,155-page library. The link is also the accessible
+   * control: it works with middle-click, "copy link", and without JavaScript.
+   */
+  const pageLink = (target: number, disabled: boolean, label: string) => {
+    const className = buttonVariants({ variant: "outline", size: "sm" });
+    if (disabled || isPending) {
+      return (
+        <span
+          aria-disabled="true"
+          className={cn(className, "pointer-events-none opacity-50")}
+        >
+          {label}
+        </span>
+      );
+    }
+    return (
+      <Link href={urlFor(target)} scroll={false} className={className}>
+        {label}
+      </Link>
+    );
+  };
+
   return (
     <nav
       aria-label={t("herbs.pagination.page")}
       aria-busy={isPending}
       className="mt-8 flex flex-wrap items-center justify-center gap-3"
     >
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={isPending || page <= 1}
-        onClick={() => navigate(1)}
-      >
-        {t("herbs.pagination.first")}
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={isPending || page <= 1}
-        onClick={() => navigate(page - 1)}
-      >
-        {t("herbs.pagination.previous")}
-      </Button>
+      {pageLink(1, page <= 1, t("herbs.pagination.first"))}
+      {pageLink(page - 1, page <= 1, t("herbs.pagination.previous"))}
       {isPending ? (
         <span className="flex items-center gap-1 text-sm text-muted-foreground">
           <Loader2 className="size-4 animate-spin" />
@@ -115,22 +130,8 @@ export function HerbPagination({
           {page} {t("herbs.pagination.of")} {totalPages}
         </span>
       )}
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={isPending || page >= totalPages}
-        onClick={() => navigate(page + 1)}
-      >
-        {t("herbs.pagination.next")}
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={isPending || page >= totalPages}
-        onClick={() => navigate(totalPages)}
-      >
-        {t("herbs.pagination.last")}
-      </Button>
+      {pageLink(page + 1, page >= totalPages, t("herbs.pagination.next"))}
+      {pageLink(totalPages, page >= totalPages, t("herbs.pagination.last"))}
       <form
         onSubmit={handleJump}
         className="flex items-center gap-2"
