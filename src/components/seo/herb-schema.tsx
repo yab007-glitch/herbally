@@ -1,6 +1,7 @@
 import { siteUrl } from "@/lib/seo/site-url";
 import { getReviewer } from "@/lib/data/reviewers";
 import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
+import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 
 interface Herb {
   name: string;
@@ -94,10 +95,10 @@ export function HerbSchema({ herb, url }: HerbSchemaProps) {
             : "Not recommended while nursing",
         }),
       ...(contraindications.length > 0 && {
-        contraindication: contraindications.join("; "),
+        contraindication: contraindications.map(stripFieldLabels).join("; "),
       }),
       ...(sideEffects.length > 0 && {
-        adverseEffect: sideEffects.join("; "),
+        adverseEffect: sideEffects.map(stripFieldLabels).join("; "),
       }),
     },
     ...(herb.dosage_adult && {

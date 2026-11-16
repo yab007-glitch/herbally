@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanFaqText } from "./clean-faq";
+import { cleanFaqText, stripFieldLabels } from "./clean-faq";
 
 describe("cleanFaqText", () => {
   it("removes a leading regulator field label", () => {
@@ -86,6 +86,51 @@ describe("cleanFaqText", () => {
   it("leaves a clean answer untouched", () => {
     expect(cleanFaqText("6 to 12 g per day as a decoction.")).toBe(
       "6 to 12 g per day as a decoction."
+    );
+  });
+});
+
+describe("stripFieldLabels", () => {
+  it("removes a leading label from a quoted safety entry", () => {
+    expect(
+      stripFieldLabels("Contra-Indications: Do not take if you are pregnant.")
+    ).toBe("Do not take if you are pregnant.");
+  });
+
+  it("removes a label that follows a semicolon", () => {
+    expect(
+      stripFieldLabels(
+        "Do not use if allergic to the daisy famil; Contra-Indications: Do not use if you have impaired kidney function."
+      )
+    ).toBe(
+      "Do not use if allergic to the daisy famil; Do not use if you have impaired kidney function."
+    );
+  });
+
+  it("removes a label that follows a dangling '.;' and tidies it", () => {
+    expect(
+      stripFieldLabels(
+        "Discontinue use.; Contra-Indications: Do not use if you take MAOIs."
+      )
+    ).toBe("Discontinue use. Do not use if you take MAOIs.");
+  });
+
+  it("removes French safety labels", () => {
+    expect(
+      stripFieldLabels(
+        "Contre-indications : Ne pas utiliser pendant la grossesse. Mises en garde et précautions : Consulter un praticien."
+      )
+    ).toBe("Ne pas utiliser pendant la grossesse. Consulter un praticien.");
+  });
+
+  it("keeps a label that sits inside a clause", () => {
+    const text = "Ask your practitioner about the Risk Information: section.";
+    expect(stripFieldLabels(text)).toBe(text);
+  });
+
+  it("leaves text without a label untouched", () => {
+    expect(stripFieldLabels("Do not use before surgery.")).toBe(
+      "Do not use before surgery."
     );
   });
 });

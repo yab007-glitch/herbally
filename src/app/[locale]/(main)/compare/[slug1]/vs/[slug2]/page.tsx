@@ -18,6 +18,7 @@ import { fitTitle } from "@/lib/seo/fit-title";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 
 // ISR. The locale is a root param now, so on-demand generation is safe and
@@ -394,10 +395,10 @@ export default async function ComparePage({ params }: Props) {
               {t("compare.contraindications")}
             </div>
             <div className="text-muted-foreground">
-              {herbA.contraindications?.join(", ") || "—"}
+              {herbA.contraindications?.map(stripFieldLabels).join(", ") || "—"}
             </div>
             <div className="text-muted-foreground">
-              {herbB.contraindications?.join(", ") || "—"}
+              {herbB.contraindications?.map(stripFieldLabels).join(", ") || "—"}
             </div>
           </div>
           <div className="grid grid-cols-[1fr_2fr_2fr] gap-4 border-b py-3 text-sm">
@@ -405,10 +406,10 @@ export default async function ComparePage({ params }: Props) {
               {t("compare.sideEffects")}
             </div>
             <div className="text-muted-foreground">
-              {herbA.side_effects?.join(", ") || "—"}
+              {herbA.side_effects?.map(stripFieldLabels).join(", ") || "—"}
             </div>
             <div className="text-muted-foreground">
-              {herbB.side_effects?.join(", ") || "—"}
+              {herbB.side_effects?.map(stripFieldLabels).join(", ") || "—"}
             </div>
           </div>
           <div className="grid grid-cols-[1fr_2fr_2fr] gap-4 py-3 text-sm">

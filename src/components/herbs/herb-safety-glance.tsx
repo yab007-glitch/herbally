@@ -4,6 +4,7 @@ import { ArrowRight, CircleHelp, ShieldCheck, ShieldX } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { cleanQuotedText } from "@/lib/herbs/clean-quote";
+import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 
 /**
  * "Safety at a glance" — the answer a worried visitor needs before anything
@@ -271,7 +272,7 @@ export function SafetyGlance({
                 {/* Imported labels were hard-sliced mid-word upstream; the
                     glance is the first thing a visitor reads, so close the
                     quotation honestly instead of showing "…or a ki". */}
-                {cleanQuotedText(item)}
+                {cleanQuotedText(stripFieldLabels(item))}
               </li>
             ))}
           </ul>

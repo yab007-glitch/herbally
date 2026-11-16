@@ -51,6 +51,53 @@ const SENTENCE_START = /(^|[.!?]\s+)([a-zà-öø-ÿ])/g;
 // is what stops it matching the last letter of an ordinary word ("famil.").
 const ABBREVIATION = /(?:\b[a-z]|e\.g|i\.e|p\.\s?ex|vs|etc|approx|no|ex)\.\s$/i;
 
+/**
+ * Remove the regulator field name from a quoted safety string.
+ *
+ * The imported `contraindications` / `side_effects` arrays keep the source
+ * field name at the front of each entry ("Contra-Indications: Do not take…"),
+ * and a few entries are whole field dumps where the label reappears after a
+ * sentence or a semicolon ("…daisy famil; Contra-Indications: Do not use…").
+ * 443 of the 3,238 published herbs carried at least one such entry (measured
+ * 2026-11-16). The section around the list already says "Contraindications",
+ * so the label is duplication — but the sentence after it is a quotation and
+ * is otherwise left verbatim.
+ */
+const SAFETY_LABEL = [
+  // English
+  "Contra-?indications?",
+  "Known Adverse Reactions",
+  "Adverse Reactions",
+  "Cautions? and Warnings?",
+  "Warnings?",
+  "Risk Information",
+  // French
+  "Contre-indications?",
+  "Mises? en garde(?: et (?:précautions|avertissements))?",
+  "Réactions? indésirables(?: connues?)?",
+  "Effets? indésirables(?: connus?)?",
+  "Informations sur les risques",
+].join("|");
+
+// Start of the string, or after a sentence end or a semicolon — the field
+// dumps chain several fields with "; ". A label inside a clause is part of
+// the sentence and survives.
+const SAFETY_LABEL_BOUNDARY = new RegExp(
+  `(^|[.!?;]\\s+)(?:${SAFETY_LABEL})\\s*:\\s*`,
+  "gi"
+);
+
+export function stripFieldLabels(raw: string): string {
+  if (!raw) return raw;
+  let text = raw.replace(/\s+/g, " ").trim();
+  if (!text.includes(":")) return text;
+
+  text = text.replace(SAFETY_LABEL_BOUNDARY, "$1");
+  // "…discontinue use.; Do not…" — the label sat after ".;".
+  text = text.replace(/\s+([,.])/g, "$1").replace(/\.;/g, ".");
+  return text;
+}
+
 export function cleanFaqText(raw: string): string {
   if (!raw) return raw;
   let text = raw.replace(/\s+/g, " ").trim();
