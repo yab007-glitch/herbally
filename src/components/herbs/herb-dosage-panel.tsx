@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
 
 interface HerbDosagePanelProps {
   /** Name of the regulator behind this entry, when one exists. */
@@ -66,7 +67,7 @@ export function HerbDosagePanel({ herb, regulatorName }: HerbDosagePanelProps) {
                   {t("herbDetail.adultDosage")}
                 </dt>
                 <dd className="mt-1 text-sm text-muted-foreground">
-                  {herb.dosage_adult}
+                  {normalizeDosage(herb.dosage_adult)}
                 </dd>
               </div>
             )}

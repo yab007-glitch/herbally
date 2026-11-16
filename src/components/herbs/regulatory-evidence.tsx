@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 
 /**
  * Regulator-sourced evidence for one herb.
@@ -118,7 +119,7 @@ export function RegulatoryEvidenceSection({
                       key={p}
                       className="border-l-2 border-primary/30 pl-3 text-sm leading-relaxed text-muted-foreground"
                     >
-                      {p}
+                      {cleanQuotedText(p)}
                     </li>
                   ))}
                 </ul>
@@ -136,7 +137,7 @@ export function RegulatoryEvidenceSection({
                       key={`${d.text}-${d.population ?? ""}`}
                       className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
                     >
-                      {d.text}
+                      {cleanQuotedText(d.text)}
                       {d.population ? ` · ${d.population}` : ""}
                       {typeof d.age_minimum === "number" && d.age_minimum > 0
                         ? ` · ${d.age_minimum}+`
@@ -158,7 +159,7 @@ export function RegulatoryEvidenceSection({
                       key={r}
                       className="border-l-2 border-amber-500/40 pl-3 text-sm leading-relaxed text-muted-foreground"
                     >
-                      {r}
+                      {cleanQuotedText(r)}
                     </li>
                   ))}
                 </ul>

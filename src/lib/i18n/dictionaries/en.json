@@ -1294,13 +1294,14 @@
     "index": "index",
     "noMonographNotice": "No direct government monograph is available for this herb. The content below is AI-generated and has not been verified against an authoritative government source. Use the search links to check official sources before relying on this information.",
     "stubTitle": "No human-written monograph for this herb",
-    "stubBody": "This herb does not have a human-authored monograph, and AI-generated content is not shown here. See the government sources and PubMed (NIH) primary studies listed below for credible information. Always confirm with a healthcare provider before use."
+    "stubBody": "This herb does not have a human-authored monograph. The reference material on this page is labelled with how it was produced; see the government sources and PubMed (NIH) primary studies listed below for credible information. Always confirm with a healthcare provider before use."
   },
   "pubmedSheet": {
     "compiledTitle": "PubMed-compiled information sheet",
     "compiledBody": "This sheet was compiled from PubMed (NIH) abstracts using AI assistance. Every factual claim is cited to a real PubMed article (see the source list). It has not yet been human-reviewed — confirm with a healthcare provider before use.",
     "reviewedTitle": "Reviewed information sheet",
     "reviewedBody": "This sheet was compiled from PubMed (NIH) abstracts and has been human-reviewed. Every claim is cited to a real PubMed article (see the source list).",
+    "languageNote": "This compiled sheet is in English because the PubMed studies it cites are in English.",
     "compiledFrom": "Compiled from {count} PubMed articles",
     "summary": "Summary",
     "background": "Background",
@@ -1315,10 +1316,10 @@
     "evidenceSummary": "Evidence summary",
     "citations": "PubMed sources",
     "level": {
-      "A": "Evidence A",
-      "B": "Evidence B",
-      "C": "Evidence C",
-      "D": "Evidence D"
+      "A": "Study grade A",
+      "B": "Study grade B",
+      "C": "Study grade C",
+      "D": "Study grade D"
     }
   },
   "herbBadges": {
@@ -1664,7 +1665,7 @@
     "safeRange": "Safe range",
     "result": "Result",
     "disclaimer": "This reference calculator is for adults aged 18 and older. It provides estimates only and is not medical advice. Always consult a healthcare provider.",
-    "clampedWarning": "The calculated dose exceeded the adult reference dose and was capped at the adult dose. Please double-check the inputs (weight, age, height) — they may be implausible for this patient.",
+    "clampedWarning": "The calculated dose exceeded the adult reference dose and was capped at the adult dose. This is expected for adults above the 68 kg reference weight: the calculator never shows more than the adult reference dose.",
     "plausibilityWarning": "These inputs look unusual for a reference dose (age or weight outside the typical adult range). Please double-check them.",
     "clarkRule": "Clark's Rule",
     "youngsRule": "Young's Rule",

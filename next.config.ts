@@ -39,6 +39,10 @@ const nextConfig: NextConfig = {
   staticPageGenerationTimeout: 180,
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
+    // The root layout lives under app/[locale], so unmatched top-level URLs
+    // had no layout to render a 404 from. This flag enables
+    // src/app/global-not-found.tsx, which Next serves for exactly that case.
+    globalNotFound: true,
     serverActions: {
       // Exact origins only. The Quick Tunnel era allowed
       // "*.trycloudflare.com"; anyone can mint a free hostname there, so the
@@ -190,6 +194,39 @@ const nextConfig: NextConfig = {
       {
         source: "/:locale(en|fr)/pharmacist",
         destination: "/:locale/herbalist",
+        permanent: true,
+      },
+      // Guessable URLs that 404'd in the live audit. Each one has an obvious
+      // equivalent: /signup is the same form as /register, and /account and
+      // /saved are the two names people try for the profile and garden.
+      { source: "/signup", destination: "/register", permanent: true },
+      {
+        source: "/:locale(en|fr)/signup",
+        destination: "/:locale/register",
+        permanent: true,
+      },
+      { source: "/account", destination: "/profile", permanent: true },
+      {
+        source: "/:locale(en|fr)/account",
+        destination: "/:locale/profile",
+        permanent: true,
+      },
+      { source: "/saved", destination: "/garden", permanent: true },
+      {
+        source: "/:locale(en|fr)/saved",
+        destination: "/:locale/garden",
+        permanent: true,
+      },
+      { source: "/search", destination: "/herbs", permanent: true },
+      {
+        source: "/:locale(en|fr)/search",
+        destination: "/:locale/herbs",
+        permanent: true,
+      },
+      { source: "/herbs/categories", destination: "/herbs", permanent: true },
+      {
+        source: "/:locale(en|fr)/herbs/categories",
+        destination: "/:locale/herbs",
         permanent: true,
       },
       // Merged duplicate herbs. Each pair was reviewed (same species, same part

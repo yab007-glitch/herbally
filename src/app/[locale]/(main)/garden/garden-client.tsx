@@ -9,7 +9,6 @@ import {
   Trash2,
   Leaf,
   Stethoscope,
-  Heart,
   BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -203,7 +202,7 @@ export function GardenClient() {
               <Leaf className="size-4 mr-2" />
               {t("garden.exploreHerbs") || "Explore Herbs"}
             </Button>
-            <Button variant="outline" render={<Link href="/" />}>
+            <Button variant="outline" render={<Link href="/herbalist" />}>
               <Stethoscope className="size-4 mr-2" />
               {t("garden.askHerbalist") || "Ask Herbalist"}
             </Button>
@@ -231,11 +230,11 @@ export function GardenClient() {
           </div>
         </Link>
         <Link
-          href="/"
+          href="/herbalist"
           className="group flex items-center gap-4 rounded-2xl border bg-card/50 p-5 transition-all hover:shadow-md hover:bg-card"
         >
-          <div className="flex size-10 items-center justify-center rounded-xl bg-destructive/10 text-destructive transition-colors group-hover:bg-destructive group-hover:text-destructive-foreground">
-            <Heart className="size-5" />
+          <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+            <Stethoscope className="size-5" />
           </div>
           <div>
             <p className="font-medium text-foreground">

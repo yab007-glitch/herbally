@@ -1,5 +1,6 @@
 import { siteUrl } from "@/lib/seo/site-url";
 import { getReviewer } from "@/lib/data/reviewers";
+import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
 
 interface Herb {
   name: string;
@@ -102,7 +103,7 @@ export function HerbSchema({ herb, url }: HerbSchemaProps) {
     ...(herb.dosage_adult && {
       dosage: {
         "@type": "MedicalDoseSchedule",
-        doseValue: herb.dosage_adult,
+        doseValue: normalizeDosage(herb.dosage_adult),
         targetPopulation: "Adults",
       },
     }),

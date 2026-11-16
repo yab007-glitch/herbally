@@ -6,6 +6,7 @@ import {
   Pill,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { getLocale } from "@/lib/i18n/page-locale";
 
 /**
  * Renders a PubMed-compiled information sheet on a herb page (for herbs with
@@ -92,10 +93,19 @@ export async function PubmedMonographSheet({
   status,
 }: Props) {
   const t = await getTranslations("pubmedSheet");
+  const locale = await getLocale();
   const reviewed = status === "reviewed";
 
   return (
     <article className="space-y-6">
+      {/* The compiled sheet is English-only: the PubMed abstracts it cites
+          are English. Say so instead of switching language silently under
+          French headings. */}
+      {locale === "fr" && (
+        <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+          {t("languageNote")}
+        </p>
+      )}
       {/* Provenance line */}
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm dark:border-blue-800 dark:bg-blue-950/30">
         <div className="flex items-start gap-2">

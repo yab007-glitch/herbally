@@ -4,6 +4,7 @@ import {
   type NarrativeInput,
 } from "@/lib/herbs/narrative";
 import { herbPageCopy, type CopyLocale } from "@/lib/i18n/herb-page-copy";
+import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
 
 /**
  * The recorded facts, in sentences.
@@ -42,7 +43,9 @@ export function HerbNarrative({
       name: herb.name,
       traditionalUses: herb.traditional_uses,
       modernUses: herb.modern_uses,
-      dosageAdult: herb.dosage_adult,
+      dosageAdult: herb.dosage_adult
+        ? normalizeDosage(herb.dosage_adult)
+        : herb.dosage_adult,
       contraindications: herb.contraindications,
       sideEffects: herb.side_effects,
       pregnancySafe: herb.pregnancy_safe,

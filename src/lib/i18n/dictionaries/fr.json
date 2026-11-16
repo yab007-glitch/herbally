@@ -1294,13 +1294,14 @@
     "index": "index",
     "noMonographNotice": "Aucune monographie gouvernementale directe n'est disponible pour cette plante. Le contenu ci-dessous est généré par IA et n'a pas été vérifié par rapport à une source gouvernementale faisant autorité. Utilisez les liens de recherche pour consulter les sources officielles avant de vous fier à ces informations.",
     "stubTitle": "Aucune monographie rédigée par un humain pour cette plante",
-    "stubBody": "Cette plante ne dispose pas d'une monographie rédigée par un humain, et le contenu généré par IA n'est pas affiché ici. Consultez les sources gouvernementales et les études primaires PubMed (NIH) listées ci-dessous pour des informations fiables. Confirmez toujours auprès d'un professionnel de santé avant utilisation."
+    "stubBody": "Cette plante ne dispose pas d'une monographie rédigée par un humain. Le contenu de référence de cette page est étiqueté selon son mode de production ; consultez les sources gouvernementales et les études primaires PubMed (NIH) listées ci-dessous pour des informations fiables. Confirmez toujours auprès d'un professionnel de santé avant utilisation."
   },
   "pubmedSheet": {
     "compiledTitle": "Fiche d'information compilée à partir de PubMed",
     "compiledBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) avec l'assistance d'une IA. Chaque affirmation factuelle est citée par un article PubMed réel (voir la liste des sources). Elle n'a pas encore été révisée par un humain — confirmez auprès d'un professionnel de santé avant utilisation.",
     "reviewedTitle": "Fiche d'information révisée",
     "reviewedBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) et a été révisée par un humain. Chaque affirmation est citée par un article PubMed réel (voir la liste des sources).",
+    "languageNote": "Cette fiche compilée est en anglais parce que les études PubMed qu'elle cite sont en anglais ; l'interface autour reste en français.",
     "compiledFrom": "Compilé à partir de {count} articles PubMed",
     "summary": "Résumé",
     "background": "Contexte",
@@ -1315,10 +1316,10 @@
     "evidenceSummary": "Synthèse des preuves",
     "citations": "Sources PubMed",
     "level": {
-      "A": "Preuve A",
-      "B": "Preuve B",
-      "C": "Preuve C",
-      "D": "Preuve D"
+      "A": "Niveau d'étude A",
+      "B": "Niveau d'étude B",
+      "C": "Niveau d'étude C",
+      "D": "Niveau d'étude D"
     }
   },
   "herbBadges": {
@@ -1664,7 +1665,7 @@
     "safeRange": "Plage sûre",
     "result": "Résultat",
     "disclaimer": "Ce calculateur de référence est destiné aux adultes de 18 ans et plus. Il fournit des estimations uniquement et ne constitue pas un avis médical. Consultez toujours un professionnel de santé.",
-    "clampedWarning": "La dose calculée dépassait la dose de référence adulte et a été plafonnée à la dose adulte. Veuillez vérifier les données saisies (poids, âge, taille) — elles peuvent être irréalistes pour ce patient.",
+    "clampedWarning": "La dose calculée dépassait la dose de référence adulte et a été plafonnée à la dose adulte. C'est normal pour un adulte au-dessus du poids de référence de 68 kg : le calculateur n'affiche jamais plus que la dose de référence adulte.",
     "plausibilityWarning": "Ces valeurs semblent inhabituelles pour une dose de référence (âge ou poids hors des plages adultes typiques). Veuillez les vérifier.",
     "clarkRule": "Règle de Clark",
     "youngsRule": "Règle de Young",

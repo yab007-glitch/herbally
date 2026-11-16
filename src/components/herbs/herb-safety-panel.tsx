@@ -18,6 +18,7 @@ import {
   InteractionAlert,
 } from "@/components/herbs/safety-alert";
 import { useTranslations } from "next-intl";
+import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 
 interface HerbSafetyPanelProps {
   herb: {
@@ -119,7 +120,7 @@ export function HerbSafetyPanel({
                     className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
                     <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-destructive" />
-                    {c}
+                    {cleanQuotedText(c)}
                   </li>
                 ))}
               </ul>
@@ -137,7 +138,7 @@ export function HerbSafetyPanel({
                     className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
                     <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-warning" />
-                    {s}
+                    {cleanQuotedText(s)}
                   </li>
                 ))}
               </ul>

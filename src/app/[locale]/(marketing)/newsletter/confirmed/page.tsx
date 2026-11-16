@@ -1,4 +1,5 @@
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
+import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +68,13 @@ export default async function NewsletterConfirmedPage({
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         {copy.body}
       </p>
+      {/* The invalid/error copy tells people to "enter your address again"
+          and then offered no field to do it in: a dead end. Show the form. */}
+      {(key === "invalid" || key === "error") && (
+        <div className="mt-8">
+          <NewsletterSignup locale={locale} />
+        </div>
+      )}
       <p className="mt-8 text-sm">
         <Link
           href="/herbs"

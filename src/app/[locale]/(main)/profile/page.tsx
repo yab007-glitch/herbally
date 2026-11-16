@@ -3,6 +3,7 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileClient } from "./profile-client";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 
 export const generateMetadata = async () => {
   const meta = await buildPageMetadata({
@@ -34,6 +35,22 @@ export default async function ProfilePage() {
         <p className="mt-2 text-muted-foreground">
           {t("profile.signInForProfile")}
         </p>
+        {/* The wall had no way through it: the page told people to sign in and
+            then offered no link. */}
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link
+            href="/login"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            {t("auth.login.submit")}
+          </Link>
+          <Link
+            href="/register"
+            className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-muted"
+          >
+            {t("auth.register.submit")}
+          </Link>
+        </div>
       </div>
     );
   }
