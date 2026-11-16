@@ -53,12 +53,12 @@ export function localizeHerb<T extends Herb>(herb: T, locale: string): T {
   const localized = localizeHerbCategory(herb, locale);
   const t = fr<HerbFr>(herb.translations);
   if (!t) return localized;
+  const record = t as unknown as Record<string, unknown>;
+  const commonNames = toStringArray(frField(record, "common_names"));
   return {
     ...localized,
     name: t.name || herb.name,
-    common_names: toStringArray(t.common_names)?.length
-      ? (toStringArray(t.common_names) as string[])
-      : herb.common_names,
+    common_names: commonNames?.length ? commonNames : herb.common_names,
     description: t.description || herb.description,
     traditional_uses:
       toStringArray(t.traditional_uses) ?? herb.traditional_uses,
@@ -68,8 +68,40 @@ export function localizeHerb<T extends Herb>(herb: T, locale: string): T {
     preparation_notes: t.preparation_notes || herb.preparation_notes,
     contraindications:
       toStringArray(t.contraindications) ?? herb.contraindications,
-    side_effects: toStringArray(t.side_effects) ?? herb.side_effects,
+    side_effects:
+      toStringArray(frField(record, "side_effects")) ?? herb.side_effects,
   };
+}
+
+/**
+ * Read a French translation field, tolerating the ad-hoc key spellings left by
+ * earlier translation passes.
+ *
+ * Several rows carry a field under a translated key instead of the canonical
+ * one — "effets_secondaires" (64 rows) or "noms_communs" (44 rows) rather than
+ * "side_effects" / "common_names". The canonical key always wins; an alias is
+ * read only when it is missing, so those French pages stop falling back to the
+ * English text that already exists in French under another key.
+ */
+const FR_FIELD_ALIASES: Record<string, string[]> = {
+  common_names: ["noms_communs", "nom_commun", "nom_courant", "noms_courants"],
+  side_effects: [
+    "effets_secondaires",
+    "effets_indésirables",
+    "effet_secondaires",
+    "effets secondaires",
+    "effets indésirables",
+  ],
+};
+
+function frField(record: Record<string, unknown>, key: string): unknown {
+  const direct = record[key];
+  if (direct !== undefined && direct !== null && direct !== "") return direct;
+  for (const alias of FR_FIELD_ALIASES[key] ?? []) {
+    const value = record[alias];
+    if (value !== undefined && value !== null && value !== "") return value;
+  }
+  return direct;
 }
 
 /** Overlay French translation onto a drug interaction. */

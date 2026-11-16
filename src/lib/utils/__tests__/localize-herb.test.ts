@@ -87,6 +87,52 @@ describe("localizeHerb", () => {
     expect(result.name).toBe("Ginger");
   });
 
+  // Several earlier translation passes wrote a field under a French key
+  // instead of the canonical one ("effets_secondaires" on 64 rows,
+  // "noms_communs" on 44). Without the alias those French pages fell back to
+  // the English text even though a French value existed.
+  describe("alias keys for ad-hoc French translation fields", () => {
+    it("reads side effects from effets_secondaires when side_effects is absent", () => {
+      const herb = {
+        ...baseHerb,
+        translations: {
+          fr: {
+            name: "Gingembre",
+            effets_secondaires: ["brûlures d'estomac"],
+          },
+        },
+      } as unknown as Herb;
+      const result = localizeHerb(herb, "fr");
+      expect(result.side_effects).toEqual(["brûlures d'estomac"]);
+    });
+
+    it("reads common names from noms_communs when common_names is absent", () => {
+      const herb = {
+        ...baseHerb,
+        translations: {
+          fr: { name: "Gingembre", noms_communs: ["Racine de gingembre"] },
+        },
+      } as unknown as Herb;
+      const result = localizeHerb(herb, "fr");
+      expect(result.common_names).toEqual(["Racine de gingembre"]);
+    });
+
+    it("prefers the canonical key over an alias when both exist", () => {
+      const herb = {
+        ...baseHerb,
+        translations: {
+          fr: {
+            name: "Gingembre",
+            side_effects: ["canonique"],
+            effets_secondaires: ["alias"],
+          },
+        },
+      } as unknown as Herb;
+      const result = localizeHerb(herb, "fr");
+      expect(result.side_effects).toEqual(["canonique"]);
+    });
+  });
+
   // Regression: HERBALLY-9 / -A / -7. The translation pipeline emitted bare
   // strings for array fields (21 entries across 14 herbs). A string passes a
   // `.length > 0` check but has no `.join`, so herb-schema.tsx threw

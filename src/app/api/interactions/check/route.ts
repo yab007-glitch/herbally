@@ -3,6 +3,7 @@ import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getHerbPairs } from "@/lib/interactions/pairs";
 import { matchInteractionPair } from "@/lib/interactions/check";
 import { pairPath } from "@/lib/interactions/pair-url";
+import { rankHerbMatches } from "@/lib/interactions/rank-herb-match";
 import { escapeForIlike } from "@/lib/utils/ilike";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
@@ -35,17 +36,7 @@ async function resolveHerb(term: string): Promise<HerbCandidate | null> {
     .or(`name.ilike.%${safe}%,scientific_name.ilike.%${safe}%`)
     .limit(20);
   if (error || !data || data.length === 0) return null;
-  const rows = data as HerbCandidate[];
-  const lower = term.trim().toLowerCase();
-  return (
-    rows.find(
-      (r) =>
-        r.name.toLowerCase() === lower ||
-        r.scientific_name.toLowerCase() === lower
-    ) ??
-    rows.find((r) => r.name.toLowerCase().startsWith(lower)) ??
-    rows[0]
-  );
+  return rankHerbMatches(data as HerbCandidate[], term) ?? null;
 }
 
 /**

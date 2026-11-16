@@ -123,6 +123,24 @@ describe("stripFieldLabels", () => {
     ).toBe("Ne pas utiliser pendant la grossesse. Consulter un praticien.");
   });
 
+  it("removes the Health Canada French 'Précautions et mises en garde' label", () => {
+    expect(
+      stripFieldLabels(
+        "Précautions et mises en garde : Consulter un praticien de la santé si les symptômes persistent. Précautions et mises en garde : Consulter un praticien avant l'usage si vous êtes enceinte."
+      )
+    ).toBe(
+      "Consulter un praticien de la santé si les symptômes persistent. Consulter un praticien avant l'usage si vous êtes enceinte."
+    );
+  });
+
+  it("removes the same label from FAQ answers", () => {
+    expect(
+      cleanFaqText(
+        "Précautions et mises en garde : Consulter un praticien si les symptômes persistent."
+      )
+    ).toBe("Consulter un praticien si les symptômes persistent.");
+  });
+
   it("keeps a label that sits inside a clause", () => {
     const text = "Ask your practitioner about the Risk Information: section.";
     expect(stripFieldLabels(text)).toBe(text);

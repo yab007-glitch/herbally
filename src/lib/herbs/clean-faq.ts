@@ -28,6 +28,10 @@ const FIELD_LABEL = [
   "Risk Information",
   // French
   "Contre-indications?",
+  // "Précautions et mises en garde :" is the label Health Canada's French
+  // monographs use; it is the mirror of "Cautions and Warnings" and was the
+  // one French label both lists missed (cassia-acutifolia, saraca-indica).
+  "Précautions? et mises? en garde(?: et (?:précautions|avertissements))?",
   "Mises? en garde(?: et (?:précautions|avertissements))?",
   "Réactions? indésirables(?: connues?)?",
   "Effets? indésirables(?: connus?)?",
@@ -73,6 +77,10 @@ const SAFETY_LABEL = [
   "Risk Information",
   // French
   "Contre-indications?",
+  // "Précautions et mises en garde :" is the label Health Canada's French
+  // monographs use; it is the mirror of "Cautions and Warnings" and was the
+  // one French label both lists missed (cassia-acutifolia, saraca-indica).
+  "Précautions? et mises? en garde(?: et (?:précautions|avertissements))?",
   "Mises? en garde(?: et (?:précautions|avertissements))?",
   "Réactions? indésirables(?: connues?)?",
   "Effets? indésirables(?: connus?)?",
