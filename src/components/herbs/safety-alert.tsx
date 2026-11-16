@@ -149,8 +149,9 @@ export function InteractionAlert({
 
 // Component for pregnancy/nursing warnings
 interface PregnancyAlertProps {
-  pregnancySafe: boolean;
-  nursingSafe: boolean;
+  /** `null` means the sources do not establish safety — not "unsafe". */
+  pregnancySafe: boolean | null;
+  nursingSafe: boolean | null;
   evidenceLevel?: "strong" | "limited" | "insufficient";
   className?: string;
 }
@@ -163,7 +164,17 @@ export function PregnancyAlert({
 }: PregnancyAlertProps) {
   const t = useTranslations();
 
-  if (pregnancySafe && nursingSafe) {
+  // A null field used to be coerced to `false` by the caller, so the 3,095
+  // herbs whose pregnancy status was never established were labelled "not
+  // recommended during pregnancy" — a claim the sources do not make, and one
+  // that contradicted the "status unknown" badge elsewhere on the same page
+  // (live QA, 2026-11-15). Unknown is now its own state.
+  const unknownPregnancy = pregnancySafe === null;
+  const unknownNursing = nursingSafe === null;
+  const unsafePregnancy = pregnancySafe === false;
+  const unsafeNursing = nursingSafe === false;
+
+  if (pregnancySafe === true && nursingSafe === true) {
     return (
       <SafetyAlert
         severity="info"
@@ -175,15 +186,34 @@ export function PregnancyAlert({
     );
   }
 
+  if (unsafePregnancy || unsafeNursing) {
+    return (
+      <SafetyAlert
+        severity="critical"
+        title={`⚠️ ${t("safety.notSafeTitle")}`}
+        className={className}
+      >
+        <div className="space-y-2">
+          {unsafePregnancy && <p>{t("safety.notPregnancyMsg")}</p>}
+          {unsafeNursing && <p>{t("safety.notNursingMsg")}</p>}
+          {unknownPregnancy && <p>{t("safety.pregnancyUnknownMsg")}</p>}
+          {unknownNursing && <p>{t("safety.nursingUnknownMsg")}</p>}
+          <p className="font-medium">{t("safety.consultProvider")}</p>
+        </div>
+      </SafetyAlert>
+    );
+  }
+
+  // Nothing is flagged unsafe, but at least one status is unestablished.
   return (
     <SafetyAlert
-      severity="critical"
-      title={`⚠️ ${t("safety.notSafeTitle")}`}
+      severity="info"
+      title={t("safety.pregnancySafetyTitle")}
       className={className}
     >
       <div className="space-y-2">
-        {!pregnancySafe && <p>{t("safety.notPregnancyMsg")}</p>}
-        {!nursingSafe && <p>{t("safety.notNursingMsg")}</p>}
+        {unknownPregnancy && <p>{t("safety.pregnancyUnknownMsg")}</p>}
+        {unknownNursing && <p>{t("safety.nursingUnknownMsg")}</p>}
         <p className="font-medium">{t("safety.consultProvider")}</p>
       </div>
     </SafetyAlert>

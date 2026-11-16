@@ -38,6 +38,13 @@ Last observed console state was “Getting ready”. Ads must not be enabled on 
 unapproved account. Action: confirm approval in the AdSense console and record
 the date and the approving account.
 
+2026-11-15: the site had no ownership signal at all, which stalls the review.
+`src/app/[locale]/layout.tsx` now emits
+`<meta name="google-adsense-account" content="ca-pub-1901058826905247">` on every
+page. This is a verification tag only — it loads no script, makes no request
+and shows no ad, so the launch gate stays off and this item stays OPEN until
+the console reports approval.
+
 ### 2.2 ads.txt — **VERIFIED (file), re-verify after approval**
 
 `public/ads.txt` contains

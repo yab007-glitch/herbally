@@ -74,6 +74,10 @@ const FORMULA_DESC_MAP: Record<FormulaKey, string> = {
 
 export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   const t = useTranslations();
+  // mg / g / ml are symbols and read the same in both languages; "drops" is
+  // an English word and was left untranslated on /fr/calculator.
+  const unitLabel = (u: string) =>
+    u === "drops" ? t("calculatorForm.drops") : u;
   const [herbName, setHerbName] = useState(prefill?.herbName ?? "");
   const [adultDose, setAdultDose] = useState(prefill?.adultDose ?? "");
   const [doseUnit, setDoseUnit] = useState<(typeof unitOptions)[number]>(
@@ -238,13 +242,12 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   // age to `> 18`, so every adult — and a perfectly ordinary 50 kg one —
   // triggered "these inputs look unusual" (live QA finding). Age is already
   // gated to 18–120 by assessDoseEligibility before a result is shown, so the
-  // note is in practice about weight; 300 kg is the upper bound a reference
-  // adult dose should ever be scaled against.
+  // note is in practice about weight. The threshold is 250 kg, the point past
+  // which no adult reference dose should be scaled, and the note must survive
+  // clamping: a 300 kg entry was accepted in silence precisely because the
+  // dose had been capped.
   const showPlausibilityNote =
-    !!result &&
-    !result.clamped &&
-    Number.isFinite(parsedWeightKg) &&
-    parsedWeightKg > 300;
+    !!result && Number.isFinite(parsedWeightKg) && parsedWeightKg > 250;
 
   // Explain a cap only when it materially changed the number. Clark's Rule at
   // 70 kg is 2.9 % above the 68 kg adult reference, so every ordinary adult
@@ -353,7 +356,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     {t(
                       `calculatorForm.range${key === "low" ? "Low" : key === "middle" ? "Middle" : "High"}`
                     )}{" "}
-                    {value} {prefill.dosageRange!.unit}
+                    {value} {unitLabel(prefill.dosageRange!.unit)}
                   </Button>
                 ))}
               </div>
@@ -391,6 +394,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
           <div className="space-y-2">
             <Label htmlFor="herb-name">{t("calculatorForm.herbName")}</Label>
             <Input
+              className="h-11"
               id="herb-name"
               placeholder={t("calculatorForm.herbNamePlaceholder")}
               value={herbName}
@@ -405,6 +409,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 {t("calculatorForm.adultDose")}
               </Label>
               <Input
+                className="h-11"
                 id="adult-dose"
                 type="number"
                 min="0"
@@ -429,13 +434,13 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     aria-checked={doseUnit === unit}
                     onClick={() => setDoseUnit(unit)}
                     className={cn(
-                      "rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                      "min-h-11 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
                       doseUnit === unit
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-background text-muted-foreground hover:bg-muted"
                     )}
                   >
-                    {unit}
+                    {unitLabel(unit)}
                   </button>
                 ))}
               </div>
@@ -469,6 +474,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </div>
             </div>
             <Input
+              className="h-11"
               id="patient-age"
               type="number"
               min="0"
@@ -500,6 +506,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </div>
             </div>
             <Input
+              className="h-11"
               id="patient-weight"
               type="number"
               min="0"
@@ -520,6 +527,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </span>
             </Label>
             <Input
+              className="h-11"
               id="patient-height"
               type="number"
               min="0"
@@ -638,7 +646,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       and read as "0 mg" (live QA finding). It is not zero. */}
                   {result.dose > 0 && result.dose < 0.1 ? "<0.1" : result.dose}
                   <span className="ml-1 text-lg font-normal text-muted-foreground">
-                    {result.unit}
+                    {unitLabel(result.unit)}
                   </span>
                 </div>
                 {herbName && (
@@ -681,7 +689,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                           {t("calculatorForm.adultDose")}
                         </span>
                         <span className="font-medium">
-                          {adultDose} {doseUnit}
+                          {adultDose} {unitLabel(doseUnit)}
                         </span>
                       </div>
                       <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
@@ -697,7 +705,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                           {t("calculatorForm.calculatedDose")}
                         </span>
                         <span className="font-medium text-primary">
-                          {result.dose} {result.unit}
+                          {result.dose > 0 && result.dose < 0.1
+                            ? "<0.1"
+                            : result.dose}{" "}
+                          {unitLabel(result.unit)}
                         </span>
                       </div>
                       <div className="h-3 w-full overflow-hidden rounded-full bg-muted">

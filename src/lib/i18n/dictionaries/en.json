@@ -1248,6 +1248,8 @@
     "notSafeTitle": "Not Recommended During Pregnancy or Nursing",
     "notPregnancyMsg": "This herb is NOT recommended during pregnancy due to potential risks to the developing fetus.",
     "notNursingMsg": "This herb is NOT recommended while breastfeeding as effects on infants are unknown.",
+    "pregnancyUnknownMsg": "Safety in pregnancy is not established in the sources reviewed here.",
+    "nursingUnknownMsg": "Safety while breastfeeding is not established in the sources reviewed here.",
     "consultProvider": "Consult your healthcare provider before use.",
     "severityContraindicated": "Contraindicated",
     "severitySevere": "Severe",

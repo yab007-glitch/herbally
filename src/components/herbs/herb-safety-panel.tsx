@@ -1,5 +1,5 @@
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
-import { AlertTriangle, ShieldCheck, ShieldX } from "lucide-react";
+import { AlertTriangle, CircleHelp, ShieldCheck, ShieldX } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -54,10 +54,10 @@ export function HerbSafetyPanel({
   return (
     <div className="space-y-6">
       {/* Pregnancy Alert */}
-      {(!herb.pregnancy_safe || !herb.nursing_safe) && (
+      {(herb.pregnancy_safe !== true || herb.nursing_safe !== true) && (
         <PregnancyAlert
-          pregnancySafe={herb.pregnancy_safe ?? false}
-          nursingSafe={herb.nursing_safe ?? false}
+          pregnancySafe={herb.pregnancy_safe}
+          nursingSafe={herb.nursing_safe}
           evidenceLevel="limited"
         />
       )}
@@ -84,27 +84,35 @@ export function HerbSafetyPanel({
         <CardContent className="space-y-5">
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
-              {herb.pregnancy_safe ? (
+              {herb.pregnancy_safe === true ? (
                 <ShieldCheck className="size-5 text-success" />
-              ) : (
+              ) : herb.pregnancy_safe === false ? (
                 <ShieldX className="size-5 text-destructive" />
+              ) : (
+                <CircleHelp className="size-5 text-muted-foreground" />
               )}
               <span className="text-sm">
-                {herb.pregnancy_safe
+                {herb.pregnancy_safe === true
                   ? t("herbDetail.safePregnancy")
-                  : t("herbDetail.notSafePregnancy")}
+                  : herb.pregnancy_safe === false
+                    ? t("herbDetail.notSafePregnancy")
+                    : t("safetyGlance.unknown")}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              {herb.nursing_safe ? (
+              {herb.nursing_safe === true ? (
                 <ShieldCheck className="size-5 text-success" />
-              ) : (
+              ) : herb.nursing_safe === false ? (
                 <ShieldX className="size-5 text-destructive" />
+              ) : (
+                <CircleHelp className="size-5 text-muted-foreground" />
               )}
               <span className="text-sm">
-                {herb.nursing_safe
+                {herb.nursing_safe === true
                   ? t("herbDetail.safeNursing")
-                  : t("herbDetail.notSafeNursing")}
+                  : herb.nursing_safe === false
+                    ? t("herbDetail.notSafeNursing")
+                    : t("safetyGlance.unknown")}
               </span>
             </div>
           </div>
