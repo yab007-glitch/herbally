@@ -48,12 +48,21 @@ jobs:
           set -euo pipefail
           # deploy/ is excluded on purpose: it holds production secrets and
           # stack config that must not be overwritten by a code push.
-          rsync -a \
+          #
+          # --delete matters: without it, a source file deleted in the repo
+          # stays in /srv/herbally and is rebuilt into every image. That is
+          # how the removed [locale]/[...rest] catch-all survived a deploy
+          # and kept the 404 page broken. Excluded paths (deploy/, backups/,
+          # artifacts/, .git, node_modules, .next) are protected from
+          # deletion as well, so the secrets and the local-only harvest
+          # caches are safe.
+          rsync -a --delete \
             --exclude .git \
             --exclude deploy/ \
             --exclude node_modules \
             --exclude .next \
             --exclude backups/ \
+            --exclude artifacts/ \
             "$GITHUB_WORKSPACE/" /srv/herbally/
 
       - name: Build image
