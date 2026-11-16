@@ -176,9 +176,16 @@ export function HerbHeroV2({
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
               {herb.name}
             </h1>
-            <p className="mt-1 text-sm italic text-muted-foreground">
-              {herb.scientific_name}
-            </p>
+            {/* Half the library is catalogued under its botanical name, so
+                this line can repeat the H1 verbatim ("Abies nigra" / "Abies
+                nigra"). Print it only when it adds something — same guard as
+                the herb card. */}
+            {herb.scientific_name?.trim().toLowerCase() !==
+              herb.name.trim().toLowerCase() && (
+              <p className="mt-1 text-sm italic text-muted-foreground">
+                {herb.scientific_name}
+              </p>
+            )}
             {/* Provenance sits on its own line, below the name.
                 It used to share a row with the evidence grade, which put a
                 green "Evidence A · Multiple RCTs" pill next to an amber "Not
