@@ -45,6 +45,10 @@ page. This is a verification tag only — it loads no script, makes no request
 and shows no ad, so the launch gate stays off and this item stays OPEN until
 the console reports approval.
 
+Verified live on 2026-11-15 (deploy `3b72875`): the tag is present in the
+server HTML of `/fr` and the herb pages. The console still reads "Getting
+ready"; nothing further can be done from this side.
+
 ### 2.2 ads.txt — **VERIFIED (file), re-verify after approval**
 
 `public/ads.txt` contains
