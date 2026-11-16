@@ -23,6 +23,7 @@ import {
 } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { siteUrl } from "@/lib/seo/site-url";
+import { pairTitle } from "@/lib/seo/pair-title";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -253,23 +254,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   // 105 of the 174 pair pages ran past 60 characters with the old fixed
-  // suffix, so Google cut the part that identifies the pair. Keep the herb and
-  // drug names, shorten the suffix until the title fits.
-  const TITLE_MAX = 60;
-  const titleCandidates = fr
-    ? [
-        `${pair.herbName} et ${pair.drugName} : interaction, gravité et conseils`,
-        `${pair.herbName} et ${pair.drugName} : interaction`,
-        `${pair.herbName} et ${pair.drugName}`,
-      ]
-    : [
-        `${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`,
-        `${pair.herbName} & ${pair.drugName}: Interaction & Safety`,
-        `${pair.herbName} & ${pair.drugName} Interaction`,
-      ];
-  const title =
-    titleCandidates.find((candidate) => candidate.length <= TITLE_MAX) ??
-    titleCandidates[titleCandidates.length - 1];
+  // suffix, so Google cut the part that identifies the pair. The budget lives
+  // in src/lib/seo/pair-title.ts and accounts for the " | HerbAlly" template
+  // that the rendered <title> carries.
+  const title = pairTitle(pair.herbName, pair.drugName, fr);
   // 133 of 174 pairs carry no citation; the old description promised sources
   // on every one of them while the body said "no primary citation recorded".
   const hasCitation = Boolean(pair.source || pair.sourceUrl);
