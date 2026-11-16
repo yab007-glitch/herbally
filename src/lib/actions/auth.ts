@@ -95,6 +95,17 @@ export async function register(formData: FormData): Promise<ActionResponse> {
   });
 
   if (error) {
+    // GoTrue says "Email already registered" / "User already registered" in
+    // some configurations. Echoing that confirms whether an address has an
+    // account (M-1 in the 2026-11-15 audit), so answer like a fresh sign-up
+    // and let the owner recover through the reset mail instead.
+    const msg = error.message.toLowerCase();
+    if (msg.includes("already registered") || msg.includes("already exists")) {
+      await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/reset-password`,
+      });
+      return { success: true };
+    }
     return { success: false, error: error.message };
   }
 
@@ -137,14 +148,15 @@ export async function register(formData: FormData): Promise<ActionResponse> {
       ) {
         return { success: true };
       }
-      // Any other sign-in error (invalid credentials, etc.) means the email
-      // already exists with a different password — tell them to log in.
-      const locale = await getLocaleFromRequest();
-      const t = await getTranslations({ locale, namespace: "auth.register" });
-      return {
-        success: false,
-        error: t("accountExists"),
-      };
+      // Any other sign-in error means the address is already registered
+      // with a different password. Saying so would make this form an
+      // account-existence oracle (M-1), so answer exactly like a new sign-up
+      // and send a password-reset mail: the real owner can get back in, and an
+      // attacker learns nothing from the response.
+      await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/reset-password`,
+      });
+      return { success: true };
     }
   }
 

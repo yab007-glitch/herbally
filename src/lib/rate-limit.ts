@@ -27,6 +27,11 @@ const requestLog = new Map<string, number[]>();
 const CLEANUP_INTERVAL = 60_000;
 let lastCleanup = Date.now();
 
+// One warning per process. This used to print on every rate-limited call in
+// production (357 lines in a five-minute stress window), which drowned any real
+// error in the logs. The condition is a deployment fact, not a per-request one.
+let memoryBackendWarned = false;
+
 function cleanup(windowMs: number) {
   const now = Date.now();
   if (now - lastCleanup < CLEANUP_INTERVAL) return;
@@ -146,9 +151,16 @@ export async function rateLimit(
     return upstashRateLimit(key, limit, windowMs);
   }
 
-  // In production, warn that memory rate limiting doesn't scale
-  if (process.env.NODE_ENV === "production" && backend === "memory") {
-    logger.error("rate_limit_memory_in_production", {
+  // In production, warn once that memory rate limiting doesn't scale. HerbAlly
+  // runs a single app container, so this is expected — it must not be an error
+  // on every request.
+  if (
+    process.env.NODE_ENV === "production" &&
+    backend === "memory" &&
+    !memoryBackendWarned
+  ) {
+    memoryBackendWarned = true;
+    logger.warn("rate_limit_memory_in_production", {
       message:
         "Memory rate limiter is active in production. Deployments with multiple instances will not share rate limit state. Set RATE_LIMIT_BACKEND=upstash with UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.",
     });

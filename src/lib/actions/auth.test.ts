@@ -37,6 +37,14 @@ vi.mock("@/lib/i18n/server-locale", () => ({
   getLocaleFromRequest: async () => "en",
 }));
 
+// The in-memory limiter is per-process and shared by every register() call in
+// this file, so a suite that grows past five cases would start testing the
+// limiter instead of the action. Allow everything here.
+vi.mock("@/lib/rate-limit", () => ({
+  rateLimit: async () => ({ success: true, remaining: 99 }),
+  rateLimitKey: (route: string, ip: string) => `${route}:${ip}`,
+}));
+
 vi.mock("next-intl/server", () => ({
   getTranslations: async () => (key: string) => key,
 }));
@@ -134,7 +142,7 @@ describe("auth actions", () => {
       expect(redirectMock).toHaveBeenCalledWith("/?welcome=login");
     });
 
-    it("returns accountExists error when email exists with wrong password", async () => {
+    it("answers a duplicate email like a new sign-up and sends a reset mail", async () => {
       signUpMock.mockResolvedValueOnce({
         data: { session: null, user: { id: "u1" } },
         error: null,
@@ -144,27 +152,50 @@ describe("auth actions", () => {
         data: { session: null, user: null },
         error: { message: "Invalid login credentials" },
       });
+      resetPasswordMock.mockResolvedValueOnce({ error: null });
       const formData = new FormData();
       formData.set("email", "existing@example.com");
       formData.set("password", "wrongpass");
       formData.set("full_name", "Jane Doe");
 
+      // The response must be indistinguishable from a fresh sign-up — no
+      // "account exists" hint (M-1: account-existence oracle).
       const result = await register(formData);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
+      expect(resetPasswordMock).toHaveBeenCalledWith("existing@example.com", {
+        redirectTo: "https://herbally.app/auth/callback?next=/reset-password",
+      });
     });
 
-    it("returns error when registration fails", async () => {
+    it("answers GoTrue's duplicate-email error the same way", async () => {
       signUpMock.mockResolvedValueOnce({
         error: { message: "Email already registered" },
       });
+      resetPasswordMock.mockResolvedValueOnce({ error: null });
       const formData = new FormData();
       formData.set("email", "taken@example.com");
       formData.set("password", "x");
       formData.set("full_name", "X");
 
       const result = await register(formData);
+      expect(result.success).toBe(true);
+      expect(resetPasswordMock).toHaveBeenCalled();
+    });
+
+    it("returns error when registration fails", async () => {
+      signUpMock.mockResolvedValueOnce({
+        error: { message: "Password should be at least 12 characters" },
+      });
+      const formData = new FormData();
+      formData.set("email", "new@example.com");
+      formData.set("password", "x");
+      formData.set("full_name", "X");
+
+      const result = await register(formData);
       expect(result.success).toBe(false);
-      expect(!result.success && result.error).toBe("Email already registered");
+      expect(!result.success && result.error).toBe(
+        "Password should be at least 12 characters"
+      );
     });
   });
 
