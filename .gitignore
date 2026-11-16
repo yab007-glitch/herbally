@@ -109,3 +109,4 @@ artifacts/fr-content-review-*.csv
 artifacts/gbif-name-cache.json
 artifacts/pd-herbals-preview-*.json
 artifacts/thin-rewrite*.jsonl
+artifacts/field-backfill-proposals.jsonl
