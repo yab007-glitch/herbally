@@ -36,10 +36,19 @@ export function AuthorByline({
           updated: "Last updated",
         };
 
+  // Format in the site's home timezone, not the server's. The server runs in
+  // UTC, so an update saved at 21:00 in Montreal (01:00 UTC the next day)
+  // rendered "Last updated: November 16" on November 15 — a future date on
+  // hundreds of pages, which reads as fabricated.
   const date = lastReviewed
     ? new Date(lastReviewed).toLocaleDateString(
         locale === "fr" ? "fr-CA" : "en-CA",
-        { year: "numeric", month: "long", day: "numeric" }
+        {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "America/Toronto",
+        }
       )
     : null;
 

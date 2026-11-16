@@ -267,12 +267,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : `Can you take ${pair.herbName} (${pair.herbScientificName}) with ${pair.drugName}? ${severityLabel(pair.severity, false)} interaction — mechanism, evidence and what to do${hasCitation ? ", with sources." : "."}`
   ).slice(0, 158);
   const path = `/interactions/${pair.herbSlug}/${pair.drugSlug}`;
+  const canonicalUrl = fr ? `${baseUrl}/fr${path}` : `${baseUrl}${path}`;
 
   return {
     title,
     description,
     alternates: {
-      canonical: fr ? `${baseUrl}/fr${path}` : `${baseUrl}${path}`,
+      canonical: canonicalUrl,
       languages: {
         en: `${baseUrl}${path}`,
         fr: `${baseUrl}/fr${path}`,
@@ -282,7 +283,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: `${baseUrl}${path}`,
+      // The French page used to share with the English URL here.
+      url: canonicalUrl,
       type: "article",
       // Restated because a child openGraph object replaces the root one.
       images: [

@@ -102,7 +102,7 @@ export default async function OgImage() {
         }}
       >
         {[
-          { label: "2,700+", sublabel: "Herbs" },
+          { label: "3,200+", sublabel: "Herbs" },
           { label: "Free", sublabel: "Forever" },
           { label: "AI", sublabel: "Herbalist" },
         ].map((stat) => (

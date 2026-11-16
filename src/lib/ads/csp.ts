@@ -37,8 +37,11 @@ export function buildContentSecurityPolicy(options: {
   const apiSuffix = apiOrigin ? ` ${apiOrigin}` : "";
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${options.dev ? " 'unsafe-eval'" : ""} blob: *.stripe.com${adsSuffix}`,
-    `connect-src 'self'${apiSuffix} *.supabase.co *.stripe.com${adsSuffix}`,
+    // Cloudflare Web Analytics is injected by the Cloudflare zone in front of
+    // the origin. Without these two hosts every page logged a CSP violation
+    // and the beacon never reported, so the analytics dashboard stayed empty.
+    `script-src 'self' 'unsafe-inline'${options.dev ? " 'unsafe-eval'" : ""} blob: *.stripe.com https://static.cloudflareinsights.com${adsSuffix}`,
+    `connect-src 'self'${apiSuffix} *.supabase.co *.stripe.com https://cloudflareinsights.com${adsSuffix}`,
     // Scope img-src to the only remote image hosts actually used: Supabase
     // Storage plus the ad creative hosts when (and only when) ads are on.
     `img-src 'self' data: blob: https://*.supabase.co https://*.googleusercontent.com${adsSuffix}`,

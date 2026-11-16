@@ -215,7 +215,7 @@ export default async function CompareHubPage() {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
           <Leaf className="size-3.5" />
-          {fr ? "Parcourir les 2 700 plantes" : "Browse all 2,700 herbs"}
+          {fr ? "Parcourir les 2 700 plantes" : "Browse all 3,200 herbs"}
         </Link>
       </div>
     </div>

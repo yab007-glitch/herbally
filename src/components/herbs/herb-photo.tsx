@@ -45,6 +45,11 @@ export function HerbPhoto({
   // strip the trailing pair or the line reads "Public domain · Public domain".
   const artist = (credit || "")
     .replace(/\s+—\s+(CC[^—]*|Public domain|GFDL[^—]*)$/i, "")
+    // Some stored credits arrived double-escaped ("Forest &amp; Kim Starr"),
+    // so the caption literally printed "&amp;". Decode before rendering.
+    .replace(/&amp;/g, "&")
+    .replace(/&#0?39;/g, "'")
+    .replace(/&quot;/g, '"')
     .trim();
   const remotePhoto: HerbPhotoCredit | null =
     imageUrl && !failedSrcs.includes(imageUrl)

@@ -47,7 +47,6 @@ interface Props {
   content: SheetContent;
   citations: Citation[];
   articleCount: number;
-  model: string | null;
   status: string | null;
 }
 
@@ -90,7 +89,6 @@ export async function PubmedMonographSheet({
   content,
   citations,
   articleCount,
-  model,
   status,
 }: Props) {
   const t = await getTranslations("pubmedSheet");
@@ -112,8 +110,12 @@ export async function PubmedMonographSheet({
             <p className="text-blue-800 dark:text-blue-200">
               {reviewed ? t("reviewedBody") : t("compiledBody")}
             </p>
+            {/* The build model name is an internal detail: printing it told
+                every visitor which LLM wrote the draft, which reads as
+                unfinished and says nothing about the evidence. The article
+                count is the part that matters. */}
             <p className="text-xs text-blue-700 dark:text-blue-300">
-              {t("compiledFrom", { count: articleCount, model: model ?? "AI" })}
+              {t("compiledFrom", { count: articleCount })}
             </p>
           </div>
         </div>

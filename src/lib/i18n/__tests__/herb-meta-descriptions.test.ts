@@ -28,7 +28,6 @@ function fill(template: string, vars: Record<string, string>): string {
 
 const EN_TEMPLATES = [
   ["descWithNames", { name: NAME, scientific: SCIENTIFIC, common: COMMON }],
-  ["descFromBody", { body: BODY, name: NAME, scientific: SCIENTIFIC }],
   ["descFallback", { name: NAME, scientific: SCIENTIFIC }],
 ] as const;
 
@@ -64,7 +63,7 @@ describe("herb meta descriptions", () => {
 
   it("does not carry the broken English phrasing into French", () => {
     const frMeta = fr.herbMeta as Record<string, string>;
-    for (const key of ["descWithNames", "descFromBody", "descFallback"]) {
+    for (const key of ["descWithNames", "descFallback"]) {
       expect(frMeta[key]).not.toMatch(/\bin English\b/i);
       expect(frMeta[key]).not.toContain("{uses}");
     }

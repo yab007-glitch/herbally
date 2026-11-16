@@ -403,19 +403,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ]
       : [title, herbT("titleBinomialShort", { scientific }), scientific]
   );
-  const description = truncateDescription(
-    commonNames
-      ? herbT("descWithNames", {
+  // The body-based variant used to splice a hard 120-character slice into a
+  // keyword template ("…pregnancy safety & interactions…"), and the outer
+  // truncation then cut the template itself — leaving 2,543 live descriptions
+  // ending in a bare "&…". The body alone, cut on a word boundary, reads as a
+  // sentence and is already unique per herb.
+  const description = commonNames
+    ? truncateDescription(
+        herbT("descWithNames", {
           name: herb.name,
           common: commonNames,
         })
-      : herb.description
-        ? herbT("descFromBody", { body: herb.description.slice(0, 120) })
-        : herbT("descFallback", {
+      )
+    : herb.description
+      ? truncateDescription(herb.description)
+      : truncateDescription(
+          herbT("descFallback", {
             name: herb.name,
             scientific: herb.scientific_name,
           })
-  );
+        );
 
   const untranslatedFr = metaLocale === "fr" && !hasFr;
 
@@ -1289,7 +1296,6 @@ export default async function HerbDetailPage({ params }: Props) {
                         (pubmedSheet.citations as unknown as Citation[]) ?? []
                       }
                       articleCount={pubmedSheet.article_count ?? 0}
-                      model={pubmedSheet.model}
                       status={pubmedSheet.status}
                     />
                   </div>
@@ -1302,7 +1308,6 @@ export default async function HerbDetailPage({ params }: Props) {
                   (pubmedSheet.citations as unknown as Citation[]) ?? []
                 }
                 articleCount={pubmedSheet.article_count ?? 0}
-                model={pubmedSheet.model}
                 status={pubmedSheet.status}
               />
             )
@@ -1444,20 +1449,30 @@ export default async function HerbDetailPage({ params }: Props) {
             {t("herbDetail.relatedHerbs")}
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {relatedHerbs.map((related) => (
-              <Link
-                key={related.slug}
-                href={`/herbs/${related.slug}`}
-                className="group rounded-2xl border p-4 transition-colors hover:bg-muted/50"
-              >
-                <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
-                  {related.name}
-                </h3>
-                <p className="text-sm italic text-muted-foreground">
-                  {related.scientific_name}
-                </p>
-              </Link>
-            ))}
+            {relatedHerbs.map((related) => {
+              // For many rows the stored display name *is* the binomial, which
+              // rendered the same string twice ("Aloe maculata / Aloe
+              // maculata"). Show one line when they are the same.
+              const showName =
+                related.name.trim().toLowerCase() !==
+                related.scientific_name.trim().toLowerCase();
+              return (
+                <Link
+                  key={related.slug}
+                  href={`/herbs/${related.slug}`}
+                  className="group rounded-2xl border p-4 transition-colors hover:bg-muted/50"
+                >
+                  <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
+                    {showName ? related.name : related.scientific_name}
+                  </h3>
+                  {showName && related.scientific_name && (
+                    <p className="text-sm italic text-muted-foreground">
+                      {related.scientific_name}
+                    </p>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}

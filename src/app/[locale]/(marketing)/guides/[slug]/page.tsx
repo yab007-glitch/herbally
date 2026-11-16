@@ -65,6 +65,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         "x-default": `${base}/guides/${guide.slug}`,
       },
     },
+    // Otherwise the share card inherited the homepage og:url.
+    openGraph: {
+      title: c.metaTitle,
+      description: c.metaDescription,
+      url: `${base}${path}`,
+      type: "article",
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: c.metaTitle,
+        },
+      ],
+    },
     // A draft must never be indexed: nothing here has been reviewed.
     ...(guide.status === "draft"
       ? { robots: { index: false, follow: true } }

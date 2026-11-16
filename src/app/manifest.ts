@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "HerbAlly - Your Trusted Guide to Medicinal Herbs",
     short_name: "HerbAlly",
     description:
-      "Explore 2,700+ medicinal herbs, calculate dosages, and check drug interactions.",
+      "Explore 3,200+ medicinal herbs, calculate dosages, and check drug interactions.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

@@ -357,7 +357,8 @@ async function findArticles(herb: Herb): Promise<Article[]> {
  * synonym literature that only names the genus.
  */
 function isRelevant(article: Article, herb: Herb): boolean {
-  const hay = `${article.title} ${article.abstract} ${article.mesh.join(" ")}`.toLowerCase();
+  const hay =
+    `${article.title} ${article.abstract} ${article.mesh.join(" ")}`.toLowerCase();
   const genus = (herb.scientific_name.split(/\s+/)[0] ?? "").toLowerCase();
   const tokens = [genus, ...(herb.common_names ?? [])]
     .map((t) => t.trim().toLowerCase())

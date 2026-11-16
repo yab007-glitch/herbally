@@ -139,6 +139,22 @@ export async function generateMetadata(): Promise<Metadata> {
         "x-default": `${siteUrl()}/editorial-policy`,
       },
     },
+    // Without this the page inherited the homepage openGraph, so sharing it
+    // produced og:url = https://herbally.app — the wrong page entirely.
+    openGraph: {
+      title: c.title,
+      description: c.description,
+      url: `${siteUrl()}${path}`,
+      type: "website",
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: c.title,
+        },
+      ],
+    },
   };
 }
 

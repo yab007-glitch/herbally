@@ -132,7 +132,7 @@ export default async function CalculatorPage({
           {
             question: "Is the herbal dosage calculator free?",
             answer:
-              "Yes — free, no account required. Reference doses come from our 2,700+ herb database with PubMed, WHO and NCCIH sources.",
+              "Yes — free, no account required. Reference doses come from our 3,200+ herb database with PubMed, WHO and NCCIH sources.",
           },
         ]}
       />
@@ -180,7 +180,7 @@ export default async function CalculatorPage({
             </summary>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Yes — free, no account required. Reference doses come from our
-              2,700+ herb database with PubMed, WHO and NCCIH sources.
+              3,200+ herb database with PubMed, WHO and NCCIH sources.
             </p>
           </details>
         </div>

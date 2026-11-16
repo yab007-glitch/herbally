@@ -1,6 +1,7 @@
 import { ExternalLink, Landmark } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getGovSources, hasGovMonograph } from "@/lib/data/gov-sources";
+import { getLocale } from "@/lib/i18n/page-locale";
 
 /**
  * Renders the authoritative government sources for a herb (NCCIH/NIH,
@@ -19,7 +20,8 @@ export async function GovSources({
   displayName: string;
 }) {
   const t = await getTranslations("govSources");
-  const sources = getGovSources(slug, displayName);
+  const locale = (await getLocale()) === "fr" ? "fr" : "en";
+  const sources = getGovSources(slug, displayName, locale);
   const matched = hasGovMonograph(slug);
 
   return (

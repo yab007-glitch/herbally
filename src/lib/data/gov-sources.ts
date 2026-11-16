@@ -143,7 +143,12 @@ const NCCIH_DIRECT: Record<string, string> = {
  * @param displayName herb common name (used to build always-resolving search links)
  * @returns ordered list: direct monograph links first, then search/index fallbacks
  */
-export function getGovSources(slug: string, displayName?: string): GovSource[] {
+export function getGovSources(
+  slug: string,
+  displayName?: string,
+  locale: "en" | "fr" = "en"
+): GovSource[] {
+  const fr = locale === "fr";
   const out: GovSource[] = [];
   const query = encodeURIComponent(displayName ?? slug.replace(/-/g, " "));
 
@@ -160,7 +165,7 @@ export function getGovSources(slug: string, displayName?: string): GovSource[] {
     // No direct page verified — offer a search that always resolves.
     out.push({
       id: "nccih",
-      label: "Search NCCIH (NIH)",
+      label: fr ? "Rechercher dans NCCIH (NIH)" : "Search NCCIH (NIH)",
       url: `https://www.nccih.nih.gov/search?query=${query}`,
       kind: "search",
       authoritative: false,
@@ -169,7 +174,9 @@ export function getGovSources(slug: string, displayName?: string): GovSource[] {
 
   out.push({
     id: "medlineplus",
-    label: "Search MedlinePlus (NIH)",
+    label: fr
+      ? "Rechercher dans MedlinePlus (NIH)"
+      : "Search MedlinePlus (NIH)",
     url: `https://vsearch.nlm.nih.gov/vivisimo/cgi-bin/query-meta?v%3Aproject=medlineplus&query=${query}`,
     kind: "search",
     authoritative: false,

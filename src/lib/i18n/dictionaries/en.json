@@ -108,7 +108,7 @@
     "sameCheckError": "The herb and medication look the same — enter two different products.",
     "featuresTitle": "What you can do",
     "featureHerbsTitle": "Herb database",
-    "featureHerbsDescription": "Search 2,700+ medicinal herbs with detailed profiles, uses, and safety information.",
+    "featureHerbsDescription": "Search 3,200+ medicinal herbs with detailed profiles, uses, and safety information.",
     "featureCalculatorTitle": "Dosage calculator",
     "featureCalculatorDescription": "Get age and weight-based dosage recommendations using evidence-based formulas.",
     "featureInteractionsTitle": "Interaction checker",
@@ -129,7 +129,7 @@
     "checkerEvidence": "Evidence",
     "checkerMechanism": "How it works",
     "explainerTitle": "Your trusted guide to medicinal herbs",
-    "explainerBody": "HerbAlly is a free medicinal-herb database with 2,700+ herbs. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
+    "explainerBody": "HerbAlly is a free medicinal-herb database with 3,200+ herbs. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
     "explainerNote": "Educational purposes only. Not medical advice. Always confirm with your doctor or pharmacist before combining a herb with a medication.",
     "popularTitle": "Popular herbs",
     "herbLabel": "Herb",
@@ -147,7 +147,7 @@
   },
   "herbs": {
     "title": "Medicinal Herbs Database",
-    "subtitle": "Explore 2,700+ herbs with evidence-based information",
+    "subtitle": "Explore 3,200+ herbs with evidence-based information",
     "herbOfTheDay": "Herb of the Day",
     "searchPlaceholder": "Search herbs by name, symptom, or use...",
     "recentSearches": "Recent searches",
@@ -735,8 +735,8 @@
   "mission": {
     "title": "Our Mission",
     "description": "Free herbal knowledge for everyone. We believe access to health information is a fundamental right, not a privilege. HerbAlly is built to democratize access to evidence-based herbal medicine knowledge.",
-    "freeAccess": "No paywalls, no premium tiers. All 2,700+ herbs are available to everyone, completely free.",
-    "herbsCount": "2,700+ Herbs",
+    "freeAccess": "No paywalls, no premium tiers. All 3,200+ herbs are available to everyone, completely free.",
+    "herbsCount": "3,200+ Herbs",
     "herbsDesc": "Comprehensive database with detailed profiles",
     "aiHerbalist": "AI Herbalist",
     "aiHerbalistDesc": "Get instant answers to your questions",
@@ -745,7 +745,7 @@
     "howDonationsHelp": "How Your Donation Helps",
     "donationHostings": "Hosting & Servers — Keep the app fast and available 24/7",
     "donationAi": "AI Costs — Power the virtual herbalist chatbot",
-    "donationDb": "Database — Store and serve 2,700+ herb profiles",
+    "donationDb": "Database — Store and serve 3,200+ herb profiles",
     "donationFeatures": "New Features — Add more herbs, interactions, and tools",
     "promise": "We'll never charge users or sell your data.",
     "sustained": "HerbAlly is sustained entirely by voluntary donations.",
@@ -930,7 +930,7 @@
     "howItWorks": {
       "title": "How It Works",
       "step1Title": "Search Our Database",
-      "step1Desc": "Browse 2,700+ medicinal herbs with detailed profiles including active compounds, traditional uses, and modern research.",
+      "step1Desc": "Browse 3,200+ medicinal herbs with detailed profiles including active compounds, traditional uses, and modern research.",
       "step2Title": "Calculate Reference Doses",
       "step2Desc": "Use our reference calculator for adults aged 18 and older. It does not provide pediatric doses; consult a qualified pediatric professional for a child or adolescent.",
       "step3Title": "Consult the Virtual Herbalist",
@@ -966,7 +966,7 @@
       },
       "herbCount": {
         "q": "How many herbs does HerbAlly cover?",
-        "a": "HerbAlly covers 2,700+ medicinal herbs with detailed profiles including active compounds, traditional uses, modern applications, dosage guidance, and drug interactions."
+        "a": "HerbAlly covers 3,200+ medicinal herbs with detailed profiles including active compounds, traditional uses, modern applications, dosage guidance, and drug interactions."
       },
       "reviewed": {
         "q": "Is the information on HerbAlly medically reviewed?",
@@ -1018,7 +1018,7 @@
     "herbalistCat": {
       "how": {
         "q": "How does the AI Virtual Herbalist work?",
-        "a": "The Virtual Herbalist uses AI to provide evidence-based guidance about herbs, including safety information, potential interactions, and traditional uses. It draws from our database of 2,700+ herbs, WHO monographs, PubMed, NCCIH, and Commission E sources. Each response includes evidence levels and source citations."
+        "a": "The Virtual Herbalist uses AI to provide evidence-based guidance about herbs, including safety information, potential interactions, and traditional uses. It draws from our database of 3,200+ herbs, WHO monographs, PubMed, NCCIH, and Commission E sources. Each response includes evidence levels and source citations."
       },
       "notAsk": {
         "q": "What should I NOT ask the Virtual Herbalist?",
@@ -1076,7 +1076,7 @@
   "donateContent": {
     "title": "Keep HerbAlly 100% Free",
     "subtitle": "No paywalls. No premium tiers. Just free herbal knowledge for everyone — supported by donations, with limited, clearly labelled advertising planned but not yet live.",
-    "herbsStat": "2,700+ herbs",
+    "herbsStat": "3,200+ herbs",
     "freeAI": "Free AI herbalist",
     "freeForever": "100% free forever",
     "chooseImpact": "Choose Your Impact",
@@ -1109,7 +1109,7 @@
       },
       "database": {
         "label": "Database & Storage",
-        "desc": "Supabase database hosting for 2,700+ herbs and user data",
+        "desc": "Supabase database hosting for 3,200+ herbs and user data",
         "monthly": "$25"
       },
       "ai": {
@@ -1301,7 +1301,7 @@
     "compiledBody": "This sheet was compiled from PubMed (NIH) abstracts using AI assistance. Every factual claim is cited to a real PubMed article (see the source list). It has not yet been human-reviewed — confirm with a healthcare provider before use.",
     "reviewedTitle": "Reviewed information sheet",
     "reviewedBody": "This sheet was compiled from PubMed (NIH) abstracts and has been human-reviewed. Every claim is cited to a real PubMed article (see the source list).",
-    "compiledFrom": "Compiled from {count} PubMed articles · model: {model}",
+    "compiledFrom": "Compiled from {count} PubMed articles",
     "summary": "Summary",
     "background": "Background",
     "traditionalUses": "Traditional uses",
@@ -1602,11 +1602,11 @@
   },
   "meta": {
     "herbsDatabase": "Medicinal Herbs Database",
-    "herbsDatabaseDesc": "Browse our comprehensive database of 2,700+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
+    "herbsDatabaseDesc": "Browse our comprehensive database of 3,200+ medicinal herbs with detailed profiles, active compounds, and drug interactions.",
     "virtualHerbalist": "Virtual Herbalist",
     "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
     "doseCalculator": "Herbal Dosage Calculator: Adult Reference Doses by Weight",
-    "doseCalculatorDesc": "Free adult herbal dosage calculator: reference doses by weight and age (Clark's & Young's rules) for adults 18 and over. 2,700+ herbs, no account required.",
+    "doseCalculatorDesc": "Free adult herbal dosage calculator: reference doses by weight and age (Clark's & Young's rules) for adults 18 and over. 3,200+ herbs, no account required.",
     "herbsBySymptom": "Herbs by Symptom",
     "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
     "privacyPolicy": "Privacy Policy",
@@ -1631,9 +1631,9 @@
     "contactDesc": "How to contact HerbAlly: general, privacy, and terms email addresses.",
     "herbDrugInteractions": "Herb–Drug Interactions",
     "herbDrugInteractionsDesc": "What herb–drug interactions are, why they matter, and how to check them. High-risk examples (St. John's Wort, garlic, ginkgo, turmeric, kava, warfarin) and how to stay safe.",
-    "appDescription": "Check any herb against your medication in seconds. 2,700+ herb profiles with cited sources, evidence grades and an adult dosage calculator. Free, no account required.",
+    "appDescription": "Check any herb against your medication in seconds. 3,200+ herb profiles with cited sources, evidence grades and an adult dosage calculator. Free, no account required.",
     "herbsFor": "Herbs for {symptom}",
-    "homeTitle": "Herb-Drug Interaction Checker: 2,700 Herbs",
+    "homeTitle": "Herb-Drug Interaction Checker: 3,200 Herbs",
     "gardenPageTitle": "My Garden",
     "gardenSubtitle": "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
     "profileTitle": "My Profile",
@@ -1836,7 +1836,6 @@
     "titleShort": "{name} ({scientific}): Benefits & Safety",
     "titleBinomialShort": "{scientific}: Benefits & Safety",
     "descWithNames": "{name}, also called {common}: uses, dosage, pregnancy safety and drug interactions, with PubMed-cited evidence, safety ratings and a free dosage calculator.",
-    "descFromBody": "{body} Uses, dosage, pregnancy safety & interactions. Free calculator included.",
     "descFallback": "{name} ({scientific}): uses, dosage, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and a free dosage calculator.",
     "usesFallback": "traditional wellness"
   },
@@ -1853,7 +1852,7 @@
     "nccihSource": "Herbs at a Glance",
     "breadcrumbHome": "Home",
     "orgName": "HerbAlly",
-    "orgDesc": "A reference library of 2,700+ medicinal herbs with cited sources, evidence grades, an adult dosage calculator and an herb-drug interaction checker."
+    "orgDesc": "A reference library of 3,200+ medicinal herbs with cited sources, evidence grades, an adult dosage calculator and an herb-drug interaction checker."
   },
   "brand": {
     "full": "HerbAlly"

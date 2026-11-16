@@ -129,7 +129,7 @@
     "checkerEvidence": "Preuves",
     "checkerMechanism": "Fonctionnement",
     "explainerTitle": "Votre guide de confiance des plantes médicinales",
-    "explainerBody": "HerbAlly est une base de données gratuite de plantes médicinales avec plus de 2 700 plantes. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, trouver des plantes par symptôme et calculer une dose adulte — le tout sans compte. L'Herboriste Virtuel est là pour expliquer, pas pour remplacer la base de données ou votre pharmacien.",
+    "explainerBody": "HerbAlly est une base de données gratuite de plantes médicinales avec plus de 3 200 plantes. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, trouver des plantes par symptôme et calculer une dose adulte — le tout sans compte. L'Herboriste Virtuel est là pour expliquer, pas pour remplacer la base de données ou votre pharmacien.",
     "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
     "popularTitle": "Plantes populaires",
     "herbLabel": "Plante",
@@ -147,7 +147,7 @@
   },
   "herbs": {
     "title": "Base de Données d'Herbes Médicinales",
-    "subtitle": "Explorez plus de 2 700 herbes avec des informations basées sur des preuves",
+    "subtitle": "Explorez plus de 3 200 herbes avec des informations basées sur des preuves",
     "herbOfTheDay": "Plante du Jour",
     "searchPlaceholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
     "recentSearches": "Recherches récentes",
@@ -439,7 +439,7 @@
     "interactNone": "{name} ne présente pas d'interaction médicamenteuse majeure bien documentée dans notre base, mais informez toujours votre professionnel de santé de tous les compléments que vous prenez.",
     "sideEffects": "Quels sont les effets secondaires de {name} ?",
     "sideEffectsFallback": "Les effets secondaires de {name} sont généralement légers aux doses recommandées. Utilisez notre calculateur de dose gratuit pour rester dans les plages fondées sur des preuves, et consultez votre professionnel de santé pour un avis personnalisé.",
-    "doseQuestion": "Comment calculer une dose sûre de {name} ?",
+    "doseQuestion": "Comment calculer une dose sûre pour {name} ?",
     "doseAnswer": "Utilisez le calculateur de posologie adulte gratuit d'HerbAlly — saisissez la dose de référence adulte pour {name}, ainsi que l'âge et le poids, pour obtenir une estimation de référence selon les règles de Clark / Young pour un adulte de 18 ans ou plus. Ne dépassez jamais la dose adulte.",
     "pregQuestion": "{name} est-il sûr pendant la grossesse ?",
     "interactQuestion": "{name} interagit-il avec les médicaments ?"
@@ -590,7 +590,7 @@
     "browseHerbs": "Parcourir toutes les plantes",
     "herbsAtAGlance": "Plantes en Bref",
     "askHerbalist": "Demander à l'herboriste",
-    "calculatorCtaTitle": "Calculer une dose sûre de {name}",
+    "calculatorCtaTitle": "Calculer une dose sûre pour {name}",
     "calculatorCtaBody": "Calculateur gratuit de posologie — doses de référence adultes selon le poids.",
     "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement.",
     "noStatedDose": "Les dossiers d'homologation à l'origine de cette fiche ({source}) n'indiquent aucune quantité. Consultez l'étiquette du produit ou un pharmacien — aucun dosage n'a été inventé ici."
@@ -735,8 +735,8 @@
   "mission": {
     "title": "Notre Mission",
     "description": "Le savoir phytothérapique gratuit pour tous. Nous croyons que l'accès à l'information sur la santé est un droit fondamental, pas un privilège. HerbAlly est conçu pour démocratiser l'accès aux connaissances en phytothérapie basées sur des preuves.",
-    "freeAccess": "Pas de barrières de paiement, pas d'offres premium. Toutes les 2 700+ herbes sont disponibles pour tous, complètement gratuitement.",
-    "herbsCount": "2 700+ Herbes",
+    "freeAccess": "Pas de barrières de paiement, pas d'offres premium. Toutes les 3 200+ herbes sont disponibles pour tous, complètement gratuitement.",
+    "herbsCount": "3 200+ Herbes",
     "herbsDesc": "Base de données complète avec des profils détaillés",
     "aiHerbalist": "Herboriste IA",
     "aiHerbalistDesc": "Obtenez des réponses instantanées à vos questions",
@@ -745,7 +745,7 @@
     "howDonationsHelp": "Comment Votre Don Aide",
     "donationHostings": "Hébergement et Serveurs — Maintenir l'application rapide et disponible 24/7",
     "donationAi": "Coûts IA — Alimenter le chatbot herboriste virtuel",
-    "donationDb": "Base de Données — Stocker et servir 2 700+ profils d'herbes",
+    "donationDb": "Base de Données — Stocker et servir 3 200+ profils d'herbes",
     "donationFeatures": "Nouvelles Fonctionnalités — Ajouter plus d'herbes, interactions et outils",
     "promise": "Nous ne facturerons jamais les utilisateurs et ne vendrons pas vos données.",
     "sustained": "HerbAlly est maintenu entièrement par des dons volontaires.",
@@ -930,7 +930,7 @@
     "howItWorks": {
       "title": "Comment ça marche",
       "step1Title": "Rechercher dans notre base de données",
-      "step1Desc": "Parcourez plus de 2 700 herbes médicinales avec des profils détaillés incluant les composés actifs, les utilisations traditionnelles et la recherche moderne.",
+      "step1Desc": "Parcourez plus de 3 200 herbes médicinales avec des profils détaillés incluant les composés actifs, les utilisations traditionnelles et la recherche moderne.",
       "step2Title": "Calculer des doses de référence",
       "step2Desc": "Utilisez notre calculateur de référence pour les adultes de 18 ans et plus. Il ne fournit pas de posologie pédiatrique ; consultez un professionnel de santé pédiatrique qualifié pour un enfant ou un adolescent.",
       "step3Title": "Consulter l'Herboriste Virtuel",
@@ -966,7 +966,7 @@
       },
       "herbCount": {
         "q": "Combien de plantes HerbAlly couvre-t-il ?",
-        "a": "HerbAlly couvre plus de 2 700 plantes médicinales avec des profils détaillés incluant les composés actifs, les utilisations traditionnelles, les applications modernes, les guides de posologie et les interactions médicamenteuses."
+        "a": "HerbAlly couvre plus de 3 200 plantes médicinales avec des profils détaillés incluant les composés actifs, les utilisations traditionnelles, les applications modernes, les guides de posologie et les interactions médicamenteuses."
       },
       "reviewed": {
         "q": "Les informations sur HerbAlly sont-elles revues médicalement ?",
@@ -1018,7 +1018,7 @@
     "herbalistCat": {
       "how": {
         "q": "Comment fonctionne l'Herboriste Virtuel IA ?",
-        "a": "L'Herboriste Virtuel utilise l'IA pour fournir des conseils basés sur des preuves sur les plantes, y compris les informations de sécurité, les interactions potentielles et les utilisations traditionnelles. Il s'appuie sur notre base de données de 2 700+ plantes, les monographies de l'OMS, PubMed, le NCCIH et les sources de la Commission E. Chaque réponse inclut des niveaux de preuve et des citations."
+        "a": "L'Herboriste Virtuel utilise l'IA pour fournir des conseils basés sur des preuves sur les plantes, y compris les informations de sécurité, les interactions potentielles et les utilisations traditionnelles. Il s'appuie sur notre base de données de 3 200+ plantes, les monographies de l'OMS, PubMed, le NCCIH et les sources de la Commission E. Chaque réponse inclut des niveaux de preuve et des citations."
       },
       "notAsk": {
         "q": "Que ne dois-je PAS demander à l'Herboriste Virtuel ?",
@@ -1076,7 +1076,7 @@
   "donateContent": {
     "title": "Gardez HerbAlly 100% Gratuit",
     "subtitle": "Pas de barrières de paiement. Pas d'offres premium. Juste des connaissances gratuites sur les plantes pour tous — financées par les dons, avec une publicité limitée et clairement identifiée prévue mais pas encore active.",
-    "herbsStat": "2 700+ herbes",
+    "herbsStat": "3 200+ herbes",
     "freeAI": "Herboriste IA gratuit",
     "freeForever": "100% gratuit pour toujours",
     "chooseImpact": "Choisissez Votre Impact",
@@ -1109,7 +1109,7 @@
       },
       "database": {
         "label": "Base de Données & Stockage",
-        "desc": "Hébergement de base de données Supabase pour 2 700+ plantes et données utilisateur",
+        "desc": "Hébergement de base de données Supabase pour 3 200+ plantes et données utilisateur",
         "monthly": "25$"
       },
       "ai": {
@@ -1301,7 +1301,7 @@
     "compiledBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) avec l'assistance d'une IA. Chaque affirmation factuelle est citée par un article PubMed réel (voir la liste des sources). Elle n'a pas encore été révisée par un humain — confirmez auprès d'un professionnel de santé avant utilisation.",
     "reviewedTitle": "Fiche d'information révisée",
     "reviewedBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) et a été révisée par un humain. Chaque affirmation est citée par un article PubMed réel (voir la liste des sources).",
-    "compiledFrom": "Compilé à partir de {count} articles PubMed · modèle : {model}",
+    "compiledFrom": "Compilé à partir de {count} articles PubMed",
     "summary": "Résumé",
     "background": "Contexte",
     "traditionalUses": "Usages traditionnels",
@@ -1602,11 +1602,11 @@
   },
   "meta": {
     "herbsDatabase": "Base de Données de Plantes Médicinales",
-    "herbsDatabaseDesc": "Parcourez notre base de données complète de plus de 2 700 plantes médicinales avec des profils détaillés, composants actifs et interactions médicamenteuses.",
+    "herbsDatabaseDesc": "Parcourez notre base de données complète de plus de 3 200 plantes médicinales avec des profils détaillés, composants actifs et interactions médicamenteuses.",
     "virtualHerbalist": "Herboriste Virtuel",
     "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et la posologie. Réponses fondées sur les sources OMS, NCCIH et PubMed. Gratuit, sans compte requis.",
     "doseCalculator": "Calculateur de Posologie : Doses de Référence pour Adultes",
-    "doseCalculatorDesc": "Calculateur de posologie adulte gratuit : doses de référence par poids et âge (règles de Clark & Young) pour les adultes de 18 ans et plus. 2 700+ plantes, sans compte.",
+    "doseCalculatorDesc": "Calculateur de posologie adulte gratuit : doses de référence par poids et âge (règles de Clark & Young) pour les adultes de 18 ans et plus. 3 200+ plantes, sans compte.",
     "herbsBySymptom": "Plantes par Symptôme",
     "herbsBySymptomDesc": "Trouvez les bonnes plantes pour vos symptômes. Parcourez les recommandations phytothérapiques fondées sur les preuves pour l'anxiété, le sommeil, l'inflammation, la digestion et plus encore.",
     "privacyPolicy": "Politique de Confidentialité",
@@ -1631,7 +1631,7 @@
     "contactDesc": "Comment contacter HerbAlly : adresses courriel générales, de confidentialité et des conditions.",
     "herbDrugInteractions": "Interactions Plante-Médicament",
     "herbDrugInteractionsDesc": "Ce que sont les interactions plante-médicament, pourquoi elles comptent et comment les vérifier. Exemples à risque (millepertuis, ail, ginkgo, curcuma, kava, warfarine) et comment rester prudent.",
-    "appDescription": "Vérifiez une plante contre vos médicaments en quelques secondes. Plus de 2 700 fiches avec sources et niveaux de preuve, et un calculateur de posologie. Gratuit.",
+    "appDescription": "Vérifiez une plante contre vos médicaments en quelques secondes. Plus de 3 200 fiches avec sources et niveaux de preuve, et un calculateur de posologie. Gratuit.",
     "herbsFor": "Plantes pour {symptom}",
     "homeTitle": "Vérificateur d'interactions plante-médicament",
     "gardenPageTitle": "Mon Jardin",
@@ -1836,7 +1836,6 @@
     "titleShort": "{name} ({scientific}) : bienfaits et précautions",
     "titleBinomialShort": "{scientific} : bienfaits et précautions",
     "descWithNames": "Bienfaits, posologie, grossesse et interactions médicamenteuses de {name} ({common}). Sources PubMed et calculateur de doses gratuit.",
-    "descFromBody": "{body} Bienfaits, posologie, grossesse et interactions. Calculateur de doses gratuit inclus.",
     "descFallback": "Bienfaits, posologie, grossesse, effets secondaires et interactions médicamenteuses de {name} ({scientific}). Fiche sourcée et calculateur de doses gratuit.",
     "usesFallback": "le bien-être traditionnel"
   },
@@ -1853,7 +1852,7 @@
     "nccihSource": "Plantes Médicinales en Bref",
     "breadcrumbHome": "Accueil",
     "orgName": "HerbAlly",
-    "orgDesc": "Une bibliothèque de référence de plus de 2 700 plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
+    "orgDesc": "Une bibliothèque de référence de plus de 3 200 plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
   },
   "brand": {
     "full": "HerbAlly"

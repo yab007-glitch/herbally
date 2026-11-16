@@ -370,10 +370,13 @@ function withLanguageAlternates(
   const listed = new Set(entries.map((entry) => entry.url));
   const frPrefix = `${baseUrl}${FR_BASE}`;
   return entries.map((entry) => {
-    const isFr =
-      entry.url === frPrefix || entry.url.startsWith(`${frPrefix}/`);
+    const isFr = entry.url === frPrefix || entry.url.startsWith(`${frPrefix}/`);
     const suffix = entry.url.slice(frPrefix.length);
-    const enUrl = isFr ? (suffix === "" ? baseUrl : `${baseUrl}${suffix}`) : entry.url;
+    const enUrl = isFr
+      ? suffix === ""
+        ? baseUrl
+        : `${baseUrl}${suffix}`
+      : entry.url;
     const frUrl = isFr
       ? entry.url
       : entry.url === baseUrl

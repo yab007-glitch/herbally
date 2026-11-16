@@ -88,6 +88,9 @@ export function buildCsp(options: CspOptions = {}): string {
     ...(isProduction ? [] : ["'unsafe-eval'"]),
     "blob:",
     "*.stripe.com",
+    // Cloudflare Web Analytics beacon, injected by the zone in front of the
+    // origin. Keep in step with src/lib/ads/csp.ts.
+    "https://static.cloudflareinsights.com",
     ads,
   ].join(" ");
 
@@ -97,7 +100,7 @@ export function buildCsp(options: CspOptions = {}): string {
     // The Ollama Cloud call is server-side only; the browser never talks to it.
     // `apiOrigin` is the configured Supabase host: `'self'` does not cover a
     // custom API domain, so without it a self-hosted backend breaks sign-in.
-    `connect-src 'self'${apiOrigin ? ` ${apiOrigin}` : ""} *.supabase.co *.stripe.com ${ads}`,
+    `connect-src 'self'${apiOrigin ? ` ${apiOrigin}` : ""} *.supabase.co *.stripe.com https://cloudflareinsights.com ${ads}`,
     // L16 (audit 2026-06-22): scope img-src to the only remote image host we
     // actually use (Supabase Storage), matching next.config.ts remotePatterns.
     // A bare `https:` allowed any origin to be a CSP-permitted image source.

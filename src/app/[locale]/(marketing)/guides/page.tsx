@@ -60,6 +60,22 @@ export async function generateMetadata(): Promise<Metadata> {
         "x-default": alternates["x-default"],
       },
     },
+    // A child page without its own openGraph inherits the root layout's, whose
+    // url is the homepage. Restate it so shares point at the guides index.
+    openGraph: {
+      title: c.metaTitle,
+      description: c.metaDescription,
+      url: alternates[locale],
+      type: "website",
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: c.metaTitle,
+        },
+      ],
+    },
   };
 }
 

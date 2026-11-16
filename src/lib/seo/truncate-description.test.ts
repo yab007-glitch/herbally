@@ -40,4 +40,21 @@ describe("truncateDescription", () => {
     const out = truncateDescription("word ".repeat(40), 24);
     expect(out).not.toMatch(/[,;:.\-\u2013\u2014]…$/);
   });
+
+  it("does not leave a bare ampersand before the ellipsis", () => {
+    const out = truncateDescription(
+      "Uses, dosage, pregnancy safety & interactions, with PubMed citations.",
+      40
+    );
+    expect(out).not.toMatch(/&…$/);
+    expect(out.endsWith("…")).toBe(true);
+  });
+
+  it("does not leave a dangling connector before the ellipsis", () => {
+    const out = truncateDescription(
+      "A long preamble that ends right before safety and",
+      50
+    );
+    expect(out).not.toMatch(/\band…$/);
+  });
 });

@@ -349,8 +349,11 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Static media is excluded by path *and* by extension: the locale rewrite
-    // would otherwise turn /media/x.mp4 into /en/media/x.mp4 and 404 it.
-    "/((?!monitoring|media/|_next/static|_next/image|favicon.ico|robots.txt|ads.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|mp4|webm|ogg|mp3|wav|m4a|pdf|txt|html)$).*)",
+    // Static files are excluded by path *and* by extension: the locale rewrite
+    // would otherwise turn /media/x.mp4 into /en/media/x.mp4 and 404 it. `.js`
+    // was missing from this list, so /sw.js (and every other public script)
+    // was rewritten to /en/sw.js and answered 404 — the service worker could
+    // never register.
+    "/((?!monitoring|media/|_next/static|_next/image|favicon.ico|robots.txt|ads.txt|sitemap.xml|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm|ogg|mp3|wav|m4a|pdf|txt|html|js|mjs|css|map|xml|webmanifest|woff|woff2|ttf|otf|eot)$).*)",
   ],
 };

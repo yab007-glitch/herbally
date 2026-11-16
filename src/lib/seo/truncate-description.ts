@@ -15,5 +15,12 @@ export function truncateDescription(text: string, max = 158): string {
   const lastSpace = hard.lastIndexOf(" ");
   const cut = lastSpace > hard.length * 0.6 ? hard.slice(0, lastSpace) : hard;
 
-  return `${cut.replace(/[\s,;:.\u2013\u2014-]+$/, "")}…`;
+  // Strip punctuation *and* dangling connectors before the ellipsis: a cut
+  // that lands right after "&" or "and" otherwise renders "pregnancy safety
+  // &…", which is the defect this helper exists to prevent.
+  const trimmed = cut
+    .replace(/[\s,;:.\u2013\u2014&-]+$/, "")
+    .replace(/\s+(?:and|or|with|for|of|the|a|an|to|in|on|at|by)$/i, "");
+
+  return `${trimmed}…`;
 }
