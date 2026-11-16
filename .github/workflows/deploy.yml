@@ -95,7 +95,12 @@ jobs:
           api=$(curl -fsS -o /dev/null -w '%{http_code}' 'https://herbally.app/api/interactions/check?herb=ginger&drug=warfarin')
           locs=$(curl -fsS https://herbally.app/sitemap.xml | grep -c '<loc>' || true)
           echo "home=$home api=$api sitemap_urls=$locs"
-          [ "$home" = "200" ] && [ "$api" = "200" ] && [ "$locs" -ge 6000 ]
+          # The sitemap is deliberately small since 2026-11-16: only herb pages
+          # with a regulator record or imported monograph are offered, so it went
+          # from 6,796 URLs to ~2,940. A floor of 6,000 would fail every deploy
+          # from now on; 2,000 still catches an empty or truncated sitemap.
+          [ "$home" = "200" ] && [ "$api" = "200" ] && [ "$locs" -ge 2000 ]
+          curl -fsS https://herbally.app/sitemap.xml | grep -q '/herbs/aloe-vera<'
 
       - name: Roll back on failure
         if: failure()
