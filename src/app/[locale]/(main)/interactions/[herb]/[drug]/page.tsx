@@ -252,9 +252,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = fr
-    ? `${pair.herbName} et ${pair.drugName} : interaction, gravité et conseils`
-    : `${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`;
+  // 105 of the 174 pair pages ran past 60 characters with the old fixed
+  // suffix, so Google cut the part that identifies the pair. Keep the herb and
+  // drug names, shorten the suffix until the title fits.
+  const TITLE_MAX = 60;
+  const titleCandidates = fr
+    ? [
+        `${pair.herbName} et ${pair.drugName} : interaction, gravité et conseils`,
+        `${pair.herbName} et ${pair.drugName} : interaction`,
+        `${pair.herbName} et ${pair.drugName}`,
+      ]
+    : [
+        `${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`,
+        `${pair.herbName} & ${pair.drugName}: Interaction & Safety`,
+        `${pair.herbName} & ${pair.drugName} Interaction`,
+      ];
+  const title =
+    titleCandidates.find((candidate) => candidate.length <= TITLE_MAX) ??
+    titleCandidates[titleCandidates.length - 1];
   // 133 of 174 pairs carry no citation; the old description promised sources
   // on every one of them while the body said "no primary citation recorded".
   const hasCitation = Boolean(pair.source || pair.sourceUrl);
