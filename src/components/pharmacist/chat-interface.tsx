@@ -66,6 +66,18 @@ function writeStoredSessionId(id: string | null) {
   }
 }
 
+/**
+ * An emergency answer ends by sending the reader to poison control or the
+ * emergency services. Offering "What's the recommended dosage?" directly
+ * underneath that is the worst possible next suggestion, so the follow-up
+ * chips are suppressed when the last answer looks like one.
+ */
+function looksLikeEmergencyAnswer(content: string) {
+  return /\b(?:911|811|poison control|centre antipoison|emergency (?:room|number|services|department)|salle d'urgence|services d'urgence|urgence vitale)\b/i.test(
+    content
+  );
+}
+
 // ─── Smart Command Parser ───────────────────────────────────────────
 
 function parseCommand(text: string): {
@@ -214,7 +226,8 @@ export function ChatInterface({
   const showFollowUps =
     !isLoading &&
     lastAssistantMessage?.role === "assistant" &&
-    messages.length > 1;
+    messages.length > 1 &&
+    !looksLikeEmergencyAnswer(lastAssistantMessage.content);
 
   const followUpQuestions = useMemo(() => {
     if (!showFollowUps || !lastAssistantMessage) return [];
