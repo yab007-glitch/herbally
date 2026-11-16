@@ -104,6 +104,20 @@ describe("quotedContraindications", () => {
     expect(text).not.toContain("Contra-Indications:");
   });
 
+  it("strips every regulator field name, not only contraindications", () => {
+    const text = quotedContraindications({
+      name: "Bergera koenigii",
+      regulator: "Health Canada",
+      contraindications: [
+        "Known Adverse Reactions: Hypersensitivity has been known to occur.",
+        "Risk Information: Stop use if symptoms persist.",
+      ],
+    });
+    expect(text).not.toContain("Known Adverse Reactions:");
+    expect(text).not.toContain("Risk Information:");
+    expect(text).toContain("Hypersensitivity has been known to occur");
+  });
+
   it("returns null when there is no record", () => {
     expect(
       quotedContraindications({ name: "X", contraindications: [] })

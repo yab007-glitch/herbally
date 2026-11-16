@@ -80,7 +80,8 @@ export const NARRATIVE_EN: NarrativeCopy = {
   regulatorSource: (regulator) =>
     regulator ? ` ${regulator}'s records state` : " The source records state",
   colon: ":",
-  labelPattern: /^(contra-?indications?|cautions?|warnings?)\s*:\s*/i,
+  labelPattern:
+    /^(contra-?indications?|cautions?|warnings?|known adverse reactions?|adverse reactions?|risk information)\s*:\s*/i,
 };
 
 export const NARRATIVE_FR: NarrativeCopy = {
@@ -115,7 +116,7 @@ export const NARRATIVE_FR: NarrativeCopy = {
   // French typography puts a space before a colon; English does not.
   colon: " :",
   labelPattern:
-    /^(précautions?\s+et\s+mises?\s+en\s+garde|mises?\s+en\s+garde(\s+et\s+précautions)?|contre-indications?)\s*:\s*/i,
+    /^(précautions?\s+et\s+mises?\s+en\s+garde|mises?\s+en\s+garde(\s+et\s+précautions)?|contre-indications?|réactions?\s+indésirables(\s+connues?)?|effets?\s+indésirables(\s+connus?)?|informations\s+sur\s+les\s+risques)\s*:\s*/i,
 };
 
 /** "a, b and c" — an Oxford-comma-free list, as prose wants. */
