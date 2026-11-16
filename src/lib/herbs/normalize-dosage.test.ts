@@ -8,6 +8,15 @@ describe("normalizeDosage", () => {
     );
   });
 
+  it("keeps a range below two singular (French grammar)", () => {
+    expect(normalizeDosage("0,75–1 granule 1× par jour")).toBe(
+      "0,75–1 granule 1× par jour"
+    );
+    expect(normalizeDosage("1–1,75 granule 1× par jour")).toBe(
+      "1–1,75 granule 1× par jour"
+    );
+  });
+
   it("keeps a single unit singular", () => {
     expect(normalizeDosage("1 granule daily")).toBe("1 granule daily");
   });
