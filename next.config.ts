@@ -87,6 +87,27 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.inaturalist.org",
       },
+      // Institutional botanical archives (GBIF CC0 / CC BY / CC BY-SA specimens & Pl@ntNet field photos)
+      {
+        protocol: "https",
+        hostname: "collections.nmnh.si.edu",
+      },
+      {
+        protocol: "https",
+        hostname: "d2jcv3kl45hlgi.cloudfront.net",
+      },
+      {
+        protocol: "https",
+        hostname: "medialib.naturalis.nl",
+      },
+      {
+        protocol: "https",
+        hostname: "images.mobot.org",
+      },
+      {
+        protocol: "https",
+        hostname: "bs.plantnet.org",
+      },
     ],
   },
   compress: true,

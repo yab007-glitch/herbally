@@ -1104,33 +1104,33 @@ export default async function HerbDetailPage({ params }: Props) {
         lastReviewed={herb.last_reviewed ?? herb.updated_at ?? null}
       />
 
-      {/* Only the twelve herbs with a licensed photograph render anything. */}
-      <HerbPhoto
-        slug={slug}
-        name={herb.name}
-        className="mt-2"
-        imageUrl={herb.image_url}
-        credit={
-          (herb.provenance as { image?: { credit?: string } } | null)?.image
-            ?.credit
-        }
-        creditUrl={
-          (herb.provenance as { image?: { source?: string } } | null)?.image
-            ?.source
-        }
-        publisher={
-          (herb.provenance as { image?: { publisher?: string } } | null)?.image
-            ?.publisher
-        }
-        licence={
-          (herb.provenance as { image?: { licence?: string } } | null)?.image
-            ?.licence
-        }
-        licenceUrl={
-          (herb.provenance as { image?: { licence_url?: string } } | null)
-            ?.image?.licence_url
-        }
-      />
+      {(() => {
+        const imageMeta = (
+          herb.provenance as {
+            image?: {
+              credit?: string;
+              source?: string;
+              publisher?: string;
+              licence?: string;
+              licence_url?: string;
+              licenceUrl?: string;
+            };
+          } | null
+        )?.image;
+        return (
+          <HerbPhoto
+            slug={slug}
+            name={herb.name}
+            className="mt-2"
+            imageUrl={herb.image_url}
+            credit={imageMeta?.credit}
+            creditUrl={imageMeta?.source}
+            publisher={imageMeta?.publisher}
+            licence={imageMeta?.licence}
+            licenceUrl={imageMeta?.licence_url ?? imageMeta?.licenceUrl}
+          />
+        );
+      })()}
 
       {/* Personalized interaction warning (H1). Client component so the ISR
           page stays static for anonymous traffic; signed-in users get a
