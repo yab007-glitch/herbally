@@ -77,6 +77,10 @@ export async function POST(request: NextRequest) {
     // (entries written before the per-slug tag existed still expire on TTL).
     revalidateTag(`herb-page-bundle-${slug}`, "max");
     revalidateTag(`herb-faqs-${slug}`, "max");
+    // The regulator record is cached separately from the bundle it reads, so
+    // purging the bundle alone left an edited purposes/doses list on screen for
+    // the rest of its TTL (found 2026-11-16 on malabar-nut).
+    revalidateTag(`herb-regulatory-evidence-${slug}`, "max");
     // The Full Route Cache (the prerendered HTML) is keyed by path, not tag.
     revalidatePath(`/herbs/${slug}`);
     revalidatePath(`/fr/herbs/${slug}`);

@@ -265,13 +265,34 @@ const loadHerbPageBundle = cache(
   }
 );
 
-const loadRegulatoryEvidence = unstable_cache(
+/**
+ * The regulator record for one herb.
+ *
+ * This used to be a single module-level `unstable_cache` carrying only the
+ * global tag `herb-regulatory-evidence`, which nothing invalidated: once the
+ * entry was warm, a database correction stayed invisible for the full 72 h
+ * TTL. Rebuilding the bundle did not help either, because this cache holds its
+ * own copy of the value. Measured on 2026-11-16: `malabar-nut` lost a claim
+ * that named another plant, the table and the bundle were both clean, and the
+ * live page still rendered the old bullet.
+ *
+ * The wrapper is therefore created per call so the tag can carry the slug, and
+ * `/api/revalidate-herb` purges `herb-regulatory-evidence-<slug>`.
+ */
+const loadRegulatoryEvidence = cache(
   async (slug: string): Promise<RegulatoryEvidence | null> => {
-    const bundle = await loadHerbPageBundle(slug);
-    return (bundle?.regulatory as RegulatoryEvidence | null) ?? null;
-  },
-  ["herb-regulatory-evidence"],
-  { revalidate: HERB_PAGE_TTL, tags: ["herb-regulatory-evidence"] }
+    return await unstable_cache(
+      async (s: string) => {
+        const bundle = await loadHerbPageBundle(s);
+        return (bundle?.regulatory as RegulatoryEvidence | null) ?? null;
+      },
+      ["herb-regulatory-evidence"],
+      {
+        revalidate: HERB_PAGE_TTL,
+        tags: ["herb-regulatory-evidence", `herb-regulatory-evidence-${slug}`],
+      }
+    )(slug);
+  }
 );
 
 export async function generateStaticParams() {
