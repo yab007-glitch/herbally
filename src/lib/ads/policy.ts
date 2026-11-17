@@ -19,8 +19,20 @@
  *   2. the current URL is an ad-eligible public herb reference page;
  *   3. the *document* was originally loaded at an ad-eligible URL (so an ad
  *      script can never survive a client-side navigation from another page);
- *   4. the reader granted ad consent (explicit opt-in, not implied);
- *   5. the reader's region is not EEA/UK/CH and is positively known.
+ *   4. the reader has not asserted Global Privacy Control, a browser-level
+ *      opt-out that outranks anything the site stores;
+ *   5. the reader's region is positively known;
+ *   6. outside EEA/UK/CH, the reader granted ad consent (explicit opt-in, not
+ *      implied); inside EEA/UK/CH, Google's consent message (Funding Choices,
+ *      acting as the CMP) reports both ad_storage and ad_user_data granted.
+ *
+ * ── EEA/UK/CH consent ─────────────────────────────────────────────────────
+ * Restricted regions are no longer blocked outright: they are gated by the
+ * Google consent message, the certified CMP. The first-party banner is not a
+ * certified CMP and never renders there. The CMP exposes its answer through
+ * `window.googlefc`; `src/lib/ads/cmp.ts` reads it and mirrors it into
+ * Consent Mode v2. While the CMP is loading, absent or declined the decision
+ * is `cmp-missing` / `cmp-denied`, never `allowed`.
  *
  * ── What this does NOT solve ──────────────────────────────────────────────
  * A script running in a document still runs with the origin's privileges.
@@ -60,25 +72,45 @@ export const AD_PROVIDER_HOSTS = [
   "https://*.doubleclick.net",
   "https://adservice.google.com",
   "https://www.google.com",
+  "https://fundingchoicesmessages.google.com",
 ] as const;
 
 export type AdConsent = "granted" | "denied" | null;
 
-/** `row` = ads may be offered (with explicit opt-in). `eea` = blocked. */
+/**
+ * `row` = ads may be offered with the first-party opt-in. `eea` = ads may be
+ * offered only when the Google CMP reports consent. `unknown` = blocked.
+ */
 export type AdRegion = "row" | "eea" | "unknown";
 
 export type AdPageClass = "ad-eligible" | "sensitive" | "neutral";
+
+/** The Google consent message's answer. `unknown` = no decision (fails closed). */
+export type GoogleCmpConsent = "granted" | "denied" | "unknown";
 
 export type AdBlockReason =
   | "gate-off"
   | "not-configured"
   | "page-not-ad-eligible"
   | "document-not-ad-eligible"
+  | "gpc-opt-out"
+  | "region-unknown"
+  | "cmp-missing"
+  | "cmp-denied"
   | "consent-missing"
   | "consent-denied"
-  | "region-restricted"
-  | "region-unknown"
   | "allowed";
+
+/**
+ * Global Privacy Control is a browser/extension-level opt-out signal. Only an
+ * explicit `true` counts: missing or malformed data must not opt a reader out
+ * by accident, and must never be read as permission.
+ */
+export function isGlobalPrivacyControlEnabled(
+  value: boolean | null | undefined
+): boolean {
+  return value === true;
+}
 
 export type AdGateDecision = {
   allowed: boolean;
@@ -89,9 +121,9 @@ export type AdGateDecision = {
  * EU member states + EEA (Iceland, Liechtenstein, Norway) + UK + Switzerland.
  *
  * These are the jurisdictions where Google's EU user consent policy applies.
- * HerbAlly blocks ads there entirely until a Google-certified CMP (or Google's
- * own consent message) is integrated — a custom banner is not a certified CMP
- * and must not be presented as one.
+ * Ads there are gated by Google's consent message (Funding Choices), which is
+ * a certified CMP; the first-party banner is not, and must not be presented
+ * as one. No CMP answer means no ad.
  */
 const CONSENT_RESTRICTED_COUNTRIES = new Set([
   "AT",
@@ -273,6 +305,10 @@ export type AdGateInput = {
   bootPathname?: string | null;
   consent: AdConsent;
   region: AdRegion;
+  /** Google consent message answer. Absent reads as `unknown`. */
+  cmpConsent?: GoogleCmpConsent;
+  /** `navigator.globalPrivacyControl`; only an explicit `true` opts out. */
+  gpc?: boolean;
 };
 
 /**
@@ -292,17 +328,30 @@ export function evaluateAdGate(input: AdGateInput): AdGateDecision {
   if (!input.bootPathname || !isAdEligiblePath(input.bootPathname)) {
     return { allowed: false, reason: "document-not-ad-eligible" };
   }
+  // A browser-level opt-out outranks every on-site choice, including a CMP
+  // grant: it is checked before geo and consent so it cannot be overridden.
+  if (isGlobalPrivacyControlEnabled(input.gpc)) {
+    return { allowed: false, reason: "gpc-opt-out" };
+  }
+  if (input.region === "unknown") {
+    return { allowed: false, reason: "region-unknown" };
+  }
+  // EEA/UK/CH: the Google CMP is the only consent surface.
+  if (input.region === "eea") {
+    if (input.cmpConsent === "granted") {
+      return { allowed: true, reason: "allowed" };
+    }
+    if (input.cmpConsent === "denied") {
+      return { allowed: false, reason: "cmp-denied" };
+    }
+    return { allowed: false, reason: "cmp-missing" };
+  }
+  // Rest of world: the reader's explicit first-party opt-in.
   if (input.consent === null) {
     return { allowed: false, reason: "consent-missing" };
   }
   if (input.consent === "denied") {
     return { allowed: false, reason: "consent-denied" };
-  }
-  if (input.region === "eea") {
-    return { allowed: false, reason: "region-restricted" };
-  }
-  if (input.region !== "row") {
-    return { allowed: false, reason: "region-unknown" };
   }
   return { allowed: true, reason: "allowed" };
 }

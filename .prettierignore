@@ -7,3 +7,4 @@ supabase/.temp
 ads.txt
 artifacts/
 ours-*.json
+.e2e-gate-on/

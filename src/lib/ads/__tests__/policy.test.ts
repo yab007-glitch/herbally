@@ -5,6 +5,7 @@ import {
   classifyPage,
   evaluateAdGate,
   isAdEligiblePath,
+  isGlobalPrivacyControlEnabled,
   isSensitivePath,
   normalizePublicPath,
   parseAdConsent,
@@ -185,6 +186,15 @@ describe("resolveAdRegion", () => {
   });
 });
 
+describe("isGlobalPrivacyControlEnabled", () => {
+  it("opts out only on an explicit true", () => {
+    expect(isGlobalPrivacyControlEnabled(true)).toBe(true);
+    expect(isGlobalPrivacyControlEnabled(false)).toBe(false);
+    expect(isGlobalPrivacyControlEnabled(null)).toBe(false);
+    expect(isGlobalPrivacyControlEnabled(undefined)).toBe(false);
+  });
+});
+
 describe("evaluateAdGate", () => {
   it("is inert while the hard launch gate is off", () => {
     expect(ADS_LAUNCH_GATE).toBe(false);
@@ -259,18 +269,76 @@ describe("evaluateAdGate", () => {
     });
   });
 
-  it("blocks restricted and unknown regions", () => {
+  it("gates EEA/UK/CH on the Google CMP, never on the first-party banner", () => {
+    // There the CMP is the only consent surface: absent or still-loading data
+    // must fail closed rather than fall back to the cookie.
     expect(evaluateAdGate({ ...allowedInput, region: "eea" })).toEqual({
       allowed: false,
-      reason: "region-restricted",
+      reason: "cmp-missing",
     });
+    expect(
+      evaluateAdGate({ ...allowedInput, region: "eea", cmpConsent: "unknown" })
+    ).toEqual({ allowed: false, reason: "cmp-missing" });
+    expect(
+      evaluateAdGate({ ...allowedInput, region: "eea", cmpConsent: "denied" })
+    ).toEqual({ allowed: false, reason: "cmp-denied" });
+    expect(
+      evaluateAdGate({ ...allowedInput, region: "eea", cmpConsent: "granted" })
+    ).toEqual({ allowed: true, reason: "allowed" });
+  });
+
+  it("still refuses a region that could not be established", () => {
     expect(evaluateAdGate({ ...allowedInput, region: "unknown" })).toEqual({
       allowed: false,
       reason: "region-unknown",
     });
+    // Even a CMP grant cannot rescue an unknown region.
+    expect(
+      evaluateAdGate({
+        ...allowedInput,
+        region: "unknown",
+        cmpConsent: "granted",
+      })
+    ).toEqual({ allowed: false, reason: "region-unknown" });
   });
 
-  it("checks the gate before consent and region", () => {
+  it("honours Global Privacy Control before region and consent", () => {
+    expect(evaluateAdGate({ ...allowedInput, gpc: true })).toEqual({
+      allowed: false,
+      reason: "gpc-opt-out",
+    });
+    // A CMP grant does not override a browser-level opt-out.
+    expect(
+      evaluateAdGate({
+        ...allowedInput,
+        region: "eea",
+        cmpConsent: "granted",
+        gpc: true,
+      })
+    ).toEqual({ allowed: false, reason: "gpc-opt-out" });
+    // Nor does an explicit first-party opt-in.
+    expect(
+      evaluateAdGate({
+        ...allowedInput,
+        consent: "granted",
+        region: "row",
+        gpc: true,
+      })
+    ).toEqual({ allowed: false, reason: "gpc-opt-out" });
+  });
+
+  it("reports a page or document refusal before GPC", () => {
+    // Ordering matters for explainability: an ineligible document is refused
+    // for that reason, not because of a signal it never reached.
+    expect(
+      evaluateAdGate({ ...allowedInput, pathname: "/herbalist", gpc: true })
+    ).toEqual({ allowed: false, reason: "page-not-ad-eligible" });
+    expect(
+      evaluateAdGate({ ...allowedInput, bootPathname: "/herbalist", gpc: true })
+    ).toEqual({ allowed: false, reason: "document-not-ad-eligible" });
+  });
+
+  it("checks the gate before consent, region, CMP and GPC", () => {
     // A closed gate reports "gate-off", not some downstream reason: the
     // decision must be explainable without knowing the visitor.
     expect(
@@ -279,6 +347,8 @@ describe("evaluateAdGate", () => {
         gate: false,
         consent: "denied",
         region: "eea",
+        cmpConsent: "granted",
+        gpc: true,
         client: null,
       })
     ).toEqual({ allowed: false, reason: "gate-off" });

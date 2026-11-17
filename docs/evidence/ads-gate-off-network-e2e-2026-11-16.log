@@ -1,0 +1,21 @@
+
+Running 15 tests using 4 workers
+
+  ✓   3 [chromium] › e2e/ads.spec.ts:91:3 › advertising safety — launch gate off › the herb document's CSP forbids every ad origin (2.5s)
+  ✓   1 [chromium] › e2e/ads.spec.ts:80:3 › advertising safety — launch gate off › a direct herb page load contacts no ad network (4.5s)
+  -   6 [chromium] › e2e/ads.spec.ts:275:3 › advertising safety — launch gate on › A. before consent no ad network is contacted and the CMP owns the decision
+  -   7 [chromium] › e2e/ads.spec.ts:299:3 › advertising safety — launch gate on › B. a granted choice loads AdSense and mirrors the grant into Consent Mode
+  -   8 [chromium] › e2e/ads.spec.ts:322:3 › advertising safety — launch gate on › C. a denied choice contacts no ad network and renders no unit
+  -   9 [chromium] › e2e/ads.spec.ts:341:5 › advertising safety — launch gate on › EEA/UK/CH › D. a granted first-party cookie cannot outrank the Google CMP
+  -  10 [chromium] › e2e/ads.spec.ts:359:3 › advertising safety — launch gate on › E. Global Privacy Control outranks a stored grant
+  -  11 [chromium] › e2e/ads.spec.ts:381:3 › advertising safety — launch gate on › F. the herbalist tool stays ad-free even with a stored grant
+  -  12 [chromium] › e2e/ads.spec.ts:397:3 › advertising safety — launch gate on › G. the calculator stays ad-free even with a stored grant
+  -  13 [chromium] › e2e/ads.spec.ts:413:3 › advertising safety — launch gate on › H. leaving an ad document replaces it and stops ad requests
+  -  14 [chromium] › e2e/ads.spec.ts:427:3 › advertising safety — launch gate on › J. the calculator document replaces the ad document and stays ad-free
+  -  15 [chromium] › e2e/ads.spec.ts:441:3 › advertising safety — launch gate on › I. revoking the choice replaces the document and stores the denial
+  ✓   4 [chromium] › e2e/ads.spec.ts:113:3 › advertising safety — launch gate off › no consent banner is rendered anywhere while the gate is off (9.2s)
+  ✓   2 [chromium] › e2e/ads.spec.ts:102:3 › advertising safety — launch gate off › a health-tool page contacts no ad network (10.4s)
+  ✓   5 [chromium] › e2e/ads.spec.ts:127:3 › advertising safety — launch gate off › navigation from a tool into a herb page and back contacts no ad network (16.5s)
+
+  10 skipped
+  5 passed (21.6s)

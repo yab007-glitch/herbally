@@ -5,8 +5,13 @@ import { usePathname } from "next/navigation";
 import {
   ADS_LAUNCH_GATE,
   evaluateAdGate,
+  isAdEligiblePath,
+  isGlobalPrivacyControlEnabled,
   type AdGateDecision,
+  type AdGateInput,
+  type GoogleCmpConsent,
 } from "@/lib/ads/policy";
+import { readGoogleConsent, updateConsentMode } from "@/lib/ads/cmp";
 import { readAdConsent, subscribeAdConsent } from "@/lib/ads/consent";
 import {
   getDocumentBootPathname,
@@ -36,6 +41,15 @@ type AdSlotProps = {
 
 const SCRIPT_ID = "adsbygoogle-js";
 
+/** `navigator.globalPrivacyControl`, undefined on browsers without the API. */
+function readGlobalPrivacyControl(): boolean | null | undefined {
+  if (typeof navigator === "undefined") return undefined;
+  const nav = navigator as Navigator & {
+    globalPrivacyControl?: boolean | null;
+  };
+  return nav.globalPrivacyControl;
+}
+
 /**
  * Render one clearly labelled AdSense unit, or nothing.
  *
@@ -45,8 +59,9 @@ const SCRIPT_ID = "adsbygoogle-js";
  *   - current URL is a public herb detail page;
  *   - the *document* was loaded at such a page — an ad script must never be
  *     injected into a document that also rendered a health tool;
- *   - explicit opt-in consent;
- *   - positively-known non-EEA/UK/CH region.
+ *   - the reader has not asserted Global Privacy Control;
+ *   - positively-known region; outside EEA/UK/CH an explicit opt-in, inside
+ *     EEA/UK/CH a grant from the Google CMP.
  *
  * The provider script is only created after all of those pass, so there is no
  * ad-network request before consent. Non-personalised ads are requested
@@ -74,35 +89,63 @@ export function AdSlot({
 
     const evaluate = async () => {
       const consent = readAdConsent();
+      const gpc = isGlobalPrivacyControlEnabled(readGlobalPrivacyControl());
+      const bootPathname = getDocumentBootPathname();
+      const base = {
+        gate: ADS_LAUNCH_GATE,
+        client,
+        slot,
+        pathname,
+        bootPathname,
+        consent,
+        gpc,
+      } satisfies Omit<AdGateInput, "region" | "cmpConsent">;
 
-      // Nothing below this point may create a provider request. A revoke in
-      // another tab also lands here: if a script is already live, replace the
-      // document so it cannot keep running.
-      if (consent !== "granted") {
-        if (isAdScriptActive()) {
-          reloadDocumentOnce("herbally:ads-consent-reload");
-        }
-        setDecision({
-          allowed: false,
-          reason: consent === "denied" ? "consent-denied" : "consent-missing",
-        });
+      // Cheap decisions first: a document that can never be ad-eligible, or a
+      // reader who asserted Global Privacy Control, must not even cost a geo
+      // lookup. Every one of these checks precedes the region branch in
+      // evaluateAdGate, so the placeholder region cannot change the reason.
+      if (
+        !isAdEligiblePath(pathname) ||
+        !bootPathname ||
+        !isAdEligiblePath(bootPathname) ||
+        gpc
+      ) {
+        setDecision(evaluateAdGate({ ...base, region: "unknown" }));
         return;
       }
 
       const region = await getAdRegion();
       if (cancelled) return;
 
-      setDecision(
-        evaluateAdGate({
-          gate: ADS_LAUNCH_GATE,
-          client,
-          slot,
-          pathname,
-          bootPathname: getDocumentBootPathname(),
-          consent,
-          region,
-        })
-      );
+      // Outside EEA/UK/CH the first-party choice is the consent basis. Mirror
+      // it into Consent Mode v2 as soon as it is known, exactly as the CMP's
+      // answer is mirrored below: the tags must see the same decision the ad
+      // gate honours, including on a document loaded with a stored choice.
+      if (region === "row" && (consent === "granted" || consent === "denied")) {
+        updateConsentMode(consent);
+      }
+
+      // EEA/UK/CH consent comes from the Google CMP, never the first-party
+      // cookie. "unknown" covers a message that is absent or still loading.
+      const cmpConsent: GoogleCmpConsent =
+        region === "eea" ? await readGoogleConsent() : "unknown";
+      if (cancelled) return;
+
+      if (cmpConsent === "granted" || cmpConsent === "denied") {
+        updateConsentMode(cmpConsent);
+      }
+
+      const next = evaluateAdGate({ ...base, region, cmpConsent });
+
+      // Nothing below this point may create a provider request. A revoke, a
+      // CMP denial or a GPC opt-out that arrives after the script loaded
+      // cannot unload it by removing markup, so replace the document.
+      if (!next.allowed && isAdScriptActive()) {
+        reloadDocumentOnce("herbally:ads-consent-reload");
+      }
+
+      setDecision(next);
     };
 
     void evaluate();
