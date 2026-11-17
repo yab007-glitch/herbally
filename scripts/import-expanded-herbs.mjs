@@ -21,6 +21,12 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const GATE = join(ROOT, "artifacts", "expand-gate.json");
 const UA = { "User-Agent": "HerbAlly expansion import (herbally.app)" };
 const DRY = process.argv.includes("--dry-run");
+// A page minted without an indication is exactly the thin URL this library has
+// been removing: 4,249 of them sat in "crawled, currently not indexed" and the
+// whole site's coverage signal carried the cost. Import only what a regulator
+// actually supports — one stated purpose and one dose — unless an operator
+// deliberately overrides it, and say so at the end of the run.
+const ALLOW_THIN = process.argv.includes("--allow-thin");
 const API = "https://health-products.canada.ca/api/natural-licences";
 const CATEGORY = "de16f867-b392-4c17-b50a-b6923296ba6d"; // "Not Common"
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -263,6 +269,17 @@ async function main() {
       },
     };
 
+    // Refuse to mint a page the page itself would have to declare unsourced:
+    // no stated purpose or no dose means no row.
+    if (!ALLOW_THIN && (!doseText || !(row.traditional_uses?.length ?? 0))) {
+      report.push({
+        slug,
+        status: "skipped: no indication or no dose",
+        dose: doseText,
+      });
+      continue;
+    }
+
     if (DRY) {
       report.push({
         slug,
@@ -297,12 +314,18 @@ async function main() {
   );
   const counts = report.reduce(
     (a, r) => (
-      (a[r.status.split(" ")[0]] = (a[r.status.split(" ")[0]] || 0) + 1),
+      (a[r.status.split(/[ :]/)[0]] = (a[r.status.split(/[ :]/)[0]] || 0) + 1),
       a
     ),
     {}
   );
   console.log("[import] done:", JSON.stringify(counts));
+  if (!ALLOW_THIN && counts.skipped) {
+    console.log(
+      `[import] refused ${counts.skipped} candidate(s) with no stated purpose or no dose — ` +
+        "that is the standard, not a failure. Re-run with --allow-thin only if you have decided to publish unsourced pages."
+    );
+  }
 }
 
 main().catch((err) => {
