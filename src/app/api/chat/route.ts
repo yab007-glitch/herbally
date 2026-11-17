@@ -442,7 +442,11 @@ export async function POST(request: NextRequest) {
   // under v2 include "this herb is not in my database" denials produced when a
   // French herb name matched no row; they must never be served again. Old rows
   // simply expire.
-  const CACHE_KEY_VERSION = "herbally-chat-cache-v3-fr-names";
+  // v4: the system prompt now carries regulator records and imported
+  // monographs, and herb extraction is ranked. Answers cached under v3 include
+  // "no EMA monograph for Sideritis scardica" — a denial the database
+  // contradicts. They must never be served again; old rows simply expire.
+  const CACHE_KEY_VERSION = "herbally-chat-cache-v4-regulator-context";
   const promptHash = createHash("sha256")
     .update(CACHE_KEY_VERSION)
     .update(JSON.stringify(chatMessages))
