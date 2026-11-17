@@ -112,3 +112,4 @@ artifacts/thin-rewrite*.jsonl
 artifacts/field-backfill-proposals.jsonl
 artifacts/ema-final-mapping.json
 artifacts/ema-new-sourced.json
+artifacts/lnhpd-purposes-backup-20261116.tsv

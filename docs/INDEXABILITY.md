@@ -3,7 +3,8 @@
 What every route type is allowed to do in search, why, and where the rule lives
 in code. Change the code and this table together.
 
-Last verified against production: **2026-11-16**, `sitemap.xml` = 2,940 URLs.
+Last verified against production: **2026-11-16**, `sitemap.xml` = 2,964 URLs
+(1,239 herb pages in each locale, plus 486 non-herb URLs).
 
 ## Indexable
 

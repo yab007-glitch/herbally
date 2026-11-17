@@ -113,6 +113,23 @@ least one licensed product; median 25 records per herb. The remaining 1,535
 herbs have no regulator record in this source and must not be padded to look
 like they do.
 
+### Purpose text is normalised to one claim per bullet — 2026-11-16
+
+The harvest concatenated every purpose statement on a product label into a
+single string, so one array element could run to 4,000 characters and the page
+rendered it as one bullet. On 2026-11-16 all 1,183 stored rows were split on
+sentence boundaries (guarding `e.g.`, `i.e.`, `etc.`, `approx.`, `vs.`),
+de-duplicated within each herb, and re-ordered as first seen. Elements went from
+3,093 to 10,114, characters from 824,190 to 798,976. Nothing was rewritten: the
+transformation only splits and removes exact duplicates.
+
+The same pass dropped sentences whose subject is another plant by its binomial
+(`Arctium lappa is traditionally used…` on the acacia record). That is still not
+a clean fix for the underlying defect — a herb's purposes are a **union across
+every product it appears in**, so a gum used as a multivitamin excipient inherits
+the multivitamin's claims. Re-scoping the import to per-product granularity is
+open work; until then the page shows the first six bullets only.
+
 ## Open reference sources — inventory (licence and access), checked 2026-11-03
 
 These sources support taxonomy, chemistry and literature rather than interaction
