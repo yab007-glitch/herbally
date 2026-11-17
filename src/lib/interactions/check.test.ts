@@ -50,3 +50,101 @@ describe("matchInteractionPair bilingual support", () => {
     );
   });
 });
+
+describe("matchInteractionPair drug classes", () => {
+  // St. John's Wort stores its four SSRI pairs as the individual drugs, so a
+  // reader typing the class must still be told about the contraindication.
+  const stJohnsWortPairs = [
+    {
+      drugName: "Sertraline (Zoloft)",
+      drugSlug: "sertraline",
+      severity: "contraindicated",
+    },
+    {
+      drugName: "Fluoxetine (Prozac)",
+      drugSlug: "fluoxetine",
+      severity: "contraindicated",
+    },
+    {
+      drugName: "Paroxetine (Paxil)",
+      drugSlug: "paroxetine",
+      severity: "contraindicated",
+    },
+    {
+      drugName: "Citalopram (Celexa)",
+      drugSlug: "citalopram",
+      severity: "contraindicated",
+    },
+    {
+      drugName: "Warfarin (Coumadin)",
+      drugSlug: "warfarin",
+      severity: "moderate",
+    },
+  ];
+
+  it("resolves a class to the herb's own member rows", () => {
+    const match = matchInteractionPair("SSRI antidepressants", stJohnsWortPairs);
+    expect(match?.severity).toBe("contraindicated");
+    expect([
+      "sertraline",
+      "fluoxetine",
+      "paroxetine",
+      "citalopram",
+    ]).toContain(match?.drugSlug);
+  });
+
+  it("prefers the stored class row over its members", () => {
+    const withClassRow = [
+      {
+        drugName: "Antidepressants (SSRIs)",
+        drugSlug: "antidepressants",
+        severity: "contraindicated",
+      },
+      ...stJohnsWortPairs,
+    ];
+    expect(
+      matchInteractionPair("SSRI antidepressants", withClassRow)?.drugSlug
+    ).toBe("antidepressants");
+  });
+
+  it("answers 'blood thinners' with the most serious thinner the herb holds", () => {
+    const turmericPairs = [
+      {
+        drugName: "Warfarin (Coumadin)",
+        drugSlug: "warfarin",
+        severity: "severe",
+      },
+      { drugName: "Aspirin", drugSlug: "aspirin", severity: "moderate" },
+      {
+        drugName: "Clopidogrel (Plavix)",
+        drugSlug: "clopidogrel",
+        severity: "moderate",
+      },
+    ];
+    expect(matchInteractionPair("blood thinners", turmericPairs)?.drugName).toBe(
+      "Warfarin (Coumadin)"
+    );
+    expect(matchInteractionPair("blood thinner", turmericPairs)?.drugName).toBe(
+      "Warfarin (Coumadin)"
+    );
+  });
+
+  it("keeps a drug the reader named above a more severe sibling", () => {
+    const turmericPairs = [
+      {
+        drugName: "Warfarin (Coumadin)",
+        drugSlug: "warfarin",
+        severity: "severe",
+      },
+      { drugName: "Aspirin", drugSlug: "aspirin", severity: "moderate" },
+    ];
+    expect(matchInteractionPair("aspirin", turmericPairs)?.drugName).toBe(
+      "Aspirin"
+    );
+  });
+
+  it("does not invent a class member the herb does not have", () => {
+    expect(matchInteractionPair("statins", stJohnsWortPairs)).toBeNull();
+    expect(matchInteractionPair("antibiotics", stJohnsWortPairs)).toBeNull();
+  });
+});
