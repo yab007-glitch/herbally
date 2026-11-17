@@ -50,7 +50,11 @@ export function buildHerbTextOrFilter(
       const fields = [
         `name.ilike.%${safe}%`,
         `scientific_name.ilike.%${safe}%`,
-        ...(includeDescription ? [`description.ilike.%${safe}%`] : []),
+        // Avoid short 2-3 char tokens matching thousands of unrelated descriptions
+        // (e.g. "ail" in "available") before an exact French/English name match.
+        ...(includeDescription && token.length >= 4
+          ? [`description.ilike.%${safe}%`]
+          : []),
         `translations->fr->>name.ilike.%${safe}%`,
       ];
       return fields;

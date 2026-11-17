@@ -77,6 +77,37 @@ function inputTokens(input: string): string[] {
     .filter((t) => t.length >= 3);
 }
 
+const PAIR_STOP_WORDS = new Set([
+  "medications",
+  "medication",
+  "drugs",
+  "drug",
+  "agents",
+  "agent",
+  "general",
+  "oral",
+  "absorption",
+  "therapy",
+  "products",
+  "supplements",
+  "inhibitors",
+  "agonists",
+  "blockers",
+  "depressants",
+  "metabolized",
+  "cytochrome",
+  "p450",
+]);
+
+/** Extract individual generic drug/class words from a pair's display name. */
+function pairDrugTokens(drugName: string): string[] {
+  return stripAccents(drugName)
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 4 && !PAIR_STOP_WORDS.has(t));
+}
+
 export function matchInteractionPair<T extends CheckablePair>(
   drugInput: string,
   pairs: T[]
@@ -106,10 +137,16 @@ export function matchInteractionPair<T extends CheckablePair>(
     if (pair.drugSlug === slug) return pair;
   }
 
-  // 2. Whole-token / French alias match.
+  // 2. Whole-token / French alias match against drugSlug AND individual generic
+  //    names inside multi-drug labels (e.g. "Antidiabetic medications (Metformin, Insulin)").
   for (const pair of pairs) {
     if (candidateTokens.has(singular(pair.drugSlug))) return pair;
     if (candidateTokens.has(pair.drugSlug)) return pair;
+    for (const pTok of pairDrugTokens(pair.drugName)) {
+      if (candidateTokens.has(singular(pTok)) || candidateTokens.has(pTok)) {
+        return pair;
+      }
+    }
   }
 
   // 3. Containment in one direction only.

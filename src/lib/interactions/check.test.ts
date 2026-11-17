@@ -31,5 +31,22 @@ describe("matchInteractionPair bilingual support", () => {
     expect(matchInteractionPair("ibuprofène", pairs)?.drugSlug).toBe(
       "ibuprofen"
     );
+
+    const multiDrugPairs = [
+      {
+        drugName: "Antidiabetic medications (Metformin, Insulin)",
+        drugSlug: "antidiabetic-medications",
+      },
+      {
+        drugName: "Anticoagulants and Antiplatelets (Warfarin, Aspirin)",
+        drugSlug: "anticoagulants-and-antiplatelets",
+      },
+    ];
+    expect(matchInteractionPair("metformine", multiDrugPairs)?.drugSlug).toBe(
+      "antidiabetic-medications"
+    );
+    expect(matchInteractionPair("aspirine", multiDrugPairs)?.drugSlug).toBe(
+      "anticoagulants-and-antiplatelets"
+    );
   });
 });

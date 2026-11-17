@@ -11,7 +11,8 @@ import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 
 function getLocale(request: NextRequest): "en" | "fr" {
-  return request.headers.get("x-locale") === "fr" ? "fr" : "en";
+  if (request.headers.get("x-locale") === "fr") return "fr";
+  return request.nextUrl.searchParams.get("locale") === "fr" ? "fr" : "en";
 }
 
 interface HerbCandidate {

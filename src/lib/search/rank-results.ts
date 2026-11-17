@@ -1,14 +1,18 @@
-import { normalizeMatchText } from "@/lib/search/normalize-query";
+import {
+  normalizeMatchText,
+  splitSearchTokens,
+} from "@/lib/search/normalize-query";
 import { extractFrenchHerbName } from "@/lib/utils/localize-herb";
 
 /**
  * Rank herb search results so exact/prefix name matches surface first across
- * both English and French herb names (with accents folded).
+ * both English and French herb names (with accents and elided articles folded).
  */
 export function rankHerbResults<
   T extends { name: string; translations?: unknown },
 >(results: T[], term: string): T[] {
-  const norm = normalizeMatchText(term);
+  const tokens = splitSearchTokens(term);
+  const norm = normalizeMatchText(tokens.join(" ")) || normalizeMatchText(term);
   if (!norm) return results;
 
   const candidateRank = (candidate: string | null | undefined): number => {
