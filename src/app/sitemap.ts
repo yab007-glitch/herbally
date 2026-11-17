@@ -684,27 +684,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (herbsBatch.length === 0) break;
 
       for (const herb of herbsBatch) {
-        // Offer Google only what we can stand behind: a regulator record or
-        // imported monograph text. Compiled PubMed sheets are excluded — see
-        // the note in src/lib/seo/indexable.ts. Internal links still expose
-        // those pages; Google judges them on their own merit.
-        // Offer Google only what the page itself is willing to have indexed.
-        // The two used to disagree: every published herb was listed here while
-        // the page rendered noindex below the substance line. That is the shape
-        // Google reported 2,711 times as "crawled, currently not indexed", and
-        // the evidence behind the AdSense "low-value content" refusal.
+        // Offer Google only what we can point at: a regulator record, imported
+        // monograph text, or a hand-written monograph. Compiled PubMed sheets
+        // are excluded — see the note in src/lib/seo/indexable.ts. Internal
+        // links still expose those pages; Google judges them on their own merit.
+        // The sitemap is deliberately stricter than the page: the page may say
+        // `index, follow` for a page Google can judge on its own merit, while
+        // the sitemap only offers pages with a record behind them. Advertising
+        // the whole library is what left 4,249 URLs in "crawled, currently not
+        // indexed" and fed the AdSense "low-value content" refusal.
         const hasRegulatory = regulatorySlugs.has(herb.slug);
         const hasMonograph =
           monographSlugs.has(herb.id) || sourceSlugs.has(herb.slug);
-        // The sitemap is deliberately stricter than the page. The page may say
-        // `index, follow` for a page Google can judge on its own merit; the
-        // sitemap only offers pages with a record behind them. A page with
-        // neither a regulator record nor imported monograph text is left to
-        // internal links, which is why 4,249 URLs sat in "crawled, currently
-        // not indexed" while every one of them was being advertised here.
-        // A hand-written monograph is a source too, and the page counts it when it
-        // decides robots — keep the two in step so neither side withholds a page
-        // the other advertises.
         if (!hasRegulatory && !hasMonograph && !hasManualMonograph(herb.slug))
           continue;
         const indexable = isIndexable({

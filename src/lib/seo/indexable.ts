@@ -7,11 +7,13 @@
  * Google reached the same verdict twice — 2,711 pages "crawled, currently not
  * indexed" and an AdSense refusal for "low-value content".
  *
- * A PubMed-compiled information sheet counts as a monograph. Those sheets are
- * built from real abstracts with a PMID on every claim, average ~3,200
- * characters, and are what the page renders for the 2,500 herbs that have no
- * hand-written monograph — counting them (2026-11-08) lifted the indexable set
- * from 1,347 to ~2,594.
+ * A PubMed-compiled information sheet still counts for the page's own robots
+ * decision. Those sheets are built from real abstracts with a PMID on every
+ * claim, average ~3,200 characters, and are what the page renders for the
+ * 2,500 herbs that have no hand-written monograph — counting them (2026-11-08)
+ * lifted the indexable set from 1,347 to ~2,594. Since 2026-11-16 they no
+ * longer count for the sitemap (see below): the page may be judged on its own
+ * merit, but the site no longer advertises what it cannot source.
  *
  * **Views do not exempt a page any more.** Until 2026-11-07 a page with 78 views
  * was submitted regardless of substance, on the theory that an entry people

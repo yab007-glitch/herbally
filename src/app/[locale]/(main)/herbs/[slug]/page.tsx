@@ -1214,7 +1214,15 @@ export default async function HerbDetailPage({ params }: Props) {
                     claimsHeading: copy.healthCanada.claimsHeading,
                     safetyHeading: copy.healthCanada.safetyHeading,
                   }
-                : historical
+                : source.source === "European Medicines Agency (HMPC)"
+                  ? {
+                      heading: copy.ema.heading(herb.name),
+                      sourceLabel: copy.ema.sourceLabel,
+                      licenceText: copy.ema.licenceText,
+                      claimsHeading: copy.ema.claimsHeading,
+                      safetyHeading: copy.ema.safetyHeading,
+                    }
+                  : historical
                   ? {
                       heading: historical.heading(herb.name),
                       sourceLabel: historical.sourceLabel,

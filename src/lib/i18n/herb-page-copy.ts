@@ -50,6 +50,7 @@ export interface HerbPageCopy {
   reproducedLabel: string;
   liverTox: SourceBlockCopy;
   healthCanada: SourceBlockCopy;
+  ema: SourceBlockCopy;
   nccih: SourceBlockCopy;
   /**
    * Public-domain books, keyed by the exact `source` value in
@@ -90,6 +91,15 @@ const EN: HerbPageCopy = {
       "Contains information licensed under the Open Government Licence – Canada.",
     claimsHeading: "Approved uses",
     safetyHeading: "Cautions, contraindications and adverse reactions",
+  },
+  ema: {
+    heading: (name) => `What the European Medicines Agency says about ${name}`,
+    sourceLabel:
+      "European Medicines Agency — Committee on Herbal Medicinal Products (HMPC)",
+    licenceText:
+      "European Medicines Agency herbal monograph. The EMA legal notice permits reuse with acknowledgement, so the monograph text is reproduced with attribution.",
+    claimsHeading: "Uses stated in the monograph",
+    safetyHeading: "Cautions and adverse reactions",
   },
   nccih: {
     heading: (name) => `What the NIH says about ${name}`,
@@ -164,6 +174,16 @@ const FR: HerbPageCopy = {
     claimsHeading: "Usages approuvés",
     safetyHeading:
       "Mises en garde, contre-indications et réactions indésirables",
+  },
+  ema: {
+    heading: (name) =>
+      `Ce que dit l'Agence européenne des médicaments à propos de ${name}`,
+    sourceLabel:
+      "Agence européenne des médicaments — Comité des médicaments à base de plantes (HMPC)",
+    licenceText:
+      "Monographie de l'Agence européenne des médicaments. L'avis juridique de l'EMA permet la réutilisation avec mention de la source ; le texte de la monographie est donc reproduit avec attribution.",
+    claimsHeading: "Usages indiqués dans la monographie",
+    safetyHeading: "Mises en garde et réactions indésirables",
   },
   nccih: {
     heading: (name) => `Ce que dit le NIH à propos de ${name}`,

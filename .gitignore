@@ -110,3 +110,5 @@ artifacts/gbif-name-cache.json
 artifacts/pd-herbals-preview-*.json
 artifacts/thin-rewrite*.jsonl
 artifacts/field-backfill-proposals.jsonl
+artifacts/ema-final-mapping.json
+artifacts/ema-new-sourced.json
