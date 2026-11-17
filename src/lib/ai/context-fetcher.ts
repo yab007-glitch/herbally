@@ -618,7 +618,11 @@ async function extractHerbNames(message: string): Promise<string[]> {
         // A wide net, ranked below. The old `.limit(5)` with no ordering made
         // the result depend on row order, which is how unrelated herbs that
         // happened to share a word with the question displaced the real one.
-        .limit(60);
+        // 200 covers the worst measured fan-out ("root" matches 72 published
+        // herbs); an average translations blob is under 1 KB, so even a full
+        // page of candidates stays well under 200 KB.
+        .order("name")
+        .limit(200);
 
       const candidates = (data ?? []).map((row) => {
         const record = row as Record<string, unknown>;

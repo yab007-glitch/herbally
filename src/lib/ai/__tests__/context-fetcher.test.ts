@@ -236,7 +236,7 @@ describe("context-fetcher", () => {
             eq: () => ({
               or: (conditions: string) => {
                 orCalls.push(conditions);
-                return { limit: () => ({ data: [] }) };
+                return { order: () => ({ limit: () => ({ data: [] }) }) };
               },
             }),
           };
@@ -296,7 +296,11 @@ describe("context-fetcher", () => {
       mockSelect.mockImplementation((columns: string) => {
         if (columns === "name, scientific_name, slug, translations") {
           return {
-            eq: () => ({ or: () => ({ limit: () => ({ data: searchRows }) }) }),
+            eq: () => ({
+              or: () => ({
+                order: () => ({ limit: () => ({ data: searchRows }) }),
+              }),
+            }),
           };
         }
         if (columns === "*, herb_categories(*), drug_interactions(*)") {
@@ -334,15 +338,17 @@ describe("context-fetcher", () => {
           return {
             eq: () => ({
               or: () => ({
-                limit: () => ({
-                  data: [
-                    {
-                      name: "Sideritis",
-                      scientific_name: "Sideritis scardica",
-                      slug: "sideritis",
-                      translations: { fr: { name: "Sidérite" } },
-                    },
-                  ],
+                order: () => ({
+                  limit: () => ({
+                    data: [
+                      {
+                        name: "Sideritis",
+                        scientific_name: "Sideritis scardica",
+                        slug: "sideritis",
+                        translations: { fr: { name: "Sidérite" } },
+                      },
+                    ],
+                  }),
                 }),
               }),
             }),
