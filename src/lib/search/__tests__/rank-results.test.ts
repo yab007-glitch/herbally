@@ -55,6 +55,33 @@ describe("rankHerbResults", () => {
     ]);
   });
 
+  it("prefers the name carrying the most typed words over a shorter stranger", () => {
+    // Production on 2026-11-17: "st johns wort extract" put Sticta pulmonacea
+    // first because its two-word name merely starts with "st", while St.
+    // John's Wort carries three of the four typed words and sorted below it.
+    const ranked = rankHerbResults(
+      herbs(["Sticta pulmonacea", "St. John's Wort", "St. Johns Wort Oil"]),
+      "st johns wort extract"
+    );
+    expect(ranked[0].name).toBe("St. John's Wort");
+  });
+
+  it("keeps the herb matching two qualifier words above one-word neighbours", () => {
+    const ranked = rankHerbResults(
+      herbs(["Swamp Milkweed", "Carline Thistle", "Milk Thistle"]),
+      "milk thistle seed"
+    );
+    expect(ranked[0].name).toBe("Milk Thistle");
+  });
+
+  it("ranks the full two-word name above its own one-word head", () => {
+    const ranked = rankHerbResults(
+      herbs(["Aloe", "Aloe Vera"]),
+      "aloe vera juice"
+    );
+    expect(ranked.map((h) => h.name)).toEqual(["Aloe Vera", "Aloe"]);
+  });
+
   it("is case-insensitive and stable within ranks", () => {
     const ranked = rankHerbResults(herbs(["b-one", "a-two"]), "zzz");
     expect(ranked.map((h) => h.name)).toEqual(["b-one", "a-two"]);

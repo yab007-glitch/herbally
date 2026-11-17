@@ -54,15 +54,39 @@ export function rankHerbResults<
   const nameTokenCount = (row: T): number =>
     normalizeMatchText(row.name).split(" ").filter(Boolean).length;
 
+  // How many of the typed words this row's name covers. Used only to order
+  // partial matches: a herb whose name carries three of four typed words
+  // ("St. John's Wort" for "st johns wort extract") is closer than one that
+  // shares a single word ("Sticta pulmonacea", whose name merely starts with
+  // "st").
+  const coverageOf = (row: T): number =>
+    Math.max(
+      ...[row.name, extractFrenchHerbName(row.translations)].map(
+        (candidate) => {
+          const n = normalizeMatchText(candidate || "");
+          if (!n) return 0;
+          const nameTokens = n.split(" ");
+          return queryTokens.filter((token) =>
+            nameTokens.some(
+              (nameToken) =>
+                nameToken.startsWith(token) || token.startsWith(nameToken)
+            )
+          ).length;
+        }
+      )
+    );
+
   return [...results].sort((a, b) => {
     const rankDiff = rowRank(a) - rowRank(b);
     if (rankDiff !== 0) return rankDiff;
     const rank = rowRank(a);
-    // Between partial name matches only, the shorter name that still carries
-    // the typed words is the closer one: "Turmeric" for "turmeric powder",
-    // not "Ethiopian Turmeric". Outside ranks 3 and 4 the caller's order
-    // (evidence grade for symptom matches) must survive untouched.
+    // Between partial name matches only: more typed words covered wins; on a
+    // tie, the shorter name is the closer one ("Turmeric" for "turmeric
+    // powder", not "Ethiopian Turmeric"). Outside ranks 3 and 4 the caller's
+    // order (evidence grade for symptom matches) must survive untouched.
     if (rank === 3 || rank === 4) {
+      const coverageDiff = coverageOf(b) - coverageOf(a);
+      if (coverageDiff !== 0) return coverageDiff;
       return nameTokenCount(a) - nameTokenCount(b);
     }
     return 0;
