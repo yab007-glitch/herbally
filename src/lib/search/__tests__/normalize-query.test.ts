@@ -59,6 +59,18 @@ describe("buildHerbPreciseNameFilter", () => {
   it("leaves the broad text filter untouched", () => {
     expect(buildHerbTextOrFilter("ginger")).toContain("name.ilike.%ginger%");
   });
+
+  it("can drop two-letter fillers that crowd the candidate window", () => {
+    // 2026-11-17: "Chapéu de Couro" answered herb:null because every row in
+    // the limit-30 window matched only the word "de".
+    const filter = buildHerbTextOrFilter("Chapéu de Couro", {
+      includeDescription: false,
+      maxTokens: 5,
+      minTokenLength: 3,
+    });
+    expect(filter).toContain("name.ilike.%Chapéu%");
+    expect(filter).not.toContain("%de%");
+  });
 });
 
 describe("buildHerbNameAnchorFilter", () => {

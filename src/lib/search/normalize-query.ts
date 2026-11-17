@@ -84,10 +84,25 @@ export function normalizeMatchText(value: string): string {
  */
 export function buildHerbTextOrFilter(
   term: string,
-  options: { includeDescription?: boolean; maxTokens?: number } = {}
+  options: {
+    includeDescription?: boolean;
+    maxTokens?: number;
+    minTokenLength?: number;
+  } = {}
 ): string {
-  const { includeDescription = true, maxTokens = 10 } = options;
-  const tokens = splitSearchTokens(term, maxTokens);
+  const {
+    includeDescription = true,
+    maxTokens = 10,
+    minTokenLength = 2,
+  } = options;
+  // Two-letter words ("de", "du", "la") match hundreds of herb names and, in
+  // an unordered `limit 30` window, crowd the real row out — on 2026-11-17
+  // "Chapéu de Couro" resolved to nothing because every returned candidate
+  // matched only the word "de". The interaction checker raises this floor;
+  // the search page keeps matching short words.
+  const tokens = splitSearchTokens(term, maxTokens).filter(
+    (token) => token.length >= minTokenLength
+  );
   const terms =
     tokens.length > 0 ? tokens : [term.trim()].filter(Boolean).slice(0, 1);
 

@@ -1,6 +1,7 @@
 import {
   herbNameContentTokens,
   normalizeMatchText,
+  stripAccents,
 } from "@/lib/search/normalize-query";
 
 export interface HerbMatchCandidate {
@@ -13,6 +14,24 @@ export interface HerbMatchCandidate {
 /** "Turmeric (Curcuma longa)" -> "turmeric-curcuma-longa" */
 export function slugifyHerbTerm(term: string): string {
   return normalizeMatchText(term)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * Slug of a typed name with plurals and possessives kept, so a display name
+ * can equal the slug it was built from. `slugifyHerbTerm` folds a trailing
+ * "s" ("seeds" -> "seed"), which is right for name comparisons but wrong for
+ * slugs: on 2026-11-17 "Citrullus lanatus seeds" resolved to `egusi-herb`,
+ * whose Latin name "Citrullus lanatus seed" tied on the folded form, instead
+ * of the row actually named "Citrullus lanatus seeds"
+ * (`citrullus-lanatus-seeds`). Apostrophes are dropped rather than spaced so
+ * "St. John's Wort" also meets its own slug `st-johns-wort`.
+ */
+function slugifyHerbNameRaw(term: string): string {
+  return stripAccents(term)
+    .toLowerCase()
+    .replace(/['’]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
@@ -32,6 +51,7 @@ export function rankHerbMatches<T extends HerbMatchCandidate>(
   if (rows.length === 0) return undefined;
   const norm = normalizeMatchText(term);
   const slug = slugifyHerbTerm(term);
+  const rawSlug = slugifyHerbNameRaw(term);
   const exact = rows.filter(
     (row) =>
       normalizeMatchText(row.name) === norm ||
@@ -40,12 +60,14 @@ export function rankHerbMatches<T extends HerbMatchCandidate>(
   );
   const direct =
     exact.find((row) => row.slug === slug) ??
+    exact.find((row) => row.slug === rawSlug) ??
     exact.find((row) => !row.slug.includes("-")) ??
     exact[0] ??
     rows.find((row) => normalizeMatchText(row.name).startsWith(norm)) ??
     rows.find((row) =>
       row.frName ? normalizeMatchText(row.frName).startsWith(norm) : false
     ) ??
+    rows.find((row) => row.slug === rawSlug) ??
     rows.find((row) => row.slug === slug);
   if (direct) return direct;
 

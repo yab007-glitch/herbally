@@ -51,6 +51,9 @@ async function resolveHerb(term: string): Promise<HerbCandidate | null> {
   const broadFilter = buildHerbTextOrFilter(term, {
     includeDescription: false,
     maxTokens: 5,
+    // Two-letter fillers ("de", "la") match hundreds of names and push the
+    // real row out of the `limit 30` window (2026-11-17: "Chapéu de Couro").
+    minTokenLength: 3,
   });
   if (!preciseFilter && !anchorFilter && !broadFilter) return null;
   const columns = "slug,name,scientific_name,translations";

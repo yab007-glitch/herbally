@@ -141,6 +141,26 @@ describe("rankHerbMatches", () => {
     ).toBe(aloeVera);
   });
 
+  it("prefers the row named by the typed name when its slug keeps a plural", () => {
+    // Production on 2026-11-17: "Citrullus lanatus seeds" resolved to Ogiri
+    // Igbo (egusi-herb, Latin "Citrullus lanatus seed"). The plural fold made
+    // both rows exact and the unordered window decided; the typed name's own
+    // slug keeps the "s".
+    const egusi = {
+      slug: "egusi-herb",
+      name: "Ogiri Igbo",
+      scientific_name: "Citrullus lanatus seed",
+    };
+    const seeds = {
+      slug: "citrullus-lanatus-seeds",
+      name: "Citrullus lanatus seeds",
+      scientific_name: "Citrullus lanatus",
+    };
+    expect(rankHerbMatches([egusi, seeds], "Citrullus lanatus seeds")).toBe(
+      seeds
+    );
+  });
+
   it("matches exact French names cleanly (e.g. Curcuma -> turmeric, Millepertuis -> st-johns-wort)", () => {
     const curcumaAromatica = {
       slug: "curcuma-aromatica",
