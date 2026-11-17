@@ -400,6 +400,23 @@ describe("context-fetcher", () => {
             }),
           };
         }
+        if (columns === "slug, content, pmids, article_count") {
+          return {
+            in: () => ({
+              data: [
+                {
+                  slug: "sideritis",
+                  content: {
+                    summary: "A mountain tea of the Balkans.",
+                    dosageAndAdministration: "2-4 g as an infusion.",
+                  },
+                  pmids: ["12345678"],
+                  article_count: 18,
+                },
+              ],
+            }),
+          };
+        }
         return { eq: () => ({ or: () => ({ limit: () => ({ data: [] }) }) }) };
       });
 
@@ -414,6 +431,10 @@ describe("context-fetcher", () => {
       expect(ctx.herbs[0].monographs).toHaveLength(1);
       expect(ctx.herbs[0].monographs[0].source).toContain("European Medicines");
       expect(ctx.herbs[0].monographs[0].claims[0]).toContain("Traditional");
+      expect(ctx.herbs[0].information_sheet?.summary).toContain("mountain tea");
+      expect(ctx.herbs[0].information_sheet?.dosage).toContain("2-4 g");
+      expect(ctx.herbs[0].information_sheet?.article_count).toBe(18);
+      expect(ctx.herbs[0].information_sheet?.pmids).toEqual(["12345678"]);
       expect(ctx.note).toContain("regulator data");
     });
 

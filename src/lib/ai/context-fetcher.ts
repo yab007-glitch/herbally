@@ -36,6 +36,23 @@ export interface VerifiedMonograph {
   url: string | null;
 }
 
+/**
+ * The compiled information sheet (herb_pubmed_monographs), written from PubMed
+ * abstracts. Derived, not a regulator — the prompt says so — but for the ~2,000
+ * herbs with no imported monograph it is the only record of what the clinical
+ * literature says, which is exactly what the herbalist kept missing.
+ */
+export interface VerifiedInformationSheet {
+  summary: string | null;
+  traditional_uses: string | null;
+  dosage: string | null;
+  safety: string | null;
+  pregnancy: string | null;
+  drug_interactions: string | null;
+  article_count: number | null;
+  pmids: string[];
+}
+
 export interface VerifiedHerb {
   slug: string;
   name: string;
@@ -60,6 +77,8 @@ export interface VerifiedHerb {
   regulatory: VerifiedRegulatory | null;
   /** Imported monographs for this herb (EMA HMPC, NCCIH, LiverTox, …). */
   monographs: VerifiedMonograph[];
+  /** PubMed-compiled information sheet, when the database has one. */
+  information_sheet: VerifiedInformationSheet | null;
 }
 
 export interface VerifiedInteraction {
@@ -917,6 +936,7 @@ async function lookupHerb(
           ?.verification_method as string | null) ?? null,
       regulatory: null,
       monographs: [],
+      information_sheet: null,
     };
   } catch {
     return null;
@@ -1061,6 +1081,7 @@ async function batchLookupHerbs(
                   ?.verification_method as string | null) ?? null,
               regulatory: null,
               monographs: [],
+              information_sheet: null,
             } satisfies VerifiedHerb;
           })
           .filter((h): h is VerifiedHerb => h !== null);
@@ -1196,9 +1217,15 @@ async function attachRegulatorRecords(herbs: VerifiedHerb[]): Promise<void> {
     url: string | null;
     monograph_date: string | null;
   };
+  type SheetRow = {
+    slug: string;
+    content: Record<string, unknown> | null;
+    pmids: string[] | null;
+    article_count: number | null;
+  };
 
   try {
-    const [regulatoryResult, monographResult] = await Promise.all([
+    const [regulatoryResult, monographResult, sheetResult] = await Promise.all([
       supabase
         .from("herb_regulatory_evidence")
         .select("herb_slug, source, purposes, doses, risks, source_urls")
@@ -1210,6 +1237,12 @@ async function attachRegulatorRecords(herbs: VerifiedHerb[]): Promise<void> {
           "herb_slug, source, licence, claims, safety, doses, url, monograph_date"
         )
         .in("herb_slug", slugs),
+      // Compiled from PubMed abstracts. Publicly readable (RLS: "herb_pubmed_
+      // monographs is publicly readable"). Keyed by `slug`, not `herb_slug`.
+      supabase
+        .from("herb_pubmed_monographs" as never)
+        .select("slug, content, pmids, article_count")
+        .in("slug", slugs),
     ]);
 
     const groupBySlug = <T extends { herb_slug: string }>(
@@ -1230,6 +1263,22 @@ async function attachRegulatorRecords(herbs: VerifiedHerb[]): Promise<void> {
     const monographsBySlug = groupBySlug(
       (monographResult.data ?? []) as unknown as MonographRow[]
     );
+    const sheetsBySlug = new Map<string, SheetRow>();
+    for (const row of (sheetResult.data ?? []) as unknown as SheetRow[]) {
+      if (row.slug) sheetsBySlug.set(row.slug, row);
+    }
+
+    const sheetText = (
+      content: SheetRow["content"],
+      key: string,
+      cap: number
+    ) => {
+      const value = content?.[key];
+      if (typeof value !== "string") return null;
+      const text = value.trim();
+      if (!text) return null;
+      return text.length > cap ? `${text.slice(0, cap).trimEnd()}…` : text;
+    };
 
     for (const herb of herbs) {
       const regulatory = regulatoryBySlug.get(herb.slug)?.[0];
@@ -1253,6 +1302,27 @@ async function attachRegulatorRecords(herbs: VerifiedHerb[]): Promise<void> {
           doses: toLines(row.doses, MONOGRAPH_DOSES_CAP),
           url: row.url ?? null,
         }));
+
+      const sheet = sheetsBySlug.get(herb.slug);
+      if (sheet) {
+        herb.information_sheet = {
+          summary: sheetText(sheet.content, "summary", 600),
+          traditional_uses: sheetText(sheet.content, "traditionalUses", 400),
+          dosage: sheetText(sheet.content, "dosageAndAdministration", 400),
+          safety: sheetText(sheet.content, "safetyAndAdverseEffects", 400),
+          pregnancy: sheetText(sheet.content, "pregnancyAndLactation", 400),
+          drug_interactions: sheetText(sheet.content, "drugInteractions", 400),
+          article_count:
+            typeof sheet.article_count === "number"
+              ? sheet.article_count
+              : null,
+          pmids: Array.isArray(sheet.pmids)
+            ? sheet.pmids
+                .filter((p): p is string => typeof p === "string")
+                .slice(0, 6)
+            : [],
+        };
+      }
     }
   } catch {
     // Enrichment only — the herbs row is enough to answer.

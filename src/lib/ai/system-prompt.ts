@@ -137,6 +137,29 @@ export function getSystemPrompt(
         if (monograph.url)
           verifiedDataSection += `  Source: ${monograph.url}\n`;
       }
+
+      // PubMed-compiled sheet. Written from abstracts, so it is labelled as
+      // derived: it is information the database holds, not a regulator's text.
+      if (herb.information_sheet) {
+        const sheet = herb.information_sheet;
+        const articles = sheet.article_count
+          ? `; compiled from ${sheet.article_count} articles`
+          : "";
+        verifiedDataSection += `Compiled information sheet (written from PubMed abstracts — derived, not a regulator's text${articles}):\n`;
+        const fields: Array<[string, string | null]> = [
+          ["Summary", sheet.summary],
+          ["Traditional uses", sheet.traditional_uses],
+          ["Dosage", sheet.dosage],
+          ["Safety", sheet.safety],
+          ["Pregnancy and lactation", sheet.pregnancy],
+          ["Drug interactions", sheet.drug_interactions],
+        ];
+        for (const [label, text] of fields) {
+          if (text) verifiedDataSection += `  ${label}: ${text}\n`;
+        }
+        if (sheet.pmids.length > 0)
+          verifiedDataSection += `  PMIDs on record: ${sheet.pmids.join(", ")}\n`;
+      }
     }
 
     if (verifiedContext.interactions.length > 0) {
@@ -201,7 +224,8 @@ ${
 
 ### CITATION RULES
 - You do NOT have real-time PubMed access. NEVER fabricate a PMID.
-- Only cite a PMID if you are 100% certain from training data; a wrong PMID is worse than none. When unsure, OMIT it and describe the study ("a 2015 randomized trial found…").
+- Only cite a PMID if it is listed under "PMIDs on record" below, or you are 100% certain from training data; a wrong PMID is worse than none. When unsure, OMIT it and describe the study ("a 2015 randomized trial found…").
+- A "Compiled information sheet" is written from abstracts, not read from a regulator: present it as what the research literature suggests, and let a regulator monograph or regulator record win if the two disagree.
 - Cite "HerbAlly database" for anything from the verified data below.
 
 ### EVIDENCE TRANSPARENCY
