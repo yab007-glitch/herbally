@@ -21,8 +21,18 @@ export const metadata: Metadata = {
 
 export default function GlobalNotFound() {
   return (
-    <html lang="en" className="antialiased">
+    <html lang="en" className="antialiased" suppressHydrationWarning>
       <body className="bg-background text-foreground">
+        {/* The copy is bilingual because there is no locale segment to read on
+            the server here, but the URL still carries one. Set the document
+            language before paint so /fr/... does not claim to be English to a
+            screen reader or a crawler. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(location.pathname==='/fr'||location.pathname.indexOf('/fr/')===0)document.documentElement.lang='fr'}catch(e){}",
+          }}
+        />
         <main className="mx-auto flex min-h-screen max-w-xl flex-col items-center justify-center gap-4 px-6 text-center">
           <p className="text-sm font-medium tracking-wide text-muted-foreground">
             404

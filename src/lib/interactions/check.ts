@@ -57,6 +57,48 @@ const FRENCH_DRUG_ALIASES: Record<string, string[]> = {
   tamoxifene: ["tamoxifen"],
 };
 
+/**
+ * Brand names that are not part of the stored generic label.
+ *
+ * The database stores one generic name per pair, with a brand in parentheses
+ * only when someone curated it there ("Warfarin (Coumadin)"). A reader who
+ * types a brand that is missing from that label used to get "no record" for a
+ * pair the site actually holds — a false negative on a safety tool. Keep this
+ * list limited to brands whose generic name exists as a pair, so it resolves
+ * to a real row rather than inventing a match.
+ */
+const DRUG_BRAND_ALIASES: Record<string, string[]> = {
+  glucophage: ["metformin"],
+  fortamet: ["metformin"],
+  riomet: ["metformin"],
+  ecotrin: ["aspirin"],
+  bufferin: ["aspirin"],
+  disprin: ["aspirin"],
+  invirase: ["saquinavir"],
+  fortovase: ["saquinavir"],
+  jantoven: ["warfarin"],
+  lanoxin: ["digoxin"],
+  glucotrol: ["glipizide"],
+  prograf: ["tacrolimus"],
+  advagraf: ["tacrolimus"],
+  neoral: ["cyclosporine"],
+  sandimmune: ["cyclosporine"],
+  gengraf: ["cyclosporine"],
+  cipro: ["ciprofloxacin"],
+  cozaar: ["losartan"],
+  zocor: ["simvastatin"],
+  lipitor: ["atorvastatin"],
+  plavix: ["clopidogrel"],
+};
+
+/** Aliases for one token, French/common first, then brand names. */
+function aliasesFor(token: string): string[] {
+  return [
+    ...(FRENCH_DRUG_ALIASES[token] ?? []),
+    ...(DRUG_BRAND_ALIASES[token] ?? []),
+  ];
+}
+
 export interface CheckablePair {
   drugName: string;
   drugSlug: string;
@@ -122,12 +164,12 @@ export function matchInteractionPair<T extends CheckablePair>(
 
   for (const token of rawTokens) {
     candidateTokens.add(singular(token));
-    for (const mapped of FRENCH_DRUG_ALIASES[token] ?? []) {
+    for (const mapped of aliasesFor(token)) {
       candidateTokens.add(mapped);
       candidateTokens.add(singular(mapped));
     }
   }
-  for (const mapped of FRENCH_DRUG_ALIASES[slug] ?? []) {
+  for (const mapped of aliasesFor(slug)) {
     candidateTokens.add(mapped);
     candidateTokens.add(singular(mapped));
   }

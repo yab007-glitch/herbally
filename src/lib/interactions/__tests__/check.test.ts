@@ -62,4 +62,25 @@ describe("matchInteractionPair", () => {
     // "asp" must not match "aspirin" via containment.
     expect(matchInteractionPair("asp", pairs)).toBeNull();
   });
+
+  it("resolves a brand name to the stored generic name", () => {
+    const withBrands = [
+      ...pairs,
+      { drugName: "Metformin", drugSlug: "metformin" },
+      { drugName: "Saquinavir", drugSlug: "saquinavir" },
+    ];
+    expect(matchInteractionPair("Glucophage", withBrands)?.drugName).toBe(
+      "Metformin"
+    );
+    expect(matchInteractionPair("Ecotrin", withBrands)?.drugName).toBe(
+      "Aspirin"
+    );
+    expect(matchInteractionPair("Invirase", withBrands)?.drugName).toBe(
+      "Saquinavir"
+    );
+  });
+
+  it("does not invent a match for a brand whose generic is absent", () => {
+    expect(matchInteractionPair("Glucophage", pairs)).toBeNull();
+  });
 });
