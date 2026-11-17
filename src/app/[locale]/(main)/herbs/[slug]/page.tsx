@@ -250,7 +250,14 @@ const loadHerbPageBundle = cache(
     try {
       return await unstable_cache(
         fetchHerbPageBundle,
-        ["herb-page-bundle-v5"],
+        // The version suffix is the only invalidation that cannot miss. On
+        // 2026-11-17 a bulk description rewrite was followed by
+        // /api/revalidate-herb for all 2,247 affected slugs; most pages
+        // re-read the bundle, but a handful kept serving the pre-rewrite row
+        // even when fetched straight from the container, so the per-slug tag
+        // purge had not landed on their entries. Bump this when a data
+        // correction must reach every page regardless of cache state.
+        ["herb-page-bundle-v6"],
         {
           revalidate: HERB_PAGE_TTL,
           tags: ["herb-page-bundle", `herb-page-bundle-${slug}`],
