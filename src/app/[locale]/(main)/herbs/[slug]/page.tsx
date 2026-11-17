@@ -1168,6 +1168,20 @@ export default async function HerbDetailPage({ params }: Props) {
         );
       })()}
 
+      {/* The lead paragraph. Every non-monograph entry carries a description in
+          the herbs row, but before this it only reached JSON-LD and the meta
+          tag: the "What the records say" section restates the use, dose and
+          safety fields and never printed the description itself, so a reader
+          landed on a name and a table of fragments. It is rendered here, after
+          the photo, because that is where an encyclopedia lead belongs.
+          Monographs keep their own overview tab so the paragraph is not shown
+          twice on those pages. */}
+      {!isManualMonograph && herb.description?.trim() ? (
+        <p className="measure prose-body leading-relaxed text-foreground">
+          {herb.description}
+        </p>
+      ) : null}
+
       {/* Personalized interaction warning (H1). Client component so the ISR
           page stays static for anonymous traffic; signed-in users get a
           personalized alert after hydration based on their medication list. */}
