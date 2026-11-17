@@ -90,6 +90,53 @@ export function getSystemPrompt(
         for (const ix of herb.drug_interactions)
           verifiedDataSection += `  - ${ix}\n`;
       }
+
+      // The regulator's own record: the most authoritative text the site owns.
+      if (herb.regulatory) {
+        verifiedDataSection += `Regulator record — ${herb.regulatory.source} (licensed products):\n`;
+        if (herb.regulatory.purposes.length > 0) {
+          verifiedDataSection += `  Licensed claims (what products are authorised to say):\n`;
+          for (const purpose of herb.regulatory.purposes)
+            verifiedDataSection += `    - ${purpose}\n`;
+        }
+        if (herb.regulatory.doses.length > 0) {
+          verifiedDataSection += `  Doses on licensed products:\n`;
+          for (const dose of herb.regulatory.doses)
+            verifiedDataSection += `    - ${dose}\n`;
+        }
+        if (herb.regulatory.risks.length > 0) {
+          verifiedDataSection += `  Risk statements on licensed products:\n`;
+          for (const risk of herb.regulatory.risks)
+            verifiedDataSection += `    - ${risk}\n`;
+        }
+        if (herb.regulatory.urls.length > 0)
+          verifiedDataSection += `  Source: ${herb.regulatory.urls[0]}\n`;
+      }
+
+      // Imported monographs (EMA HMPC, NCCIH, LiverTox, …). If one is listed
+      // here, that regulator HAS published on this herb — the model must never
+      // say otherwise, which it did on 2026-11-16 for Sideritis scardica.
+      for (const monograph of herb.monographs) {
+        const licence = monograph.licence ? ` — ${monograph.licence}` : "";
+        verifiedDataSection += `Regulator monograph — ${monograph.source}${licence}:\n`;
+        if (monograph.claims.length > 0) {
+          verifiedDataSection += `  Claims:\n`;
+          for (const claim of monograph.claims)
+            verifiedDataSection += `    - ${claim}\n`;
+        }
+        if (monograph.safety.length > 0) {
+          verifiedDataSection += `  Safety:\n`;
+          for (const line of monograph.safety)
+            verifiedDataSection += `    - ${line}\n`;
+        }
+        if (monograph.doses.length > 0) {
+          verifiedDataSection += `  Doses:\n`;
+          for (const dose of monograph.doses)
+            verifiedDataSection += `    - ${dose}\n`;
+        }
+        if (monograph.url)
+          verifiedDataSection += `  Source: ${monograph.url}\n`;
+      }
     }
 
     if (verifiedContext.interactions.length > 0) {
@@ -120,6 +167,8 @@ ${
 - If verified data says a herb is unsafe in pregnancy, DO NOT say it's safe.
 - If verified data lists side effects, DO NOT omit them.
 - If verified data shows a drug interaction, ALWAYS mention it.
+- "Regulator record" and "Regulator monograph" entries are part of the verified data. If one is listed for a herb, that regulator HAS published it: NEVER say the source has no monograph, no record, or no position on that herb, and do not describe the herb as having no official/regulatory backing.
+- Attribute regulator information by name ("Health Canada's licensed-product database lists…", "The EMA HMPC monograph states…", "NCCIH notes…") and prefer it over your training data when the two disagree.
 - Supplement with your own knowledge ONLY where verified data is incomplete, and mark it clearly: "[Supplemental — not in HerbAlly database]".
 - If verified data says "Unknown — insufficient data", say exactly that. Do not guess.`
     : `- You do NOT have HerbAlly database data for this query. Use your training data but be explicit about uncertainty.

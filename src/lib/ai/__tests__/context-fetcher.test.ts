@@ -32,6 +32,30 @@ describe("context-fetcher", () => {
   });
 
   describe("fetchVerifiedContext", () => {
+    /** Minimal published herbs row as batchLookupHerbs receives it. */
+    const herbRow = {
+      name: "Sideritis",
+      scientific_name: "Sideritis scardica",
+      slug: "sideritis",
+      description: "Mountain tea used in the Balkans.",
+      traditional_uses: ["colds"],
+      modern_uses: [],
+      contraindications: [],
+      side_effects: [],
+      drug_interactions: [],
+      dosage_adult: null,
+      pregnancy_safe: null,
+      nursing_safe: null,
+      pregnancy_safe_oral: null,
+      pregnancy_safe_topical: null,
+      nursing_safe_oral: null,
+      nursing_safe_topical: null,
+      evidence_level: "Traditional",
+      active_compounds: [],
+      provenance: { verification_method: "primary_source" },
+      is_published: true,
+    };
+
     it("returns source=none when no herbs or medications are found", async () => {
       mockSelect.mockReturnValue({
         eq: vi.fn(() => ({
@@ -197,6 +221,194 @@ describe("context-fetcher", () => {
       const ctx = await fetchVerifiedContext("I take Advil and Tylenol");
       expect(ctx.medicationsMentioned).toContain("advil");
       expect(ctx.medicationsMentioned).toContain("tylenol");
+    });
+
+    it("does not search the database for question words", async () => {
+      // Live failure 2026-11-16: "European", "Medicines", "Agency" were sent as
+      // herb search terms, and the five unranked results were all unrelated
+      // herbs that merely contained them. The real herb never got looked up, so
+      // the herbalist said it had no data — and then that the EMA had no
+      // monograph, which was false.
+      const orCalls: string[] = [];
+      mockSelect.mockImplementation((columns: string) => {
+        if (columns === "name, scientific_name, slug, translations") {
+          return {
+            eq: () => ({
+              or: (conditions: string) => {
+                orCalls.push(conditions);
+                return { limit: () => ({ data: [] }) };
+              },
+            }),
+          };
+        }
+        return { eq: () => ({ or: () => ({ limit: () => ({ data: [] }) }) }) };
+      });
+
+      await fetchVerifiedContext(
+        "Tell me about Sideritis scardica. What does the European Medicines Agency say?"
+      );
+
+      const conditions = orCalls[0] ?? "";
+      expect(conditions).toContain("sideritis");
+      expect(conditions).toContain("scardica");
+      for (const noise of [
+        "tell",
+        "about",
+        "what",
+        "does",
+        "european",
+        "medicines",
+        "agency",
+      ]) {
+        expect(conditions).not.toContain(noise);
+      }
+    });
+
+    it("ranks the named herb above unrelated rows that share a word", async () => {
+      const searchRows = [
+        {
+          name: "European Goldenrod",
+          scientific_name: "Solidago virgaurea",
+          slug: "european-goldenrod",
+          translations: null,
+        },
+        {
+          name: "Mugwort European",
+          scientific_name: "Artemisia vulgaris",
+          slug: "mugwort-european",
+          translations: null,
+        },
+        {
+          name: "Wild Ginger European",
+          scientific_name: "Asarum europaeum",
+          slug: "wild-ginger-european",
+          translations: null,
+        },
+        {
+          name: "Sideritis",
+          scientific_name: "Sideritis scardica",
+          slug: "sideritis",
+          translations: { fr: { name: "Sidérite" } },
+        },
+      ];
+
+      let lookupConditions = "";
+      mockSelect.mockImplementation((columns: string) => {
+        if (columns === "name, scientific_name, slug, translations") {
+          return {
+            eq: () => ({ or: () => ({ limit: () => ({ data: searchRows }) }) }),
+          };
+        }
+        if (columns === "*, herb_categories(*), drug_interactions(*)") {
+          return {
+            or: (conditions: string) => {
+              lookupConditions = conditions;
+              // Return the Sideritis row only if it was actually asked for —
+              // a decoy is returned for any other condition string, so an
+              // unranked extraction would surface the wrong herb.
+              const wanted = conditions.includes("sideritis");
+              return {
+                eq: () => ({
+                  limit: () => ({ data: wanted ? [herbRow] : [] }),
+                }),
+              };
+            },
+          };
+        }
+        return { eq: () => ({ or: () => ({ limit: () => ({ data: [] }) }) }) };
+      });
+
+      const ctx = await fetchVerifiedContext(
+        "Tell me about Sideritis scardica. What does the European Medicines Agency say?"
+      );
+
+      expect(lookupConditions).toContain("sideritis");
+      expect(lookupConditions).not.toContain("goldenrod");
+      expect(lookupConditions).not.toContain("mugwort");
+      expect(ctx.herbs.map((h) => h.slug)).toEqual(["sideritis"]);
+    });
+
+    it("attaches the regulator record and imported monograph", async () => {
+      mockSelect.mockImplementation((columns: string) => {
+        if (columns === "name, scientific_name, slug, translations") {
+          return {
+            eq: () => ({
+              or: () => ({
+                limit: () => ({
+                  data: [
+                    {
+                      name: "Sideritis",
+                      scientific_name: "Sideritis scardica",
+                      slug: "sideritis",
+                      translations: { fr: { name: "Sidérite" } },
+                    },
+                  ],
+                }),
+              }),
+            }),
+          };
+        }
+        if (columns === "*, herb_categories(*), drug_interactions(*)") {
+          return {
+            or: () => ({
+              eq: () => ({ limit: () => ({ data: [herbRow] }) }),
+            }),
+          };
+        }
+        if (
+          columns === "herb_slug, source, purposes, doses, risks, source_urls"
+        ) {
+          return {
+            in: () => ({
+              data: [
+                {
+                  herb_slug: "sideritis",
+                  source: "Health Canada LNHPD",
+                  purposes: ["Traditionally used to relieve colds"],
+                  doses: [{ text: "1-2 g", population: "Adults" }],
+                  risks: [
+                    "Consult a health care practitioner if symptoms persist",
+                  ],
+                  source_urls: [
+                    "https://open.canada.ca/data/en/dataset/example",
+                  ],
+                },
+              ],
+            }),
+          };
+        }
+        if (columns.startsWith("herb_slug, source, licence, claims")) {
+          return {
+            in: () => ({
+              data: [
+                {
+                  herb_slug: "sideritis",
+                  source: "European Medicines Agency (HMPC)",
+                  licence: "EMA/HMPC/123",
+                  claims: [{ text: "Traditional herbal medicinal product" }],
+                  safety: ["Not recommended under 18"],
+                  doses: ["2 g in 150 ml water"],
+                  url: "https://www.ema.europa.eu/example.pdf",
+                },
+              ],
+            }),
+          };
+        }
+        return { eq: () => ({ or: () => ({ limit: () => ({ data: [] }) }) }) };
+      });
+
+      const ctx = await fetchVerifiedContext(
+        "Tell me about Sideritis scardica."
+      );
+
+      expect(ctx.herbs).toHaveLength(1);
+      expect(ctx.herbs[0].regulatory?.source).toBe("Health Canada LNHPD");
+      expect(ctx.herbs[0].regulatory?.purposes[0]).toContain("colds");
+      expect(ctx.herbs[0].regulatory?.doses[0]).toBe("Adults: 1-2 g");
+      expect(ctx.herbs[0].monographs).toHaveLength(1);
+      expect(ctx.herbs[0].monographs[0].source).toContain("European Medicines");
+      expect(ctx.herbs[0].monographs[0].claims[0]).toContain("Traditional");
+      expect(ctx.note).toContain("regulator data");
     });
 
     it("limits herb lookups to 5 herbs", async () => {
