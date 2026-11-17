@@ -3,8 +3,11 @@
 What every route type is allowed to do in search, why, and where the rule lives
 in code. Change the code and this table together.
 
-Last verified against production: **2026-11-16**, `sitemap.xml` = 2,964 URLs
-(1,239 herb pages in each locale, plus 486 non-herb URLs).
+Last verified against production: **2026-11-16**, `sitemap.xml` = 3,052 URLs
+(1,239 herb pages in each locale, plus 574 non-herb URLs of which 442 are
+`/interactions/<herb>/<drug>` pages). The herb count only moves when a herb gains
+a source; the interaction count moves with the interaction table, so expect the
+total to drift without any change to this file.
 
 ## Indexable
 
