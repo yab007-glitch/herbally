@@ -17,14 +17,14 @@ what moves a new site out of the "one referring domain" bucket.
 
 ## What there is to link to
 
-| Asset | URL | Why anyone would link it |
-| --- | --- | --- |
-| Embeddable herb–drug interaction checker | `/embed/checker` | It is free, needs no account, and carries a required "Powered by HerbAlly" attribution link. Built for exactly this. |
-| Interaction checker (human page) | `/herb-drug-interactions` | Snippet is promoted here with a copy button. |
-| The sourced library | `/herbs/[slug]` | 3,238 herbs; 1,239 have a regulator record or an imported regulator monograph; every claim carries a PMID, an LNHPD id or a monograph URL. |
-| Method and licences | `/methodology`, `docs/data-source-licences.md` | Librarians check provenance before they add a link. These pages answer that. |
+| Asset                                    | URL                                            | Why anyone would link it                                                                                                                   |
+| ---------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Embeddable herb–drug interaction checker | `/embed/checker`                               | It is free, needs no account, and carries a required "Powered by HerbAlly" attribution link. Built for exactly this.                       |
+| Interaction checker (human page)         | `/herb-drug-interactions`                      | Snippet is promoted here with a copy button.                                                                                               |
+| The sourced library                      | `/herbs/[slug]`                                | 3,238 herbs; 1,239 have a regulator record or an imported regulator monograph; every claim carries a PMID, an LNHPD id or a monograph URL. |
+| Method and licences                      | `/methodology`, `docs/data-source-licences.md` | Librarians check provenance before they add a link. These pages answer that.                                                               |
 
-The embed is the only asset *designed* to earn links. The rest earns them by
+The embed is the only asset _designed_ to earn links. The rest earns them by
 being citable.
 
 ## Tier A — library research guides (the real opportunity)
@@ -34,26 +34,26 @@ librarians. They already hand-pick free herb and supplement resources for the
 public, and they add and prune entries as part of the job. All five were
 verified live on 2026-11-16.
 
-| Guide | URL | Updated | Contact | Fit |
-| --- | --- | --- | --- | --- |
-| Michigan State University — Consumer Health: Drugs / Herbs / Supplements | https://libguides.lib.msu.edu/consumerhealth/drugs | 2026-10-19 | "Ask Us" form | Lists MSK About Herbs, HerbMed, DSLD, MedlinePlus. A free interaction checker with citations is the same shape of resource. |
-| University of Toledo — Consumer Health: Herbs and Supplements | https://libguides.utoledo.edu/ConsumerHealth/Herbs_Supplements | 2026-04-27 | wade.lee@utoledo.edu | Already links NCCIH's drug–supplement interaction page; an actual checker is the obvious next entry. |
-| UNMC College of Pharmacy — Patient Herb and Supplement Info | https://unmc.libguides.com/c.php?g=444162&p=3203235 | 2026-11-02 | page's Report a problem link | **Links NCCAM**, which was renamed NCCIH in 2015. That is a real defect in their guide and a natural, non-salesy opening. |
-| MCPHS University — Consumer Health: Complementary and Alternative Medicine | https://mcphs.libguides.com/Consumer_Health/alternative_medicine | 2026-09-03 | erin.wentz@mcphs.edu | Pharmacy college; CAM resources for patients. |
-| ECPI University — Pharmacology: Dietary Supplements | https://ecpi.libguides.com/c.php?g=696097&p=5066563 | not shown | ssimmons@ecpi.edu | Nursing/pharmacy students; lists NIH resources only. |
+| Guide                                                                      | URL                                                              | Updated    | Contact                      | Fit                                                                                                                         |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Michigan State University — Consumer Health: Drugs / Herbs / Supplements   | https://libguides.lib.msu.edu/consumerhealth/drugs               | 2026-10-19 | "Ask Us" form                | Lists MSK About Herbs, HerbMed, DSLD, MedlinePlus. A free interaction checker with citations is the same shape of resource. |
+| University of Toledo — Consumer Health: Herbs and Supplements              | https://libguides.utoledo.edu/ConsumerHealth/Herbs_Supplements   | 2026-04-27 | wade.lee@utoledo.edu         | Already links NCCIH's drug–supplement interaction page; an actual checker is the obvious next entry.                        |
+| UNMC College of Pharmacy — Patient Herb and Supplement Info                | https://unmc.libguides.com/c.php?g=444162&p=3203235              | 2026-11-02 | page's Report a problem link | **Links NCCAM**, which was renamed NCCIH in 2015. That is a real defect in their guide and a natural, non-salesy opening.   |
+| MCPHS University — Consumer Health: Complementary and Alternative Medicine | https://mcphs.libguides.com/Consumer_Health/alternative_medicine | 2026-09-03 | erin.wentz@mcphs.edu         | Pharmacy college; CAM resources for patients.                                                                               |
+| ECPI University — Pharmacology: Dietary Supplements                        | https://ecpi.libguides.com/c.php?g=696097&p=5066563              | not shown  | ssimmons@ecpi.edu            | Nursing/pharmacy students; lists NIH resources only.                                                                        |
 
 **What to ask for:** one line on the guide, not a guest post. The embed is a
 second, smaller ask — offer it only if they reply.
 
 ## Tier B — practitioner and association lists
 
-| Target | URL | Status | Verdict |
-| --- | --- | --- | --- |
-| Western Botanical Medicine — Herbal Medicine Links | https://askyourherbdoctor.com/links.html | Last copyright 2019, no submission route | Dormant. Low value; skip unless it revives. |
-| American Herbalists Guild — Resources | https://americanherbalistsguild.com/resources/ | Live, current | Links only its own material. No public external list to join. Skip. |
-| Miller Library (Seattle Botanic Gardens) — Recommended Websites | https://millerlibrary.libguides.com/recommendedwebsites/resourcelists | Live | Its medicinal-plant list is a PDF reading list, not a web directory. Poor fit. |
+| Target                                                          | URL                                                                   | Status                                   | Verdict                                                                        |
+| --------------------------------------------------------------- | --------------------------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
+| Western Botanical Medicine — Herbal Medicine Links              | https://askyourherbdoctor.com/links.html                              | Last copyright 2019, no submission route | Dormant. Low value; skip unless it revives.                                    |
+| American Herbalists Guild — Resources                           | https://americanherbalistsguild.com/resources/                        | Live, current                            | Links only its own material. No public external list to join. Skip.            |
+| Miller Library (Seattle Botanic Gardens) — Recommended Websites | https://millerlibrary.libguides.com/recommendedwebsites/resourcelists | Live                                     | Its medicinal-plant list is a PDF reading list, not a web directory. Poor fit. |
 
-Recording these three as *checked and rejected* matters: they are what a search
+Recording these three as _checked and rejected_ matters: they are what a search
 for "herb database links" returns, and re-checking them every month is waste.
 
 ## Tier C — where the embed can travel

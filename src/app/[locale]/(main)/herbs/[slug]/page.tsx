@@ -1223,20 +1223,20 @@ export default async function HerbDetailPage({ params }: Props) {
                       safetyHeading: copy.ema.safetyHeading,
                     }
                   : historical
-                  ? {
-                      heading: historical.heading(herb.name),
-                      sourceLabel: historical.sourceLabel,
-                      licenceText: historical.licenceText,
-                      claimsHeading: historical.claimsHeading,
-                      safetyHeading: historical.safetyHeading,
-                    }
-                  : {
-                      heading: copy.nccih.heading(herb.name),
-                      sourceLabel: copy.nccih.sourceLabel,
-                      licenceText: copy.nccih.licenceText,
-                      claimsHeading: copy.nccih.claimsHeading,
-                      safetyHeading: copy.nccih.safetyHeading,
-                    })}
+                    ? {
+                        heading: historical.heading(herb.name),
+                        sourceLabel: historical.sourceLabel,
+                        licenceText: historical.licenceText,
+                        claimsHeading: historical.claimsHeading,
+                        safetyHeading: historical.safetyHeading,
+                      }
+                    : {
+                        heading: copy.nccih.heading(herb.name),
+                        sourceLabel: copy.nccih.sourceLabel,
+                        licenceText: copy.nccih.licenceText,
+                        claimsHeading: copy.nccih.claimsHeading,
+                        safetyHeading: copy.nccih.safetyHeading,
+                      })}
           />
         );
       })}

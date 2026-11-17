@@ -7,21 +7,21 @@ Last verified against production: **2026-11-16**, `sitemap.xml` = 2,940 URLs.
 
 ## Indexable
 
-| Route                                                                        | Locales | In sitemap                                         | Canonical | Notes                                         |
-| ---------------------------------------------------------------------------- | ------- | -------------------------------------------------- | --------- | --------------------------------------------- |
-| `/`                                                                          | en, fr  | yes                                                | self      | 785 EN / 867 FR words of prose below the tool |
-| `/herbs`                                                                     | en, fr  | yes                                                | self      | Directory + search                            |
-| `/herbs/<slug>`                                                              | en, fr  | **only when the entry has a source** — see below   | self      | FR only when `translations->fr` exists        |
-| `/symptoms`                                                                  | en, fr  | yes                                                | self      | Hub with 26 real `<a>` links                  |
-| `/symptoms/<slug>`                                                           | en, fr  | **only when a published herb carries its keyword** | self      | See "Empty hubs" below                        |
-| `/compare/turmeric/vs/ginger` and the `POPULAR_COMPARISONS` set              | en, fr  | yes                                                | self      |                                               |
-| `/interactions/<herb>/<drug>`                                                | en, fr  | yes, FR only when `hasFr`                          | self      |                                               |
-| `/herb-drug-interactions`                                                    | en, fr  | yes                                                | self      | Was reachable as `/interactions` — now a 301  |
-| `/calculator`                                                                | en, fr  | yes                                                | self      |                                               |
-| `/faq`, `/about`, `/methodology`                                             | en, fr  | yes                                                | self      |                                               |
-| `/guides`                                                                    | en, fr  | yes                                                | self      | Index page only                               |
-| Policy pages (disclaimer, privacy, terms, editorial-policy, sponsors, contact) | en, fr | yes                                             | self      | AdSense checks these; all return 200 |                                               |
-| `/herbalist`                                                                 | en, fr  | yes                                                | self      | Landing content only                          |
+| Route                                                                          | Locales | In sitemap                                         | Canonical | Notes                                         |
+| ------------------------------------------------------------------------------ | ------- | -------------------------------------------------- | --------- | --------------------------------------------- |
+| `/`                                                                            | en, fr  | yes                                                | self      | 785 EN / 867 FR words of prose below the tool |
+| `/herbs`                                                                       | en, fr  | yes                                                | self      | Directory + search                            |
+| `/herbs/<slug>`                                                                | en, fr  | **only when the entry has a source** — see below   | self      | FR only when `translations->fr` exists        |
+| `/symptoms`                                                                    | en, fr  | yes                                                | self      | Hub with 26 real `<a>` links                  |
+| `/symptoms/<slug>`                                                             | en, fr  | **only when a published herb carries its keyword** | self      | See "Empty hubs" below                        |
+| `/compare/turmeric/vs/ginger` and the `POPULAR_COMPARISONS` set                | en, fr  | yes                                                | self      |                                               |
+| `/interactions/<herb>/<drug>`                                                  | en, fr  | yes, FR only when `hasFr`                          | self      |                                               |
+| `/herb-drug-interactions`                                                      | en, fr  | yes                                                | self      | Was reachable as `/interactions` — now a 301  |
+| `/calculator`                                                                  | en, fr  | yes                                                | self      |                                               |
+| `/faq`, `/about`, `/methodology`                                               | en, fr  | yes                                                | self      |                                               |
+| `/guides`                                                                      | en, fr  | yes                                                | self      | Index page only                               |
+| Policy pages (disclaimer, privacy, terms, editorial-policy, sponsors, contact) | en, fr  | yes                                                | self      | AdSense checks these; all return 200          |     |
+| `/herbalist`                                                                   | en, fr  | yes                                                | self      | Landing content only                          |
 
 ## Noindex
 

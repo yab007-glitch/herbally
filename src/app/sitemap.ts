@@ -702,7 +702,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           description: herb.description,
           traditional_uses: herb.traditional_uses,
           dosage_adult: herb.dosage_adult,
-          hasMonograph,
+          // A hand-written monograph is sourced detail and counts as substance,
+          // exactly as the page counts it. Passing it only to the guard above
+          // let the page claim `index, follow` while this map withheld the URL.
+          hasMonograph: hasMonograph || hasManualMonograph(herb.slug),
           hasRegulatory,
         });
         if (!indexable) continue;
