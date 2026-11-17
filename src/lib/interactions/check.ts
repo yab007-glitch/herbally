@@ -263,10 +263,7 @@ function matchesByTokens<T extends CheckablePair>(
 ): T[] {
   const out: T[] = [];
   for (const pair of pairs) {
-    if (
-      tokens.has(pair.drugSlug) ||
-      tokens.has(singular(pair.drugSlug))
-    ) {
+    if (tokens.has(pair.drugSlug) || tokens.has(singular(pair.drugSlug))) {
       out.push(pair);
       continue;
     }

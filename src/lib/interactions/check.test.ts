@@ -83,14 +83,14 @@ describe("matchInteractionPair drug classes", () => {
   ];
 
   it("resolves a class to the herb's own member rows", () => {
-    const match = matchInteractionPair("SSRI antidepressants", stJohnsWortPairs);
+    const match = matchInteractionPair(
+      "SSRI antidepressants",
+      stJohnsWortPairs
+    );
     expect(match?.severity).toBe("contraindicated");
-    expect([
-      "sertraline",
-      "fluoxetine",
-      "paroxetine",
-      "citalopram",
-    ]).toContain(match?.drugSlug);
+    expect(["sertraline", "fluoxetine", "paroxetine", "citalopram"]).toContain(
+      match?.drugSlug
+    );
   });
 
   it("prefers the stored class row over its members", () => {
@@ -121,9 +121,9 @@ describe("matchInteractionPair drug classes", () => {
         severity: "moderate",
       },
     ];
-    expect(matchInteractionPair("blood thinners", turmericPairs)?.drugName).toBe(
-      "Warfarin (Coumadin)"
-    );
+    expect(
+      matchInteractionPair("blood thinners", turmericPairs)?.drugName
+    ).toBe("Warfarin (Coumadin)");
     expect(matchInteractionPair("blood thinner", turmericPairs)?.drugName).toBe(
       "Warfarin (Coumadin)"
     );
