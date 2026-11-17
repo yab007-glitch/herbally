@@ -32,6 +32,8 @@ export default defineConfig({
       // a local run reports a failed test file that CI never sees — the folder
       // is untracked. Output is not test input.
       "**/artifacts/**",
+      // The gate-on e2e harness copies the whole repo into .e2e-gate-on/app.
+      "**/.e2e-gate-on/**",
       "**/.{idea,git,cache,output,temp}/**",
       "**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*",
     ],

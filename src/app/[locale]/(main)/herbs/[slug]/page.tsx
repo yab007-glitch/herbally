@@ -56,6 +56,8 @@ import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 import { InteractionsTable } from "@/components/herbs/interactions-table";
 import { AdSlot } from "@/components/ads/ad-slot";
+import { AdCmp } from "@/components/ads/ad-cmp";
+import { CmpBootstrap } from "@/components/ads/cmp-bootstrap";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { ViewTracker } from "@/components/herbs/view-tracker";
 import { GovSources } from "@/components/herbs/gov-sources";
@@ -1363,6 +1365,11 @@ export default async function HerbDetailPage({ params }: Props) {
           No ad unit is shown unless NEXT_PUBLIC_ADSENSE_CLIENT and
           NEXT_PUBLIC_ADSENSE_SLOT_HERB are configured. Private tools (chat,
           interaction checker, calculator) never render this component. */}
+      {/* EEA/UK/CH consent comes from Google's consent message; the default
+          Consent Mode state ships in the document HTML, before any Google
+          tag can run. Both are inert while the launch gate is off. */}
+      <CmpBootstrap />
+      <AdCmp />
       <AdSlot
         slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
         format="auto"

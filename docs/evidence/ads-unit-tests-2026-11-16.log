@@ -1,0 +1,45 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.12 /Users/yasser/.hermes/kanban/workspaces/t_eba10738/herbally
+
+ ✓ src/components/ads/__tests__/ad-document-guard.test.tsx (2 tests) 38ms
+ ✓ src/components/ads/__tests__/ad-consent.test.tsx (2 tests) 47ms
+ ✓ src/components/ads/__tests__/ad-slot.test.tsx (5 tests) 90ms
+ ✓ src/components/ads/__tests__/ad-document-guard-gate-on.test.tsx (6 tests) 89ms
+ ✓ src/lib/ads/__tests__/cmp.test.ts (16 tests) 140ms
+stderr | src/components/ads/__tests__/ad-slot-gate-on.test.tsx > AdSlot — launch gate on > does not reload on revoke when no script had loaded
+An update to AdSlot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AdSlot inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/components/ads/__tests__/ad-slot-gate-on.test.tsx (11 tests) 166ms
+ ✓ src/components/ads/__tests__/ad-consent-gate-on.test.tsx (7 tests) 220ms
+ ✓ src/lib/ads/__tests__/navigation.test.ts (8 tests) 7ms
+ ✓ src/lib/ads/__tests__/policy.test.ts (33 tests) 9ms
+ ✓ src/lib/ads/__tests__/reload.test.ts (5 tests) 6ms
+ ✓ src/lib/ads/__tests__/csp.test.ts (8 tests) 5ms
+
+ Test Files  11 passed (11)
+      Tests  103 passed (103)
+   Start at  20:35:58
+   Duration  2.15s (transform 641ms, setup 2.29s, import 810ms, tests 818ms, environment 4.94s)
+

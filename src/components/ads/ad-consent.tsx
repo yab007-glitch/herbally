@@ -14,6 +14,7 @@ import {
   subscribeAdConsent,
   writeAdConsent,
 } from "@/lib/ads/consent";
+import { updateConsentMode } from "@/lib/ads/cmp";
 import { getAdRegion } from "@/lib/ads/region-client";
 
 type AdConsentProps = {
@@ -27,8 +28,10 @@ type AdConsentProps = {
  * Rendered in the footer on every public layout, but inert while the launch
  * gate is off: no banner, no region lookup, no network. Once the gate is on:
  *
- *   - EEA/UK/CH (and unknown regions) get nothing — ads are blocked there
- *     until a Google-certified CMP exists, so there is nothing to consent to;
+ *   - EEA/UK/CH get nothing: Google's consent message (Funding Choices, the
+ *     certified CMP) owns that decision, and this first-party banner must not
+ *     impersonate one; unknown regions get nothing because ads are blocked
+ *     there;
  *   - elsewhere the reader gets an explicit Allow / No-ads choice before any
  *     ad request;
  *   - a footer "Ad settings" control reopens the choice and can revoke it. A
@@ -71,6 +74,9 @@ export function AdConsent({ reload }: AdConsentProps = {}) {
     const hadGranted = consent === "granted";
     writeAdConsent(choice);
     notifyAdConsentChanged();
+    // Mirror the choice into Consent Mode v2 so every Google tag sees the
+    // same decision the ad gate honours.
+    updateConsentMode(choice);
     setOpen(false);
     if (choice === "denied" && hadGranted) {
       if (reload) reload();

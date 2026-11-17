@@ -13,6 +13,7 @@ const eslintConfig = [
       "**/.next/**",
       "**/node_modules/**",
       "**/.worktrees/**",
+      "**/.e2e-gate-on/**",
     ],
   },
   ...(Array.isArray(nextConfig) ? nextConfig : [nextConfig]).map((config) => {

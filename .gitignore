@@ -58,6 +58,8 @@ AUDIT_REPORT_*.md
 # Generated test artifacts
 playwright-report/
 test-results/
+.e2e-gate-on/
+.e2e-evidence/
 
 # Hermes and local worktrees
 .hermes/

@@ -66,6 +66,13 @@ function denyConsent() {
   document.cookie = "herbally-ads-consent=v1:denied; Path=/";
 }
 
+function stubGpc(enabled: boolean) {
+  Object.defineProperty(navigator, "globalPrivacyControl", {
+    value: enabled,
+    configurable: true,
+  });
+}
+
 describe("AdSlot — launch gate on", () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
@@ -74,6 +81,13 @@ describe("AdSlot — launch gate on", () => {
     document.head.innerHTML = "";
     document.cookie = "herbally-ads-consent=; Max-Age=0; Path=/";
     window.sessionStorage.clear();
+    delete window.googlefc;
+    delete window.dataLayer;
+    delete window.gtag;
+    Object.defineProperty(navigator, "globalPrivacyControl", {
+      value: undefined,
+      configurable: true,
+    });
     __resetAdRegionForTests();
     nav.pathname = "/herbs/ginger";
     __setAdDocumentStateForTests({
@@ -86,32 +100,45 @@ describe("AdSlot — launch gate on", () => {
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
     document.cookie = "herbally-ads-consent=; Max-Age=0; Path=/";
+    delete window.googlefc;
+    delete window.dataLayer;
+    delete window.gtag;
+    Object.defineProperty(navigator, "globalPrivacyControl", {
+      value: undefined,
+      configurable: true,
+    });
     __setAdDocumentStateForTests({
       bootPathname: null,
       adScriptActive: false,
     });
   });
 
-  it("makes no request before an explicit opt-in", async () => {
+  it("makes no ad-network request before an explicit opt-in", async () => {
     const fetchMock = stubRegion("row");
     const { container } = render(<AdSlot slot="1234567890" />);
-    await Promise.resolve();
+
+    // The only request is the same-origin coarse region lookup, which the
+    // CMP-gated gate needs before it can decide anything.
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/ads/region",
+      expect.objectContaining({ credentials: "same-origin" })
+    );
 
     expect(container).toBeEmptyDOMElement();
-    expect(fetchMock).not.toHaveBeenCalled();
     expect(
       document.querySelector('script[src*="googlesyndication"]')
     ).toBeNull();
   });
 
-  it("makes no request after an explicit reject", async () => {
+  it("makes no ad-network request after an explicit reject", async () => {
     denyConsent();
     const fetchMock = stubRegion("row");
     const { container } = render(<AdSlot slot="1234567890" />);
-    await Promise.resolve();
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalled());
 
     expect(container).toBeEmptyDOMElement();
-    expect(fetchMock).not.toHaveBeenCalled();
     expect(
       document.querySelector('script[src*="googlesyndication"]')
     ).toBeNull();
@@ -143,12 +170,15 @@ describe("AdSlot — launch gate on", () => {
     // Client-side navigation /herbalist → /herbs/ginger. The DOM already ran
     // tool code, so the ad must not appear until a real document load.
     grantConsent();
-    stubRegion("row");
+    const fetchMock = stubRegion("row");
     __setAdDocumentStateForTests({ bootPathname: "/herbalist" });
 
     const { container } = render(<AdSlot slot="1234567890" />);
-    await waitFor(() => expect(fetch).toHaveBeenCalled());
+    await Promise.resolve();
 
+    // Ineligible documents are refused before the region lookup, so the page
+    // does not even pay for a geo request.
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(container).toBeEmptyDOMElement();
     expect(
       document.querySelector('script[src*="googlesyndication"]')
@@ -171,13 +201,56 @@ describe("AdSlot — launch gate on", () => {
     ).toBeNull();
   });
 
-  it("blocks ads in an EEA/UK/CH region even with consent", async () => {
+  it("blocks ads in an EEA/UK/CH region when the CMP denies", async () => {
     grantConsent();
     stubRegion("eea");
+    window.googlefc = {
+      getConsentData: () => ({
+        adStorageAllowed: true,
+        adUserDataAllowed: false,
+      }),
+    };
+
     const { container } = render(<AdSlot slot="1234567890" />);
 
     await waitFor(() => expect(fetch).toHaveBeenCalled());
     expect(container).toBeEmptyDOMElement();
+    expect(
+      document.querySelector('script[src*="googlesyndication"]')
+    ).toBeNull();
+  });
+
+  it("serves an EEA/UK/CH reader only after the CMP grants", async () => {
+    // In EEA/UK/CH the CMP replaces the first-party banner: the cookie alone
+    // is not a consent basis there.
+    denyConsent();
+    stubRegion("eea");
+    window.googlefc = {
+      getConsentData: () => ({
+        adStorageAllowed: true,
+        adUserDataAllowed: true,
+      }),
+    };
+
+    const { container } = render(<AdSlot slot="1234567890" />);
+
+    await waitForProviderScript();
+    expect(container.querySelector("ins.adsbygoogle")).not.toBeNull();
+    // The CMP's answer is mirrored into Consent Mode v2.
+    expect(window.dataLayer).toHaveLength(1);
+  });
+
+  it("honours Global Privacy Control even with opt-in and a known region", async () => {
+    grantConsent();
+    const fetchMock = stubRegion("row");
+    stubGpc(true);
+
+    const { container } = render(<AdSlot slot="1234567890" />);
+    await Promise.resolve();
+
+    expect(container).toBeEmptyDOMElement();
+    // A browser-level opt-out is decided before any geo or CMP lookup.
+    expect(fetchMock).not.toHaveBeenCalled();
     expect(
       document.querySelector('script[src*="googlesyndication"]')
     ).toBeNull();
