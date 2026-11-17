@@ -12,6 +12,7 @@ import { pairPath } from "@/lib/interactions/pair-url";
 import { withTimeout } from "@/lib/utils/with-timeout";
 import { publishedGuides } from "@/lib/guides/guides";
 import { isIndexable } from "@/lib/seo/indexable";
+import { hasManualMonograph } from "@/lib/data/monographs";
 
 // Snapshot of last modification time for static pages.
 // Using a stable date prevents misleading Google into thinking
@@ -701,7 +702,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // neither a regulator record nor imported monograph text is left to
         // internal links, which is why 4,249 URLs sat in "crawled, currently
         // not indexed" while every one of them was being advertised here.
-        if (!hasRegulatory && !hasMonograph) continue;
+        // A hand-written monograph is a source too, and the page counts it when it
+        // decides robots — keep the two in step so neither side withholds a page
+        // the other advertises.
+        if (!hasRegulatory && !hasMonograph && !hasManualMonograph(herb.slug))
+          continue;
         const indexable = isIndexable({
           description: herb.description,
           traditional_uses: herb.traditional_uses,

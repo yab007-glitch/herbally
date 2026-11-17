@@ -428,25 +428,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const untranslatedFr = metaLocale === "fr" && !hasFr;
 
   // Which pages Google is asked to index is decided in one place, shared with the
-  // sitemap: see src/lib/seo/indexable.ts for the measurement behind the numbers.
-  // Views are not an input: the counter is crawler-inflated, so a thin page can
-  // never buy its way into the index with bot traffic.
-  const thin = !isIndexable({
-    description: herb.description,
-    traditional_uses: herb.traditional_uses,
-    dosage_adult: herb.dosage_adult,
-    hasMonograph:
-      Boolean(bundle?.monograph) ||
-      isUsablePubmedSheet(
-        bundle?.pubmed as {
-          content?: unknown;
-          pmids?: unknown;
-          citations?: unknown;
-        } | null
-      ) ||
-      (bundle?.sources?.length ?? 0) > 0,
-    hasRegulatory: Boolean(bundle?.regulatory),
-  });
+  // sitemap: see src/lib/seo/indexable.ts. Views are not an input: the counter is
+  // crawler-inflated, so a thin page can never buy its way into the index with bot
+  // traffic.
+  //
+  // A page also needs a record behind it (2026-11-16). Length stopped meaning depth:
+  // counting compiled PubMed sheets as substance let 97% of the library claim to be
+  // indexable while Google kept 2,373 of 9,007 known URLs and refused 4,249. Pages
+  // with no regulator record, imported monograph or hand-written monograph now render
+  // `noindex, follow` — reachable for people, still passing links, just no longer
+  // offered as a search result. Adding a source flips one back with no code change.
+  const sourced =
+    Boolean(bundle?.regulatory) ||
+    (bundle?.sources?.length ?? 0) > 0 ||
+    hasManualMonograph(slug);
+  const thin =
+    !sourced ||
+    !isIndexable({
+      description: herb.description,
+      traditional_uses: herb.traditional_uses,
+      dosage_adult: herb.dosage_adult,
+      hasMonograph:
+        Boolean(bundle?.monograph) ||
+        isUsablePubmedSheet(
+          bundle?.pubmed as {
+            content?: unknown;
+            pmids?: unknown;
+            citations?: unknown;
+          } | null
+        ) ||
+        (bundle?.sources?.length ?? 0) > 0,
+      hasRegulatory: Boolean(bundle?.regulatory),
+    });
 
   return {
     title: titleMeta,
