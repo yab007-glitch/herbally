@@ -3,7 +3,7 @@
 What every route type is allowed to do in search, why, and where the rule lives
 in code. Change the code and this table together.
 
-Last verified against production: **2026-11-02**, `sitemap.xml` = 5,870 URLs.
+Last verified against production: **2026-11-16**, `sitemap.xml` = 2,940 URLs.
 
 ## Indexable
 
@@ -11,7 +11,7 @@ Last verified against production: **2026-11-02**, `sitemap.xml` = 5,870 URLs.
 | ---------------------------------------------------------------------------- | ------- | -------------------------------------------------- | --------- | --------------------------------------------- |
 | `/`                                                                          | en, fr  | yes                                                | self      | 785 EN / 867 FR words of prose below the tool |
 | `/herbs`                                                                     | en, fr  | yes                                                | self      | Directory + search                            |
-| `/herbs/<slug>`                                                              | en, fr  | yes, FR only when `translations->fr` exists        | self      | ~1,700 words on a populated record            |
+| `/herbs/<slug>`                                                              | en, fr  | **only when the entry has a source** — see below   | self      | FR only when `translations->fr` exists        |
 | `/symptoms`                                                                  | en, fr  | yes                                                | self      | Hub with 26 real `<a>` links                  |
 | `/symptoms/<slug>`                                                           | en, fr  | **only when a published herb carries its keyword** | self      | See "Empty hubs" below                        |
 | `/compare/turmeric/vs/ginger` and the `POPULAR_COMPARISONS` set              | en, fr  | yes                                                | self      |                                               |
@@ -20,7 +20,7 @@ Last verified against production: **2026-11-02**, `sitemap.xml` = 5,870 URLs.
 | `/calculator`                                                                | en, fr  | yes                                                | self      |                                               |
 | `/faq`, `/about`, `/methodology`                                             | en, fr  | yes                                                | self      |                                               |
 | `/guides`                                                                    | en, fr  | yes                                                | self      | Index page only                               |
-| Policy pages (disclaimer, privacy, editorial, sponsorship, contact, support) | en, fr  | yes                                                | self      |                                               |
+| Policy pages (disclaimer, privacy, terms, editorial-policy, sponsors, contact) | en, fr | yes                                             | self      | AdSense checks these; all return 200 |                                               |
 | `/herbalist`                                                                 | en, fr  | yes                                                | self      | Landing content only                          |
 
 ## Noindex
@@ -32,6 +32,34 @@ Last verified against production: **2026-11-02**, `sitemap.xml` = 5,870 URLs.
 | `/garden`                                   | `noindex`         | Account-scoped, empty when signed out.                                                                                                                                                    |
 | Any 404                                     | `noindex, follow` | Status is already 404; `follow` keeps the outbound links usable.                                                                                                                          |
 | Preview / staging deployments               | Vercel auth wall  | Not public.                                                                                                                                                                               |
+
+## Herb pages: the page may be indexable without being advertised
+
+Since 2026-11-16 the sitemap lists a herb only if the entry carries a
+`herb_regulatory_evidence` record, an imported regulator monograph in
+`herb_monograph_sources`, or a published hand-written monograph. A
+PubMed-compiled information sheet does not qualify: it is derived from
+abstracts, and counting it had let 97% of the library back into the sitemap
+(3,155 of 3,238 pages), against Google's own verdict of 4,249 URLs "crawled,
+currently not indexed".
+
+That leaves **2,011 published herbs in the sitemap's blind spot but still
+`index,follow` on the page itself.** That is a decision, not an oversight:
+
+- The page is judged by its own content. Those entries render a compiled sheet
+  averaging ~3,200 characters with a PMID on every claim, which is real content
+  and clears `isIndexable()`; telling Google not to index them would remove
+  2,011 pages that answer a long-tail query nobody else covers.
+- The sitemap is an advertisement, and advertising text the site cannot source
+  from a regulator is what produced the 4,249-page unindexed bucket. The page
+  does not promise anything; it just doesn't get pushed.
+- If a hand-written monograph or regulator record ever lands for one of those
+  slugs, the next sitemap build picks it up with no code change.
+
+`src/app/sitemap.ts` therefore loads the same sourced set the page uses and
+filters on it; the page keeps using `isIndexable()` alone. Being stricter in
+the sitemap than on the page is safe in one direction only — a page may be
+indexable without being advertised, but a `noindex` page must never be listed.
 
 ## Deliberately absent from the sitemap
 

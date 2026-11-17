@@ -1,3 +1,10 @@
+> **Superseded 2026-11-16 — do not work from this file.** Nothing in it was
+> checked against the live web when it was written: the DA figures are invented,
+> the email addresses are guessed patterns, and several targets (mercola,
+> naturalnews) are sites a health reference should not be asking for a link
+> from. It also treats "get a link from healthline" as an outreach task, which
+> it is not. The current plan is `verified-targets-2026-11-16.md`.
+
 # HerbAlly Backlink Outreach List — Top 100 Targets
 
 ## Strategy Overview
