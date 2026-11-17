@@ -87,7 +87,10 @@ export function RecentSearches() {
 // Hook for saving searches
 export function useSaveSearch() {
   return (query: string) => {
-    if (!query.trim()) return;
+    const trimmed = query.trim();
+    // Live search calls this on every debounced pause, so a two-letter
+    // fragment is usually a half-typed word, not a search.
+    if (trimmed.length < 3) return;
 
     const saved = localStorage.getItem(STORAGE_KEY);
     // L25 (audit 2026-06-22): guard the JSON.parse — a corrupted/tampered
@@ -103,10 +106,14 @@ export function useSaveSearch() {
       }
     }
 
-    const updated = [
-      query.trim(),
-      ...existing.filter((s) => s !== query.trim()),
-    ].slice(0, MAX_RECENT);
+    // Drop the prefixes of the same typing run. Typing "aloe" with pauses used
+    // to leave "a", "al" and "alo" beside it, which is how the list filled
+    // with fragments instead of searches.
+    const kept = existing.filter(
+      (s) => s !== trimmed && !trimmed.startsWith(s) && !s.startsWith(trimmed)
+    );
+
+    const updated = [trimmed, ...kept].slice(0, MAX_RECENT);
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   };

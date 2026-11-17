@@ -526,13 +526,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "article",
       siteName: "HerbAlly",
       locale: metaLocale === "fr" ? "fr_FR" : "en_US",
-      images: [`${baseUrl}/opengraph-image`],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`${baseUrl}/twitter-image`],
     },
     // An untranslated French URL is the English page under French chrome. It stays
     // crawlable (follow) so links are discovered, but it must not be indexed as a

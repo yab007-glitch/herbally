@@ -44,7 +44,10 @@ export default function robots(): MetadataRoute.Robots {
           "CCBot",
           "ClaudeBot",
           "anthropic-ai",
-          "Claude-Web",
+          // NOT Claude-Web: like ChatGPT-User, it is the browsing agent that
+          // reads a page to answer a question, not a trainer. Blocking it stops
+          // the site being read and cited where health questions increasingly
+          // get answered.
           "Google-Extended",
           "Applebot-Extended",
           "Bytespider",
