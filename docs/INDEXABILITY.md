@@ -43,13 +43,14 @@ abstracts, and counting it had let 97% of the library back into the sitemap
 (3,155 of 3,238 pages), against Google's own verdict of 4,249 URLs "crawled,
 currently not indexed".
 
-That leaves **2,011 published herbs in the sitemap's blind spot but still
-`index,follow` on the page itself.** That is a decision, not an oversight:
+That leaves **1,999 of the 3,238 published herbs in the sitemap's blind spot but
+still `index,follow` on the page itself** (2,011 before the EMA monographs were
+imported on 2026-11-16). That is a decision, not an oversight:
 
 - The page is judged by its own content. Those entries render a compiled sheet
   averaging ~3,200 characters with a PMID on every claim, which is real content
   and clears `isIndexable()`; telling Google not to index them would remove
-  2,011 pages that answer a long-tail query nobody else covers.
+  1,999 pages that answer a long-tail query nobody else covers.
 - The sitemap is an advertisement, and advertising text the site cannot source
   from a regulator is what produced the 4,249-page unindexed bucket. The page
   does not promise anything; it just doesn't get pushed.
