@@ -130,6 +130,7 @@ describe("rankHerbMatches", () => {
       slug: "barbadian-aloe",
       name: "Barbadian Aloe",
       scientific_name: "Aloe vera var. barbadensis",
+      frName: "Aloès de la Barbade",
     };
     expect(rankHerbMatches([baiGuo, ginkgo], "ginkgo leaf")).toBe(ginkgo);
     expect(

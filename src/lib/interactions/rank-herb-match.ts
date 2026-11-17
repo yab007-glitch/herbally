@@ -96,11 +96,19 @@ export function rankHerbMatches<T extends HerbMatchCandidate>(
   // juice" resolved to Barbadian Aloe the same way.
   const head = herbNameContentTokens(term)[0];
   if (head && head.length >= 3) {
-    const headMatches = rows.filter((row) =>
-      [row.name, row.frName].some((candidate) =>
-        normalizeMatchText(candidate || "").startsWith(head)
-      )
+    const nameMatches = rows.filter((row) =>
+      normalizeMatchText(row.name).startsWith(head)
     );
+    // Only if no English name carries the head word does the French one
+    // count. "Aloès de la Barbade" also starts with "aloe" once folded, and
+    // letting it compete tied Barbadian Aloe with Aloe Vera on the English
+    // query "aloe vera juice"; its row holds no interaction data.
+    const headMatches =
+      nameMatches.length > 0
+        ? nameMatches
+        : rows.filter((row) =>
+            row.frName ? normalizeMatchText(row.frName).startsWith(head) : false
+          );
     if (headMatches.length > 0) return bestOf(headMatches);
   }
 
