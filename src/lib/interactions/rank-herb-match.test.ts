@@ -53,10 +53,52 @@ describe("rankHerbMatches", () => {
     expect(rankHerbMatches([ginger], "Ging")).toBe(ginger);
   });
 
-  it("never invents a herb: an unmatched query keeps the first DB candidate", () => {
-    // The caller's ILIKE already filtered the rows, so rows[0] is the old
-    // fallback and stays the last resort.
-    expect(rankHerbMatches([ginger], "not-a-herb")).toBe(ginger);
+  it("never invents a herb: an unmatched query returns undefined", () => {
+    // rows[0] used to sit here. The caller's ILIKE only proves that SOME word
+    // matched somewhere, so checking interactions against that row reports a
+    // confident "no interaction" for a herb the reader never asked about.
+    expect(rankHerbMatches([ginger], "not-a-herb")).toBeUndefined();
+  });
+
+  it("resolves a punctuated name typed without punctuation", () => {
+    const stJohns = {
+      slug: "st-johns-wort",
+      name: "St. John's Wort",
+      scientific_name: "Hypericum perforatum",
+    };
+    const stJohnsOil = {
+      slug: "st-johns-wort-oil",
+      name: "St. Johns Wort Oil",
+      scientific_name: "Hypericum perforatum",
+    };
+    expect(rankHerbMatches([stJohnsOil, stJohns], "st johns wort")).toBe(
+      stJohns
+    );
+  });
+
+  it("still resolves a trailing qualifier to the herb itself", () => {
+    const turmeric = {
+      slug: "turmeric",
+      name: "Turmeric",
+      scientific_name: "Curcuma longa",
+    };
+    expect(rankHerbMatches([turmeric], "turmeric powder")).toBe(turmeric);
+  });
+
+  it("prefers the herb over a preparation with the same words in its name", () => {
+    const stJohns = {
+      slug: "st-johns-wort",
+      name: "St. John's Wort",
+      scientific_name: "Hypericum perforatum",
+    };
+    const stJohnsOil = {
+      slug: "st-johns-wort-oil",
+      name: "St. Johns Wort Oil",
+      scientific_name: "Hypericum perforatum",
+    };
+    expect(
+      rankHerbMatches([stJohnsOil, stJohns], "st johns wort extract")
+    ).toBe(stJohns);
   });
 
   it("matches exact French names cleanly (e.g. Curcuma -> turmeric, Millepertuis -> st-johns-wort)", () => {

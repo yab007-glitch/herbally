@@ -35,7 +35,7 @@ export function rankHerbMatches<T extends HerbMatchCandidate>(
       normalizeMatchText(row.scientific_name) === norm ||
       (row.frName ? normalizeMatchText(row.frName) === norm : false)
   );
-  return (
+  const direct =
     exact.find((row) => row.slug === slug) ??
     exact.find((row) => !row.slug.includes("-")) ??
     exact[0] ??
@@ -43,7 +43,48 @@ export function rankHerbMatches<T extends HerbMatchCandidate>(
     rows.find((row) =>
       row.frName ? normalizeMatchText(row.frName).startsWith(norm) : false
     ) ??
-    rows.find((row) => row.slug === slug) ??
-    rows[0]
-  );
+    rows.find((row) => row.slug === slug);
+  if (direct) return direct;
+
+  // Last tier: the row whose own names cover the most of what the reader
+  // typed. An arbitrary `rows[0]` used to sit here, which is how any query
+  // sharing a single word with the library could resolve to the wrong plant
+  // and then answer "no interaction" for a pair that exists. Nothing covering
+  // at least half the typed words is "we could not identify this herb", and
+  // the caller reports that honestly instead of checking the wrong one.
+  const queryTokens = norm.split(" ").filter(Boolean);
+  if (queryTokens.length === 0) return undefined;
+  const needed = Math.max(1, Math.ceil(queryTokens.length / 2));
+  let best: T | undefined;
+  let bestCovered = 0;
+  let bestNameTokens = Number.POSITIVE_INFINITY;
+  for (const row of rows) {
+    const nameTokens = normalizeMatchText(
+      `${row.name} ${row.scientific_name} ${row.frName ?? ""}`
+    )
+      .split(" ")
+      .filter(Boolean);
+    const covered = queryTokens.filter((token) =>
+      nameTokens.some(
+        (nameToken) =>
+          nameToken.startsWith(token) || token.startsWith(nameToken)
+      )
+    ).length;
+    // On a tie prefer the shorter display name: for "st johns wort extract"
+    // both "St. John's Wort" and "St. Johns Wort Oil" cover three words, but
+    // the second carries a word the reader never typed, and its row is a
+    // different product with its own (empty) interaction set.
+    const displayTokens = normalizeMatchText(row.name)
+      .split(" ")
+      .filter(Boolean).length;
+    if (
+      covered > bestCovered ||
+      (covered === bestCovered && covered > 0 && displayTokens < bestNameTokens)
+    ) {
+      best = row;
+      bestCovered = covered;
+      bestNameTokens = displayTokens;
+    }
+  }
+  return bestCovered >= needed ? best : undefined;
 }

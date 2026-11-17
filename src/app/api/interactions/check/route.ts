@@ -4,7 +4,11 @@ import { getHerbPairs } from "@/lib/interactions/pairs";
 import { matchInteractionPair } from "@/lib/interactions/check";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { rankHerbMatches } from "@/lib/interactions/rank-herb-match";
-import { buildHerbTextOrFilter } from "@/lib/search/normalize-query";
+import {
+  buildHerbNameAnchorFilter,
+  buildHerbPreciseNameFilter,
+  buildHerbTextOrFilter,
+} from "@/lib/search/normalize-query";
 import { extractFrenchHerbName } from "@/lib/utils/localize-herb";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
@@ -29,24 +33,61 @@ interface HerbCandidate {
 async function resolveHerb(term: string): Promise<HerbCandidate | null> {
   const supabase = getAnonClient();
   if (!supabase) return null;
-  const filter = buildHerbTextOrFilter(term, {
+  // Two candidate sets. The precise one is rows whose own name carries every
+  // typed word; the broad one is the old any-word-in-any-name filter. The
+  // broad filter alone with `limit 20` picked whichever twenty rows the
+  // database returned first, so on 2026-11-17 "st johns wort" resolved to
+  // Aster tataricus and the checker answered found:false for sertraline — a
+  // false "no interaction" on the most important herb-drug pair there is.
+  const preciseFilter = [
+    buildHerbPreciseNameFilter(term, { maxTokens: 5 }),
+    buildHerbNameAnchorFilter(term, { maxTokens: 5 }),
+  ]
+    .filter(Boolean)
+    .join(",");
+  const broadFilter = buildHerbTextOrFilter(term, {
     includeDescription: false,
     maxTokens: 5,
   });
-  if (!filter) return null;
-  const { data, error } = await supabase
-    .from("herbs")
-    .select("slug,name,scientific_name,translations")
-    .eq("is_published", true)
-    .or(filter)
-    .limit(20);
-  if (error || !data || data.length === 0) return null;
-  const candidates: HerbCandidate[] = data.map((row) => ({
-    slug: row.slug,
-    name: row.name,
-    scientific_name: row.scientific_name,
-    frName: extractFrenchHerbName(row.translations),
-  }));
+  if (!preciseFilter && !broadFilter) return null;
+  const columns = "slug,name,scientific_name,translations";
+  const [preciseResponse, broadResponse] = await Promise.all([
+    preciseFilter
+      ? supabase
+          .from("herbs")
+          .select(columns)
+          .eq("is_published", true)
+          .or(preciseFilter)
+          .limit(30)
+      : Promise.resolve({ data: [], error: null }),
+    broadFilter
+      ? supabase
+          .from("herbs")
+          .select(columns)
+          .eq("is_published", true)
+          .or(broadFilter)
+          .limit(30)
+      : Promise.resolve({ data: [], error: null }),
+  ]);
+  // Both queries failed: the database could not be asked, not "no such herb".
+  if (preciseResponse.error && broadResponse.error) return null;
+  const rows = [
+    ...(preciseResponse.data ?? []),
+    ...(broadResponse.data ?? []),
+  ];
+  if (rows.length === 0) return null;
+  const seen = new Set<string>();
+  const candidates: HerbCandidate[] = [];
+  for (const row of rows) {
+    if (seen.has(row.slug)) continue;
+    seen.add(row.slug);
+    candidates.push({
+      slug: row.slug,
+      name: row.name,
+      scientific_name: row.scientific_name,
+      frName: extractFrenchHerbName(row.translations),
+    });
+  }
   return rankHerbMatches(candidates, term) ?? null;
 }
 

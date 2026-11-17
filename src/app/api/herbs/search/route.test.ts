@@ -46,25 +46,45 @@ const textRow: HerbRow = {
   translations: { fr: { name: "Curcuma" } },
 };
 
-/** Install a fake Supabase client that answers the symptom and text queries. */
-function installSupabase(symptomData: HerbRow[], textData: HerbRow[]) {
-  const orConditions: string[] = [];
+/**
+ * Install a fake Supabase client answering the three queries the route makes:
+ * the symptom overlap, the precise name filter (its condition starts with
+ * `and(`), and the broad text filter. Each records its own condition so a
+ * test can assert on the filter that was actually built.
+ */
+function installSupabase(
+  symptomData: HerbRow[],
+  textData: HerbRow[],
+  preciseData: HerbRow[] = textData
+) {
+  const preciseConditions: string[] = [];
+  const textConditions: string[] = [];
 
   createClientMock.mockResolvedValue({
     from: vi.fn(() => {
-      let hasOrCondition = false;
+      let kind: "symptom" | "precise" | "text" = "symptom";
       const builder = {
         select: vi.fn(() => builder),
         eq: vi.fn(() => builder),
         overlaps: vi.fn(() => builder),
         or: vi.fn((condition: string) => {
-          hasOrCondition = true;
-          orConditions.push(condition);
+          if (condition.startsWith("and(")) {
+            kind = "precise";
+            preciseConditions.push(condition);
+          } else {
+            kind = "text";
+            textConditions.push(condition);
+          }
           return builder;
         }),
         limit: vi.fn(() =>
           Promise.resolve({
-            data: hasOrCondition ? textData : symptomData,
+            data:
+              kind === "precise"
+                ? preciseData
+                : kind === "text"
+                  ? textData
+                  : symptomData,
             error: null,
           })
         ),
@@ -73,7 +93,7 @@ function installSupabase(symptomData: HerbRow[], textData: HerbRow[]) {
     }),
   });
 
-  return { orConditions };
+  return { preciseConditions, textConditions };
 }
 
 function postRequest(body: string, headers: Record<string, string> = {}) {
@@ -109,6 +129,34 @@ describe("POST /api/herbs/search", () => {
     expect(createClientMock).toHaveBeenCalledTimes(1);
   });
 
+  it("lets the exact name win when two rows share a scientific name", async () => {
+    const baiGuo: HerbRow = {
+      id: "10",
+      name: "Bai Guo",
+      slug: "bai-guo",
+      scientific_name: "Ginkgo biloba",
+      evidence_level: "C",
+      translations: null,
+    };
+    const ginkgo: HerbRow = {
+      id: "11",
+      name: "Ginkgo Biloba",
+      slug: "ginkgo-biloba",
+      scientific_name: "Ginkgo biloba",
+      evidence_level: "C",
+      translations: null,
+    };
+    installSupabase([], [baiGuo, ginkgo], [baiGuo, ginkgo]);
+
+    const response = await GET(
+      new NextRequest("https://example.test/api/herbs/search?q=ginkgo")
+    );
+
+    const results = await response.json();
+    expect(results).toHaveLength(1);
+    expect(results[0].slug).toBe("ginkgo-biloba");
+  });
+
   it("uses the x-locale header to localize results", async () => {
     installSupabase([symptomRow], []);
 
@@ -121,14 +169,29 @@ describe("POST /api/herbs/search", () => {
   });
 
   it("sanitizes PostgREST filter metacharacters before building the text query", async () => {
-    const { orConditions } = installSupabase([], []);
+    const { textConditions } = installSupabase([], []);
 
     await POST(postRequest(JSON.stringify({ q: "pain,danger" })));
 
-    expect(orConditions).toHaveLength(1);
-    expect(orConditions[0]).toBe(
+    expect(textConditions).toHaveLength(1);
+    expect(textConditions[0]).toBe(
       "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,description.ilike.%paindanger%,translations->fr->>name.ilike.%paindanger%"
     );
+  });
+
+  it("asks for name-only matches of every typed word first", async () => {
+    const { preciseConditions } = installSupabase([], []);
+
+    await POST(postRequest(JSON.stringify({ q: "milk thistle" })));
+
+    expect(preciseConditions).toHaveLength(1);
+    expect(preciseConditions[0]).toContain(
+      "and(name.ilike.%milk%,name.ilike.%thistle%),and(scientific_name.ilike.%milk%,scientific_name.ilike.%thistle%),and(translations->fr->>name.ilike.%milk%,translations->fr->>name.ilike.%thistle%)"
+    );
+    // …and it also carries the anchor words, so a qualified name still
+    // brings the herb into the candidate set.
+    expect(preciseConditions[0]).toContain("name.ilike.%milk%");
+    expect(preciseConditions[0]).toContain("name.ilike.%thistle%");
   });
 
   it("searches French translated names and ranks exact French matches first", async () => {
@@ -140,15 +203,23 @@ describe("POST /api/herbs/search", () => {
       evidence_level: "B",
       translations: { fr: { name: "Chardon-Marie" } },
     };
-    const { orConditions } = installSupabase([symptomRow], [milkThistle]);
+    const { textConditions, preciseConditions } = installSupabase(
+      [symptomRow],
+      [milkThistle]
+    );
 
     const response = await GET(
       new NextRequest("https://example.test/api/herbs/search?q=chardon-marie")
     );
 
     expect(response.status).toBe(200);
-    expect(orConditions[0]).toContain(
+    expect(textConditions[0]).toContain(
       "translations->fr->>name.ilike.%chardon-marie%"
+    );
+    // A hyphenated name also has to be searchable without its hyphen, so the
+    // precise filter splits it into two required words.
+    expect(preciseConditions[0]).toContain(
+      "and(translations->fr->>name.ilike.%chardon%,translations->fr->>name.ilike.%marie%)"
     );
     const results = await response.json();
     expect(results[0]).toEqual(
@@ -157,13 +228,13 @@ describe("POST /api/herbs/search", () => {
   });
 
   it("splits elided French articles such as l'ail into searchable tokens", async () => {
-    const { orConditions } = installSupabase([], []);
+    const { textConditions } = installSupabase([], []);
 
     await GET(
       new NextRequest("https://example.test/api/herbs/search?q=l%27ail")
     );
 
-    expect(orConditions[0]).toContain("translations->fr->>name.ilike.%ail%");
+    expect(textConditions[0]).toContain("translations->fr->>name.ilike.%ail%");
   });
 
   it.each([

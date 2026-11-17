@@ -25,9 +25,55 @@ export function splitSearchTokens(term: string, maxTokens = 10): string[] {
 
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
 
-/** Canonical case- and accent-folded form for exact/prefix comparisons. */
+/**
+ * Word endings where a final "s" is part of the name, not a plural: the Latin
+ * and French -is/-us/-es/-os/-as forms ("Millepertuis", "officinalis",
+ * "sativus", "Cannabis"). Stripping those would rewrite the name instead of
+ * folding a plural.
+ */
+const NON_PLURAL_S = /(?:is|us|es|os|as)$/;
+
+/**
+ * One comparison token: accents and case folded, punctuation dropped, and a
+ * trailing plural "s" removed once a word is long enough for "s" to be an
+ * ending rather than part of the name.
+ *
+ * The plural fold is what lets a typed "st johns wort" meet the stored
+ * "St. John's Wort": the possessive apostrophe is removed by the caller, and
+ * "johns" and "john" have to agree on the same token for the exact-match tier
+ * to fire. It is applied to both sides of every comparison, so it can never
+ * make two different names collide.
+ */
+function foldToken(token: string): string {
+  const cleaned = stripAccents(token).toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (
+    cleaned.length > 4 &&
+    cleaned.endsWith("s") &&
+    !NON_PLURAL_S.test(cleaned)
+  ) {
+    return cleaned.slice(0, -1);
+  }
+  return cleaned;
+}
+
+/**
+ * Canonical form for exact/prefix comparisons.
+ *
+ * Removes possessives ("John's" -> "john"), turns remaining apostrophes and
+ * punctuation into spaces, and keeps only tokens of two or more characters, so
+ * "St. John's Wort" and "st johns wort" both become "st john wort". Dropping
+ * the punctuation is the difference between an exact match (rank 0) and an
+ * unrelated row that happens to share a word.
+ */
 export function normalizeMatchText(value: string): string {
-  return stripAccents(value).trim().toLowerCase();
+  return stripAccents(value)
+    .toLowerCase()
+    .replace(/['’]s\b/g, "")
+    .replace(/['’]/g, " ")
+    .split(/[^a-z0-9]+/)
+    .map(foldToken)
+    .filter((token) => token.length >= 2)
+    .join(" ");
 }
 
 /**
@@ -58,6 +104,127 @@ export function buildHerbTextOrFilter(
         `translations->fr->>name.ilike.%${safe}%`,
       ];
       return fields;
+    })
+    .join(",");
+}
+
+/**
+ * PostgREST `.or(...)` body matching rows whose own NAME contains every query
+ * token, in the English name, the Latin binomial, or the French translation.
+ *
+ * The general text filter above matches ANY token in ANY field, so
+ * "st johns wort" also matches every row with "wort" or "st" anywhere in its
+ * description. The route then applies `limit` to that set in whatever order
+ * the database returns, and the real herb can fall outside the window entirely
+ * — on 2026-11-17 the interaction checker resolved "st johns wort" to Aster
+ * tataricus and reported no interaction with sertraline.
+ *
+ * This filter is the precise half of the candidate pair. A row that passes it
+ * is a name match by construction, so the caller can rank it ahead of the
+ * broad set. Tokens are folded exactly as `normalizeMatchText` folds them, so
+ * a typed "johns" searches for "john" and matches the stored "John's".
+ */
+export function buildHerbPreciseNameFilter(
+  term: string,
+  options: { maxTokens?: number } = {}
+): string {
+  const { maxTokens = 10 } = options;
+  // Fold the whole term rather than its whitespace-delimited words: a typed
+  // "Chardon-Marie" and a stored "Chardon Marie" have to meet, and so do
+  // "st johns wort" and "St. John's Wort". normalizeMatchText already splits
+  // on punctuation, apostrophes, and plurals.
+  const tokens = Array.from(
+    new Set(
+      normalizeMatchText(term)
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, maxTokens)
+    )
+  );
+  const safe = tokens.map(sanitizeFilterValue).filter(Boolean);
+  if (safe.length === 0) return "";
+
+  return ["name", "scientific_name", "translations->fr->>name"]
+    .map((field) => `and(${safe.map((t) => `${field}.ilike.%${t}%`).join(",")})`)
+    .join(",");
+}
+
+/**
+ * Words readers add to say what form of the herb they mean. They are useful in
+ * a query but useless as anchors: "ginkgo leaf" must search for "ginkgo", not
+ * for "leaf". Stripped only for choosing the anchor words below — the precise
+ * filter keeps every word, and the broad filter is untouched.
+ */
+const FORM_WORDS = new Set([
+  "extract",
+  "powder",
+  "root",
+  "leaf",
+  "leaves",
+  "seed",
+  "tea",
+  "juice",
+  "oil",
+  "capsule",
+  "capsules",
+  "tincture",
+  "dried",
+  "ground",
+  "organic",
+  "fresh",
+  "raw",
+  "supplement",
+  "herb",
+  "tablet",
+  "tablets",
+  "dose",
+  "dosage",
+]);
+
+/**
+ * PostgREST `.or(...)` body that anchors a multi-word query on its two most
+ * identifying words, searched in the name fields only.
+ *
+ * The precise filter requires EVERY word in one name, which is the right
+ * answer when the reader types a complete name but finds nothing when they add
+ * a qualifier ("ginger root", "milk thistle seed", "ginkgo leaf"): on
+ * 2026-11-17 those queries returned forty rows and not one was a name match,
+ * because the broad filter matches any word anywhere and the limit sampled
+ * description matches. Requiring just the head word (or the longest
+ * non-form word) keeps the real herb in the candidate set, and ranking puts
+ * it where it belongs.
+ *
+ * The first word is included because English herb names put the head noun
+ * first ("aloe vera juice" -> "aloe"); the longest remaining word catches
+ * French and Latin phrasings.
+ */
+export function buildHerbNameAnchorFilter(
+  term: string,
+  options: { maxTokens?: number } = {}
+): string {
+  const { maxTokens = 10 } = options;
+  const tokens = normalizeMatchText(term)
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, maxTokens);
+  if (tokens.length < 2) return "";
+
+  const contentTokens = tokens.filter((token) => !FORM_WORDS.has(token));
+  const pool = contentTokens.length > 0 ? contentTokens : tokens;
+  const longest = pool.reduce((best, token) =>
+    token.length > best.length ? token : best
+  );
+  const anchors = Array.from(new Set([pool[0], longest]));
+
+  return anchors
+    .flatMap((token) => {
+      const safe = sanitizeFilterValue(token);
+      if (!safe) return [];
+      return [
+        `name.ilike.%${safe}%`,
+        `scientific_name.ilike.%${safe}%`,
+        `translations->fr->>name.ilike.%${safe}%`,
+      ];
     })
     .join(",");
 }

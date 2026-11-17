@@ -3,7 +3,11 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { localizeHerb } from "@/lib/utils/localize-herb";
-import { buildHerbTextOrFilter } from "@/lib/search/normalize-query";
+import {
+  buildHerbNameAnchorFilter,
+  buildHerbPreciseNameFilter,
+  buildHerbTextOrFilter,
+} from "@/lib/search/normalize-query";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
@@ -32,28 +36,56 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     const supabase = await createClient();
     const expandedKeywords = expandQueryToKeywords(term);
 
-    const { data: symptomResults, error: symptomError } = await supabase
-      .from("herbs")
-      .select(
-        "id, name, slug, scientific_name, evidence_level, translations, symptom_keywords"
-      )
-      .eq("is_published", true)
-      .overlaps("symptom_keywords", expandedKeywords)
-      .limit(30);
-
     // Sanitize each token to prevent ILIKE wildcard & PostgREST `.or()` filter
     // injection, matching English names, Latin binomials, descriptions, and
     // French translated names (`translations->fr->>name`).
     const textConditions = buildHerbTextOrFilter(term);
+    // Rows whose OWN name carries every word the reader typed. The broad
+    // filter above matches any word in any field, and `limit` samples that set
+    // in whatever order the database returns: on 2026-11-17 "licorice root"
+    // surfaced Beaucarnea recurvata first and "st johns wort" surfaced Aster
+    // tataricus, because the real rows never entered the window. The precise
+    // pass guarantees they do; ranking then puts them at the top.
+    const preciseConditions = buildHerbPreciseNameFilter(term);
+    // The same query also carries the anchor words, so a qualified name
+    // ("ginkgo leaf") still puts a name match in the candidate set.
+    const nameConditions = [
+      preciseConditions,
+      buildHerbNameAnchorFilter(term),
+    ]
+      .filter(Boolean)
+      .join(",");
+    const herbColumns =
+      "id, name, slug, scientific_name, evidence_level, translations";
 
-    const { data: textResults, error: textError } = await supabase
-      .from("herbs")
-      .select("id, name, slug, scientific_name, evidence_level, translations")
-      .eq("is_published", true)
-      .or(textConditions)
-      .limit(20);
+    const [symptomResponse, preciseResponse, textResponse] = await Promise.all([
+      supabase
+        .from("herbs")
+        .select(`${herbColumns}, symptom_keywords`)
+        .eq("is_published", true)
+        .overlaps("symptom_keywords", expandedKeywords)
+        .limit(30),
+      nameConditions
+        ? supabase
+            .from("herbs")
+            .select(herbColumns)
+            .eq("is_published", true)
+            .or(nameConditions)
+            .limit(40)
+        : Promise.resolve({ data: [], error: null }),
+      supabase
+        .from("herbs")
+        .select(herbColumns)
+        .eq("is_published", true)
+        .or(textConditions)
+        .limit(40),
+    ]);
 
-    if (symptomError && textError) {
+    const { data: symptomResults, error: symptomError } = symptomResponse;
+    const { data: preciseResults, error: preciseError } = preciseResponse;
+    const { data: textResults, error: textError } = textResponse;
+
+    if (symptomError && preciseError && textError) {
       return NextResponse.json([]);
     }
 
@@ -125,6 +157,24 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
       }
     }
 
+    // Name matches for every typed word, ahead of the broad description
+    // matches. Ranking still sorts by name similarity; this order decides
+    // ties and which row survives de-duplication.
+    const localizedPreciseResults = (preciseResults || []).map((h) =>
+      localizeHerb(h as Herb, locale)
+    );
+    for (const herb of localizedPreciseResults) {
+      if (!seen.has(herb.id)) {
+        seen.add(herb.id);
+        results.push({
+          ...herb,
+          matchedBy: "name",
+          matchedKeywords: [],
+          matchedInputs: [],
+        });
+      }
+    }
+
     // Localize text results
     const localizedTextResults = (textResults || []).map((h) =>
       localizeHerb(h as Herb, locale)
@@ -146,11 +196,15 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     // herb name like "Turmeric" surfaced obscure variants while the exact
     // herb sat below the fold. Stable sort preserves the existing
     // evidence/DB order within each rank.
-    // Collapse distinct rows for the same plant (e.g. two common names
-    // for one scientific name) into one result, keeping the first row's
-    // slug/link. General name ranking is unchanged for other consumers.
+    //
+    // Rank BEFORE collapsing rows that share a scientific name: the collapse
+    // keeps the first row per plant, so ranking afterwards lets an arbitrary
+    // database order decide which name represents it. "ginkgo" returned
+    // "Bai Guo" (Ginkgo biloba seed) and "Ginkgo Biloba"; with the old order
+    // the seed entry could win the plant even though the exact name match was
+    // the other row.
     return NextResponse.json(
-      rankHerbResults(dedupeSymptomResults(results), term)
+      dedupeSymptomResults(rankHerbResults(results, term))
     );
   } catch {
     // Upstream errors may include search terms; never log their raw text.
