@@ -438,6 +438,49 @@ describe("context-fetcher", () => {
       expect(ctx.note).toContain("regulator data");
     });
 
+    it("does not promote a herb on a generic word like 'long'", async () => {
+      // "Long" is part of real names (Long Gu, Di Long), so it stays in the
+      // search set — but "how long…" must not drag those herbs in.
+      let lookupConditions = "";
+      mockSelect.mockImplementation((columns: string) => {
+        if (columns === "name, scientific_name, slug, translations") {
+          return {
+            eq: () => ({
+              or: () => ({
+                order: () => ({
+                  limit: () => ({
+                    data: [
+                      {
+                        name: "Long Gu",
+                        scientific_name: "Os Draconis",
+                        slug: "long-gu",
+                        translations: null,
+                      },
+                    ],
+                  }),
+                }),
+              }),
+            }),
+          };
+        }
+        if (columns === "*, herb_categories(*), drug_interactions(*)") {
+          return {
+            or: (conditions: string) => {
+              lookupConditions = conditions;
+              return { eq: () => ({ limit: () => ({ data: [] }) }) };
+            },
+          };
+        }
+        return { eq: () => ({ or: () => ({ limit: () => ({ data: [] }) }) }) };
+      });
+
+      await fetchVerifiedContext("How long should I take ginger?");
+
+      expect(lookupConditions).toContain("ginger");
+      expect(lookupConditions).not.toContain("long-gu");
+      expect(lookupConditions).not.toContain("Long Gu");
+    });
+
     it("limits herb lookups to 5 herbs", async () => {
       mockSelect.mockReturnValue({
         eq: vi.fn(() => ({

@@ -341,7 +341,6 @@ const NON_HERB_WORDS = new Set([
   "herbal",
   "herbalist",
   "herbally",
-  "plant",
   "plants",
   "medicine",
   "medicines",
@@ -401,7 +400,6 @@ const NON_HERB_WORDS = new Set([
   "weeks",
   "month",
   "months",
-  "long",
   "term",
   "much",
   "time",
@@ -544,6 +542,15 @@ const NON_HERB_WORDS = new Set([
   "longtemps",
 ]);
 
+/**
+ * Real herb names contain these words ("Long Gu", "Di Long", "Ti Plant"), so
+ * they cannot be stopwords — dropping them left three herbs unreachable. They
+ * are still too generic to promote a herb on their own ("how long can I take
+ * this?"), so a partial match on one counts only when the whole name appears
+ * in the message.
+ */
+const WEAK_SEARCH_TERMS = new Set(["long", "plant"]);
+
 /** A herbs row reduced to the fields name matching needs. */
 interface HerbCandidate {
   name: string;
@@ -622,6 +629,8 @@ function rankCandidates(
       // A single-word name must match in full; a binomial needs at least half.
       const needed = words.length === 1 ? 1 : Math.ceil(words.length / 2);
       if (matched.length < needed) continue;
+      // A generic word shared with a herb name is not evidence of a match.
+      if (!matched.some((w) => !WEAK_SEARCH_TERMS.has(w))) continue;
 
       let score = matched.reduce((sum, w) => sum + w.length * 10, 0);
       if (matched.length === words.length) score += 25;
