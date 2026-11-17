@@ -183,6 +183,21 @@ const FORM_WORDS = new Set([
 ]);
 
 /**
+ * The query words that name the plant itself, with form words ("leaf",
+ * "extract", "juice") removed. Falls back to every word when the query is
+ * nothing but form words. Shared by the search anchor filter and the
+ * interaction herb resolver, which both need "ginkgo" out of "ginkgo leaf".
+ */
+export function herbNameContentTokens(term: string, maxTokens = 10): string[] {
+  const tokens = normalizeMatchText(term)
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, maxTokens);
+  const contentTokens = tokens.filter((token) => !FORM_WORDS.has(token));
+  return contentTokens.length > 0 ? contentTokens : tokens;
+}
+
+/**
  * PostgREST `.or(...)` body that anchors a multi-word query on its two most
  * identifying words, searched in the name fields only.
  *
@@ -214,8 +229,7 @@ export function buildHerbNameAnchorFilter(
     .slice(0, maxTokens);
   if (tokens.length < 2) return "";
 
-  const contentTokens = tokens.filter((token) => !FORM_WORDS.has(token));
-  const pool = contentTokens.length > 0 ? contentTokens : tokens;
+  const pool = herbNameContentTokens(term, maxTokens);
   const eligible = pool.filter((token) => token.length >= 3);
   if (eligible.length === 0) return "";
   const longest = eligible.reduce((best, token) =>

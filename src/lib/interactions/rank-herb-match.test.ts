@@ -101,6 +101,45 @@ describe("rankHerbMatches", () => {
     ).toBe(stJohns);
   });
 
+  it("resolves a qualified name to the herb it names, not a same-genus sibling", () => {
+    // Production on 2026-11-17: "ginkgo leaf" resolved to Bai Guo (Ginkgo
+    // biloba seed) and "aloe vera juice" to Barbadian Aloe. Interaction data
+    // lives on Ginkgo Biloba (7 pairs) and Aloe Vera (5), so the checker
+    // answered "no interaction" for herbs it knows.
+    const baiGuo = {
+      slug: "bai-guo",
+      name: "Bai Guo",
+      scientific_name: "Ginkgo biloba",
+    };
+    const ginkgo = {
+      slug: "ginkgo-biloba",
+      name: "Ginkgo Biloba",
+      scientific_name: "Ginkgo biloba",
+    };
+    const aloeMaculata = {
+      slug: "aloe-maculata",
+      name: "Aloe maculata",
+      scientific_name: "Aloe maculata",
+    };
+    const aloeVera = {
+      slug: "aloe-vera",
+      name: "Aloe Vera",
+      scientific_name: "Aloe vera",
+    };
+    const barbadianAloe = {
+      slug: "barbadian-aloe",
+      name: "Barbadian Aloe",
+      scientific_name: "Aloe vera var. barbadensis",
+    };
+    expect(rankHerbMatches([baiGuo, ginkgo], "ginkgo leaf")).toBe(ginkgo);
+    expect(
+      rankHerbMatches(
+        [barbadianAloe, aloeMaculata, aloeVera],
+        "aloe vera juice"
+      )
+    ).toBe(aloeVera);
+  });
+
   it("matches exact French names cleanly (e.g. Curcuma -> turmeric, Millepertuis -> st-johns-wort)", () => {
     const curcumaAromatica = {
       slug: "curcuma-aromatica",
