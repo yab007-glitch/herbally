@@ -197,7 +197,11 @@ const FORM_WORDS = new Set([
  *
  * The first word is included because English herb names put the head noun
  * first ("aloe vera juice" -> "aloe"); the longest remaining word catches
- * French and Latin phrasings.
+ * French and Latin phrasings. Only words of three characters or more may
+ * anchor: on 2026-11-17 "st johns wort" anchored on "st", and
+ * `name.ilike.%st%` matched 249 published names, so the unordered limit window
+ * filled with unrelated rows and the real herb never entered the candidate
+ * set. Two-letter words carry no identity.
  */
 export function buildHerbNameAnchorFilter(
   term: string,
@@ -212,10 +216,12 @@ export function buildHerbNameAnchorFilter(
 
   const contentTokens = tokens.filter((token) => !FORM_WORDS.has(token));
   const pool = contentTokens.length > 0 ? contentTokens : tokens;
-  const longest = pool.reduce((best, token) =>
+  const eligible = pool.filter((token) => token.length >= 3);
+  if (eligible.length === 0) return "";
+  const longest = eligible.reduce((best, token) =>
     token.length > best.length ? token : best
   );
-  const anchors = Array.from(new Set([pool[0], longest]));
+  const anchors = Array.from(new Set([eligible[0], longest]));
 
   return anchors
     .flatMap((token) => {

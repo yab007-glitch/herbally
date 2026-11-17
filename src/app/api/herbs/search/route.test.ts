@@ -47,53 +47,52 @@ const textRow: HerbRow = {
 };
 
 /**
- * Install a fake Supabase client answering the three queries the route makes:
+ * Install a fake Supabase client answering the four queries the route makes:
  * the symptom overlap, the precise name filter (its condition starts with
- * `and(`), and the broad text filter. Each records its own condition so a
- * test can assert on the filter that was actually built.
+ * `and(`), the anchor filter, and the broad text filter. The broad query is
+ * always constructed last, so its condition is the final `.or()` recorded;
+ * everything else that is not precise is the anchor.
  */
 function installSupabase(
   symptomData: HerbRow[],
   textData: HerbRow[],
-  preciseData: HerbRow[] = textData
+  preciseData: HerbRow[] = textData,
+  anchorData: HerbRow[] = []
 ) {
-  const preciseConditions: string[] = [];
-  const textConditions: string[] = [];
+  const orConditions: string[] = [];
 
   createClientMock.mockResolvedValue({
     from: vi.fn(() => {
-      let kind: "symptom" | "precise" | "text" = "symptom";
+      let condition: string | undefined;
       const builder = {
         select: vi.fn(() => builder),
         eq: vi.fn(() => builder),
         overlaps: vi.fn(() => builder),
-        or: vi.fn((condition: string) => {
-          if (condition.startsWith("and(")) {
-            kind = "precise";
-            preciseConditions.push(condition);
-          } else {
-            kind = "text";
-            textConditions.push(condition);
-          }
+        or: vi.fn((next: string) => {
+          condition = next;
+          orConditions.push(next);
           return builder;
         }),
-        limit: vi.fn(() =>
-          Promise.resolve({
-            data:
-              kind === "precise"
-                ? preciseData
-                : kind === "text"
-                  ? textData
-                  : symptomData,
-            error: null,
-          })
-        ),
+        limit: vi.fn(() => {
+          if (condition === undefined) {
+            return Promise.resolve({ data: symptomData, error: null });
+          }
+          const own = condition;
+          // Classify in a microtask, after every query has been constructed.
+          return Promise.resolve().then(() => {
+            if (own.startsWith("and(")) {
+              return { data: preciseData, error: null };
+            }
+            const isText = orConditions[orConditions.length - 1] === own;
+            return { data: isText ? textData : anchorData, error: null };
+          });
+        }),
       };
       return builder;
     }),
   });
 
-  return { preciseConditions, textConditions };
+  return { orConditions };
 }
 
 function postRequest(body: string, headers: Record<string, string> = {}) {
@@ -157,6 +156,37 @@ describe("POST /api/herbs/search", () => {
     expect(results[0].slug).toBe("ginkgo-biloba");
   });
 
+  it("finds the exact herb even when the anchor query returns forty unrelated rows", async () => {
+    // Production on 2026-11-17: "st johns wort" matched 249 published names on
+    // the two-letter anchor `st`, so the unordered limit window held none of
+    // the rows whose name carries every typed word. The queries are separate
+    // now, so anchor noise cannot displace the precise row.
+    const stJohns: HerbRow = {
+      id: "20",
+      name: "St. John's Wort",
+      slug: "st-johns-wort",
+      scientific_name: "Hypericum perforatum",
+      evidence_level: "B",
+      translations: null,
+    };
+    const anchorNoise: HerbRow[] = Array.from({ length: 40 }, (_, i) => ({
+      id: `noise-${i}`,
+      name: `Sticta ${i}`,
+      slug: `sticta-${i}`,
+      scientific_name: `Sticta species ${i}`,
+      evidence_level: null,
+      translations: null,
+    }));
+    installSupabase([], anchorNoise, [stJohns], anchorNoise);
+
+    const response = await GET(
+      new NextRequest("https://example.test/api/herbs/search?q=st+johns+wort")
+    );
+
+    const results = await response.json();
+    expect(results[0].slug).toBe("st-johns-wort");
+  });
+
   it("uses the x-locale header to localize results", async () => {
     installSupabase([symptomRow], []);
 
@@ -169,29 +199,33 @@ describe("POST /api/herbs/search", () => {
   });
 
   it("sanitizes PostgREST filter metacharacters before building the text query", async () => {
-    const { textConditions } = installSupabase([], []);
+    const { orConditions } = installSupabase([], []);
 
     await POST(postRequest(JSON.stringify({ q: "pain,danger" })));
 
-    expect(textConditions).toHaveLength(1);
-    expect(textConditions[0]).toBe(
+    // The precise, anchor and broad queries each carry their own condition;
+    // the broad one is always last.
+    expect(orConditions).toHaveLength(3);
+    expect(orConditions.at(-1)).toBe(
       "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,description.ilike.%paindanger%,translations->fr->>name.ilike.%paindanger%"
     );
   });
 
   it("asks for name-only matches of every typed word first", async () => {
-    const { preciseConditions } = installSupabase([], []);
+    const { orConditions } = installSupabase([], []);
 
     await POST(postRequest(JSON.stringify({ q: "milk thistle" })));
 
-    expect(preciseConditions).toHaveLength(1);
-    expect(preciseConditions[0]).toContain(
+    // Precise, anchor, broad — in that order, each as its own query.
+    expect(orConditions).toHaveLength(3);
+    expect(orConditions[0]).toContain(
       "and(name.ilike.%milk%,name.ilike.%thistle%),and(scientific_name.ilike.%milk%,scientific_name.ilike.%thistle%),and(translations->fr->>name.ilike.%milk%,translations->fr->>name.ilike.%thistle%)"
     );
-    // …and it also carries the anchor words, so a qualified name still
-    // brings the herb into the candidate set.
-    expect(preciseConditions[0]).toContain("name.ilike.%milk%");
-    expect(preciseConditions[0]).toContain("name.ilike.%thistle%");
+    // The anchor is a separate request, so its loose rows can never crowd the
+    // precise rows out of one unordered limit window.
+    expect(orConditions[1]).not.toContain("and(");
+    expect(orConditions[1]).toContain("name.ilike.%milk%");
+    expect(orConditions[1]).toContain("name.ilike.%thistle%");
   });
 
   it("searches French translated names and ranks exact French matches first", async () => {
@@ -203,22 +237,19 @@ describe("POST /api/herbs/search", () => {
       evidence_level: "B",
       translations: { fr: { name: "Chardon-Marie" } },
     };
-    const { textConditions, preciseConditions } = installSupabase(
-      [symptomRow],
-      [milkThistle]
-    );
+    const { orConditions } = installSupabase([symptomRow], [milkThistle]);
 
     const response = await GET(
       new NextRequest("https://example.test/api/herbs/search?q=chardon-marie")
     );
 
     expect(response.status).toBe(200);
-    expect(textConditions[0]).toContain(
+    expect(orConditions.at(-1)).toContain(
       "translations->fr->>name.ilike.%chardon-marie%"
     );
     // A hyphenated name also has to be searchable without its hyphen, so the
     // precise filter splits it into two required words.
-    expect(preciseConditions[0]).toContain(
+    expect(orConditions[0]).toContain(
       "and(translations->fr->>name.ilike.%chardon%,translations->fr->>name.ilike.%marie%)"
     );
     const results = await response.json();
@@ -228,13 +259,15 @@ describe("POST /api/herbs/search", () => {
   });
 
   it("splits elided French articles such as l'ail into searchable tokens", async () => {
-    const { textConditions } = installSupabase([], []);
+    const { orConditions } = installSupabase([], []);
 
     await GET(
       new NextRequest("https://example.test/api/herbs/search?q=l%27ail")
     );
 
-    expect(textConditions[0]).toContain("translations->fr->>name.ilike.%ail%");
+    expect(orConditions.at(-1)).toContain(
+      "translations->fr->>name.ilike.%ail%"
+    );
   });
 
   it.each([

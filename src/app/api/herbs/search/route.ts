@@ -47,42 +47,55 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     // tataricus, because the real rows never entered the window. The precise
     // pass guarantees they do; ranking then puts them at the top.
     const preciseConditions = buildHerbPreciseNameFilter(term);
-    // The same query also carries the anchor words, so a qualified name
-    // ("ginkgo leaf") still puts a name match in the candidate set.
-    const nameConditions = [preciseConditions, buildHerbNameAnchorFilter(term)]
-      .filter(Boolean)
-      .join(",");
+    // Qualified names ("ginkgo leaf", "milk thistle seed") whose full word
+    // list is in no single name are caught by the anchor words. The anchor is
+    // queried separately, with its own limit: joined into the same `.or()`,
+    // its loose alternatives compete with the precise rows for one unordered
+    // window. On 2026-11-17 the anchor for "st johns wort" was
+    // `name.ilike.%st%`, which matched 249 published names, so the forty rows
+    // returned contained none of the rows whose name carries every typed word.
+    const anchorConditions = buildHerbNameAnchorFilter(term);
     const herbColumns =
       "id, name, slug, scientific_name, evidence_level, translations";
 
-    const [symptomResponse, preciseResponse, textResponse] = await Promise.all([
-      supabase
-        .from("herbs")
-        .select(`${herbColumns}, symptom_keywords`)
-        .eq("is_published", true)
-        .overlaps("symptom_keywords", expandedKeywords)
-        .limit(30),
-      nameConditions
-        ? supabase
-            .from("herbs")
-            .select(herbColumns)
-            .eq("is_published", true)
-            .or(nameConditions)
-            .limit(40)
-        : Promise.resolve({ data: [], error: null }),
-      supabase
-        .from("herbs")
-        .select(herbColumns)
-        .eq("is_published", true)
-        .or(textConditions)
-        .limit(40),
-    ]);
+    const [symptomResponse, preciseResponse, anchorResponse, textResponse] =
+      await Promise.all([
+        supabase
+          .from("herbs")
+          .select(`${herbColumns}, symptom_keywords`)
+          .eq("is_published", true)
+          .overlaps("symptom_keywords", expandedKeywords)
+          .limit(30),
+        preciseConditions
+          ? supabase
+              .from("herbs")
+              .select(herbColumns)
+              .eq("is_published", true)
+              .or(preciseConditions)
+              .limit(40)
+          : Promise.resolve({ data: [], error: null }),
+        anchorConditions
+          ? supabase
+              .from("herbs")
+              .select(herbColumns)
+              .eq("is_published", true)
+              .or(anchorConditions)
+              .limit(40)
+          : Promise.resolve({ data: [], error: null }),
+        supabase
+          .from("herbs")
+          .select(herbColumns)
+          .eq("is_published", true)
+          .or(textConditions)
+          .limit(40),
+      ]);
 
     const { data: symptomResults, error: symptomError } = symptomResponse;
     const { data: preciseResults, error: preciseError } = preciseResponse;
+    const { data: anchorResults, error: anchorError } = anchorResponse;
     const { data: textResults, error: textError } = textResponse;
 
-    if (symptomError && preciseError && textError) {
+    if (symptomError && preciseError && anchorError && textError) {
       return NextResponse.json([]);
     }
 
@@ -161,6 +174,23 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
       localizeHerb(h as Herb, locale)
     );
     for (const herb of localizedPreciseResults) {
+      if (!seen.has(herb.id)) {
+        seen.add(herb.id);
+        results.push({
+          ...herb,
+          matchedBy: "name",
+          matchedKeywords: [],
+          matchedInputs: [],
+        });
+      }
+    }
+
+    // Anchor matches for qualified names ("ginkgo leaf"), behind the exact
+    // name rows and ahead of the broad matches.
+    const localizedAnchorResults = (anchorResults || []).map((h) =>
+      localizeHerb(h as Herb, locale)
+    );
+    for (const herb of localizedAnchorResults) {
       if (!seen.has(herb.id)) {
         seen.add(herb.id);
         results.push({

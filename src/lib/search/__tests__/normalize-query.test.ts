@@ -81,9 +81,16 @@ describe("buildHerbNameAnchorFilter", () => {
 
   it("adds the longest meaningful word for phrasings that lead with a qualifier", () => {
     const filter = buildHerbNameAnchorFilter("st johns wort extract");
-    expect(filter).toContain("name.ilike.%st%");
     expect(filter).toContain("name.ilike.%john%");
     expect(filter).not.toContain("extract");
+  });
+
+  it("never anchors on a two-letter word", () => {
+    // `name.ilike.%st%` matched 249 published names on 2026-11-17 and pushed
+    // the exact herb out of the unordered limit window.
+    const filter = buildHerbNameAnchorFilter("st johns wort");
+    expect(filter).not.toContain("%st%");
+    expect(filter).toContain("name.ilike.%john%");
   });
 
   it("declines to anchor a single-word query, which the precise filter already covers", () => {
