@@ -76,9 +76,7 @@ describe("buildHerbNameAnchorFilter", () => {
     expect(buildHerbNameAnchorFilter("aloe vera juice")).toContain(
       "name.ilike.%aloe%"
     );
-    expect(buildHerbNameAnchorFilter("aloe vera juice")).not.toContain(
-      "juice"
-    );
+    expect(buildHerbNameAnchorFilter("aloe vera juice")).not.toContain("juice");
   });
 
   it("adds the longest meaningful word for phrasings that lead with a qualifier", () => {

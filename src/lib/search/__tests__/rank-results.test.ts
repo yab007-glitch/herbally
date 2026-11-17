@@ -26,7 +26,11 @@ describe("rankHerbResults", () => {
 
   it("treats a typed name with missing punctuation as an exact match", () => {
     const ranked = rankHerbResults(
-      herbs(["St. Johns Wort Oil", "Mountain St. John's Wort", "St. John's Wort"]),
+      herbs([
+        "St. Johns Wort Oil",
+        "Mountain St. John's Wort",
+        "St. John's Wort",
+      ]),
       "st johns wort"
     );
     expect(ranked[0].name).toBe("St. John's Wort");
@@ -45,7 +49,10 @@ describe("rankHerbResults", () => {
       herbs(["Ethiopian Turmeric", "Turmeric"]),
       "turmeric powder"
     );
-    expect(ranked.map((h) => h.name)).toEqual(["Turmeric", "Ethiopian Turmeric"]);
+    expect(ranked.map((h) => h.name)).toEqual([
+      "Turmeric",
+      "Ethiopian Turmeric",
+    ]);
   });
 
   it("is case-insensitive and stable within ranks", () => {

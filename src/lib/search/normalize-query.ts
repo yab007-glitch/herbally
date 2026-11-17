@@ -45,7 +45,9 @@ const NON_PLURAL_S = /(?:is|us|es|os|as)$/;
  * make two different names collide.
  */
 function foldToken(token: string): string {
-  const cleaned = stripAccents(token).toLowerCase().replace(/[^a-z0-9]/g, "");
+  const cleaned = stripAccents(token)
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
   if (
     cleaned.length > 4 &&
     cleaned.endsWith("s") &&
@@ -135,17 +137,16 @@ export function buildHerbPreciseNameFilter(
   // on punctuation, apostrophes, and plurals.
   const tokens = Array.from(
     new Set(
-      normalizeMatchText(term)
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, maxTokens)
+      normalizeMatchText(term).split(" ").filter(Boolean).slice(0, maxTokens)
     )
   );
   const safe = tokens.map(sanitizeFilterValue).filter(Boolean);
   if (safe.length === 0) return "";
 
   return ["name", "scientific_name", "translations->fr->>name"]
-    .map((field) => `and(${safe.map((t) => `${field}.ilike.%${t}%`).join(",")})`)
+    .map(
+      (field) => `and(${safe.map((t) => `${field}.ilike.%${t}%`).join(",")})`
+    )
     .join(",");
 }
 

@@ -71,10 +71,7 @@ async function resolveHerb(term: string): Promise<HerbCandidate | null> {
   ]);
   // Both queries failed: the database could not be asked, not "no such herb".
   if (preciseResponse.error && broadResponse.error) return null;
-  const rows = [
-    ...(preciseResponse.data ?? []),
-    ...(broadResponse.data ?? []),
-  ];
+  const rows = [...(preciseResponse.data ?? []), ...(broadResponse.data ?? [])];
   if (rows.length === 0) return null;
   const seen = new Set<string>();
   const candidates: HerbCandidate[] = [];

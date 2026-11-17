@@ -49,10 +49,7 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     const preciseConditions = buildHerbPreciseNameFilter(term);
     // The same query also carries the anchor words, so a qualified name
     // ("ginkgo leaf") still puts a name match in the candidate set.
-    const nameConditions = [
-      preciseConditions,
-      buildHerbNameAnchorFilter(term),
-    ]
+    const nameConditions = [preciseConditions, buildHerbNameAnchorFilter(term)]
       .filter(Boolean)
       .join(",");
     const herbColumns =
