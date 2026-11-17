@@ -1301,15 +1301,16 @@ export async function fetchVerifiedContext(
   const resolvedLocale =
     locale ?? (await getLocaleFromRequest().catch(() => "en"));
   const herbs = await batchLookupHerbs(herbNames.slice(0, 5), resolvedLocale);
-  // Regulator record + imported monographs for those same herbs. Runs after the
-  // row lookup because both tables are keyed by slug.
-  await attachRegulatorRecords(herbs);
 
-  // Look up interactions
-  const interactions = await lookupInteractions(
+  // Regulator record + imported monographs for those same herbs. Runs after the
+  // row lookup because both tables are keyed by slug, but alongside the
+  // interaction lookup — the whole fetch shares one 3 s budget withTimeout.
+  const interactionsPromise = lookupInteractions(
     herbs.map((h) => h.name.toLowerCase()),
     medNames
   );
+  await attachRegulatorRecords(herbs);
+  const interactions = await interactionsPromise;
 
   const hasData = herbs.length > 0 || interactions.length > 0;
   const regulatorCount = herbs.filter(
