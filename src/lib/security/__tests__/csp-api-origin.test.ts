@@ -24,9 +24,14 @@ describe("supabaseApiOrigin", () => {
     expect(supabaseApiOrigin()).toBe("https://api.herbally.app");
   });
 
-  it("keeps a non-default port", () => {
+  it("keeps a non-default port on loopback http", () => {
     process.env[KEY] = "http://127.0.0.1:54321/rest/v1";
     expect(supabaseApiOrigin()).toBe("http://127.0.0.1:54321");
+  });
+
+  it("upgrades non-loopback http origins (self-hosted Docker URL) to https for CSP", () => {
+    process.env[KEY] = "http://api.herbally.app";
+    expect(supabaseApiOrigin()).toBe("https://api.herbally.app");
   });
 
   it("treats a missing value as absent", () => {

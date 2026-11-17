@@ -127,8 +127,43 @@ describe("POST /api/herbs/search", () => {
 
     expect(orConditions).toHaveLength(1);
     expect(orConditions[0]).toBe(
-      "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,description.ilike.%paindanger%"
+      "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,description.ilike.%paindanger%,translations->fr->>name.ilike.%paindanger%"
     );
+  });
+
+  it("searches French translated names and ranks exact French matches first", async () => {
+    const milkThistle: HerbRow = {
+      id: "3",
+      name: "Milk Thistle",
+      slug: "milk-thistle",
+      scientific_name: "Silybum marianum",
+      evidence_level: "B",
+      translations: { fr: { name: "Chardon-Marie" } },
+    };
+    const { orConditions } = installSupabase([symptomRow], [milkThistle]);
+
+    const response = await GET(
+      new NextRequest("https://example.test/api/herbs/search?q=chardon-marie")
+    );
+
+    expect(response.status).toBe(200);
+    expect(orConditions[0]).toContain(
+      "translations->fr->>name.ilike.%chardon-marie%"
+    );
+    const results = await response.json();
+    expect(results[0]).toEqual(
+      expect.objectContaining({ slug: "milk-thistle", matchedBy: "name" })
+    );
+  });
+
+  it("splits elided French articles such as l'ail into searchable tokens", async () => {
+    const { orConditions } = installSupabase([], []);
+
+    await GET(
+      new NextRequest("https://example.test/api/herbs/search?q=l%27ail")
+    );
+
+    expect(orConditions[0]).toContain("translations->fr->>name.ilike.%ail%");
   });
 
   it.each([

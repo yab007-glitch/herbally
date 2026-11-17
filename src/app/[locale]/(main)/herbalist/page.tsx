@@ -4,6 +4,7 @@ import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { ContinueExploring } from "@/components/shared/continue-exploring";
+import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 
 export const dynamic = "force-dynamic";
 
@@ -63,7 +64,10 @@ export default async function PharmacistPage({
         autoQuery={autoQuery}
         locale={locale}
       />
-      <div className="mt-10">
+      <div className="mt-8">
+        <NewsletterSignup locale={locale === "fr" ? "fr" : "en"} />
+      </div>
+      <div className="mt-8">
         <ContinueExploring />
       </div>
     </div>

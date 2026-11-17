@@ -52,13 +52,11 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    // Constrain the variant matrix. The defaults are 8 device widths × 7 icon
-    // widths × 2 formats, so one photo can produce up to 30 derivatives; every
-    // derivative is a billed transformation and a billed cache write. The app
-    // has only three <Image> call sites, and their `sizes` props resolve to
-    // widths covered by these breakpoints. `qualities` is required in Next 16;
-    // 75 is the global default and no call site overrides it.
-    deviceSizes: [640, 1080, 1920],
+    // Constrain formats/qualities while keeping Next's standard responsive device
+    // widths. Trimming 750/828/1200/2048 rejected cached pages and external
+    // crawlers with HTTP 400 on /_next/image. Self-hosted Sharp caches resized
+    // outputs locally at no per-transform billing fee.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [96, 128, 256, 384],
     qualities: [75],
     formats: ["image/avif", "image/webp"],

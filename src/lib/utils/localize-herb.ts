@@ -23,6 +23,12 @@ function fr<T>(translations: unknown): T | null {
   return ((translations as Record<string, unknown>).fr as T) ?? null;
 }
 
+/** Return the French display name stored in `translations.fr.name`, if non-empty. */
+export function extractFrenchHerbName(translations: unknown): string | null {
+  const name = fr<HerbFr>(translations)?.name;
+  return typeof name === "string" && name.trim() ? name.trim() : null;
+}
+
 /**
  * Coerce a translation field into a string[].
  *

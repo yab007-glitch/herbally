@@ -1,31 +1,22 @@
+import { normalizeMatchText } from "@/lib/search/normalize-query";
+import { extractFrenchHerbName } from "@/lib/utils/localize-herb";
+
 /**
  * Rank the union of symptom-keyword matches and name/description matches
  * for the /herbs list search.
- *
- * Previously getHerbs was keyword-first: whenever any symptom-keyword
- * match existed, the name/description fallback never ran, so an exact
- * herb name could be hidden by unrelated keyword matches. The search API
- * already unions both kinds of matches; this helper gives the list page
- * the same union, with a deterministic order:
- *   1. exact name matches (case-insensitive) first;
- *   2. remaining matches in the caller's sort order — strongest evidence
- *      first when sort is "evidence" (or the keyword default), name A-Z
- *      when sort is "name";
- *   3. de-duplicated by id, first occurrence wins.
- *
- * Pure function — no Supabase access — so it is unit-testable without
- * mocking the database client.
  */
 
 export interface KeywordHerbMatch {
   id: string;
   name: string;
   evidence_level: string | null;
+  translations?: unknown;
 }
 
 export interface NameHerbMatch {
   id: string;
   name: string;
+  translations?: unknown;
 }
 
 const EVIDENCE_ORDER: Record<string, number> = {
@@ -51,31 +42,46 @@ export function rankHerbSearchResults({
   nameMatches: NameHerbMatch[];
   sort: "name" | "evidence";
 }): string[] {
-  const norm = query.trim().toLowerCase();
+  const norm = normalizeMatchText(query);
   if (!norm) return [];
 
   const byId = new Map<
     string,
-    { id: string; name: string; evidence: string | null }
+    {
+      id: string;
+      name: string;
+      frName: string | null;
+      evidence: string | null;
+    }
   >();
   for (const herb of keywordMatches) {
     if (!byId.has(herb.id)) {
       byId.set(herb.id, {
         id: herb.id,
         name: herb.name,
+        frName: extractFrenchHerbName(herb.translations),
         evidence: herb.evidence_level,
       });
     }
   }
   for (const herb of nameMatches) {
     if (!byId.has(herb.id)) {
-      byId.set(herb.id, { id: herb.id, name: herb.name, evidence: null });
+      byId.set(herb.id, {
+        id: herb.id,
+        name: herb.name,
+        frName: extractFrenchHerbName(herb.translations),
+        evidence: null,
+      });
     }
   }
 
   const keywordIds = new Set(keywordMatches.map((h) => h.id));
   const exact = [...byId.values()]
-    .filter((h) => h.name.toLowerCase() === norm)
+    .filter(
+      (h) =>
+        normalizeMatchText(h.name) === norm ||
+        (h.frName ? normalizeMatchText(h.frName) === norm : false)
+    )
     .sort((a, b) => a.name.localeCompare(b.name));
   const exactIds = new Set(exact.map((h) => h.id));
 

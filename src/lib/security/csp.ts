@@ -67,7 +67,20 @@ export function supabaseApiOrigin(): string {
     // transports this app uses, so anything but http(s) is treated as absent
     // rather than emitted as a bogus source.
     if (url.protocol !== "https:" && url.protocol !== "http:") return "";
-    return url.origin === "null" ? "" : url.origin;
+    if (url.origin === "null") return "";
+    // Self-hosted Docker builds point NEXT_PUBLIC_SUPABASE_URL at http://api.*
+    // over the internal bridge, while browsers reach the public endpoint over
+    // HTTPS behind Cloudflare + HSTS preload. Keep loopback http:// for local
+    // dev/tests and emit https:// for non-loopback public hosts.
+    const isLoopback =
+      url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "::1" ||
+      url.hostname === "[::1]";
+    if (url.protocol === "http:" && !isLoopback) {
+      return `https://${url.host}`;
+    }
+    return url.origin;
   } catch {
     return "";
   }

@@ -314,10 +314,30 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Excluded paths (API, auth callback, static metadata) — no locale rewrite.
-  // x-locale stays available for route handlers and server actions, which
-  // cannot read next/root-params.
+  // Propagate French locale when an API call originates from a /fr page,
+  // carries an explicit x-locale header, or carries the French locale cookie.
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-locale", DEFAULT_LOCALE);
+  const explicitHeaderLocale = request.headers.get("x-locale");
+  const referer = request.headers.get("referer");
+  let refererIsFr = false;
+  if (referer) {
+    try {
+      const refPath = new URL(referer).pathname;
+      refererIsFr = refPath === "/fr" || refPath.startsWith("/fr/");
+    } catch {
+      // Ignore malformed Referer header
+    }
+  }
+  const cookieLocaleValue = request.cookies.get("herbally-locale")?.value;
+  const resolvedExcludedLocale: Locale =
+    explicitHeaderLocale === "fr" || explicitHeaderLocale === "en"
+      ? explicitHeaderLocale
+      : refererIsFr
+        ? "fr"
+        : cookieLocaleValue === "fr"
+          ? "fr"
+          : DEFAULT_LOCALE;
+  requestHeaders.set("x-locale", resolvedExcludedLocale);
   requestHeaders.set("x-pathname", pathname);
   const response = NextResponse.next({ request: { headers: requestHeaders } });
 

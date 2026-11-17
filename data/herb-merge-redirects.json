@@ -438,5 +438,37 @@
   {
     "from": "/herbs/lian-zi-xin-heart",
     "to": "/herbs/lian-zi-xin-tcm"
+  },
+  {
+    "from": "/herbs/berberine-metabolic-v2",
+    "to": "/herbs/berberine"
+  },
+  {
+    "from": "/herbs/citrus-aurantiifolia",
+    "to": "/herbs/citrus-aurantifolia"
+  },
+  {
+    "from": "/herbs/deer-antler-velvet-mens",
+    "to": "/herbs/deer-antler-velvet"
+  },
+  {
+    "from": "/herbs/jatropha-gossypifolia",
+    "to": "/herbs/jatropha-gossypiifolia"
+  },
+  {
+    "from": "/herbs/ligusticum-sinense-cv-chuanxiong",
+    "to": "/herbs/ligusticum-sinense"
+  },
+  {
+    "from": "/herbs/medicago-sativa-l",
+    "to": "/herbs/medicago-sativa"
+  },
+  {
+    "from": "/herbs/sang-bai-pi-tcm-v2",
+    "to": "/herbs/sang-bai-pi"
+  },
+  {
+    "from": "/herbs/tamanu-skin",
+    "to": "/herbs/tamanu"
   }
 ]

@@ -11,6 +11,7 @@ import {
 } from "@/lib/utils/localize-herb";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
+import { buildHerbTextOrFilter } from "@/lib/search/normalize-query";
 import { rankHerbSearchResults } from "@/lib/search/herb-search-union";
 import type {
   ActionResponse,
@@ -82,7 +83,6 @@ export async function getHerbs(
     // to the ranked id list, so an exact match is always on page 1.
     const trimmedQuery = params.query?.trim().slice(0, MAX_QUERY_LENGTH);
     if (trimmedQuery) {
-      const qWords = trimmedQuery.split(/\s+/).filter(Boolean);
       // Resolve the category first so both match queries honour it, the
       // same way the main query below does.
       let categoryId: string | null = null;
@@ -102,20 +102,13 @@ export async function getHerbs(
         return qb;
       };
       const expandedKeywords = expandQueryToKeywords(trimmedQuery);
-      const keywordQuery = buildMatchQuery("id, name, evidence_level")
+      const keywordQuery = buildMatchQuery(
+        "id, name, evidence_level, translations"
+      )
         .overlaps("symptom_keywords", expandedKeywords)
         .limit(500);
-      const nameConditions = qWords
-        .flatMap((w) => {
-          const safe = sanitizeFilterValue(w);
-          return [
-            `name.ilike.%${safe}%`,
-            `scientific_name.ilike.%${safe}%`,
-            `description.ilike.%${safe}%`,
-          ];
-        })
-        .join(",");
-      const nameQuery = buildMatchQuery("id, name")
+      const nameConditions = buildHerbTextOrFilter(trimmedQuery);
+      const nameQuery = buildMatchQuery("id, name, translations")
         .or(nameConditions)
         .limit(500);
       const [keywordRes, nameRes] = await Promise.all([
@@ -149,11 +142,13 @@ export async function getHerbs(
           id: string;
           name: string;
           evidence_level: string | null;
+          translations?: unknown;
         }> | null) || [];
       const nameRows =
         (nameRes.data as Array<{
           id: string;
           name: string;
+          translations?: unknown;
         }> | null) || [];
       const rankedIds = rankHerbSearchResults({
         query: trimmedQuery,
@@ -161,8 +156,13 @@ export async function getHerbs(
           id: h.id,
           name: h.name,
           evidence_level: h.evidence_level,
+          translations: h.translations,
         })),
-        nameMatches: nameRows.map((h) => ({ id: h.id, name: h.name })),
+        nameMatches: nameRows.map((h) => ({
+          id: h.id,
+          name: h.name,
+          translations: h.translations,
+        })),
         sort: params.sort === "evidence" ? "evidence" : "name",
       });
       const pageIds = rankedIds.slice(from, to + 1);
@@ -524,9 +524,6 @@ export async function searchHerbs(
   try {
     const supabase = await createClient();
     const safeTerm = term.trim().slice(0, MAX_QUERY_LENGTH);
-    // searchHerbs builds a hand-built `.or()` string, so escape both ILIKE
-    // wildcards AND PostgREST filter delimiters (L2, audit 2026-06-22).
-    const escapedTerm = sanitizeFilterValue(safeTerm);
 
     const expandedKeywords = expandQueryToKeywords(safeTerm);
     const { data: keywordResults } = await supabase
@@ -567,9 +564,7 @@ export async function searchHerbs(
       .from("herbs")
       .select("id, name, slug, scientific_name, translations")
       .eq("is_published", true)
-      .or(
-        `name.ilike.%${escapedTerm}%,scientific_name.ilike.%${escapedTerm}%,description.ilike.%${escapedTerm}%`
-      )
+      .or(buildHerbTextOrFilter(safeTerm))
       .limit(10);
 
     if (error) {

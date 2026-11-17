@@ -25,6 +25,7 @@ type Labels = {
   checking: string;
   checkerFoundTitle: string;
   checkerAskHerbalist: string;
+  checkerAskPrompt: string;
   checkerViewPair: string;
   checkerViewHerb: string;
   checkerDisclaimer: string;
@@ -426,7 +427,11 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                   variant="outline"
                   render={
                     <Link
-                      href={`/herbalist?q=${encodeURIComponent(`Is ${checkResult.herb.name} safe to take with ${checkResult.pair.drugName}?`)}`}
+                      href={`/herbalist?q=${encodeURIComponent(
+                        labels.checkerAskPrompt
+                          .replace("{herb}", checkResult.herb.name)
+                          .replace("{drug}", checkResult.pair.drugName)
+                      )}`}
                     />
                   }
                 >
@@ -462,7 +467,11 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                   variant="outline"
                   render={
                     <Link
-                      href={`/herbalist?q=${encodeURIComponent(`Is ${herbInput.trim()} safe to take with ${medInput.trim()}?`)}`}
+                      href={`/herbalist?q=${encodeURIComponent(
+                        labels.checkerAskPrompt
+                          .replace("{herb}", herbInput.trim())
+                          .replace("{drug}", medInput.trim())
+                      )}`}
                     />
                   }
                 >

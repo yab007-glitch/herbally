@@ -141,14 +141,6 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} antialiased`}
     >
       <head>
-        <link
-          rel="preconnect"
-          href="https://pnvltmyixympgammxvoo.supabase.co"
-        />
-        <link
-          rel="dns-prefetch"
-          href="https://pnvltmyixympgammxvoo.supabase.co"
-        />
         <OrganizationSchema locale={locale} />
       </head>
       <body className="bg-background text-foreground">

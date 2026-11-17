@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getAdminAccess } from "@/lib/auth/admin-guard";
 import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { slugify } from "@/lib/utils";
@@ -23,17 +24,11 @@ async function requireAdmin(): Promise<{
   supabase: Awaited<ReturnType<typeof createClient>>;
   ok: boolean;
 }> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { supabase, ok: false };
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-  return { supabase, ok: profile?.role === "admin" };
+  const access = await getAdminAccess();
+  if (access.status === "authorized") {
+    return { supabase: access.supabase, ok: true };
+  }
+  return { supabase: await createClient(), ok: false };
 }
 
 function parseStringArray(value: string | null): string[] {

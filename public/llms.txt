@@ -1,7 +1,7 @@
 # HerbAlly
 
 > HerbAlly is a free, evidence-graded reference for medicinal herbs and
-> herb–drug interactions. 2,700+ herb profiles, dosage calculators, and
+> herb–drug interactions. 3,200+ herb profiles, dosage calculators, and
 > curated interaction analyses in English and French. No paywalls. Advertising is planned but not yet live.
 
 ## Key resources

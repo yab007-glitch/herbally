@@ -4,7 +4,8 @@ import { getHerbPairs } from "@/lib/interactions/pairs";
 import { matchInteractionPair } from "@/lib/interactions/check";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { rankHerbMatches } from "@/lib/interactions/rank-herb-match";
-import { escapeForIlike } from "@/lib/utils/ilike";
+import { buildHerbTextOrFilter } from "@/lib/search/normalize-query";
+import { extractFrenchHerbName } from "@/lib/utils/localize-herb";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
@@ -17,26 +18,35 @@ interface HerbCandidate {
   slug: string;
   name: string;
   scientific_name: string;
+  frName?: string | null;
 }
 
 /**
- * Resolve a free-text herb name to a published herb row.
- * Prefers an exact (case-insensitive) name/scientific-name match, then
- * a prefix match, then the first ILIKE candidate — the same ranking
- * discipline as the herb search route, without inventing a herb.
+ * Resolve a free-text herb name to a published herb row across English,
+ * scientific, and French names (`translations->fr->>name`).
  */
 async function resolveHerb(term: string): Promise<HerbCandidate | null> {
   const supabase = getAnonClient();
   if (!supabase) return null;
-  const safe = escapeForIlike(term.trim());
+  const filter = buildHerbTextOrFilter(term, {
+    includeDescription: false,
+    maxTokens: 5,
+  });
+  if (!filter) return null;
   const { data, error } = await supabase
     .from("herbs")
-    .select("slug,name,scientific_name")
+    .select("slug,name,scientific_name,translations")
     .eq("is_published", true)
-    .or(`name.ilike.%${safe}%,scientific_name.ilike.%${safe}%`)
+    .or(filter)
     .limit(20);
   if (error || !data || data.length === 0) return null;
-  return rankHerbMatches(data as HerbCandidate[], term) ?? null;
+  const candidates: HerbCandidate[] = data.map((row) => ({
+    slug: row.slug,
+    name: row.name,
+    scientific_name: row.scientific_name,
+    frName: extractFrenchHerbName(row.translations),
+  }));
+  return rankHerbMatches(candidates, term) ?? null;
 }
 
 /**
@@ -92,17 +102,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const locale = getLocale(request);
     const herb = await resolveHerb(herbTerm);
     if (!herb) return NextResponse.json({ found: false, herb: null });
 
-    const pairs = await getHerbPairs(herb.slug, getLocale(request));
+    const displayName =
+      locale === "fr" && herb.frName ? herb.frName : herb.name;
+    const pairs = await getHerbPairs(herb.slug, locale);
     const pair = matchInteractionPair(drugTerm, pairs);
     if (!pair) {
       return NextResponse.json({
         found: false,
         herb: {
           slug: herb.slug,
-          name: herb.name,
+          name: displayName,
           scientific_name: herb.scientific_name,
         },
       });
@@ -112,7 +125,7 @@ export async function GET(request: NextRequest) {
       found: true,
       herb: {
         slug: herb.slug,
-        name: herb.name,
+        name: displayName,
         scientific_name: herb.scientific_name,
       },
       pair: {

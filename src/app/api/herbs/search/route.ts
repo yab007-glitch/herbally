@@ -3,10 +3,10 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
 import { localizeHerb } from "@/lib/utils/localize-herb";
+import { buildHerbTextOrFilter } from "@/lib/search/normalize-query";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
-import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import { rankHerbResults } from "@/lib/search/rank-results";
 import { dedupeSymptomResults } from "@/lib/search/symptom-results";
 import type { Herb } from "@/lib/types";
@@ -41,21 +41,10 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
       .overlaps("symptom_keywords", expandedKeywords)
       .limit(30);
 
-    // Sanitize each word to prevent ILIKE wildcard injection AND PostgREST
-    // `.or()` filter-syntax injection (a `,` or `.` in the value would let a
-    // caller inject an arbitrary filter clause — L2, audit 2026-06-22).
-    // Cap words to bound PostgREST URL size and slow leading-wildcard ILIKEs.
-    const words = term.trim().split(/\s+/).filter(Boolean).slice(0, 10);
-    const textConditions = words
-      .flatMap((w) => {
-        const safe = sanitizeFilterValue(w);
-        return [
-          `name.ilike.%${safe}%`,
-          `scientific_name.ilike.%${safe}%`,
-          `description.ilike.%${safe}%`,
-        ];
-      })
-      .join(",");
+    // Sanitize each token to prevent ILIKE wildcard & PostgREST `.or()` filter
+    // injection, matching English names, Latin binomials, descriptions, and
+    // French translated names (`translations->fr->>name`).
+    const textConditions = buildHerbTextOrFilter(term);
 
     const { data: textResults, error: textError } = await supabase
       .from("herbs")

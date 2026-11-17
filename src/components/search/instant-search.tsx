@@ -66,7 +66,7 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
       );
       if (response.ok) {
         const data = await response.json();
-        setResults(data.herbs || []);
+        setResults(Array.isArray(data) ? data : data.herbs || []);
         setSettledQuery(searchQuery);
       }
     } catch (error) {

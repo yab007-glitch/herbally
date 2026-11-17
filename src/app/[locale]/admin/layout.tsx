@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Leaf, Home, Users, AlertTriangle } from "lucide-react";
+import { Leaf, Home, Users, AlertTriangle, ShieldCheck } from "lucide-react";
 import { ClipboardCheck } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminAccess } from "@/lib/auth/admin-guard";
+import { AdminMfaGate } from "@/components/admin/admin-mfa-gate";
 
 /**
- * Every admin route reads the signed-in user's session and a live role from
- * the database. Prerendering them at build time is both useless — nobody sees
- * a cached admin shell without a session — and harmful: it makes the whole
- * build depend on the database answering, and a slow minute there took the
- * admin page past Next's 60s prerender ceiling and failed the deploy.
+ * Every admin route reads the signed-in user's session, live DB role, and
+ * AAL2 TOTP verification. Prerendering them at build time is both useless and
+ * harmful.
  */
 export const dynamic = "force-dynamic";
 
@@ -23,6 +22,7 @@ const adminNavItems = [
     icon: ClipboardCheck,
   },
   { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/security", label: "Security (2FA)", icon: ShieldCheck },
 ];
 
 export default async function AdminLayout({
@@ -30,27 +30,18 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const access = await getAdminAccess();
 
-  if (!user) {
+  if (access.status === "unauthenticated" || access.status === "forbidden") {
     redirect("/");
   }
 
-  // Verify admin role against the database profile ONLY. JWT user_metadata is
-  // client-supplied at signup and must never be trusted for authorization — a
-  // user could set raw_user_meta_data.role = "admin" themselves.
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
+  if (access.status === "mfa_enroll_required") {
+    return <AdminMfaGate mode="enroll" />;
+  }
 
-  const role = profile?.role ?? "user";
-  if (role !== "admin") {
-    redirect("/");
+  if (access.status === "mfa_required") {
+    return <AdminMfaGate mode="verify" factorId={access.factorId} />;
   }
 
   return (

@@ -58,4 +58,27 @@ describe("rankHerbMatches", () => {
     // fallback and stays the last resort.
     expect(rankHerbMatches([ginger], "not-a-herb")).toBe(ginger);
   });
+
+  it("matches exact French names cleanly (e.g. Curcuma -> turmeric, Millepertuis -> st-johns-wort)", () => {
+    const curcumaAromatica = {
+      slug: "curcuma-aromatica",
+      name: "Curcuma Aromatica",
+      scientific_name: "Curcuma aromatica",
+      frName: "Curcuma Aromatica",
+    };
+    const turmericFr = {
+      ...turmeric,
+      frName: "Curcuma",
+    };
+    const stJohns = {
+      slug: "st-johns-wort",
+      name: "St. John's Wort",
+      scientific_name: "Hypericum perforatum",
+      frName: "Millepertuis",
+    };
+    expect(rankHerbMatches([curcumaAromatica, turmericFr], "Curcuma")).toBe(
+      turmericFr
+    );
+    expect(rankHerbMatches([stJohns], "millepertuis")).toBe(stJohns);
+  });
 });

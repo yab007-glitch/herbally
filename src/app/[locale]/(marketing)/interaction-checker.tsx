@@ -49,6 +49,7 @@ export async function InteractionChecker({
           checking: t("home.checkerChecking"),
           checkerFoundTitle: t("home.checkerFoundTitle"),
           checkerAskHerbalist: t("home.checkerAskHerbalist"),
+          checkerAskPrompt: t.raw("home.checkerAskPrompt"),
           checkerViewPair: t("home.checkerViewPair"),
           checkerViewHerb: t("home.checkerViewHerb"),
           checkerDisclaimer: t("home.checkerDisclaimer"),
