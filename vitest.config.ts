@@ -26,6 +26,12 @@ export default defineConfig({
       // files into 462 (549 failures) and 14s into 189s. CI is unaffected
       // (fresh checkouts have no .worktrees/), but local runs must stay honest.
       "**/.worktrees/**",
+      // artifacts/ holds regenerated output and salvaged copies of source
+      // (e.g. a pre-migration snapshot of a feature). A salvaged tree carries
+      // its own *.test.ts files whose imports no longer resolve from there, so
+      // a local run reports a failed test file that CI never sees — the folder
+      // is untracked. Output is not test input.
+      "**/artifacts/**",
       "**/.{idea,git,cache,output,temp}/**",
       "**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*",
     ],

@@ -6,3 +6,4 @@ pnpm-lock.yaml
 supabase/.temp
 ads.txt
 artifacts/
+ours-*.json
