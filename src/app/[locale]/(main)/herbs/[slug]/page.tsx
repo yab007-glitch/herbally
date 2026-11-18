@@ -3,6 +3,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { unstable_cache } from "next/cache";
 import { isIndexable } from "@/lib/seo/indexable";
 import { isUsablePubmedSheet } from "@/lib/pubmed/usable";
+import { resolveSheetContent } from "@/lib/i18n/sheet-content";
 import { cache } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -889,6 +890,16 @@ export default async function HerbDetailPage({ params }: Props) {
   // records narrative). Without this the page was French down to the first
   // regulator block and English below it.
   const copy = herbPageCopy(locale === "fr" ? "fr" : "en");
+
+  // A French translation of the PubMed sheet, when one exists, lives under
+  // `content->'fr'` with the same shape as the English sheet, so English is
+  // never overwritten. When it is missing (or a stub), /fr keeps the existing
+  // behaviour: the English sheet is shown collapsed and labelled as a verbatim
+  // source rather than presented as if it were French.
+  const sheet = resolveSheetContent(
+    pubmedSheet?.content as unknown as SheetContent | undefined,
+    locale
+  );
   const t = await getTranslations({ locale });
   const tFaq = await getTranslations({ locale, namespace: "herbFaq" });
   // Same `herbMeta` title the <title> tag uses, so the JSON-LD name and the
@@ -1349,11 +1360,12 @@ export default async function HerbDetailPage({ params }: Props) {
               way, curated (non-AI) interaction data is shown when present. */}
 
           {pubmedSheet && isUsablePubmedSheet(pubmedSheet) ? (
-            // The sheet is compiled from English-language publications and is
-            // stored in English. On /fr it is labelled and collapsed rather
+            // The sheet is compiled from English-language publications. When a
+            // French translation exists it renders normally; without one it is
+            // stored in English and shown on /fr labelled and collapsed rather
             // than dropped: the content stays in the DOM and one click away,
             // but a French page no longer opens with a wall of English.
-            locale === "fr" ? (
+            locale === "fr" && !sheet.translated ? (
               <div className="space-y-3">
                 <p className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
                   {copy.verbatimQuoteNote}
@@ -1364,7 +1376,7 @@ export default async function HerbDetailPage({ params }: Props) {
                   </summary>
                   <div className="px-4 pb-4">
                     <PubmedMonographSheet
-                      content={pubmedSheet.content as unknown as SheetContent}
+                      content={sheet.content as SheetContent}
                       citations={
                         (pubmedSheet.citations as unknown as Citation[]) ?? []
                       }
@@ -1376,7 +1388,7 @@ export default async function HerbDetailPage({ params }: Props) {
               </div>
             ) : (
               <PubmedMonographSheet
-                content={pubmedSheet.content as unknown as SheetContent}
+                content={sheet.content as SheetContent}
                 citations={
                   (pubmedSheet.citations as unknown as Citation[]) ?? []
                 }
