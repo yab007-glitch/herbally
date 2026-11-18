@@ -133,16 +133,20 @@ describe("HerbSchema reviewer attribution", () => {
         last_reviewed: "2026-11-18T00:00:00Z",
       })
     );
-    expect(json.reviewedBy?.name).toBe("Yasser Bheekun");
-    expect(json.reviewedBy?.jobTitle).toContain("OPTMQ");
-    expect(json.reviewedBy?.["@type"]).toBe("Person");
+    const reviewedBy = json.reviewedBy as
+      { name?: string; jobTitle?: string; "@type"?: string } | undefined;
+    expect(reviewedBy?.name).toBe("Yasser Bheekun");
+    expect(reviewedBy?.jobTitle).toContain("OPTMQ");
+    expect(reviewedBy?.["@type"]).toBe("Person");
   });
 
   it("resolves the reviewer by display name as well as by id", () => {
     const json = extractJson(
       renderSchema({ ...baseHerb, reviewed_by: "Yasser Bheekun" })
     );
-    expect(json.reviewedBy?.name).toBe("Yasser Bheekun");
+    expect((json.reviewedBy as { name?: string } | undefined)?.name).toBe(
+      "Yasser Bheekun"
+    );
   });
 
   it("never emits the generic editorial-team string as a person", () => {
