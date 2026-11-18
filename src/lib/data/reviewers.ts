@@ -45,6 +45,31 @@ export interface Reviewer {
 }
 
 export const REVIEWERS: Record<string, Reviewer> = {
+  "yasser-bheekun": {
+    id: "yasser-bheekun",
+    name: "Yasser Bheekun",
+    credentials: "MLT, OPTMQ · CSMLS",
+    qualifications: [
+      "DEC in Biomedical Laboratory Technology, Dawson College (2016–2019)",
+      "Diploma in Science (Biomedical Sciences), University of Mauritius (2007–2011)",
+      "Medical Laboratory Technologist, OPTMQ — Ordre professionnel des technologistes médicaux du Québec",
+      "Medical Laboratory Technologist, CSMLS — Canadian Society for Medical Laboratory Science",
+    ],
+    affiliation:
+      "Hospital laboratory, McGill University Health Centre, Montreal",
+    affiliations: [
+      { name: "McGill University Health Centre — hospital laboratory" },
+    ],
+    expertise: [
+      "Clinical laboratory science",
+      "Herbal safety and drug interactions",
+      "Evidence grading",
+      "English/French medical writing",
+    ],
+    languages: ["English", "French"],
+    profileUrl: "https://herbally.app/editorial-policy",
+    bio: "Yasser Bheekun is a medical laboratory technologist certified with the OPTMQ and the CSMLS, with a DEC in Biomedical Laboratory Technology from Dawson College. He writes and maintains HerbAlly and is its editor and reviewer of record: he is answerable for what the site publishes, decides what may be stated as sourced, and labels anything that has not been clinically reviewed. He is not a licensed physician or herbalist, and the site does not claim clinical review it has not had.",
+  },
   "dawn-wong": {
     id: "dawn-wong",
     name: "Dr. Dawn Wong",

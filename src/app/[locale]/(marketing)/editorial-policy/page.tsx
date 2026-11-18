@@ -21,6 +21,7 @@ const COPY = {
         body: [
           "HerbAlly is written and maintained by Yasser Bheekun, a medical laboratory technologist certified with the OPTMQ (Ordre professionnel des technologistes médicaux du Québec) and the CSMLS (Canadian Society for Medical Laboratory Science). He holds a DEC in Biomedical Laboratory Technology and works in a hospital laboratory at the McGill University Health Centre in Montreal.",
           "That is the accountability line: one named person, with a health-science education, answerable for what this site publishes. It is not a content team, and it is not an anonymous editorial board.",
+          "He is also the site's reviewer of record: editorial review — deciding what may be stated, which sources back a claim, and where the limits are — not clinical review. No page is labelled as clinically reviewed.",
         ],
       },
       {
@@ -77,6 +78,7 @@ const COPY = {
         body: [
           "HerbAlly est rédigé et maintenu par Yasser Bheekun, technologiste médical certifié par l'OPTMQ (Ordre professionnel des technologistes médicaux du Québec) et la SCSLM (Société canadienne de science de laboratoire médical). Il détient un DEC en technologie d'analyses biomédicales et travaille dans un laboratoire hospitalier du Centre universitaire de santé McGill, à Montréal.",
           "C'est la ligne de responsabilité : une personne nommée, formée en sciences de la santé, répond de ce que ce site publie. Ce n'est pas une équipe de contenu, ni un comité éditorial anonyme.",
+          "Il est également le réviseur de référence du site : une révision éditoriale — décider ce qui peut être affirmé, quelles sources appuient une affirmation et où sont les limites — et non une révision clinique. Aucune page n'est présentée comme cliniquement révisée.",
         ],
       },
       {
