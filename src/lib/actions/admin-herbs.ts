@@ -227,3 +227,75 @@ export async function updateHerb(
   }
   redirect("/admin/herbs");
 }
+
+/**
+ * The registry id of the site's editor and reviewer of record. Kept as an id,
+ * not a free-text name, so the public page resolves the same person, and their
+ * credentials, everywhere.
+ */
+const REVIEWER_REGISTRY_ID = "yasser-bheekun";
+
+/**
+ * Record (or clear) a human review of one herb page.
+ *
+ * This is the only way `herbs.reviewed_by` becomes a named person. The site's
+ * public tooltip promises that "Reviewed by" appears only on pages a named
+ * person has actually read, so this action is deliberately per-page and
+ * admin-only at aal2 — there is no bulk version.
+ */
+async function setHerbReview(
+  formData: FormData,
+  reviewed: boolean
+): Promise<ActionResponse<{ reviewedOn: string | null }>> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { success: false, error: "Not authorized" };
+
+  const id = str(formData, "herb_id");
+  const slug = str(formData, "slug");
+  if (!id || !slug) return { success: false, error: "Missing herb id or slug" };
+
+  const { data: prior, error: readError } = await supabase
+    .from("herbs")
+    .select("provenance")
+    .eq("id", id)
+    .maybeSingle();
+  if (readError || !prior)
+    return { success: false, error: "Could not load the herb" };
+
+  const reviewedOn = reviewed ? new Date().toISOString().slice(0, 10) : null;
+  const provenance = {
+    ...((prior.provenance as Record<string, unknown> | null) ?? {}),
+    review_status: reviewed ? "human_reviewed" : null,
+    reviewed_by_name: reviewed ? "Yasser Bheekun" : null,
+    reviewed_on: reviewedOn,
+  };
+
+  const { error } = await supabase
+    .from("herbs")
+    .update({
+      reviewed_by: reviewed ? REVIEWER_REGISTRY_ID : null,
+      last_reviewed: reviewed ? new Date().toISOString() : null,
+      provenance,
+    })
+    .eq("id", id);
+  if (error) {
+    logger.error("setHerbReview_failed", { error: error.message });
+    return { success: false, error: "Failed to save the review" };
+  }
+
+  invalidateHerbTags(slug);
+  revalidatePath(`/herbs/${slug}`);
+  revalidatePath(`/admin/herbs/${id}/edit`);
+  return { success: true, data: { reviewedOn } };
+}
+
+/**
+ * One entry point for the admin panel: `intent` is "mark" or "clear".
+ * Kept as a single action so the client can drive it with useActionState and
+ * surface a failure instead of a silent no-op.
+ */
+export async function reviewHerbAction(
+  formData: FormData
+): Promise<ActionResponse<{ reviewedOn: string | null }>> {
+  return setHerbReview(formData, str(formData, "intent") === "mark");
+}

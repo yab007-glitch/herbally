@@ -123,3 +123,32 @@ describe("HerbSchema", () => {
     }
   });
 });
+
+describe("HerbSchema reviewer attribution", () => {
+  it("emits reviewedBy for a registered, named reviewer", () => {
+    const json = extractJson(
+      renderSchema({
+        ...baseHerb,
+        reviewed_by: "yasser-bheekun",
+        last_reviewed: "2026-11-18T00:00:00Z",
+      })
+    );
+    expect(json.reviewedBy?.name).toBe("Yasser Bheekun");
+    expect(json.reviewedBy?.jobTitle).toContain("OPTMQ");
+    expect(json.reviewedBy?.["@type"]).toBe("Person");
+  });
+
+  it("resolves the reviewer by display name as well as by id", () => {
+    const json = extractJson(
+      renderSchema({ ...baseHerb, reviewed_by: "Yasser Bheekun" })
+    );
+    expect(json.reviewedBy?.name).toBe("Yasser Bheekun");
+  });
+
+  it("never emits the generic editorial-team string as a person", () => {
+    const json = extractJson(
+      renderSchema({ ...baseHerb, reviewed_by: "HerbAlly Editorial Team" })
+    );
+    expect(json.reviewedBy).toBeUndefined();
+  });
+});
