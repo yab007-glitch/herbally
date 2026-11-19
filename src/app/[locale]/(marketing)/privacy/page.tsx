@@ -1,4 +1,8 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
@@ -12,6 +16,8 @@ export const generateMetadata = () =>
 export default async function PrivacyPage() {
   const locale = await getLocale();
   const t = await getTranslations({ locale });
+  const prefix = locale === "fr" ? "/fr" : "";
+  const url = `${siteUrl()}${prefix}/privacy`;
 
   const howWeUseItems = [0, 1, 2, 3, 4, 5, 6].map((i) =>
     t(`privacy.howWeUse.items.${i}`)
@@ -19,6 +25,21 @@ export default async function PrivacyPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <WebPageSchema
+        title={t("privacy.title")}
+        description={t("meta.privacyDesc")}
+        url={url}
+        breadcrumbs={[
+          { name: t("common.home"), url: siteUrl() },
+          { name: t("privacy.title"), url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("privacy.title"), url: "/privacy" },
+        ]}
+      />
       <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
         {t("privacy.title")}
       </h1>
@@ -141,6 +162,20 @@ export default async function PrivacyPage() {
             {t("privacy.contact.title")}
           </h2>
           <p>{t("privacy.contact.text")}</p>
+          <p className="mt-4 flex flex-wrap gap-4 text-xs">
+            <Link
+              href="/editorial-policy"
+              className="text-primary hover:underline"
+            >
+              {t("footer.editorialPolicy")}
+            </Link>
+            <Link href="/terms" className="text-primary hover:underline">
+              {t("footer.terms")}
+            </Link>
+            <Link href="/contact" className="text-primary hover:underline">
+              {t("footer.contact")}
+            </Link>
+          </p>
         </section>
       </div>
     </div>

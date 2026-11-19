@@ -87,12 +87,25 @@ describe("sitemap", () => {
           symptom_keywords: ["anxiety"],
         },
         {
-          // Long curated prose with a regulator record behind it.
+          // Curated interaction backs this herb even without a monograph row,
+          // paired with curated prose so it stays indexable.
           id: "h-turmeric",
           slug: "turmeric",
           updated_at: null,
           translations: null,
           description: "x".repeat(420),
+          traditional_uses: null,
+          dosage_adult: null,
+          symptom_keywords: null,
+        },
+        {
+          // Bare regulatory licence stub without monograph or interactions:
+          // kept live with noindex, follow and withheld from the sitemap.
+          id: "h-chamomile-stub",
+          slug: "chamomile-stub",
+          updated_at: null,
+          translations: null,
+          description: "y".repeat(420),
           traditional_uses: null,
           dosage_adult: null,
           symptom_keywords: null,
@@ -119,7 +132,7 @@ describe("sitemap", () => {
       error: null,
     });
     regulatoryRangeMock.mockResolvedValue({
-      data: [{ herb_slug: "turmeric" }],
+      data: [{ herb_slug: "turmeric" }, { herb_slug: "chamomile-stub" }],
       error: null,
     });
     getEmptySymptomHubsMock.mockResolvedValue([UNPOPULATED_HUB]);
@@ -140,6 +153,22 @@ describe("sitemap", () => {
         updatedAt: "2026-02-03T00:00:00.000Z",
         hasFr: true,
       },
+      {
+        id: "p2",
+        herbSlug: "turmeric",
+        herbName: "Turmeric",
+        herbScientificName: "Curcuma longa",
+        drugName: "Warfarin",
+        drugSlug: "warfarin",
+        severity: "moderate",
+        description: "May increase bleeding risk.",
+        mechanism: null,
+        evidenceLevel: "B",
+        source: null,
+        sourceUrl: null,
+        updatedAt: "2026-02-03T00:00:00.000Z",
+        hasFr: false,
+      },
     ]);
 
     const result = await sitemap();
@@ -153,10 +182,28 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/herbs/turmeric`);
     expect(urls).not.toContain(`${BASE_URL}/fr/herbs/turmeric`);
 
-    // A thin page is not offered to Google even when its view counter is high:
-    // that counter is crawler traffic, and the page itself renders noindex.
+    // A thin page is not offered to Google even when its view counter is high,
+    // and a bare product-licence stub without monograph or curated interaction
+    // is also withheld.
     expect(urls).not.toContain(`${BASE_URL}/herbs/eritrean-rue`);
     expect(urls).not.toContain(`${BASE_URL}/fr/herbs/eritrean-rue`);
+    expect(urls).not.toContain(`${BASE_URL}/herbs/chamomile-stub`);
+
+    // Static tool pages & published guides in EN + FR.
+    expect(urls).toContain(`${BASE_URL}/npn-checker`);
+    expect(urls).toContain(`${BASE_URL}/fr/npn-checker`);
+    expect(urls).toContain(`${BASE_URL}/widgets`);
+    expect(urls).toContain(`${BASE_URL}/fr/widgets`);
+    expect(urls).toContain(`${BASE_URL}/guides/how-to-check-an-interaction`);
+    expect(urls).toContain(`${BASE_URL}/fr/guides/how-to-check-an-interaction`);
+    expect(urls).toContain(`${BASE_URL}/guides/herbs-to-stop-before-surgery`);
+    expect(urls).toContain(
+      `${BASE_URL}/fr/guides/herbs-to-stop-before-surgery`
+    );
+    expect(urls).toContain(`${BASE_URL}/guides/how-to-read-health-canada-npn`);
+    expect(urls).toContain(
+      `${BASE_URL}/fr/guides/how-to-read-health-canada-npn`
+    );
 
     // Pair URLs, both locales (hasFr = true).
     expect(urls).toContain(`${BASE_URL}/interactions/ginger/warfarin`);
@@ -276,11 +323,35 @@ describe("sitemap", () => {
     // (Asserted through the regulator read below instead — the sheet table is
     // no longer consulted at all.)
 
-    // A regulator record is: offered.
+    // A bare regulator licence record alone does NOT admit a stub page into
+    // the sitemap anymore; it needs a monograph or a curated interaction.
     regulatoryRangeMock.mockResolvedValue({
       data: [{ herb_slug: "thin-herb" }],
       error: null,
     });
+    expect((await sitemap()).map((entry) => entry.url)).not.toContain(
+      `${BASE_URL}/herbs/thin-herb`
+    );
+
+    // An herb backed by a curated drug interaction IS offered.
+    getInteractionPairsMock.mockResolvedValue([
+      {
+        id: "p-thin",
+        herbSlug: "thin-herb",
+        herbName: "Thin Herb",
+        herbScientificName: "Herba tenuis",
+        drugName: "Warfarin",
+        drugSlug: "warfarin",
+        severity: "moderate",
+        description: "Test interaction.",
+        mechanism: null,
+        evidenceLevel: "C",
+        source: "NCCIH",
+        sourceUrl: "https://www.nccih.nih.gov/health/herbsataglance",
+        updatedAt: "2026-11-18T00:00:00.000Z",
+        hasFr: false,
+      },
+    ]);
     expect((await sitemap()).map((entry) => entry.url)).toContain(
       `${BASE_URL}/herbs/thin-herb`
     );

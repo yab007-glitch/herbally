@@ -237,16 +237,10 @@ export default async function proxy(request: NextRequest) {
         request: { headers: requestHeaders },
       });
 
-      // Only seed the cookie for first-time visitors so /fr links don't
-      // override a previously saved English preference.
-      if (!cookieLocale) {
-        response.cookies.set("herbally-locale", locale, {
-          path: "/",
-          maxAge: 60 * 60 * 24 * 365,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-        });
-      }
+      // Do not emit Set-Cookie on anonymous GETs: automatic Set-Cookie headers
+      // force CDN caches (Cloudflare) to bypass edge caching (`DYNAMIC`) for
+      // every crawler and first-time visitor. Explicit language changes still
+      // persist `herbally-locale` client-side in `use-set-locale.ts`.
 
       // Refresh the Supabase session on French pages too. This branch used to
       // return before updateSession() ran, so /fr visitors never had expired
@@ -272,6 +266,7 @@ export default async function proxy(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = redirectPath;
       const redirect = NextResponse.redirect(url);
+      redirect.headers.set("Cache-Control", "private, no-store");
       return applySecurityHeaders(redirect);
     }
 
@@ -291,18 +286,8 @@ export default async function proxy(request: NextRequest) {
       request: { headers: requestHeaders },
     });
 
-    // Locale cookie for first-time visitors (English default)
-    if (!cookieLocale) {
-      const detected = detectLocaleFromAcceptLanguage(
-        request.headers.get("accept-language")
-      );
-      response.cookies.set("herbally-locale", detected, {
-        path: "/",
-        maxAge: 60 * 60 * 24 * 365,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-      });
-    }
+    // Do not set a default locale cookie automatically on anonymous GETs so
+    // CDN edge caches can serve unauthenticated public English pages cleanly.
 
     // Supabase session refresh
     const { supabaseResponse } = await updateSession(request);
@@ -340,19 +325,6 @@ export default async function proxy(request: NextRequest) {
   requestHeaders.set("x-locale", resolvedExcludedLocale);
   requestHeaders.set("x-pathname", pathname);
   const response = NextResponse.next({ request: { headers: requestHeaders } });
-
-  const existingLocale = request.cookies.get("herbally-locale")?.value;
-  if (!existingLocale) {
-    const detected = detectLocaleFromAcceptLanguage(
-      request.headers.get("accept-language")
-    );
-    response.cookies.set("herbally-locale", detected, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    });
-  }
 
   const { supabaseResponse } = await updateSession(request);
   supabaseResponse.cookies.getAll().forEach((cookie) => {

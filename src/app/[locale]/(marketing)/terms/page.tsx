@@ -1,4 +1,8 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
+import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 
@@ -12,9 +16,26 @@ export const generateMetadata = () =>
 export default async function TermsPage() {
   const locale = await getLocale();
   const t = await getTranslations({ locale });
+  const prefix = locale === "fr" ? "/fr" : "";
+  const url = `${siteUrl()}${prefix}/terms`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <WebPageSchema
+        title={t("terms.title")}
+        description={t("meta.termsDesc")}
+        url={url}
+        breadcrumbs={[
+          { name: t("common.home"), url: siteUrl() },
+          { name: t("terms.title"), url },
+        ]}
+      />
+      <BreadcrumbListSchema
+        items={[
+          { name: "Home", url: "/" },
+          { name: t("terms.title"), url: "/terms" },
+        ]}
+      />
       <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
         {t("terms.title")}
       </h1>
@@ -104,6 +125,20 @@ export default async function TermsPage() {
             {t("terms.contact.title")}
           </h2>
           <p>{t("terms.contact.text")}</p>
+          <p className="mt-4 flex flex-wrap gap-4 text-xs">
+            <Link
+              href="/editorial-policy"
+              className="text-primary hover:underline"
+            >
+              {t("footer.editorialPolicy")}
+            </Link>
+            <Link href="/disclaimer" className="text-primary hover:underline">
+              {t("footer.disclaimer")}
+            </Link>
+            <Link href="/privacy" className="text-primary hover:underline">
+              {t("footer.privacy")}
+            </Link>
+          </p>
         </section>
       </div>
     </div>

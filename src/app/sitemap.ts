@@ -541,6 +541,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/npn-checker`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/npn-checker`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/widgets`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/widgets`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/disclaimer`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "yearly",
@@ -636,7 +660,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // hour-long cache window, with a 200 status. Ordering by `name` also forces
     // a full sort on every batch; `slug` is unique and indexed. Both fixed here,
     // plus a retry at a quarter of the batch size before giving up.
-    const herbPages: MetadataRoute.Sitemap = [];
+    type CandidateHerb = {
+      slug: string;
+      updatedAt: string | null;
+      hasFr: boolean;
+      hasMonograph: boolean;
+      hasRegulatory: boolean;
+      description: string | null;
+      traditional_uses: string[] | null;
+      dosage_adult: string | null;
+    };
+    const candidateHerbs: CandidateHerb[] = [];
     // Symptom hubs are emitted only for symptoms that actually match a
     // published herb. Four of them (bloodPressure, hormonal, prostate,
     // diabetes) match nothing, so they were indexable pages whose whole body
@@ -676,7 +710,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         // and let the pair/static pages through, but record the loss loudly.
         logger.error("sitemap_herbs_incomplete", {
           from,
-          collected: herbPages.length,
+          collected: candidateHerbs.length,
         });
         break;
       }
@@ -684,43 +718,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (herbsBatch.length === 0) break;
 
       for (const herb of herbsBatch) {
-        // Offer Google only what we can point at: a regulator record, imported
-        // monograph text, or a hand-written monograph. Compiled PubMed sheets
-        // are excluded — see the note in src/lib/seo/indexable.ts. Internal
-        // links still expose those pages; Google judges them on their own merit.
-        // The sitemap is deliberately stricter than the page: the page may say
-        // `index, follow` for a page Google can judge on its own merit, while
-        // the sitemap only offers pages with a record behind them. Advertising
-        // the whole library is what left 4,249 URLs in "crawled, currently not
-        // indexed" and fed the AdSense "low-value content" refusal.
         const hasRegulatory = regulatorySlugs.has(herb.slug);
         const hasMonograph =
-          monographSlugs.has(herb.id) || sourceSlugs.has(herb.slug);
-        if (!hasRegulatory && !hasMonograph && !hasManualMonograph(herb.slug))
-          continue;
-        const indexable = isIndexable({
-          description: herb.description,
-          traditional_uses: herb.traditional_uses,
-          dosage_adult: herb.dosage_adult,
-          // A hand-written monograph is sourced detail and counts as substance,
-          // exactly as the page counts it. Passing it only to the guard above
-          // let the page claim `index, follow` while this map withheld the URL.
-          hasMonograph: hasMonograph || hasManualMonograph(herb.slug),
-          hasRegulatory,
-        });
-        if (!indexable) continue;
-        herbPages.push({
-          url: `${baseUrl}/herbs/${herb.slug}`,
-          lastModified: herb.updated_at
-            ? new Date(herb.updated_at)
-            : new Date(),
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-        });
-        // Only list a French URL when the herb actually has a French record.
-        // /fr/herbs/<slug> resolves for every slug, but without `translations.fr`
-        // it renders French chrome around English content — listing that as the
-        // French page is how a site gets a section treated as duplicate content.
+          monographSlugs.has(herb.id) ||
+          sourceSlugs.has(herb.slug) ||
+          hasManualMonograph(herb.slug);
         const t = herb.translations as Record<string, unknown> | null;
         const frRecord =
           t && typeof t === "object" ? (t as { fr?: unknown }).fr : null;
@@ -728,16 +730,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           !!frRecord &&
           typeof frRecord === "object" &&
           Object.keys(frRecord).length > 0;
-        if (hasFr) {
-          herbPages.push({
-            url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
-            lastModified: herb.updated_at
-              ? new Date(herb.updated_at)
-              : new Date(),
-            changeFrequency: "weekly" as const,
-            priority: 0.7,
-          });
-        }
+        candidateHerbs.push({
+          slug: herb.slug,
+          updatedAt: herb.updated_at,
+          hasFr,
+          hasMonograph,
+          hasRegulatory,
+          description: herb.description,
+          traditional_uses: herb.traditional_uses,
+          dosage_adult: herb.dosage_adult,
+        });
       }
 
       if (herbsBatch.length < batchSize) break;
@@ -794,13 +796,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const pairsRemainingMs = remainingBudgetMs();
     if (pairsRemainingMs <= 0) return budgetExhausted();
 
-    const pairPages: MetadataRoute.Sitemap = (
-      await withTimeout(
-        getInteractionPairs(),
-        "sitemap_interaction_pairs",
-        pairsRemainingMs
-      )
-    ).flatMap((p) => {
+    const interactionPairs = await withTimeout(
+      getInteractionPairs(),
+      "sitemap_interaction_pairs",
+      pairsRemainingMs
+    );
+    const interactionHerbSlugs = new Set(
+      interactionPairs.map((p) => p.herbSlug)
+    );
+
+    const herbPages: MetadataRoute.Sitemap = [];
+    for (const herb of candidateHerbs) {
+      const hasCuratedInteraction = interactionHerbSlugs.has(herb.slug);
+      if (!herb.hasMonograph && !hasCuratedInteraction) continue;
+      const indexable = isIndexable({
+        description: herb.description,
+        traditional_uses: herb.traditional_uses,
+        dosage_adult: herb.dosage_adult,
+        hasMonograph: herb.hasMonograph || hasCuratedInteraction,
+        hasRegulatory: herb.hasRegulatory,
+      });
+      if (!indexable) continue;
+      const lastModified = herb.updatedAt
+        ? new Date(herb.updatedAt)
+        : new Date();
+      herbPages.push({
+        url: `${baseUrl}/herbs/${herb.slug}`,
+        lastModified,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      });
+      if (herb.hasFr) {
+        herbPages.push({
+          url: `${baseUrl}${FR_BASE}/herbs/${herb.slug}`,
+          lastModified,
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        });
+      }
+    }
+
+    const pairPages: MetadataRoute.Sitemap = interactionPairs.flatMap((p) => {
       const path = pairPath(p.herbSlug, p.drugName);
       const entries: MetadataRoute.Sitemap = [
         {

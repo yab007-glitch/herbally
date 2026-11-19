@@ -13,6 +13,10 @@ import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { JsonLd } from "@/components/seo/json-ld";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
+import {
+  getCachedDefaultHerbsPage,
+  getCachedHerbCategories,
+} from "@/lib/data/herbs-directory";
 import type { Metadata } from "next";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
@@ -79,10 +83,22 @@ export default async function HerbsPage({
   const locale = await getLocale();
   const prefix = locale === "fr" ? "/fr" : "";
   const t = await getTranslations({ locale });
-  const [herbsResult, categoriesResult] = await Promise.all([
-    getHerbs({ query, category, page, sort }, locale),
-    getHerbCategories(locale),
+  const isDefaultPage1 = !query && !category && page === 1;
+  const [herbsResult, cachedCategories] = await Promise.all([
+    isDefaultPage1
+      ? getCachedDefaultHerbsPage(locale, sort)
+          .catch(() => null)
+          .then((cached) =>
+            cached
+              ? ({ success: true, data: cached } as const)
+              : getHerbs({ query, category, page, sort }, locale)
+          )
+      : getHerbs({ query, category, page, sort }, locale),
+    getCachedHerbCategories(locale).catch(() => null),
   ]);
+  const categoriesResult = cachedCategories
+    ? ({ success: true, data: cachedCategories } as const)
+    : await getHerbCategories(locale);
 
   const categories = categoriesResult.success ? categoriesResult.data! : [];
   const buildCanonical = (opts: {

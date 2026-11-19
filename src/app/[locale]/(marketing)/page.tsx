@@ -128,6 +128,24 @@ export default async function HomePage() {
           ))}
         </div>
 
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 rounded-2xl border border-border/80 bg-muted/30 px-4 py-3 text-xs sm:text-sm">
+          <Link
+            href="/herb-drug-interactions#stack-checker"
+            className="font-medium text-primary hover:underline"
+          >
+            {t("home.stackLinkLabel")} →
+          </Link>
+          <span className="text-border" aria-hidden="true">
+            •
+          </span>
+          <Link
+            href="/npn-checker"
+            className="font-medium text-primary hover:underline"
+          >
+            {t("home.npnLinkLabel")} →
+          </Link>
+        </div>
+
         <h3 className="mt-10 text-center text-lg font-semibold text-foreground">
           {t("home.popularTitle")}
         </h3>

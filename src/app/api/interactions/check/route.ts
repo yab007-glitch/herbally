@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getHerbPairs } from "@/lib/interactions/pairs";
+import { resolveHerb } from "@/lib/interactions/resolve-herb";
 import { matchInteractionPair } from "@/lib/interactions/check";
 import { pairPath } from "@/lib/interactions/pair-url";
-import { rankHerbMatches } from "@/lib/interactions/rank-herb-match";
-import {
-  buildHerbNameAnchorFilter,
-  buildHerbPreciseNameFilter,
-  buildHerbTextOrFilter,
-} from "@/lib/search/normalize-query";
-import { extractFrenchHerbName } from "@/lib/utils/localize-herb";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
@@ -17,96 +11,6 @@ import { logger } from "@/lib/utils/logger";
 function getLocale(request: NextRequest): "en" | "fr" {
   if (request.headers.get("x-locale") === "fr") return "fr";
   return request.nextUrl.searchParams.get("locale") === "fr" ? "fr" : "en";
-}
-
-interface HerbCandidate {
-  slug: string;
-  name: string;
-  scientific_name: string;
-  frName?: string | null;
-}
-
-/**
- * Resolve a free-text herb name to a published herb row across English,
- * scientific, and French names (`translations->fr->>name`).
- */
-async function resolveHerb(term: string): Promise<HerbCandidate | null> {
-  const supabase = getAnonClient();
-  if (!supabase) return null;
-  // Three candidate sets. The precise one is rows whose own name carries every
-  // typed word; the anchor one catches qualified names ("milk thistle seed");
-  // the broad one is the old any-word-in-any-name filter. The broad filter
-  // alone with `limit 20` picked whichever twenty rows the database returned
-  // first, so on 2026-11-17 "st johns wort" resolved to Aster tataricus and
-  // the checker answered found:false for sertraline — a false "no interaction"
-  // on the most important herb-drug pair there is.
-  //
-  // The sets are queried separately, each with its own limit. Joining the
-  // precise and anchor conditions into one `.or()` recreated the same fault:
-  // the anchor for "st johns wort" was `name.ilike.%st%`, which matches 249
-  // published names, so the unordered `limit 30` could return thirty of those
-  // and never the exact herb.
-  const preciseFilter = buildHerbPreciseNameFilter(term, { maxTokens: 5 });
-  const anchorFilter = buildHerbNameAnchorFilter(term, { maxTokens: 5 });
-  const broadFilter = buildHerbTextOrFilter(term, {
-    includeDescription: false,
-    maxTokens: 5,
-    // Two-letter fillers ("de", "la") match hundreds of names and push the
-    // real row out of the `limit 30` window (2026-11-17: "Chapéu de Couro").
-    minTokenLength: 3,
-  });
-  if (!preciseFilter && !anchorFilter && !broadFilter) return null;
-  const columns = "slug,name,scientific_name,translations";
-  const empty = Promise.resolve({ data: [], error: null });
-  const [preciseResponse, anchorResponse, broadResponse] = await Promise.all([
-    preciseFilter
-      ? supabase
-          .from("herbs")
-          .select(columns)
-          .eq("is_published", true)
-          .or(preciseFilter)
-          .limit(30)
-      : empty,
-    anchorFilter
-      ? supabase
-          .from("herbs")
-          .select(columns)
-          .eq("is_published", true)
-          .or(anchorFilter)
-          .limit(30)
-      : empty,
-    broadFilter
-      ? supabase
-          .from("herbs")
-          .select(columns)
-          .eq("is_published", true)
-          .or(broadFilter)
-          .limit(30)
-      : empty,
-  ]);
-  // All queries failed: the database could not be asked, not "no such herb".
-  if (preciseResponse.error && anchorResponse.error && broadResponse.error) {
-    return null;
-  }
-  const rows = [
-    ...(preciseResponse.data ?? []),
-    ...(anchorResponse.data ?? []),
-    ...(broadResponse.data ?? []),
-  ];
-  if (rows.length === 0) return null;
-  const seen = new Set<string>();
-  const candidates: HerbCandidate[] = [];
-  for (const row of rows) {
-    if (seen.has(row.slug)) continue;
-    seen.add(row.slug);
-    candidates.push({
-      slug: row.slug,
-      name: row.name,
-      scientific_name: row.scientific_name,
-      frName: extractFrenchHerbName(row.translations),
-    });
-  }
-  return rankHerbMatches(candidates, term) ?? null;
 }
 
 /**

@@ -96,11 +96,11 @@ jobs:
           sitemap=$(curl -fsS https://herbally.app/sitemap.xml)
           locs=$(printf '%s' "$sitemap" | grep -c '<loc>' || true)
           echo "home=$home api=$api sitemap_urls=$locs"
-          # The sitemap is deliberately small since 2026-11-16: only herb pages
-          # with a regulator record or imported monograph are offered, so it went
-          # from 6,796 URLs to ~2,940. A floor of 6,000 would fail every deploy
-          # from now on; 2,000 still catches an empty or truncated sitemap.
-          [ "$home" = "200" ] && [ "$api" = "200" ] && [ "$locs" -ge 2000 ]
+          # The sitemap is deliberately small: only herb pages with a curated
+          # monograph or curated drug interaction are offered, keeping thin
+          # regulatory-only stubs out of search. Floor of 1,000 catches an empty
+          # or truncated sitemap without failing on the tightened index.
+          [ "$home" = "200" ] && [ "$api" = "200" ] && [ "$locs" -ge 1000 ]
           # Assert a known sourced page is offered, by shell case rather than
           # `curl | grep -q`: grep closes the pipe on first match, curl exits 23
           # ("failure writing output") and `set -o pipefail` fails a healthy site.
@@ -108,6 +108,14 @@ jobs:
             *"/herbs/aloe-vera<"*) echo "sourced herb page present" ;;
             *) echo "sourced herb page missing from sitemap"; exit 1 ;;
           esac
+
+      - name: Prune stale Docker images and build cache
+        run: |
+          set -euo pipefail
+          # Keep herbally-app:rollback and recent layers so deploys stay fast
+          # while preventing multi-gigabyte build cache bloat on C:.
+          docker image prune -f --filter "until=48h" || true
+          docker builder prune -f --keep-storage=4GB || true
 
       - name: Roll back on failure
         if: failure()

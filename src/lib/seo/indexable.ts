@@ -27,10 +27,12 @@
  * sheets as monographs lifted the advertised set to ~2,594, and in production it
  * let 97% of the library through — 3,155 of 3,238 published herbs. Google knew
  * 9,007 URLs, kept 2,373, and left 4,249 in "crawled, currently not indexed".
- * Length was standing in for depth. The sitemap now requires a record we can
- * point at: a regulator record, an imported regulator monograph, or a
- * hand-written one. A sheet still renders and still supports the page's own
- * content claim; it no longer buys a place in the sitemap.
+ * Length was standing in for depth. The sitemap and `noindex` gate now require
+ * substantive clinical or reference backing — an imported regulator/clinical
+ * monograph, a published/hand-written monograph, or curated drug-interaction
+ * pairs. Bare regulator product-licence stubs without a monograph or curated
+ * interaction remain live and searchable for readers (`noindex, follow`) without
+ * diluting search indexation or ad-review signals.
  *
  * The page still decides robots from this same function, so a thin page never
  * claims to be indexable. Being stricter in the sitemap than on the page is

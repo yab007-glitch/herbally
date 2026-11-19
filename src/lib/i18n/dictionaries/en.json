@@ -135,7 +135,9 @@
     "popularTitle": "Popular herbs",
     "herbLabel": "Herb",
     "medLabel": "Medication",
-    "eyebrow": "A reference for what you take together"
+    "eyebrow": "A reference for what you take together",
+    "stackLinkLabel": "Check multiple herbs & medications + print sheet",
+    "npnLinkLabel": "Decode a Health Canada bottle NPN"
   },
   "embed": {
     "title": "Check an herb + drug combo",
@@ -497,7 +499,9 @@
     "sponsorship": "Sponsorship",
     "herbDrugInteractions": "Herb–Drug Interactions",
     "symptoms": "Symptoms",
-    "editorialPolicy": "Editorial policy"
+    "editorialPolicy": "Editorial policy",
+    "npnChecker": "Health Canada NPN Decoder",
+    "widgets": "Embed Widget"
   },
   "errors": {
     "404": {
@@ -686,7 +690,11 @@
     "embedCopied": "Copied!",
     "checkerCtaTitle": "Check a combination",
     "checkerCtaBody": "Use the interaction checker on the homepage — it checks the HerbAlly database first and shows a structured result when a pair is recorded.",
-    "checkerCtaButton": "Use the homepage checker"
+    "checkerCtaButton": "Use the homepage checker",
+    "npnBannerTitle": "Checking a Canadian supplement bottle?",
+    "npnBannerBody": "Enter the 8-digit Health Canada NPN on your label to see official medicinal ingredients, risks, and drug interactions.",
+    "npnBannerButton": "Open NPN Decoder",
+    "widgetsHubLink": "Configure EN/FR embed sizes on the Widget Builder"
   },
   "auth": {
     "rateLimited": "Too many attempts. Please wait a minute and try again.",
@@ -790,7 +798,7 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "lastUpdated": "Last updated: October 2026",
+    "lastUpdated": "Last updated: November 2026",
     "overview": {
       "title": "1. Overview",
       "text": "HerbAlly is free to use and most of the site works without an account. Some features, such as saving a garden, saving calculations or keeping chat history, need an account or create an anonymous session. This policy explains what is stored, where it is stored, and the choices you have."
@@ -799,7 +807,7 @@
       "title": "2. Information We Collect",
       "text": "Depending on how you use HerbAlly, we may collect:",
       "chatMessages": "Questions sent to the Virtual Herbalist may be processed by Ollama Cloud to generate replies. Signed-in conversations can be saved to your account; guest conversations may be saved to a session linked to the herbally-guest-id cookie.",
-      "analytics": "Vercel Web Analytics collects usage information such as page views and general region. The site also collects performance metrics to monitor its operation.",
+      "analytics": "Cloudflare Web Analytics collects cookieless, privacy-first aggregate traffic counts and Core Web Vitals performance telemetry.",
       "cookies": "HerbAlly uses cookies for language preference, guest sessions and authentication. Your browser may also store garden entries and notes and recent searches. If advertising is enabled in the future, Google and its partners may use cookies or device identifiers.",
       "notCollect": "We do not ask for your name or email unless you create an account or make a donation. We do not sell personal information."
     },
@@ -818,8 +826,8 @@
     "thirdParty": {
       "title": "4. Third-Party Services",
       "text": "HerbAlly uses the following third-party services:",
-      "supabase": "Supabase — database and authentication hosting. The production database is currently in London, United Kingdom (eu-west-2). It can hold account details, health profiles and medications you save, chats, garden and dosage history, and donation records.",
-      "vercel": "Vercel — application hosting and aggregate web analytics. Vercel may process request logs and approximate location data.",
+      "supabase": "Self-hosted PostgreSQL / Supabase stack operated in Montreal, Quebec, Canada — stores optional user accounts, saved health profiles, garden entries, dosage history, and aggregate donation logs.",
+      "vercel": "Cloudflare — DNS, TLS edge proxy, Cloudflare Tunnel, and cookieless Cloudflare Web Analytics protecting traffic to our Montreal origin server.",
       "stripe": "Stripe — payment processing for donations. HerbAlly never sees or stores your card details. Stripe provides us the donor name, email and payment status so the donation can be recorded.",
       "ollamaCloud": "Ollama Cloud — AI processing. Chat messages and symptom descriptions submitted for AI-assisted search may be sent to Ollama to generate responses or search keywords. Symptom search terms, including the original description if keyword extraction fails, may appear in search-request URLs and hosting logs. Ollama's own retention practices are governed by its privacy policy.",
       "adsense": "Google AdSense is not active. If advertising is enabled in future, Google and its partners may receive information about the public page being viewed and may use cookies or device identifiers to serve and measure ads. The intended placement is on public herb reference pages, not on health-input tools."
@@ -827,11 +835,11 @@
     "cookiesSection": {
       "title": "5. Cookies",
       "onlyOne": "HerbAlly uses the following cookies:",
-      "localeCookie": "herbally-locale — stores your language preference (en or fr) for up to 1 year.",
+      "localeCookie": "herbally-locale — set only when you switch languages, to remember en or fr for up to 1 year.",
       "guestCookie": "herbally-guest-id — an HttpOnly cookie that links your browser to an anonymous guest chat session so you can return to it.",
       "authCookies": "Supabase authentication cookies — set only if you choose to sign in, so your session stays active.",
       "adCookies": "Advertising cookies — if ads are enabled, Google and its partners may set cookies or use identifiers to serve and measure ads. You can control these through your browser and Google's ad settings.",
-      "noTracking": "We do not use Facebook Pixel. Aggregate Vercel analytics is used for page counts. Advertising providers are used only as described above."
+      "noTracking": "We do not use Facebook Pixel or invasive third-party trackers. Cookieless Cloudflare Web Analytics provides aggregate page counts, and advertising cookies apply only if ads are enabled."
     },
     "dataRetention": {
       "title": "6. Data Retention",
@@ -859,7 +867,7 @@
   },
   "terms": {
     "title": "Terms of Service",
-    "lastUpdated": "Last updated: April 2026",
+    "lastUpdated": "Last updated: November 2026",
     "acceptance": {
       "title": "1. Acceptance of Terms",
       "text": "By accessing or using HerbAlly, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using this platform."
@@ -899,7 +907,7 @@
     },
     "userContent": {
       "title": "7. User Content",
-      "text": "Any content you submit through the platform (such as chat messages to the Virtual Herbalist) may be processed by our AI systems to generate responses. We do not claim ownership of your content, but you grant us a license to use it for the purpose of providing and improving our services. Chat messages are not stored on our servers after the session ends."
+      "text": "Questions submitted to the Virtual Herbalist are processed to generate responses. Signed-in or guest chat history is handled strictly as described in our Privacy Policy, and we claim no ownership over content you submit."
     },
     "serviceAvailability": {
       "title": "8. Service Availability",
@@ -953,8 +961,8 @@
     "freeText3": "If HerbAlly has been helpful to you, please consider making a donation to help us keep this resource available for everyone.",
     "freeLink": "making a donation",
     "team": {
-      "title": "Our Team",
-      "text": "HerbAlly is built by a small team of software engineers and herbal-medicine contributors. Hand-written monographs list their cited sources and review status. AI-generated material is labelled as such and is not presented as clinically reviewed."
+      "title": "Founder & Reviewer of Record",
+      "text": "HerbAlly is written, curated, and editorially reviewed by Yasser Bheekun, MLT (OPTMQ · CSMLS) — a Medical Laboratory Technologist holding a DEC in Biomedical Laboratory Technology (Dawson College) working in a hospital laboratory at the McGill University Health Centre in Montreal, Quebec. Every published entry carries cited primary sources and is validated editorially against regulator and clinical references. Editorial review is not physician medical care."
     }
   },
   "faqContent": {
@@ -981,7 +989,7 @@
       },
       "reviewed": {
         "q": "Is the information on HerbAlly medically reviewed?",
-        "a": "Hand-written monographs list their cited sources and review status. Some herb profiles are generated from structured data and are labelled as AI-generated and not clinically reviewed. Evidence grades (A through D) describe the strength of the cited research, not a guarantee of safety or effectiveness."
+        "a": "Every published herb monograph and interaction page displays its cited primary sources (Health Canada NHP, EMA HMPC, NIH NCCIH, LiverTox, PubMed) and has been editorially validated by Yasser Bheekun, MLT (OPTMQ · CSMLS). Editorial review checks source alignment and safety framing — it is educational information, not a substitute for personal advice from your physician or pharmacist."
       },
       "trustAI": {
         "q": "Can I trust the AI Virtual Herbalist?",
@@ -1065,7 +1073,7 @@
     },
     "sourceHierarchy": {
       "title": "Source Hierarchy",
-      "content": "We prioritize sources in this order:\n\n1. **Systematic Reviews & Meta-Analyses**: Cochrane Database, PubMed systematic reviews\n2. **Randomized Controlled Trials**: Peer-reviewed RCTs with adequate sample sizes\n3. **Authoritative Monographs**: WHO Monographs, German Commission E, EMA Assessments\n4. **Government Databases**: NCCIH (NIH), NLM (PubMed), FDA GRAS notices\n5. **Pharmacopoeias**: USP, British Pharmacopoeia, European Pharmacopoeia\n6. **Traditional Sources**: Historical pharmacopoeias, ethnographic records\n\nWe avoid: Marketing materials, manufacturer-funded studies without peer review, and unverified online sources."
+      "content": "We prioritize primary regulatory and clinical sources in this order:\n\n1. **Regulatory Monographs & Product Registers**: Health Canada NHP Monographs & Licensed Natural Health Products Database (LNHPD), European Medicines Agency (EMA / HMPC)\n2. **Government Clinical References**: NIH National Center for Complementary and Integrative Health (NCCIH), NIH LiverTox hepatotoxicity database\n3. **Systematic Reviews & Clinical Trials**: Cochrane Database, PubMed-indexed peer-reviewed RCTs and pharmacokinetic interaction studies\n4. **Pharmacopoeias & Historical Materia Medica**: WHO Monographs, Commission E, US Dispensatory (1918), British/European Pharmacopoeias (marked clearly as Traditional Use)\n\nWe avoid: Marketing claims, unreviewed manufacturer testimonials, and unsourced blogs."
     },
     "safetyAssessment": {
       "title": "Safety Assessment",
@@ -1073,7 +1081,7 @@
     },
     "monographProcess": {
       "title": "Monograph Creation Process",
-      "content": "Each herb monograph follows this process:\n\n1. **Literature Review**: Systematic search of PubMed, Cochrane, and specialized databases\n2. **Evidence Extraction**: RCTs and systematic reviews evaluated for quality and relevance\n3. **Grading**: Independent evidence grading by at least two reviewers\n4. **Safety Review**: Drug interactions, contraindications, and pregnancy data reviewed by medical herbalist\n5. **Citation**: All claims linked to primary sources with PMIDs where available\n6. **Medical Review**: Final review by MD or qualified medical herbalist\n7. **Publication**: Monograph published with \"Last Reviewed\" date\n\n**Update Cycle**: Monographs are reviewed annually and updated immediately upon significant new evidence."
+      "content": "Every published profile follows a traceable five-step editorial workflow:\n\n1. **Source Extraction**: Official regulator monographs (Health Canada, EMA HMPC), government summaries (NCCIH, LiverTox), and PubMed citations are linked verbatim.\n2. **Taxonomic Verification**: Botanical binomials and plant parts are cross-checked against GBIF, ITIS, and NCBI Taxonomy.\n3. **Safety & Interaction Mapping**: Drug interactions, hepatotoxicity ratings, and pregnancy/lactation cautions are tagged to exact source URLs.\n4. **Editorial Review & Validation**: Reviewed and validated against primary references by Yasser Bheekun, MLT (OPTMQ · CSMLS) — editorial verification of evidence grading and safety framing, not physician clinical care.\n5. **Publication & Corrections**: Published with clear source links, evidence grades, and last-reviewed dates; safety corrections are prioritized."
     },
     "transparency": {
       "title": "Transparency & Limitations",
@@ -1651,7 +1659,11 @@
     "gardenPageTitle": "My Garden",
     "gardenSubtitle": "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
     "profileTitle": "My Profile",
-    "profileSubtitle": "Manage your health data for personalized dosing and safety warnings"
+    "profileSubtitle": "Manage your health data for personalized dosing and safety warnings",
+    "npnChecker": "Health Canada NPN Supplement Decoder",
+    "npnCheckerDesc": "Look up any 8-digit Health Canada Natural Product Number (NPN) or DIN-HM: inspect medicinal ingredients, cautions, and cross-check drug interactions.",
+    "widgets": "Free Embeddable Herb-Drug Checker",
+    "widgetsDesc": "Embed HerbAlly's free bilingual herb-drug interaction checker widget on your clinic, pharmacy student, or wellness website."
   },
   "calculatorForm": {
     "herbName": "Herb Name",
@@ -1955,5 +1967,92 @@
     "reject": "No ads",
     "revoke": "Turn off ads",
     "privacyLink": "Privacy policy"
+  },
+  "stackChecker": {
+    "eyebrow": "Full regimen review",
+    "title": "Check your full herb & medication stack",
+    "subtitle": "Add up to 10 herbs/supplements and 10 prescription or OTC medications. Saved locally in your browser so you can print a summary sheet for your doctor or pharmacist.",
+    "loadSample": "Load sample stack",
+    "clearAll": "Clear all",
+    "printSheetTitle": "HerbAlly Supplement & Medication Interaction Summary",
+    "printGeneratedLabel": "Generated on",
+    "herbsHeading": "Herbs & supplements",
+    "herbPlaceholder": "Add a herb (e.g. St. John's Wort, Garlic)...",
+    "addHerb": "Add herb",
+    "noHerbsYet": "No herbs added yet — type a herb name and press Enter or +.",
+    "remove": "Remove",
+    "drugsHeading": "Medications",
+    "drugPlaceholder": "Add a drug (e.g. warfarin, sertraline)...",
+    "addDrug": "Add medication",
+    "noDrugsYet": "No medications added yet — type a drug or class and press Enter or +.",
+    "needBothError": "Add at least one herb and one medication to run a stack check.",
+    "errorGeneric": "Could not run the stack check right now. Please try again.",
+    "checkingButton": "Checking regimen...",
+    "checkButton": "Check my full stack",
+    "printButton": "Print / Save PDF for doctor or pharmacist",
+    "summaryFound": "{matched} curated interaction(s) recorded across {total} combination(s) checked.",
+    "summaryNone": "No curated interactions recorded across {total} combination(s) checked.",
+    "summaryDisclaimer": "An unrecorded pair means it is absent from our curated table — not proof that the combination is safe.",
+    "highestSeverityLabel": "Highest grade",
+    "checkedHerbsTitle": "Herbs checked",
+    "herbNotInDb": "not matched in curated herb list",
+    "checkedDrugsTitle": "Medications checked",
+    "matchesHeading": "Recorded interactions (highest severity first)",
+    "mechanismLabel": "Mechanism",
+    "viewFullPair": "Open full interaction monograph",
+    "sourceLink": "Primary source",
+    "unrecordedHeading": "Combinations with no curated record on file",
+    "unrecordedNote": "Ask your pharmacist or prescriber to confirm these remaining combinations against the exact brand and dose you take:",
+    "clinicalFooterNote": "Educational reference only — never stop or change prescribed medications without speaking to your prescriber or pharmacist.",
+    "severity": {
+      "mild": "Mild",
+      "moderate": "Moderate",
+      "severe": "Severe",
+      "contraindicated": "Contraindicated"
+    }
+  },
+  "npnCheckerPage": {
+    "eyebrow": "Canadian natural health products",
+    "heading": "Health Canada NPN Supplement Decoder",
+    "intro": "Enter the 8-digit Natural Product Number (NPN) or DIN-HM printed on a supplement bottle sold in Canada to fetch Health Canada's official LNHPD licence, medicinal ingredients, cautions, and drug interaction matches.",
+    "explainerTitle": "What this decoder verifies",
+    "explainerBody1": "Natural health products sold legally in Canada carry an 8-digit NPN (or DIN-HM for homeopathic remedies). HerbAlly queries Health Canada's official public Licensed Natural Health Products Database (LNHPD) live without storing personal medication searches.",
+    "explainerBody2": "Whenever a licensed medicinal ingredient is a botanical tracked in HerbAlly, you can jump straight to its full clinical monograph or screen every botanical ingredient in the bottle against your prescriptions.",
+    "readNpnGuideLink": "Guide: How to read a Health Canada NPN label",
+    "openStackCheckerLink": "Open full multi-herb & medication stack checker",
+    "inputLabel": "8-digit Health Canada NPN or DIN-HM",
+    "inputPlaceholder": "e.g. 80000001 or NPN 80010538",
+    "searchingButton": "Decoding NPN...",
+    "searchButton": "Decode bottle",
+    "samplesLabel": "Try a live bottle:",
+    "sampleFlax": "Flax Seed Oil",
+    "sampleGreens": "greens+ Multi-Herb",
+    "sampleAstragalus": "Astragalus Blend",
+    "emptyError": "Enter an 8-digit NPN number from the front label of your product.",
+    "errorGeneric": "Unable to decode that NPN right now. Please try again.",
+    "officialRecordLink": "Official LNHPD record",
+    "ingredientsHeading": "Official medicinal ingredients",
+    "medCheckTitle": "Check matched herbs against a medication",
+    "medCheckSubtitle": "Screen every botanical linked above against a prescription or OTC medication you take.",
+    "medCheckPlaceholder": "Enter a drug (e.g. warfarin, sertraline, metformin)...",
+    "checkingMedButton": "Checking...",
+    "checkMedButton": "Check bottle",
+    "medCheckNeedInput": "Enter at least 2 characters for your medication.",
+    "readInteractionDetails": "Read full interaction details",
+    "medCheckNoMatches": "No curated interaction recorded in HerbAlly for the matched herbs and that medication — still verify with your pharmacist.",
+    "purposesHeading": "Authorised recommended uses",
+    "risksHeading": "Health Canada cautions & warnings"
+  },
+  "widgetsPage": {
+    "eyebrow": "Free for clinics & educators",
+    "heading": "Embeddable Herb–Drug Checker Widget",
+    "intro": "Add HerbAlly's ad-free, bilingual herb–drug interaction checker directly to your pharmacy blog, integrative clinic site, or student study portal using a single copy-paste iframe snippet.",
+    "languageLabel": "Widget language",
+    "widthLabel": "Maximum width",
+    "codeHeading": "HTML embed snippet",
+    "copyCode": "Copy HTML code",
+    "copied": "Copied!",
+    "previewHeading": "Live widget preview",
+    "attributionLabel": "Herb-drug safety data by HerbAlly"
   }
 }

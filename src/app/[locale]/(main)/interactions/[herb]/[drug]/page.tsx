@@ -444,6 +444,42 @@ export default async function InteractionPairPage({ params }: Props) {
         </div>
       </div>
 
+      {/* Clinical quick-facts summary */}
+      <dl className="grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 text-xs sm:grid-cols-4">
+        <div>
+          <dt className="font-medium text-muted-foreground">
+            {fr ? "Plante" : "Herb"}
+          </dt>
+          <dd className="mt-0.5 font-semibold text-foreground">
+            {pair.herbName}
+          </dd>
+        </div>
+        <div>
+          <dt className="font-medium text-muted-foreground">
+            {fr ? "Médicament" : "Medication"}
+          </dt>
+          <dd className="mt-0.5 font-semibold text-foreground">
+            {pair.drugName}
+          </dd>
+        </div>
+        <div>
+          <dt className="font-medium text-muted-foreground">
+            {fr ? "Gravité" : "Severity"}
+          </dt>
+          <dd className="mt-0.5 font-semibold text-foreground">
+            {severityLabel(pair.severity, fr)}
+          </dd>
+        </div>
+        <div>
+          <dt className="font-medium text-muted-foreground">
+            {fr ? "Référence" : "Citation"}
+          </dt>
+          <dd className="mt-0.5 font-semibold text-foreground">
+            {pair.source || (fr ? "Pharmacologie" : "Pharmacology")}
+          </dd>
+        </div>
+      </dl>
+
       {/* What the data says */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold text-foreground">

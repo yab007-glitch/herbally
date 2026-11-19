@@ -233,12 +233,34 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Team Section */}
-      <section>
-        <h2 className="mb-4 text-2xl font-bold text-foreground">
+      {/* Team / Reviewer of Record Section */}
+      <section className="rounded-2xl border border-border bg-card p-6">
+        <h2 className="mb-3 text-2xl font-bold text-foreground">
           {t("aboutContent.team.title")}
         </h2>
-        <p className="text-muted-foreground">{t("aboutContent.team.text")}</p>
+        <p className="leading-relaxed text-muted-foreground">
+          {t("aboutContent.team.text")}
+        </p>
+        <div className="mt-4 flex flex-wrap gap-4 text-sm">
+          <Link
+            href="/editorial-policy"
+            className="font-medium text-primary hover:underline"
+          >
+            {locale === "fr" ? "Politique éditoriale" : "Editorial policy"} →
+          </Link>
+          <Link
+            href="/methodology"
+            className="font-medium text-primary hover:underline"
+          >
+            {t("footer.methodology")} →
+          </Link>
+          <Link
+            href="/guides"
+            className="font-medium text-primary hover:underline"
+          >
+            {t("footer.guides")} →
+          </Link>
+        </div>
       </section>
 
       {/* Contact Section */}

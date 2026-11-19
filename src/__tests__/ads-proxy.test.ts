@@ -39,6 +39,9 @@ describe("proxy — security headers with the launch gate off", () => {
     "/herbalist",
     "/calculator",
     "/interactions/ginger",
+    "/npn-checker",
+    "/fr/npn-checker",
+    "/widgets",
     "/symptoms",
     "/garden",
     "/admin/herbs",
@@ -54,6 +57,30 @@ describe("proxy — security headers with the launch gate off", () => {
     expect(csp).toContain("object-src 'none'");
     expect(csp).toContain("base-uri 'self'");
     expectNoAdOrigins(csp, path);
+  });
+
+  it.each([
+    "/",
+    "/herbs/ginger",
+    "/fr/herbs/ginger",
+    "/about",
+    "/guides",
+    "/ads.txt",
+    "/npn-checker",
+    "/widgets",
+  ])("does not emit Set-Cookie on anonymous GET to %s", async (path) => {
+    const response = await fetchPath(path);
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
+
+  it("marks Accept-Language French redirects as private, no-store", async () => {
+    const response = await fetchPath("/herbs/ginger", {
+      "accept-language": "fr-CA,fr;q=0.9,en;q=0.8",
+    });
+    expect(response.status).toBeGreaterThanOrEqual(300);
+    expect(response.status).toBeLessThan(400);
+    expect(response.headers.get("location")).toContain("/fr/herbs/ginger");
+    expect(response.headers.get("cache-control")).toBe("private, no-store");
   });
 
   it("keeps X-Frame-Options DENY on ordinary pages", async () => {

@@ -193,6 +193,7 @@ const SENSITIVE_PREFIXES = [
   "/herbalist",
   "/calculator",
   "/interactions",
+  "/npn-checker",
   "/symptoms",
   "/compare",
   "/garden",

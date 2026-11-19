@@ -463,16 +463,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // crawler-inflated, so a thin page can never buy its way into the index with bot
   // traffic.
   //
-  // A page also needs a record behind it (2026-11-16). Length stopped meaning depth:
-  // counting compiled PubMed sheets as substance let 97% of the library claim to be
-  // indexable while Google kept 2,373 of 9,007 known URLs and refused 4,249. Pages
-  // with no regulator record, imported monograph or hand-written monograph now render
-  // `noindex, follow` — reachable for people, still passing links, just no longer
-  // offered as a search result. Adding a source flips one back with no code change.
+  // A page earns `index, follow` only when backed by substantive reference
+  // depth: a curated/imported/manual monograph or at least one curated
+  // drug-interaction record. Bare product-licence stubs without monographs or
+  // interactions remain live (`200 OK`) and searchable with `noindex, follow`,
+  // matching the sitemap so search engines and AdSense never see thin stubs.
+  const bundleInteractions = (
+    bundle?.herb as Record<string, unknown> | null | undefined
+  )?.drug_interactions;
+  const hasCuratedInteraction =
+    (Array.isArray(herb.drug_interactions) &&
+      herb.drug_interactions.length > 0) ||
+    (Array.isArray(bundleInteractions) && bundleInteractions.length > 0);
   const sourced =
-    Boolean(bundle?.regulatory) ||
+    Boolean(bundle?.monograph) ||
     (bundle?.sources?.length ?? 0) > 0 ||
-    hasManualMonograph(slug);
+    hasManualMonograph(slug) ||
+    hasCuratedInteraction;
   const thin =
     !sourced ||
     !isIndexable({
@@ -488,7 +495,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             citations?: unknown;
           } | null
         ) ||
-        (bundle?.sources?.length ?? 0) > 0,
+        (bundle?.sources?.length ?? 0) > 0 ||
+        hasManualMonograph(slug) ||
+        hasCuratedInteraction,
       hasRegulatory: Boolean(bundle?.regulatory),
     });
 

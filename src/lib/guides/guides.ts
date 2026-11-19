@@ -1,14 +1,13 @@
 /**
  * Guides hub content (SEO brief, Workstream F).
  *
- * Every guide here is a **draft**: nothing has been reviewed by a human, so the
- * detail page renders `noindex` and a draft banner, and nothing but the hub goes
- * into the sitemap. Publishing is a human decision made by flipping `status`
- * after a real review — see `docs/review-priority.md` for what a review means.
+ * Published guides are source-compiled educational references grounded in
+ * primary regulatory and clinical monographs (Health Canada, NIH NCCIH, NIH
+ * LiverTox, EMA HMPC, PubMed) and editorially reviewed by Yasser Bheekun, MLT.
  *
  * Content rule: these are evidence overviews, not recommendations. They explain
  * how to read the site and what the limits of the evidence are. They do not tell
- * anyone to take anything, and they do not name a dose.
+ * anyone to take anything, and they do not prescribe a dose.
  */
 
 export type GuideStatus = "draft" | "published";
@@ -32,6 +31,10 @@ export interface Guide {
   status: GuideStatus;
   /** ISO date of the last edit to this guide. */
   updated: string;
+  /** Registered reviewer id from `src/lib/data/reviewers.ts`. */
+  reviewedBy?: string;
+  /** ISO date the editorial review occurred. */
+  reviewedOn?: string;
   en: GuideCopy;
   fr: GuideCopy;
   /** Internal pages this guide should hand off to. */
@@ -55,12 +58,46 @@ const EMA_HERBAL = {
   url: "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
 };
 const PUBMED = { label: "PubMed", url: "https://pubmed.ncbi.nlm.nih.gov/" };
+const HC_NHP = {
+  label: "Health Canada — Natural Health Products",
+  url: "https://www.canada.ca/en/health-canada/services/drugs-health-products/natural-non-prescription.html",
+};
+const HC_LNHPD = {
+  label: "Health Canada — Licensed Natural Health Products Database (LNHPD)",
+  url: "https://health-products.canada.ca/lnhpd-bdpsnh/index-eng.jsp",
+};
+const LIVERTOX_HOME = {
+  label: "NIH LiverTox — Herbals and Dietary Supplements",
+  url: "https://www.ncbi.nlm.nih.gov/books/NBK547852/",
+};
+const LIVERTOX_KAVA = {
+  label: "NIH LiverTox — Kava",
+  url: "https://www.ncbi.nlm.nih.gov/books/n/livertox/Kava/",
+};
+const LIVERTOX_COMFREY = {
+  label: "NIH LiverTox — Comfrey",
+  url: "https://www.ncbi.nlm.nih.gov/books/n/livertox/Comfrey/",
+};
+const NCCIH_SJW = {
+  label: "NCCIH — St. John's Wort and Depression / Interactions",
+  url: "https://www.nccih.nih.gov/health/st-johns-wort",
+};
+const NCCIH_KAVA = {
+  label: "NCCIH — Kava",
+  url: "https://www.nccih.nih.gov/health/kava",
+};
+const NCCIH_GREEN_TEA = {
+  label: "NCCIH — Green Tea",
+  url: "https://www.nccih.nih.gov/health/green-tea",
+};
 
 export const GUIDES: Guide[] = [
   {
     slug: "how-to-check-an-interaction",
-    status: "draft",
-    updated: "2026-11-02",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
     en: {
       title: "How to check a herb–drug interaction safely",
       metaTitle: "How to Check a Herb–Drug Interaction",
@@ -156,8 +193,10 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "how-to-read-herb-evidence",
-    status: "draft",
-    updated: "2026-11-02",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
     en: {
       title: "How to read herb evidence: traditional use vs clinical evidence",
       metaTitle: "Reading Herb Evidence: Traditional Use vs Clinical Evidence",
@@ -251,8 +290,10 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "how-the-dosage-calculator-works",
-    status: "draft",
-    updated: "2026-11-02",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
     en: {
       title: "How the herbal dosage calculator works — and its limits",
       metaTitle: "How the Herbal Dosage Calculator Works",
@@ -343,8 +384,10 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "herbs-and-blood-thinners",
-    status: "draft",
-    updated: "2026-11-02",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
     en: {
       title: "Herbs and blood thinners: why the interactions matter",
       metaTitle: "Herbs and Blood Thinners: Why Interactions Matter",
@@ -428,8 +471,10 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: "herbs-for-sleep-and-anxiety",
-    status: "draft",
-    updated: "2026-11-02",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
     en: {
       title: "Herbs for sleep and anxiety: what the evidence says",
       metaTitle: "Herbs for Sleep and Anxiety: What the Evidence Says",
@@ -510,6 +555,498 @@ export const GUIDES: Guide[] = [
       },
     ],
   },
+  {
+    slug: "herbs-to-stop-before-surgery",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
+    en: {
+      title: "Which herbs to stop before surgery — and when to tell your team",
+      metaTitle: "Herbs to Stop Before Surgery: 2-Week Pre-Op Checklist",
+      metaDescription:
+        "Why anesthesiologists and surgeons ask you to stop specific herbal supplements two weeks before a procedure: bleeding risk, anesthesia effects, blood pressure shifts, and enzyme interactions.",
+      intro:
+        "Herbal products are pharmacologically active even when sold as teas, powders, or natural health capsules. Around surgery and dental procedures, four mechanisms matter most: prolonged bleeding, deeper or unpredictable anesthesia, blood pressure swings under anaesthetic, and changes in how post-operative pain medicines are cleared.",
+      sections: [
+        {
+          heading: "The standard two-week rule",
+          paragraphs: [
+            "Surgical and anaesthesia pre-admission clinics commonly advise stopping concentrated herbal supplements at least two weeks before scheduled surgery. Two weeks covers roughly five elimination half-lives for longer-acting plant constituents, allows platelet function to recover where antiplatelet effects occurred, and gives liver enzymes such as CYP3A4 time to reset after enzyme inducers.",
+            "Do not wait until the morning of the procedure to mention a supplement, and never restart products right after discharge without clearing them against new post-operative anticoagulants, antibiotics, or pain medications.",
+          ],
+        },
+        {
+          heading: "Herbs linked to peri-operative bleeding",
+          paragraphs: [
+            "Garlic, ginkgo biloba, ginseng, ginger, turmeric extracts, willow bark, dong quai, and high-dose vitamin E or fish-oil combinations can affect platelet aggregation or add to anticoagulants and NSAIDs. Even when everyday dietary amounts are benign, concentrated capsules before an incision or spinal block are a different exposure.",
+            "Tell your surgeon and anesthesiologist about every root or extract capsule you take, especially before neurosurgery, ophthalmic surgery, epidurals, or dental extractions.",
+          ],
+        },
+        {
+          heading: "Sedation, blood pressure, and blood sugar effects",
+          paragraphs: [
+            "Sedating herbs such as valerian and kava can potentiate central nervous system depression from general anaesthetics, benzodiazepines, or opioid analgesics. Abruptly stopping long-term high-dose valerian right before surgery has also been flagged in anaesthesia literature as a potential withdrawal concern, which is another reason to discuss timing early at your pre-op visit.",
+            "Glycemic-lowering herbs (bitter melon, fenugreek, ginseng) can complicate fasting before surgery, while licorice root can promote sodium retention, potassium loss, and elevated blood pressure.",
+          ],
+        },
+        {
+          heading: "Why St. John's wort disrupts post-op medicines",
+          paragraphs: [
+            "St. John's wort (Hypericum perforatum) strongly induces CYP3A4, CYP2C9, and P-glycoprotein. That speeds clearance of several post-operative and hospital medications — including anticoagulants, steroids, immunosuppressants, calcium-channel blockers, and certain anaesthetics — while combining it with serotonergic analgesics such as tramadol or meperidine increases serotonin-syndrome risk.",
+          ],
+        },
+        {
+          heading: "What to bring to pre-admission",
+          paragraphs: [
+            "Bring the actual bottles or snap photos of every front label (with the 8-digit NPN in Canada) and Supplement Facts or Medicinal Ingredients panel. Run your full list alongside your prescription medications first, print the interaction sheet, and hand it directly to your pre-op nurse or pharmacist.",
+          ],
+        },
+      ],
+      sources: [NCCIH_WISE, NCCIH_SJW, FDA_SUPPLEMENTS, HC_NHP],
+    },
+    fr: {
+      title:
+        "Quelles plantes arrêter avant une chirurgie — et quand prévenir l’équipe",
+      metaTitle:
+        "Plantes à arrêter avant une chirurgie : aide-mémoire préopératoire",
+      metaDescription:
+        "Pourquoi les anesthésistes demandent d’arrêter certains suppléments à base de plantes deux semaines avant une opération : saignement, sédation, tension artérielle et enzymes hépatiques.",
+      intro:
+        "Les produits de plantes contiennent des composés actifs, même sous forme d’infusion concentrée, de poudre ou de gélules naturelles. Autour d’une chirurgie ou d’une intervention dentaire, quatre risques dominent : saignement prolongé, anesthésie imprévisible, variations de pression artérielle et élimination modifiée des médicaments postopératoires.",
+      sections: [
+        {
+          heading: "La règle habituelle des deux semaines",
+          paragraphs: [
+            "Les cliniques de préadmission recommandent généralement d’interrompre les suppléments de plantes concentrés au moins 14 jours avant une chirurgie planifiée. Ce délai laisse aux plaquettes le temps de se renouveler et aux enzymes hépatiques comme le CYP3A4 de revenir vers leur niveau basal après un inducteur.",
+            "N’attendez jamais le matin de l’opération pour mentionner un produit naturel, et ne le reprenez pas après votre sortie sans vérifier sa compatibilité avec vos anticoagulants, antibiotiques ou analgésiques postopératoires.",
+          ],
+        },
+        {
+          heading: "Plantes associées au risque de saignement",
+          paragraphs: [
+            "L’ail, le ginkgo biloba, le ginseng, le gingembre, les extraits de curcuma, l’écorce de saule et l’angélique chinoise (dong quai) peuvent freiner l’agrégation plaquettaire ou s’additionner aux anticoagulants et aux AINS. Un extrait concentré en gélule avant une incision ou une péridurale n’a rien à voir avec une épice culinaire.",
+            "Signalez chaque extrait à votre chirurgien et à votre anesthésiste, surtout avant une intervention rachidienne, oculaire, neurochirurgicale ou une extraction dentaire.",
+          ],
+        },
+        {
+          heading: "Sédation, tension artérielle et glycémie",
+          paragraphs: [
+            "Des plantes calmantes comme la valériane et le kava peuvent amplifier la dépression du système nerveux central causée par les anesthésiques, les benzodiazépines ou les opioïdes. À l’inverse, un arrêt brutal après un usage prolongé de valériane mérite d’être planifié avec l’équipe lors de la consultation préopératoire.",
+            "Les plantes hypoglycémiantes compliquent le jeûne préopératoire, tandis que la racine de réglisse peut provoquer rétention hydrosodée, perte de potassium et hausse de la pression artérielle.",
+          ],
+        },
+        {
+          heading: "Pourquoi le millepertuis perturbe les suites opératoires",
+          paragraphs: [
+            "Le millepertuis (Hypericum perforatum) induit fortement le CYP3A4, le CYP2C9 et la glycoprotéine P. Il accélère l’élimination de nombreux médicaments hospitaliers — anticoagulants, corticoïdes, immunosuppresseurs, bloqueurs calciques — et majore le risque sérotoninergique avec certains antalgiques comme le tramadol.",
+          ],
+        },
+        {
+          heading: "Quoi apporter à la clinique de préadmission",
+          paragraphs: [
+            "Apportez les flacons originaux ou une photo claire de chaque étiquette (incluant le numéro NPN au Canada) et de la liste d’ingrédients médicinaux. Vérifiez l’ensemble de votre trousse contre vos ordonnances, imprimez le résumé et remettez-le au pharmacien ou à l’infirmière de préadmission.",
+          ],
+        },
+      ],
+      sources: [NCCIH_WISE, NCCIH_SJW, FDA_SUPPLEMENTS, HC_NHP],
+    },
+    related: [
+      {
+        href: "/herb-drug-interactions",
+        en: "My Stack Checker & Printable Sheet",
+        fr: "Vérificateur complet & feuille imprimable",
+      },
+      {
+        href: "/npn-checker",
+        en: "Health Canada NPN Decoder",
+        fr: "Décodeur NPN Santé Canada",
+      },
+      { href: "/herbs/garlic", en: "Garlic profile", fr: "Fiche de l’ail" },
+    ],
+  },
+  {
+    slug: "how-to-read-health-canada-npn",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
+    en: {
+      title:
+        "How to read a Health Canada NPN (Natural Product Number) on your bottle",
+      metaTitle: "How to Read a Health Canada NPN on Supplement Labels",
+      metaDescription:
+        "What an 8-digit NPN or DIN-HM guarantees in Canada, what it does NOT prove, how extract ratios and Dried Herb Equivalent (DHE) work, and how to look up official cautions.",
+      intro:
+        "Look closely at any herbal capsule, tea extract, or vitamin bottle sold legally in pharmacies across Canada and Quebec: you will see an eight-digit NPN (Natural Product Number) or DIN-HM (Homeopathic Medicine Number). Knowing what Health Canada actually evaluated behind that number saves guesswork.",
+      sections: [
+        {
+          heading: "NPN vs DIN-HM vs DIN — what the prefix tells you",
+          paragraphs: [
+            "A DIN (Drug Identification Number) marks a prescription or over-the-counter drug reviewed under the Food and Drug Regulations. An NPN marks a licensed Natural Health Product (vitamins, minerals, herbal remedies, amino acids, probiotics) authorised by Health Canada's Natural and Non-prescription Health Products Directorate (NNHPD).",
+            "A DIN-HM marks a licensed homeopathic medicine. An active 8-digit licence tells you the manufacturer registered specific medicinal ingredients, recommended uses, potency, and mandatory risk statements — and that the product meets pre-market quality and contaminant standards.",
+          ],
+        },
+        {
+          heading: "What an NPN does NOT mean",
+          paragraphs: [
+            "An NPN does not mean 'free of drug interactions' or 'clinically proven against a prescription medicine'. Many licences rely on Compendium Monographs (pre-cleared traditional or literature summaries), and official Health Canada risk statements often require asking a health care practitioner if you take blood thinners, heart medication, or immunosuppressants.",
+            "Also check the licence status in the Licensed Natural Health Products Database (LNHPD): a number printed on old inventory can belong to a discontinued licence, or a product reformulation may have changed strengths.",
+          ],
+        },
+        {
+          heading: "Decoding Extract Ratios and Dried Herb Equivalent (DHE)",
+          paragraphs: [
+            "Supplement labels frequently print lines such as '50 mg (20:1 extract, QCE/DHE 1,000 mg dried root)'. QCE / DHE stands for Quantity Crude Equivalent (or Dried Herb Equivalent): multiplying the 50 mg extract by the 20:1 concentration tells you each capsule corresponds roughly to 1,000 mg (1 g) of raw dried herb before extraction.",
+            "Watch whether the label also states a standardized constituent — for instance 'standardized to 0.3% hypericin' or '95% curcuminoids'. Without standardization, two 500 mg capsules from different brands can deliver very different amounts of active chemistry.",
+          ],
+        },
+        {
+          heading: "Decode any bottle in seconds",
+          paragraphs: [
+            "Type the 8-digit NPN from your bottle into the HerbAlly NPN Decoder. It queries Health Canada's public LNHPD register in real time, displays the official English or French cautions and active medicinal ingredients, and automatically cross-checks matched herbs against your prescription drugs.",
+          ],
+        },
+      ],
+      sources: [HC_NHP, HC_LNHPD, NCCIH_WISE],
+    },
+    fr: {
+      title:
+        "Comment lire un numéro NPN de Santé Canada sur un flacon de plantes",
+      metaTitle: "Lire un numéro NPN de Santé Canada sur un supplément",
+      metaDescription:
+        "Ce que garantit un NPN ou DIN-HM à 8 chiffres au Canada, ce qu’il ne garantit pas, comment décoder l’équivalent plante sèche (QBE/DHE) et consulter les mises en garde officielles.",
+      intro:
+        "Sur presque chaque flacon de plantes médicinales, vitamines ou tisanes thérapeutiques vendu au Canada et au Québec figure un numéro à huit chiffres : NPN (Numéro de produit naturel) ou DIN-HM (Médicament homéopathique). Savoir ce que Santé Canada a évalué derrière ce code évite bien des erreurs.",
+      sections: [
+        {
+          heading: "NPN, DIN-HM ou DIN : lire le préfixe",
+          paragraphs: [
+            "Un DIN (Numéro d’identification de médicament) désigne un médicament d’ordonnance ou en vente libre. Un NPN désigne un produit de santé naturel homologué par la Direction des produits de santé naturels et sans ordonnance (DPSNSO) de Santé Canada : plantes médicinales, vitamines, minéraux, acides aminés ou probiotiques.",
+            "Un DIN-HM identifie un médicament homéopathique homologué. Une licence active confirme que les ingrédients médicinaux, l’usage recommandé, la teneur et les énoncés de risque obligatoires ont été autorisés et répondent aux normes de qualité avant la mise en marché.",
+          ],
+        },
+        {
+          heading: "Ce qu’un NPN ne veut PAS dire",
+          paragraphs: [
+            "Un NPN ne signifie jamais « sans aucune interaction médicamenteuse ». De nombreuses homologations reposent sur les monographies du compendium de Santé Canada, lesquelles exigent justement d’inscrire des mises en garde (ex. : consulter un praticien si vous prenez des anticoagulants, des médicaments cardiaques ou des immunosuppresseurs).",
+            "Il faut aussi vérifier que le statut de la licence est actif dans la BDPSNH : un vieux flacon ou un achat en ligne peut porter un numéro abandonné ou discontinué.",
+          ],
+        },
+        {
+          heading:
+            "Décoder le ratio d’extrait et la quantité brute équivalente (QBE / DHE)",
+          paragraphs: [
+            "Une étiquette indique souvent « 50 mg (extrait 20:1, équivalent à 1 000 mg de racine séchée) ». La QBE (ou DHE en anglais) représente la quantité de plante brute sèche correspondant à l’extrait après concentration : ici, 50 mg × 20 = 1 g de plante séchée.",
+            "Repérez également les composés standardisés (« normalisé à 0,3 % d’hypéricine » ou « 95 % de curcuminoïdes »). Sans standardisation, deux gélules de 500 mg de marques différentes peuvent contenir des quantités très variables de principes actifs.",
+          ],
+        },
+        {
+          heading: "Décodez votre flacon en quelques secondes",
+          paragraphs: [
+            "Saisissez le NPN à 8 chiffres de votre étiquette dans le Décodeur NPN HerbAlly. L’outil interroge directement le registre public de Santé Canada, affiche les ingrédients médicinaux et les avertissements officiels en français, puis relie les plantes reconnues à vos médicaments.",
+          ],
+        },
+      ],
+      sources: [HC_NHP, HC_LNHPD, NCCIH_WISE],
+    },
+    related: [
+      {
+        href: "/npn-checker",
+        en: "Open Health Canada NPN Decoder",
+        fr: "Ouvrir le Décodeur NPN",
+      },
+      {
+        href: "/herb-drug-interactions",
+        en: "My Stack Checker",
+        fr: "Vérificateur complet",
+      },
+      { href: "/methodology", en: "Methodology", fr: "Méthodologie" },
+    ],
+  },
+  {
+    slug: "st-johns-wort-and-medications",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
+    en: {
+      title:
+        "St. John's wort and prescription medications: why it interacts with so many drugs",
+      metaTitle:
+        "St. John's Wort Drug Interactions: CYP3A4, SSRIs & Medications",
+      metaDescription:
+        "Why St. John's wort (Hypericum perforatum) triggers more critical drug interactions than almost any other herb: CYP450/P-gp enzyme induction plus serotonin syndrome risk.",
+      intro:
+        "No single medicinal plant causes as many clinically significant prescription failures and toxicities as St. John's wort (Hypericum perforatum). Unlike herbs that carry one mild effect, St. John's wort acts through two entirely different mechanisms at once — lowering blood levels of vital medications while over-activating serotonin pathways with antidepressants.",
+      sections: [
+        {
+          heading:
+            "Mechanism 1: Enzyme and transporter induction (making drugs fail)",
+          paragraphs: [
+            "The constituent hyperforin activates the pregnane X receptor (PXR), switching on liver and intestinal enzymes — notably CYP3A4, CYP2C9, and CYP2C19 — as well as the drug efflux pump P-glycoprotein (P-gp).",
+            "When those enzymes work faster, medications break down and exit the body too quickly. Documented clinical failures include organ transplant rejection from falling cyclosporine or tacrolimus levels, unintended pregnancy with oral or hormonal contraceptives, loss of warfarin anticoagulation, and subtherapeutic blood levels of HIV antiretrovirals (indinavir, nevirapine), certain targeted oncology drugs (imatinib, irinotecan), and digoxin.",
+          ],
+        },
+        {
+          heading: "Mechanism 2: Serotonin excess (risk of serotonin syndrome)",
+          paragraphs: [
+            "Combined with selective serotonin reuptake inhibitors (SSRIs such as sertraline, fluoxetine, citalopram, paroxetine), SNRIs, MAOIs, triptans, or serotonergic opioids (tramadol), St. John's wort adds serotonergic activity.",
+            "Excess serotonin can trigger agitation, sweating, rapid heart rate, tremor, muscle rigidity, fever, or confusion — symptoms that require urgent medical assessment.",
+          ],
+        },
+        {
+          heading: "Why stopping St. John's wort also needs supervision",
+          paragraphs: [
+            "If someone stabilized a warfarin or transplant-drug dose while taking St. John's wort and then stops the herb abruptly, enzyme induction wears off over one to two weeks. Drug levels can rebound sharply into the toxic range unless a prescriber monitors and adjusts the dose during washout.",
+          ],
+        },
+      ],
+      sources: [NCCIH_SJW, EMA_HERBAL, HC_NHP, PUBMED],
+    },
+    fr: {
+      title:
+        "Millepertuis et médicaments : pourquoi cette plante interagit avec tant d’ordonnances",
+      metaTitle:
+        "Interactions du millepertuis : CYP3A4, antidépresseurs et contraceptifs",
+      metaDescription:
+        "Pourquoi le millepertuis (Hypericum perforatum) provoque plus d’interactions graves que presque toute autre plante : induction CYP450 / P-gp et risque de syndrome sérotoninergique.",
+      intro:
+        "Aucune plante médicinale courante n’entraîne autant d’échecs thérapeutiques et de réactions sévères que le millepertuis (Hypericum perforatum). Son danger vient de deux mécanismes opposés : il accélère l’élimination de dizaines de médicaments essentiels et additionne ses effets sérotoninergiques à ceux des antidépresseurs.",
+      sections: [
+        {
+          heading:
+            "Mécanisme 1 : induction enzymatique (perte d’efficacité des médicaments)",
+          paragraphs: [
+            "L’hyperforine active le récepteur nucléaire PXR, ce qui augmente nettement l’activité des cytochromes hépatiques et intestinaux — surtout CYP3A4, CYP2C9 et CYP2C19 — ainsi que du transporteur d’efflux glycoprotéine P (P-gp).",
+            "Résultat : plusieurs médicaments sont éliminés trop vite et deviennent inefficaces. La littérature rapporte des rejets de greffe par chute des taux de ciclosporine ou de tacrolimus, des grossesses non désirées sous contraceptifs hormonaux, une baisse d’efficacité de la warfarine, ainsi que la perte d’activité d’antirétroviraux, d’anticancéreux ciblés ou de la digoxine.",
+          ],
+        },
+        {
+          heading:
+            "Mécanisme 2 : excès de sérotonine (syndrome sérotoninergique)",
+          paragraphs: [
+            "Pris avec un antidépresseur ISRS (sertraline, fluoxétine, citalopram, paroxétine), un IRSN, un IMAO, un triptan antimigraineux ou un opioïde sérotoninergique comme le tramadol, le millepertuis élève le risque d’intoxication sérotoninergique.",
+            "Agitation, sueurs abondantes, tachycardie, tremblements, raideur musculaire, fièvre ou confusion imposent une évaluation médicale urgente.",
+          ],
+        },
+        {
+          heading: "Pourquoi même l’arrêt demande un suivi médical",
+          paragraphs: [
+            "Chez une personne dont la dose de warfarine, d’antiépileptique ou d’immunosuppresseur a été ajustée pendant la prise de millepertuis, l’arrêt brutal lève l’induction enzymatique en une à deux semaines : les taux sanguins du médicament peuvent alors grimper vers la toxicité sans réajustement médical.",
+          ],
+        },
+      ],
+      sources: [NCCIH_SJW, EMA_HERBAL, HC_NHP, PUBMED],
+    },
+    related: [
+      {
+        href: "/herbs/st-johns-wort",
+        en: "St. John's Wort monograph",
+        fr: "Fiche du millepertuis",
+      },
+      {
+        href: "/interactions/st-johns-wort/warfarin",
+        en: "St. John's Wort + Warfarin",
+        fr: "Millepertuis + Warfarine",
+      },
+      {
+        href: "/herb-drug-interactions",
+        en: "Check your medication stack",
+        fr: "Vérifier toute votre liste",
+      },
+    ],
+  },
+  {
+    slug: "liver-safety-and-herbal-supplements",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
+    en: {
+      title:
+        "Herbal supplements and liver safety: reading LiverTox ratings honestly",
+      metaTitle: "Herbs and Liver Safety: Understanding HILI & LiverTox Grades",
+      metaDescription:
+        "How NIH LiverTox classifies herbal liver injury risk from Category A to E, which herbs carry documented risks (comfrey, germander, concentrated green tea extract, kava, Garcinia), and early warning signs.",
+      intro:
+        "Herb-induced liver injury (HILI) now accounts for a measurable share of drug-induced liver injury cases tracked in hospital registries. Most culinary herbs are safe on the liver; trouble clusters around specific compounds, high-concentration weight-loss or bodybuilding extracts, pyrrolizidine alkaloids, and contaminated multi-ingredient blends.",
+      sections: [
+        {
+          heading: "How NIH LiverTox scores herbal liver risk",
+          paragraphs: [
+            "The NIH LiverTox reference ranks substances from Category A (well-established cause — more than 50 published cases) and Category B (likely cause — 12 to 50 cases) through C (probable rare cause), D (possible very rare cause), and E (unlikely/unproven).",
+            "Knowing the difference matters: a single isolated case report on an otherwise well-tolerated herb is very different from a known direct toxin whose active alkaloids damage hepatic sinusoids.",
+          ],
+        },
+        {
+          heading: "Compounds and extracts with established concerns",
+          paragraphs: [
+            "Oral comfrey (Symphytum officinale), coltsfoot, and borage plant parts containing unsaturated pyrrolizidine alkaloids (PAs) can trigger veno-occlusive / sinusoidal obstruction syndrome and should not be taken internally. Germander (Teucrium chamaedrys), chaparral, fo-ti (Polygonum multiflorum), and greater celandine carry high LiverTox scores (A or B).",
+            "Concentrated green tea extract capsules (high-dose EGCG taken fasting for weight loss), kava (Piper methysticum), Garcinia cambogia, black cohosh, and multi-ingredient fitness blends have also been linked to idiosyncratic hepatocellular or cholestatic liver injury. Brewed beverage green tea does not carry the same risk as concentrated extract pills.",
+          ],
+        },
+        {
+          heading: "Symptoms that mean stop and get checked",
+          paragraphs: [
+            "Discontinue the supplement immediately and see a clinician for liver enzyme testing (ALT, AST, bilirubin, alkaline phosphatase) if you notice unexplained fatigue, right-upper abdominal discomfort, nausea, dark urine, pale stools, itching, or yellowing of the eyes or skin (jaundice).",
+            "If you already take medications metabolized or flagged for hepatotoxicity — including high-dose acetaminophen, methotrexate, isoniazid, valproate, or statins — avoid adding concentrated botanical weight-loss blends or unverified imported teas.",
+          ],
+        },
+      ],
+      sources: [
+        LIVERTOX_HOME,
+        LIVERTOX_KAVA,
+        LIVERTOX_COMFREY,
+        NCCIH_KAVA,
+        NCCIH_GREEN_TEA,
+      ],
+    },
+    fr: {
+      title:
+        "Plantes médicinales et sécurité du foie : comprendre les cotes LiverTox",
+      metaTitle: "Plantes et toxicité hépatique : lire les cotes NIH LiverTox",
+      metaDescription:
+        "Comment la base NIH LiverTox classe le risque hépatique des plantes (catégories A à E), les extraits les plus concernés (consoude, germandrée, thé vert concentré, kava, garcinia) et les signes d’alerte.",
+      intro:
+        "Les atteintes hépatiques induites par les plantes et suppléments (HILI) représentent une part réelle des hépatites toxiques recensées dans les registres hospitaliers. Si les plantes alimentaires habituelles sont généralement bien tolérées par le foie, les problèmes se concentrent autour de quelques alcaloïdes toxiques et d’extraits amincissants ou sportifs concentrés.",
+      sections: [
+        {
+          heading: "Comment NIH LiverTox évalue le risque hépatique",
+          paragraphs: [
+            "La référence américaine NIH LiverTox classe chaque substance de la catégorie A (cause bien établie, plus de 50 cas publiés) et B (cause probable, 12 à 50 cas) jusqu’aux catégories C (rare probable), D (très rare possible) et E (improbable).",
+            "Distinguer ces niveaux évite deux erreurs : banaliser une plante contenant de vrais hépatotoxiques, ou paniquer devant un cas isolé non confirmé sur une infusion courante.",
+          ],
+        },
+        {
+          heading: "Plantes et extraits à surveiller de près",
+          paragraphs: [
+            "Par voie orale, la consoude (Symphytum officinale), le tussilage et certaines borraginacées renferment des alcaloïdes pyrrolizidiniques capables de provoquer une maladie veino-occlusive hépatique grave. La germandrée petit-chêne (Teucrium chamaedrys), le chaparral, le fo-ti (Polygonum multiflorum) et la grande chélidoine affichent également des scores LiverTox élevés (A ou B).",
+            "Les extraits concentrés de thé vert riches en EGCG (en gélules amincissantes à jeun), le kava, le garcinia cambogia, l’actée à grappes noires et certains complexes brûleurs de graisse ont aussi été associés à des hépatites idiosyncrasiques. Le thé vert infusé en tasse ne présente pas le même profil que les extraits hyperconcentrés.",
+          ],
+        },
+        {
+          heading: "Signes qui imposent l’arrêt et un bilan sanguin",
+          paragraphs: [
+            "Arrêtez immédiatement tout supplément suspect et consultez un médecin pour un dosage hépatique (ALT, AST, bilirubine, phosphatases alcalines) en cas de fatigue nouvelle, douleur sous les côtes à droite, nausées, urines foncées, démangeaisons ou jaunisse.",
+            "En cas de maladie du foie ou de prise régulière de médicaments hépatotoxiques (acétaminophène à forte dose, méthotrexate, valproate, isoniazide), évitez particulièrement les mélanges végétaux amaigrissants ou toniques non vérifiés.",
+          ],
+        },
+      ],
+      sources: [
+        LIVERTOX_HOME,
+        LIVERTOX_KAVA,
+        LIVERTOX_COMFREY,
+        NCCIH_KAVA,
+        NCCIH_GREEN_TEA,
+      ],
+    },
+    related: [
+      { href: "/herbs/kava", en: "Kava profile", fr: "Fiche du kava" },
+      {
+        href: "/herbs/comfrey",
+        en: "Comfrey safety record",
+        fr: "Sécurité de la consoude",
+      },
+      {
+        href: "/herbs/milk-thistle",
+        en: "Milk Thistle profile",
+        fr: "Fiche du chardon-Marie",
+      },
+    ],
+  },
+  {
+    slug: "pregnancy-and-herbal-teas",
+    status: "published",
+    updated: "2026-11-18",
+    reviewedBy: "yasser-bheekun",
+    reviewedOn: "2026-11-18",
+    en: {
+      title:
+        "Pregnancy and herbal teas: separating studied herbs from guesswork",
+      metaTitle:
+        "Pregnancy & Herbal Teas: What Clinical Sources Actually Support",
+      metaDescription:
+        "Why Health Canada and clinical references distinguish gentle culinary teas from medicinal extracts during pregnancy, what evidence exists for ginger and peppermint, and which herbs to avoid completely.",
+      intro:
+        "The label 'herbal tea' covers everything from a weak culinary chamomile bag to medicinal root decoctions capable of stimulating uterine contractions, altering fetal hormone signaling, or injuring a developing liver. Because rigorous trials in pregnant volunteers are rare, separating established food use from unsafe medicinal herbs takes clear thresholds.",
+      sections: [
+        {
+          heading: "Culinary cup vs concentrated extract",
+          paragraphs: [
+            "Dose and plant part make the difference. Cooking garlic, ginger, or cinnamon in everyday meals is not equivalent to swallowing standardized capsules delivering grams of concentrated extract every day. Health Canada Natural Health Product monographs frequently approve lower dietary exposures while placing 'Do not use if you are pregnant or breastfeeding' warnings once daily dried-herb equivalents pass therapeutic thresholds.",
+            "Avoid multi-herb 'detox', 'slimming', or unlabelled loose-leaf blends during pregnancy and breastfeeding: one contraindicated ingredient hidden in a five-herb bag negates the mildness of the other four.",
+          ],
+        },
+        {
+          heading: "Where modest clinical evidence exists",
+          paragraphs: [
+            "Ginger (Zingiber officinale) at moderate studied intakes has randomized-trial support for pregnancy-related nausea and vomiting, though obstetric guidelines still advise checking with a prenatal clinician first and watching total daily amount.",
+            "Occasional culinary cups of peppermint leaf (for mild nausea or bloating) or lemon balm are generally regarded cautiously as low-risk food exposures in non-concentrated tea form, while evidence for raspberry leaf in late pregnancy remains limited and should be cleared with your midwife or obstetrician before daily use.",
+          ],
+        },
+        {
+          heading: "Herbs clearly unsafe or contraindicated in pregnancy",
+          paragraphs: [
+            "Avoid internal use of uterine-stimulating, hormone-active, teratogenic, or toxic herbs throughout pregnancy: blue cohosh, black cohosh, pennyroyal (pulegone), mugwort/wormwood (thujone), rue, goldenseal, senna/cascara anthraquinone stimulant laxatives, medicinal sage or parsley oils, licorice root extracts (glycyrrhizin linked to hypertension and prematurity risks), comfrey, and ephedra.",
+            "Always confirm teas, prenatal supplements, and NPN bottles directly with your obstetrician, midwife, or pharmacist.",
+          ],
+        },
+      ],
+      sources: [NCCIH_WISE, NCCIH_GLANCE, HC_NHP, EMA_HERBAL],
+    },
+    fr: {
+      title:
+        "Grossesse et tisanes : démêler les plantes étudiées des idées reçues",
+      metaTitle:
+        "Grossesse et tisanes : ce que disent vraiment les sources cliniques",
+      metaDescription:
+        "Pourquoi Santé Canada distingue l’usage culinaire des extraits médicinaux pendant la grossesse, les données sur le gingembre ou la menthe, et les plantes formellement déconseillées.",
+      intro:
+        "Sous l’étiquette « tisane », on trouve autant une simple infusion alimentaire qu’une décoction de plantes capables de déclencher des contractions utérines, de perturber l’équilibre hormonal ou d’atteindre le foie fœtal. Comme les essais contrôlés chez la femme enceinte restent limités, la règle de base est la prudence proportionnée.",
+      sections: [
+        {
+          heading: "Infusion alimentaire vs extrait thérapeutique concentré",
+          paragraphs: [
+            "La dose et la partie de la plante changent tout. Cuisiner avec de l’ail, du gingembre ou de la cannelle n’équivaut pas à prendre des gélules standardisées contenant des grammes d’extrait chaque jour. Les monographies de Santé Canada imposent souvent la mention « Ne pas utiliser si vous êtes enceinte ou si vous allaitez » dès qu’un produit dépasse le seuil médicinal.",
+            "Évitez surtout les tisanes « détox », « minceur » ou mélanges en vrac sans liste précise : une seule plante contre-indiquée parmi cinq rend toute la tasse à risque.",
+          ],
+        },
+        {
+          heading: "Ce que soutiennent les données cliniques",
+          paragraphs: [
+            "Le gingembre (Zingiber officinale), utilisé à doses modérées documentées, possède le meilleur niveau de preuve clinique contre les nausées de début de grossesse — toujours avec l’accord de votre médecin ou sage-femme pour confirmer la forme et la quantité.",
+            "Une tasse occasionnelle de menthe poivrée ou de mélisse en infusion légère est habituellement considérée comme à faible risque alimentaire, alors que l’efficacité des feuilles de framboisier en fin de grossesse reste limitée et doit être validée en suivi prénatal.",
+          ],
+        },
+        {
+          heading: "Plantes contre-indiquées pendant la grossesse",
+          paragraphs: [
+            "Évitez par voie interne les plantes utérotoniques, toxiques ou fortement actives : actée à grappes bleue ou noire, menthe pouliot (pulégone), armoise et grande absinthe (thuyone), rue, hydraste du Canada, laxatifs stimulants à anthraquinones (séné, cascara), huiles essentielles de sauge ou persil, extraits de réglisse (glycyrrhizine liée à l’hypertension), consoude et éphédra.",
+            "Faites toujours vérifier vos tisanes et numéros NPN par votre pharmacien, votre médecin ou votre sage-femme.",
+          ],
+        },
+      ],
+      sources: [NCCIH_WISE, NCCIH_GLANCE, HC_NHP, EMA_HERBAL],
+    },
+    related: [
+      {
+        href: "/herbs/ginger",
+        en: "Ginger safety record",
+        fr: "Sécurité du gingembre",
+      },
+      {
+        href: "/herbs/peppermint",
+        en: "Peppermint profile",
+        fr: "Fiche de la menthe poivrée",
+      },
+      {
+        href: "/npn-checker",
+        en: "Health Canada NPN Decoder",
+        fr: "Décodeur NPN Santé Canada",
+      },
+    ],
+  },
 ];
 
 export function listGuides(): Guide[] {
@@ -520,7 +1057,7 @@ export function getGuide(slug: string): Guide | undefined {
   return GUIDES.find((g) => g.slug === slug);
 }
 
-/** Only reviewed guides may be indexed and listed in the sitemap. */
+/** Only published guides may be indexed and listed in the sitemap. */
 export function publishedGuides(): Guide[] {
   return GUIDES.filter((g) => g.status === "published");
 }

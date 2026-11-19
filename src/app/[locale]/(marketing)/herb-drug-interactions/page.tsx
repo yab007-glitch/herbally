@@ -9,6 +9,7 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { InteractionExplainer } from "@/components/herbs/interaction-explainer";
 import { EmbedSnippet } from "@/components/embed/embed-snippet";
+import { StackChecker } from "@/components/interactions/stack-checker";
 import { Button } from "@/components/ui/button";
 import { InteractionChecker } from "../interaction-checker";
 
@@ -89,6 +90,25 @@ export default async function HerbDrugInteractionsPage() {
       </section>
 
       <div className="mt-8">
+        <StackChecker />
+      </div>
+
+      <section className="mt-8 flex flex-col justify-between gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-5 sm:flex-row sm:items-center">
+        <div>
+          <h2 className="text-base font-semibold text-foreground">
+            {t("npnBannerTitle")}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("npnBannerBody")}
+          </p>
+        </div>
+        <Button render={<Link href="/npn-checker" />} className="shrink-0">
+          {t("npnBannerButton")}
+          <ArrowRight className="ml-1 size-4" />
+        </Button>
+      </section>
+
+      <div className="mt-8">
         <InteractionExplainer />
       </div>
 
@@ -115,6 +135,14 @@ export default async function HerbDrugInteractionsPage() {
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("embedBody")}</p>
         <EmbedSnippet />
+        <p className="mt-3 text-xs">
+          <Link
+            href="/widgets"
+            className="font-medium text-primary hover:underline"
+          >
+            {t("widgetsHubLink")} →
+          </Link>
+        </p>
       </section>
 
       <section className="mt-10 rounded-2xl border bg-muted/30 p-6">

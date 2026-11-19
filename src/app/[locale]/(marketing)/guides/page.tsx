@@ -5,6 +5,7 @@ import { buildAlternateUrls } from "@/lib/i18n/routing";
 import { siteUrl } from "@/lib/seo/site-url";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { listGuides } from "@/lib/guides/guides";
+import { getReviewer } from "@/lib/data/reviewers";
 
 /**
  * Guides hub (SEO brief, Workstream F). `/blog` does not exist in this repo, so
@@ -19,11 +20,12 @@ const COPY = {
     title: "Guides",
     metaTitle: "Guides",
     metaDescription:
-      "How to read herb evidence, check an interaction safely, use the dosage calculator, and understand herb–drug interactions — written for readers, not for search engines.",
+      "How to read herb evidence, check an interaction safely, decode a Health Canada NPN label, avoid surgery and liver risks, and use herbal products wisely.",
     intro:
-      "Longer explanations of the things the herb pages can only summarise: how to read an evidence grade, what a checker result really means, and where the limits are. Every guide is an evidence overview, not a recommendation, and each one is marked with its review status.",
-    draftNotice:
-      "Drafts. These guides have not been reviewed by a human yet, so they are excluded from search on purpose. What they say follows the same sourced data as the rest of the site.",
+      "Longer explanations of the things individual herb sheets can only summarise: how to read an evidence grade, what a checker result really means, how Canadian NPN labels work, and where the clinical limits sit.",
+    provenanceNotice:
+      "Editorially reviewed by Yasser Bheekun, MLT (OPTMQ · CSMLS) against primary regulatory and clinical monographs (Health Canada, NIH NCCIH, LiverTox, EMA HMPC). Educational information only — not medical advice.",
+    reviewedTag: "Reviewed",
     readMore: "Read the guide",
     draft: "Draft — not yet reviewed",
     crumbs: ["Home", "Guides"],
@@ -33,11 +35,12 @@ const COPY = {
     title: "Guides",
     metaTitle: "Guides",
     metaDescription:
-      "Comment lire les preuves sur les plantes, vérifier une interaction sans se tromper, utiliser le calculateur de posologie et comprendre les interactions plante-médicament.",
+      "Comment lire les preuves sur les plantes, vérifier une interaction, décoder un NPN de Santé Canada et limiter les risques hépatiques, opératoires ou en grossesse.",
     intro:
-      "Des explications plus longues sur ce que les fiches de plantes ne peuvent que résumer : comment lire un niveau de preuve, ce que signifie vraiment un résultat de vérificateur, et où sont les limites. Chaque guide est un survol des preuves, pas une recommandation, et porte son état de révision.",
-    draftNotice:
-      "Brouillons. Ces guides n’ont pas encore été révisés par une personne ; ils sont donc volontairement exclus de la recherche. Leur contenu suit les mêmes données sourcées que le reste du site.",
+      "Des explications approfondies sur ce que les fiches de plantes ne peuvent que résumer : lire un niveau de preuve, interpréter un résultat d’interaction, comprendre les numéros NPN de Santé Canada et cerner les limites cliniques.",
+    provenanceNotice:
+      "Révision éditoriale par Yasser Bheekun, T.M. (OPTMQ · SCSLM) à partir des monographies officielles (Santé Canada, NIH NCCIH, LiverTox, EMA HMPC). Contenu éducatif — ne remplace pas un avis médical.",
+    reviewedTag: "Révisé",
     readMore: "Lire le guide",
     draft: "Brouillon — non révisé",
     crumbs: ["Accueil", "Guides"],
@@ -100,13 +103,14 @@ export default async function GuidesIndexPage() {
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
         {c.intro}
       </p>
-      <p className="mt-4 rounded-xl border border-amber-300/70 bg-amber-50/60 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-800/60 dark:bg-amber-950/30 dark:text-amber-200">
-        {c.draftNotice}
+      <p className="mt-4 rounded-xl border border-border bg-muted/40 p-3 text-xs leading-relaxed text-muted-foreground">
+        {c.provenanceNotice}
       </p>
 
       <ul className="mt-8 space-y-4">
         {guides.map((guide) => {
           const g = guide[locale];
+          const reviewer = getReviewer(guide.reviewedBy);
           return (
             <li
               key={guide.slug}
@@ -124,6 +128,10 @@ export default async function GuidesIndexPage() {
                 {guide.status === "draft" ? (
                   <span className="rounded-full border border-amber-400 px-2 py-0.5 text-[11px] text-amber-800 dark:text-amber-300">
                     {c.draft}
+                  </span>
+                ) : reviewer ? (
+                  <span className="rounded-full border border-green-300 bg-green-50 px-2 py-0.5 text-[11px] text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-300">
+                    {c.reviewedTag} · {reviewer.name}
                   </span>
                 ) : null}
               </div>

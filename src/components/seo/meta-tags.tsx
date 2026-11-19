@@ -21,7 +21,7 @@ export function generateMetaTags({
   type = "website",
   publishedTime,
   modifiedTime,
-  author = "HerbAlly Editorial Team",
+  author = "Yasser Bheekun, MLT",
   keywords,
 }: MetaTagsProps): Metadata {
   const meta: Metadata = {

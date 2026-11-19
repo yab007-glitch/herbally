@@ -67,6 +67,17 @@ export default async function ContactPage() {
       </h1>
       <p className="mt-4 text-lg text-muted-foreground">{t("contact.intro")}</p>
 
+      <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+        <p className="font-semibold text-foreground">
+          Yasser Bheekun — MLT (OPTMQ · CSMLS)
+        </p>
+        <p className="mt-1">
+          {locale === "fr"
+            ? "Éditeur et réviseur de référence de HerbAlly · Montréal (Québec), Canada"
+            : "Publisher & Reviewer of Record, HerbAlly · Montreal, Quebec, Canada"}
+        </p>
+      </div>
+
       <div className="mt-10 space-y-6">
         {entries.map(({ icon: Icon, title, text, email }) => (
           <section
@@ -106,8 +117,26 @@ export default async function ContactPage() {
             </Link>
           </li>
           <li>
+            <Link
+              href="/editorial-policy"
+              className="text-primary hover:underline"
+            >
+              {t("footer.editorialPolicy")}
+            </Link>
+          </li>
+          <li>
+            <Link href="/about" className="text-primary hover:underline">
+              {t("nav.about")}
+            </Link>
+          </li>
+          <li>
             <Link href="/privacy" className="text-primary hover:underline">
               {t("footer.privacy")}
+            </Link>
+          </li>
+          <li>
+            <Link href="/disclaimer" className="text-primary hover:underline">
+              {t("footer.disclaimer")}
             </Link>
           </li>
         </ul>

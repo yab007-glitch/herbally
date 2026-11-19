@@ -70,6 +70,13 @@ http://herbally.app, :80 {
 		respond "" 204
 	}
 
+	@blocked_probes {
+		path *.php /wp-admin /wp-admin/* /wp-content/* /wp-includes/* /wp-login* /xmlrpc.php /.env /.env.* /.git /.git/*
+	}
+	handle @blocked_probes {
+		respond "Not Found" 404
+	}
+
 	@via_cf header CF-Connecting-IP *
 	handle @via_cf {
 		reverse_proxy app:3000 {

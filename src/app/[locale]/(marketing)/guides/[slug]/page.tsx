@@ -7,6 +7,7 @@ import { siteUrl } from "@/lib/seo/site-url";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { listGuides, getGuide } from "@/lib/guides/guides";
+import { getReviewer } from "@/lib/data/reviewers";
 
 /**
  * A guide detail page.
@@ -25,6 +26,11 @@ const UI = {
     draft: "Draft — not yet reviewed",
     draftBody:
       "This guide has not been reviewed by a human yet, so it is excluded from search. It is written from the same sourced data as the herb pages, and it makes no recommendation about what to take.",
+    compiledNotice:
+      "Source-compiled educational guide — references verified against Health Canada, NIH NCCIH, LiverTox & EMA monographs.",
+    reviewedByPrefix: "Editorial review:",
+    reviewedOn: "Validated",
+    policyLink: "Editorial policy",
     disclaimer:
       "Educational material, not medical advice. HerbAlly is not affiliated with the FDA or Health Canada. Confirm with your doctor or pharmacist before changing anything you take.",
     updated: "Last edited",
@@ -36,6 +42,11 @@ const UI = {
     draft: "Brouillon — non révisé",
     draftBody:
       "Ce guide n’a pas encore été révisé par une personne ; il est donc exclu de la recherche. Il est écrit à partir des mêmes données sourcées que les fiches de plantes et ne recommande rien à prendre.",
+    compiledNotice:
+      "Guide éducatif compilé à partir de sources officielles (Santé Canada, NIH NCCIH, LiverTox, EMA).",
+    reviewedByPrefix: "Révision éditoriale :",
+    reviewedOn: "Validé le",
+    policyLink: "Politique éditoriale",
     disclaimer:
       "Contenu éducatif, pas un avis médical. HerbAlly n’est affilié ni à la FDA ni à Santé Canada. Vérifiez avec votre médecin ou votre pharmacien avant de changer quoi que ce soit.",
     updated: "Dernière modification",
@@ -102,6 +113,7 @@ export default async function GuidePage({ params }: Props) {
   const locale = (await getLocale()) === "fr" ? "fr" : "en";
   const ui = UI[locale];
   const c = guide[locale];
+  const reviewer = getReviewer(guide.reviewedBy);
   const base = siteUrl();
   const url = `${base}${addLocalePrefix(`/guides/${guide.slug}`, locale)}`;
   const home = `${base}${addLocalePrefix("/", locale)}`;
@@ -147,7 +159,36 @@ export default async function GuidePage({ params }: Props) {
           <p className="font-semibold">{ui.draft}</p>
           <p className="mt-1">{ui.draftBody}</p>
         </div>
-      ) : null}
+      ) : reviewer ? (
+        <div className="mt-4 rounded-xl border border-border bg-muted/40 p-3 text-xs leading-relaxed text-muted-foreground">
+          <p>
+            <span className="font-semibold text-foreground">
+              {ui.reviewedByPrefix}{" "}
+            </span>
+            <Link
+              href="/editorial-policy"
+              className="font-medium text-primary hover:underline"
+            >
+              {reviewer.name}
+            </Link>{" "}
+            — {reviewer.credentials} ({reviewer.affiliation})
+            {guide.reviewedOn ? ` · ${ui.reviewedOn} ${guide.reviewedOn}` : ""}
+          </p>
+          <p className="mt-1">
+            {ui.compiledNotice}{" "}
+            <Link
+              href="/editorial-policy"
+              className="underline hover:text-foreground"
+            >
+              {ui.policyLink}
+            </Link>
+          </p>
+        </div>
+      ) : (
+        <p className="mt-4 rounded-xl border border-border bg-muted/40 p-3 text-xs leading-relaxed text-muted-foreground">
+          {ui.compiledNotice}
+        </p>
+      )}
 
       <p className="mt-6 text-sm leading-relaxed text-muted-foreground sm:text-base">
         {c.intro}

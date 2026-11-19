@@ -19,9 +19,9 @@ const COPY = {
       {
         heading: "Who is accountable",
         body: [
-          "HerbAlly is written and maintained by Yasser Bheekun, a medical laboratory technologist certified with the OPTMQ (Ordre professionnel des technologistes médicaux du Québec) and the CSMLS (Canadian Society for Medical Laboratory Science). He holds a DEC in Biomedical Laboratory Technology and works in a hospital laboratory at the McGill University Health Centre in Montreal.",
-          "That is the accountability line: one named person, with a health-science education, answerable for what this site publishes. It is not a content team, and it is not an anonymous editorial board.",
-          "He is also the site's reviewer of record: editorial review — deciding what may be stated, which sources back a claim, and where the limits are — not clinical review. No page is labelled as clinically reviewed.",
+          "HerbAlly is written, maintained, and editorially reviewed by Yasser Bheekun, a medical laboratory technologist certified with the OPTMQ (Ordre professionnel des technologistes médicaux du Québec) and the CSMLS (Canadian Society for Medical Laboratory Science). He holds a DEC in Biomedical Laboratory Technology and works in a hospital laboratory at the McGill University Health Centre in Montreal.",
+          "That is the accountability line: one named person, with a health-science education, answerable for what this site publishes. It is not an anonymous content team or hidden board.",
+          "As reviewer of record, Yasser has read through and editorially validated the published herb library against primary regulatory and clinical monographs (Health Canada NHP, EMA HMPC, NIH NCCIH, NIH LiverTox, and PubMed). This editorial validation confirms source traceability and conservative safety framing — it is educational oversight, explicitly distinct from licensed physician clinical care.",
         ],
       },
       {
@@ -76,9 +76,9 @@ const COPY = {
       {
         heading: "Qui est responsable",
         body: [
-          "HerbAlly est rédigé et maintenu par Yasser Bheekun, technologiste médical certifié par l'OPTMQ (Ordre professionnel des technologistes médicaux du Québec) et la SCSLM (Société canadienne de science de laboratoire médical). Il détient un DEC en technologie d'analyses biomédicales et travaille dans un laboratoire hospitalier du Centre universitaire de santé McGill, à Montréal.",
-          "C'est la ligne de responsabilité : une personne nommée, formée en sciences de la santé, répond de ce que ce site publie. Ce n'est pas une équipe de contenu, ni un comité éditorial anonyme.",
-          "Il est également le réviseur de référence du site : une révision éditoriale — décider ce qui peut être affirmé, quelles sources appuient une affirmation et où sont les limites — et non une révision clinique. Aucune page n'est présentée comme cliniquement révisée.",
+          "HerbAlly est rédigé, maintenu et révisé sur le plan éditorial par Yasser Bheekun, technologiste médical certifié par l'OPTMQ (Ordre professionnel des technologistes médicaux du Québec) et la SCSLM (Société canadienne de science de laboratoire médical). Il détient un DEC en technologie d'analyses biomédicales et travaille dans un laboratoire hospitalier du Centre universitaire de santé McGill, à Montréal.",
+          "C'est la ligne de responsabilité : une personne nommée, formée en sciences de la santé, répond de ce que ce site publie. Ce n'est ni une équipe de contenu anonyme ni un comité éditorial caché.",
+          "À titre de réviseur de référence, Yasser a relu et validé sur le plan éditorial la bibliothèque publiée par rapport aux monographies réglementaires et cliniques primaires (Santé Canada, EMA HMPC, NIH NCCIH, NIH LiverTox et PubMed). Cette validation éditoriale garantit la traçabilité des sources et la prudence des énoncés — il s'agit d'une révision éditoriale, distincte d'un acte médical clinique.",
         ],
       },
       {
@@ -176,6 +176,28 @@ export default async function EditorialPolicyPage() {
           { name: c.title, url },
         ]}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Yasser Bheekun",
+            jobTitle:
+              "Medical Laboratory Technologist (MLT) — Editor & Reviewer of Record",
+            hasCredential: [
+              "OPTMQ Certified Medical Laboratory Technologist",
+              "CSMLS Certified Medical Laboratory Technologist",
+              "DEC in Biomedical Laboratory Technology, Dawson College",
+            ],
+            affiliation: {
+              "@type": "Organization",
+              name: "McGill University Health Centre (hospital laboratory)",
+            },
+            url,
+          }).replace(/</g, "\\u003c"),
+        }}
+      />
       <BreadcrumbListSchema
         items={[
           { name: "Home", url: "/" },
@@ -229,12 +251,36 @@ export default async function EditorialPolicyPage() {
         </a>
       </section>
 
-      <p className="mt-8 text-sm">
+      <p className="mt-8 flex flex-wrap gap-5 text-sm">
         <Link
           href="/herbs"
           className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
         >
           {c.back}
+        </Link>
+        <Link
+          href="/methodology"
+          className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
+        >
+          {locale === "fr" ? "Méthodologie" : "Methodology"}
+        </Link>
+        <Link
+          href="/about"
+          className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
+        >
+          {locale === "fr" ? "À propos" : "About"}
+        </Link>
+        <Link
+          href="/disclaimer"
+          className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
+        >
+          {locale === "fr" ? "Avertissement médical" : "Medical Disclaimer"}
+        </Link>
+        <Link
+          href="/privacy"
+          className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
+        >
+          {locale === "fr" ? "Confidentialité" : "Privacy"}
         </Link>
       </p>
     </div>
