@@ -12,7 +12,7 @@ import { ChipLegend } from "@/components/herbs/chip-legend";
 import { RecentlyViewed } from "@/components/herbs/recently-viewed";
 import { JsonLd } from "@/components/seo/json-ld";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
-import { getHerbs, getHerbCategories } from "@/lib/actions/herbs";
+import { getHerbs } from "@/lib/actions/herbs";
 import {
   getCachedDefaultHerbsPage,
   getCachedHerbCategories,
@@ -84,21 +84,23 @@ export default async function HerbsPage({
   const prefix = locale === "fr" ? "/fr" : "";
   const t = await getTranslations({ locale });
   const isDefaultPage1 = !query && !category && page === 1;
-  const [herbsResult, cachedCategories] = await Promise.all([
+  const [herbsResult, categoriesResult] = await Promise.all([
     isDefaultPage1
       ? getCachedDefaultHerbsPage(locale, sort)
-          .catch(() => null)
-          .then((cached) =>
-            cached
-              ? ({ success: true, data: cached } as const)
-              : getHerbs({ query, category, page, sort }, locale)
-          )
+          .then((data) => ({ success: true as const, data }))
+          .catch((err) => ({
+            success: false as const,
+            error: err instanceof Error ? err.message : "Failed to fetch herbs",
+          }))
       : getHerbs({ query, category, page, sort }, locale),
-    getCachedHerbCategories(locale).catch(() => null),
+    getCachedHerbCategories(locale)
+      .then((data) => ({ success: true as const, data }))
+      .catch((err) => ({
+        success: false as const,
+        error:
+          err instanceof Error ? err.message : "Failed to fetch categories",
+      })),
   ]);
-  const categoriesResult = cachedCategories
-    ? ({ success: true, data: cachedCategories } as const)
-    : await getHerbCategories(locale);
 
   const categories = categoriesResult.success ? categoriesResult.data! : [];
   const buildCanonical = (opts: {
