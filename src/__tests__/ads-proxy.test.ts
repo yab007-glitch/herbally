@@ -41,6 +41,8 @@ describe("proxy — security headers with the launch gate off", () => {
     "/interactions/ginger",
     "/medications",
     "/fr/medications/warfarin",
+    "/surgery-planner",
+    "/fr/surgery-planner",
     "/npn-checker",
     "/fr/npn-checker",
     "/widgets",

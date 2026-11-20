@@ -115,6 +115,15 @@ jobs:
             *) echo "sourced herb page missing from sitemap"; exit 1 ;;
           esac
 
+          # Best-effort IndexNow notification for Bing/DuckDuckGo/ChatGPT Search
+          idx_key=$(tr -d '\r\n' < /srv/herbally/public/indexnow-key.txt 2>/dev/null || true)
+          if [ -n "$idx_key" ]; then
+            curl -fsS -X POST "https://api.indexnow.org/indexnow" \
+              -H "Content-Type: application/json; charset=utf-8" \
+              -d "{\"host\":\"herbally.app\",\"key\":\"${idx_key}\",\"keyLocation\":\"https://herbally.app/${idx_key}.txt\",\"urlList\":[\"https://herbally.app/\",\"https://herbally.app/herbs\",\"https://herbally.app/medications\",\"https://herbally.app/herb-drug-interactions\",\"https://herbally.app/surgery-planner\",\"https://herbally.app/npn-checker\",\"https://herbally.app/guides\",\"https://herbally.app/compare\",\"https://herbally.app/fr\",\"https://herbally.app/fr/medications\",\"https://herbally.app/fr/surgery-planner\",\"https://herbally.app/fr/guides\",\"https://herbally.app/rss.xml\"]}" >/dev/null || true
+            echo "IndexNow pinged"
+          fi
+
       - name: Prune stale Docker images and build cache
         run: |
           set -euo pipefail

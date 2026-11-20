@@ -554,6 +554,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     },
     {
+      url: `${baseUrl}/surgery-planner`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/surgery-planner`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/npn-checker`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "weekly",
@@ -893,6 +905,46 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return entries;
     });
 
+    const interactionHerbMap = new Map<
+      string,
+      { hasFr: boolean; updatedAt: string | null }
+    >();
+    for (const pair of interactionPairs) {
+      const prev = interactionHerbMap.get(pair.herbSlug);
+      const updated =
+        pair.updatedAt && (!prev?.updatedAt || pair.updatedAt > prev.updatedAt)
+          ? pair.updatedAt
+          : (prev?.updatedAt ?? null);
+      interactionHerbMap.set(pair.herbSlug, {
+        hasFr: (prev?.hasFr ?? false) || pair.hasFr,
+        updatedAt: updated,
+      });
+    }
+    const herbInteractionHubPages: MetadataRoute.Sitemap = Array.from(
+      interactionHerbMap.entries()
+    ).flatMap(([slug, info]) => {
+      const lastModified = info.updatedAt
+        ? new Date(info.updatedAt)
+        : new Date();
+      const entries: MetadataRoute.Sitemap = [
+        {
+          url: `${baseUrl}/interactions/${slug}`,
+          lastModified,
+          changeFrequency: "monthly" as const,
+          priority: 0.75,
+        },
+      ];
+      if (info.hasFr) {
+        entries.push({
+          url: `${baseUrl}${FR_BASE}/interactions/${slug}`,
+          lastModified,
+          changeFrequency: "monthly" as const,
+          priority: 0.75,
+        });
+      }
+      return entries;
+    });
+
     return withLanguageAlternates(
       [
         ...staticPages,
@@ -900,6 +952,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ...comparePages,
         ...pairPages,
         ...medicationPages,
+        ...herbInteractionHubPages,
         ...herbPages,
       ],
       baseUrl

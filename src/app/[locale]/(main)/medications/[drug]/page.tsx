@@ -33,6 +33,10 @@ import { cn } from "@/lib/utils";
 export const revalidate = 3600;
 export const dynamicParams = true;
 
+export async function generateStaticParams() {
+  return [];
+}
+
 type Props = { params: Promise<{ drug: string }> };
 
 const loadMedication = cache((slug: string, locale: string) =>

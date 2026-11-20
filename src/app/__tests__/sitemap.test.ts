@@ -194,6 +194,8 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/fr/npn-checker`);
     expect(urls).toContain(`${BASE_URL}/medications`);
     expect(urls).toContain(`${BASE_URL}/fr/medications`);
+    expect(urls).toContain(`${BASE_URL}/surgery-planner`);
+    expect(urls).toContain(`${BASE_URL}/fr/surgery-planner`);
     expect(urls).toContain(`${BASE_URL}/widgets`);
     expect(urls).toContain(`${BASE_URL}/fr/widgets`);
     expect(urls).toContain(`${BASE_URL}/guides/how-to-check-an-interaction`);
@@ -207,9 +209,11 @@ describe("sitemap", () => {
       `${BASE_URL}/fr/guides/how-to-read-health-canada-npn`
     );
 
-    // Pair URLs & reverse-lookup medication URLs, both locales (hasFr = true).
+    // Pair URLs & reverse-lookup medication/herb hubs, both locales (hasFr = true).
     expect(urls).toContain(`${BASE_URL}/interactions/ginger/warfarin`);
     expect(urls).toContain(`${BASE_URL}/fr/interactions/ginger/warfarin`);
+    expect(urls).toContain(`${BASE_URL}/interactions/ginger`);
+    expect(urls).toContain(`${BASE_URL}/fr/interactions/ginger`);
     expect(urls).toContain(`${BASE_URL}/medications/warfarin`);
     expect(urls).toContain(`${BASE_URL}/fr/medications/warfarin`);
 

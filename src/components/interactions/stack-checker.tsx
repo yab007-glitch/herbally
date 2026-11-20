@@ -67,6 +67,7 @@ export function StackChecker() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StackApiResponse | null>(null);
+  const [showWalletCard, setShowWalletCard] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -397,16 +398,92 @@ export function StackChecker() {
         </Button>
 
         {result && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => window.print()}
-          >
-            <Printer className="mr-1.5 size-4" />
-            {t("printButton")}
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowWalletCard((prev) => !prev);
+              }}
+            >
+              <Printer className="mr-1.5 size-4" />
+              {locale === "fr"
+                ? showWalletCard
+                  ? "Masquer carte portefeuille"
+                  : "Carte portefeuille (pharmacien)"
+                : showWalletCard
+                  ? "Hide wallet card"
+                  : "Foldable Wallet Card"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => window.print()}
+            >
+              <Printer className="mr-1.5 size-4" />
+              {t("printButton")}
+            </Button>
+          </div>
         )}
       </div>
+
+      {result && showWalletCard && (
+        <div className="print-sheet mt-5 rounded-xl border-2 border-dashed border-primary/50 bg-background p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-primary">
+                {locale === "fr"
+                  ? "Carte portefeuille HerbAlly — Suppléments & Médicaments"
+                  : "HerbAlly Pocket Wallet Card — Supplements & Medications"}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                {locale === "fr"
+                  ? "Présentez cette carte à votre pharmacien, médecin ou dentiste avant toute nouvelle ordonnance."
+                  : "Show this foldable card to your pharmacist, physician, or surgeon at every appointment."}
+              </p>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              className="no-print"
+              onClick={() => window.print()}
+            >
+              <Printer className="mr-1 size-3.5" />
+              {locale === "fr" ? "Imprimer la carte" : "Print card"}
+            </Button>
+          </div>
+          <div className="mt-3 grid gap-3 text-xs sm:grid-cols-2">
+            <div>
+              <p className="font-semibold text-foreground">
+                {t("herbsHeading")}
+              </p>
+              <p className="mt-0.5 text-muted-foreground">
+                {herbs.join(", ") || "—"}
+              </p>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">
+                {t("drugsHeading")}
+              </p>
+              <p className="mt-0.5 text-muted-foreground">
+                {drugs.join(", ") || "—"}
+              </p>
+            </div>
+          </div>
+          {result.matches.length > 0 && (
+            <div className="mt-3 border-t border-border/60 pt-2 text-[11px] text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                {locale === "fr"
+                  ? "Alertes répertoriées : "
+                  : "Flagged pairs: "}
+              </span>
+              {result.matches
+                .map((m) => `${m.herbName} + ${m.drugName} (${m.severity})`)
+                .join(" · ")}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Results */}
       {result && (

@@ -194,6 +194,7 @@ const SENSITIVE_PREFIXES = [
   "/calculator",
   "/interactions",
   "/medications",
+  "/surgery-planner",
   "/npn-checker",
   "/symptoms",
   "/compare",

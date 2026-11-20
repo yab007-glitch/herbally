@@ -127,6 +127,25 @@ export default async function HerbDrugInteractionsPage() {
         </Button>
       </section>
 
+      <section className="mt-4 flex flex-col justify-between gap-3 rounded-2xl border bg-muted/30 p-5 sm:flex-row sm:items-center">
+        <div>
+          <h2 className="text-base font-semibold text-foreground">
+            {t("surgeryBannerTitle")}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("surgeryBannerBody")}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          render={<Link href="/surgery-planner" />}
+          className="shrink-0"
+        >
+          {t("surgeryBannerButton")}
+          <ArrowRight className="ml-1 size-4" />
+        </Button>
+      </section>
+
       <div className="mt-8">
         <InteractionExplainer />
       </div>

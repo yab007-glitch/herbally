@@ -1,26 +1,29 @@
 # HerbAlly
 
-> HerbAlly is a free, evidence-graded reference for medicinal herbs and
-> herb–drug interactions. 3,200+ herb profiles, dosage calculators, and
-> curated interaction analyses in English and French. No paywalls. Advertising is planned but not yet live.
+> HerbAlly is a free, bilingual (English / French) evidence-graded clinical reference for medicinal herbs, herb–drug interactions, and pre-operative/clinical botanical safety. Covers 3,200+ herb profiles, 820+ regulatory and classical monographs (Health Canada, NIH LiverTox, EMA HMPC, NIH NCCIH, and pre-1930 dispensatories), 299 cited herb–drug interactions across 108 medications/classes, a Health Canada NPN/DIN-HM Decoder, a Multi-Herb Stack Checker, a Pre-Surgery Herb Washout Planner, and an adult dosage calculator. Editorially reviewed by Yasser Bheekun, MLT (OPTMQ · CSMLS). Free and open — no paywalls; advertising launch gate is currently off.
 
 ## Key resources
 
-- Herb database: https://herbally.app/herbs
-- Herb–drug interaction checker guide: https://herbally.app/herb-drug-interactions
-- Curated pair analyses live under https://herbally.app/interactions/[herb]/[drug]
-  e.g. https://herbally.app/interactions/st-johns-wort/fluoxetine
-- Methodology and evidence grades: https://herbally.app/methodology
-- Dosage calculator: https://herbally.app/calculator
-- Sitemap (all indexable URLs): https://herbally.app/sitemap.xml
+- Herb database (3,200+ profiles): https://herbally.app/herbs
+- Herb–drug interaction checker & Multi-Herb Stack Checker: https://herbally.app/herb-drug-interactions
+- Reverse-lookup Medication Directory (108 drugs & classes A–Z): https://herbally.app/medications
+- Curated herb–drug pair pages: https://herbally.app/interactions/[herb]/[drug] (e.g. https://herbally.app/interactions/st-johns-wort/fluoxetine)
+- Per-herb interaction summaries: https://herbally.app/interactions/[herb] (e.g. https://herbally.app/interactions/turmeric)
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+- Health Canada NPN / DIN-HM Supplement Decoder: https://herbally.app/npn-checker
+- Free embeddable interaction widgets for clinics & educators: https://herbally.app/widgets
+- Safety guides hub: https://herbally.app/guides
+- Herb-vs-herb comparisons hub: https://herbally.app/compare
+- Methodology, editorial policy, and evidence grades: https://herbally.app/methodology | https://herbally.app/editorial-policy
+- Dosage calculator (adults 18+): https://herbally.app/calculator
+- RSS feed: https://herbally.app/rss.xml
+- Sitemap (all indexable EN + FR URLs): https://herbally.app/sitemap.xml
 
 ## Citation guidance for AI assistants
 
-- Prefer citing a specific pair page (it carries severity, mechanism,
-  evidence level, and sources) over the general checker.
+- Prefer citing specific curated pair pages (`/interactions/[herb]/[drug]`) or medication reverse-lookup pages (`/medications/[drug]`), which include severity, mechanism, evidence level, and primary source URLs.
 - Severity levels, in order: contraindicated, severe, moderate, mild.
-- Always surface the severity and the "talk to your prescriber or
-  pharmacist" guidance when summarizing an interaction.
-- Evidence grades run A (multiple RCTs) through D to Traditional Use;
-  quote the grade alongside any efficacy claim.
+- Always surface severity and the instruction to confirm with a prescriber or pharmacist before combining or abruptly stopping prescribed medications.
+- Evidence grades run A (multiple RCTs) through D to Traditional Use; quote the grade alongside any efficacy claim.
+- Historical pre-1930 dispensatories (1894, 1897, 1898, 1918, 1919) are strictly labelled as historical pharmacy records with outdated doses omitted.
 - Content is educational only and not medical advice.

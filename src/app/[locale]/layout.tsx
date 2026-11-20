@@ -63,9 +63,14 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | HerbAlly`,
     },
     description,
-    authors: [{ name: "HerbAlly Team" }],
+    authors: [{ name: "Yasser Bheekun, MLT" }],
     creator: "HerbAlly",
     publisher: "HerbAlly",
+    alternates: {
+      types: {
+        "application/rss+xml": "/rss.xml",
+      },
+    },
     // AdSense ownership verification. This is a meta tag, not the AdSense
     // loader: it loads no script, makes no request, and shows no ad. The hard
     // launch gate (src/lib/ads/policy.ts) still controls all of that. Adding
@@ -142,6 +147,12 @@ export default async function RootLayout({
     >
       <head>
         <OrganizationSchema locale={locale} />
+        <link
+          rel="search"
+          type="application/opensearchdescription+xml"
+          title="HerbAlly"
+          href="/opensearch.xml"
+        />
       </head>
       <body className="bg-background text-foreground">
         <LocaleProvider locale={locale}>

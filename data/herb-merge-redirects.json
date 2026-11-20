@@ -482,5 +482,101 @@
   {
     "from": "/herbs/triphala-indian",
     "to": "/herbs/triphala"
+  },
+  {
+    "from": "/herbs/alisma-plantago-aquatica-subsp-orientale",
+    "to": "/herbs/alisma-oriental"
+  },
+  {
+    "from": "/herbs/angelica-archangelica-l",
+    "to": "/herbs/angelica-root"
+  },
+  {
+    "from": "/herbs/bassia-scoparia",
+    "to": "/herbs/di-fu-zi"
+  },
+  {
+    "from": "/herbs/cinnamomum-aromaticum",
+    "to": "/herbs/cassia-cinnamon"
+  },
+  {
+    "from": "/herbs/crataegus-monogyna-jacq",
+    "to": "/herbs/hawthorn"
+  },
+  {
+    "from": "/herbs/dioscorea-collettii-var-hypoglauca",
+    "to": "/herbs/bi-xie"
+  },
+  {
+    "from": "/herbs/hansenia-weberbaueriana",
+    "to": "/herbs/notopterygium-root"
+  },
+  {
+    "from": "/herbs/hydrastis-canadensis",
+    "to": "/herbs/goldenseal"
+  },
+  {
+    "from": "/herbs/linum-usitatissimum-l",
+    "to": "/herbs/flaxseed-oil-herb"
+  },
+  {
+    "from": "/herbs/passiflora-incarnata",
+    "to": "/herbs/passionflower"
+  },
+  {
+    "from": "/herbs/phyllolobium-chinense",
+    "to": "/herbs/astragalus-complanatus"
+  },
+  {
+    "from": "/herbs/scutellaria-lateriflora-l",
+    "to": "/herbs/skullcap"
+  },
+  {
+    "from": "/herbs/senega-officinalis",
+    "to": "/herbs/seneca-snakeroot"
+  },
+  {
+    "from": "/herbs/styphnolobium-japonicum",
+    "to": "/herbs/sophora-japonica"
+  },
+  {
+    "from": "/herbs/vaccinium-myrtillus-l",
+    "to": "/herbs/bilberry"
+  },
+  {
+    "from": "/herbs/valeriana-officinalis-l",
+    "to": "/herbs/valerian"
+  },
+  {
+    "from": "/herbs/vincetoxicum-stauntonii",
+    "to": "/herbs/cynanchum-stauntonii"
+  },
+  {
+    "from": "/herbs/qing-pi-liver",
+    "to": "/herbs/qing-pi"
+  },
+  {
+    "from": "/herbs/sheng-di-huang-tcm",
+    "to": "/herbs/sheng-di-huang"
+  },
+  {
+    "from": "/herbs/xanthorrhiza-simplicissima-herb",
+    "to": "/herbs/xanthorhiza-simplicissima"
+  },
+  {
+    "from": "/herbs/asteraceae-roman-chamomile",
+    "to": "/herbs/chamomile-roman"
+  },
+  {
+    "from": "/herbs/boneset-herb",
+    "to": "/herbs/boneset"
+  },
+  {
+    "from": "/herbs/clivers-goosegrass",
+    "to": "/herbs/cleavers-herb"
+  },
+  {
+    "from": "/herbs/herb-bennet",
+    "to": "/herbs/wood-avens"
   }
 ]

@@ -499,6 +499,7 @@
     "sponsorship": "Sponsorship",
     "herbDrugInteractions": "Herb–Drug Interactions",
     "medications": "Medications A–Z",
+    "surgeryPlanner": "Pre-Surgery Planner",
     "symptoms": "Symptoms",
     "editorialPolicy": "Editorial policy",
     "npnChecker": "Health Canada NPN Decoder",
@@ -698,6 +699,9 @@
     "medicationsBannerTitle": "Prefer to start from your prescription medication?",
     "medicationsBannerBody": "Browse our reverse-lookup directory of medications and drug classes to see every herb documented to interact with your prescription.",
     "medicationsBannerButton": "Browse Medications A–Z",
+    "surgeryBannerTitle": "Upcoming surgery or dental procedure?",
+    "surgeryBannerBody": "Enter your surgery date and current supplements to build a printable ASA/Health Canada pre-op washout checklist for your surgeon.",
+    "surgeryBannerButton": "Open Surgery Planner",
     "widgetsHubLink": "Configure EN/FR embed sizes on the Widget Builder"
   },
   "auth": {
@@ -1668,6 +1672,8 @@
     "npnCheckerDesc": "Look up any 8-digit Health Canada Natural Product Number (NPN) or DIN-HM: inspect medicinal ingredients, cautions, and cross-check drug interactions.",
     "medications": "Medications & Herb Interactions A–Z",
     "medicationsDesc": "Browse prescription medications and drug classes to see every herb documented to interact with each drug, ranked by severity and evidence.",
+    "surgeryPlanner": "Pre-Surgery Herb Washout Planner",
+    "surgeryPlannerDesc": "Calculate pre-operative review dates for bleeding, sedation, and CYP450-active herbs based on ASA and Health Canada surgical safety guidance.",
     "widgets": "Free Embeddable Herb-Drug Checker",
     "widgetsDesc": "Embed HerbAlly's free bilingual herb-drug interaction checker widget on your clinic, pharmacy student, or wellness website."
   },
