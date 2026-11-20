@@ -239,6 +239,7 @@ export async function getRelatedPairs(
   const supabase = getAnonClient();
   if (!supabase) return { sameHerb: [], sameDrug: [] };
   try {
+    const drugPrefix = pair.drugName.split(" (")[0].trim();
     const [{ data: herbRows }, { data: drugRows }] = await Promise.all([
       supabase
         .from("drug_interactions")
@@ -252,8 +253,9 @@ export async function getRelatedPairs(
         .from("drug_interactions")
         .select(PAIR_SELECT)
         .eq("herbs.is_published", true)
+        .ilike("drug_name", `${drugPrefix}%`)
         .neq("id", pair.id)
-        .limit(500)
+        .limit(50)
         .abortSignal(querySignal()),
     ]);
     const sameHerb: InteractionPair[] = [];

@@ -159,3 +159,122 @@ hosts, in order of likelihood:
 - Analytics: referrals to `/herb-drug-interactions` and `/embed/checker`.
 - The number that matters is not links; it is whether the one-domain ceiling
   breaks. Five real library links would triple it.
+
+---
+
+## Ready-to-Send Personalized Messages (Updated 2026-11-20)
+
+### 1. University of Toledo — Mulford Health Science Library (`wade.lee@utoledo.edu`)
+
+- **To:** `wade.lee@utoledo.edu`
+- **Subject:** Free herb–drug interaction checker for your Herbs and Supplements guide
+- **Body:**
+
+```text
+Hello Professor Lee,
+
+I maintain HerbAlly, a free, bilingual (EN/FR) herbal-medicine and drug-interaction reference. I'm writing because your Consumer Health: Herbs and Supplements guide at https://libguides.utoledo.edu/ConsumerHealth/Herbs_Supplements links to NCCIH's "How Medications and Supplements Can Interact" overview — and an interactive, sourced checker alongside it may be useful to your readers.
+
+We publish three free patient-safety tools that require no account and carry no ads on clinical tool pages:
+- Herb–Drug Interaction & Stack Checker: https://herbally.app/herb-drug-interactions
+- Reverse-Lookup Medication Directory (by prescription drug or class): https://herbally.app/medications
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+
+Every interaction is severity-graded and cites its primary source, and the underlying herb monographs display official records from Health Canada (LNHPD & single-ingredient monographs), the European Medicines Agency (HMPC), NIH NCCIH, and NIH LiverTox. Our methodology and open-data licences are documented at https://herbally.app/methodology.
+
+If it fits your guide, a single resource link is all I'd ask for (or there is a zero-tracking embed snippet at https://herbally.app/widgets if you ever want an inline checker). Either way, thank you for keeping the guide current.
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 2. MCPHS University — Henrietta DeBenedictis Library (`erin.wentz@mcphs.edu`)
+
+- **To:** `erin.wentz@mcphs.edu`
+- **Subject:** Free herb–medication interaction reference for your CAM Consumer Health guide
+- **Body:**
+
+```text
+Hello Erin,
+
+I maintain HerbAlly, a free herbal-medicine and supplement-interaction reference. I'm writing because your Consumer Health: Complementary and Alternative Medicine guide at https://mcphs.libguides.com/Consumer_Health/alternative_medicine curates patient-facing supplement resources for pharmacy students and consumers.
+
+We publish a free herb–drug interaction checker and reverse-lookup medication directory (no login, no tracking, and no ads on clinical tool pages):
+- Herb–Drug Interaction Checker & Printable Pharmacist Wallet Card: https://herbally.app/herb-drug-interactions
+- Reverse-Lookup Medication Directory (108+ medications & drug classes mapped to NIH RxNorm): https://herbally.app/medications
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+
+Each entry cites its regulatory or clinical source (Health Canada LNHPD, EU EMA HMPC monographs, NIH NCCIH, NIH LiverTox, and PubMed PMIDs). Methodology and source licensing are detailed at https://herbally.app/methodology.
+
+If you feel it would help your students or readers, we would be grateful for a link on the guide. Thank you for maintaining such a clear resource.
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 3. ECPI University — Virtual Library (`ssimmons@ecpi.edu`)
+
+- **To:** `ssimmons@ecpi.edu`
+- **Subject:** Sourced herb–drug interaction tool for your Pharmacology: Dietary Supplements guide
+- **Body:**
+
+```text
+Hello Stephanie,
+
+I maintain HerbAlly, a free herbal-medicine and drug-interaction reference. I came across your Pharmacology: Dietary Supplements LibGuide (https://ecpi.libguides.com/c.php?g=696097&p=5066563) and thought our interactive medication-screening tools might be a helpful companion to the NIH resources you list for nursing and pharmacology students:
+
+- Herb–Drug Interaction Checker (multi-herb stack screening + printable wallet card): https://herbally.app/herb-drug-interactions
+- Reverse-Lookup Medication Directory (search by prescription drug to see interacting herbs): https://herbally.app/medications
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+
+Every interaction is graded by severity and linked to primary literature or regulator monographs (NIH NCCIH, NIH LiverTox, EU EMA HMPC, and Health Canada LNHPD), with methodology documented at https://herbally.app/methodology. It is completely free and requires no account.
+
+If it fits your pharmacology guide, a single line under dietary supplement resources would be wonderful. Thank you for your time and for curating the guide.
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 4. UNMC College of Pharmacy — McGoogan Health Sciences Library (`https://unmc.libguides.com/c.php?g=444162&p=3203235`)
+
+- **Channel:** Page's "Report a problem" link
+- **Subject:** Stale NCCAM link on Patient Herb and Supplement Info guide
+- **Body:**
+
+```text
+Hello McGoogan Library team,
+
+On your Patient Herb and Supplement Info guide (https://unmc.libguides.com/c.php?g=444162&p=3203235), the entry for the NIH center still lists "National Center for Complementary and Alternative Medicine (NCCAM)" — NCCAM was renamed the National Center for Complementary and Integrative Health (NCCIH, https://www.nccih.nih.gov/) in 2015, so updating the title and direct URL may save readers a redirect.
+
+While you are editing that section, if you are open to an additional free patient tool: we publish HerbAlly's Herb–Drug Interaction Checker (https://herbally.app/herb-drug-interactions) and Reverse-Lookup Medication Directory (https://herbally.app/medications), where every entry carries its primary PubMed or regulator source (NIH NCCIH, LiverTox, EMA HMPC, Health Canada) with no account required. Methodology: https://herbally.app/methodology.
+
+Thank you for maintaining the guide!
+Yasser Bheekun, MLT — HerbAlly (https://herbally.app)
+```
+
+### 5. Michigan State University Libraries (`https://libguides.lib.msu.edu/consumerhealth/drugs`)
+
+- **Channel:** MSU Libraries "Ask Us" form (`https://lib.msu.edu/contact/askalib-email`)
+- **Subject:** Free herb–drug interaction checker for Consumer Health: Drugs / Herbs / Supplements guide
+- **Body:**
+
+```text
+Hello MSU Consumer Health Library team,
+
+I maintain HerbAlly, a free herbal-medicine reference. Your Consumer Health: Drugs / Herbs / Supplements guide (https://libguides.lib.msu.edu/consumerhealth/drugs) lists Memorial Sloan Kettering's About Herbs, MedlinePlus, and NIH DSLD for patients checking supplements — and I wanted to suggest a complementary interactive tool for readers screening herb–medication combinations:
+
+- Herb–Drug Interaction Checker: https://herbally.app/herb-drug-interactions
+- Reverse-Lookup Medication Directory: https://herbally.app/medications
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+
+Every interaction is graded by clinical severity and cites its source, and the underlying herb pages show the official monograph or regulator record (Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, NIH LiverTox; methodology at https://herbally.app/methodology). No account or sign-up is required.
+
+If it's a good fit for the Herbs / Supplements box, a link would be much appreciated. Thank you for keeping the guide current!
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```

@@ -113,11 +113,11 @@ export function buildCsp(options: CspOptions = {}): string {
     // The Ollama Cloud call is server-side only; the browser never talks to it.
     // `apiOrigin` is the configured Supabase host: `'self'` does not cover a
     // custom API domain, so without it a self-hosted backend breaks sign-in.
-    `connect-src 'self'${apiOrigin ? ` ${apiOrigin}` : ""} *.supabase.co *.stripe.com https://cloudflareinsights.com ${ads}`,
-    // L16 (audit 2026-06-22): scope img-src to the only remote image host we
-    // actually use (Supabase Storage), matching next.config.ts remotePatterns.
+    `connect-src 'self'${apiOrigin ? ` ${apiOrigin}` : ""} *.stripe.com https://cloudflareinsights.com ${ads}`,
+    // L16 (audit 2026-06-22): scope img-src to the remote image hosts we
+    // actually use, matching next.config.ts remotePatterns.
     // A bare `https:` allowed any origin to be a CSP-permitted image source.
-    "img-src 'self' data: blob: https://*.supabase.co https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
+    "img-src 'self' data: blob: https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     `frame-src *.stripe.com ${ads}`,

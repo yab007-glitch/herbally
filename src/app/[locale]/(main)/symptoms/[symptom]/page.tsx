@@ -76,12 +76,20 @@ const loadSymptomHerbs = cache(
       // Bounded: an unresponsive database must not hang a prerender until
       // Next's 60s page budget kills the build. 2026-11-02 a wedged PostgREST
       // failed the whole production deploy this way.
+      const baseQuery =
+        locale === "fr"
+          ? supabase
+              .from("herbs")
+              .select(
+                "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
+              )
+          : supabase
+              .from("herbs")
+              .select(
+                "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses"
+              );
       const { data } = await withTimeout(
-        supabase
-          .from("herbs")
-          .select(
-            "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
-          )
+        baseQuery
           .eq("is_published", true)
           .overlaps("symptom_keywords", symptomQueryKeywords(symptom))
           .order("evidence_level", { ascending: true })

@@ -42,8 +42,8 @@ type Props = { params: Promise<{ herb: string; drug: string }> };
  * How many pair pages to pre-render at build time.
  *
  * Zero, deliberately: this is the most expensive route to generate
- * (getInteractionPair plus getRelatedPairs, the latter pulling up to 500
- * joined rows), and the build shares the 0.5 GB production database. Pairs are
+ * (getInteractionPair plus getRelatedPairs), and the build shares the
+ * production database. Pairs are
  * generated on demand and cached instead. Indexability never depended on
  * prerendering — the sitemap lists every curated pair.
  */

@@ -1,4 +1,6 @@
 import { normalizeMatchText } from "@/lib/search/normalize-query";
+import { rankHerbResults } from "@/lib/search/rank-results";
+import { evidenceRank } from "@/lib/search/symptom-results";
 import { extractFrenchHerbName } from "@/lib/utils/localize-herb";
 
 /**
@@ -17,18 +19,6 @@ export interface NameHerbMatch {
   id: string;
   name: string;
   translations?: unknown;
-}
-
-const EVIDENCE_ORDER: Record<string, number> = {
-  A: 0,
-  B: 1,
-  C: 2,
-  D: 3,
-  trad: 4,
-};
-
-function evidenceRank(level: string | null): number {
-  return EVIDENCE_ORDER[level ?? "C"] ?? 2;
 }
 
 export function rankHerbSearchResults({
@@ -92,9 +82,12 @@ export function rankHerbSearchResults({
     const keywordRest = rest
       .filter((h) => keywordIds.has(h.id))
       .sort((a, b) => evidenceRank(a.evidence) - evidenceRank(b.evidence));
-    const nameRest = rest
-      .filter((h) => !keywordIds.has(h.id))
-      .sort((a, b) => a.name.localeCompare(b.name));
+    const nameRest = rankHerbResults(
+      rest
+        .filter((h) => !keywordIds.has(h.id))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+      query
+    );
     rest.splice(0, rest.length, ...keywordRest, ...nameRest);
   }
 

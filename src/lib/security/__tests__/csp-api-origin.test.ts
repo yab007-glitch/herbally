@@ -86,8 +86,7 @@ describe("connect-src includes the configured API origin", () => {
       process.env[KEY] = "https://api.herbally.app";
       const parsed = tokens(build(), "connect-src");
       expect(parsed).toContain("https://api.herbally.app");
-      // The Cloud wildcard must survive for the current deployment.
-      expect(parsed).toContain("*.supabase.co");
+      expect(parsed).not.toContain("*.supabase.co");
       expect(parsed).toContain("'self'");
     });
 
@@ -95,7 +94,7 @@ describe("connect-src includes the configured API origin", () => {
       delete process.env[KEY];
       const connect = tokens(build(), "connect-src");
       expect(connect).toContain("'self'");
-      expect(connect).toContain("*.supabase.co");
+      expect(connect).not.toContain("*.supabase.co");
       expect(connect).toContain("*.stripe.com");
       // Cloudflare Web Analytics: the beacon script posted its events here
       // and the CSP blocked them until this host was allowed.

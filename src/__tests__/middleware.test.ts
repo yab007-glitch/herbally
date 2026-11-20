@@ -130,8 +130,8 @@ describe("middleware — CSP", () => {
     }
   });
 
-  it("allows connections to Supabase but not to the Ollama server", () => {
-    expect(directive(devCsp, "connect-src")).toContain("*.supabase.co");
+  it("excludes legacy *.supabase.co wildcard and the Ollama server", () => {
+    expect(directive(devCsp, "connect-src")).not.toContain("*.supabase.co");
     expect(directive(devCsp, "connect-src")).not.toContain("ollama.com");
     expect(devCsp).not.toContain("ollama.com");
   });
