@@ -410,9 +410,12 @@ export default async function InteractionPairPage({ params }: Props) {
             {pair.herbName}
           </Link>
           <span className="text-muted-foreground">+</span>
-          <span className="text-sm font-medium text-foreground">
-            {pair.drugName}
-          </span>
+          <Link
+            href={`/medications/${pair.drugSlug}`}
+            className="text-sm font-medium text-foreground hover:text-primary hover:underline"
+          >
+            {pair.localizedDrugName || pair.drugName}
+          </Link>
         </div>
         <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           {verdict.headline}
@@ -658,11 +661,21 @@ export default async function InteractionPairPage({ params }: Props) {
       )}
       {sameDrug.length > 0 && (
         <section>
-          <h2 className="mb-3 text-xl font-semibold text-foreground">
-            {fr
-              ? `Autres plantes interagissant avec ${pair.drugName}`
-              : `More herbs that interact with ${pair.drugName}`}
-          </h2>
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-xl font-semibold text-foreground">
+              {fr
+                ? `Autres plantes interagissant avec ${pair.localizedDrugName || pair.drugName}`
+                : `More herbs that interact with ${pair.drugName}`}
+            </h2>
+            <Link
+              href={`/medications/${pair.drugSlug}`}
+              className="text-xs font-medium text-primary hover:underline"
+            >
+              {fr
+                ? `Voir toutes les plantes pour ce médicament →`
+                : `View full medication guide →`}
+            </Link>
+          </div>
           <div className="flex flex-wrap gap-2">
             {sameDrug
               .sort(

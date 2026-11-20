@@ -131,6 +131,41 @@ const EN: HerbPageCopy = {
       notice:
         "This records what a Victorian doctor wrote in 1897. Some of it is now known to be wrong, and it is not medical advice; the warnings above give current guidance.",
     },
+    "King's American Dispensatory 1898": {
+      heading: (name) =>
+        `What King's American Dispensatory (1898) said about ${name}`,
+      sourceLabel:
+        "King's American Dispensatory, H. W. Felter & J. U. Lloyd (18th ed., 1898)",
+      licenceText:
+        "Published in 1898 and in the public domain; reproduced from the National Library of Medicine archival digitization.",
+      claimsHeading: "History, composition, and historical medical uses",
+      safetyHeading: "Historical toxicological notes",
+      notice:
+        "This records Eclectic pharmacy teaching from 1898. Medical understanding has changed significantly, and historical doses are omitted as unsafe. It is not medical advice; follow the modern cautions above.",
+    },
+    "Ellingwood's American Materia Medica 1919": {
+      heading: (name) =>
+        `What Ellingwood's Materia Medica (1919) said about ${name}`,
+      sourceLabel:
+        "American Materia Medica, Therapeutics and Pharmacognosy, Finley Ellingwood (1919)",
+      licenceText:
+        "Published in 1919 and in the public domain; reproduced from archival medical library holdings.",
+      claimsHeading: "Action, indications, and historical commentary",
+      safetyHeading: "Historical toxicological notes",
+      notice:
+        "This records early 20th-century Eclectic clinical teaching (1919). Some therapeutic claims are unverified or superseded, and historical doses are excluded. Consult current evidence and a clinician.",
+    },
+    "US Dispensatory 1894": {
+      heading: (name) => `What the 1894 US Dispensatory said about ${name}`,
+      sourceLabel:
+        "The Dispensatory of the United States of America, 17th edition (1894)",
+      licenceText:
+        "Published in 1894 and in the public domain; reproduced from National Library of Medicine historical holdings.",
+      claimsHeading: "Description and 19th-century medical properties",
+      safetyHeading: "Historical cautionary notes",
+      notice:
+        "This records what an American pharmacy reference taught in 1894. Portions are outdated and historical doses are excluded for safety. Refer to the modern sections above for current guidance.",
+    },
   },
   narrative: NARRATIVE_EN,
   severity: {
@@ -217,6 +252,41 @@ const FR: HerbPageCopy = {
       safetyHeading: "Effets rapportés",
       notice:
         "Ce texte rapporte ce qu'un médecin victorien écrivait en 1897. Une partie est aujourd'hui reconnue fausse, et il ne s'agit pas d'un avis médical ; les mises en garde ci-dessus donnent les recommandations actuelles.",
+    },
+    "King's American Dispensatory 1898": {
+      heading: (name) =>
+        `Ce que disait le King's American Dispensatory (1898) à propos de ${name}`,
+      sourceLabel:
+        "King's American Dispensatory, H. W. Felter & J. U. Lloyd (18e éd., 1898)",
+      licenceText:
+        "Ouvrage publié en 1898 et appartenant au domaine public (numérisation de la National Library of Medicine).",
+      claimsHeading: "Historique, composition et usages médicaux anciens",
+      safetyHeading: "Notes toxicologiques historiques",
+      notice:
+        "Ce texte rapporte l'enseignement pharmaceutique éclectique de 1898. Les connaissances médicales ont évolué et les posologies d'époque ont été retirées par sécurité. Il ne s'agit pas d'un avis médical.",
+    },
+    "Ellingwood's American Materia Medica 1919": {
+      heading: (name) =>
+        `Ce que disait le Ellingwood's Materia Medica (1919) à propos de ${name}`,
+      sourceLabel:
+        "American Materia Medica, Therapeutics and Pharmacognosy, Finley Ellingwood (1919)",
+      licenceText: "Ouvrage publié en 1919 et appartenant au domaine public.",
+      claimsHeading: "Action, indications et commentaires historiques",
+      safetyHeading: "Notes toxicologiques historiques",
+      notice:
+        "Ce texte rapporte un manuel clinique américain de 1919. Certaines allégations sont dépassées et les doses historiques sont omises par sécurité. Référez-vous aux données modernes ci-dessus.",
+    },
+    "US Dispensatory 1894": {
+      heading: (name) =>
+        `Ce que disait le Dispensaire américain de 1894 à propos de ${name}`,
+      sourceLabel:
+        "The Dispensatory of the United States of America, 17e édition (1894)",
+      licenceText:
+        "Ouvrage publié en 1894 et appartenant au domaine public (National Library of Medicine).",
+      claimsHeading: "Description et usages rapportés au XIXe siècle",
+      safetyHeading: "Notes historiques de prudence",
+      notice:
+        "Ce texte rapporte ce qu'enseignait une pharmacopée américaine en 1894. Une partie est dépassée et les doses historiques ont été retirées par sécurité.",
     },
   },
   narrative: NARRATIVE_FR,

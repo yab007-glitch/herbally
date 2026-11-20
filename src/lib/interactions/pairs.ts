@@ -11,6 +11,8 @@ export interface InteractionPair {
   herbName: string;
   herbScientificName: string;
   drugName: string;
+  /** Localized display name when `locale !== "en"`, falling back to `drugName`. */
+  localizedDrugName?: string;
   drugSlug: string;
   severity: InteractionSeverity;
   description: string;
@@ -46,6 +48,7 @@ interface PairRow {
 }
 
 interface InteractionFr {
+  drug_name?: string;
   description?: string;
   mechanism?: string;
 }
@@ -69,10 +72,12 @@ function toPair(row: PairRow, locale: string = "en"): InteractionPair | null {
   // share one canonical URL (verified collision-free on the EN corpus).
   const drugSlugValue = drugSlug(row.drug_name);
   let herbName = row.herbs.name;
+  let localizedDrugName = row.drug_name;
   let description = row.description;
   let mechanism = row.mechanism;
   if (locale === "fr") {
     const frIx = frOf(t) as InteractionFr | null;
+    if (frIx?.drug_name) localizedDrugName = frIx.drug_name;
     if (frIx?.description) description = frIx.description;
     if (frIx?.mechanism !== undefined && frIx.mechanism !== null)
       mechanism = frIx.mechanism;
@@ -87,6 +92,7 @@ function toPair(row: PairRow, locale: string = "en"): InteractionPair | null {
     herbName,
     herbScientificName: row.herbs.scientific_name,
     drugName: row.drug_name,
+    localizedDrugName,
     drugSlug: drugSlugValue,
     severity: row.severity,
     description,
@@ -116,7 +122,9 @@ function querySignal(): AbortSignal {
  * All curated herb↔drug pairs (published herbs only). Single source of truth
  * for the pair route's generateStaticParams and the sitemap.
  */
-export async function getInteractionPairs(): Promise<InteractionPair[]> {
+export async function getInteractionPairs(
+  locale: string = "en"
+): Promise<InteractionPair[]> {
   const supabase = getAnonClient();
   if (!supabase) return [];
   try {
@@ -136,7 +144,7 @@ export async function getInteractionPairs(): Promise<InteractionPair[]> {
     }
     const pairs: InteractionPair[] = [];
     for (const row of data as unknown as PairRow[]) {
-      const pair = toPair(row);
+      const pair = toPair(row, locale);
       if (pair) pairs.push(pair);
     }
     return pairs;

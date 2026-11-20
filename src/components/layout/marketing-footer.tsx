@@ -101,6 +101,13 @@ export function MarketingFooter() {
               {t("footer.herbDrugInteractions")}
             </Link>
             <Link
+              href="/medications"
+              prefetch={true}
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.medications")}
+            </Link>
+            <Link
               href="/npn-checker"
               prefetch={true}
               className="hover:text-foreground transition-colors"

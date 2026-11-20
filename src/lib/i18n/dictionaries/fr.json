@@ -498,6 +498,7 @@
     "methodology": "Méthodologie",
     "sponsorship": "Parrainage",
     "herbDrugInteractions": "Interactions Plante-Médicament",
+    "medications": "Médicaments A–Z",
     "symptoms": "Symptômes",
     "editorialPolicy": "Politique éditoriale",
     "npnChecker": "Décodeur NPN Santé Canada",
@@ -694,6 +695,9 @@
     "npnBannerTitle": "Vous vérifiez un flacon vendu au Canada ?",
     "npnBannerBody": "Saisissez le NPN à 8 chiffres de votre étiquette pour consulter les ingrédients médicinaux, mises en garde et interactions.",
     "npnBannerButton": "Ouvrir le Décodeur NPN",
+    "medicationsBannerTitle": "Vous préférez partir de votre médicament ?",
+    "medicationsBannerBody": "Parcourez notre répertoire inversé par médicament et classe thérapeutique pour voir toutes les plantes susceptibles d'interagir avec votre traitement.",
+    "medicationsBannerButton": "Répertoire des médicaments A–Z",
     "widgetsHubLink": "Configurer la langue et la taille sur la page Widget"
   },
   "auth": {
@@ -1662,6 +1666,8 @@
     "profileSubtitle": "Gérez vos données de santé pour un dosage personnalisé et des avertissements de sécurité",
     "npnChecker": "Décodeur NPN Santé Canada (BDPSNH)",
     "npnCheckerDesc": "Vérifiez tout numéro NPN ou DIN-HM à 8 chiffres de Santé Canada : ingrédients médicinaux, mises en garde officielles et interactions avec vos médicaments.",
+    "medications": "Médicaments et interactions avec les plantes A–Z",
+    "medicationsDesc": "Parcourez vos médicaments et classes thérapeutiques pour voir toutes les plantes documentées pouvant interagir, classées par gravité et sources.",
     "widgets": "Widget gratuit d'interactions plante-médicament",
     "widgetsDesc": "Intégrez gratuitement le vérificateur bilingue d'interactions plante-médicament HerbAlly sur votre site clinique, étudiant ou santé."
   },

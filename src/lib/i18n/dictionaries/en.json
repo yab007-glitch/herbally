@@ -498,6 +498,7 @@
     "methodology": "Methodology",
     "sponsorship": "Sponsorship",
     "herbDrugInteractions": "Herb–Drug Interactions",
+    "medications": "Medications A–Z",
     "symptoms": "Symptoms",
     "editorialPolicy": "Editorial policy",
     "npnChecker": "Health Canada NPN Decoder",
@@ -694,6 +695,9 @@
     "npnBannerTitle": "Checking a Canadian supplement bottle?",
     "npnBannerBody": "Enter the 8-digit Health Canada NPN on your label to see official medicinal ingredients, risks, and drug interactions.",
     "npnBannerButton": "Open NPN Decoder",
+    "medicationsBannerTitle": "Prefer to start from your prescription medication?",
+    "medicationsBannerBody": "Browse our reverse-lookup directory of medications and drug classes to see every herb documented to interact with your prescription.",
+    "medicationsBannerButton": "Browse Medications A–Z",
     "widgetsHubLink": "Configure EN/FR embed sizes on the Widget Builder"
   },
   "auth": {
@@ -1662,6 +1666,8 @@
     "profileSubtitle": "Manage your health data for personalized dosing and safety warnings",
     "npnChecker": "Health Canada NPN Supplement Decoder",
     "npnCheckerDesc": "Look up any 8-digit Health Canada Natural Product Number (NPN) or DIN-HM: inspect medicinal ingredients, cautions, and cross-check drug interactions.",
+    "medications": "Medications & Herb Interactions A–Z",
+    "medicationsDesc": "Browse prescription medications and drug classes to see every herb documented to interact with each drug, ranked by severity and evidence.",
     "widgets": "Free Embeddable Herb-Drug Checker",
     "widgetsDesc": "Embed HerbAlly's free bilingual herb-drug interaction checker widget on your clinic, pharmacy student, or wellness website."
   },

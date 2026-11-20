@@ -8,6 +8,7 @@ import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
 import { getEmptySymptomHubs } from "@/lib/symptoms/hub-coverage";
 import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page";
 import { getInteractionPairs } from "@/lib/interactions/pairs";
+import { aggregateMedications } from "@/lib/interactions/medications";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { withTimeout } from "@/lib/utils/with-timeout";
 import { publishedGuides } from "@/lib/guides/guides";
@@ -541,6 +542,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/medications`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}${FR_BASE}/medications`,
+      lastModified: STATIC_PAGE_MODIFIED,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
       url: `${baseUrl}/npn-checker`,
       lastModified: STATIC_PAGE_MODIFIED,
       changeFrequency: "weekly",
@@ -857,12 +870,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return entries;
     });
 
+    const medicationPages: MetadataRoute.Sitemap = Array.from(
+      aggregateMedications(interactionPairs).values()
+    ).flatMap((med) => {
+      const lastModified = med.updatedAt ? new Date(med.updatedAt) : new Date();
+      const entries: MetadataRoute.Sitemap = [
+        {
+          url: `${baseUrl}/medications/${med.drugSlug}`,
+          lastModified,
+          changeFrequency: "monthly" as const,
+          priority: 0.8,
+        },
+      ];
+      if (med.hasFr) {
+        entries.push({
+          url: `${baseUrl}${FR_BASE}/medications/${med.drugSlug}`,
+          lastModified,
+          changeFrequency: "monthly" as const,
+          priority: 0.8,
+        });
+      }
+      return entries;
+    });
+
     return withLanguageAlternates(
       [
         ...staticPages,
         ...symptomPages,
         ...comparePages,
         ...pairPages,
+        ...medicationPages,
         ...herbPages,
       ],
       baseUrl

@@ -258,7 +258,7 @@ const loadHerbPageBundle = cache(
         // even when fetched straight from the container, so the per-slug tag
         // purge had not landed on their entries. Bump this when a data
         // correction must reach every page regardless of cache state.
-        ["herb-page-bundle-v6"],
+        ["herb-page-bundle-v7"],
         {
           revalidate: HERB_PAGE_TTL,
           tags: ["herb-page-bundle", `herb-page-bundle-${slug}`],

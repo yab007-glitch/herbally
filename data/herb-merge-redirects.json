@@ -470,5 +470,17 @@
   {
     "from": "/herbs/tamanu-skin",
     "to": "/herbs/tamanu"
+  },
+  {
+    "from": "/herbs/triphala-digestive",
+    "to": "/herbs/triphala"
+  },
+  {
+    "from": "/herbs/triphala-formula",
+    "to": "/herbs/triphala"
+  },
+  {
+    "from": "/herbs/triphala-indian",
+    "to": "/herbs/triphala"
   }
 ]
