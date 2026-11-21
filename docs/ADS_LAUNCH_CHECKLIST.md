@@ -72,17 +72,35 @@ gate-on harness: `docs/ADS_CMP_EVIDENCE.md`.
 
 A third-party script running in a document on `herbally.app` executes with the
 app origin's privileges. While ads are off this is moot. Before launch the
-owner must choose one of:
+owner must review the current origin storage posture and choose a path:
 
-- (a) accept that an ad script could read non-HttpOnly Supabase auth cookies
-  and `localStorage` garden/notes data, and document that acceptance; or
-- (b) move ad-bearing pages to a separate origin/subdomain so ad code never
-  shares an origin with authenticated app state; or
-- (c) make the authenticated surfaces same-site-but-cross-origin and move all
-  auth state to HttpOnly cookies.
+- **Current verified baseline (2026-11-20):**
+  - Supabase authentication cookies (`createServerClient` in
+    `src/lib/supabase/middleware.ts` and `src/lib/supabase/server.ts`) and the
+    guest chat session cookie (`herbally-guest-id`) already set `httpOnly: true`
+    so third-party scripts cannot read session tokens via `document.cookie`.
+  - The Multi-Herb & Medication Stack Checker (`herbally-my-stack-v1`) stores
+    entered herb/drug lists only in `window.sessionStorage` (cleared on session
+    close) and automatically scrubs any legacy `localStorage` entry on mount.
+  - `/privacy` includes a one-click **Clear browser data** control (`ClearLocalDataButton`)
+    that wipes all `localStorage` and `sessionStorage` keys written by HerbAlly.
+  - Remaining client-accessible `localStorage` keys are limited to
+    `herbally-garden`, `herbally-recent-searches`, `herbally-chat-session-id`
+    (opaque UUID pointer; chat history itself is scoped server-side behind the
+    `HttpOnly` guest cookie or authenticated user session), reading streaks
+    (`herbally-streak`, `herbally-last-visit`, `herbally-explored-herbs`,
+    `herbally-explored-count`), and teaser/view deduplication flags.
+- Before enabling ads, the owner must still choose one of:
+  - (a) accept that a third-party script on `herbally.app` could read the
+    non-token `localStorage` keys listed above (`herbally-garden`,
+    `herbally-recent-searches`), and document that acceptance; or
+  - (b) move ad-bearing pages to a separate origin/subdomain so ad code never
+    shares an origin with app storage; or
+  - (c) move garden notes/preferences out of client `localStorage` or onto a
+    separate authenticated origin.
 
-Document isolation does **not** isolate origin storage. This is the single
-largest remaining privacy question.
+Document isolation does **not** isolate origin storage. Keeping ads disabled
+(`ADS_LAUNCH_GATE = false`) keeps this benign until an explicit launch review.
 
 ### 2.5 Google policy review of the content — **OPEN**
 

@@ -1,0 +1,154 @@
+name: Uptime Watchdog
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: uptime-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Probe herbally.app from GitHub cloud
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check live endpoints with retry
+        id: probe
+        shell: bash
+        run: |
+          set -u
+          probe_once() {
+            local failures=""
+            local health_code health_body home_code sitemap_code sitemap_body sitemap_locs
+
+            health_body=$(mktemp)
+            health_code=$(curl -sS -m 15 -o "$health_body" -w '%{http_code}' 'https://herbally.app/api/health' || echo "000")
+            if [ "$health_code" != "200" ] || ! grep -q '"status":"healthy"' "$health_body"; then
+              failures="${failures}health(http=${health_code},body=$(head -c 160 "$health_body" | tr '\n' ' ')); "
+            fi
+            rm -f "$health_body"
+
+            home_code=$(curl -sS -m 15 -o /dev/null -w '%{http_code}' 'https://herbally.app/' || echo "000")
+            if [ "$home_code" != "200" ]; then
+              failures="${failures}home(http=${home_code}); "
+            fi
+
+            sitemap_body=$(mktemp)
+            sitemap_code=$(curl -sS -m 20 -o "$sitemap_body" -w '%{http_code}' 'https://herbally.app/sitemap.xml' || echo "000")
+            sitemap_locs=$(grep -c '<loc>' "$sitemap_body" 2>/dev/null || echo "0")
+            if [ "$sitemap_code" != "200" ] || [ "$sitemap_locs" -lt 1000 ]; then
+              failures="${failures}sitemap(http=${sitemap_code},locs=${sitemap_locs}); "
+            fi
+            rm -f "$sitemap_body"
+
+            echo "$failures"
+          }
+
+          first=$(probe_once)
+          if [ -z "$first" ]; then
+            echo "status=up" >> "$GITHUB_OUTPUT"
+            echo "details=All probes healthy (health=200, home=200, sitemap>=1000)." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Initial probe failed: $first — retrying in 20s..."
+          sleep 20
+          second=$(probe_once)
+          if [ -z "$second" ]; then
+            echo "status=up" >> "$GITHUB_OUTPUT"
+            echo "details=Recovered on retry (first attempt: $first)." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "status=down" >> "$GITHUB_OUTPUT"
+          {
+            echo "details<<EOF"
+            echo "$second"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update uptime-alert issue on outage or recovery
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = "${{ steps.probe.outputs.status }}";
+            const details = `${{ steps.probe.outputs.details }}`.trim();
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const nowIso = new Date().toISOString();
+            const labelName = "uptime-alert";
+
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: labelName,
+              });
+            } catch {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: labelName,
+                color: "d73a4a",
+                description: "Automated cloud uptime probe alert for herbally.app",
+              });
+            }
+
+            const { data: openIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "open",
+              labels: labelName,
+              per_page: 5,
+            });
+
+            if (status === "down") {
+              if (openIssues.length === 0) {
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: "HerbAlly uptime check failed",
+                  labels: [labelName],
+                  body: [
+                    `Two consecutive cloud probes failed at **${nowIso}**.`,
+                    "",
+                    `**Failures:** \`${details}\``,
+                    "",
+                    `Check Cloudflare Tunnel / Docker containers (\`herbally-app\`, \`herbally-db\`) on the Montreal origin server.`,
+                    `Workflow run: ${runUrl}`,
+                  ].join("\n"),
+                });
+              } else {
+                const existing = openIssues[0];
+                const updatedAt = new Date(existing.updated_at).getTime();
+                if (Date.now() - updatedAt > 6 * 3600 * 1000) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: existing.number,
+                    body: `Still failing at **${nowIso}**: \`${details}\`\nRun: ${runUrl}`,
+                  });
+                }
+              }
+              core.setFailed(`Uptime check failed: ${details}`);
+            } else if (openIssues.length > 0) {
+              for (const issue of openIssues) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `Recovered at **${nowIso}**. ${details}\nRun: ${runUrl}`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  state: "closed",
+                });
+              }
+            }

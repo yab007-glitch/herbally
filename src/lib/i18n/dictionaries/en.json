@@ -849,6 +849,12 @@
       "adCookies": "Advertising cookies — if ads are enabled, Google and its partners may set cookies or use identifiers to serve and measure ads. You can control these through your browser and Google's ad settings.",
       "noTracking": "We do not use Facebook Pixel or invasive third-party trackers. Cookieless Cloudflare Web Analytics provides aggregate page counts, and advertising cookies apply only if ads are enabled."
     },
+    "localStorageSection": {
+      "controlTitle": "Clear local browser data",
+      "controlDesc": "Removes any HerbAlly searches, saved garden notes, chat session pointer, or streak counters stored in this browser.",
+      "clearButton": "Clear browser data",
+      "clearedButton": "Cleared"
+    },
     "dataRetention": {
       "title": "6. Data Retention",
       "text": "Account and saved data may be retained until deleted. Guest chat records can persist separately from the guest cookie; cookie expiry does not necessarily delete server records. Donation records may be retained for accounting. Ollama's retention practices are governed by its own policy."
@@ -2065,6 +2071,39 @@
     "copyCode": "Copy HTML code",
     "copied": "Copied!",
     "previewHeading": "Live widget preview",
-    "attributionLabel": "Herb-drug safety data by HerbAlly"
+    "attributionLabel": "Herb-drug safety data by HerbAlly",
+    "citationKit": {
+      "eyebrow": "For librarians, educators & clinics",
+      "heading": "Cite or Link HerbAlly in Resource Guides",
+      "intro": "Maintaining a university pharmacy LibGuide, patient handout, or clinical portal? Copy a pre-written description or plain HTML link below—no iframe required.",
+      "blurbHeading": "Copyable LibGuide / resource description",
+      "copyBlurb": "Copy description",
+      "htmlHeading": "Plain HTML resource link",
+      "copyHtml": "Copy HTML link",
+      "copied": "Copied!",
+      "directLinksHeading": "Key clinical & reference tools to link directly",
+      "links": {
+        "checker": {
+          "title": "Herb–Drug Interaction & Stack Checker",
+          "desc": "Screen herbs alongside prescriptions, inspect CYP mechanisms, and print a wallet card."
+        },
+        "medications": {
+          "title": "Reverse Medication Interaction Directory",
+          "desc": "Browse 108+ prescription drugs and therapeutic classes mapped to NIH RxNorm."
+        },
+        "surgery": {
+          "title": "Pre-Surgery Herb Washout Planner",
+          "desc": "Printable stop-timing checklist grounded in ASA and Health Canada guidance."
+        },
+        "npn": {
+          "title": "Health Canada NPN Supplement Decoder",
+          "desc": "Live lookup of 8-digit NPN licences, ingredients, and cautions from Health Canada LNHPD."
+        },
+        "methodology": {
+          "title": "Methodology & Open-Data Licences",
+          "desc": "Source hierarchy (Health Canada, EU EMA HMPC, NIH NCCIH, LiverTox) and evidence grading."
+        }
+      }
+    }
   }
 }

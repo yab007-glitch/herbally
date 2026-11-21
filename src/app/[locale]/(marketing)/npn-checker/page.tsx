@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { NpnCheckerClient } from "@/components/npn/npn-checker-client";
+import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ShieldCheck } from "lucide-react";
 
@@ -20,11 +21,13 @@ export default async function NpnCheckerPage() {
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "npnCheckerPage" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
-  const url = `${siteUrl()}${locale === "fr" ? "/fr" : ""}/npn-checker`;
+  const fr = locale === "fr";
+  const url = `${siteUrl()}${fr ? "/fr" : ""}/npn-checker`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       <WebPageSchema
+        type="MedicalWebPage"
         title={t("heading")}
         description={t("intro")}
         url={url}
@@ -60,6 +63,17 @@ export default async function NpnCheckerPage() {
         <p className="text-base text-muted-foreground sm:text-lg">
           {t("intro")}
         </p>
+        <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+          <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+          <Link
+            href="/methodology"
+            className="hover:text-foreground hover:underline"
+          >
+            {fr
+              ? "Révision éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS"
+              : "Editorially reviewed by Yasser Bheekun — MLT, OPTMQ · CSMLS"}
+          </Link>
+        </p>
       </header>
 
       <div className="mt-8">
@@ -91,6 +105,8 @@ export default async function NpnCheckerPage() {
           </Link>
         </div>
       </section>
+
+      <ClinicalSupportCallout locale={locale} />
     </div>
   );
 }

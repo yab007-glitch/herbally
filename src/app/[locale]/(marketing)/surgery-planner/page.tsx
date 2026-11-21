@@ -9,6 +9,7 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { SurgeryPlannerClient } from "@/components/interactions/surgery-planner-client";
+import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
 
 export const revalidate = 86400;
 
@@ -106,6 +107,8 @@ export default async function SurgeryPlannerPage() {
           <ArrowRight className="size-4" />
         </Link>
       </section>
+
+      <ClinicalSupportCallout locale={locale} />
     </div>
   );
 }

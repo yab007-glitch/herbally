@@ -278,3 +278,181 @@ Best regards,
 Yasser Bheekun, MLT (OPTMQ · CSMLS)
 HerbAlly — https://herbally.app
 ```
+
+---
+
+## Tier A2 — Additional Verified Canadian, Quebec & US Targets (Added 2026-11-20)
+
+All targets below returned HTTP `200 OK` on `2026-11-20`, with verified liaison/contact details read directly from each live page. Nothing is sent without explicit owner go-ahead.
+
+### 6. Dalhousie University — Kellogg Health Sciences Library (`https://dal.ca.libguides.com/pharmacy`)
+
+- **To:** `louise.gillis@dal.ca` (Louise Gillis, Pharmacy & Drug Regulation Librarian)
+- **Subject:** Free Canadian NHP / herb–drug interaction checker for your Pharmacy & Pharmacology guide
+- **Body:**
+
+```text
+Hello Louise,
+
+I maintain HerbAlly, a free, bilingual (English / French) herbal-medicine and medication-safety reference built in Montreal. I noticed your Pharmacy and Pharmacology guide (https://dal.ca.libguides.com/pharmacy) curates Health Canada's Drug Product Database, MedlinePlus Drugs and Supplements, and NatMed Pro — and thought two free Canadian-focused tools might be useful additions for pharmacy students and patients alongside those links:
+
+- Health Canada NPN Supplement Decoder (queries LNHPD live for 8-digit NPNs, medicinal ingredients, cautions, and drug interaction matches): https://herbally.app/npn-checker
+- Herb–Drug Interaction Checker & Reverse-Lookup Medication Directory: https://herbally.app/herb-drug-interactions and https://herbally.app/medications
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+
+No account is required and there are no ads on clinical tool pages. Every monograph cites primary regulatory records (Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, NIH LiverTox, and PubMed; methodology at https://herbally.app/methodology). For course or portal pages, there is also a citation/embed kit at https://herbally.app/widgets.
+
+If it fits your Pharmacy guide, a single resource link would be much appreciated. Thank you for maintaining the guide!
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 7. University of Toronto — Leslie Dan Faculty of Pharmacy Guide (`https://guides.library.utoronto.ca/pharmacy`)
+
+- **To:** `glyneva.bradley.ridout@utoronto.ca`
+- **Subject:** Free bilingual Canadian NPN & herb–drug checker for your Pharmacy eResources guide
+- **Body:**
+
+```text
+Hello Glyneva,
+
+I maintain HerbAlly (https://herbally.app), a free, bilingual (English / French) reference for medicinal herbs, Canadian NPN supplements, and herb–medication interactions. Your Pharmacy eResources guide at https://guides.library.utoronto.ca/pharmacy features a dedicated "Herbs & Supplements" section alongside Health Canada-approved product links — and I wanted to suggest HerbAlly as an open-access complement for students or patients without institutional NatMed access:
+
+- Health Canada NPN Supplement Decoder (live LNHPD ingredient & interaction check): https://herbally.app/npn-checker
+- Herb–Drug Interaction & Stack Checker (with CYP pathways and severity grades): https://herbally.app/herb-drug-interactions
+- Reverse-Lookup Medication Directory (108+ drugs mapped to NIH RxNorm): https://herbally.app/medications
+
+Every entry links to its primary regulatory monograph or PubMed record (Health Canada LNHPD, EMA HMPC, NIH NCCIH, LiverTox), with methodology documented at https://herbally.app/methodology. There are no logins and no ads on clinical tool pages.
+
+If it fits the Herbs & Supplements section, a link would mean a lot. Thank you for keeping the guide updated.
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 8. George Washington University — Himmelfarb Health Sciences Library (`https://guides.himmelfarb.gwu.edu/CAM`)
+
+- **To:** `deborah.wassertzug@gwu.edu` (cc/alt: `himmelfarb@gwu.edu`)
+- **Subject:** Free herb–drug interaction checker & EMA/NCCIH reference for your CAM guide
+- **Body:**
+
+```text
+Hello Deborah,
+
+I noticed your Complementary and Alternative Medicine (CAM) guide at https://guides.himmelfarb.gwu.edu/CAM links directly to the European Medicines Agency HMPC herbal monographs, NIH NCCIH, and MedlinePlus Dietary Supplement resources.
+
+I maintain HerbAlly (https://herbally.app), a free, ad-free clinical interaction reference built on those exact primary sources alongside NIH LiverTox, Health Canada LNHPD, and PubMed:
+- Herb–Drug Interaction & Multi-Herb Stack Checker: https://herbally.app/herb-drug-interactions
+- Reverse-Lookup by Prescription Medication or Class: https://herbally.app/medications
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+- Methodology & Open-Data Licences: https://herbally.app/methodology
+
+No account is required, and our widgets/citation kit (https://herbally.app/widgets) includes copy-paste links and an inline checker snippet for resource guides. If it is a fit for your CAM guide, we would be grateful to be listed.
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 9. University of North Carolina at Chapel Hill — HSL Pharmacy Guide (`https://guides.lib.unc.edu/pharmacy`)
+
+- **To:** `rcarlson@unc.edu` (Rebecca Carlson, MLS, AHIP — Pharmacy Librarian)
+- **Subject:** Open-access herb–drug interaction tool for your HSL Pharmacy Guide
+- **Body:**
+
+```text
+Hello Rebecca,
+
+I maintain HerbAlly (https://herbally.app), a free herbal-medicine and drug-interaction reference. I came across your HSL Pharmacy Guide (https://guides.lib.unc.edu/pharmacy) and its Handbooks, Guides & Natural Medicines section, and wanted to share a free open-access patient-safety companion alongside subscription databases:
+
+- Herb–Drug Interaction & Stack Checker (printable pharmacist wallet card): https://herbally.app/herb-drug-interactions
+- Reverse Medication Lookup Directory (mapped to NIH RxNorm): https://herbally.app/medications
+- Pre-Surgery Herb Washout Planner: https://herbally.app/surgery-planner
+
+Every interaction cites primary literature or regulator monographs (NIH NCCIH, NIH LiverTox, EU EMA HMPC, Health Canada LNHPD; methodology at https://herbally.app/methodology), requires no sign-up, and runs without ads on clinical tool pages.
+
+If it feels helpful for students or patients visiting the guide, a link would be greatly appreciated. Thank you for curating the resource!
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 10. Rutgers University — Pharmaceutical Sciences Research Guide (`https://libguides.rutgers.edu/pharmacy`)
+
+- **To:** `matthew.bridgeman@rutgers.edu` (Matthew Bridgeman — Medical & Pharmaceutical Sciences Librarian)
+- **Subject:** Free herb–drug & medication lookup tool for your Pharmaceutical Sciences guide
+- **Body:**
+
+```text
+Hello Matthew,
+
+I maintain HerbAlly (https://herbally.app), a free, bilingual herbal-medicine and medication-interaction reference. Looking at your Pharmaceutical Sciences Research Guide (https://libguides.rutgers.edu/pharmacy) and its drug safety and consumer databases sections, I wanted to share our open-access safety tools in case they help pharmacy students or consumers alongside subscription clinical tools:
+
+- Herb–Drug Interaction & Stack Checker: https://herbally.app/herb-drug-interactions
+- Reverse-Lookup Medication Directory (search by Rx drug or class): https://herbally.app/medications
+- Pre-Surgery Botanical Washout Planner: https://herbally.app/surgery-planner
+
+Every interaction entry is severity-graded with primary PubMed, NIH NCCIH, NIH LiverTox, EU EMA HMPC, or Health Canada LNHPD citations (documented at https://herbally.app/methodology). No login is required, and clinical tool pages carry no ads.
+
+If you ever add open consumer safety tools to the guide, a single resource link would be wonderful. Thank you for maintaining it!
+
+Best regards,
+Yasser Bheekun, MLT (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app
+```
+
+### 11. FloraMedicina — École d'herboristerie en ligne, Québec (`https://www.floramedicina.com`)
+
+- **To:** `info@floramedicina.com`
+- **Objet:** Référence bilingue gratuite : interactions plantes–médicaments et décodeur NPN (Québec)
+- **Body:**
+
+```text
+Bonjour à l'équipe de FloraMedicina,
+
+Technologiste médical certifié au Québec (OPTMQ · CSMLS) basé à Montréal, j'ai conçu HerbAlly (https://herbally.app/fr), une référence gratuite et entièrement bilingue dédiée à la sécurité des plantes médicinales et aux interactions plantes–médicaments.
+
+Vos étudiant·es et lecteur·rices au Québec pourraient trouver utiles ces quatre outils gratuits, sans inscription et sans publicité sur les pages cliniques :
+- Vérificateur d'interactions plantes–médicaments et fiche imprimable pour le pharmacien : https://herbally.app/fr/herb-drug-interactions
+- Répertoire inverse par médicament d'ordonnance : https://herbally.app/fr/medications
+- Décodeur NPN Santé Canada (lecture directe de la base officielle BDPSNH) : https://herbally.app/fr/npn-checker
+- Planificateur d'arrêt préopératoire : https://herbally.app/fr/surgery-planner
+
+Chaque fiche indique clairement la source réglementaire ou scientifique utilisée (monographies de Santé Canada, EMA HMPC, NIH NCCIH, LiverTox et PubMed) — méthode complète ici : https://herbally.app/fr/methodology. Un widget intégrable gratuit existe aussi sur https://herbally.app/fr/widgets si vous souhaitez l'offrir à vos étudiant·es.
+
+Si cela correspond à vos ressources pédagogiques, un simple lien serait très apprécié. Merci pour tout votre travail de formation au Québec !
+
+Cordialement,
+Yasser Bheekun, T.M. (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app/fr
+```
+
+### 12. Guilde des herboristes du Québec (`https://www.guildedesherboristes.org`)
+
+- **To:** `info@guildedesherboristes.org`
+- **Objet:** Outil gratuit au Québec : interactions plantes–médicaments et registre NPN Santé Canada
+- **Body:**
+
+```text
+Bonjour à l'équipe de la Guilde des herboristes,
+
+Technologiste médical au Québec (OPTMQ · CSMLS) basé à Montréal, j'ai bâti HerbAlly (https://herbally.app/fr), une référence bilingue gratuite axée sur la sécurité clinique, les monographies officielles (Santé Canada, EMA HMPC, NIH NCCIH, LiverTox) et les interactions plantes–médicaments.
+
+Pour les membres praticien·nes ou les étudiant·es qui accompagnent des personnes prenant des médicaments sur ordonnance, nous mettons à disposition gratuitement, sans compte et sans publicité :
+- Vérificateur d'interactions plantes–médicaments (multi-plantes + carte imprimable) : https://herbally.app/fr/herb-drug-interactions
+- Décodeur de numéro NPN Santé Canada (BDPSNH en direct) : https://herbally.app/fr/npn-checker
+- Répertoire inverse par médicament ou classe thérapeutique : https://herbally.app/fr/medications
+- Méthodologie et sources ouvertes : https://herbally.app/fr/methodology
+
+Si la Guilde maintient une page de références ou partage des outils pratiques à ses membres, n'hésitez pas à nous ajouter ou à tester le widget gratuit (https://herbally.app/fr/widgets).
+
+Merci pour votre engagement pour une herboristerie rigoureuse au Québec !
+
+Bien cordialement,
+Yasser Bheekun, T.M. (OPTMQ · CSMLS)
+HerbAlly — https://herbally.app/fr
+```

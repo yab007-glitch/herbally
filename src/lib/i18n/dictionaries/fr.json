@@ -849,6 +849,12 @@
       "adCookies": "Cookies publicitaires — si la publicité est activée, Google et ses partenaires peuvent déposer des cookies ou utiliser des identifiants pour diffuser et mesurer les annonces. Vous pouvez les contrôler via votre navigateur et les paramètres publicitaires de Google.",
       "noTracking": "Nous n'utilisons ni Facebook Pixel ni traceurs publicitaires intrusifs. Les statistiques utilisent Cloudflare Web Analytics sans témoins ; les témoins publicitaires ne s'appliqueront que si les annonces sont activées."
     },
+    "localStorageSection": {
+      "controlTitle": "Effacer les données locales du navigateur",
+      "controlDesc": "Supprime les recherches récentes, notes de jardin locales, l'identifiant de session de clavardage et le compteur de visites enregistrés dans ce navigateur.",
+      "clearButton": "Effacer les données locales",
+      "clearedButton": "Effacé"
+    },
     "dataRetention": {
       "title": "6. Conservation des Données",
       "text": "Les données de compte et les données enregistrées peuvent être conservées jusqu'à leur suppression. Les discussions invitées peuvent subsister indépendamment du cookie invité ; l'expiration du cookie ne supprime pas nécessairement les données du serveur. Les dons peuvent être conservés pour la comptabilité. Les pratiques de conservation d'Ollama sont régies par sa propre politique."
@@ -2065,6 +2071,39 @@
     "copyCode": "Copier le code HTML",
     "copied": "Copié !",
     "previewHeading": "Aperçu en direct",
-    "attributionLabel": "Données de sécurité plante-médicament par HerbAlly"
+    "attributionLabel": "Données de sécurité plante-médicament par HerbAlly",
+    "citationKit": {
+      "eyebrow": "Pour bibliothécaires, formateurs et cliniques",
+      "heading": "Citer ou référencer HerbAlly dans un guide de ressources",
+      "intro": "Vous tenez à jour un guide de pharmacie universitaire, une fiche patient ou un portail clinique ? Copiez une description prête à l'emploi ou un lien HTML simple ci-dessous, sans iframe requis.",
+      "blurbHeading": "Description prête à copier pour guide ou répertoire",
+      "copyBlurb": "Copier la description",
+      "htmlHeading": "Lien HTML simple",
+      "copyHtml": "Copier le lien HTML",
+      "copied": "Copié !",
+      "directLinksHeading": "Principaux outils cliniques à référencer directement",
+      "links": {
+        "checker": {
+          "title": "Vérificateur d'interactions plantes–médicaments",
+          "desc": "Vérifiez plusieurs plantes et ordonnances simultanément et imprimez une carte pour le pharmacien."
+        },
+        "medications": {
+          "title": "Répertoire inverse par médicament",
+          "desc": "Consultez plus de 108 médicaments d'ordonnance et classes thérapeutiques reliés à NIH RxNorm."
+        },
+        "surgery": {
+          "title": "Planificateur d'arrêt avant chirurgie",
+          "desc": "Calendrier imprimable basé sur les recommandations préopératoires de l'ASA et de Santé Canada."
+        },
+        "npn": {
+          "title": "Décodeur NPN Santé Canada",
+          "desc": "Lecture en direct des licences BDPSNH à 8 chiffres, ingrédients médicinaux et mises en garde."
+        },
+        "methodology": {
+          "title": "Méthodologie et licences ouvertes",
+          "desc": "Hiérarchie des sources (Santé Canada, EMA HMPC, NIH NCCIH, LiverTox) et gradation des preuves."
+        }
+      }
+    }
   }
 }

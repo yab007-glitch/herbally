@@ -14,6 +14,7 @@ import { ChipLegend } from "@/components/herbs/chip-legend";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
+import { getReviewer } from "@/lib/data/reviewers";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -45,6 +46,7 @@ export default async function MethodologyPage() {
     locale === "fr"
       ? `${siteUrl()}/fr/methodology`
       : `${siteUrl()}/methodology`;
+  const reviewer = getReviewer("yasser-bheekun");
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
@@ -64,6 +66,35 @@ export default async function MethodologyPage() {
             name: t("methodologyContent.title"),
             description: t("methodologyContent.subtitle"),
             url,
+            publishingPrinciples: `${siteUrl()}${locale === "fr" ? "/fr" : ""}/editorial-policy`,
+            ...(reviewer && {
+              author: {
+                "@type": "Person",
+                name: reviewer.name,
+                jobTitle: reviewer.credentials,
+                url: reviewer.profileUrl,
+              },
+              reviewedBy: {
+                "@type": "Person",
+                name: reviewer.name,
+                jobTitle: reviewer.credentials,
+                url: reviewer.profileUrl,
+                affiliation: {
+                  "@type": "Organization",
+                  name: reviewer.affiliation,
+                },
+                hasCredential: reviewer.qualifications.map((q) => ({
+                  "@type": "EducationalOccupationalCredential",
+                  name: q,
+                })),
+              },
+            }),
+            mainEntity: {
+              "@type": "Organization",
+              name: "HerbAlly",
+              url: siteUrl(),
+              publishingPrinciples: `${siteUrl()}/editorial-policy`,
+            },
             publisher: {
               "@type": "Organization",
               name: "HerbAlly",

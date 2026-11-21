@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { useTranslations, useLocale } from "next-intl";
 import {
@@ -68,12 +68,25 @@ export function StackChecker() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StackApiResponse | null>(null);
   const [showWalletCard, setShowWalletCard] = useState(false);
+  const hasHydratedRef = useRef(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       try {
-        const saved = window.localStorage.getItem(STORAGE_KEY);
+        // Persist personal herb/medication stacks only for the browser session
+        // (sessionStorage clears automatically when the session closes). Any
+        // legacy localStorage entry from earlier releases is migrated once and
+        // scrubbed so health-stack inputs do not linger on the shared origin.
+        const sessionSaved = window.sessionStorage.getItem(STORAGE_KEY);
+        const legacySaved = window.localStorage.getItem(STORAGE_KEY);
+        if (legacySaved !== null) {
+          window.localStorage.removeItem(STORAGE_KEY);
+        }
+        const saved = sessionSaved ?? legacySaved;
         if (!saved) return;
+        if (!sessionSaved && legacySaved) {
+          window.sessionStorage.setItem(STORAGE_KEY, legacySaved);
+        }
         const parsed = JSON.parse(saved) as {
           herbs?: unknown;
           drugs?: unknown;
@@ -93,18 +106,24 @@ export function StackChecker() {
           );
         }
       } catch {
-        // Ignore corrupt local storage
+        // Ignore corrupt or blocked storage
+      } finally {
+        hasHydratedRef.current = true;
       }
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
+    if (!hasHydratedRef.current) return;
     try {
-      window.localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ herbs, drugs })
-      );
+      const payload = JSON.stringify({ herbs, drugs });
+      if (herbs.length === 0 && drugs.length === 0) {
+        window.sessionStorage.removeItem(STORAGE_KEY);
+      } else {
+        window.sessionStorage.setItem(STORAGE_KEY, payload);
+      }
+      window.localStorage.removeItem(STORAGE_KEY);
     } catch {
       // Ignore storage quota / private-browsing errors
     }
@@ -147,6 +166,12 @@ export function StackChecker() {
     setDrugDraft("");
     setError(null);
     setResult(null);
+    try {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore storage cleanup errors
+    }
   }
 
   async function runCheck() {

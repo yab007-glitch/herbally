@@ -11,6 +11,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { Button } from "@/components/ui/button";
 import { getMedicationSummaries } from "@/lib/interactions/medications";
 import { MedicationDirectoryClient } from "@/components/interactions/medication-directory-client";
+import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
 
 export const revalidate = 3600;
 
@@ -174,6 +175,8 @@ export default async function MedicationsIndexPage() {
           ? "Informations éducatives uniquement — ne constituent pas un avis médical. N'interrompez jamais un traitement prescrit sans l'avis de votre médecin ou de votre pharmacien."
           : "Educational information only — not medical advice. Never stop a prescribed medication without consulting your physician or pharmacist."}
       </p>
+
+      <ClinicalSupportCallout locale={locale} />
     </div>
   );
 }

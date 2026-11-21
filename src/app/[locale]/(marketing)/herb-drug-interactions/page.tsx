@@ -1,6 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
-import { AlertTriangle, ArrowRight } from "lucide-react";
+import { AlertTriangle, ArrowRight, ShieldCheck } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { siteUrl } from "@/lib/seo/site-url";
@@ -10,6 +10,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { InteractionExplainer } from "@/components/herbs/interaction-explainer";
 import { EmbedSnippet } from "@/components/embed/embed-snippet";
 import { StackChecker } from "@/components/interactions/stack-checker";
+import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
 import { Button } from "@/components/ui/button";
 import { InteractionChecker } from "../interaction-checker";
 
@@ -38,11 +39,13 @@ export default async function HerbDrugInteractionsPage() {
     namespace: "herbDrugInteractionsPage",
   });
   const tCommon = await getTranslations({ locale, namespace: "common" });
-  const url = `${siteUrl()}${locale === "fr" ? "/fr" : ""}/herb-drug-interactions`;
+  const fr = locale === "fr";
+  const url = `${siteUrl()}${fr ? "/fr" : ""}/herb-drug-interactions`;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
       <WebPageSchema
+        type="MedicalWebPage"
         title={t("heading")}
         description={t("intro")}
         url={url}
@@ -76,6 +79,17 @@ export default async function HerbDrugInteractionsPage() {
           {t("heading")}
         </h1>
         <p className="text-lg text-muted-foreground">{t("intro")}</p>
+        <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+          <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+          <Link
+            href="/methodology"
+            className="hover:text-foreground hover:underline"
+          >
+            {fr
+              ? "Révision éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS"
+              : "Editorially reviewed by Yasser Bheekun — MLT, OPTMQ · CSMLS"}
+          </Link>
+        </p>
       </header>
 
       {/* The checker itself, on the page.
@@ -195,6 +209,8 @@ export default async function HerbDrugInteractionsPage() {
           </Button>
         </div>
       </section>
+
+      <ClinicalSupportCallout locale={locale} />
     </div>
   );
 }

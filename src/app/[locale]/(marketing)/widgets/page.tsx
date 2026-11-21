@@ -6,6 +6,8 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { WidgetBuilder } from "@/components/embed/widget-builder";
+import { LibrarianCitationKit } from "@/components/embed/librarian-citation-kit";
+import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
 import { Code2 } from "lucide-react";
 
 export const generateMetadata = () =>
@@ -64,6 +66,10 @@ export default async function WidgetsPage() {
       <div className="mt-8">
         <WidgetBuilder />
       </div>
+
+      <LibrarianCitationKit />
+
+      <ClinicalSupportCallout locale={locale} />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { ClearLocalDataButton } from "@/components/privacy/clear-local-data-button";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -141,6 +142,7 @@ export default async function PrivacyPage() {
             <li>{t("privacy.yourRights.deletion")}</li>
             <li>{t("privacy.yourRights.complaint")}</li>
           </ul>
+          <ClearLocalDataButton />
         </section>
 
         <section>
