@@ -145,6 +145,9 @@ export default async function DonatePage({
           </p>
         </div>
         <DonationButtons />
+        <p className="mx-auto max-w-2xl rounded-lg border border-border/70 bg-muted/40 px-4 py-3 text-center text-xs leading-relaxed text-muted-foreground">
+          {t("donateContent.taxNote")}
+        </p>
       </div>
 
       {/* Monthly Costs Breakdown */}

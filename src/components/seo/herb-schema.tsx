@@ -34,6 +34,8 @@ interface HerbSchemaProps {
    * declare the English URL inside their own MedicalWebPage node.
    */
   url?: string;
+  /** Latest ISO modification timestamp for MedicalWebPage.dateModified. */
+  dateModified?: string;
 }
 
 /**
@@ -48,7 +50,7 @@ function asArray(value: unknown): string[] {
   return typeof value === "string" && value.trim() ? [value.trim()] : [];
 }
 
-export function HerbSchema({ herb, url }: HerbSchemaProps) {
+export function HerbSchema({ herb, url, dateModified }: HerbSchemaProps) {
   const reviewer = getReviewer(herb.reviewed_by);
   const activeCompounds = asArray(herb.active_compounds);
   const traditionalUses = asArray(herb.traditional_uses);
@@ -61,6 +63,7 @@ export function HerbSchema({ herb, url }: HerbSchemaProps) {
     alternateName: herb.scientific_name,
     description: herb.description ?? undefined,
     url: url ?? `${siteUrl()}/herbs/${herb.slug}`,
+    ...(dateModified && { dateModified }),
     mainEntity: {
       "@type": "MedicalSubstance",
       name: herb.name,

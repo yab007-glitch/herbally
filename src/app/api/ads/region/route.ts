@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { resolveAdRegion } from "@/lib/ads/policy";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
+import { getClientIP } from "@/lib/utils/client-ip";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +17,24 @@ export const dynamic = "force-dynamic";
  * `no-store` keeps a per-visitor answer out of shared caches.
  */
 export async function GET(request: Request) {
+  const { success } = await rateLimit(
+    rateLimitKey("ads-region", getClientIP(request)),
+    60,
+    60_000
+  );
+  if (!success) {
+    return NextResponse.json(
+      { region: "unknown", rateLimited: true },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": "60",
+          "Cache-Control": "private, no-store, max-age=0",
+        },
+      }
+    );
+  }
+
   const region = resolveAdRegion(
     request.headers.get("x-vercel-ip-country"),
     request.headers.get("cf-ipcountry")

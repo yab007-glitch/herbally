@@ -4,57 +4,64 @@ import { unstable_cache } from "next/cache";
 import { isIndexable } from "@/lib/seo/indexable";
 import { isUsablePubmedSheet } from "@/lib/pubmed/usable";
 import { resolveSheetContent } from "@/lib/i18n/sheet-content";
-import { cache } from "react";
+import type { SheetContent } from "@/components/herbs/pubmed-monograph-sheet";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { HerbSchema } from "@/components/seo/herb-schema";
-import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
 import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
 import { AuthorByline } from "@/components/herbs/author-byline";
 import { HerbPhoto } from "@/components/herbs/herb-photo";
-import { InternalLinkRail } from "@/components/herbs/internal-link-rail";
+import { HerbJumpNav } from "@/components/herbs/herb-jump-nav";
+import { HerbRegulatorExcerpts } from "@/components/herbs/herb-regulator-excerpts";
+import { HerbBodyContent } from "@/components/herbs/herb-body-content";
+import { HerbRelatedSection } from "@/components/herbs/herb-related-grid";
 import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 import {
   getAlphabeticalNeighbours,
   getSymptomPeers,
-  type LinkHerb,
 } from "@/lib/data/internal-links";
 import { CitationsList, SourceAttribution } from "@/components/herbs/citations";
 import { generateMonograph } from "@/lib/data/generate-monograph";
-import { getComparisonHerbs } from "@/lib/data/comparisons";
 import { siteUrl } from "@/lib/seo/site-url";
 import { truncateDescription } from "@/lib/seo/truncate-description";
 import { fitTitle } from "@/lib/seo/fit-title";
 import { hasDistinctCommonName } from "@/lib/seo/herb-naming";
 import { addLocalePrefix } from "@/lib/i18n/routing";
-import type { Monograph } from "@/lib/data/monographs";
+import { hasManualMonograph, type Monograph } from "@/lib/data/monographs";
 import { parseProvenance } from "@/lib/types/provenance";
-import { getHerbBySlug } from "@/lib/actions/herbs";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
-import { cleanFaqText } from "@/lib/herbs/clean-faq";
-import type { ActionResponse, HerbWithInteractions } from "@/lib/types";
+import type { HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { type Locale } from "@/lib/i18n/config";
 import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
-
+import {
+  HERB_PAGE_TTL,
+  PRERENDER_HERB_LIMIT,
+  computeLatestModified,
+  formatCitations,
+  getEvidenceLevel,
+  loadFaqsCached,
+  loadHerb,
+  loadHerbPageBundle,
+  loadMonographCached,
+  loadPubmedSheetCached,
+  loadRegulatoryEvidence,
+  loadRelatedHerbs,
+  loadSourcesCached,
+  type CitationData,
+} from "@/lib/herbs/herb-page-data";
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
-import { HerbDetailTabs } from "@/components/herbs/herb-detail-tabs";
 import { HerbNarrative } from "@/components/herbs/herb-narrative";
-import { HerbOverviewPanel } from "@/components/herbs/herb-overview-panel";
-import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
-import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
-import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
-import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 import { InteractionsTable } from "@/components/herbs/interactions-table";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { AdCmp } from "@/components/ads/ad-cmp";
@@ -62,250 +69,16 @@ import { CmpBootstrap } from "@/components/ads/cmp-bootstrap";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { ViewTracker } from "@/components/herbs/view-tracker";
 import { GovSources } from "@/components/herbs/gov-sources";
-import {
-  RegulatoryEvidenceSection,
-  type RegulatoryEvidence,
-} from "@/components/herbs/regulatory-evidence";
-import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
-import { PubmedMonographSheet } from "@/components/herbs/pubmed-monograph-sheet";
-import { NccihSummary } from "@/components/herbs/nccih-summary";
+import { RegulatoryEvidenceSection } from "@/components/herbs/regulatory-evidence";
 import { HerbSources } from "@/components/herbs/herb-sources";
-import type {
-  SheetContent,
-  Citation,
-} from "@/components/herbs/pubmed-monograph-sheet";
-import { hasManualMonograph } from "@/lib/data/monographs";
 import { getReviewer } from "@/lib/data/reviewers";
 
-// ISR. This route was force-dynamic because the locale used to come from
-// headers(): the root layout's `headers()` call threw during on-demand static
-// generation, which is what turned unlisted slugs into 500s on 2026-10-08.
-// The locale is now a root param and no page-level code reads a request API,
-// so on-demand generation is safe. Revalidate aligns with the unstable_cache
-// TTLs below (3 days); admin edits still invalidate on demand.
+// ISR: locale comes from [locale] param and no page-level code reads a request API.
 export const revalidate = 259200;
 
 type Props = { params: Promise<{ slug: string }> };
 
-/**
- * How many herb pages to pre-render at build time.
- *
- * Kept at zero deliberately: the build runs against the same 0.5 GB Supabase
- * instance that serves production, so prerendering every herb would trade a
- * runtime problem for a build-time one. `dynamicParams` defaults to true and
- * revalidate is set above, so any published slug outside this set is generated
- * on demand and cached. Raise this in a follow-up while watching build time
- * and DB load.
- */
-const PRERENDER_HERB_LIMIT = 0;
-/**
- * How long a rendered herb page stays cached.
- *
- * Every expiry costs two database round trips. At 3,240 pages a one-day window is
- * roughly 6,500 revalidation queries a day on top of real traffic, and the free-tier
- * instance ran out of Disk IO budget three times in a week. Three days cuts that by
- * two thirds; on-demand revalidation (`revalidateTag`) still handles edits that must
- * appear immediately.
- */
-const HERB_PAGE_TTL = 259200;
-
-/**
- * Below this much substance a page is not submitted for indexing.
- *
- * Measured across the 3,238 published herbs: median 322 characters of substance
- * (description + recorded uses + dosage), 1,868 pages under 400, and only 259 that
- * a reader would call substantial. Google reached the same verdict independently —
- * 2,711 pages "crawled, currently not indexed", and AdSense refused the site for
- * "low-value content". Asking Google to index pages we cannot stand behind wastes
- * crawl budget and feeds that verdict.
- *
- * A monograph or a regulator record counts as substance: those pages carry sourced
- * detail even when the prose is short. The rule is computed, so a page becomes
- * indexable the moment its content crosses the line — nothing to remember to undo.
- */
-
-/**
- * Request-scoped memo around the herb fetch.
- *
- * The page component needs this row; generateMetadata reads it from the page
- * bundle instead and only lands here when that bundle is unavailable. This is
- * still a `select *` with two nested embeds, and every cold render used to pay
- * for it twice (metadata and body). React's cache dedupes callers within one
- * render pass; unstable_cache below still handles reuse across requests, and
- * the per-slug tags still drive on-demand revalidation.
- */
-async function fetchHerb(
-  slug: string,
-  locale: Locale
-): Promise<ActionResponse<HerbWithInteractions>> {
-  const result = await getHerbBySlug(slug, { locale, skipCookies: true });
-  // A failed query must never be cached. unstable_cache below would otherwise
-  // persist the failure for 24 h and ISR would re-serve it as a prerendered
-  // 404. Throwing aborts the cache write, so the route returns a retryable 500
-  // and the next request retries the database.
-  if (!result.success && result.reason === "unavailable") {
-    herbUnavailable(result.error);
-  }
-  return result;
-}
-
-const loadHerb = cache((slug: string, locale: Locale) =>
-  fetchHerb(slug, locale)
-);
-
-/**
- * Regulator evidence for this herb (Health Canada LNHPD). Cached for the same
- * 24 h window as the rest of the page and tagged so an import can purge it.
- * A missing row is normal: 1,535 of 2,699 herbs have no licensed product in
- * Canada, and those pages must render without the section rather than with an
- * empty shell.
- */
-/**
- * One round trip per herb page instead of six.
- *
- * Supabase charges Disk IO, and this page used to issue a separate query for the
- * herb, its monograph, PubMed sheet, FAQs, regulator evidence and related herbs.
- * A cold cache after a deploy turned ~3,200 pages into ~19,000 queries and the
- * project ran out of IO budget twice. herb_page_bundle() returns the whole page
- * payload as one jsonb, so a render costs one query.
- *
- * The individual shapes are unchanged: each section still receives exactly the
- * columns it used to select.
- */
-type HerbPageBundle = {
-  herb: Record<string, unknown> | null;
-  regulatory: RegulatoryEvidence | null;
-  monograph: Record<string, unknown> | null;
-  pubmed: Record<string, unknown> | null;
-  popularity: { views?: number | null } | null;
-  sources: Array<{
-    source: string;
-    licence: string | null;
-    attribution: string | null;
-    url: string | null;
-    claims: unknown;
-    safety: unknown;
-    doses: unknown;
-    monograph_date: string | null;
-  }>;
-  faqs: Array<Record<string, unknown>>;
-  related: Array<{ name: string; slug: string; scientific_name: string }>;
-  neighbours?: { prev: LinkHerb | null; next: LinkHerb | null };
-  symptom_peers?: LinkHerb[];
-};
-
-// The data cache survives a deploy: entries written by the previous build keep
-// being served until their TTL expires, even when the RPC's shape changes. Bump
-// this key whenever the bundle's fields change, or new fields read as undefined.
-// v3: imported Health Canada monographs were invisible until the key moved.
-// v4: the bundle also carries `faqs`, so a corrected herb_faqs row stayed hidden
-//     on every page whose bundle was still warm. The per-slug tag below is what
-//     lets a data-only correction reach a warm entry; a key bump is still needed
-//     when the payload's shape changes.
-async function fetchHerbPageBundle(
-  slug: string
-): Promise<HerbPageBundle | null> {
-  const supabase = getAnonClient();
-  if (!supabase) return null;
-  // The generated database types predate this function; the call is typed here
-  // instead of hand-editing the generated file.
-  // Bind the method: supabase-js' rpc reads `this.rest`, so a detached
-  // reference throws "Cannot read properties of undefined (reading 'rest')".
-  const rpc = supabase.rpc.bind(supabase) as unknown as (
-    fn: string,
-    args: Record<string, unknown>
-  ) => Promise<{ data: unknown; error: { message?: string } | null }>;
-  const { data, error } = await rpc("herb_page_bundle", { p_slug: slug });
-  if (error) {
-    // Throw rather than return null: unstable_cache would persist a null for the
-    // whole TTL, so one database blip (the 2026-11-14 outage served 521s for
-    // twenty minutes) would strip the monograph, FAQs and regulator sections
-    // from that herb for three days. Throwing aborts the cache write;
-    // loadHerbPageBundle turns the failure back into a per-request null.
-    throw new Error(error.message ?? "herb_page_bundle failed");
-  }
-  // A null payload is a genuine miss (unknown slug), not a failure: cache it so
-  // repeated 404 probes do not re-query the database.
-  return (data as HerbPageBundle | null) ?? null;
-}
-
-/**
- * Read one herb's page bundle from the data cache.
- *
- * The wrapper is created per call so the tags can carry the slug: metadata now
- * reads the herb row from this bundle, so a data-only correction must refresh
- * one herb without purging every page. `revalidateTag("herb-page-bundle")`
- * still busts the lot (that is what a bundle-key bump wants), while
- * `herb-page-bundle-<slug>` lets /api/revalidate-herb and admin edits purge a
- * single entry. unstable_cache keys on its arguments, so the per-call wrapper
- * still shares one cache entry per slug.
- *
- * React's cache() memoizes it per request, which is load-bearing: generateMetadata
- * and the page body render concurrently, so without it both miss the same entry
- * and the RPC runs twice per cold render (measured 41 bundle calls to 19 herb
- * calls in the minute after the 2026-11-14 deploy — the pre-fix shape, where
- * metadata read the herb row separately, was 2 herb calls to 1 bundle).
- */
-const loadHerbPageBundle = cache(
-  async (slug: string): Promise<HerbPageBundle | null> => {
-    try {
-      return await unstable_cache(
-        fetchHerbPageBundle,
-        // The version suffix is the only invalidation that cannot miss. On
-        // 2026-11-17 a bulk description rewrite was followed by
-        // /api/revalidate-herb for all 2,247 affected slugs; most pages
-        // re-read the bundle, but a handful kept serving the pre-rewrite row
-        // even when fetched straight from the container, so the per-slug tag
-        // purge had not landed on their entries. Bump this when a data
-        // correction must reach every page regardless of cache state.
-        ["herb-page-bundle-v7"],
-        {
-          revalidate: HERB_PAGE_TTL,
-          tags: ["herb-page-bundle", `herb-page-bundle-${slug}`],
-        }
-      )(slug);
-    } catch (error) {
-      // A failed read is not cached (see fetchHerbPageBundle); it is only a
-      // miss for this request, which falls back to the direct herb read.
-      logger.warn("herb_page_bundle failed", { slug, error: String(error) });
-      return null;
-    }
-  }
-);
-
-/**
- * The regulator record for one herb.
- *
- * This used to be a single module-level `unstable_cache` carrying only the
- * global tag `herb-regulatory-evidence`, which nothing invalidated: once the
- * entry was warm, a database correction stayed invisible for the full 72 h
- * TTL. Rebuilding the bundle did not help either, because this cache holds its
- * own copy of the value. Measured on 2026-11-16: `malabar-nut` lost a claim
- * that named another plant, the table and the bundle were both clean, and the
- * live page still rendered the old bullet.
- *
- * The wrapper is therefore created per call so the tag can carry the slug, and
- * `/api/revalidate-herb` purges `herb-regulatory-evidence-<slug>`.
- */
-const loadRegulatoryEvidence = cache(
-  async (slug: string): Promise<RegulatoryEvidence | null> => {
-    return await unstable_cache(
-      async (s: string) => {
-        const bundle = await loadHerbPageBundle(s);
-        return (bundle?.regulatory as RegulatoryEvidence | null) ?? null;
-      },
-      ["herb-regulatory-evidence"],
-      {
-        revalidate: HERB_PAGE_TTL,
-        tags: ["herb-regulatory-evidence", `herb-regulatory-evidence-${slug}`],
-      }
-    )(slug);
-  }
-);
-
 export async function generateStaticParams() {
-  // Return before querying: a limit of zero should cost zero database work, and
-  // this build runs against the same 0.5 GB instance that serves production.
   if (PRERENDER_HERB_LIMIT === 0) return [];
 
   const supabase = getAnonClient();
@@ -314,10 +87,6 @@ export async function generateStaticParams() {
     return [];
   }
 
-  // NOTE: herb_popularity is service_role-only (migration 00069); the anon
-  // client below cannot read it. Raising the limit therefore requires a
-  // service-role client here. The error is logged rather than swallowed so that
-  // mistake shows up as an empty prerender set instead of a silent one.
   const { data: herbs, error } = await supabase
     .from("herb_popularity")
     .select("slug")
@@ -336,25 +105,15 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const metaLocale = await getLocale();
-
-  // The bundle is fetched below for isIndexable anyway, and it carries the
-  // herbs row, so metadata reads that row instead of paying a second
-  // `select *` with two nested embeds. The bundle row is the raw herbs row (no
-  // drug_interactions embed), which is everything used here.
   const bundle = await loadHerbPageBundle(slug);
 
   let herb: HerbWithInteractions;
   if (bundle?.herb) {
-    // The bundle stores the raw row, so apply the same French overlay
-    // getHerbBySlug would have applied before the metadata derives from it.
     herb = localizeHerb(
       bundle.herb as unknown as HerbWithInteractions,
       metaLocale
     );
   } else {
-    // The bundle is null on an RPC failure or when the slug has no precomputed
-    // row. Fall back to the direct read, which also keeps the miss/unavailable
-    // distinction intact.
     const getHerbMetaCached = unstable_cache(
       async (herbSlug: string, locale: string) => {
         return loadHerb(herbSlug, locale as Locale);
@@ -364,29 +123,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     );
 
     const result = await getHerbMetaCached(slug, metaLocale);
-    // Only a genuine miss becomes "Herb Not Found" metadata. A failed query is
-    // not evidence the herb doesn't exist: propagate it so the route renders a
-    // retryable 500 rather than teaching crawlers a 404.
     if (!result.success || !result.data) {
       if (!result.success && result.reason === "unavailable") {
         herbUnavailable(result.error);
       }
-      // The page body turns this into a 404 (see resolveHerbOr404 below). There
-      // is no loading.tsx above this route precisely so that the status can still
-      // be set to 404; a Suspense fallback would flush a 200 shell first.
       return {
-        // absolute: the root template would append " | HerbAlly" to a title that
-        // already carries it, giving "Herb Not Found | HerbAlly | HerbAlly".
         title: { absolute: "Herb Not Found | HerbAlly" },
         robots: { index: false },
       };
     }
     herb = result.data;
   }
+
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
-  // Only herbs with a real French record count as French. Pages under /fr render
-  // French chrome around English content when no translation exists, so declaring
-  // those as the fr alternate invites Google to treat them as duplicates.
   const frRecord = (herb.translations as Record<string, unknown> | null)?.fr;
   const hasFr =
     !!frRecord &&
@@ -403,24 +152,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     "natural medicine",
   ].filter(Boolean);
 
-  // Title and description come from the `herbMeta` dictionary so a French page
-  // does not ship an English snippet. Hardcoding them meant all 2,700 /fr/herbs
-  // pages read "…: Benefits, Dosage, Safety & Evidence" and described the herb
-  // as "What is Curcuma in English (…)" — a page written for French queries
-  // that told the reader the answer was in English.
   const herbT = await getTranslations({
     locale: metaLocale,
     namespace: "herbMeta",
   });
   const commonNames = (herb.common_names || []).slice(0, 3).join(", ");
-  // {uses} used to be spliced into the meta description, but those values are
-  // clauses ("In Ayurvedic medicine, traditional…"), so every one of the 2,700
-  // pages read "Uses for In Ayurvedic medicine, traditional…". The
-  // descriptions now describe the page instead of quoting a clause.
-  // The full template renders 64+ characters for a typical herb and over 70
-  // with the layout's " | HerbAlly" suffix, so search results cut off the
-  // benefit keywords. Candidates run longest to shortest; the binomial-only
-  // fallbacks exist for long plant names.
   const scientific = herb.scientific_name;
   const title = hasDistinctCommonName(herb)
     ? herbT("title", { name: herb.name, scientific })
@@ -435,11 +171,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ]
       : [title, herbT("titleBinomialShort", { scientific }), scientific]
   );
-  // The body-based variant used to splice a hard 120-character slice into a
-  // keyword template ("…pregnancy safety & interactions…"), and the outer
-  // truncation then cut the template itself — leaving 2,543 live descriptions
-  // ending in a bare "&…". The body alone, cut on a word boundary, reads as a
-  // sentence and is already unique per herb.
+
   const description = commonNames
     ? truncateDescription(
         herbT("descWithNames", {
@@ -457,17 +189,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         );
 
   const untranslatedFr = metaLocale === "fr" && !hasFr;
-
-  // Which pages Google is asked to index is decided in one place, shared with the
-  // sitemap: see src/lib/seo/indexable.ts. Views are not an input: the counter is
-  // crawler-inflated, so a thin page can never buy its way into the index with bot
-  // traffic.
-  //
-  // A page earns `index, follow` only when backed by substantive reference
-  // depth: a curated/imported/manual monograph or at least one curated
-  // drug-interaction record. Bare product-licence stubs without monographs or
-  // interactions remain live (`200 OK`) and searchable with `noindex, follow`,
-  // matching the sitemap so search engines and AdSense never see thin stubs.
   const bundleInteractions = (
     bundle?.herb as Record<string, unknown> | null | undefined
   )?.drug_interactions;
@@ -518,8 +239,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           },
         }
       : {
-          // No French record: point every French request at the English page and
-          // claim no fr alternate, so the untranslated copy is not indexed twice.
           canonical: `${baseUrl}/herbs/${slug}`,
           languages: {
             en: `${baseUrl}/herbs/${slug}`,
@@ -542,12 +261,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
     },
-    // An untranslated French URL is the English page under French chrome. It stays
-    // crawlable (follow) so links are discovered, but it must not be indexed as a
-    // French page of its own.
-    // ONE decision for robots. A second `robots` key anywhere in this object
-    // silently wins, which is how the untranslated-FR noindex was lost once
-    // already and how the thin-page rule would be lost now.
     robots:
       untranslatedFr || thin
         ? { index: false, follow: true }
@@ -565,50 +278,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function getEvidenceLevel(
-  level: string | null | undefined
-): "A" | "B" | "C" | "D" | "trad" {
-  if (level && ["A", "B", "C", "D", "trad"].includes(level))
-    return level as "A" | "B" | "C" | "D" | "trad";
-  // Default to "trad" (Traditional Use) rather than "C" (Limited Evidence).
-  // Most unverified herbs have no clinical evidence data — presenting them
-  // as "C - Traditional/preclinical" overstates the evidence basis. "trad"
-  // is honest: it says "used traditionally, science may be limited."
-  return "trad";
-}
-
-interface CitationData {
-  source: string;
-  title?: string;
-  url?: string;
-  year?: number;
-  pmid?: string;
-}
-
-function formatCitations(
-  citations: CitationData[] | null | undefined,
-  t: (key: string, params?: Record<string, string | number>) => string
-): CitationData[] {
-  if (!citations || citations.length === 0) {
-    return [
-      {
-        source: t("herbDetailContent.sources.nccih"),
-        title: t("seo.nccihSource"),
-        url: "https://www.nccih.nih.gov/health/herbsataglance",
-      },
-    ];
-  }
-  return citations;
-}
-
 export default async function HerbDetailPage({ params }: Props) {
   const { slug } = await params;
   const pageLocale = await getLocale();
-
-  // Share the request-scoped bundle with generateMetadata. Migration 00070
-  // embeds herb_categories and drug_interactions inside bundle.herb, so a warm
-  // or freshly built bundle supplies the full HerbWithInteractions row without
-  // a second PostgREST round trip.
   const bundle = await loadHerbPageBundle(slug);
 
   let herb: HerbWithInteractions;
@@ -628,127 +300,30 @@ export default async function HerbDetailPage({ params }: Props) {
     };
   } else {
     const getHerbCached = unstable_cache(
-      async (herbSlug: string, locale: Locale) => {
-        return loadHerb(herbSlug, locale);
-      },
+      async (herbSlug: string, locale: Locale) => loadHerb(herbSlug, locale),
       ["herb-v8-" + slug],
       { revalidate: HERB_PAGE_TTL, tags: ["herb-" + slug] }
     );
-
-    const result = await getHerbCached(slug, pageLocale as Locale);
-    herb = resolveHerbOr404(result);
+    herb = resolveHerbOr404(await getHerbCached(slug, pageLocale as Locale));
   }
 
-  // View tracking runs from a client beacon (ViewTracker) instead of a
-  // server-side `after()` hook. The old hook fired once per dynamic render —
-  // including crawlers, prefetches and repeat views — and drove ~79k UPDATEs
-  // against a Nano instance's Disk IO budget. The beacon dedupes per
-  // visitor/slug/day and writes through a slug-addressed RPC.
-
-  // Read imported regulator sources from the precomputed bundle first (triggers
-  // on herb_monograph_sources mark the bundle dirty on any write, and
-  // fetchHerbPageBundle throws on RPC error so failed reads are never cached).
-  // Fall back to the direct table query only when the bundle is unavailable.
-  const getSourcesCached = unstable_cache(
-    async (herbSlug: string) => {
-      const b = await loadHerbPageBundle(herbSlug);
-      if (b && Array.isArray(b.sources)) {
-        return b.sources;
-      }
-      const supabase = getAnonClient();
-      if (!supabase) return [];
-      const { data, error } = await supabase
-        .from("herb_monograph_sources" as never)
-        .select(
-          "source, licence, attribution, url, claims, safety, doses, monograph_date"
-        )
-        .eq("herb_slug", herbSlug)
-        .order("source", { ascending: true });
-      if (error) return [];
-      return (data ?? []) as unknown as Array<{
-        source: string;
-        licence: string | null;
-        attribution: string | null;
-        url: string | null;
-        claims: unknown;
-        safety: unknown;
-        doses: unknown;
-        monograph_date: string | null;
-      }>;
-    },
-    [`sources-v4-${slug}`],
-    { revalidate: HERB_PAGE_TTL, tags: [`sources-${slug}`] }
-  );
-
-  const getMonographCached = unstable_cache(
-    async (herbSlug: string) => {
-      const bundle = await loadHerbPageBundle(herbSlug);
-      if (!bundle?.monograph) return null;
-      const m = bundle.monograph as Record<string, unknown>;
-      // Only the columns this page reads, so the callers keep their old shape.
-      return {
-        summary: m.summary,
-        mechanism: m.mechanism,
-        claims: m.claims,
-        safety_notes: m.safety_notes,
-        drug_interactions: m.drug_interactions,
-        pregnancy_category: m.pregnancy_category,
-        key_citations: m.key_citations,
-        status: m.status,
-        generation_method: m.generation_method,
-        reviewed_by: m.reviewed_by,
-        provenance: m.provenance,
-      };
-    },
-    // Versioned: the Data Cache outlives a deploy, so an unversioned key keeps
-    // serving yesterday's monograph. Popular pages were still showing their old
-    // source hours after the import because only they had a warm entry.
-    [`monograph-v2-${slug}`],
-    { revalidate: HERB_PAGE_TTL, tags: [`monograph-${slug}`] }
-  );
-
-  // PubMed-compiled information sheet (for herbs with no hand-written
-  // monograph). Cached like the monograph; anon-readable via RLS.
-  const getPubmedSheetCached = unstable_cache(
-    async (herbSlug: string) => {
-      const bundle = await loadHerbPageBundle(herbSlug);
-      if (!bundle?.pubmed) return null;
-      const p = bundle.pubmed as Record<string, unknown>;
-      const data = {
-        content: (p.content as string | null) ?? null,
-        citations: (p.citations as unknown[] | null) ?? null,
-        pmids: (p.pmids as string[] | null) ?? null,
-        article_count: (p.article_count as number | null) ?? 0,
-        model: (p.model as string | null) ?? null,
-        status: (p.status as string | null) ?? null,
-      };
-      return data;
-    },
-    [`pubmed-sheet-${slug}`],
-    // 1h revalidate so newly-written PubMed sheets appear without waiting the
-    // full day; on-demand revalidation (/api/revalidate-pubmed-sheet) makes a
-    // freshly compiled sheet appear instantly.
-    { revalidate: 3600, tags: [`pubmed-sheet-${slug}`] }
-  );
-
-  // Independent reads — firing them together removes a serial round trip from
-  // every cold render (i.e. from every prerender and every ISR regeneration).
-  const sources = await getSourcesCached(slug);
-  const [dbMonograph, pubmedSheet] = await Promise.all([
-    getMonographCached(slug),
-    getPubmedSheetCached(slug),
+  const [
+    sources,
+    dbMonograph,
+    pubmedSheet,
+    preGeneratedFaqs,
+    regulatoryEvidence,
+  ] = await Promise.all([
+    loadSourcesCached(slug),
+    loadMonographCached(slug),
+    loadPubmedSheetCached(slug),
+    loadFaqsCached(slug, pageLocale),
+    loadRegulatoryEvidence(slug),
   ]);
 
-  // Imported regulator text lives in herb_monograph_sources now — many rows per
-  // herb, one per source — and is rendered from the bundle below. herb_monographs
-  // holds only authored entries.
-
-  // Parse provenance to determine if this herb's content has been verified
   const provenance = parseProvenance(
     herb.provenance as Record<string, unknown> | null
   );
-  // Visible evidence trail: verified_sources is the current field, `sources` is
-  // what older rows carry, so fall back rather than rendering nothing.
   const verifiedSources: string[] = (() => {
     const raw = herb.provenance as {
       verified_sources?: unknown;
@@ -761,35 +336,18 @@ export default async function HerbDetailPage({ params }: Props) {
     const list = pick(raw?.verified_sources);
     return list.length ? list : pick(raw?.sources);
   })();
-  // Only manually reviewed or primary-source-backed herbs have verified
-  // mechanism text. Both "unverified" (no sources, no citations) and
-  // "ai_summarized" (has PubMed citations but no authoritative monograph
-  // match) have AI-generated mechanism text that was never checked against
-  // primary literature.
   const isNotManuallyVerified =
     provenance.verification_method === "unverified" ||
     provenance.verification_method === "ai_summarized";
 
-  let monograph: Monograph | null = null;
-  // Option B: only herbs with a hand-written (human-authored) or reviewed
-  // monograph show the rich narrative. Every other herb renders the
-  // government/PubMed-sourced view instead of AI-generated text. The hardcoded
-  // set covers the monographs that ship in code; the DB branch lets an admin
-  // publish a reviewed monograph without a deploy, while still refusing to
-  // render an unreviewed auto-generated row (the archived 2026-06 batch).
   const isManualMonograph =
     hasManualMonograph(slug) ||
     (dbMonograph?.status === "published" &&
       (dbMonograph.generation_method === "manual" ||
         Boolean(dbMonograph.reviewed_by)));
-  // The "Verified" veto for an unreviewed PubMed sheet lives in the hero
-  // component (herb-hero-v2.tsx), which is what actually renders the badge.
-  // Computing it here too left the result unused — an ESLint warning and a
-  // second, silently divergent copy of the trust rule.
+
+  let monograph: Monograph | null = null;
   if (dbMonograph) {
-    // Option B: the rich narrative is only RENDERED for herbs with a
-    // hand-written monograph (see the tabs gate). The monograph object is
-    // still built so references/SEO metadata stay consistent.
     const builtMonograph: Monograph = {
       slug,
       summary: (dbMonograph.summary as string) ?? "",
@@ -804,18 +362,10 @@ export default async function HerbDetailPage({ params }: Props) {
     };
     monograph = builtMonograph;
 
-    // For herbs without manual verification, override the fabricated
-    // mechanism text with an honest disclosure. The stored DB monographs
-    // were AI-generated with specific molecular pathway claims (e.g.
-    // "modulates NF-κB, COX-2") that were never verified against primary
-    // literature. Don't present them as fact.
     if (isNotManuallyVerified && builtMonograph.mechanism) {
       builtMonograph.mechanism = `The specific molecular targets and pharmacokinetic pathways by which the active compounds of ${herb.name} exert their reported effects have not been verified against primary literature for this entry. This monograph was generated by AI and has not yet been reviewed against authoritative sources. Consult PubMed or a qualified pharmacognosist for evidence-based mechanism data.`;
     }
-    // Also override the summary if it contains specific clinical claims
-    // that weren't verified
     if (isNotManuallyVerified && builtMonograph.summary) {
-      // Only prepend the disclaimer if the summary doesn't already mention it
       if (
         !/not been verified/i.test(builtMonograph.summary) &&
         !/AI-generated/i.test(builtMonograph.summary)
@@ -835,53 +385,6 @@ export default async function HerbDetailPage({ params }: Props) {
   const interactions = (herb.drug_interactions ||
     []) as import("@/components/herbs/interactions-table").Interaction[];
 
-  // Fetch pre-generated FAQs for Featured Snippet optimization.
-  // Overlays translations.fr (question/answer) on French pages; falls back
-  // to English per-field so partially translated rows never blank out.
-  // Locale is a parameter (not a closure over the later `locale` const) and
-  // part of the cache key so EN/FR entries can't poison each other.
-  const getFaqsCached = unstable_cache(
-    async (herbSlug: string, faqLocale: string) => {
-      const bundle = await loadHerbPageBundle(herbSlug);
-      const data = bundle?.faqs ?? [];
-      const rows = (data || []) as unknown as Array<{
-        question: string;
-        answer: string;
-        category?: string;
-        translations?: {
-          fr?: { question?: string; answer?: string };
-        } | null;
-      }>;
-      // The harvest kept regulator field names as lead-ins ("Contra-
-      // Indications: …"); on 439 English and 418 French answers that read
-      // like a database dump. Both the visible section and the JSON-LD read
-      // these rows, so the cleanup happens once, here.
-      const clean = (list: typeof rows) =>
-        list.map((r) => ({ ...r, answer: cleanFaqText(r.answer) }));
-
-      if (faqLocale !== "fr") return clean(rows);
-      // No FAQ row carries a French translation yet, and falling back to English
-      // put an English Q&A block in the middle of otherwise French pages. Drop the
-      // untranslated rows until the translation pass lands: a French page with
-      // fewer answers beats one that switches language halfway down.
-      return clean(
-        rows
-          .filter(
-            (r) => r.translations?.fr?.question && r.translations?.fr?.answer
-          )
-          .map((r) => ({
-            ...r,
-            question: r.translations!.fr!.question!,
-            answer: r.translations!.fr!.answer!,
-          }))
-      );
-    },
-    [`herb-faqs-v5-${slug}`],
-    { revalidate: HERB_PAGE_TTL, tags: [`herb-faqs-${slug}`] }
-  );
-
-  const preGeneratedFaqs = await getFaqsCached(slug, await getLocale());
-
   const severityCounts = {
     contraindicated: interactions.filter(
       (i) => i.severity === "contraindicated"
@@ -892,37 +395,26 @@ export default async function HerbDetailPage({ params }: Props) {
   };
 
   const evidenceLevel = getEvidenceLevel(herb.evidence_level);
-
-  // Default locale for static generation; client-side locale switching handles user prefs
-  const locale = await getLocale();
-  // Copy for the sections composed in code (source blocks, evidence trail,
-  // records narrative). Without this the page was French down to the first
-  // regulator block and English below it.
-  const copy = herbPageCopy(locale === "fr" ? "fr" : "en");
-
-  // A French translation of the PubMed sheet, when one exists, lives under
-  // `content->'fr'` with the same shape as the English sheet, so English is
-  // never overwritten. When it is missing (or a stub), /fr keeps the existing
-  // behaviour: the English sheet is shown collapsed and labelled as a verbatim
-  // source rather than presented as if it were French.
+  const locale = pageLocale;
+  const copyLocale = locale === "fr" ? "fr" : "en";
+  const copy = herbPageCopy(copyLocale);
   const sheet = resolveSheetContent(
     pubmedSheet?.content as unknown as SheetContent | undefined,
     locale
   );
-  const t = await getTranslations({ locale });
-  const tFaq = await getTranslations({ locale, namespace: "herbFaq" });
-  // Same `herbMeta` title the <title> tag uses, so the JSON-LD name and the
-  // share text are not English sentences on a French page.
-  const tHerbMeta = await getTranslations({ locale, namespace: "herbMeta" });
+
+  const [t, tFaq, tHerbMeta] = await Promise.all([
+    getTranslations({ locale }),
+    getTranslations({ locale, namespace: "herbFaq" }),
+    getTranslations({ locale, namespace: "herbMeta" }),
+  ]);
+
   const herbMetaTitle = hasDistinctCommonName(herb)
     ? tHerbMeta("title", {
         name: herb.name,
         scientific: herb.scientific_name,
       })
     : tHerbMeta("titleBinomial", { scientific: herb.scientific_name });
-  // Structured data must point at the URL this page actually serves. It used to
-  // hardcode the English paths, so every /fr/herbs/* page declared a canonical
-  // elsewhere in its own JSON-LD and English breadcrumb labels.
   const herbPageUrl = `${siteUrl()}${addLocalePrefix(`/herbs/${slug}`, locale)}`;
   const herbCrumbs = [
     {
@@ -936,34 +428,26 @@ export default async function HerbDetailPage({ params }: Props) {
     { name: herb.name, url: herbPageUrl },
   ];
 
-  // Localized fallback FAQs, shared with the visible section via the same
-  // builder so JSON-LD and content match in both languages.
-  const fallbackFaqInput = {
-    herbName: herb.name,
-    scientificName: herb.scientific_name,
-    uses: [...(herb.traditional_uses || []), ...(herb.modern_uses || [])],
-    safetyNotes:
-      monograph?.safetyNotes?.join(". ") || herb.side_effects?.join(". ") || "",
-    pregnancyCategory: monograph?.pregnancyCategory || "insufficient",
-    drugInteractions: interactions.length,
-    commonNames: herb.common_names || [],
-  };
-  const fallbackFaqs = buildHerbFallbackFaqs(fallbackFaqInput, (key, params) =>
-    tFaq(key as never, params as never)
+  const fallbackFaqs = buildHerbFallbackFaqs(
+    {
+      herbName: herb.name,
+      scientificName: herb.scientific_name,
+      uses: [...(herb.traditional_uses || []), ...(herb.modern_uses || [])],
+      safetyNotes:
+        monograph?.safetyNotes?.join(". ") ||
+        herb.side_effects?.join(". ") ||
+        "",
+      pregnancyCategory: monograph?.pregnancyCategory || "insufficient",
+      drugInteractions: interactions.length,
+      commonNames: herb.common_names || [],
+    },
+    (key, params) => tFaq(key as never, params as never)
   );
 
   const citations = formatCitations(
     herb.citations as unknown as CitationData[] | null,
     t
   );
-  // A review attribution needs a named, registered reviewer. Every herb row
-  // carries the generic string "HerbAlly Editorial Team", which is not a
-  // person and cannot be shown as a byline or emitted as a schema.org Person:
-  // that would claim review by a body nobody can name. Until a real reviewer
-  // is registered for a herb, the page shows its author and leaves review
-  // unclaimed. `last_reviewed` is tied to the same condition — the current
-  // value is one bulk date stamped across all 2,699 rows, so it is a
-  // data-entry artifact, not evidence that anything was reviewed.
   const registeredReviewer = getReviewer(herb.reviewed_by);
   const lastReviewed =
     registeredReviewer && herb.last_reviewed
@@ -972,8 +456,6 @@ export default async function HerbDetailPage({ params }: Props) {
           year: "numeric",
         })
       : undefined;
-  // Which regulator, if any, backs this entry. Used to explain a missing dose
-  // honestly instead of leaving the panel silent.
   const regulatorName =
     (
       (herb.provenance as { sources?: unknown[] } | null)?.sources?.find(
@@ -983,66 +465,12 @@ export default async function HerbDetailPage({ params }: Props) {
           (src as { type?: string }).type === "regulator"
       ) as { name?: string } | undefined
     )?.name ?? null;
-
   const reviewedBy = registeredReviewer?.name;
   const reviewerCredentials = registeredReviewer?.credentials;
-
-  // Related herbs: the category query is the only un-cached Supabase fetch on
-  // this page (every other query uses tagged `fetch`/`unstable_cache`). Wrap
-  // it in unstable_cache so it shares the page's 86400s revalidation window and
-  // can be purged via the `related-herbs-<slug>` tag instead of re-running on
-  // every daily regeneration. `getComparisonHerbs` is a pure in-memory ranker,
-  // so it runs inside the cache to cache the final ranked result.
-  const getRelatedHerbs = unstable_cache(
-    async (
-      herbSlug: string,
-      categoryId: string | null,
-      curatedSlugs: string[]
-    ) => {
-      const b = await loadHerbPageBundle(herbSlug);
-      if (b?.related?.length) {
-        if (curatedSlugs.length) {
-          // Preserve the curated order rather than the database's.
-          const bySlug = new Map(b.related.map((r) => [r.slug, r]));
-          const ordered = curatedSlugs
-            .map((s) => bySlug.get(s))
-            .filter(
-              (
-                r
-              ): r is { name: string; slug: string; scientific_name: string } =>
-                Boolean(r)
-            );
-          if (ordered.length) return ordered;
-        }
-        return b.related.slice(0, 3);
-      }
-      // Migration 00070 populates b.related from related_slugs or symptom_peers;
-      // when an enriched bundle has no related entries, do not fall back to a
-      // 2,620-row scan of the "Not Common" category bucket.
-      if (b && b.neighbours !== undefined) {
-        return [];
-      }
-      const supabaseClient = getAnonClient();
-      if (!supabaseClient) return [];
-      let relatedQuery = supabaseClient
-        .from("herbs")
-        .select(
-          "name, slug, scientific_name, symptom_keywords, traditional_uses"
-        )
-        .eq("is_published", true)
-        .limit(24);
-      if (categoryId) {
-        relatedQuery = relatedQuery.eq("category_id", categoryId);
-      }
-      const { data: categoryHerbs } = await relatedQuery;
-      if (!categoryHerbs) return [];
-      return getComparisonHerbs(herbSlug, categoryHerbs, 3);
-    },
-    ["related-herbs-v3-" + slug],
-    { revalidate: HERB_PAGE_TTL, tags: ["related-herbs-" + slug] }
+  const latestModified = computeLatestModified(
+    herb.updated_at,
+    herb.last_reviewed
   );
-
-  const regulatoryEvidence = await loadRegulatoryEvidence(slug);
 
   let relatedHerbs: Array<{
     name: string;
@@ -1050,7 +478,7 @@ export default async function HerbDetailPage({ params }: Props) {
     scientific_name: string;
   }> = [];
   try {
-    relatedHerbs = await getRelatedHerbs(
+    relatedHerbs = await loadRelatedHerbs(
       slug,
       herb.category_id ?? null,
       (
@@ -1058,13 +486,9 @@ export default async function HerbDetailPage({ params }: Props) {
       ).filter(Boolean)
     );
   } catch {
-    // swallow — related herbs are non-critical
+    // Non-critical related herbs fallback
   }
 
-  // Structure rails. The A–Z neighbours are guaranteed and turn 2,700
-  // otherwise-isolated pages into a crawlable chain; the symptom peers are the
-  // relevance signal that actually varies across the library. Migration 00070
-  // includes both in herb_page_bundle() so cold renders pay zero extra queries.
   const [{ prev, next }, symptomPeers] =
     bundle?.neighbours && Array.isArray(bundle.symptom_peers)
       ? [bundle.neighbours, bundle.symptom_peers]
@@ -1076,18 +500,28 @@ export default async function HerbDetailPage({ params }: Props) {
           ),
         ]);
 
+  const imageMeta = (
+    herb.provenance as {
+      image?: {
+        credit?: string;
+        source?: string;
+        publisher?: string;
+        licence?: string;
+        licence_url?: string;
+        licenceUrl?: string;
+      };
+    } | null
+  )?.image;
+
   return (
     <div className="space-y-8">
       <ViewTracker slug={slug} />
-      <WebPageSchema
-        title={herbMetaTitle}
-        description={herb.description ?? `Learn about ${herb.name}`}
-        url={herbPageUrl}
-        dateModified={herb.last_reviewed ?? herb.updated_at ?? undefined}
-        breadcrumbs={herbCrumbs}
-      />
       <BreadcrumbListSchema items={herbCrumbs} />
-      <HerbSchema herb={herb} url={herbPageUrl} />
+      <HerbSchema
+        herb={herb}
+        url={herbPageUrl}
+        dateModified={latestModified ?? undefined}
+      />
       <HerbFAQSchema
         herbName={herb.name}
         scientificName={herb.scientific_name}
@@ -1105,7 +539,6 @@ export default async function HerbDetailPage({ params }: Props) {
         fallbackFaqs={fallbackFaqs}
       />
 
-      {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
           { name: t("common.breadcrumbHome"), href: "/" },
@@ -1114,20 +547,20 @@ export default async function HerbDetailPage({ params }: Props) {
         ]}
       />
 
-      {/* Back Button */}
-      <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="min-h-10"
+        render={<Link href="/herbs" />}
+      >
         <ArrowLeft className="size-4" />
         {t("herbDetail.backToHerbs")}
       </Button>
 
-      {/* Medical Disclaimer */}
       <p className="text-xs text-muted-foreground italic">
         {t("herbDetail.medicalDisclaimerText")}
       </p>
 
-      {/* New Hero */}
-      {/* Safety-first: lethal plants (abrin, aconite…) get a hard "do not
-          use" banner above the fold, before any hero/benefits content. */}
       <DangerousHerbBanner slug={slug} />
       <HerbHeroV2
         herb={{ ...herb, evidence_level: evidenceLevel }}
@@ -1145,88 +578,50 @@ export default async function HerbDetailPage({ params }: Props) {
         safetyHref="#interactions"
       />
 
-      {/* The explanation of these labels lives on /methodology. It used to be a
-          collapsed block here, which put the same ~60 lines of text in the HTML
-          of all 3,238 entries. A link carries the reader there without
-          duplicating the template three thousand times. */}
       <p className="-mt-4 text-sm text-muted-foreground">
         <Link
           href="/methodology"
-          className="underline-offset-4 hover:text-foreground hover:underline"
+          className="inline-flex min-h-9 items-center underline-offset-4 hover:text-foreground hover:underline"
         >
           {copy.evidenceLabelsLink}
         </Link>
       </p>
 
-      {/* Accountable author. Health pages are judged on who stands behind
-          them, and this site's byline previously read "Editorial Team". */}
-      <AuthorByline
-        locale={locale === "fr" ? "fr" : "en"}
-        lastReviewed={herb.last_reviewed ?? herb.updated_at ?? null}
+      <AuthorByline locale={copyLocale} lastReviewed={latestModified} />
+
+      <HerbJumpNav
+        locale={copyLocale}
+        hasInteractions={interactions.length > 0}
       />
 
-      {(() => {
-        const imageMeta = (
-          herb.provenance as {
-            image?: {
-              credit?: string;
-              source?: string;
-              publisher?: string;
-              licence?: string;
-              licence_url?: string;
-              licenceUrl?: string;
-            };
-          } | null
-        )?.image;
-        return (
-          <HerbPhoto
-            slug={slug}
-            name={herb.name}
-            className="mt-2"
-            imageUrl={herb.image_url}
-            credit={imageMeta?.credit}
-            creditUrl={imageMeta?.source}
-            publisher={imageMeta?.publisher}
-            licence={imageMeta?.licence}
-            licenceUrl={imageMeta?.licence_url ?? imageMeta?.licenceUrl}
-          />
-        );
-      })()}
+      <HerbPhoto
+        slug={slug}
+        name={herb.name}
+        className="mt-2"
+        imageUrl={herb.image_url}
+        credit={imageMeta?.credit}
+        creditUrl={imageMeta?.source}
+        publisher={imageMeta?.publisher}
+        licence={imageMeta?.licence}
+        licenceUrl={imageMeta?.licence_url ?? imageMeta?.licenceUrl}
+      />
 
-      {/* The lead paragraph. Every non-monograph entry carries a description in
-          the herbs row, but before this it only reached JSON-LD and the meta
-          tag: the "What the records say" section restates the use, dose and
-          safety fields and never printed the description itself, so a reader
-          landed on a name and a table of fragments. It is rendered here, after
-          the photo, because that is where an encyclopedia lead belongs.
-          Monographs keep their own overview tab so the paragraph is not shown
-          twice on those pages. */}
-      {!isManualMonograph && herb.description?.trim() ? (
-        <p className="measure prose-body leading-relaxed text-foreground">
-          {herb.description}
-        </p>
-      ) : null}
+      <div id="overview" className="scroll-mt-28 space-y-8">
+        {!isManualMonograph && herb.description?.trim() ? (
+          <p className="measure prose-body leading-relaxed text-foreground">
+            {herb.description}
+          </p>
+        ) : null}
 
-      {/* Personalized interaction warning (H1). Client component so the ISR
-          page stays static for anonymous traffic; signed-in users get a
-          personalized alert after hydration based on their medication list. */}
-      <UserInteractionAlert herbSlug={slug} />
+        <UserInteractionAlert herbSlug={slug} />
+      </div>
 
-      {/* Known interactions, in the flow of the page.
-          On a monograph this table used to exist only inside the "Safety"
-          tab — the reason most visitors arrive was one click away, and the
-          hero's "see the full list" link only opened a tab. It now sits above
-          the tabs so it is on the page, in the DOM, and in the printout. The
-          safety panel no longer repeats it. */}
       {interactions.length > 0 && (
-        <section id="interactions" className="scroll-mt-24">
+        <section id="interactions" className="scroll-mt-28">
           <InteractionsTable interactions={interactions} herbSlug={slug} />
         </section>
       )}
 
-      {/* NCCIH text is shown for every herb we have it for, above the tabs.
-          It used to sit inside the no-monograph branch, which silently hid it on
-          exactly the herbs people search most (ashwagandha, turmeric, ginger). */}
       <HerbSources
         sources={verifiedSources}
         lastChecked={
@@ -1239,196 +634,35 @@ export default async function HerbDetailPage({ params }: Props) {
         note={copy.sources.note}
       />
 
-      {/* Every imported regulator excerpt, each in its own block with its own
-          licence. Health Canada and NCCIH can both speak about the same plant;
-          the page shows both instead of one overwriting the other. */}
-      {sources.map((source) => {
-        // Public-domain books get their own copy block and render as prose.
-        // Anything without one falls through to NCCIH, which is why a book added
-        // to the database needs a matching key in historicalSources.
-        const historical = copy.historicalSources[source.source];
-        return (
-          <NccihSummary
-            key={source.source}
-            id={`source-${source.source.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-            claims={source.claims as unknown as (string | { text?: string })[]}
-            safety={source.safety as unknown as (string | { text?: string })[]}
-            url={source.url}
-            title={herb.name}
-            notice={historical?.notice ?? null}
-            renderAs={historical ? "prose" : "list"}
-            verbatimNote={copy.verbatimQuoteNote}
-            expandLabel={copy.verbatimExpandLabel}
-            reproducedLabel={copy.reproducedLabel}
-            {...(source.source === "LiverTox"
-              ? {
-                  heading: copy.liverTox.heading(herb.name),
-                  sourceLabel: copy.liverTox.sourceLabel,
-                  licenceText: copy.liverTox.licenceText,
-                  claimsHeading: copy.liverTox.claimsHeading,
-                  safetyHeading: copy.liverTox.safetyHeading,
-                }
-              : source.source === "Health Canada"
-                ? {
-                    heading: copy.healthCanada.heading(herb.name),
-                    sourceLabel: copy.healthCanada.sourceLabel,
-                    licenceText: copy.healthCanada.licenceText,
-                    claimsHeading: copy.healthCanada.claimsHeading,
-                    safetyHeading: copy.healthCanada.safetyHeading,
-                  }
-                : source.source === "European Medicines Agency (HMPC)"
-                  ? {
-                      heading: copy.ema.heading(herb.name),
-                      sourceLabel: copy.ema.sourceLabel,
-                      licenceText: copy.ema.licenceText,
-                      claimsHeading: copy.ema.claimsHeading,
-                      safetyHeading: copy.ema.safetyHeading,
-                    }
-                  : historical
-                    ? {
-                        heading: historical.heading(herb.name),
-                        sourceLabel: historical.sourceLabel,
-                        licenceText: historical.licenceText,
-                        claimsHeading: historical.claimsHeading,
-                        safetyHeading: historical.safetyHeading,
-                      }
-                    : {
-                        heading: copy.nccih.heading(herb.name),
-                        sourceLabel: copy.nccih.sourceLabel,
-                        licenceText: copy.nccih.licenceText,
-                        claimsHeading: copy.nccih.claimsHeading,
-                        safetyHeading: copy.nccih.safetyHeading,
-                      })}
-          />
-        );
-      })}
-
-      {/* The recorded facts, in full sentences, before the tabs. Every paragraph
-          restates a field the entry already holds — see lib/herbs/narrative — so
-          a reader gets an answer without opening anything, and the page reads as
-          prose rather than a column of fragments. */}
-      <HerbNarrative
-        herb={herb}
-        interactionCount={interactions.length}
-        locale={locale === "fr" ? "fr" : "en"}
+      <HerbRegulatorExcerpts
+        herbName={herb.name}
+        sources={sources}
+        copy={copy}
       />
 
-      {/* Tabbed Content — only hand-written monographs show the narrative
-          tabs; every other herb renders the government-sourced view (Option B)
-          so no AI-generated content is displayed. */}
-      {isManualMonograph ? (
-        <HerbDetailTabs
-          tabs={[
-            {
-              key: "overview",
-              content: (
-                <HerbOverviewPanel
-                  herb={herb}
-                  monograph={monograph}
-                  lastReviewed={lastReviewed}
-                  reviewedBy={reviewedBy}
-                  locale={locale === "fr" ? "fr" : "en"}
-                />
-              ),
-            },
-            { key: "uses", content: <HerbUsesPanel herb={herb} /> },
-            {
-              key: "science",
-              content: (
-                <HerbSciencePanel
-                  herb={herb}
-                  monograph={monograph}
-                  locale={locale === "fr" ? "fr" : "en"}
-                />
-              ),
-            },
-            {
-              key: "dosage",
-              content: (
-                <HerbDosagePanel herb={herb} regulatorName={regulatorName} />
-              ),
-            },
-            {
-              key: "safety",
-              content: (
-                <HerbSafetyPanel
-                  herb={herb}
-                  interactions={interactions}
-                  severityCounts={severityCounts}
-                  showInteractions={false}
-                />
-              ),
-            },
-          ]}
+      <div id="dosage-safety" className="scroll-mt-28 space-y-8">
+        <HerbNarrative
+          herb={herb}
+          interactionCount={interactions.length}
+          locale={copyLocale}
         />
-      ) : (
-        <>
-          {/* Option B: no hand-written monograph. If a PubMed-compiled sheet
-              exists, show it (AI-assisted, every claim cited to a PubMed
-              article). Otherwise show the government-sources stub. Either
-              way, curated (non-AI) interaction data is shown when present. */}
 
-          {pubmedSheet && isUsablePubmedSheet(pubmedSheet) ? (
-            // The sheet is compiled from English-language publications. When a
-            // French translation exists it renders normally; without one it is
-            // stored in English and shown on /fr labelled and collapsed rather
-            // than dropped: the content stays in the DOM and one click away,
-            // but a French page no longer opens with a wall of English.
-            locale === "fr" && !sheet.translated ? (
-              <div className="space-y-3">
-                <p className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-                  {copy.verbatimQuoteNote}
-                </p>
-                <details className="rounded-xl border border-border">
-                  <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-foreground">
-                    {copy.verbatimExpandLabel}
-                  </summary>
-                  <div className="px-4 pb-4">
-                    <PubmedMonographSheet
-                      content={sheet.content as SheetContent}
-                      citations={
-                        (pubmedSheet.citations as unknown as Citation[]) ?? []
-                      }
-                      articleCount={pubmedSheet.article_count ?? 0}
-                      status={pubmedSheet.status}
-                    />
-                  </div>
-                </details>
-              </div>
-            ) : (
-              <PubmedMonographSheet
-                content={sheet.content as SheetContent}
-                citations={
-                  (pubmedSheet.citations as unknown as Citation[]) ?? []
-                }
-                articleCount={pubmedSheet.article_count ?? 0}
-                status={pubmedSheet.status}
-              />
-            )
-          ) : (
-            <GovSourcedBanner />
-          )}
-          {interactions.length > 0 && (
-            /* Anchor for the hero's "See the full list" link. */
-            <div id="safety" className="scroll-mt-24">
-              <HerbSafetyPanel
-                herb={herb}
-                interactions={interactions}
-                severityCounts={severityCounts}
-                showInteractions={false}
-              />
-            </div>
-          )}
-        </>
-      )}
+        <HerbBodyContent
+          herb={herb}
+          monograph={monograph}
+          isManualMonograph={isManualMonograph}
+          lastReviewed={lastReviewed}
+          reviewedBy={reviewedBy}
+          regulatorName={regulatorName}
+          interactions={interactions}
+          severityCounts={severityCounts}
+          locale={copyLocale}
+          copy={copy}
+          pubmedSheet={pubmedSheet}
+          sheet={sheet}
+        />
+      </div>
 
-      {/* Clearly labelled advertising on public herb reference pages only.
-          No ad unit is shown unless NEXT_PUBLIC_ADSENSE_CLIENT and
-          NEXT_PUBLIC_ADSENSE_SLOT_HERB are configured. Private tools (chat,
-          interaction checker, calculator) never render this component. */}
-      {/* EEA/UK/CH consent comes from Google's consent message; the default
-          Consent Mode state ships in the document HTML, before any Google
-          tag can run. Both are inert while the launch gate is off. */}
       <CmpBootstrap />
       <AdCmp />
       <AdSlot
@@ -1437,8 +671,7 @@ export default async function HerbDetailPage({ params }: Props) {
         className="my-8 min-h-[100px] no-print"
       />
 
-      {/* Citations */}
-      <section className="pt-4">
+      <section id="sources" className="scroll-mt-28 pt-4">
         <h2 className="mb-3 flex items-center gap-2 text-xl font-semibold text-foreground">
           {t("herbDetail.sourcesAndCitations")}
         </h2>
@@ -1451,22 +684,14 @@ export default async function HerbDetailPage({ params }: Props) {
         lastReviewed={lastReviewed}
       />
 
-      {/* Regulator record: quoted statements from licensed products. Renders
-          only where the herb has a Health Canada match. */}
       <RegulatoryEvidenceSection
         evidence={regulatoryEvidence}
-        locale={locale === "fr" ? "fr" : "en"}
+        locale={copyLocale}
         className="mt-4"
       />
 
-      {/* Government sources — the credible source-of-truth layer. Direct
-          NCCIH/NIH monograph links where mapped; honest notice when no
-          government monograph covers this herb. */}
       <GovSources slug={slug} displayName={herb.name} />
 
-      {/* Visible FAQ — must match HerbFAQSchema Q&A above or Google ignores
-          the FAQPage rich result (Search Appearance = No data, Sep 2026).
-          Also targets converting intents: "X in english", dosage/calculator. */}
       <HerbFaqSection
         herbName={herb.name}
         scientificName={herb.scientific_name}
@@ -1484,8 +709,6 @@ export default async function HerbDetailPage({ params }: Props) {
         }
       />
 
-      {/* Calculator CTA — /calculator is the #1 converting page (4 clicks /
-          92 imp). Funnel every herb view toward it with a crawlable link. */}
       <section
         aria-label={t("herbDetail.calculatorCtaTitle", { name: herb.name })}
         className="rounded-2xl border bg-muted/50 p-4"
@@ -1501,6 +724,7 @@ export default async function HerbDetailPage({ params }: Props) {
           </div>
           <Button
             variant="outline"
+            className="min-h-10"
             render={<Link href={`/calculator?herb=${slug}`} />}
           >
             {t("herbDetail.calculateDose")}
@@ -1508,78 +732,27 @@ export default async function HerbDetailPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Share buttons */}
       <ShareButtons
         title={`${herbMetaTitle} - HerbAlly`}
         url={herbPageUrl}
         className="pt-4 no-print"
       />
 
-      <section aria-labelledby="internal-links-heading" className="pt-4">
-        {/* Distinct from the visible "Related Herbs" heading below. An sr-only
-            h2 repeating that exact string made the page carry two identical
-            <h2> "Related Herbs" — harmless to sighted readers, a duplicate
-            heading to a screen reader or a crawler. */}
-        <h2 id="internal-links-heading" className="sr-only">
-          {locale === "fr"
-            ? "Autres plantes et interactions"
-            : "More herbs and interactions"}
-        </h2>
-        <InternalLinkRail
-          locale={locale === "fr" ? "fr" : "en"}
-          herbSlug={slug}
-          interactions={interactions.map((i) => ({
-            drug_name: i.drug_name,
-            severity: i.severity,
-          }))}
-          prev={prev}
-          next={next}
-          peers={symptomPeers}
-        />
-      </section>
+      <HerbRelatedSection
+        locale={copyLocale}
+        herbSlug={slug}
+        interactions={interactions.map((i) => ({
+          drug_name: i.drug_name,
+          severity: i.severity,
+        }))}
+        prev={prev}
+        next={next}
+        symptomPeers={symptomPeers}
+        relatedHerbs={relatedHerbs}
+        relatedHeading={t("herbDetail.relatedHerbs")}
+      />
 
-      {/* Related Herbs */}
-      {relatedHerbs.length > 0 && (
-        <section aria-labelledby="related-herbs-heading" className="pt-4">
-          <h2
-            id="related-herbs-heading"
-            className="mb-4 text-xl font-semibold text-foreground"
-          >
-            {t("herbDetail.relatedHerbs")}
-          </h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {relatedHerbs.map((related) => {
-              // For many rows the stored display name *is* the binomial, which
-              // rendered the same string twice ("Aloe maculata / Aloe
-              // maculata"). Show one line when they are the same.
-              const showName =
-                related.name.trim().toLowerCase() !==
-                related.scientific_name.trim().toLowerCase();
-              return (
-                <Link
-                  key={related.slug}
-                  href={`/herbs/${related.slug}`}
-                  className="group rounded-2xl border p-4 transition-colors hover:bg-muted/50"
-                >
-                  <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
-                    {showName ? related.name : related.scientific_name}
-                  </h3>
-                  {showName && related.scientific_name && (
-                    <p className="text-sm italic text-muted-foreground">
-                      {related.scientific_name}
-                    </p>
-                  )}
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* The one place on the site that asks for something back. A visitor who
-          has just read an interaction wants to know when it changes; without
-          this, every one of them leaves and is never reachable again. */}
-      <NewsletterSignup locale={locale === "fr" ? "fr" : "en"} />
+      <NewsletterSignup locale={copyLocale} />
     </div>
   );
 }

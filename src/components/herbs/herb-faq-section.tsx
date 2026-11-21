@@ -68,7 +68,11 @@ export function HerbFaqSection({
       : fallbackFaqs;
 
   return (
-    <section aria-labelledby="herb-faq-heading" className="pt-4">
+    <section
+      id="faq"
+      aria-labelledby="herb-faq-heading"
+      className="scroll-mt-28 pt-4"
+    >
       <h2
         id="herb-faq-heading"
         className="mb-3 text-xl font-semibold text-foreground"
@@ -77,8 +81,8 @@ export function HerbFaqSection({
       </h2>
       <div className="divide-y rounded-2xl border">
         {faqs.map((faq) => (
-          <details key={faq.question} className="group px-4 py-3">
-            <summary className="cursor-pointer font-medium text-foreground">
+          <details key={faq.question} className="group px-4 py-2">
+            <summary className="flex min-h-11 cursor-pointer items-center py-1 font-medium text-foreground">
               {faq.question}
             </summary>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">

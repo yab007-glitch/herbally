@@ -104,11 +104,15 @@ export default async function PrivacyPage() {
           <p>{t("privacy.thirdParty.text")}</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
             <li>{t("privacy.thirdParty.supabase")}</li>
-            <li>{t("privacy.thirdParty.ollamaCloud")}</li>
             <li>{t("privacy.thirdParty.vercel")}</li>
+            <li>{t("privacy.thirdParty.ollamaCloud")}</li>
+            <li>{t("privacy.thirdParty.upstash")}</li>
+            <li>{t("privacy.thirdParty.sentry")}</li>
             <li>{t("privacy.thirdParty.stripe")}</li>
+            <li>{t("privacy.thirdParty.zoho")}</li>
             <li>{t("privacy.thirdParty.adsense")}</li>
           </ul>
+          <p className="mt-3">{t("privacy.thirdParty.crossBorder")}</p>
         </section>
 
         <section>
@@ -140,6 +144,7 @@ export default async function PrivacyPage() {
           <ul className="mt-2 list-inside list-disc space-y-1">
             <li>{t("privacy.yourRights.access")}</li>
             <li>{t("privacy.yourRights.deletion")}</li>
+            <li>{t("privacy.yourRights.portability")}</li>
             <li>{t("privacy.yourRights.complaint")}</li>
           </ul>
           <ClearLocalDataButton />
@@ -150,6 +155,7 @@ export default async function PrivacyPage() {
             {t("privacy.security.title")}
           </h2>
           <p>{t("privacy.security.text")}</p>
+          <p className="mt-2">{t("privacy.security.breachNotice")}</p>
         </section>
 
         <section>
@@ -163,7 +169,8 @@ export default async function PrivacyPage() {
           <h2 className="mb-3 text-lg font-semibold text-foreground">
             {t("privacy.contact.title")}
           </h2>
-          <p>{t("privacy.contact.text")}</p>
+          <p>{t("privacy.contact.officer")}</p>
+          <p className="mt-2">{t("privacy.contact.text")}</p>
           <p className="mt-4 flex flex-wrap gap-4 text-xs">
             <Link
               href="/editorial-policy"

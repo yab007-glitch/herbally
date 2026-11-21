@@ -12,11 +12,24 @@ import {
   MessageCircle,
   Compass,
   Sprout,
+  ShieldAlert,
+  Calculator,
+  Pill,
+  ShieldCheck,
+  CalendarClock,
+  Stethoscope,
+  ChevronDown,
   Globe,
   Moon,
   Sun,
   Monitor,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetTrigger,
@@ -35,11 +48,47 @@ import { useTranslations, useLocale } from "next-intl";
 import { LANGUAGES } from "@/lib/i18n/config";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
-  { href: "/", labelKey: "nav.chat", icon: MessageCircle },
+import { stripLocalePrefix } from "@/lib/i18n/routing";
+
+const primaryNavLinks = [
+  {
+    href: "/herb-drug-interactions",
+    labelKey: "nav.interactions",
+    icon: ShieldAlert,
+  },
   { href: "/herbs", labelKey: "nav.explore", icon: Compass },
+  { href: "/herbalist", labelKey: "nav.herbalist", icon: MessageCircle },
   { href: "/garden", labelKey: "nav.garden", icon: Sprout },
 ];
+
+const toolLinks = [
+  { href: "/calculator", labelKey: "nav.calculator", icon: Calculator },
+  { href: "/medications", labelKey: "nav.medications", icon: Pill },
+  { href: "/npn-checker", labelKey: "nav.npnChecker", icon: ShieldCheck },
+  {
+    href: "/surgery-planner",
+    labelKey: "nav.surgeryPlanner",
+    icon: CalendarClock,
+  },
+  { href: "/symptoms", labelKey: "nav.symptoms", icon: Stethoscope },
+];
+
+function isPrimaryActive(pathname: string, href: string): boolean {
+  const clean = stripLocalePrefix(pathname);
+  if (href === "/herb-drug-interactions") {
+    return (
+      clean === "/herb-drug-interactions" || clean.startsWith("/interactions")
+    );
+  }
+  return isActivePath(pathname, href, false);
+}
+
+function isToolsActive(pathname: string): boolean {
+  const clean = stripLocalePrefix(pathname);
+  return toolLinks.some(
+    (item) => clean === item.href || clean.startsWith(`${item.href}/`)
+  );
+}
 
 function getMobileThemeIcon(theme: Theme) {
   if (theme === "dark") return Moon;
@@ -83,22 +132,18 @@ export function UnifiedNavbar() {
 
           {/* Desktop links */}
           <nav
-            className="hidden items-center gap-6 md:flex"
+            className="hidden items-center gap-4 md:flex lg:gap-6"
             aria-label={t("common.navPrimary")}
           >
-            {navLinks.map((link) => {
-              const isActive = isActivePath(
-                pathname,
-                link.href,
-                link.href === "/"
-              );
+            {primaryNavLinks.map((link) => {
+              const isActive = isPrimaryActive(pathname, link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "px-1 py-2 text-sm transition-colors",
+                    "inline-flex min-h-10 items-center px-1.5 py-2 text-sm transition-colors",
                     isActive
                       ? "font-medium text-foreground"
                       : "text-muted-foreground hover:text-foreground"
@@ -108,6 +153,39 @@ export function UnifiedNavbar() {
                 </Link>
               );
             })}
+
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={cn(
+                  "inline-flex min-h-10 items-center gap-1 rounded-md px-1.5 py-2 text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  isToolsActive(pathname)
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {t("nav.tools")}
+                <ChevronDown className="size-3.5" aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                {toolLinks.map((tool) => {
+                  const Icon = tool.icon;
+                  const active = isActivePath(pathname, tool.href, false);
+                  return (
+                    <DropdownMenuItem
+                      key={tool.href}
+                      render={<Link href={tool.href} />}
+                      className={cn(
+                        "min-h-10 cursor-pointer gap-2.5 px-2.5 py-2",
+                        active && "bg-accent font-medium text-accent-foreground"
+                      )}
+                    >
+                      <Icon className="size-4 shrink-0" aria-hidden="true" />
+                      <span>{t(tool.labelKey)}</span>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
 
           {/* Right side */}
@@ -136,30 +214,52 @@ export function UnifiedNavbar() {
                 className="flex flex-col gap-1 px-2 pt-6"
                 aria-label={t("common.navMobile")}
               >
-                {navLinks.map((link) => {
+                {primaryNavLinks.map((link) => {
                   const Icon = link.icon;
-                  const isActive = isActivePath(
-                    pathname,
-                    link.href,
-                    link.href === "/"
-                  );
+                  const isActive = isPrimaryActive(pathname, link.href);
                   return (
                     <Link
                       key={link.href}
                       href={link.href}
                       onClick={() => setOpen(false)}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
+                        "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
                         isActive
                           ? "bg-accent text-accent-foreground font-medium"
                           : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
-                      <Icon className="size-4" />
+                      <Icon className="size-4" aria-hidden="true" />
                       {t(link.labelKey)}
                     </Link>
                   );
                 })}
+
+                <div className="mt-2 border-t pt-2">
+                  <p className="px-3 py-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    {t("nav.tools")}
+                  </p>
+                  {toolLinks.map((tool) => {
+                    const Icon = tool.icon;
+                    const isActive = isActivePath(pathname, tool.href, false);
+                    return (
+                      <Link
+                        key={tool.href}
+                        href={tool.href}
+                        onClick={() => setOpen(false)}
+                        className={cn(
+                          "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
+                          isActive
+                            ? "bg-accent text-accent-foreground font-medium"
+                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        )}
+                      >
+                        <Icon className="size-4" aria-hidden="true" />
+                        {t(tool.labelKey)}
+                      </Link>
+                    );
+                  })}
+                </div>
 
                 <div className="mt-4 space-y-2 border-t pt-4">
                   <div className="px-3 py-1">

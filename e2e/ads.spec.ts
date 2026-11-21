@@ -89,7 +89,6 @@ test.describe("advertising safety — launch gate off", () => {
   });
 
   test("the herb document's CSP forbids every ad origin", async ({
-    page,
     request,
   }) => {
     const response = await request.get("/herbs/ginger");

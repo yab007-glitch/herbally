@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod/v4";
 import {
   cleanBotanicalIngredientName,
   extractLnhpdArray,
@@ -15,6 +16,11 @@ import { getHerbPairs } from "@/lib/interactions/pairs";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
+
+const npnQuerySchema = z.object({
+  npn: z.string().trim().min(1).max(32),
+  locale: z.enum(["en", "fr"]).optional(),
+});
 
 const LNHPD_BASE = "https://health-products.canada.ca/api/natural-licences";
 const HC_HEADERS = {
@@ -53,8 +59,13 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const rawNpn = request.nextUrl.searchParams.get("npn") ?? "";
-  const npn = normalizeNpnInput(rawNpn);
+  const parsedQuery = npnQuerySchema.safeParse({
+    npn: request.nextUrl.searchParams.get("npn") ?? "",
+    locale: request.nextUrl.searchParams.get("locale") ?? undefined,
+  });
+  const npn = parsedQuery.success
+    ? normalizeNpnInput(parsedQuery.data.npn)
+    : null;
   if (!npn) {
     return NextResponse.json(
       {
@@ -66,7 +77,7 @@ export async function GET(request: NextRequest) {
   }
 
   const locale: "en" | "fr" =
-    request.nextUrl.searchParams.get("locale") === "fr" ||
+    parsedQuery.data?.locale === "fr" ||
     request.headers.get("x-locale") === "fr"
       ? "fr"
       : "en";

@@ -40,8 +40,19 @@ function severityLabel(severity: InteractionSeverity, fr: boolean): string {
   return severity.charAt(0).toUpperCase() + severity.slice(1);
 }
 
+export type MedicationCardSummary = Pick<
+  MedicationSummary,
+  | "drugSlug"
+  | "drugName"
+  | "enDrugName"
+  | "totalInteractions"
+  | "highestSeverity"
+> & {
+  sampleHerbs: Array<{ slug: string; name: string }>;
+};
+
 interface Props {
-  medications: MedicationSummary[];
+  medications: MedicationCardSummary[];
   locale: string;
 }
 

@@ -3,7 +3,7 @@ import { z } from "zod/v4";
 import { logger } from "@/lib/utils/logger";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
-import { getAnonClient } from "@/lib/supabase/anonymous";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // Core Web Vitals endpoint for real user monitoring.
 //
@@ -77,10 +77,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Store in Supabase if configured — uses anon key (safe for public endpoint).
+    // Store in Supabase if configured — uses the server-side service role so
+    // direct anonymous PostgREST inserts can remain locked down at RLS/GRANT level.
     // A single insert call for the whole batch: PostgREST sends it as one
     // statement, so the batch costs the database one write, not five.
-    const supabase = getAnonClient();
+    const supabase =
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+        ? createAdminClient()
+        : null;
 
     if (supabase) {
       const rows = parsed.data.metrics.map((body) => ({

@@ -146,7 +146,20 @@ export default async function MedicationsIndexPage() {
         </div>
       </dl>
 
-      <MedicationDirectoryClient medications={medications} locale={locale} />
+      <MedicationDirectoryClient
+        medications={medications.map((m) => ({
+          drugSlug: m.drugSlug,
+          drugName: m.drugName,
+          enDrugName: m.enDrugName,
+          totalInteractions: m.totalInteractions,
+          highestSeverity: m.highestSeverity,
+          sampleHerbs: m.sampleHerbs.slice(0, 4).map((h) => ({
+            slug: h.slug,
+            name: h.name,
+          })),
+        }))}
+        locale={locale}
+      />
 
       <section className="flex flex-col justify-between gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-5 sm:flex-row sm:items-center">
         <div>

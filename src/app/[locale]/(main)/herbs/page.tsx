@@ -14,6 +14,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getHerbs } from "@/lib/actions/herbs";
 import {
+  compactHerbForDirectory,
   getCachedDefaultHerbsPage,
   getCachedHerbCategories,
 } from "@/lib/data/herbs-directory";
@@ -129,7 +130,10 @@ export default async function HerbsPage({
     redirect(buildCanonical({ dropPage: true, dropCategory: true }));
   }
 
-  const herbs = herbsResult.success ? herbsResult.data!.herbs : [];
+  const rawHerbs = herbsResult.success ? herbsResult.data!.herbs : [];
+  const herbs = rawHerbs.map((h) =>
+    "translations" in h ? compactHerbForDirectory(h) : h
+  );
   const total = herbsResult.success ? herbsResult.data!.total : 0;
   const totalPages = Math.ceil(total / 20);
 
@@ -342,9 +346,10 @@ export default async function HerbsPage({
       <div id="herb-results" className="scroll-mt-24">
         {herbs.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {herbs.map((herb) => (
-              <HerbCard key={herb.id} herb={herb} />
-            ))}
+            {herbs.map((herb) => {
+              const { description: _schemaDesc, ...cardHerb } = herb;
+              return <HerbCard key={herb.id} herb={cardHerb} />;
+            })}
           </div>
         ) : (
           <EmptyState

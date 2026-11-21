@@ -88,6 +88,10 @@ jobs:
 
   test-e2e:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox]
     # Placeholder Supabase env so the standalone server's proxy (updateSession)
     # can construct a client and start. OPENROUTER_API_KEY is intentionally
     # unset so /api/chat 503s gracefully and AI-dependent tests skip.
@@ -107,15 +111,15 @@ jobs:
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
-      - name: Install Playwright browsers
+          key: ${{ runner.os }}-playwright-${{ matrix.project }}-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Playwright browser (${{ matrix.project }})
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium firefox
-      - run: npx playwright test --project=chromium --project=firefox
+        run: npx playwright install --with-deps ${{ matrix.project }}
+      - run: npx playwright test --project=${{ matrix.project }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}
           path: playwright-report/
           retention-days: 30
 

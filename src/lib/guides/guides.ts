@@ -964,10 +964,9 @@ export const GUIDES: Guide[] = [
     en: {
       title:
         "Pregnancy and herbal teas: separating studied herbs from guesswork",
-      metaTitle:
-        "Pregnancy & Herbal Teas: What Clinical Sources Actually Support",
+      metaTitle: "Pregnancy & Herbal Teas: What Clinical Sources Say",
       metaDescription:
-        "Why Health Canada and clinical references distinguish gentle culinary teas from medicinal extracts during pregnancy, what evidence exists for ginger and peppermint, and which herbs to avoid completely.",
+        "How Health Canada separates culinary teas from concentrated herbal extracts in pregnancy, evidence for ginger, and herbs to avoid.",
       intro:
         "The label 'herbal tea' covers everything from a weak culinary chamomile bag to medicinal root decoctions capable of stimulating uterine contractions, altering fetal hormone signaling, or injuring a developing liver. Because rigorous trials in pregnant volunteers are rare, separating established food use from unsafe medicinal herbs takes clear thresholds.",
       sections: [
@@ -998,10 +997,9 @@ export const GUIDES: Guide[] = [
     fr: {
       title:
         "Grossesse et tisanes : démêler les plantes étudiées des idées reçues",
-      metaTitle:
-        "Grossesse et tisanes : ce que disent vraiment les sources cliniques",
+      metaTitle: "Grossesse et tisanes : ce que disent les sources cliniques",
       metaDescription:
-        "Pourquoi Santé Canada distingue l’usage culinaire des extraits médicinaux pendant la grossesse, les données sur le gingembre ou la menthe, et les plantes formellement déconseillées.",
+        "Pourquoi Santé Canada distingue tisanes culinaires et extraits pendant la grossesse, données sur le gingembre et plantes à éviter.",
       intro:
         "Sous l’étiquette « tisane », on trouve autant une simple infusion alimentaire qu’une décoction de plantes capables de déclencher des contractions utérines, de perturber l’équilibre hormonal ou d’atteindre le foie fœtal. Comme les essais contrôlés chez la femme enceinte restent limités, la règle de base est la prudence proportionnée.",
       sections: [

@@ -17,7 +17,6 @@ import fr from "../dictionaries/fr.json";
 const NAME = "Turmeric";
 const SCIENTIFIC = "Curcuma longa";
 const COMMON = "Indian Saffron, Haldi";
-const BODY = "A rhizome used in cooking and traditional medicine.";
 
 function fill(template: string, vars: Record<string, string>): string {
   return template.replace(

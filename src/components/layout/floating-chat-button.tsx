@@ -93,31 +93,28 @@ export function FloatingChatButton() {
         return;
     }
 
-    // On a phone the homepage's primary button sits low on the first screen, and
-    // a bubble parked over it is worse than no bubble. So a small screen waits
-    // until the visitor has scrolled past that button (240px) before speaking;
-    // a wide screen has room to speak immediately.
-    // jsdom has no matchMedia; treat that as a wide screen so the component
-    // behaves predictably in tests.
-    const isNarrow =
-      typeof window.matchMedia === "function" &&
-      window.matchMedia("(max-width: 767px)").matches;
+    // Wait until the visitor scrolls past the home hero (200px) before showing
+    // the teaser on both desktop and mobile, so the greeting bubble never
+    // overlaps the hero suggestion chips ("Ginkgo + aspirin") or CTA on arrival.
     let show: number | undefined;
     const reveal = () => {
       setTeaser(true);
       writeStorage(() => window.sessionStorage.setItem(TEASER_SEEN_KEY, "1"));
     };
-    if (isNarrow) {
-      const onScroll = () => {
-        if (window.scrollY < 240) return;
-        window.removeEventListener("scroll", onScroll);
-        reveal();
-      };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      return () => window.removeEventListener("scroll", onScroll);
+    if (forced || window.scrollY >= 200) {
+      show = window.setTimeout(reveal, TEASER_DELAY_MS);
+      return () => window.clearTimeout(show);
     }
-    show = window.setTimeout(reveal, TEASER_DELAY_MS);
-    return () => window.clearTimeout(show);
+    const onScroll = () => {
+      if (window.scrollY < 200) return;
+      window.removeEventListener("scroll", onScroll);
+      show = window.setTimeout(reveal, 600);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (show !== undefined) window.clearTimeout(show);
+    };
   }, [isHome, open, hasOpened]);
 
   // Stop hovering once it has had its moment; a bubble that never leaves is
@@ -165,12 +162,12 @@ export function FloatingChatButton() {
 
   return (
     <>
-      {/* The greeting bubble — shown once, on the homepage. */}
+      {/* The greeting bubble — shown once on the homepage after scrolling past the hero. */}
       {teaser && !open && (
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-36 right-4 z-40 w-[calc(100vw-2rem)] max-w-[17rem] rounded-2xl rounded-br-md border border-border bg-background p-3.5 shadow-xl transition-all duration-300 motion-reduce:transition-none md:bottom-20"
+          className="fixed bottom-24 right-4 z-40 w-[calc(100vw-2rem)] max-w-[16rem] rounded-2xl rounded-br-md border border-border bg-background p-3.5 shadow-xl transition-all duration-300 motion-reduce:transition-none md:bottom-[4.25rem]"
         >
           <div className="flex items-start gap-2.5">
             <div className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -222,8 +219,8 @@ export function FloatingChatButton() {
           // Desktop-only: on a phone this button sits at bottom-20, which is
           // exactly where the medication field lands on a 664px-tall screen —
           // measured 48×38px of overlap on first paint. The bottom nav already
-          // carries a Chat tab, so the phone loses nothing.
-          "fixed bottom-20 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition-all md:bottom-6 max-md:hidden no-print",
+          // carries a Herbalist tab, so the phone loses nothing.
+          "fixed bottom-20 right-4 z-40 flex size-12 items-center justify-center rounded-full shadow-lg transition-all md:bottom-4 max-md:hidden no-print",
           // `hidden` here is a Tailwind class, not the HTML attribute: the
           // utility's `display:flex` would beat the UA `[hidden]` rule.
           teaser && !open && "hidden",

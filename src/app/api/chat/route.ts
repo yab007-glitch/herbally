@@ -5,6 +5,7 @@ import { getSystemPrompt } from "@/lib/ai/system-prompt";
 import { z } from "zod";
 import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import {
   evaluateAssistantContent,
   getSafetyRefusal,
@@ -305,9 +306,34 @@ async function collectAnswer(
 
 export async function POST(request: NextRequest) {
   // In-route rate limiting as a defense-in-depth fallback in case the
-  // proxy-level rate limiter is bypassed (e.g. misconfigured matcher).
+  // proxy-level rate limiter is bypassed. Anonymous callers are capped lower
+  // (8/min, 40/day) than verified authenticated users (20/min, 150/day).
   const ip = getClientIP(request);
-  const perMinute = await rateLimit(`${ip}:chat:minute`, 20, 60_000);
+  let verifiedUserId: string | null = null;
+  const hasAuthCookie = request.cookies
+    .getAll()
+    .some((c) => /^sb-.*-auth-token/.test(c.name) && Boolean(c.value));
+  if (hasAuthCookie && process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    try {
+      const authClient = await createClient();
+      const {
+        data: { user },
+      } = await authClient.auth.getUser();
+      verifiedUserId = user?.id ?? null;
+    } catch {
+      verifiedUserId = null;
+    }
+  }
+
+  const rateKeyBase = verifiedUserId ? `user:${verifiedUserId}` : ip;
+  const minuteCap = verifiedUserId ? 20 : 8;
+  const dayCap = verifiedUserId ? 150 : 40;
+
+  const perMinute = await rateLimit(
+    `${rateKeyBase}:chat:minute`,
+    minuteCap,
+    60_000
+  );
   if (!perMinute.success) {
     return NextResponse.json(
       { error: "Too many requests. Please try again later." },
@@ -317,7 +343,7 @@ export async function POST(request: NextRequest) {
       }
     );
   }
-  const perDay = await rateLimit(`${ip}:chat:day`, 200, 86_400_000);
+  const perDay = await rateLimit(`${rateKeyBase}:chat:day`, dayCap, 86_400_000);
   if (!perDay.success) {
     return NextResponse.json(
       { error: "Daily message limit reached. Please come back tomorrow." },

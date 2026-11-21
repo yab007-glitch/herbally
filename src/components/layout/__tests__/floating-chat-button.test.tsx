@@ -22,6 +22,12 @@ function advance(ms: number) {
   });
 }
 
+function scrollPastHero() {
+  Object.defineProperty(window, "scrollY", { value: 260, configurable: true });
+  fireEvent.scroll(window);
+  advance(600);
+}
+
 /** Production shape: gate closed, so the launcher behaves exactly as before. */
 describe("FloatingChatButton — launch gate off (production)", () => {
   it.each(["/herbs/ginger", "/herbalist", "/"])("renders on %s", (pathname) => {
@@ -40,18 +46,20 @@ describe("FloatingChatButton — teaser", () => {
     nav.pathname = "/";
     window.localStorage.clear();
     window.sessionStorage.clear();
+    Object.defineProperty(window, "scrollY", { value: 0, configurable: true });
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("waits before speaking, then greets the visitor on the homepage", () => {
+  it("does not overlap hero at scrollY=0, and greets after scrolling past hero", () => {
     render(<FloatingChatButton />);
 
+    advance(10_000);
     expect(screen.queryByText(TEASER)).toBeNull();
 
-    advance(2_500);
+    scrollPastHero();
     expect(screen.getByText(TEASER)).toBeTruthy();
   });
 
@@ -59,23 +67,26 @@ describe("FloatingChatButton — teaser", () => {
     nav.pathname = "/herbs";
     render(<FloatingChatButton />);
 
+    scrollPastHero();
     advance(10_000);
     expect(screen.queryByText(TEASER)).toBeNull();
   });
 
   it("does not greet twice in one visit", () => {
     const first = render(<FloatingChatButton />);
-    advance(2_500);
+    scrollPastHero();
+    expect(screen.getByText(TEASER)).toBeTruthy();
     first.unmount();
 
     render(<FloatingChatButton />);
+    scrollPastHero();
     advance(10_000);
     expect(screen.queryByText(TEASER)).toBeNull();
   });
 
   it("goes quiet for a day once dismissed", () => {
     const first = render(<FloatingChatButton />);
-    advance(2_500);
+    scrollPastHero();
     fireEvent.click(
       screen.getAllByText("herbalistPage.greeting.bubbleDismiss")[0]
     );
@@ -86,13 +97,14 @@ describe("FloatingChatButton — teaser", () => {
     ).not.toBeNull();
 
     render(<FloatingChatButton />);
+    scrollPastHero();
     advance(10_000);
     expect(screen.queryByText(TEASER)).toBeNull();
   });
 
   it("opens the chat from the bubble instead of navigating away", () => {
     render(<FloatingChatButton />);
-    advance(2_500);
+    scrollPastHero();
 
     fireEvent.click(screen.getByText("herbalistPage.greeting.bubbleOpen"));
 
@@ -103,7 +115,7 @@ describe("FloatingChatButton — teaser", () => {
 
   it("stops showing the bubble if nobody engages", () => {
     render(<FloatingChatButton />);
-    advance(2_500);
+    scrollPastHero();
     expect(screen.getByText(TEASER)).toBeTruthy();
 
     advance(15_000);

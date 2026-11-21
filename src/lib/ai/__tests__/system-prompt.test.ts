@@ -128,4 +128,13 @@ describe("getSystemPrompt", () => {
       "let a regulator monograph or regulator record win"
     );
   });
+
+  it("enforces an explicit pediatric / under-18 dosing refusal rule", () => {
+    const prompt = getSystemPrompt(null, [], "en");
+
+    expect(prompt).toContain("adults 18 and older");
+    expect(prompt).toContain("NEVER calculate, estimate, scale");
+    expect(prompt).toContain("under 18");
+    expect(prompt).toContain("pediatrician");
+  });
 });

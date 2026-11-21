@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod/v4";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getHerbPairs } from "@/lib/interactions/pairs";
 import { resolveHerb } from "@/lib/interactions/resolve-herb";
@@ -17,6 +18,12 @@ import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 
 const MAX_STACK_ITEMS = 10;
+
+const checkStackBodySchema = z.object({
+  herbs: z.array(z.string()).max(MAX_STACK_ITEMS * 2),
+  drugs: z.array(z.string()).max(MAX_STACK_ITEMS * 2),
+  locale: z.enum(["en", "fr"]).optional(),
+});
 
 function normalizeTerms(raw: unknown): string[] | null {
   if (!Array.isArray(raw)) return null;
@@ -56,19 +63,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { herbs?: unknown; drugs?: unknown; locale?: unknown };
+  let rawBody: unknown;
   try {
-    body = (await request.json()) as {
-      herbs?: unknown;
-      drugs?: unknown;
-      locale?: unknown;
-    };
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const herbs = normalizeTerms(body.herbs);
-  const drugs = normalizeTerms(body.drugs);
+  const parsedBody = checkStackBodySchema.safeParse(rawBody);
+  if (!parsedBody.success) {
+    return NextResponse.json(
+      {
+        error: `Provide between 1 and ${MAX_STACK_ITEMS} herbs and between 1 and ${MAX_STACK_ITEMS} medications.`,
+      },
+      { status: 400 }
+    );
+  }
+
+  const herbs = normalizeTerms(parsedBody.data.herbs);
+  const drugs = normalizeTerms(parsedBody.data.drugs);
 
   if (
     !herbs ||
@@ -87,7 +100,7 @@ export async function POST(request: NextRequest) {
   }
 
   const locale: "en" | "fr" =
-    body.locale === "fr" || request.headers.get("x-locale") === "fr"
+    parsedBody.data.locale === "fr" || request.headers.get("x-locale") === "fr"
       ? "fr"
       : "en";
 

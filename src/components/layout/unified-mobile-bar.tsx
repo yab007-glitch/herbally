@@ -5,33 +5,69 @@ import {
   isActivePath,
 } from "@/components/i18n/localized-link";
 import { usePathname } from "next/navigation";
-import { MessageCircle, Compass, Sprout } from "lucide-react";
+import {
+  ShieldAlert,
+  Compass,
+  MessageCircle,
+  Calculator,
+  Sprout,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
 const tabs = [
-  { labelKey: "mobileTabs.chat", href: "/", icon: MessageCircle, exact: true },
+  {
+    labelKey: "mobileTabs.interactions",
+    href: "/herb-drug-interactions",
+    icon: ShieldAlert,
+    exact: false,
+  },
   {
     labelKey: "mobileTabs.explore",
     href: "/herbs",
     icon: Compass,
     exact: false,
   },
-  { labelKey: "mobileTabs.garden", href: "/garden", icon: Sprout, exact: true },
+  {
+    labelKey: "mobileTabs.herbalist",
+    href: "/herbalist",
+    icon: MessageCircle,
+    exact: false,
+  },
+  {
+    labelKey: "mobileTabs.calc",
+    href: "/calculator",
+    icon: Calculator,
+    exact: false,
+  },
+  {
+    labelKey: "mobileTabs.garden",
+    href: "/garden",
+    icon: Sprout,
+    exact: true,
+  },
 ] as const;
 
 import { stripLocalePrefix } from "@/lib/i18n/routing";
 
 function isActive(pathname: string, href: string, exact: boolean): boolean {
   if (exact) return isActivePath(pathname, href, true);
+  const canonical = stripLocalePrefix(pathname);
+  if (href === "/herb-drug-interactions") {
+    return (
+      canonical === "/herb-drug-interactions" ||
+      canonical.startsWith("/interactions") ||
+      canonical.startsWith("/medications")
+    );
+  }
   if (href === "/herbs") {
-    const canonical = stripLocalePrefix(pathname);
     return (
       canonical === "/herbs" ||
       canonical.startsWith("/herbs/") ||
       canonical.startsWith("/symptoms") ||
-      canonical.startsWith("/calculator") ||
-      canonical.startsWith("/compare")
+      canonical.startsWith("/compare") ||
+      canonical.startsWith("/npn-checker") ||
+      canonical.startsWith("/surgery-planner")
     );
   }
   return isActivePath(pathname, href);

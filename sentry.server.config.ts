@@ -6,10 +6,21 @@ import * as Sentry from "@sentry/nextjs";
  * - Removes request bodies and breadcrumb data that may echo user health
  *   input from the chat API or chat-persist server actions.
  */
+type ScrubbableBreadcrumb = {
+  data?: Record<string, unknown>;
+};
+
 type ScrubbableEvent = {
-  request?: any;
-  breadcrumbs?: any;
-  contexts?: any;
+  request?: {
+    data?: unknown;
+    query_string?: unknown;
+    headers?: unknown;
+    cookies?: unknown;
+    env?: unknown;
+    url?: string;
+  };
+  breadcrumbs?: ScrubbableBreadcrumb[];
+  contexts?: Record<string, unknown>;
   transaction?: string;
 };
 
@@ -65,7 +76,7 @@ function scrubEvent<T extends ScrubbableEvent>(event: T): T | null {
     if (event.breadcrumbs) {
       // Breadcrumb `data` is an object map — redact it wholesale so user
       // health input captured in fetch/query breadcrumbs never leaves the app.
-      event.breadcrumbs = event.breadcrumbs.map((b: any) => ({
+      event.breadcrumbs = event.breadcrumbs.map((b) => ({
         ...b,
         data: { redacted: true },
       }));

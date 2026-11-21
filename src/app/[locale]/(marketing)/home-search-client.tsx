@@ -506,7 +506,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
         <div className="mt-6">
           <button
             onClick={() => router.push("/symptoms")}
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex min-h-10 items-center gap-1.5 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <Sparkles className="size-3.5" />
             {labels.symptomsLink}

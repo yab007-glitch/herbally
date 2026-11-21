@@ -26,7 +26,7 @@ interface HerbCardProps {
     name: string;
     scientific_name: string;
     slug: string;
-    description: string;
+    description?: string;
     pregnancy_safe: boolean | null;
     nursing_safe: boolean | null;
     dosage_adult?: string | null;
@@ -217,7 +217,7 @@ export function HerbCard({ herb, className }: HerbCardProps) {
             aria-label={saved ? t("garden.remove") : t("garden.save")}
             aria-pressed={saved}
             className={cn(
-              "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
+              "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
               saved
                 ? "bg-rose-500 text-white"
                 : "text-muted-foreground hover:text-rose-500"

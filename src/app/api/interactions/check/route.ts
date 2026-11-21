@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod/v4";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getHerbPairs } from "@/lib/interactions/pairs";
 import { resolveHerb } from "@/lib/interactions/resolve-herb";
@@ -7,6 +8,11 @@ import { pairPath } from "@/lib/interactions/pair-url";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
+
+const checkQuerySchema = z.object({
+  herb: z.string().trim().min(2).max(200),
+  drug: z.string().trim().min(2).max(200),
+});
 
 function getLocale(request: NextRequest): "en" | "fr" {
   if (request.headers.get("x-locale") === "fr") return "fr";
@@ -46,16 +52,14 @@ export async function GET(request: NextRequest) {
       { status: 429, headers: { "Retry-After": "60" } }
     );
   }
-  const herbTerm = request.nextUrl.searchParams.get("herb")?.trim() ?? "";
-  const drugTerm = request.nextUrl.searchParams.get("drug")?.trim() ?? "";
-  if (
-    herbTerm.length < 2 ||
-    herbTerm.length > 200 ||
-    drugTerm.length < 2 ||
-    drugTerm.length > 200
-  ) {
+  const parsedQuery = checkQuerySchema.safeParse({
+    herb: request.nextUrl.searchParams.get("herb") ?? "",
+    drug: request.nextUrl.searchParams.get("drug") ?? "",
+  });
+  if (!parsedQuery.success) {
     return NextResponse.json({ found: false }, { status: 400 });
   }
+  const { herb: herbTerm, drug: drugTerm } = parsedQuery.data;
 
   const supabase = getAnonClient();
   if (!supabase) {

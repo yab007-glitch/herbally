@@ -237,7 +237,7 @@
   },
   {
     "from": "/herbs/lu-rong",
-    "to": "/herbs/deer-antler-velvet-mens"
+    "to": "/herbs/deer-antler-velvet"
   },
   {
     "from": "/herbs/mandukaparni",
@@ -654,5 +654,141 @@
   {
     "from": "/herbs/thlaspi-bursa-pastoris",
     "to": "/herbs/capsella-bursa-pastoris-herb"
+  },
+  {
+    "from": "/herbs/acacia-arabica",
+    "to": "/herbs/acacia-nilotica"
+  },
+  {
+    "from": "/herbs/acacia-senegal",
+    "to": "/herbs/acacia"
+  },
+  {
+    "from": "/herbs/amla-powder",
+    "to": "/herbs/amla-dried"
+  },
+  {
+    "from": "/herbs/bai-zi-ren-seed",
+    "to": "/herbs/platycladus-orientalis"
+  },
+  {
+    "from": "/herbs/berberine-source",
+    "to": "/herbs/mahonia-aquifolium-herb"
+  },
+  {
+    "from": "/herbs/buchu-betulina-leaf",
+    "to": "/herbs/buchu-roundleaf"
+  },
+  {
+    "from": "/herbs/calamintha-nepeta",
+    "to": "/herbs/clinopodium-nepeta"
+  },
+  {
+    "from": "/herbs/calophyllum-inophyllum",
+    "to": "/herbs/tamanu"
+  },
+  {
+    "from": "/herbs/carduus-marianus",
+    "to": "/herbs/milk-thistle"
+  },
+  {
+    "from": "/herbs/cassia-alata",
+    "to": "/herbs/acapulco"
+  },
+  {
+    "from": "/herbs/eugenia-caryophyllata",
+    "to": "/herbs/clove"
+  },
+  {
+    "from": "/herbs/fenugreek-seed",
+    "to": "/herbs/fenugreek"
+  },
+  {
+    "from": "/herbs/fumitory-common",
+    "to": "/herbs/fumitory-herb"
+  },
+  {
+    "from": "/herbs/galium-odoratum-herb",
+    "to": "/herbs/woodruff"
+  },
+  {
+    "from": "/herbs/haworthia-attenuata-herb",
+    "to": "/herbs/haworthia-attenuata"
+  },
+  {
+    "from": "/herbs/ipecac-root",
+    "to": "/herbs/ipecac"
+  },
+  {
+    "from": "/herbs/kantkari",
+    "to": "/herbs/solanum-xanthocarpum"
+  },
+  {
+    "from": "/herbs/kayu-manis-jamu",
+    "to": "/herbs/cinnamomum-burmanni"
+  },
+  {
+    "from": "/herbs/korean-bellflower",
+    "to": "/herbs/platycodon-grandiflorus"
+  },
+  {
+    "from": "/herbs/macropiper-excelsum",
+    "to": "/herbs/kawakawa"
+  },
+  {
+    "from": "/herbs/mangifera-indica",
+    "to": "/herbs/mango-leaf"
+  },
+  {
+    "from": "/herbs/mentha-canadensis",
+    "to": "/herbs/mentha-haplocalyx"
+  },
+  {
+    "from": "/herbs/morus-fruit",
+    "to": "/herbs/mulberry-fruit"
+  },
+  {
+    "from": "/herbs/pau-darco-inner",
+    "to": "/herbs/pau-d-arco"
+  },
+  {
+    "from": "/herbs/picorrhiza-kurroa",
+    "to": "/herbs/picrorhiza-root"
+  },
+  {
+    "from": "/herbs/piscidia-analgesic",
+    "to": "/herbs/piscidia-piscipula"
+  },
+  {
+    "from": "/herbs/quisqualis-indica",
+    "to": "/herbs/niyog-niyogan"
+  },
+  {
+    "from": "/herbs/rhamnus-purshiana",
+    "to": "/herbs/frangula-purshiana"
+  },
+  {
+    "from": "/herbs/spirulina-platensis",
+    "to": "/herbs/spirulina"
+  },
+  {
+    "from": "/herbs/stachys-betonica",
+    "to": "/herbs/stachys-officinalis"
+  },
+  {
+    "from": "/herbs/swertia-chirata",
+    "to": "/herbs/chirata"
+  },
+  {
+    "from": "/herbs/varuna-bark",
+    "to": "/herbs/crateva-nurvala"
+  },
+  {
+    "from": "/herbs/vasaka",
+    "to": "/herbs/malabar-nut"
+  },
+  {
+    "from": "/herbs/zimbabwean-bitter-leaf",
+    "to": "/herbs/maytenus-senegalensis"
   }
 ]

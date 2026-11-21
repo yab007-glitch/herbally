@@ -149,6 +149,19 @@ const nextConfig: NextConfig = {
     ];
     return [
       {
+        // Allow edge/shared caches to serve the generated XML sitemap while keeping
+        // updates fresh within an hour.
+        source: "/sitemap.xml",
+        headers: [
+          {
+            key: "Cache-Control",
+            value:
+              "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+          },
+          ...securityHeaders,
+        ],
+      },
+      {
         // Apply to ALL routes (including static assets). The proxy matcher
         // excludes statics, so next.config headers is the uniform layer.
         source: "/:path*",

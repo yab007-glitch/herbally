@@ -12,7 +12,7 @@ const COPY = {
   en: {
     title: "Editorial policy",
     description:
-      "How HerbAlly writes, checks and corrects its herbal reference: who is accountable, how AI is used, what the review labels mean, and how to report an error.",
+      "How HerbAlly writes, verifies, and corrects its herbal profiles: named accountability, AI disclosure, evidence labels, and corrections.",
     intro:
       "This page explains how the information on HerbAlly is produced, who is accountable for it, and how to get something corrected. It is deliberately specific — a health reference should be able to say exactly where its words come from.",
     sections: [
@@ -69,7 +69,7 @@ const COPY = {
   fr: {
     title: "Politique éditoriale",
     description:
-      "Comment HerbAlly rédige, vérifie et corrige sa référence sur les plantes : qui est responsable, comment l'IA est utilisée, ce que signifient les étiquettes de révision et comment signaler une erreur.",
+      "Comment HerbAlly rédige, vérifie et corrige ses fiches : personne responsable, rôle de l'IA, étiquettes de révision et signalement d'erreurs.",
     intro:
       "Cette page explique comment l'information sur HerbAlly est produite, qui en est responsable, et comment faire corriger quelque chose. Elle est volontairement précise : une référence en santé doit pouvoir dire exactement d'où viennent ses mots.",
     sections: [

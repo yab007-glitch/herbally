@@ -147,7 +147,7 @@ export function HerbHeroV2({
             <button
               onClick={handleSave}
               className={cn(
-                "absolute -right-2 -top-2 flex size-8 items-center justify-center rounded-full shadow-md ring-2 ring-card transition-transform hover:scale-110",
+                "absolute -right-2 -top-2 flex size-10 items-center justify-center rounded-full shadow-md ring-2 ring-card transition-transform hover:scale-110",
                 saved
                   ? "bg-rose-500 text-white"
                   : "bg-background text-muted-foreground hover:text-rose-500"
@@ -228,9 +228,9 @@ export function HerbHeroV2({
                 rel="nofollow"
               />
             }
-            className="rounded-full"
+            className="min-h-10 rounded-full px-4"
           >
-            <MessageCircle className="mr-1 size-3" aria-hidden="true" />
+            <MessageCircle className="mr-1 size-3.5" aria-hidden="true" />
             {t("herbDetail.askHerbalist")}
           </Button>
           {/* Demoted on purpose: still a real button, but it now comes after
@@ -239,9 +239,9 @@ export function HerbHeroV2({
             size="sm"
             variant="outline"
             render={<Link href={`/calculator?herb=${herb.slug}`} />}
-            className="rounded-full"
+            className="min-h-10 rounded-full px-4"
           >
-            <Calculator className="mr-1 size-3" aria-hidden="true" />
+            <Calculator className="mr-1 size-3.5" aria-hidden="true" />
             {t("herbDetail.calculateDose")}
           </Button>
         </div>

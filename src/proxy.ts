@@ -158,12 +158,20 @@ export default async function proxy(request: NextRequest) {
   // ── API rate limiting (before session refresh) ────────────────────
   // Rate-limit /api/chat BEFORE the Supabase session refresh so an
   // unauthenticated flood is rejected without doing DB/session work first.
+  // Separate key prefix (`proxy-chat`) from /api/chat (`chat`) so a single
+  // request is not double-counted against the same quota bucket.
   if (pathname.startsWith("/api/chat")) {
     const ip = getClientIP(request);
-    // Two-tier limit: a short per-minute burst cap (20/min) and a daily
-    // cap (200/day) so a single IP cannot run up free-tier AI costs all
-    // day (20/min alone allows ~28,800/day). Distinct keys per window.
-    const perMinute = await rateLimit(`${ip}:chat:minute`, 20, 60_000);
+    const hasAuthCookie = request.cookies
+      .getAll()
+      .some((c) => /^sb-.*-auth-token/.test(c.name) && Boolean(c.value));
+    const minuteCap = hasAuthCookie ? 20 : 10;
+    const dayCap = hasAuthCookie ? 150 : 40;
+    const perMinute = await rateLimit(
+      `${ip}:proxy-chat:minute`,
+      minuteCap,
+      60_000
+    );
     if (!perMinute.success) {
       return applySecurityHeaders(
         NextResponse.json(
@@ -175,7 +183,7 @@ export default async function proxy(request: NextRequest) {
         )
       );
     }
-    const perDay = await rateLimit(`${ip}:chat:day`, 200, 86_400_000);
+    const perDay = await rateLimit(`${ip}:proxy-chat:day`, dayCap, 86_400_000);
     if (!perDay.success) {
       return applySecurityHeaders(
         NextResponse.json(

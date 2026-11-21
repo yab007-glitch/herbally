@@ -4,10 +4,21 @@ import * as Sentry from "@sentry/nextjs";
  * Scrub PII / health data from an edge event before upload (same logic as the
  * server config). Edge runs in the proxy and sees request URLs/headers.
  */
+type ScrubbableBreadcrumb = {
+  data?: Record<string, unknown>;
+};
+
 type ScrubbableEvent = {
-  request?: any;
-  breadcrumbs?: any;
-  contexts?: any;
+  request?: {
+    data?: unknown;
+    query_string?: unknown;
+    headers?: unknown;
+    cookies?: unknown;
+    env?: unknown;
+    url?: string;
+  };
+  breadcrumbs?: ScrubbableBreadcrumb[];
+  contexts?: Record<string, unknown>;
   transaction?: string;
 };
 
@@ -61,7 +72,7 @@ function scrubEvent<T extends ScrubbableEvent>(event: T): T | null {
       nextjsContext.request_path = "[redacted]";
     }
     if (event.breadcrumbs) {
-      event.breadcrumbs = event.breadcrumbs.map((b: any) => ({
+      event.breadcrumbs = event.breadcrumbs.map((b) => ({
         ...b,
         data: { redacted: true },
       }));
