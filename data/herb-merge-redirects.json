@@ -578,5 +578,81 @@
   {
     "from": "/herbs/herb-bennet",
     "to": "/herbs/wood-avens"
+  },
+  {
+    "from": "/herbs/anatherum-muricatum",
+    "to": "/herbs/vetiver"
+  },
+  {
+    "from": "/herbs/aralia-quinquefolia",
+    "to": "/herbs/american-ginseng"
+  },
+  {
+    "from": "/herbs/bambusa-breviflora",
+    "to": "/herbs/bambusa-tuldoides"
+  },
+  {
+    "from": "/herbs/centaurium-umbellatum",
+    "to": "/herbs/centaury-european"
+  },
+  {
+    "from": "/herbs/cocculus-indicus",
+    "to": "/herbs/anamirta-cocculus"
+  },
+  {
+    "from": "/herbs/copaiva-officinalis",
+    "to": "/herbs/bolivian-copaiba"
+  },
+  {
+    "from": "/herbs/elymus-repens-subsp-repens",
+    "to": "/herbs/couch-grass"
+  },
+  {
+    "from": "/herbs/eugenia-jambosa",
+    "to": "/herbs/syzygium-jambos"
+  },
+  {
+    "from": "/herbs/guarea-trichilioides",
+    "to": "/herbs/guarea-guidonia"
+  },
+  {
+    "from": "/herbs/jonesia-asoca",
+    "to": "/herbs/ashoka-tree"
+  },
+  {
+    "from": "/herbs/lappa-major",
+    "to": "/herbs/burdock-seed"
+  },
+  {
+    "from": "/herbs/malpighia-punicifolia",
+    "to": "/herbs/malpighia-emarginata"
+  },
+  {
+    "from": "/herbs/mesostemma-dichotomum-var-lanceolatum",
+    "to": "/herbs/stellaria-dichotoma-var-lanceolata"
+  },
+  {
+    "from": "/herbs/plantago-afra",
+    "to": "/herbs/plantago-psyllium"
+  },
+  {
+    "from": "/herbs/selinum-striatum",
+    "to": "/herbs/szechuan-lovage"
+  },
+  {
+    "from": "/herbs/sorbus-aucuparia-subsp-aucuparia",
+    "to": "/herbs/sorbus-aucuparia-herb"
+  },
+  {
+    "from": "/herbs/sterculia-acuminata",
+    "to": "/herbs/jamaican-bissy"
+  },
+  {
+    "from": "/herbs/symphoricarpus-racemosus",
+    "to": "/herbs/symphoricarpos-albus-herb"
+  },
+  {
+    "from": "/herbs/thlaspi-bursa-pastoris",
+    "to": "/herbs/capsella-bursa-pastoris-herb"
   }
 ]
