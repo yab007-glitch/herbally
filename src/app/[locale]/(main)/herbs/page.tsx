@@ -342,15 +342,30 @@ export default async function HerbsPage({
         <ChipLegend />
       </div>
 
-      {/* Grid — id is the pagination scroll target. */}
-      <div id="herb-results" className="scroll-mt-24">
+      {/* Grid — semantic list rendered server-side, id is the pagination scroll target. */}
+      <section
+        id="herb-results"
+        aria-label={t("herbs.title")}
+        className="scroll-mt-24"
+      >
         {herbs.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {herbs.map((herb) => {
-              const { description: _schemaDesc, ...cardHerb } = herb;
-              return <HerbCard key={herb.id} herb={cardHerb} />;
-            })}
-          </div>
+          <>
+            <p className="mb-3 text-xs text-muted-foreground">
+              {locale === "fr"
+                ? `Affichage ${(page - 1) * 20 + 1}–${(page - 1) * 20 + herbs.length} sur ${total} plantes`
+                : `Showing ${(page - 1) * 20 + 1}–${(page - 1) * 20 + herbs.length} of ${total} medicinal herbs`}
+            </p>
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {herbs.map((herb) => {
+                const { description: _schemaDesc, ...cardHerb } = herb;
+                return (
+                  <li key={herb.id}>
+                    <HerbCard herb={cardHerb} />
+                  </li>
+                );
+              })}
+            </ul>
+          </>
         ) : (
           <EmptyState
             variant="search"
@@ -361,7 +376,7 @@ export default async function HerbsPage({
             action={{ label: t("herbs.browseAll"), href: "/herbs" }}
           />
         )}
-      </div>
+      </section>
 
       {/* Pagination */}
       {totalPages > 1 && (

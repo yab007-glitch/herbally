@@ -123,110 +123,114 @@ export function HerbCard({ herb, className }: HerbCardProps) {
     : null;
 
   return (
-    <Card
-      className={cn(
-        "group transition-colors hover:border-primary/30",
-        className
-      )}
-    >
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          <Link
-            href={`/herbs/${herb.slug}`}
-            onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
-            className="flex min-w-0 flex-1 items-start gap-3"
-          >
-            {/* HerbImage already renders the photo when image_url exists
+    <article>
+      <Card
+        className={cn(
+          "group transition-colors hover:border-primary/30",
+          className
+        )}
+      >
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <Link
+              href={`/herbs/${herb.slug}`}
+              onClick={() => trackEvent("herb_viewed", { slug: herb.slug })}
+              className="flex min-w-0 flex-1 items-start gap-3"
+            >
+              {/* HerbImage already renders the photo when image_url exists
                 and only falls back to the coloured initial tile otherwise. */}
-            <HerbImage
-              name={herb.name}
-              imageUrl={herb.image_url}
-              className="size-12 shrink-0 rounded-lg"
-            />
-            <div className="min-w-0 flex-1">
-              {/* Names wrap instead of truncating mid-word: the full name
+              <HerbImage
+                name={herb.name}
+                imageUrl={herb.image_url}
+                className="size-12 shrink-0 rounded-lg"
+              />
+              <div className="min-w-0 flex-1">
+                {/* Names wrap instead of truncating mid-word: the full name
                   is always visible (up to two lines) and also in title. */}
-              <h3
-                title={herb.name}
-                className="font-medium text-foreground break-words line-clamp-2"
-              >
-                {herb.name}
-              </h3>
-              {/* Half the library is catalogued under its botanical name, so
+                <h3
+                  title={herb.name}
+                  className="font-medium text-foreground break-words line-clamp-2"
+                >
+                  {herb.name}
+                </h3>
+                {/* Half the library is catalogued under its botanical name, so
                   the italic line repeated the title verbatim ("Abies alba" /
                   "Abies alba"). Print it only when it adds something. */}
-              {herb.scientific_name?.trim().toLowerCase() !==
-                herb.name.trim().toLowerCase() && (
-                <p
-                  title={herb.scientific_name}
-                  className="text-xs italic text-muted-foreground line-clamp-1"
-                >
-                  {herb.scientific_name}
-                </p>
-              )}
-              {herb.traditional_uses?.[0] && (
-                <p
-                  title={herb.traditional_uses[0]}
-                  className="mt-1 text-xs text-muted-foreground line-clamp-2"
-                >
-                  {herb.traditional_uses[0]}
-                </p>
-              )}
-              <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                {/* The category badge explains why a herb appears under a
+                {herb.scientific_name?.trim().toLowerCase() !==
+                  herb.name.trim().toLowerCase() && (
+                  <p
+                    title={herb.scientific_name}
+                    className="text-xs italic text-muted-foreground line-clamp-1"
+                  >
+                    {herb.scientific_name}
+                  </p>
+                )}
+                {herb.traditional_uses?.[0] && (
+                  <p
+                    title={herb.traditional_uses[0]}
+                    className="mt-1 text-xs text-muted-foreground line-clamp-2"
+                  >
+                    {herb.traditional_uses[0]}
+                  </p>
+                )}
+                <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                  {/* The category badge explains why a herb appears under a
                     filter: the card's one-line use is the first traditional
                     use, which need not match the category name. The default
                     bucket is suppressed — it is true of almost every card. */}
-                {categoryName && !categoryIsBucket && (
-                  <Badge variant="secondary" className="text-xs">
-                    {categoryName}
-                  </Badge>
-                )}
-                {evidenceLevel && <EvidenceGradeBadge level={evidenceLevel} />}
-                {herb.provenance !== undefined && (
-                  <ProvenanceBadge
-                    provenance={parseProvenance(herb.provenance)}
-                  />
+                  {categoryName && !categoryIsBucket && (
+                    <Badge variant="secondary" className="text-xs">
+                      {categoryName}
+                    </Badge>
+                  )}
+                  {evidenceLevel && (
+                    <EvidenceGradeBadge level={evidenceLevel} />
+                  )}
+                  {herb.provenance !== undefined && (
+                    <ProvenanceBadge
+                      provenance={parseProvenance(herb.provenance)}
+                    />
+                  )}
+                </div>
+                {safetyLines.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
+                    {safetyLines.map(({ key, text, tone, Icon }) => (
+                      <span
+                        key={key}
+                        className={cn(
+                          "inline-flex items-center gap-1 text-[11px]",
+                          tone
+                        )}
+                      >
+                        <Icon className="size-3" aria-hidden="true" />
+                        {text}
+                      </span>
+                    ))}
+                  </div>
                 )}
               </div>
-              {safetyLines.length > 0 && (
-                <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
-                  {safetyLines.map(({ key, text, tone, Icon }) => (
-                    <span
-                      key={key}
-                      className={cn(
-                        "inline-flex items-center gap-1 text-[11px]",
-                        tone
-                      )}
-                    >
-                      <Icon className="size-3" aria-hidden="true" />
-                      {text}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-            <ArrowRight className="size-4 shrink-0 self-center text-muted-foreground/40 group-hover:text-primary transition-colors" />
-          </Link>
-          {/* Save heart on the card itself, so the garden empty state's
+              <ArrowRight className="size-4 shrink-0 self-center text-muted-foreground/40 group-hover:text-primary transition-colors" />
+            </Link>
+            {/* Save heart on the card itself, so the garden empty state's
               "tap the heart icon on any herb card" instruction is true.
               It sits outside the Link so it is not nested interactivity. */}
-          <button
-            type="button"
-            onClick={handleSave}
-            aria-label={saved ? t("garden.remove") : t("garden.save")}
-            aria-pressed={saved}
-            className={cn(
-              "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
-              saved
-                ? "bg-rose-500 text-white"
-                : "text-muted-foreground hover:text-rose-500"
-            )}
-          >
-            <Heart className={cn("size-4", saved && "fill-white")} />
-          </button>
-        </div>
-      </CardContent>
-    </Card>
+            <button
+              type="button"
+              onClick={handleSave}
+              aria-label={saved ? t("garden.remove") : t("garden.save")}
+              aria-pressed={saved}
+              className={cn(
+                "flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
+                saved
+                  ? "bg-rose-500 text-white"
+                  : "text-muted-foreground hover:text-rose-500"
+              )}
+            >
+              <Heart className={cn("size-4", saved && "fill-white")} />
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+    </article>
   );
 }

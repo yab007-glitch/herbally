@@ -200,6 +200,7 @@ describe("localizeInteraction", () => {
     updated_at: "2024-01-01",
     translations: {
       fr: {
+        drug_name: "Warfarine (Coumadin)",
         description: "Peut augmenter le risque de saignement.",
         mechanism: "Mécanisme inconnu.",
       },
@@ -209,10 +210,13 @@ describe("localizeInteraction", () => {
   it("returns original interaction for English", () => {
     const result = localizeInteraction(interaction, "en");
     expect(result.description).toBe("May increase bleeding risk.");
+    expect(result.display_drug_name).toBeUndefined();
   });
 
-  it("overlays French translation for interaction", () => {
+  it("overlays French translation and display_drug_name while keeping drug_name canonical", () => {
     const result = localizeInteraction(interaction, "fr");
+    expect(result.drug_name).toBe("Warfarin");
+    expect(result.display_drug_name).toBe("Warfarine (Coumadin)");
     expect(result.description).toBe("Peut augmenter le risque de saignement.");
     expect(result.mechanism).toBe("Mécanisme inconnu.");
   });

@@ -72,6 +72,11 @@ import { GovSources } from "@/components/herbs/gov-sources";
 import { RegulatoryEvidenceSection } from "@/components/herbs/regulatory-evidence";
 import { HerbSources } from "@/components/herbs/herb-sources";
 import { getReviewer } from "@/lib/data/reviewers";
+import {
+  canShowDoseCalculator,
+  isDangerousHerb,
+} from "@/lib/data/dangerous-herbs";
+import { matchGuidesForHerb } from "@/lib/guides/match-herb-guides";
 
 // ISR: locale comes from [locale] param and no page-level code reads a request API.
 export const revalidate = 259200;
@@ -471,6 +476,30 @@ export default async function HerbDetailPage({ params }: Props) {
     herb.updated_at,
     herb.last_reviewed
   );
+  const isDangerous = isDangerousHerb(slug);
+  const showCalculator = canShowDoseCalculator(slug, herb.dosage_adult);
+  const isClinicallyReviewed =
+    isManualMonograph ||
+    (pubmedSheet?.status === "reviewed" && isUsablePubmedSheet(pubmedSheet));
+  const provenanceLastVerified =
+    typeof (herb.provenance as { last_verified_at?: unknown } | null)
+      ?.last_verified_at === "string"
+      ? ((herb.provenance as { last_verified_at?: string }).last_verified_at ??
+        null)
+      : null;
+  const sourcesLastChecked = computeLatestModified(
+    provenanceLastVerified,
+    regulatoryEvidence?.retrieved_at ?? herb.updated_at ?? null
+  );
+  const relatedGuides = matchGuidesForHerb({
+    slug,
+    interactions,
+    sources,
+    pregnancySafe: herb.pregnancy_safe,
+    pregnancySafeOral: herb.pregnancy_safe_oral,
+    symptomKeywords: herb.symptom_keywords,
+    hasRegulatory: Boolean(regulatoryEvidence),
+  });
 
   let relatedHerbs: Array<{
     name: string;
@@ -546,6 +575,7 @@ export default async function HerbDetailPage({ params }: Props) {
   const tableInteractions = interactions.map((ix) => ({
     id: ix.id,
     drug_name: ix.drug_name,
+    display_drug_name: (ix as { display_drug_name?: string }).display_drug_name,
     severity: ix.severity,
     description: ix.description,
     source_url: ix.source_url ?? null,
@@ -599,7 +629,7 @@ export default async function HerbDetailPage({ params }: Props) {
         {t("herbDetail.medicalDisclaimerText")}
       </p>
 
-      <DangerousHerbBanner slug={slug} />
+      <DangerousHerbBanner slug={slug} locale={copyLocale} />
       <HerbHeroV2
         herb={heroHerb}
         provenance={compactProvenance}
@@ -609,8 +639,11 @@ export default async function HerbDetailPage({ params }: Props) {
             : null
         }
         isManualMonograph={isManualMonograph}
+        showCalculator={showCalculator}
         interactions={interactions.map((i) => ({
           drug_name: i.drug_name,
+          display_drug_name: (i as { display_drug_name?: string })
+            .display_drug_name,
           severity: i.severity,
         }))}
         safetyHref="#interactions"
@@ -625,7 +658,13 @@ export default async function HerbDetailPage({ params }: Props) {
         </Link>
       </p>
 
-      <AuthorByline locale={copyLocale} lastReviewed={latestModified} />
+      <AuthorByline
+        locale={copyLocale}
+        lastReviewed={
+          isClinicallyReviewed ? latestModified : (herb.updated_at ?? null)
+        }
+        isReviewed={isClinicallyReviewed}
+      />
 
       <HerbJumpNav
         locale={copyLocale}
@@ -662,10 +701,7 @@ export default async function HerbDetailPage({ params }: Props) {
 
       <HerbSources
         sources={verifiedSources}
-        lastChecked={
-          (herb.provenance as { last_verified_at?: string } | null)
-            ?.last_verified_at ?? null
-        }
+        lastChecked={sourcesLastChecked}
         label={copy.sources.label}
         checkedLabel={copy.sources.checkedLabel}
         countLabel={copy.sources.count}
@@ -676,6 +712,8 @@ export default async function HerbDetailPage({ params }: Props) {
         herbName={herb.name}
         sources={sources}
         copy={copy}
+        filter="modern"
+        locale={copyLocale}
       />
 
       <div id="dosage-safety" className="scroll-mt-28 space-y-8">
@@ -716,15 +754,18 @@ export default async function HerbDetailPage({ params }: Props) {
         <CitationsList citations={citations} />
       </section>
 
-      <SourceAttribution
-        reviewedBy={reviewedBy}
-        reviewerCredentials={reviewerCredentials}
-        lastReviewed={lastReviewed}
-      />
+      {isClinicallyReviewed && (
+        <SourceAttribution
+          reviewedBy={reviewedBy}
+          reviewerCredentials={reviewerCredentials}
+          lastReviewed={lastReviewed}
+        />
+      )}
 
       <RegulatoryEvidenceSection
         evidence={regulatoryEvidence}
         locale={copyLocale}
+        isDangerous={isDangerous}
         className="mt-4"
       />
 
@@ -747,28 +788,39 @@ export default async function HerbDetailPage({ params }: Props) {
         }
       />
 
-      <section
-        aria-label={t("herbDetail.calculatorCtaTitle", { name: herb.name })}
-        className="rounded-2xl border bg-muted/50 p-4"
-      >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="font-semibold text-foreground">
-              {t("herbDetail.calculatorCtaTitle", { name: herb.name })}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              {t("herbDetail.calculatorCtaBody")}
-            </p>
+      <HerbRegulatorExcerpts
+        herbName={herb.name}
+        sources={sources}
+        copy={copy}
+        filter="historical"
+        isDangerous={isDangerous}
+        locale={copyLocale}
+      />
+
+      {showCalculator && (
+        <section
+          aria-label={t("herbDetail.calculatorCtaTitle", { name: herb.name })}
+          className="rounded-2xl border bg-muted/50 p-4"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="font-semibold text-foreground">
+                {t("herbDetail.calculatorCtaTitle", { name: herb.name })}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t("herbDetail.calculatorCtaBody")}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              className="min-h-10"
+              render={<Link href={`/calculator?herb=${slug}`} />}
+            >
+              {t("herbDetail.calculateDose")}
+            </Button>
           </div>
-          <Button
-            variant="outline"
-            className="min-h-10"
-            render={<Link href={`/calculator?herb=${slug}`} />}
-          >
-            {t("herbDetail.calculateDose")}
-          </Button>
-        </div>
-      </section>
+        </section>
+      )}
 
       <ShareButtons
         title={`${herbMetaTitle} - HerbAlly`}
@@ -781,6 +833,8 @@ export default async function HerbDetailPage({ params }: Props) {
         herbSlug={slug}
         interactions={interactions.map((i) => ({
           drug_name: i.drug_name,
+          display_drug_name: (i as { display_drug_name?: string })
+            .display_drug_name,
           severity: i.severity,
         }))}
         prev={prev}
@@ -788,6 +842,7 @@ export default async function HerbDetailPage({ params }: Props) {
         symptomPeers={symptomPeers}
         relatedHerbs={relatedHerbs}
         relatedHeading={t("herbDetail.relatedHerbs")}
+        relatedGuides={relatedGuides}
       />
 
       <NewsletterSignup locale={copyLocale} />

@@ -1,6 +1,8 @@
 export interface Interaction {
   id: string;
   drug_name: string;
+  /** Localized drug name for UI display while keeping `drug_name` canonical for URLs. */
+  display_drug_name?: string;
   severity: "mild" | "moderate" | "severe" | "contraindicated";
   description: string;
   /**

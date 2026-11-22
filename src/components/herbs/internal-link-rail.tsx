@@ -39,7 +39,11 @@ export function InternalLinkRail({
 }: {
   locale: "en" | "fr";
   herbSlug: string;
-  interactions: { drug_name: string; severity: string }[];
+  interactions: {
+    drug_name: string;
+    display_drug_name?: string;
+    severity: string;
+  }[];
   prev: LinkHerb | null;
   next: LinkHerb | null;
   peers: LinkHerb[];
@@ -67,7 +71,7 @@ export function InternalLinkRail({
                   href={pairPath(herbSlug, pair.drug_name)}
                   className="flex items-center justify-between gap-3 rounded-sm border border-border px-3 py-2 text-sm text-foreground transition-colors hover:border-primary hover:bg-accent"
                 >
-                  <span>{pair.drug_name}</span>
+                  <span>{pair.display_drug_name || pair.drug_name}</span>
                   <span className="text-xs capitalize text-muted-foreground">
                     {severity[pair.severity] ?? pair.severity}
                   </span>

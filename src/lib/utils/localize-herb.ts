@@ -14,6 +14,7 @@ interface HerbFr {
 }
 
 interface InteractionFr {
+  drug_name?: string;
   description?: string;
   mechanism?: string;
 }
@@ -110,16 +111,21 @@ function frField(record: Record<string, unknown>, key: string): unknown {
   return direct;
 }
 
-/** Overlay French translation onto a drug interaction. */
+/** Overlay French translation onto a drug interaction while keeping `drug_name` canonical for URLs. */
 export function localizeInteraction(
   ix: DrugInteraction,
   locale: string
-): DrugInteraction {
+): DrugInteraction & { display_drug_name?: string } {
   if (locale !== "fr") return ix;
   const t = fr<InteractionFr>(ix.translations);
   if (!t) return ix;
+  const frDrugName =
+    typeof t.drug_name === "string" && t.drug_name.trim()
+      ? t.drug_name.trim()
+      : undefined;
   return {
     ...ix,
+    ...(frDrugName ? { display_drug_name: frDrugName } : {}),
     description: t.description || ix.description,
     mechanism: t.mechanism !== undefined ? t.mechanism : ix.mechanism,
   };

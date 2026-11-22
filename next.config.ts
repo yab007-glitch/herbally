@@ -267,6 +267,30 @@ const nextConfig: NextConfig = {
         destination: "/:locale/herbs",
         permanent: true,
       },
+      // Common-name redirects for toxic/monographed plants so guessable links resolve (301) instead of 404.
+      ...[
+        ["oleander", "nerium-oleander"],
+        ["foxglove", "digitalis-purpurea-herb"],
+        ["belladonna", "atropa-belladonna-herb"],
+        ["deadly-nightshade", "atropa-belladonna-herb"],
+        ["hemlock", "conium-maculatum-herb"],
+        ["poison-hemlock", "conium-maculatum-herb"],
+        ["mandrake", "mandragora-officinarum-herb"],
+        ["aconite", "monkshood"],
+        ["buchu", "barosma-betulina"],
+        ["stone-root", "collinsonia-canadensis-herb"],
+      ].flatMap(([alias, target]) => [
+        {
+          source: `/herbs/${alias}`,
+          destination: `/herbs/${target}`,
+          permanent: true,
+        },
+        {
+          source: `/:locale(en|fr)/herbs/${alias}`,
+          destination: `/:locale/herbs/${target}`,
+          permanent: true,
+        },
+      ]),
       // Merged duplicate herbs. Each pair was reviewed (same species, same part
       // or preparation) and the duplicate was unpublished rather than deleted,
       // so the old URL still resolves through a permanent redirect instead of

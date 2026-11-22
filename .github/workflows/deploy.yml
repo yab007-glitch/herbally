@@ -67,7 +67,10 @@ jobs:
 
       - name: Build image
         working-directory: /srv/herbally/deploy
-        run: docker compose build app
+        run: |
+          set -euo pipefail
+          BUILD_TS=$(git -C "$GITHUB_WORKSPACE" log -1 --format=%cI || date -u +%Y-%m-%dT%H:%M:%SZ)
+          docker compose build --build-arg BUILD_GIT_TIMESTAMP="$BUILD_TS" app
 
       - name: Deploy
         working-directory: /srv/herbally/deploy

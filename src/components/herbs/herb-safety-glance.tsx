@@ -24,6 +24,8 @@ export type GlanceSeverity = "contraindicated" | "severe" | "moderate" | "mild";
 
 export interface GlanceInteraction {
   drug_name: string;
+  /** Localized display name while keeping `drug_name` canonical for links. */
+  display_drug_name?: string;
   severity: string;
 }
 
@@ -127,8 +129,11 @@ export function SafetyGlance({
   })).filter((c) => c.count > 0);
 
   const worst = counts[0];
-  const worstDrug = worst
-    ? interactions.find((i) => i.severity === worst.severity)?.drug_name
+  const worstEntry = worst
+    ? interactions.find((i) => i.severity === worst.severity)
+    : undefined;
+  const worstDrug = worstEntry
+    ? worstEntry.display_drug_name || worstEntry.drug_name
     : undefined;
 
   const items = contraindications?.filter(Boolean) ?? [];

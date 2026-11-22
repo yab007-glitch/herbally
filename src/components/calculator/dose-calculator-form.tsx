@@ -272,333 +272,342 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
           </CardTitle>
           <CardDescription>{t("calculator.description")}</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Adult-only notice — shown before any field is filled, so the
-              under-18 block is never a surprise after the user has done
-              the work. The calculator refuses anyone under 18. */}
-          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-            <p className="text-sm font-medium text-foreground">
-              {t("calculatorForm.adultOnlyNotice")}
-            </p>
-          </div>
+        <CardContent>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCalculate();
+            }}
+            className="space-y-6"
+          >
+            {/* Adult-only notice — shown before any field is filled, so the
+                under-18 block is never a surprise after the user has done
+                the work. The calculator refuses anyone under 18. */}
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm font-medium text-foreground">
+                {t("calculatorForm.adultOnlyNotice")}
+              </p>
+            </div>
 
-          {/* Prefill Context Banner */}
-          {prefill && (
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-950/30">
-              <div className="flex items-start gap-3">
-                <Leaf className="mt-0.5 size-5 shrink-0 text-green-600" />
-                <div className="space-y-1 text-sm">
-                  <p className="font-medium text-green-900 dark:text-green-100">
-                    {t("calculatorForm.prefillContext", {
-                      name: prefill.herbName,
-                    })}
-                  </p>
-                  {prefill.verified && prefill.dosageAdultRaw && (
-                    <p className="text-green-700 dark:text-green-300">
-                      {t("calculatorForm.standardAdultDose")}:{" "}
-                      {prefill.dosageAdultRaw}
+            {/* Prefill Context Banner */}
+            {prefill && (
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-950/30">
+                <div className="flex items-start gap-3">
+                  <Leaf className="mt-0.5 size-5 shrink-0 text-green-600" />
+                  <div className="space-y-1 text-sm">
+                    <p className="font-medium text-green-900 dark:text-green-100">
+                      {t("calculatorForm.prefillContext", {
+                        name: prefill.herbName,
+                      })}
                     </p>
-                  )}
+                    {prefill.verified && prefill.dosageAdultRaw && (
+                      <p className="text-green-700 dark:text-green-300">
+                        {t("calculatorForm.standardAdultDose")}:{" "}
+                        {prefill.dosageAdultRaw}
+                      </p>
+                    )}
 
-                  {prefill.dosageForms.length > 0 && (
-                    <div className="flex flex-wrap gap-1 pt-1">
-                      {prefill.dosageForms.map((form) => (
-                        <Badge
-                          key={form}
-                          variant="secondary"
-                          className="text-xs"
-                        >
-                          {form.replace("_", " ")}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
+                    {prefill.dosageForms.length > 0 && (
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {prefill.dosageForms.map((form) => (
+                          <Badge
+                            key={form}
+                            variant="secondary"
+                            className="text-xs"
+                          >
+                            {form.replace("_", " ")}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Standard adult range picker — a range is never silently
+            {/* Standard adult range picker — a range is never silently
               collapsed to a single dose. The user explicitly picks low,
               middle, or high, which fills the adult dose field. */}
-          {prefill?.dosageRange && (
-            <div className="rounded-lg border p-4">
-              <p className="text-sm font-medium text-foreground">
-                {t("calculatorForm.rangePickerTitle")}
-              </p>
-              {prefill.dosageAdultRaw && (
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {t("calculatorForm.standardAdultDose")}:{" "}
-                  {prefill.dosageAdultRaw}
+            {prefill?.dosageRange && (
+              <div className="rounded-lg border p-4">
+                <p className="text-sm font-medium text-foreground">
+                  {t("calculatorForm.rangePickerTitle")}
                 </p>
-              )}
-              <div className="mt-3 flex flex-wrap gap-2">
-                {(
-                  [
-                    ["low", prefill.dosageRange.low],
+                {prefill.dosageAdultRaw && (
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {t("calculatorForm.standardAdultDose")}:{" "}
+                    {prefill.dosageAdultRaw}
+                  </p>
+                )}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(
                     [
-                      "middle",
-                      (prefill.dosageRange.low + prefill.dosageRange.high) / 2,
-                    ],
-                    ["high", prefill.dosageRange.high],
-                  ] as const
-                ).map(([key, value]) => (
-                  <Button
-                    key={key}
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setAdultDose(String(value));
-                      setDoseUnit(prefill.dosageRange!.unit);
-                    }}
-                  >
-                    {t(
-                      `calculatorForm.range${key === "low" ? "Low" : key === "middle" ? "Middle" : "High"}`
-                    )}{" "}
-                    {value} {unitLabel(prefill.dosageRange!.unit)}
-                  </Button>
-                ))}
+                      ["low", prefill.dosageRange.low],
+                      [
+                        "middle",
+                        (prefill.dosageRange.low + prefill.dosageRange.high) /
+                          2,
+                      ],
+                      ["high", prefill.dosageRange.high],
+                    ] as const
+                  ).map(([key, value]) => (
+                    <Button
+                      key={key}
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setAdultDose(String(value));
+                        setDoseUnit(prefill.dosageRange!.unit);
+                      }}
+                    >
+                      {t(
+                        `calculatorForm.range${key === "low" ? "Low" : key === "middle" ? "Middle" : "High"}`
+                      )}{" "}
+                      {value} {unitLabel(prefill.dosageRange!.unit)}
+                    </Button>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {t("calculatorForm.rangePickerNote")}
+                </p>
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {t("calculatorForm.rangePickerNote")}
-              </p>
-            </div>
-          )}
+            )}
 
-          {/* Unverified-source notice — do not present AI dosages as reference doses */}
-          {prefill && !prefill.verified && (
-            <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-950/30">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
-                <div className="space-y-1 text-sm text-amber-900 dark:text-amber-100">
-                  <p>{t("calculatorForm.unverifiedHerbNotice")}</p>
-                  {/* Unverified stated range, shown as information only:
+            {/* Unverified-source notice — do not present AI dosages as reference doses */}
+            {prefill && !prefill.verified && (
+              <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-950/30">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600" />
+                  <div className="space-y-1 text-sm text-amber-900 dark:text-amber-100">
+                    <p>{t("calculatorForm.unverifiedHerbNotice")}</p>
+                    {/* Unverified stated range, shown as information only:
                       the dose field stays blank and no range picker is
                       offered for unverified herbs, so nothing here is
                       presented as a validated reference dose or a
                       recommendation. The user must enter a dose explicitly. */}
-                  {prefill.dosageAdultRaw && (
-                    <p>
-                      {t("calculatorForm.unverifiedStatedRange", {
-                        dose: prefill.dosageAdultRaw,
-                      })}
-                    </p>
-                  )}
+                    {prefill.dosageAdultRaw && (
+                      <p>
+                        {t("calculatorForm.unverifiedStatedRange", {
+                          dose: prefill.dosageAdultRaw,
+                        })}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Herb Name */}
+            <div className="space-y-2">
+              <Label htmlFor="herb-name">{t("calculatorForm.herbName")}</Label>
+              <Input
+                className="h-11"
+                id="herb-name"
+                placeholder={t("calculatorForm.herbNamePlaceholder")}
+                value={herbName}
+                onChange={(e) => setHerbName(e.target.value)}
+              />
+            </div>
+
+            {/* Adult Dose + Unit */}
+            <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
+              <div className="space-y-2">
+                <Label htmlFor="adult-dose">
+                  {t("calculatorForm.adultDose")}
+                </Label>
+                <Input
+                  className="h-11"
+                  id="adult-dose"
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder={t("calculatorForm.adultDosePlaceholder")}
+                  value={adultDose}
+                  onChange={(e) => setAdultDose(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label id="dose-unit-label">{t("calculatorForm.unit")}</Label>
+                <div
+                  className="flex gap-1"
+                  role="radiogroup"
+                  aria-labelledby="dose-unit-label"
+                >
+                  {unitOptions.map((unit) => (
+                    <button
+                      key={unit}
+                      type="button"
+                      role="radio"
+                      aria-checked={doseUnit === unit}
+                      onClick={() => setDoseUnit(unit)}
+                      className={cn(
+                        "min-h-11 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                        doseUnit === unit
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-muted-foreground hover:bg-muted"
+                      )}
+                    >
+                      {unitLabel(unit)}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Herb Name */}
-          <div className="space-y-2">
-            <Label htmlFor="herb-name">{t("calculatorForm.herbName")}</Label>
-            <Input
-              className="h-11"
-              id="herb-name"
-              placeholder={t("calculatorForm.herbNamePlaceholder")}
-              value={herbName}
-              onChange={(e) => setHerbName(e.target.value)}
-            />
-          </div>
+            <AutoFillBadge show={autoFilled} />
 
-          {/* Adult Dose + Unit */}
-          <div className="grid gap-4 sm:grid-cols-[1fr_auto]">
+            {/* Age */}
             <div className="space-y-2">
-              <Label htmlFor="adult-dose">
-                {t("calculatorForm.adultDose")}
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="patient-age">
+                  {t("calculatorForm.childAge")} (
+                  {useMonths
+                    ? t("calculatorForm.months").toLowerCase()
+                    : t("calculatorForm.years").toLowerCase()}
+                  )
+                </Label>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">
+                    {t("calculatorForm.years")}
+                  </span>
+                  <Switch
+                    checked={useMonths}
+                    onCheckedChange={setUseMonths}
+                    aria-label={t("calculatorForm.toggleAgeUnit")}
+                  />
+                  <span className="text-muted-foreground">
+                    {t("calculatorForm.months")}
+                  </span>
+                </div>
+              </div>
               <Input
                 className="h-11"
-                id="adult-dose"
+                id="patient-age"
                 type="number"
                 min="0"
                 step="any"
-                placeholder={t("calculatorForm.adultDosePlaceholder")}
-                value={adultDose}
-                onChange={(e) => setAdultDose(e.target.value)}
+                placeholder={useMonths ? "e.g. 360" : "e.g. 30"}
+                value={useMonths ? ageMonths : ageYears}
+                onChange={(e) =>
+                  useMonths
+                    ? setAgeMonths(e.target.value)
+                    : setAgeYears(e.target.value)
+                }
               />
             </div>
+
+            {/* Weight */}
             <div className="space-y-2">
-              <Label id="dose-unit-label">{t("calculatorForm.unit")}</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="patient-weight">
+                  {t("calculatorForm.childWeight")} ({useLbs ? "lbs" : "kg"})
+                </Label>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">kg</span>
+                  <Switch
+                    checked={useLbs}
+                    onCheckedChange={setUseLbs}
+                    aria-label={t("calculatorForm.toggleWeightUnit")}
+                  />
+                  <span className="text-muted-foreground">lbs</span>
+                </div>
+              </div>
+              <Input
+                className="h-11"
+                id="patient-weight"
+                type="number"
+                min="0"
+                step="any"
+                placeholder={useLbs ? "e.g. 155" : "e.g. 70"}
+                value={weightValue}
+                onChange={(e) => setWeightValue(e.target.value)}
+              />
+            </div>
+
+            {/* Height (optional, for BSA) */}
+            <div className="space-y-2">
+              <Label htmlFor="patient-height">
+                {t("calculatorForm.heightCm")}
+                <span className="text-muted-foreground">
+                  {" "}
+                  — {t("calculatorForm.optionalForBsa")}
+                </span>
+              </Label>
+              <Input
+                className="h-11"
+                id="patient-height"
+                type="number"
+                min="0"
+                step="any"
+                placeholder="e.g. 170"
+                value={heightCm}
+                onChange={(e) => setHeightCm(e.target.value)}
+              />
+            </div>
+
+            {/* Formula Selection */}
+            <div className="space-y-3">
+              <Label id="formula-label">
+                {t("calculatorForm.calculationFormula")}
+              </Label>
               <div
-                className="flex gap-1"
+                className="grid gap-3 sm:grid-cols-2"
                 role="radiogroup"
-                aria-labelledby="dose-unit-label"
+                aria-labelledby="formula-label"
               >
-                {unitOptions.map((unit) => (
-                  <button
-                    key={unit}
-                    type="button"
-                    role="radio"
-                    aria-checked={doseUnit === unit}
-                    onClick={() => setDoseUnit(unit)}
-                    className={cn(
-                      "min-h-11 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
-                      doseUnit === unit
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border bg-background text-muted-foreground hover:bg-muted"
-                    )}
-                  >
-                    {unitLabel(unit)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <AutoFillBadge show={autoFilled} />
-
-          {/* Age */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="patient-age">
-                {t("calculatorForm.childAge")} (
-                {useMonths
-                  ? t("calculatorForm.months").toLowerCase()
-                  : t("calculatorForm.years").toLowerCase()}
+                {(
+                  Object.entries(DOSAGE_FORMULAS) as [
+                    FormulaKey,
+                    (typeof DOSAGE_FORMULAS)[FormulaKey],
+                  ][]
                 )
-              </Label>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-muted-foreground">
-                  {t("calculatorForm.years")}
-                </span>
-                <Switch
-                  checked={useMonths}
-                  onCheckedChange={setUseMonths}
-                  aria-label={t("calculatorForm.toggleAgeUnit")}
-                />
-                <span className="text-muted-foreground">
-                  {t("calculatorForm.months")}
-                </span>
+                  // Fried's Rule only applies under 24 months, and this
+                  // calculator refuses everyone under 18, so it can never be a
+                  // valid choice here.
+                  .filter(([key]) => key !== "fried_rule")
+                  .map(([key]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      role="radio"
+                      aria-checked={selectedFormula === key}
+                      onClick={() => setSelectedFormula(key)}
+                      className={cn(
+                        "rounded-lg border p-3 text-left transition-all",
+                        selectedFormula === key
+                          ? "border-primary bg-primary/5 ring-1 ring-primary"
+                          : "border-border hover:border-primary/50 hover:bg-muted/50"
+                      )}
+                    >
+                      <div className="text-sm font-medium text-foreground">
+                        {t(`calculatorForm.${FORMULA_KEY_MAP[key]}`)}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {t(`calculatorForm.${FORMULA_DESC_MAP[key]}`)}
+                      </div>
+                    </button>
+                  ))}
               </div>
             </div>
-            <Input
-              className="h-11"
-              id="patient-age"
-              type="number"
-              min="0"
-              step="any"
-              placeholder={useMonths ? "e.g. 360" : "e.g. 30"}
-              value={useMonths ? ageMonths : ageYears}
-              onChange={(e) =>
-                useMonths
-                  ? setAgeMonths(e.target.value)
-                  : setAgeYears(e.target.value)
-              }
-            />
-          </div>
 
-          {/* Weight */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="patient-weight">
-                {t("calculatorForm.childWeight")} ({useLbs ? "lbs" : "kg"})
-              </Label>
-              <div className="flex items-center gap-2 text-sm">
-                <span className="text-muted-foreground">kg</span>
-                <Switch
-                  checked={useLbs}
-                  onCheckedChange={setUseLbs}
-                  aria-label={t("calculatorForm.toggleWeightUnit")}
-                />
-                <span className="text-muted-foreground">lbs</span>
+            {/* Error */}
+            {error && (
+              <div
+                role="alert"
+                aria-live="polite"
+                className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
+              >
+                {error}
               </div>
-            </div>
-            <Input
-              className="h-11"
-              id="patient-weight"
-              type="number"
-              min="0"
-              step="any"
-              placeholder={useLbs ? "e.g. 155" : "e.g. 70"}
-              value={weightValue}
-              onChange={(e) => setWeightValue(e.target.value)}
-            />
-          </div>
+            )}
 
-          {/* Height (optional, for BSA) */}
-          <div className="space-y-2">
-            <Label htmlFor="patient-height">
-              {t("calculatorForm.heightCm")}
-              <span className="text-muted-foreground">
-                {" "}
-                — {t("calculatorForm.optionalForBsa")}
-              </span>
-            </Label>
-            <Input
-              className="h-11"
-              id="patient-height"
-              type="number"
-              min="0"
-              step="any"
-              placeholder="e.g. 170"
-              value={heightCm}
-              onChange={(e) => setHeightCm(e.target.value)}
-            />
-          </div>
-
-          {/* Formula Selection */}
-          <div className="space-y-3">
-            <Label id="formula-label">
-              {t("calculatorForm.calculationFormula")}
-            </Label>
-            <div
-              className="grid gap-3 sm:grid-cols-2"
-              role="radiogroup"
-              aria-labelledby="formula-label"
-            >
-              {(
-                Object.entries(DOSAGE_FORMULAS) as [
-                  FormulaKey,
-                  (typeof DOSAGE_FORMULAS)[FormulaKey],
-                ][]
-              )
-                // Fried's Rule only applies under 24 months, and this
-                // calculator refuses everyone under 18, so it can never be a
-                // valid choice here.
-                .filter(([key]) => key !== "fried_rule")
-                .map(([key]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    role="radio"
-                    aria-checked={selectedFormula === key}
-                    onClick={() => setSelectedFormula(key)}
-                    className={cn(
-                      "rounded-lg border p-3 text-left transition-all",
-                      selectedFormula === key
-                        ? "border-primary bg-primary/5 ring-1 ring-primary"
-                        : "border-border hover:border-primary/50 hover:bg-muted/50"
-                    )}
-                  >
-                    <div className="text-sm font-medium text-foreground">
-                      {t(`calculatorForm.${FORMULA_KEY_MAP[key]}`)}
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {t(`calculatorForm.${FORMULA_DESC_MAP[key]}`)}
-                    </div>
-                  </button>
-                ))}
-            </div>
-          </div>
-
-          {/* Error */}
-          {error && (
-            <div
-              role="alert"
-              aria-live="polite"
-              className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/20 dark:text-red-400"
-            >
-              {error}
-            </div>
-          )}
-
-          {/* Calculate Button */}
-          <Button onClick={handleCalculate} className="w-full" size="lg">
-            <Calculator className="size-4" />
-            {t("calculatorForm.calculate")}
-          </Button>
+            {/* Calculate Button */}
+            <Button type="submit" className="w-full" size="lg">
+              <Calculator className="size-4" />
+              {t("calculatorForm.calculate")}
+            </Button>
+          </form>
         </CardContent>
       </Card>
 

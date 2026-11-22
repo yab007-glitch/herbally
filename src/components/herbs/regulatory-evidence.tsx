@@ -32,9 +32,13 @@ const COPY = {
   en: {
     heading: "What licensed products claim",
     intro:
-      "Quoted from product licences issued by Health Canada. These are the words on licensed products, not medical advice.",
+      "Quoted from product licences issued by Health Canada. These are the words on licensed products, not medical advice. Some Health Canada licences cover multi-ingredient formulas, so listed claims or doses may reflect a full product rather than this herb alone.",
+    dangerousNote:
+      "Health Canada's LNHPD lists ultra-diluted homeopathic preparations under this botanical name. Extreme homeopathic dilutions are fundamentally distinct from the raw toxic plant, so licensed homeopathic doses and indications are intentionally withheld here.",
+    homeopathicNote:
+      "Homeopathic dilution notice: One or more licensed products on record are homeopathic dilutions (e.g., globules, granules, C/X/LM potencies). Homeopathic dilutions are not clinically equivalent to herbal extracts, tinctures, or raw plant material.",
     purposes: "Indications on record",
-    doses: "Doses used",
+    doses: "Adult doses on record",
     risks: "Risk statements",
     products: (n: number) =>
       `Drawn from ${n} licensed product${n === 1 ? "" : "s"}.`,
@@ -46,9 +50,13 @@ const COPY = {
   fr: {
     heading: "Ce que déclarent les produits homologués",
     intro:
-      "Citations tirées de licences de produits délivrées par Santé Canada. Ce sont les mentions des produits homologués, et non un avis médical.",
+      "Citations tirées de licences de produits délivrées par Santé Canada. Ce sont les mentions des produits homologués, et non un avis médical. Certaines licences couvrent des formules multi-ingrédients ; les mentions peuvent donc refléter le produit complet plutôt que cette plante seule.",
+    dangerousNote:
+      "La base de Santé Canada répertorie des préparations homéopathiques hautement diluées sous ce nom botanique. Ces dilutions ne correspondent pas à la plante brute toxique ; leurs posologies et allégations sont donc masquées par sécurité.",
+    homeopathicNote:
+      "Mention homéopathique : au moins un produit homologué au dossier est une préparation homéopathique diluée (granules, globules). Ces dilutions ne sont pas équivalentes à des extraits, teintures ou parties brutes de la plante.",
     purposes: "Indications au dossier",
-    doses: "Doses utilisées",
+    doses: "Doses adultes au dossier",
     risks: "Mentions de risque",
     products: (n: number) =>
       `Tiré de ${n} produit${n === 1 ? "" : "s"} homologué${n === 1 ? "" : "s"}.`,
@@ -63,14 +71,35 @@ const COPY = {
   },
 } as const;
 
+const PEDIATRIC_DOSE_PATTERN =
+  /\b(infant|infants|child|children|adolescent|adolescents|pediatric|paediatric|bébé|bébés|enfant|enfants|nourrisson|nourrissons)\b/i;
+
+function isPediatricOnlyOrTaggedDose(d: {
+  population?: string | null;
+  age_minimum?: number | null;
+}): boolean {
+  const pop = d.population ?? "";
+  if (PEDIATRIC_DOSE_PATTERN.test(pop)) return true;
+  if (
+    typeof d.age_minimum === "number" &&
+    d.age_minimum > 0 &&
+    d.age_minimum < 18
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function RegulatoryEvidenceSection({
   evidence,
   locale,
   className,
+  isDangerous = false,
 }: {
   evidence: RegulatoryEvidence | null;
   locale: "en" | "fr";
   className?: string;
+  isDangerous?: boolean;
 }) {
   if (!evidence) return null;
   const hasAny =
@@ -86,6 +115,47 @@ export function RegulatoryEvidenceSection({
     locale === "fr" ? "fr-CA" : "en-CA",
     { year: "numeric", month: "long" }
   );
+
+  if (isDangerous) {
+    return (
+      <section
+        aria-labelledby="regulatory-evidence-heading"
+        className={cn(
+          "rounded-2xl border border-border/70 bg-muted/30 p-5",
+          className
+        )}
+      >
+        <h2
+          id="regulatory-evidence-heading"
+          className="text-xl font-semibold text-foreground"
+        >
+          {c.heading}
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {c.dangerousNote}
+        </p>
+        <p className="mt-3 text-xs text-muted-foreground">
+          <a
+            href={datasetUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-foreground"
+          >
+            {c.attribution}
+          </a>
+          {` — ${c.retrieved} ${retrieved}.`}
+        </p>
+      </section>
+    );
+  }
+
+  const adultDoses = (evidence.doses ?? []).filter(
+    (d) => !isPediatricOnlyOrTaggedDose(d)
+  );
+  const isHomeopathic =
+    /\b(homeopath|hom[eé]opath|globule|granule|pellet|organotherapy|dilution)\b/i.test(
+      JSON.stringify({ p: evidence.purposes, d: evidence.doses })
+    );
 
   return (
     <section
@@ -104,6 +174,12 @@ export function RegulatoryEvidenceSection({
       <p className="measure mt-2 text-sm leading-relaxed text-muted-foreground">
         {c.intro}
       </p>
+
+      {isHomeopathic && (
+        <p className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
+          {c.homeopathicNote}
+        </p>
+      )}
 
       {(() => {
         const lists = (
@@ -126,20 +202,20 @@ export function RegulatoryEvidenceSection({
               </div>
             )}
 
-            {evidence.doses?.length > 0 && (
+            {adultDoses.length > 0 && (
               <div className="mt-4">
                 <h3 className="text-sm font-semibold text-foreground">
                   {c.doses}
                 </h3>
                 <ul className="mt-2 flex flex-wrap gap-2">
-                  {evidence.doses.slice(0, 6).map((d) => (
+                  {adultDoses.slice(0, 6).map((d) => (
                     <li
                       key={`${d.text}-${d.population ?? ""}`}
                       className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
                     >
                       {cleanQuotedText(d.text)}
                       {d.population ? ` · ${d.population}` : ""}
-                      {typeof d.age_minimum === "number" && d.age_minimum > 0
+                      {typeof d.age_minimum === "number" && d.age_minimum >= 18
                         ? ` · ${d.age_minimum}+`
                         : ""}
                     </li>

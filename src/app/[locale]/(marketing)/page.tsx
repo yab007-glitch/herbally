@@ -110,23 +110,24 @@ export default async function HomePage() {
         <h3 className="mt-10 text-center text-lg font-semibold text-foreground">
           {t("home.featuresTitle")}
         </h3>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <ul className="mt-4 grid gap-3 sm:grid-cols-2">
           {FEATURES.map((f) => (
-            <Link
-              key={f.href}
-              href={f.href}
-              className="rounded-2xl border bg-card p-4 text-left transition-colors hover:border-primary/40"
-            >
-              <f.icon className="size-5 text-primary" aria-hidden="true" />
-              <p className="mt-2 font-semibold text-foreground">
-                {t(f.titleKey)}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t(f.descKey)}
-              </p>
-            </Link>
+            <li key={f.href}>
+              <Link
+                href={f.href}
+                className="block h-full rounded-2xl border bg-card p-4 text-left transition-colors hover:border-primary/40"
+              >
+                <f.icon className="size-5 text-primary" aria-hidden="true" />
+                <p className="mt-2 font-semibold text-foreground">
+                  {t(f.titleKey)}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {t(f.descKey)}
+                </p>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 rounded-2xl border border-border/80 bg-muted/30 px-4 py-3 text-xs sm:text-sm">
           <Link
@@ -149,17 +150,18 @@ export default async function HomePage() {
         <h3 className="mt-10 text-center text-lg font-semibold text-foreground">
           {t("home.popularTitle")}
         </h3>
-        <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <ul className="mt-4 flex flex-wrap justify-center gap-2">
           {POPULAR_HERBS.map((h) => (
-            <Link
-              key={h.slug}
-              href={`/herbs/${h.slug}`}
-              className="rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
-            >
-              {t(h.nameKey)}
-            </Link>
+            <li key={h.slug}>
+              <Link
+                href={`/herbs/${h.slug}`}
+                className="inline-block rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
+              >
+                {t(h.nameKey)}
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
 
         <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-muted-foreground">
           {t("home.explainerNote")}

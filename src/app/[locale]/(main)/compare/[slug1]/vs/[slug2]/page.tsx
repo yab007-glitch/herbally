@@ -8,11 +8,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
+import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
 import { SourceAttribution } from "@/components/herbs/citations";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
+import { canShowDoseCalculator } from "@/lib/data/dangerous-herbs";
 import { truncateDescription } from "@/lib/seo/truncate-description";
 import { fitTitle } from "@/lib/seo/fit-title";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
@@ -282,6 +284,15 @@ export default async function ComparePage({ params }: Props) {
         <p className="mt-1 text-muted-foreground">{t("compare.subtitle")}</p>
       </div>
 
+      <DangerousHerbBanner
+        slug={slug1}
+        locale={locale === "fr" ? "fr" : "en"}
+      />
+      <DangerousHerbBanner
+        slug={slug2}
+        locale={locale === "fr" ? "fr" : "en"}
+      />
+
       {/* Names */}
       <div className="grid grid-cols-[1fr_2fr_2fr] gap-4 rounded-lg border bg-muted/50 p-4">
         <div className="font-medium text-foreground">{t("compare.herb")}</div>
@@ -483,12 +494,14 @@ export default async function ComparePage({ params }: Props) {
           <Leaf className="size-4" />
           {t("compare.viewDetails", { name: herbB.name })}
         </Button>
-        <Button
-          variant="outline"
-          render={<Link href={`/calculator?herb=${slug1}`} />}
-        >
-          Calculate {herbA.name} Dose
-        </Button>
+        {canShowDoseCalculator(slug1, herbA.dosage_adult) && (
+          <Button
+            variant="outline"
+            render={<Link href={`/calculator?herb=${slug1}`} />}
+          >
+            Calculate {herbA.name} Dose
+          </Button>
+        )}
       </div>
 
       {/* Visible FAQ — must mirror FAQSchema above for rich-result eligibility */}

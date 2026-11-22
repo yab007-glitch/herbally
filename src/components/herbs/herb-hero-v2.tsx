@@ -13,6 +13,7 @@ import {
 } from "@/components/herbs/herb-safety-glance";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { isBucketCategory } from "@/lib/herbs/category";
+import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { useSyncExternalStore, useEffect } from "react";
@@ -52,6 +53,8 @@ interface HerbHeroV2Props {
   interactions?: GlanceInteraction[];
   /** Anchor that opens the full interaction list. */
   safetyHref?: string;
+  /** Whether the hero should link to the dose calculator (false for lethal/no-dose herbs). */
+  showCalculator?: boolean;
 }
 
 export function HerbHeroV2({
@@ -61,7 +64,9 @@ export function HerbHeroV2({
   isManualMonograph,
   interactions = [],
   safetyHref = "#safety",
+  showCalculator = true,
 }: HerbHeroV2Props) {
+  const allowCalculator = showCalculator && !isDangerousHerb(herb.slug);
   const t = useTranslations();
   // Same external-store read as HerbCard: a lazy useState initializer ran
   // against localStorage during the first client render, which disagrees with
@@ -233,17 +238,20 @@ export function HerbHeroV2({
             <MessageCircle className="mr-1 size-3.5" aria-hidden="true" />
             {t("herbDetail.askHerbalist")}
           </Button>
-          {/* Demoted on purpose: still a real button, but it now comes after
-              the safety summary instead of being the first thing offered. */}
-          <Button
-            size="sm"
-            variant="outline"
-            render={<Link href={`/calculator?herb=${herb.slug}`} />}
-            className="min-h-10 rounded-full px-4"
-          >
-            <Calculator className="mr-1 size-3.5" aria-hidden="true" />
-            {t("herbDetail.calculateDose")}
-          </Button>
+          {/* Demoted on purpose and suppressed completely for lethal/no-dose
+              plants: still a real button for dosable herbs, never rendered for
+              poisons or entries without a quantitative dose. */}
+          {allowCalculator && (
+            <Button
+              size="sm"
+              variant="outline"
+              render={<Link href={`/calculator?herb=${herb.slug}`} />}
+              className="min-h-10 rounded-full px-4"
+            >
+              <Calculator className="mr-1 size-3.5" aria-hidden="true" />
+              {t("herbDetail.calculateDose")}
+            </Button>
+          )}
         </div>
       </div>
     </div>

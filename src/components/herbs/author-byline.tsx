@@ -15,21 +15,28 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 export function AuthorByline({
   locale,
   lastReviewed,
+  isReviewed = true,
 }: {
   locale: "en" | "fr";
   lastReviewed?: string | null;
+  /** False for entries without a manual/clinical review so bylines do not overclaim. */
+  isReviewed?: boolean;
 }) {
   const copy =
     locale === "fr"
       ? {
-          written: "Rédigé et maintenu par",
+          written: isReviewed
+            ? "Rédigé et maintenu par"
+            : "Répertorié et maintenu par",
           name: "Yasser Bheekun",
           credentials: "Technologiste médical, OPTMQ · SCSLM",
           policy: "Politique éditoriale",
           updated: "Dernière mise à jour",
         }
       : {
-          written: "Written and maintained by",
+          written: isReviewed
+            ? "Written and maintained by"
+            : "Catalogued and maintained by",
           name: "Yasser Bheekun",
           credentials: "Medical Laboratory Technologist, OPTMQ · CSMLS",
           policy: "Editorial policy",

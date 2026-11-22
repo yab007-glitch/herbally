@@ -26,9 +26,15 @@ import { hasManualMonograph } from "@/lib/data/monographs";
 // hard-coded value shipped 2026-06-22 as the lastmod for the homepage, /herbs
 // and every hub on every deploy for five months — a sitemap that never updates
 // is one Google learns to ignore.
-const FALLBACK_STATIC_MODIFIED = new Date("2026-11-02T00:00:00Z");
+const FALLBACK_STATIC_MODIFIED = new Date("2026-11-22T00:00:00Z");
 
 function staticPageModified(): Date {
+  // Self-hosted Docker builds inject commit timestamp via BUILD_GIT_TIMESTAMP.
+  const buildTs = process.env.BUILD_GIT_TIMESTAMP;
+  if (buildTs) {
+    const parsed = new Date(buildTs);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
   // Vercel sets this per deployment (unix seconds).
   const fromEnv = process.env.VERCEL_GIT_COMMIT_TIMESTAMP;
   if (fromEnv) {

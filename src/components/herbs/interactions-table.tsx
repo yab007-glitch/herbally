@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import type { Interaction } from "@/lib/types/interactions";
-import { pairPath } from "@/lib/interactions/pair-url";
+import { drugSlug, pairPath } from "@/lib/interactions/pair-url";
 
 export type { Interaction };
 
@@ -115,14 +115,24 @@ export function InteractionsTable({
               <tr key={interaction.id} className="border-b last:border-0">
                 <td className="px-4 py-3 font-medium text-foreground">
                   {herbSlug ? (
-                    <Link
-                      href={pairPath(herbSlug, interaction.drug_name)}
-                      className="hover:text-primary hover:underline transition-colors"
-                    >
-                      {interaction.drug_name}
-                    </Link>
+                    <div className="space-y-1">
+                      <Link
+                        href={pairPath(herbSlug, interaction.drug_name)}
+                        className="hover:text-primary hover:underline transition-colors"
+                      >
+                        {interaction.display_drug_name || interaction.drug_name}
+                      </Link>
+                      <div>
+                        <Link
+                          href={`/medications/${drugSlug(interaction.drug_name)}`}
+                          className="text-xs font-normal text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+                        >
+                          {t("interactions.allHerbsForDrug")}
+                        </Link>
+                      </div>
+                    </div>
                   ) : (
-                    interaction.drug_name
+                    interaction.display_drug_name || interaction.drug_name
                   )}
                 </td>
                 <td className="px-4 py-3">
@@ -177,9 +187,15 @@ export function InteractionsTable({
         </div>
       )}
 
-      {/* Coverage-limit disclaimer — the curated subset is not exhaustive */}
+      {/* Coverage-limit disclaimer + reverse medication index link */}
       <p className="mt-4 text-xs text-muted-foreground">
-        {t("interactions.coverageNotice")}
+        {t("interactions.coverageNotice")}{" "}
+        <Link
+          href="/medications"
+          className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+        >
+          {t("interactions.browseMedications")}
+        </Link>
       </p>
     </section>
   );

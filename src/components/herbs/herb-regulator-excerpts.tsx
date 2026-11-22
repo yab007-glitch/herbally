@@ -6,16 +6,35 @@ export function HerbRegulatorExcerpts({
   herbName,
   sources,
   copy,
+  filter = "all",
+  isDangerous = false,
+  locale = "en",
 }: {
   herbName: string;
   sources: MonographSourceRow[];
   copy: ReturnType<typeof herbPageCopy>;
+  filter?: "all" | "modern" | "historical";
+  isDangerous?: boolean;
+  locale?: "en" | "fr";
 }) {
-  if (sources.length === 0) return null;
+  const filtered = sources.filter((source) => {
+    const isHist = Boolean(copy.historicalSources[source.source]);
+    if (isHist && isDangerous) return false;
+    if (filter === "modern") return !isHist;
+    if (filter === "historical") return isHist;
+    return true;
+  });
+
+  if (filtered.length === 0) return null;
+
+  const historicalCollapseLabel =
+    locale === "fr"
+      ? "Afficher le texte d'archive historique (1894–1919 — ne constitue pas un avis médical)"
+      : "Show historical 1894–1919 archive text (not modern medical advice)";
 
   return (
     <>
-      {sources.map((source) => {
+      {filtered.map((source) => {
         const historical = copy.historicalSources[source.source];
         const labels =
           source.source === "LiverTox"
@@ -71,6 +90,8 @@ export function HerbRegulatorExcerpts({
             verbatimNote={copy.verbatimQuoteNote}
             expandLabel={copy.verbatimExpandLabel}
             reproducedLabel={copy.reproducedLabel}
+            collapsible={Boolean(historical)}
+            collapseSummary={historical ? historicalCollapseLabel : undefined}
             {...labels}
           />
         );

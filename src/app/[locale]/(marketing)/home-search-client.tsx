@@ -270,7 +270,13 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   return (
     <div className="w-full">
       <div className="w-full text-left">
-        <div className="space-y-3">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void handleCheck();
+          }}
+          className="space-y-3"
+        >
           <div className="relative text-left">
             <label htmlFor="home-herb" className="eyebrow mb-1.5 block">
               {labels.herbLabel}
@@ -298,6 +304,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                 {herbResults.map((herb, i) => (
                   <button
                     key={herb.id}
+                    type="button"
                     onClick={() => selectHerb(herb)}
                     className={cn(
                       "flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors",
@@ -331,14 +338,13 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                 setMedInput(e.target.value);
                 setCheckError(null);
               }}
-              onKeyDown={(e) => e.key === "Enter" && void handleCheck()}
               placeholder={labels.medPlaceholder}
               className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
             />
           </div>
 
           <Button
-            onClick={() => void handleCheck()}
+            type="submit"
             disabled={checking}
             aria-busy={checking}
             className="h-12 w-full rounded-md text-sm font-medium"
@@ -481,7 +487,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
               </div>
             </div>
           )}
-        </div>
+        </form>
 
         <div className="mt-8">
           <p className="eyebrow mb-3">{labels.suggestionsTitle}</p>
@@ -489,6 +495,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             {SUGGESTIONS.map((s, i) => (
               <button
                 key={i}
+                type="button"
                 disabled={checking}
                 onClick={() => {
                   setHerbInput(s.herb);
@@ -505,6 +512,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
 
         <div className="mt-6">
           <button
+            type="button"
             onClick={() => router.push("/symptoms")}
             className="inline-flex min-h-10 items-center gap-1.5 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >

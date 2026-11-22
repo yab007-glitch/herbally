@@ -2,12 +2,9 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { siteUrl } from "@/lib/seo/site-url";
-import dynamic from "next/dynamic";
-const DoseCalculatorForm = dynamic(() =>
-  import("@/components/calculator/dose-calculator-form").then(
-    (mod) => mod.DoseCalculatorForm
-  )
-);
+import { DoseCalculatorForm } from "@/components/calculator/dose-calculator-form";
+import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
+import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
@@ -66,6 +63,8 @@ export default async function CalculatorPage({
   const locale = await getLocale();
   const t = await getTranslations({ locale });
   const herbSlug = params.herb;
+  const blockedDangerousSlug =
+    herbSlug && isDangerousHerb(herbSlug) ? herbSlug : null;
 
   let prefill: {
     herbName: string;
@@ -81,7 +80,7 @@ export default async function CalculatorPage({
     verified: boolean;
   } | null = null;
 
-  if (herbSlug) {
+  if (herbSlug && !blockedDangerousSlug) {
     const result = await getHerbBySlug(herbSlug);
     if (result.success && result.data) {
       const herb = result.data;
@@ -142,7 +141,21 @@ export default async function CalculatorPage({
         </h1>
         <p className="mt-2 text-muted-foreground">{t("calculator.subtitle")}</p>
       </div>
-      <DoseCalculatorForm prefill={prefill} />
+      {blockedDangerousSlug ? (
+        <div className="space-y-4">
+          <DangerousHerbBanner
+            slug={blockedDangerousSlug}
+            locale={locale === "fr" ? "fr" : "en"}
+          />
+          <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 text-sm leading-relaxed text-foreground">
+            {locale === "fr"
+              ? "HerbAlly ne calcule pas de posologie pour les plantes toxiques ou potentiellement mortelles. N'utilisez pas cette plante en automédication et consultez un centre antipoison ou un médecin en cas d'exposition."
+              : "HerbAlly does not calculate doses for toxic or potentially lethal plants. Do not self-administer preparations of this plant; contact Poison Control or a licensed clinician if exposure occurs."}
+          </div>
+        </div>
+      ) : (
+        <DoseCalculatorForm prefill={prefill} />
+      )}
       <section aria-labelledby="calculator-faq-heading" className="pt-4">
         <h2
           id="calculator-faq-heading"
