@@ -68,21 +68,28 @@ export async function POST(request: NextRequest) {
 
   const slugs = [...new Set(parsed.data.slugs)];
   for (const slug of slugs) {
-    // Next 16: revalidateTag takes a cache-life profile as the second argument.
-    revalidateTag(`herb-${slug}`, "max");
-    revalidateTag(`herb-meta-${slug}`, "max");
+    // Next 16: `{ expire: 0 }` forces immediate invalidation so the very next
+    // request refills from Postgres instead of serving stale SWR to the CDN.
+    revalidateTag(`herb-${slug}`, { expire: 0 });
+    revalidateTag(`herb-meta-${slug}`, { expire: 0 });
     // generateMetadata reads the herb row from the page bundle, and the bundle
     // also carries the FAQ, monograph and regulator rows. Purging the per-slug
     // bundle tag is what makes a data-only correction land in all of them
     // (entries written before the per-slug tag existed still expire on TTL).
-    revalidateTag(`herb-page-bundle-${slug}`, "max");
-    revalidateTag(`herb-faqs-${slug}`, "max");
-    // The regulator record is cached separately from the bundle it reads, so
-    // purging the bundle alone left an edited purposes/doses list on screen for
-    // the rest of its TTL (found 2026-11-16 on malabar-nut).
-    revalidateTag(`herb-regulatory-evidence-${slug}`, "max");
-    // The Full Route Cache (the prerendered HTML) is keyed by path, not tag.
+    revalidateTag(`herb-page-bundle-${slug}`, { expire: 0 });
+    revalidateTag(`herb-faqs-${slug}`, { expire: 0 });
+    // The regulator, sources, monograph, pubmed, and related caches wrap the
+    // bundle under separate per-slug tags and outlive bundle purges unless
+    // invalidated alongside it.
+    revalidateTag(`herb-regulatory-evidence-${slug}`, { expire: 0 });
+    revalidateTag(`sources-${slug}`, { expire: 0 });
+    revalidateTag(`monograph-${slug}`, { expire: 0 });
+    revalidateTag(`pubmed-sheet-${slug}`, { expire: 0 });
+    revalidateTag(`related-herbs-${slug}`, { expire: 0 });
+    // The Full Route Cache (the prerendered HTML) is keyed by path, not tag,
+    // and proxy.ts rewrites unprefixed English URLs onto `/en/...`.
     revalidatePath(`/herbs/${slug}`);
+    revalidatePath(`/en/herbs/${slug}`);
     revalidatePath(`/fr/herbs/${slug}`);
   }
 
