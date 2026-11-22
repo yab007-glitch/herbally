@@ -37,6 +37,7 @@ export interface HerbPageCopy {
     label: string;
     checkedLabel: string;
     count: (n: number) => string;
+    taxonomyLabel: string;
     note: string;
   };
   /**
@@ -70,6 +71,7 @@ const EN: HerbPageCopy = {
     label: "Sources checked for this entry",
     checkedLabel: "Last checked",
     count: (n) => `${n} independent source${n === 1 ? "" : "s"}`,
+    taxonomyLabel: "Botanical identity confirmed via:",
     note: "Cross-checked against these sources; where nothing was found, the page says so rather than filling the gap.",
   },
   verbatimQuoteNote: null,
@@ -185,6 +187,7 @@ const FR: HerbPageCopy = {
     checkedLabel: "Dernière vérification",
     count: (n) =>
       `${n} source${n === 1 ? "" : "s"} indépendante${n === 1 ? "" : "s"}`,
+    taxonomyLabel: "Identité botanique confirmée via :",
     note: "Ces sources ont été recoupées ; lorsque rien n'a été trouvé, la fiche le dit plutôt que de combler le vide.",
   },
   verbatimQuoteNote:

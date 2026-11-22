@@ -1,6 +1,10 @@
 import { ExternalLink, Landmark } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { getGovSources, hasGovMonograph } from "@/lib/data/gov-sources";
+import {
+  getGovSources,
+  hasGovMonograph,
+  type MonographSourceRef,
+} from "@/lib/data/gov-sources";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 /**
@@ -15,14 +19,16 @@ import { getLocale } from "@/lib/i18n/page-locale";
 export async function GovSources({
   slug,
   displayName,
+  monographSources,
 }: {
   slug: string;
   displayName: string;
+  monographSources?: MonographSourceRef[];
 }) {
   const t = await getTranslations("govSources");
   const locale = (await getLocale()) === "fr" ? "fr" : "en";
-  const sources = getGovSources(slug, displayName, locale);
-  const matched = hasGovMonograph(slug);
+  const sources = getGovSources(slug, displayName, locale, monographSources);
+  const matched = hasGovMonograph(slug, monographSources);
 
   return (
     <section className="rounded-lg border bg-muted/30 p-4 text-sm">

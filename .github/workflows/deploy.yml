@@ -79,7 +79,7 @@ jobs:
           # Wipe stale Next.js Data/Fetch Cache across upgrades while keeping
           # optimized next/image files, and force-recreate the app container
           # so /app/.next/server/route-cache in the writable layer is fresh.
-          rm -rf /var/lib/docker/volumes/herbally_next-cache/_data/fetch-cache/* 2>/dev/null || true
+          docker exec -u 0 herbally-app sh -c 'rm -rf /app/.next/cache/fetch-cache/*' 2>/dev/null || true
           docker compose up -d --force-recreate --no-deps app
 
       - name: Wait for health

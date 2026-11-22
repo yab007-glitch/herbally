@@ -29,6 +29,11 @@
 
 export type GovSourceKind = "monograph" | "search" | "index";
 
+export interface MonographSourceRef {
+  source: string;
+  url: string | null;
+}
+
 export interface GovSource {
   /** Stable id, e.g. "nccih". */
   id: string;
@@ -136,32 +141,111 @@ const NCCIH_DIRECT: Record<string, string> = {
   vitex: "https://www.nccih.nih.gov/health/chasteberry",
 };
 
+function isHttpUrl(url: string | null | undefined): url is string {
+  return Boolean(url && /^https?:\/\//i.test(url.trim()));
+}
+
+function getDirectMonographMeta(
+  source: string,
+  fr: boolean
+): { id: string; label: string } | null {
+  switch (source) {
+    case "European Medicines Agency (HMPC)":
+    case "EMA":
+    case "EMA HMPC":
+      return {
+        id: "ema",
+        label: fr
+          ? "EMA HMPC — Monographie européenne"
+          : "EMA HMPC — EU Herbal Monograph",
+      };
+    case "Health Canada":
+    case "Health Canada NHP":
+      return {
+        id: "health-canada",
+        label: fr
+          ? "Santé Canada — Monographie PSN"
+          : "Health Canada — NHP Monograph",
+      };
+    case "LiverTox":
+      return { id: "livertox", label: "LiverTox (NIH/NIDDK)" };
+    case "NCCIH":
+      return { id: "nccih", label: "NCCIH (NIH) — Herbs at a Glance" };
+    case "WHO":
+    case "WHO Monographs":
+      return {
+        id: "who",
+        label: fr
+          ? "OMS — Monographie sur les plantes médicinales"
+          : "WHO — Medicinal Plant Monograph",
+      };
+    default:
+      return null;
+  }
+}
+
+function extractDirectDbMonographs(
+  monographSources: MonographSourceRef[] | undefined,
+  fr: boolean
+): GovSource[] {
+  if (!monographSources || monographSources.length === 0) return [];
+  const seen = new Set<string>();
+  const direct: GovSource[] = [];
+  for (const row of monographSources) {
+    if (!isHttpUrl(row.url)) continue;
+    const meta = getDirectMonographMeta(row.source, fr);
+    if (!meta || seen.has(meta.id)) continue;
+    seen.add(meta.id);
+    direct.push({
+      id: meta.id,
+      label: meta.label,
+      url: row.url.trim(),
+      kind: "monograph",
+      authoritative: true,
+    });
+  }
+  return direct;
+}
+
 /**
  * Resolve the authoritative government sources for a herb.
  *
  * @param slug herb database slug
  * @param displayName herb common name (used to build always-resolving search links)
+ * @param locale UI locale
+ * @param monographSources imported monograph source rows attached to this herb
  * @returns ordered list: direct monograph links first, then search/index fallbacks
  */
 export function getGovSources(
   slug: string,
   displayName?: string,
-  locale: "en" | "fr" = "en"
+  locale: "en" | "fr" = "en",
+  monographSources?: MonographSourceRef[]
 ): GovSource[] {
   const fr = locale === "fr";
   const out: GovSource[] = [];
   const query = encodeURIComponent(displayName ?? slug.replace(/-/g, " "));
+  const seenIds = new Set<string>();
 
-  const direct = NCCIH_DIRECT[slug];
-  if (direct) {
+  const nccihDirectUrl = NCCIH_DIRECT[slug];
+  if (nccihDirectUrl) {
     out.push({
       id: "nccih",
       label: "NCCIH (NIH) — Herbs at a Glance",
-      url: direct,
+      url: nccihDirectUrl,
       kind: "monograph",
       authoritative: true,
     });
-  } else {
+    seenIds.add("nccih");
+  }
+
+  for (const row of extractDirectDbMonographs(monographSources, fr)) {
+    if (seenIds.has(row.id)) continue;
+    out.push(row);
+    seenIds.add(row.id);
+  }
+
+  if (!seenIds.has("nccih")) {
     // No direct page verified — offer a search that always resolves.
     out.push({
       id: "nccih",
@@ -190,25 +274,35 @@ export function getGovSources(
     kind: "index",
     authoritative: false,
   });
-  out.push({
-    id: "ema",
-    label: GOV_SOURCES.ema.label,
-    url: GOV_SOURCES.ema.indexUrl,
-    kind: "index",
-    authoritative: false,
-  });
-  out.push({
-    id: "who",
-    label: GOV_SOURCES.who.label,
-    url: GOV_SOURCES.who.indexUrl,
-    kind: "index",
-    authoritative: false,
-  });
+  if (!seenIds.has("ema")) {
+    out.push({
+      id: "ema",
+      label: GOV_SOURCES.ema.label,
+      url: GOV_SOURCES.ema.indexUrl,
+      kind: "index",
+      authoritative: false,
+    });
+  }
+  if (!seenIds.has("who")) {
+    out.push({
+      id: "who",
+      label: GOV_SOURCES.who.label,
+      url: GOV_SOURCES.who.indexUrl,
+      kind: "index",
+      authoritative: false,
+    });
+  }
 
   return out;
 }
 
 /** True when at least one direct government monograph page is mapped. */
-export function hasGovMonograph(slug: string): boolean {
-  return Boolean(NCCIH_DIRECT[slug]);
+export function hasGovMonograph(
+  slug: string,
+  monographSources?: MonographSourceRef[]
+): boolean {
+  return (
+    Boolean(NCCIH_DIRECT[slug]) ||
+    extractDirectDbMonographs(monographSources, false).length > 0
+  );
 }

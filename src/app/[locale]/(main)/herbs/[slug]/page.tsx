@@ -705,6 +705,7 @@ export default async function HerbDetailPage({ params }: Props) {
         label={copy.sources.label}
         checkedLabel={copy.sources.checkedLabel}
         countLabel={copy.sources.count}
+        taxonomyLabel={copy.sources.taxonomyLabel}
         note={copy.sources.note}
       />
 
@@ -769,7 +770,11 @@ export default async function HerbDetailPage({ params }: Props) {
         className="mt-4"
       />
 
-      <GovSources slug={slug} displayName={herb.name} />
+      <GovSources
+        slug={slug}
+        displayName={herb.name}
+        monographSources={sources}
+      />
 
       <HerbFaqSection
         herbName={herb.name}
