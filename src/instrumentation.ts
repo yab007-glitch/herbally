@@ -1,3 +1,4 @@
+import { EventEmitter } from "node:events";
 import * as Sentry from "@sentry/nextjs";
 
 const HERBALLY_IMAGE_USER_AGENT =
@@ -59,6 +60,13 @@ function patchNodeUserAgent(mod: RequestModule | undefined) {
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
+    // Next.js 16 SSR/streaming + Sentry Node HTTP instrumentation legitimately
+    // attach >10 `close` listeners on ServerResponse; raise the warning floor
+    // so false-positive warnings don't mask real leaks.
+    EventEmitter.defaultMaxListeners = Math.max(
+      EventEmitter.defaultMaxListeners,
+      20
+    );
     try {
       const getBuiltin = (
         process as unknown as {

@@ -14,542 +14,30 @@ import type { HerbWithInteractions } from "@/lib/types";
 import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
+import {
+  COMMON_HERB_NAMES,
+  NON_HERB_WORDS,
+  WEAK_SEARCH_TERMS,
+  extractMedicationNames,
+} from "./context/dictionaries";
+import { attachRegulatorRecords } from "./context/regulator-records";
+import type {
+  VerifiedContext,
+  VerifiedHerb,
+  VerifiedInformationSheet,
+  VerifiedInteraction,
+  VerifiedMonograph,
+  VerifiedRegulatory,
+} from "./context/types";
 
-// ─── Types ──────────────────────────────────────────────────────────
-
-/** The regulator's own record for a herb (Health Canada LNHPD today). */
-export interface VerifiedRegulatory {
-  source: string;
-  purposes: string[];
-  doses: string[];
-  risks: string[];
-  urls: string[];
-}
-
-/** An imported regulator monograph (NCCIH, EMA HMPC, LiverTox, …). */
-export interface VerifiedMonograph {
-  source: string;
-  licence: string | null;
-  claims: string[];
-  safety: string[];
-  doses: string[];
-  url: string | null;
-}
-
-/**
- * The compiled information sheet (herb_pubmed_monographs), written from PubMed
- * abstracts. Derived, not a regulator — the prompt says so — but for the ~2,000
- * herbs with no imported monograph it is the only record of what the clinical
- * literature says, which is exactly what the herbalist kept missing.
- */
-export interface VerifiedInformationSheet {
-  summary: string | null;
-  traditional_uses: string | null;
-  dosage: string | null;
-  safety: string | null;
-  pregnancy: string | null;
-  drug_interactions: string | null;
-  article_count: number | null;
-  pmids: string[];
-}
-
-export interface VerifiedHerb {
-  slug: string;
-  name: string;
-  scientific_name: string;
-  description: string;
-  traditional_uses: string[];
-  modern_uses: string[];
-  contraindications: string[];
-  side_effects: string[];
-  drug_interactions: string[];
-  dosage_adult: string | null;
-  pregnancy_safe: boolean | null;
-  nursing_safe: boolean | null;
-  pregnancy_safe_oral: boolean | null;
-  pregnancy_safe_topical: boolean | null;
-  nursing_safe_oral: boolean | null;
-  nursing_safe_topical: boolean | null;
-  evidence_level: string | null;
-  active_compounds: string[];
-  provenance_method: string | null;
-  /** The regulator's own record, when one exists (Health Canada LNHPD). */
-  regulatory: VerifiedRegulatory | null;
-  /** Imported monographs for this herb (EMA HMPC, NCCIH, LiverTox, …). */
-  monographs: VerifiedMonograph[];
-  /** PubMed-compiled information sheet, when the database has one. */
-  information_sheet: VerifiedInformationSheet | null;
-}
-
-export interface VerifiedInteraction {
-  herb_name: string;
-  drug_name: string;
-  severity: string;
-  mechanism: string;
-  evidence: string;
-  recommendation: string;
-}
-
-export interface VerifiedContext {
-  herbs: VerifiedHerb[];
-  interactions: VerifiedInteraction[];
-  medicationsMentioned: string[];
-  source: "database" | "none";
-  note: string;
-}
-
-// ─── Herb name extraction ───────────────────────────────────────────
-
-/**
- * Common herb names and their variations. Used for quick matching
- * before falling back to DB search.
- */
-const COMMON_HERB_NAMES = new Set([
-  "turmeric",
-  "curcumin",
-  "ginger",
-  "garlic",
-  "echinacea",
-  "chamomile",
-  "lavender",
-  "peppermint",
-  "st. john's wort",
-  "st johns wort",
-  "saint john's wort",
-  "ginkgo",
-  "ginkgo biloba",
-  "ginseng",
-  "ashwagandha",
-  "valerian",
-  "milk thistle",
-  "saw palmetto",
-  "black cohosh",
-  "feverfew",
-  "green tea",
-  "kava",
-  "melatonin",
-  "cinnamon",
-  "aloe vera",
-  "cranberry",
-  "dandelion",
-  "elderberry",
-  "licorice",
-  "nettle",
-  "passionflower",
-  "rosemary",
-  "sage",
-  "thyme",
-  "willow bark",
-  "yarrow",
-  "oregano",
-  "basil",
-  "cardamom",
-  "clove",
-  "fennel",
-  "fenugreek",
-  "hawthorn",
-  "lemon balm",
-  "maca",
-  "reishi",
-  "rhodiola",
-  "schisandra",
-  "slippery elm",
-  "turkey tail",
-]);
-
-/**
- * Words that can never be part of a herb name. They were being sent to the
- * database as search terms, and because the match limit had no ordering, the
- * five rows PostgREST happened to return were the ones that "won".
- *
- * The live failure this fixes: "Tell me about Sideritis scardica. What does the
- * European Medicines Agency say?" searched for tell / about / what / does /
- * european / medicines / agency alongside the two real terms, filled all five
- * slots with "European Goldenrod", "Mugwort European", "Wild Ginger European"…
- * and the herbalist answered that it had no data on Sideritis — then asserted
- * the EMA had no monograph for it, while the imported EMA monograph was in
- * herb_monograph_sources.
- */
-const NON_HERB_WORDS = new Set([
-  // English function words and question words (all longer than 2 chars)
-  "the",
-  "and",
-  "for",
-  "with",
-  "without",
-  "about",
-  "what",
-  "when",
-  "where",
-  "which",
-  "who",
-  "whom",
-  "why",
-  "how",
-  "does",
-  "doesn",
-  "did",
-  "didn",
-  "do",
-  "can",
-  "could",
-  "would",
-  "should",
-  "shall",
-  "will",
-  "may",
-  "might",
-  "must",
-  "have",
-  "has",
-  "had",
-  "been",
-  "being",
-  "was",
-  "were",
-  "are",
-  "isn",
-  "not",
-  "you",
-  "your",
-  "yours",
-  "they",
-  "them",
-  "their",
-  "there",
-  "these",
-  "those",
-  "this",
-  "that",
-  "than",
-  "then",
-  "from",
-  "into",
-  "onto",
-  "over",
-  "under",
-  "also",
-  "just",
-  "only",
-  "very",
-  "much",
-  "many",
-  "more",
-  "most",
-  "often",
-  "usually",
-  "always",
-  "never",
-  "sometimes",
-  "between",
-  "versus",
-  "compare",
-  "comparison",
-  "difference",
-  "differences",
-  "treat",
-  "treats",
-  "treatment",
-  "treatments",
-  "cure",
-  "cures",
-  "prevent",
-  "prevention",
-  "effective",
-  "effectiveness",
-  "recommend",
-  "recommended",
-  "some",
-  "any",
-  "all",
-  "each",
-  "both",
-  "other",
-  "same",
-  "such",
-  "tell",
-  "give",
-  "show",
-  "know",
-  "knows",
-  "want",
-  "need",
-  "like",
-  "help",
-  "please",
-  "thanks",
-  "thank",
-  "hello",
-  "hey",
-  "okay",
-  "sure",
-  "say",
-  "says",
-  "said",
-  "think",
-  "use",
-  "used",
-  "uses",
-  "using",
-  "usage",
-  "take",
-  "taking",
-  "taken",
-  "make",
-  "made",
-  "get",
-  "got",
-  "give",
-  "find",
-  "look",
-  "looking",
-  "info",
-  "information",
-  "detail",
-  "details",
-  "question",
-  "answer",
-  "safe",
-  "safely",
-  "safety",
-  "side",
-  "effect",
-  "effects",
-  "risk",
-  "risks",
-  "benefit",
-  "benefits",
-  "dose",
-  "doses",
-  "dosage",
-  "dosing",
-  "work",
-  "works",
-  "good",
-  "bad",
-  "best",
-  "better",
-  "worse",
-  "really",
-  "actually",
-  "possible",
-  "possibly",
-  "likely",
-  // Domain vocabulary — present in questions far more often than in a name
-  "herb",
-  "herbs",
-  "herbal",
-  "herbalist",
-  "herbally",
-  "plants",
-  "medicine",
-  "medicines",
-  "medical",
-  "medication",
-  "medications",
-  "supplement",
-  "supplements",
-  "product",
-  "products",
-  "natural",
-  "health",
-  "canada",
-  "european",
-  "europe",
-  "agency",
-  "monograph",
-  "monographs",
-  "regulator",
-  "regulatory",
-  "regulator's",
-  "licence",
-  "license",
-  "licensed",
-  "indication",
-  "indications",
-  "traditional",
-  "traditionally",
-  "evidence",
-  "research",
-  "study",
-  "studies",
-  "trial",
-  "trials",
-  "clinical",
-  "database",
-  "scientific",
-  "name",
-  "names",
-  "called",
-  "interaction",
-  "interactions",
-  "combine",
-  "combined",
-  "combining",
-  "together",
-  "pregnant",
-  "pregnancy",
-  "breastfeeding",
-  "nursing",
-  "children",
-  "child",
-  "adult",
-  "adults",
-  "daily",
-  "week",
-  "weeks",
-  "month",
-  "months",
-  "term",
-  "much",
-  "time",
-  // French function words, question words and domain vocabulary
-  "les",
-  "des",
-  "une",
-  "aux",
-  "est",
-  "pas",
-  "son",
-  "ses",
-  "sur",
-  "par",
-  "mais",
-  "donc",
-  "car",
-  "rien",
-  "même",
-  "très",
-  "trop",
-  "peu",
-  "souvent",
-  "toujours",
-  "jamais",
-  "parfois",
-  "comparer",
-  "différence",
-  "traiter",
-  "traitement",
-  "traitements",
-  "prévenir",
-  "prévention",
-  "efficace",
-  "efficacité",
-  "recommandé",
-  "recommandée",
-  "que",
-  "qui",
-  "quoi",
-  "dont",
-  "quel",
-  "quelle",
-  "quels",
-  "quelles",
-  "comment",
-  "pourquoi",
-  "quand",
-  "pour",
-  "dans",
-  "avec",
-  "sans",
-  "sous",
-  "vers",
-  "chez",
-  "entre",
-  "après",
-  "avant",
-  "aussi",
-  "bien",
-  "tout",
-  "tous",
-  "toute",
-  "toutes",
-  "plus",
-  "moins",
-  "être",
-  "avoir",
-  "fait",
-  "faire",
-  "peut",
-  "peuvent",
-  "pouvez",
-  "vous",
-  "nous",
-  "ils",
-  "elles",
-  "elle",
-  "lui",
-  "leur",
-  "leurs",
-  "sont",
-  "cette",
-  "ces",
-  "cela",
-  "celui",
-  "celle",
-  "sert",
-  "utilise",
-  "utiliser",
-  "utilisé",
-  "utilisée",
-  "usage",
-  "effet",
-  "effets",
-  "secondaire",
-  "secondaires",
-  "posologie",
-  "danger",
-  "dangereux",
-  "dangereuse",
-  "sécurité",
-  "vertu",
-  "vertus",
-  "bienfait",
-  "bienfaits",
-  "plante",
-  "plantes",
-  "médecine",
-  "traditionnelle",
-  "santé",
-  "recherche",
-  "étude",
-  "études",
-  "essai",
-  "essais",
-  "clinique",
-  "données",
-  "base",
-  "nom",
-  "scientifique",
-  "appelé",
-  "appelée",
-  "interaction",
-  "interactions",
-  "combiner",
-  "ensemble",
-  "enceinte",
-  "grossesse",
-  "allaitement",
-  "enfant",
-  "enfants",
-  "adulte",
-  "adultes",
-  "quotidien",
-  "quotidienne",
-  "semaine",
-  "semaines",
-  "mois",
-  "longtemps",
-]);
-
-/**
- * Real herb names contain these words ("Long Gu", "Di Long", "Ti Plant"), so
- * they cannot be stopwords — dropping them left three herbs unreachable. They
- * are still too generic to promote a herb on their own ("how long can I take
- * this?"), so a partial match on one counts only when the whole name appears
- * in the message.
- */
-const WEAK_SEARCH_TERMS = new Set(["long", "plant"]);
+export type {
+  VerifiedContext,
+  VerifiedHerb,
+  VerifiedInformationSheet,
+  VerifiedInteraction,
+  VerifiedMonograph,
+  VerifiedRegulatory,
+};
 
 /** A herbs row reduced to the fields name matching needs. */
 interface HerbCandidate {
@@ -618,7 +106,6 @@ function rankCandidates(
       if (normalised.length < 3) continue;
 
       if (containsWord(lowerMessage, normalised)) {
-        // Longer name = more specific match, so the binomial wins over the genus.
         best = Math.max(best, 1000 + normalised.length * 10);
         continue;
       }
@@ -626,16 +113,12 @@ function rankCandidates(
       const words = nameWords(variant);
       if (words.length === 0) continue;
       const matched = words.filter((w) => messageWords.has(w));
-      // A single-word name must match in full; a binomial needs at least half.
       const needed = words.length === 1 ? 1 : Math.ceil(words.length / 2);
       if (matched.length < needed) continue;
-      // A generic word shared with a herb name is not evidence of a match.
       if (!matched.some((w) => !WEAK_SEARCH_TERMS.has(w))) continue;
 
       let score = matched.reduce((sum, w) => sum + w.length * 10, 0);
       if (matched.length === words.length) score += 25;
-      // Names usually lead with the genus or the common name: prefer a match
-      // on the first word over one on a trailing qualifier.
       if (messageWords.has(words[0])) score += 15;
       best = Math.max(best, score);
     }
@@ -656,7 +139,6 @@ async function extractHerbNames(message: string): Promise<string[]> {
   const found = new Set<string>();
   const priority: string[] = [];
 
-  // Direct common-name matching — a curated list, so these are trusted first.
   for (const name of COMMON_HERB_NAMES) {
     if (containsWord(lower, name) && !found.has(name)) {
       found.add(name);
@@ -664,15 +146,10 @@ async function extractHerbNames(message: string): Promise<string[]> {
     }
   }
 
-  // Split on apostrophes as well: French herb names are commonly written with
-  // an elided article ("l'ortie"), and the whole token never matches a name.
-  // Cap the term count: every term adds OR clauses to one query string.
   const messageWords = new Set<string>();
   for (const token of lower.split(/[^\p{L}\p{N}']+/u)) {
     for (const w of nameWords(token)) messageWords.add(w);
   }
-  // Longest terms first — the real herb name is almost always the longest word
-  // left after stopword removal.
   const searchTerms = Array.from(messageWords)
     .sort((a, b) => b.length - a.length)
     .slice(0, 8);
@@ -683,10 +160,6 @@ async function extractHerbNames(message: string): Promise<string[]> {
       const conditions = searchTerms
         .map((w) => {
           const s = sanitizeFilterValue(w);
-          // `translations->fr->>name` is where French herb names live (see
-          // localizeHerb). Without it, a French user asking about "curcuma"
-          // or "gingembre" matched nothing and the herbalist answered that it
-          // had no database entry — 13 of 25 herbs in the live FR audit.
           return `name.ilike.%${s}%,scientific_name.ilike.%${s}%,translations->fr->>name.ilike.%${s}%`;
         })
         .join(",");
@@ -695,12 +168,6 @@ async function extractHerbNames(message: string): Promise<string[]> {
         .select("name, scientific_name, slug, translations")
         .eq("is_published", true)
         .or(conditions)
-        // A wide net, ranked below. The old `.limit(5)` with no ordering made
-        // the result depend on row order, which is how unrelated herbs that
-        // happened to share a word with the question displaced the real one.
-        // 200 covers the worst measured fan-out ("root" matches 72 published
-        // herbs); an average translations blob is under 1 KB, so even a full
-        // page of candidates stays well under 200 KB.
         .order("name")
         .limit(200);
 
@@ -736,138 +203,47 @@ async function extractHerbNames(message: string): Promise<string[]> {
   return priority;
 }
 
-// ─── Medication name extraction ────────────────────────────────────
-
-const COMMON_MEDICATIONS = new Set([
-  "warfarin",
-  "coumadin",
-  "aspirin",
-  "ibuprofen",
-  "advil",
-  "motrin",
-  "naproxen",
-  "aleve",
-  "acetaminophen",
-  "tylenol",
-  "paracetamol",
-  "sertraline",
-  "zoloft",
-  "fluoxetine",
-  "prozac",
-  "citalopram",
-  "celexa",
-  "escitalopram",
-  "lexapro",
-  "paroxetine",
-  "paxil",
-  "venlafaxine",
-  "effexor",
-  "duloxetine",
-  "cymbalta",
-  "amitriptyline",
-  "nortriptyline",
-  "atorvastatin",
-  "lipitor",
-  "simvastatin",
-  "zocor",
-  "rosuvastatin",
-  "crestor",
-  "metformin",
-  "glucophage",
-  "insulin",
-  "levothyroxine",
-  "synthroid",
-  "lisinopril",
-  "prinivil",
-  "zestril",
-  "enalapril",
-  "losartan",
-  "cozaar",
-  "amlodipine",
-  "norvasc",
-  "metoprolol",
-  "lopressor",
-  "toprol",
-  "omeprazole",
-  "prilosec",
-  "esomeprazole",
-  "nexium",
-  "pantoprazole",
-  "furosemide",
-  "lasix",
-  "hydrochlorothiazide",
-  "hctz",
-  "gabapentin",
-  "neurontin",
-  "pregabalin",
-  "lyrica",
-  "clopidogrel",
-  "plavix",
-  "apixaban",
-  "eliquis",
-  "rivaroxaban",
-  "xarelto",
-  "prednisone",
-  "methotrexate",
-  "cyclosporine",
-  "tacrolimus",
-  "digoxin",
-  "lanoxin",
-  "phenytoin",
-  "dilantin",
-  "carbamazepine",
-  "tegretol",
-  "valproate",
-  "depakote",
-  "lamotrigine",
-  "lamictal",
-  "alprazolam",
-  "xanax",
-  "diazepam",
-  "valium",
-  "lorazepam",
-  "ativan",
-  "zolpidem",
-  "ambien",
-  "diphenhydramine",
-  "benadryl",
-  "montelukast",
-  "singulair",
-  "albuterol",
-  "fluticasone",
-  "sildenafil",
-  "viagra",
-  "tadalafil",
-  "cialis",
-  "oxycodone",
-  "morphine",
-  "tramadol",
-  "codeine",
-  "lithium",
-  "haloperidol",
-  "quetiapine",
-  "seroquel",
-  "olanzapine",
-  "zyprexa",
-  "risperidone",
-  "aripiprazole",
-  "abilify",
-]);
-
-function extractMedicationNames(message: string): string[] {
-  const lower = message.toLowerCase();
-  const found = new Set<string>();
-
-  for (const med of COMMON_MEDICATIONS) {
-    if (lower.includes(med)) {
-      found.add(med);
-    }
-  }
-
-  return Array.from(found);
+function mapHerbRowToVerified(
+  row: HerbWithInteractions & { provenance?: Record<string, unknown> },
+  locale: string
+): VerifiedHerb {
+  const localized = localizeHerb(row, locale) as typeof row;
+  const localizedInteractions = (localized.drug_interactions ?? []).map((ix) =>
+    localizeInteraction(ix, locale)
+  );
+  return {
+    slug: (localized as { slug?: string }).slug ?? "",
+    name: localized.name,
+    scientific_name: localized.scientific_name,
+    description: localized.description ?? "",
+    traditional_uses: localized.traditional_uses ?? [],
+    modern_uses: localized.modern_uses ?? [],
+    contraindications: localized.contraindications ?? [],
+    side_effects: localized.side_effects ?? [],
+    drug_interactions: localizedInteractions.map(
+      (ix) =>
+        `${ix.drug_name} (${ix.severity}): ${ix.mechanism ?? ix.description ?? "unknown mechanism"}`
+    ),
+    dosage_adult: localized.dosage_adult ?? null,
+    pregnancy_safe: localized.pregnancy_safe,
+    nursing_safe: localized.nursing_safe,
+    pregnancy_safe_oral:
+      localized.pregnancy_safe_oral ?? localized.pregnancy_safe,
+    pregnancy_safe_topical:
+      localized.pregnancy_safe_topical ?? localized.pregnancy_safe,
+    nursing_safe_oral: localized.nursing_safe_oral ?? localized.nursing_safe,
+    nursing_safe_topical:
+      localized.nursing_safe_topical ?? localized.nursing_safe,
+    evidence_level: localized.evidence_level,
+    active_compounds: localized.active_compounds ?? [],
+    provenance_method:
+      ((localized.provenance as Record<string, unknown> | undefined)
+        ?.verification_method as string | null) ?? null,
+    regulatory: null,
+    monographs: [],
+    information_sheet: null,
+  };
 }
-
-// ─── DB lookups ─────────────────────────────────────────────────────
 
 async function lookupHerb(
   name: string,
@@ -877,19 +253,13 @@ async function lookupHerb(
   if (!supabase) return null;
 
   try {
+    const s = sanitizeFilterValue(name);
+    const slug = sanitizeFilterValue(name.toLowerCase().replace(/\s+/g, "-"));
     const { data, error } = await supabase
       .from("herbs")
       .select("*, herb_categories(*), drug_interactions(*)")
       .or(
-        (() => {
-          const s = sanitizeFilterValue(name);
-          const slug = sanitizeFilterValue(
-            name.toLowerCase().replace(/\s+/g, "-")
-          );
-          // Also match the French name: a French query resolves to the same
-          // row as its English name.
-          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`;
-        })()
+        `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`
       )
       .eq("is_published", true)
       .limit(1)
@@ -897,56 +267,10 @@ async function lookupHerb(
 
     if (error || !data) return null;
 
-    // Localize the herb data so the AI prompt contains French descriptions/uses
-    // when the user is on a /fr page, matching the UI language.
-    const herb = localizeHerb(
-      data as HerbWithInteractions & {
-        provenance?: Record<string, unknown>;
-      },
+    return mapHerbRowToVerified(
+      data as HerbWithInteractions & { provenance?: Record<string, unknown> },
       locale
-    ) as HerbWithInteractions & {
-      provenance?: Record<string, unknown>;
-    };
-
-    // Localize interactions so the AI references them in the correct language.
-    const localizedInteractions = (herb.drug_interactions ?? []).map((ix) =>
-      localizeInteraction(ix, locale)
     );
-
-    return {
-      slug: (herb as { slug?: string }).slug ?? "",
-      name: herb.name,
-      scientific_name: herb.scientific_name,
-      description: herb.description ?? "",
-      traditional_uses: herb.traditional_uses ?? [],
-      modern_uses: herb.modern_uses ?? [],
-      contraindications: herb.contraindications ?? [],
-      side_effects: herb.side_effects ?? [],
-      drug_interactions: localizedInteractions.map(
-        (ix) =>
-          `${ix.drug_name} (${ix.severity}): ${ix.mechanism ?? ix.description ?? "unknown mechanism"}`
-      ),
-      dosage_adult: herb.dosage_adult ?? null,
-      pregnancy_safe: herb.pregnancy_safe,
-      nursing_safe: herb.nursing_safe,
-
-      pregnancy_safe_oral: herb.pregnancy_safe_oral ?? herb.pregnancy_safe,
-
-      pregnancy_safe_topical:
-        herb.pregnancy_safe_topical ?? herb.pregnancy_safe,
-
-      nursing_safe_oral: herb.nursing_safe_oral ?? herb.nursing_safe,
-
-      nursing_safe_topical: herb.nursing_safe_topical ?? herb.nursing_safe,
-      evidence_level: herb.evidence_level,
-      active_compounds: herb.active_compounds ?? [],
-      provenance_method:
-        ((herb.provenance as Record<string, unknown> | undefined)
-          ?.verification_method as string | null) ?? null,
-      regulatory: null,
-      monographs: [],
-      information_sheet: null,
-    };
   } catch {
     return null;
   }
@@ -961,7 +285,6 @@ async function lookupInteractions(
     return [];
 
   try {
-    // Build conditions for drug names
     const drugConditions = medicationNames
       .map((n) => `drug_name.ilike.%${sanitizeFilterValue(n)}%`)
       .join(",");
@@ -974,7 +297,6 @@ async function lookupInteractions(
 
     if (!data) return [];
 
-    // Filter to only interactions where herb matches
     const result: VerifiedInteraction[] = [];
     for (const ix of data) {
       const row = ix as Record<string, unknown>;
@@ -1014,8 +336,6 @@ async function lookupInteractions(
   }
 }
 
-// ─── Batch DB lookup ─────────────────────────────────────────────────
-
 /**
  * Batch-lookup multiple herbs in a single DB query instead of N individual
  * queries. Falls back to individual lookups if the batch approach fails.
@@ -1026,7 +346,6 @@ async function batchLookupHerbs(
 ): Promise<VerifiedHerb[]> {
   if (names.length === 0) return [];
 
-  // Try a single batched query first
   const supabase = getAnonClient();
   if (supabase) {
     try {
@@ -1036,8 +355,6 @@ async function batchLookupHerbs(
           const slug = sanitizeFilterValue(
             n.toLowerCase().replace(/\s+/g, "-")
           );
-          // Also match the French name so a French query resolves to the
-          // same row as its English name; localizeHerb then localizes it.
           return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`;
         })
         .join(",");
@@ -1050,303 +367,27 @@ async function batchLookupHerbs(
         .limit(5);
 
       if (!error && data && data.length > 0) {
-        return data
-          .map((row): VerifiedHerb => {
-            const herb = row as HerbWithInteractions & {
+        return data.map((row) =>
+          mapHerbRowToVerified(
+            row as HerbWithInteractions & {
               provenance?: Record<string, unknown>;
-            };
-            const localized = localizeHerb(herb, locale) as typeof herb;
-            const localizedInteractions = (
-              localized.drug_interactions ?? []
-            ).map((ix) => localizeInteraction(ix, locale));
-            return {
-              slug: (localized as { slug?: string }).slug ?? "",
-              name: localized.name,
-              scientific_name: localized.scientific_name,
-              description: localized.description ?? "",
-              traditional_uses: localized.traditional_uses ?? [],
-              modern_uses: localized.modern_uses ?? [],
-              contraindications: localized.contraindications ?? [],
-              side_effects: localized.side_effects ?? [],
-              drug_interactions: localizedInteractions.map(
-                (ix) =>
-                  `${ix.drug_name} (${ix.severity}): ${ix.mechanism ?? ix.description ?? "unknown mechanism"}`
-              ),
-              dosage_adult: localized.dosage_adult ?? null,
-              pregnancy_safe: localized.pregnancy_safe,
-              nursing_safe: localized.nursing_safe,
-              pregnancy_safe_oral:
-                localized.pregnancy_safe_oral ?? localized.pregnancy_safe,
-              pregnancy_safe_topical:
-                localized.pregnancy_safe_topical ?? localized.pregnancy_safe,
-              nursing_safe_oral:
-                localized.nursing_safe_oral ?? localized.nursing_safe,
-              nursing_safe_topical:
-                localized.nursing_safe_topical ?? localized.nursing_safe,
-              evidence_level: localized.evidence_level,
-              active_compounds: localized.active_compounds ?? [],
-              provenance_method:
-                ((localized.provenance as Record<string, unknown> | undefined)
-                  ?.verification_method as string | null) ?? null,
-              regulatory: null,
-              monographs: [],
-              information_sheet: null,
-            } satisfies VerifiedHerb;
-          })
-          .filter((h): h is VerifiedHerb => h !== null);
+            },
+            locale
+          )
+        );
       }
     } catch {
       // Fall through to individual lookups
     }
   }
 
-  // Fallback: individual lookups (parallelized)
   const results = await Promise.all(names.map((n) => lookupHerb(n, locale)));
   return results.filter((h): h is VerifiedHerb => h !== null);
 }
 
-// ─── Regulator records ──────────────────────────────────────────────
-
-// Caps keep the injected prompt bounded: a popular herb can carry a dozen
-// licensed-product claims and several imported monographs.
-const REGULATORY_PURPOSES_CAP = 8;
-const REGULATORY_DOSES_CAP = 4;
-const REGULATORY_RISKS_CAP = 6;
-const MONOGRAPH_CLAIMS_CAP = 8;
-const MONOGRAPH_SAFETY_CAP = 6;
-const MONOGRAPH_DOSES_CAP = 4;
-
-/**
- * Coerce a jsonb column into short display lines, whatever shape it has.
- * `purposes` is a string[] (normalised 2026-11-16), `doses` is
- * { text, population, age_minimum }[], and older imported rows are plain
- * strings, so every shape has to survive.
- */
-function toLines(value: unknown, cap: number): string[] {
-  const out: string[] = [];
-
-  const push = (v: unknown): void => {
-    if (v == null) return;
-    if (typeof v === "string") {
-      const text = v.trim();
-      if (text) out.push(text);
-      return;
-    }
-    if (typeof v === "number" || typeof v === "boolean") {
-      out.push(String(v));
-      return;
-    }
-    if (Array.isArray(v)) {
-      for (const item of v) push(item);
-      return;
-    }
-    if (typeof v === "object") {
-      const record = v as Record<string, unknown>;
-      for (const key of [
-        "text",
-        "claim",
-        "purpose",
-        "indication",
-        "dose",
-        "safety",
-        "risk",
-        "label",
-        "description",
-        "name",
-        "value",
-      ]) {
-        const candidate = record[key];
-        if (typeof candidate === "string" && candidate.trim()) {
-          // Keep the qualifier that makes a dose readable ("Adults: 1–2 g").
-          const population = record.population;
-          const qualifier =
-            typeof population === "string" && population.trim()
-              ? `${population.trim()}: `
-              : "";
-          out.push(`${qualifier}${candidate.trim()}`);
-          return;
-        }
-      }
-      const leaves = Object.values(record).filter(
-        (x): x is string => typeof x === "string" && x.trim().length > 0
-      );
-      if (leaves.length > 0) out.push(leaves.join(" · "));
-    }
-  };
-
-  push(value);
-  return Array.from(new Set(out)).slice(0, cap);
-}
-
-function toStringArray(value: unknown, cap: number): string[] {
-  if (!Array.isArray(value)) return [];
-  return value
-    .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
-    .slice(0, cap);
-}
-
-/**
- * Attach the regulator's own record and any imported monograph to each herb.
- *
- * VerifiedHerb used to carry the `herbs` row alone, so the herbalist could not
- * see the most authoritative text the site owns — 1,183 Health Canada LNHPD
- * records and 304 imported monographs (NCCIH, EMA HMPC, LiverTox…). Asked what
- * the European Medicines Agency said about Sideritis scardica, it answered
- * that no EMA monograph existed, while that monograph sat in the database.
- *
- * Both tables are anon-readable (RLS: public read on
- * herb_regulatory_evidence, published-herb read on herb_monograph_sources), so
- * the same anon client serves them. Failure to read them must never break the
- * answer: the herbs row alone still grounds the reply.
- */
-async function attachRegulatorRecords(herbs: VerifiedHerb[]): Promise<void> {
-  const slugs = Array.from(
-    new Set(herbs.map((h) => h.slug).filter((s) => s.length > 0))
-  );
-  if (slugs.length === 0) return;
-
-  const supabase = getAnonClient();
-  if (!supabase) return;
-
-  type RegulatoryRow = {
-    herb_slug: string;
-    source: string;
-    purposes: unknown;
-    doses: unknown;
-    risks: unknown;
-    source_urls: unknown;
-  };
-  type MonographRow = {
-    herb_slug: string;
-    source: string;
-    licence: string | null;
-    claims: unknown;
-    safety: unknown;
-    doses: unknown;
-    url: string | null;
-    monograph_date: string | null;
-  };
-  type SheetRow = {
-    slug: string;
-    content: Record<string, unknown> | null;
-    pmids: string[] | null;
-    article_count: number | null;
-  };
-
-  try {
-    const [regulatoryResult, monographResult, sheetResult] = await Promise.all([
-      supabase
-        .from("herb_regulatory_evidence")
-        .select("herb_slug, source, purposes, doses, risks, source_urls")
-        .in("herb_slug", slugs),
-      // Not in the generated database types yet — same cast the herb page uses.
-      supabase
-        .from("herb_monograph_sources" as never)
-        .select(
-          "herb_slug, source, licence, claims, safety, doses, url, monograph_date"
-        )
-        .in("herb_slug", slugs),
-      // Compiled from PubMed abstracts. Publicly readable (RLS: "herb_pubmed_
-      // monographs is publicly readable"). Keyed by `slug`, not `herb_slug`.
-      supabase
-        .from("herb_pubmed_monographs" as never)
-        .select("slug, content, pmids, article_count")
-        .in("slug", slugs),
-    ]);
-
-    const groupBySlug = <T extends { herb_slug: string }>(
-      rows: T[] | null | undefined
-    ): Map<string, T[]> => {
-      const bySlug = new Map<string, T[]>();
-      for (const row of rows ?? []) {
-        const list = bySlug.get(row.herb_slug) ?? [];
-        list.push(row);
-        bySlug.set(row.herb_slug, list);
-      }
-      return bySlug;
-    };
-
-    const regulatoryBySlug = groupBySlug(
-      (regulatoryResult.data ?? []) as unknown as RegulatoryRow[]
-    );
-    const monographsBySlug = groupBySlug(
-      (monographResult.data ?? []) as unknown as MonographRow[]
-    );
-    const sheetsBySlug = new Map<string, SheetRow>();
-    for (const row of (sheetResult.data ?? []) as unknown as SheetRow[]) {
-      if (row.slug) sheetsBySlug.set(row.slug, row);
-    }
-
-    const sheetText = (
-      content: SheetRow["content"],
-      key: string,
-      cap: number
-    ) => {
-      const value = content?.[key];
-      if (typeof value !== "string") return null;
-      const text = value.trim();
-      if (!text) return null;
-      return text.length > cap ? `${text.slice(0, cap).trimEnd()}…` : text;
-    };
-
-    for (const herb of herbs) {
-      const regulatory = regulatoryBySlug.get(herb.slug)?.[0];
-      if (regulatory) {
-        herb.regulatory = {
-          source: regulatory.source,
-          purposes: toStringArray(regulatory.purposes, REGULATORY_PURPOSES_CAP),
-          doses: toLines(regulatory.doses, REGULATORY_DOSES_CAP),
-          risks: toLines(regulatory.risks, REGULATORY_RISKS_CAP),
-          urls: toStringArray(regulatory.source_urls, 3),
-        };
-      }
-
-      herb.monographs = (monographsBySlug.get(herb.slug) ?? [])
-        .slice(0, 3)
-        .map((row) => ({
-          source: row.source,
-          licence: row.licence ?? null,
-          claims: toLines(row.claims, MONOGRAPH_CLAIMS_CAP),
-          safety: toLines(row.safety, MONOGRAPH_SAFETY_CAP),
-          doses: toLines(row.doses, MONOGRAPH_DOSES_CAP),
-          url: row.url ?? null,
-        }));
-
-      const sheet = sheetsBySlug.get(herb.slug);
-      if (sheet) {
-        herb.information_sheet = {
-          summary: sheetText(sheet.content, "summary", 600),
-          traditional_uses: sheetText(sheet.content, "traditionalUses", 400),
-          dosage: sheetText(sheet.content, "dosageAndAdministration", 400),
-          safety: sheetText(sheet.content, "safetyAndAdverseEffects", 400),
-          pregnancy: sheetText(sheet.content, "pregnancyAndLactation", 400),
-          drug_interactions: sheetText(sheet.content, "drugInteractions", 400),
-          article_count:
-            typeof sheet.article_count === "number"
-              ? sheet.article_count
-              : null,
-          pmids: Array.isArray(sheet.pmids)
-            ? sheet.pmids
-                .filter((p): p is string => typeof p === "string")
-                .slice(0, 6)
-            : [],
-        };
-      }
-    }
-  } catch {
-    // Enrichment only — the herbs row is enough to answer.
-  }
-}
-
-// ─── Main export ────────────────────────────────────────────────────
-
 /**
  * Fetch verified context from our database for a user query.
  * Returns structured data the system prompt can inject as ground truth.
- *
- * @param userMessage - The latest user message to analyze
- * @param herbContext - Optional pre-provided herb context (from URL params)
- * @param medications - Optional pre-provided medication list (from URL params)
  */
 export async function fetchVerifiedContext(
   userMessage: string,
@@ -1354,14 +395,12 @@ export async function fetchVerifiedContext(
   medications?: string[],
   locale?: "en" | "fr"
 ): Promise<VerifiedContext> {
-  // Extract names from the message
   const herbNames = await extractHerbNames(userMessage);
   const medNames = [
     ...extractMedicationNames(userMessage),
     ...(medications ?? []),
   ];
 
-  // If we have pre-provided herb context, try to extract the herb name from it
   if (herbContext && herbNames.length === 0) {
     const ctxLower = herbContext.toLowerCase();
     for (const name of COMMON_HERB_NAMES) {
@@ -1372,18 +411,10 @@ export async function fetchVerifiedContext(
     }
   }
 
-  // Look up herbs — batch into a single DB query instead of N individual
-  // lookups, then localize each result. Prefer the explicit locale from the
-  // request body (M-9) so DB-injected context and the system prompt share one
-  // locale; fall back to the x-locale request header for callers that don't pass
-  // a locale (e.g. tests).
   const resolvedLocale =
     locale ?? (await getLocaleFromRequest().catch(() => "en"));
   const herbs = await batchLookupHerbs(herbNames.slice(0, 5), resolvedLocale);
 
-  // Regulator record + imported monographs for those same herbs. Runs after the
-  // row lookup because both tables are keyed by slug, but alongside the
-  // interaction lookup — the whole fetch shares one 3 s budget withTimeout.
   const interactionsPromise = lookupInteractions(
     herbs.map((h) => h.name.toLowerCase()),
     medNames

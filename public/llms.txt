@@ -1,10 +1,10 @@
 # HerbAlly
 
-> HerbAlly is a free, bilingual (English / French) evidence-graded clinical reference for medicinal herbs, herb–drug interactions, and pre-operative/clinical botanical safety. Covers 3,200+ herb profiles, 820+ regulatory and classical monographs (Health Canada, NIH LiverTox, EMA HMPC, NIH NCCIH, and pre-1930 dispensatories), 299 cited herb–drug interactions across 108 medications/classes, a Health Canada NPN/DIN-HM Decoder, a Multi-Herb Stack Checker, a Pre-Surgery Herb Washout Planner, and an adult dosage calculator. Editorially reviewed by Yasser Bheekun, MLT (OPTMQ · CSMLS). Free and open — no paywalls; advertising launch gate is currently off.
+> HerbAlly is a free, bilingual (English / French) evidence-graded clinical reference for medicinal herbs, herb–drug interactions, and pre-operative/clinical botanical safety. Covers 3,124 published herb profiles, 834 regulatory and classical monographs across 486 herbs (Health Canada, NIH LiverTox, EMA HMPC, NIH NCCIH, and pre-1930 dispensatories), 394 cited herb–drug interactions across 108 medications/classes, a Health Canada NPN/DIN-HM Decoder, a Multi-Herb Stack Checker, a Pre-Surgery Herb Washout Planner, and an adult dosage calculator. Editorially reviewed by Yasser Bheekun, MLT (OPTMQ · CSMLS). Free and open — no paywalls; advertising launch gate is currently off.
 
 ## Key resources
 
-- Herb database (3,200+ profiles): https://herbally.app/herbs
+- Herb database (3,124 profiles): https://herbally.app/herbs
 - Herb–drug interaction checker & Multi-Herb Stack Checker: https://herbally.app/herb-drug-interactions
 - Reverse-lookup Medication Directory (108 drugs & classes A–Z): https://herbally.app/medications
 - Curated herb–drug pair pages: https://herbally.app/interactions/[herb]/[drug] (e.g. https://herbally.app/interactions/st-johns-wort/fluoxetine)

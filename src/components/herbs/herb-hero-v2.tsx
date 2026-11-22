@@ -30,7 +30,7 @@ interface HerbHeroV2Props {
     slug: string;
     name: string;
     scientific_name: string;
-    description: string;
+    description?: string;
     image_url?: string | null;
     pregnancy_safe: boolean | null;
     nursing_safe: boolean | null;

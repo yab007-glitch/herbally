@@ -74,7 +74,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Update uptime-alert issue on outage or recovery
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const status = "${{ steps.probe.outputs.status }}";

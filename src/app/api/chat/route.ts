@@ -278,8 +278,22 @@ async function collectAnswer(
     buffer += decoder.decode();
     if (buffer.trim()) consumeLine(buffer);
   } catch (err) {
+    const rawMsg =
+      err instanceof Error
+        ? err.message ||
+          (err.cause instanceof Error
+            ? err.cause.message
+            : typeof err.cause === "string"
+              ? err.cause
+              : "")
+        : typeof err === "string"
+          ? err
+          : "";
+    const errorName = err instanceof Error ? err.name : typeof err;
     logger.error("api_chat_stream_error", {
-      error: err instanceof Error ? err.message : String(err),
+      error: rawMsg.trim() || errorName || "unknown_stream_error",
+      errorName,
+      charsReceived: text.length,
     });
     return { text, complete: false, reason: "upstream-error" };
   }

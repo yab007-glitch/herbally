@@ -142,16 +142,21 @@ export function buildCsp(options: CspOptions = {}): string {
 export function buildSecurityHeaders(
   options: CspOptions = {}
 ): Record<string, string> {
+  const framing = options.framing ?? "deny";
   const headers: Record<string, string> = {
     "Content-Security-Policy": buildCsp(options),
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "X-DNS-Prefetch-Control": "on",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
   };
 
-  if ((options.framing ?? "deny") === "deny") {
+  if (framing === "deny") {
     headers["X-Frame-Options"] = "DENY";
+    headers["Cross-Origin-Resource-Policy"] = "same-site";
+  } else if (framing === "allow") {
+    headers["Cross-Origin-Resource-Policy"] = "cross-origin";
   }
 
   return headers;

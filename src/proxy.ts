@@ -23,6 +23,10 @@ function securityHeaders(opts?: {
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "X-DNS-Prefetch-Control": "on",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+    "Cross-Origin-Resource-Policy": opts?.frameable
+      ? "cross-origin"
+      : "same-site",
     "Content-Security-Policy": buildContentSecurityPolicy({
       adHosts: opts?.adHosts ?? [],
       frameable: opts?.frameable,

@@ -1,24 +1,14 @@
-"use client";
-
-import { NextIntlClientProvider } from "next-intl";
-import enMessages from "@/lib/i18n/dictionaries/en.json";
-import frMessages from "@/lib/i18n/dictionaries/fr.json";
 import type { Locale } from "@/lib/i18n/config";
-
-const allMessages: Record<Locale, typeof enMessages> = {
-  en: enMessages,
-  fr: frMessages,
-};
+import { EnLocaleProvider } from "./locale-provider-en";
+import { FrLocaleProvider } from "./locale-provider-fr";
 
 /**
- * Provides next-intl messages to all client components.
+ * Provides next-intl messages to client components without bundling the inactive
+ * language's 120–137 KB dictionary into every page.
  *
  * The active `locale` is passed in from the server root layout, which reads
- * the `[locale]` root param. Because the locale is derived from the URL (the
- * single source of truth) and the language toggle performs a hard navigation,
- * this prop is always correct and never drifts from what the server rendered —
- * eliminating the partial-translation bug where the cookie and the URL
- * disagreed.
+ * the `[locale]` root param, so the client provider only loads the active
+ * locale bundle.
  */
 export function LocaleProvider({
   locale,
@@ -27,15 +17,8 @@ export function LocaleProvider({
   locale: Locale;
   children: React.ReactNode;
 }) {
-  const messages = allMessages[locale];
-
-  return (
-    <NextIntlClientProvider
-      messages={messages}
-      locale={locale}
-      timeZone="America/Toronto"
-    >
-      {children}
-    </NextIntlClientProvider>
-  );
+  if (locale === "fr") {
+    return <FrLocaleProvider>{children}</FrLocaleProvider>;
+  }
+  return <EnLocaleProvider>{children}</EnLocaleProvider>;
 }

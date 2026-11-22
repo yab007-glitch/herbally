@@ -513,6 +513,44 @@ export default async function HerbDetailPage({ params }: Props) {
     } | null
   )?.image;
 
+  // Keep RSC Flight payloads compact by passing only the fields read by
+  // client boundaries instead of full DB rows/blobs.
+  const heroHerb = {
+    id: herb.id,
+    slug,
+    name: herb.name,
+    scientific_name: herb.scientific_name,
+    image_url: herb.image_url,
+    pregnancy_safe: herb.pregnancy_safe,
+    nursing_safe: herb.nursing_safe,
+    pregnancy_safe_oral: herb.pregnancy_safe_oral,
+    pregnancy_safe_topical: herb.pregnancy_safe_topical,
+    nursing_safe_oral: herb.nursing_safe_oral,
+    nursing_safe_topical: herb.nursing_safe_topical,
+    herb_categories: herb.herb_categories?.name
+      ? { name: herb.herb_categories.name }
+      : null,
+    evidence_level: evidenceLevel,
+    contraindications: herb.contraindications ?? null,
+  };
+  const compactProvenance: Record<string, unknown> = {
+    verification_method: provenance.verification_method,
+    verification_status: provenance.verification_status,
+    verified_source_count: provenance.verified_source_count,
+    verified_sources: provenance.verified_sources,
+    verified_by: provenance.verified_by,
+    review_status: provenance.review_status,
+    reviewed_by_name: provenance.reviewed_by_name,
+    reviewed_on: provenance.reviewed_on,
+  };
+  const tableInteractions = interactions.map((ix) => ({
+    id: ix.id,
+    drug_name: ix.drug_name,
+    severity: ix.severity,
+    description: ix.description,
+    source_url: ix.source_url ?? null,
+  }));
+
   return (
     <div className="space-y-8">
       <ViewTracker slug={slug} />
@@ -563,8 +601,8 @@ export default async function HerbDetailPage({ params }: Props) {
 
       <DangerousHerbBanner slug={slug} />
       <HerbHeroV2
-        herb={{ ...herb, evidence_level: evidenceLevel }}
-        provenance={herb.provenance as Record<string, unknown> | null}
+        herb={heroHerb}
+        provenance={compactProvenance}
         pubmedSheetStatus={
           pubmedSheet && isUsablePubmedSheet(pubmedSheet)
             ? pubmedSheet.status
@@ -616,9 +654,9 @@ export default async function HerbDetailPage({ params }: Props) {
         <UserInteractionAlert herbSlug={slug} />
       </div>
 
-      {interactions.length > 0 && (
+      {tableInteractions.length > 0 && (
         <section id="interactions" className="scroll-mt-28">
-          <InteractionsTable interactions={interactions} herbSlug={slug} />
+          <InteractionsTable interactions={tableInteractions} herbSlug={slug} />
         </section>
       )}
 

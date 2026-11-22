@@ -37,6 +37,8 @@ const nextConfig: NextConfig = {
   // instead of failing the deployment; a genuinely broken query still fails,
   // just later. Vercel's build ceiling (45 min) is the outer bound.
   staticPageGenerationTimeout: 180,
+  // Cap Next.js in-memory ISR/fetch cache at 32 MB RAM; larger entries persist on the disk cache volume.
+  cacheMaxMemorySize: 32 * 1024 * 1024,
   experimental: {
     optimizePackageImports: ["lucide-react", "react-markdown"],
     // The root layout lives under app/[locale], so unmatched top-level URLs
@@ -137,6 +139,10 @@ const nextConfig: NextConfig = {
       {
         key: "Permissions-Policy",
         value: "camera=(), microphone=(), geolocation=()",
+      },
+      {
+        key: "Cross-Origin-Opener-Policy",
+        value: "same-origin-allow-popups",
       },
       ...(process.env.NODE_ENV === "production"
         ? [

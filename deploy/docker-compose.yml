@@ -172,6 +172,7 @@ services:
       GOTRUE_DISABLE_SIGNUP: "false"
       GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
       GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_PASSWORD_MIN_LENGTH: "12"
       GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: "false"
       GOTRUE_EXTERNAL_PHONE_ENABLED: "false"
 
@@ -229,7 +230,7 @@ services:
         NEXT_PUBLIC_SUPABASE_URL: http://api.herbally.app
         NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY:?run deploy/gen-keys.mjs first}
         NEXT_PUBLIC_APP_URL: https://herbally.app
-        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-HerbWise}
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-HerbAlly}
         NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
     image: ${APP_IMAGE:-herbally-app:local}
     container_name: herbally-app
@@ -237,15 +238,15 @@ services:
     # 1.5 GB was under the heap the app actually needs: a 500-client burst
     # ended in "Ineffective mark-compacts near heap limit" and a restart.
     mem_limit: 3g
-    cpus: 1.5
+    cpus: 2.5
     env_file: ./app.env
     environment:
       NODE_ENV: production
       PORT: "3000"
-      # Keep the V8 heap below the container's 3 GB cap (the Dockerfile pins
-      # 3072 MB for the build, which would exceed it at runtime), and prefer IPv4
-      # first because WSL2 IPv6 routes time out against Wikimedia image hosts.
-      NODE_OPTIONS: --max-old-space-size=2560 --dns-result-order=ipv4first
+      # Cap V8 heap at 2 GB so Sharp/native buffers keep ~1 GB headroom below
+      # the container's 3 GB cap, and prefer IPv4 first because WSL2 IPv6
+      # routes time out against Wikimedia image hosts.
+      NODE_OPTIONS: --max-old-space-size=2048 --dns-result-order=ipv4first
       # Pinned so a stale app.env cannot shadow the values baked into the
       # client bundle at build time, or silently diverge from them. app.env
       # must not carry the anon key at all (see app.env.example).
@@ -312,7 +313,7 @@ services:
         max-file: "3"
 
   tunnel:
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared:2026.11.0
     container_name: herbally-tunnel
     restart: unless-stopped
     # Named tunnel `herbally` (id d793ef5a-45ed-4c2d-8a3e-8db042cca1d9) instead

@@ -1,6 +1,5 @@
 "use client";
 
-import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import {
   useState,
   useRef,
@@ -9,131 +8,29 @@ import {
   useMemo,
   useDeferredValue,
 } from "react";
-import {
-  Send,
-  AlertCircle,
-  Check,
-  Copy,
-  RotateCcw,
-  Leaf,
-  ArrowDown,
-} from "lucide-react";
-import { ChatMarkdown } from "./markdown-renderer";
+import { RotateCcw, ArrowDown } from "lucide-react";
 import { ChatEmptyStateV2 } from "./chat-empty-state-v2";
+import { ChatMessageList } from "./chat-message-list";
+import { ChatComposer } from "./chat-composer";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-
 import {
   createChatSession,
   addChatMessage,
   deleteChatSession,
   getChatSession,
 } from "@/lib/actions/chat-persist";
-import type { ChatMessage } from "@/lib/actions/chat";
 import { useTranslations, useLocale } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
-
-type Message = ChatMessage;
-
-// The persisted session id is remembered locally (an opaque UUID, never message
-// content) so a reload can restore the conversation. Server-side the row is
-// still scoped to the HttpOnly guest cookie / signed-in account — this key is
-// only a pointer, and a stale or foreign id resolves to "not found".
-const SESSION_STORAGE_KEY = "herbally-chat-session-id";
-const SAVE_DEBOUNCE_MS = 1500;
-
-function makeId() {
-  return Math.random().toString(36).slice(2);
-}
-
-function readStoredSessionId(): string | null {
-  try {
-    if (typeof window === "undefined") return null;
-    return window.localStorage.getItem(SESSION_STORAGE_KEY);
-  } catch {
-    return null; // storage disabled (private mode / blocked): restore unavailable
-  }
-}
-
-function writeStoredSessionId(id: string | null) {
-  try {
-    if (typeof window === "undefined") return;
-    if (id) window.localStorage.setItem(SESSION_STORAGE_KEY, id);
-    else window.localStorage.removeItem(SESSION_STORAGE_KEY);
-  } catch {
-    // Non-fatal: the conversation is still saved server-side; only the reload
-    // pointer is lost.
-  }
-}
-
-/**
- * An emergency answer ends by sending the reader to poison control or the
- * emergency services. Offering "What's the recommended dosage?" directly
- * underneath that is the worst possible next suggestion, so the follow-up
- * chips are suppressed when the last answer looks like one.
- */
-function looksLikeEmergencyAnswer(content: string) {
-  return /\b(?:911|811|poison control|centre antipoison|emergency (?:room|number|services|department)|salle d'urgence|services d'urgence|urgence vitale)\b/i.test(
-    content
-  );
-}
-
-// ─── Smart Command Parser ───────────────────────────────────────────
-
-function parseCommand(text: string): {
-  command: string | null;
-  args: string | null;
-  systemContext: string | null;
-} {
-  const trimmed = text.trim();
-
-  if (/^\/calculator\b/i.test(trimmed)) {
-    const rest = trimmed.replace(/^\/calculator\s*/i, "").trim();
-    return {
-      command: "calculator",
-      args: rest || null,
-      systemContext: `The user wants to calculate an herbal dosage.${rest ? ` Details: ${rest}` : " Guide them through the dosage calculation by asking about the herb name, patient age, weight, and adult dose."}`,
-    };
-  }
-
-  if (/^\/compare\s+(.+)/i.test(trimmed)) {
-    const args = trimmed.replace(/^\/compare\s+/i, "").trim();
-    return {
-      command: "compare",
-      args,
-      systemContext: `The user wants a comparison between herbs: ${args}. Provide a structured comparison.`,
-    };
-  }
-
-  if (/^\/herb\s+(.+)/i.test(trimmed)) {
-    const args = trimmed.replace(/^\/herb\s+/i, "").trim();
-    return {
-      command: "herb",
-      args,
-      systemContext: `The user wants a comprehensive overview of: ${args}. Provide: scientific name, active compounds, uses, dosage, contraindications, side effects, and drug interactions.`,
-    };
-  }
-
-  return { command: null, args: null, systemContext: null };
-}
-
-// ─── Follow-up question generator ───────────────────────────────────
-
-function generateFollowUpKeys(herbContext?: string | null): string[] {
-  const hasHerb = herbContext && herbContext.length > 20;
-  const base = [
-    "pharmacist.followUpQuestions.sideEffects",
-    "pharmacist.followUpQuestions.dosage",
-    "pharmacist.followUpQuestions.pregnancy",
-  ];
-  if (hasHerb) {
-    base.push("pharmacist.followUpQuestions.interactions");
-    base.push("pharmacist.followUpQuestions.research");
-  }
-  return base.slice(0, 4);
-}
-
-// ─── Component ──────────────────────────────────────────────────────
+import {
+  type Message,
+  SAVE_DEBOUNCE_MS,
+  generateFollowUpKeys,
+  looksLikeEmergencyAnswer,
+  makeId,
+  parseCommand,
+  readStoredSessionId,
+  writeStoredSessionId,
+} from "./chat-helpers";
 
 export function ChatInterface({
   herbContext,
@@ -149,7 +46,6 @@ export function ChatInterface({
   const t = useTranslations();
   const locale = useLocale();
 
-  // ── State ──
   const [messages, setMessages] = useState<Message[]>([]);
   const deferredMessages = useDeferredValue(messages);
   const [input, setInput] = useState("");
@@ -173,13 +69,6 @@ export function ChatInterface({
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // ── Persistence bookkeeping ──
-  // M15 (audit 2026-06-22) kept only an index and advanced it even when a write
-  // failed, so failed messages were never retried and the UI still said
-  // "Saved". We track the ids that actually landed instead, serialise every
-  // write through one promise chain (no overlapping saves -> no duplicates),
-  // and bump a generation on clear so an in-flight save cannot re-attach a
-  // deleted conversation.
   const messagesRef = useRef<Message[]>([]);
   const persistedIdsRef = useRef<Set<string>>(new Set());
   const sessionIdRef = useRef<string | null>(sessionId ?? null);
@@ -236,7 +125,6 @@ export function ChatInterface({
 
   const isEmpty = messages.length === 0 && !isLoading;
 
-  // ── Scroll management ──
   const scrollToBottom = useCallback((smooth = false) => {
     if (!scrollRef.current) return;
     scrollRef.current.scrollTo({
@@ -246,9 +134,6 @@ export function ChatInterface({
   }, []);
 
   useEffect(() => {
-    // With no messages the panel shows the greeting, and the greeting belongs
-    // at the top. Scrolling to "bottom" on mount pushed it out of view whenever
-    // the copy was taller than the panel — which the French text always is.
     if (messages.length === 0) return;
     if (!showScrollButton) scrollToBottom();
   }, [messages, streamingContent, showScrollButton, scrollToBottom]);
@@ -264,10 +149,6 @@ export function ChatInterface({
     return () => el.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ── Persist pending messages ──
-  // Writes are serialised and only acknowledged individually. On failure the
-  // unsaved ids stay pending (so the next attempt retries exactly them) and the
-  // status reads "Not saved — retry" instead of a false "Saved".
   const persistMessages = useCallback(async () => {
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
@@ -291,9 +172,6 @@ export function ChatInterface({
         if (!sid) {
           const created = await createChatSession(herbContextRef.current);
           if (generationRef.current !== generation) {
-            // The user cleared while the create was in flight. Delete the
-            // orphan instead of adopting it, otherwise a cleared conversation
-            // would silently become the active session again.
             if (created.ok) await deleteChatSession(created.data.id);
             return;
           }
@@ -355,11 +233,6 @@ export function ChatInterface({
     };
   }, [messages.length, isRestoring, persistMessages]);
 
-  // ── Restore the last conversation ──
-  // The reload-empty report was real: a session id prop existed but nothing
-  // ever loaded it, and the read actions collapsed errors into null/[]. Now the
-  // saved conversation is fetched on mount (unless this is a fresh quick-ask
-  // navigation, which intentionally starts a new conversation).
   const restoreSession = useCallback(async (id: string) => {
     restoreRetryIdRef.current = id;
     restoringRef.current = true;
@@ -380,7 +253,6 @@ export function ChatInterface({
             content: m.content,
             timestamp: m.createdAt,
           }));
-        // Restored rows are already stored — never write them again.
         persistedIdsRef.current = new Set(restored.map((m) => m.id));
         sessionIdRef.current = id;
         setSessionHerbContext(result.data.herbContext ?? null);
@@ -389,9 +261,6 @@ export function ChatInterface({
         writeStoredSessionId(id);
         restoreRetryIdRef.current = null;
       } else if (result.code === "not_found") {
-        // Nothing stored under this id for this identity (deleted elsewhere,
-        // or the account changed). Forget the pointer rather than retrying a
-        // session that no longer exists.
         writeStoredSessionId(null);
         sessionIdRef.current = null;
         restoreRetryIdRef.current = null;
@@ -410,25 +279,13 @@ export function ChatInterface({
   useEffect(() => {
     if (restoredOnMount.current) return;
     restoredOnMount.current = true;
-    // Quick-ask (?q= / ?herb= / ?medications=) starts a new conversation with
-    // page-provided context; restoring old history there would drop the new
-    // question into the middle of an unrelated thread.
     if (autoQuery) return;
     const stored = sessionId ?? readStoredSessionId();
     if (!stored) return;
-    // Mount-time fetch: the synchronous setIsRestoring(true) inside this call is
-    // the loading state for the restore, which cannot be derived before the
-    // first client render without a hydration mismatch (the stored id lives in
-    // localStorage). Same deliberate pattern as instant-search.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void restoreSession(stored);
   }, [autoQuery, sessionId, restoreSession]);
 
-  // ── Auto-send on mount ──
-  // Guard on the query STRING, not a boolean: on client-side navigation
-  // between two ?q= URLs the component instance (and its refs) persist, so a
-  // boolean guard silently swallowed the second question with no bubble and
-  // no error.
   const autoSentFor = useRef<string | null>(null);
   useEffect(() => {
     if (!autoQuery || autoSentFor.current === autoQuery) return;
@@ -439,13 +296,6 @@ export function ChatInterface({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoQuery, isRestoring]);
 
-  // ── Send message ──
-  // M16 (audit 2026-06-22): accept an optional history override + retry flag so
-  // `retryFailed` can pass the history with the stale error message already
-  // sliced out. Previously retryFailed called sendMessage(content) and
-  // sendMessage built the request from its closure-captured `messages` (which
-  // still contained the error assistant text), so the retried request sent the
-  // error text as assistant history AND duplicated the user message.
   async function sendMessage(
     text?: string,
     opts?: { history?: Message[]; isRetry?: boolean }
@@ -458,9 +308,6 @@ export function ChatInterface({
 
     const isRetry = !!opts?.isRetry;
     const history = opts?.history ?? messages;
-    // On a retry the user message is already present in `history`; don't add a
-    // duplicate. On a normal send, append a fresh user message to state and to
-    // the request body.
     const userMessage: Message | null = isRetry
       ? null
       : {
@@ -476,7 +323,6 @@ export function ChatInterface({
     setStreamingContent("");
     setShowScrollButton(false);
 
-    // Parse commands
     const command = parseCommand(content);
     const overrideContext = command.systemContext;
 
@@ -484,10 +330,6 @@ export function ChatInterface({
     abortRef.current = controller;
 
     try {
-      // The visitor has just been greeted by the empty state, so the model
-      // must see that introduction as part of the conversation. Without it the
-      // first reply opens cold — re-introducing itself, or asking what the
-      // person needs after they already said it.
       const greetingTurn =
         history.length === 0
           ? [
@@ -522,21 +364,16 @@ export function ChatInterface({
       });
 
       if (!response.ok) {
-        // Read the body as text and only trust it if it is the API's own
-        // `{ "error": "..." }` JSON. The live audit caught a rate-limit
-        // response rendered verbatim as raw JSON in the chat bubble (a proxy
-        // or CDN error page is not JSON). 429 always gets a localized,
-        // human message; anything unparseable falls back to the generic one.
         const rawBody = await response.text().catch(() => "");
         let apiError: string | null = null;
         try {
           const parsed = JSON.parse(rawBody) as { error?: unknown };
           if (typeof parsed?.error === "string") apiError = parsed.error;
         } catch {
-          // Not JSON — ignore it rather than showing the raw body.
+          // Ignore non-JSON bodies (e.g. proxy/CDN error pages)
         }
         if (generationRef.current !== generation) return;
-        const content =
+        const errContent =
           response.status === 429
             ? t("pharmacist.rateLimited")
             : apiError || t("pharmacist.error");
@@ -545,7 +382,7 @@ export function ChatInterface({
           {
             id: makeId(),
             role: "assistant",
-            content,
+            content: errContent,
             timestamp: new Date().toISOString(),
           },
         ]);
@@ -566,14 +403,8 @@ export function ChatInterface({
         scrollToBottom();
       }
 
-      // The conversation may have been cleared while this stream was in flight;
-      // a late reply must not reappear in a cleared thread.
       if (generationRef.current !== generation) return;
 
-      // The server already runs the safety guard on the full response before
-      // sending it (see /api/chat/route.ts — response is buffered and run
-      // through guardResponse). The client no longer re-evaluates — that was
-      // double-processing which could double-append warning disclaimers.
       setStreamingContent("");
       setMessages((prev) => [
         ...prev,
@@ -623,11 +454,6 @@ export function ChatInterface({
   }
 
   const retryFailed = useCallback(() => {
-    // Drop the trailing failed/error assistant message, then re-send the last
-    // user message. Pass the sliced history explicitly so sendMessage builds the
-    // request from it (M16) instead of its stale closure copy that still
-    // contained the error text. isRetry=true tells sendMessage not to append a
-    // duplicate user message (it's already in the sliced history).
     const lastUser = [...messages].reverse().find((m) => m.role === "user");
     if (!lastUser) return;
     const sliced = messages.slice(0, -1);
@@ -646,12 +472,6 @@ export function ChatInterface({
     }
   }
 
-  // Clear is a deletion, not just a visual reset. It waits for any in-flight
-  // save to settle, deletes the stored session, and only then empties the UI —
-  // so a failure leaves the conversation visible with an honest error instead
-  // of a cleared screen over rows that still exist. (ai_response_cache entries
-  // are prompt-keyed with no session link, so this cannot and does not claim to
-  // delete cached answers.)
   async function clearChat() {
     if (deletingRef.current || isRestoring) return;
     deletingRef.current = true;
@@ -684,9 +504,6 @@ export function ChatInterface({
       setHasSentMessage(false);
       setSessionHerbContext(null);
       setSaveStatus("idle");
-      // Only forget the reload pointer if it addressed the conversation just
-      // deleted. An unsaved conversation has no server row, so clearing must
-      // not silently unlink an older conversation that still exists.
       if (sid && readStoredSessionId() === sid) writeStoredSessionId(null);
     } catch {
       setDeleteError(true);
@@ -708,7 +525,6 @@ export function ChatInterface({
     }
   }
 
-  // Adjust textarea height
   useEffect(() => {
     const el = inputRef.current;
     if (!el) return;
@@ -716,20 +532,14 @@ export function ChatInterface({
     el.style.height = Math.min(el.scrollHeight, 120) + "px";
   }, [input]);
 
-  // Focus input on mount
   useEffect(() => {
     if (isEmpty && inputRef.current && !autoQuery && !isRestoring) {
-      // preventScroll matters: the composer sits at the bottom of a scrollable
-      // panel, so a bare focus() scrolls the greeting out of view on shorter
-      // viewports before the visitor has read a word of it.
       inputRef.current.focus({ preventScroll: true });
     }
   }, [isEmpty, autoQuery, isRestoring]);
 
-  // ── Render ──
   return (
     <div className="flex flex-col h-[calc(100dvh-12rem)] sm:h-[calc(100dvh-10rem)] rounded-2xl border border-border bg-card overflow-hidden">
-      {/* Messages area */}
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto scrollbar-hide"
@@ -760,130 +570,24 @@ export function ChatInterface({
             </Button>
           </div>
         ) : isEmpty ? (
-          // Top-aligned, at the same width as the message list: the greeting is
-          // the first message of the conversation, not a splash screen. Centring
-          // it left a void above and made the panel look empty.
           <div className="mx-auto w-full max-w-2xl px-2 py-4">
             <ChatEmptyStateV2 onSendMessage={sendMessage} />
           </div>
         ) : (
-          <div className="mx-auto max-w-2xl space-y-1 px-4 py-4">
-            {deferredMessages.map((message) => (
-              <div
-                key={message.id}
-                className={cn(
-                  "flex gap-2 animate-message-in",
-                  message.role === "user" ? "justify-end" : "justify-start"
-                )}
-              >
-                {message.role === "user" ? (
-                  <div className="max-w-[85%] rounded-2xl rounded-br-md bg-primary/10 px-4 py-2.5 text-sm leading-relaxed text-foreground">
-                    {message.content}
-                  </div>
-                ) : (
-                  <div className="flex gap-2 max-w-[85%]">
-                    <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
-                      <Leaf className="size-3" />
-                    </div>
-                    <div className="min-w-0">
-                      {message.content === t("pharmacist.error") ? (
-                        <div className="rounded-2xl rounded-bl-md bg-destructive/5 px-4 py-2.5 text-sm text-destructive">
-                          <div className="flex flex-col gap-2">
-                            <p>{message.content}</p>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={retryFailed}
-                              className="w-fit gap-1 text-xs"
-                            >
-                              <RotateCcw className="size-3" />
-                              {t("pharmacist.retry")}
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="group relative rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5 text-sm leading-relaxed text-foreground">
-                          <ChatMarkdown>{message.content}</ChatMarkdown>
-                          {/* Copy button — show on hover */}
-                          <button
-                            onClick={() =>
-                              copyToClipboard(message.content, message.id)
-                            }
-                            className="absolute -bottom-1 right-0 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
-                            aria-label={t("common.copyResponseLabel")}
-                          >
-                            {copiedId === message.id ? (
-                              <>
-                                <Check className="size-3 text-green-600" />
-                                {t("common.copied")}
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="size-3" />
-                                {t("common.copy")}
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {/* Streaming message */}
-            {isLoading && streamingContent && (
-              <div className="flex gap-2 animate-message-in">
-                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
-                  <Leaf className="size-3" />
-                </div>
-                <div className="max-w-[85%] rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5 text-sm leading-relaxed text-foreground">
-                  <ChatMarkdown>{streamingContent}</ChatMarkdown>
-                  <span className="inline-block w-1.5 h-4 ml-0.5 bg-primary/60 animate-pulse rounded-sm align-middle" />
-                </div>
-              </div>
-            )}
-
-            {/* Loading dots (waiting for first token) */}
-            {isLoading && !streamingContent && (
-              <div className="flex gap-2 animate-message-in">
-                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
-                  <Leaf className="size-3" />
-                </div>
-                <div className="rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5">
-                  <div className="flex items-center gap-1">
-                    <span className="size-1.5 rounded-full bg-muted-foreground/40 animate-bounce" />
-                    <span className="size-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:0.15s]" />
-                    <span className="size-1.5 rounded-full bg-muted-foreground/40 animate-bounce [animation-delay:0.3s]" />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Follow-up suggestions */}
-            {showFollowUps && followUpQuestions.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-2 animate-message-in">
-                {followUpQuestions.map((q) => (
-                  <button
-                    key={q}
-                    type="button"
-                    onClick={() => sendMessage(q)}
-                    className="rounded-full border border-border/60 px-3 py-1.5 text-xs text-muted-foreground hover:border-primary/30 hover:text-primary transition-colors"
-                  >
-                    {q}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* Spacer for scroll */}
-            <div className="h-2" />
-          </div>
+          <ChatMessageList
+            messages={deferredMessages}
+            isLoading={isLoading}
+            streamingContent={streamingContent}
+            copiedId={copiedId}
+            followUpQuestions={followUpQuestions}
+            showFollowUps={showFollowUps}
+            onRetryFailed={retryFailed}
+            onCopy={copyToClipboard}
+            onFollowUp={(q) => sendMessage(q)}
+          />
         )}
       </div>
 
-      {/* Scroll to bottom button */}
       {showScrollButton && (
         <button
           onClick={() => {
@@ -897,111 +601,23 @@ export function ChatInterface({
         </button>
       )}
 
-      {/* Disclaimer — subtle */}
-      <div className="shrink-0 border-t border-border/50 px-4 py-1.5 text-center">
-        <p className="text-[10px] text-muted-foreground">
-          <AlertCircle className="inline size-2.5 -mt-0.5 mr-1" />
-          {t("pharmacist.disclaimer")} {t("common.citationsDisclaimer")}
-        </p>
-      </div>
-
-      {/* Input area */}
-      <div className="shrink-0 border-t border-border/50 px-4 py-3">
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-end gap-2 mx-auto max-w-2xl"
-        >
-          <div className="relative flex-1">
-            <textarea
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t("pharmacist.placeholder")}
-              className="w-full resize-none rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-colors"
-              rows={1}
-              disabled={isLoading || isRestoring || isDeleting}
-              aria-label={t("common.chatInputlabel")}
-            />
-          </div>
-          {isLoading ? (
-            <button
-              type="button"
-              onClick={stopGeneration}
-              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
-              aria-label={t("common.stopGeneratingLabel")}
-            >
-              <div className="size-3 rounded-sm bg-destructive" />
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={!input.trim() || isRestoring || isDeleting}
-              className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 transition-all"
-              aria-label={t("common.sendMessageLabel")}
-            >
-              <Send className="size-4" />
-            </button>
-          )}
-        </form>
-
-        {/* Footer row: clear + save status */}
-        {hasSentMessage && (
-          <div className="mt-2 mx-auto max-w-2xl">
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() => void clearChat()}
-                disabled={isDeleting || isRestoring}
-                className="text-[10px] text-muted-foreground hover:text-muted-foreground transition-colors disabled:opacity-50"
-              >
-                {isDeleting
-                  ? t("common.clearing")
-                  : t("common.clearConversation")}
-              </button>
-              <span className="text-[10px] text-muted-foreground">
-                {saveStatus === "saving" ? (
-                  t("common.saving")
-                ) : saveStatus === "saved" ? (
-                  t("common.saved")
-                ) : saveStatus === "failed" ? (
-                  <button
-                    type="button"
-                    onClick={() => void persistMessages()}
-                    className="underline underline-offset-2 hover:text-foreground"
-                  >
-                    {t("common.saveFailed")}
-                  </button>
-                ) : (
-                  ""
-                )}
-              </span>
-            </div>
-            {deleteError && (
-              <p
-                role="alert"
-                className="mt-1 text-[10px] text-destructive text-right"
-              >
-                {t("common.deleteFailed")}
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Donation prompt */}
-      {messages.length >= 3 && (
-        <div className="shrink-0 border-t border-primary/10 bg-primary/5 px-4 py-1.5 text-center">
-          <p className="text-[10px] text-muted-foreground">
-            {t("donate.promptAfterUse")}{" "}
-            <Link
-              href="/donate"
-              className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
-            >
-              {t("donate.promptLink")}
-            </Link>
-          </p>
-        </div>
-      )}
+      <ChatComposer
+        input={input}
+        inputRef={inputRef}
+        isLoading={isLoading}
+        isRestoring={isRestoring}
+        isDeleting={isDeleting}
+        hasSentMessage={hasSentMessage}
+        messageCount={messages.length}
+        saveStatus={saveStatus}
+        deleteError={deleteError}
+        onInputChange={setInput}
+        onKeyDown={handleKeyDown}
+        onSubmit={handleSubmit}
+        onStop={stopGeneration}
+        onClear={() => void clearChat()}
+        onRetrySave={() => void persistMessages()}
+      />
     </div>
   );
 }

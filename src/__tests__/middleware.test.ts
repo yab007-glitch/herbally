@@ -97,21 +97,27 @@ describe("middleware — security headers", () => {
     expect(securityHeaders["Permissions-Policy"]).toContain("camera=()");
     expect(securityHeaders["Permissions-Policy"]).toContain("microphone=()");
     expect(securityHeaders["Permissions-Policy"]).toContain("geolocation=()");
+    expect(securityHeaders["Cross-Origin-Opener-Policy"]).toBe(
+      "same-origin-allow-popups"
+    );
+    expect(securityHeaders["Cross-Origin-Resource-Policy"]).toBe("same-site");
   });
 
   it("allows framing without X-Frame-Options for embed responses", () => {
     const embed = buildSecurityHeaders({ framing: "allow" });
 
     expect(embed["X-Frame-Options"]).toBeUndefined();
+    expect(embed["Cross-Origin-Resource-Policy"]).toBe("cross-origin");
     expect(directive(embed["Content-Security-Policy"], "frame-ancestors")).toBe(
       "frame-ancestors *"
     );
   });
 
-  it("omits all framing headers for config-level headers", () => {
+  it("omits all framing and CORP headers for config-level headers", () => {
     const config = buildSecurityHeaders({ framing: "omit" });
 
     expect(config["X-Frame-Options"]).toBeUndefined();
+    expect(config["Cross-Origin-Resource-Policy"]).toBeUndefined();
     expect(
       directive(config["Content-Security-Policy"], "frame-ancestors")
     ).toBeUndefined();

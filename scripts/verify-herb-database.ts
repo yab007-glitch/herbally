@@ -52,7 +52,8 @@ interface VerificationError {
 
 const VALID_EVIDENCE_LEVELS = ["A", "B", "C", "D", "trad"];
 const BINOMIAL_REGEX = /^[A-Z][a-z]+ [a-z]+/;
-const PMID_REGEX = /^\d{6,8}$/;
+// Valid historical PubMed IDs from the 1960s-1970s begin at 4-5 digits (e.g. 15766, 49743).
+const PMID_REGEX = /^\d{4,8}$/;
 
 function validateHerb(
   herb: HerbRow,

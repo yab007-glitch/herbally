@@ -72,6 +72,37 @@ describe("herbs actions", () => {
         /db timeout|Failed to fetch herbs/
       );
     });
+
+    it("handles PGRST103 range-not-satisfiable cleanly without error log", async () => {
+      const errorSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+      fromMock.mockReturnValueOnce({
+        select: () => ({
+          eq: () => ({
+            range: () => ({
+              order: () =>
+                Promise.resolve({
+                  data: null,
+                  count: 0,
+                  error: {
+                    code: "PGRST103",
+                    message: "Requested range not satisfiable",
+                  },
+                }),
+            }),
+          }),
+        }),
+      });
+
+      const result = await actions.getHerbs({ page: 999 });
+      expect(result.success).toBe(false);
+      expect(!result.success && result.error).toBe(
+        "Requested range not satisfiable"
+      );
+      expect(errorSpy).not.toHaveBeenCalled();
+      errorSpy.mockRestore();
+    });
   });
 
   describe("getHerbBySlug", () => {

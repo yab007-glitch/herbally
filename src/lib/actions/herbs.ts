@@ -243,6 +243,15 @@ export async function getHerbs(
     const { data, count, error } = await query;
 
     if (error) {
+      // Bots/stale bookmarks requesting past the end of the result set trigger
+      // PostgREST PGRST103 ("Requested range not satisfiable"); HerbsPage
+      // redirects those cleanly to page 1 without logging a false error.
+      if ((error as { code?: string }).code === "PGRST103") {
+        return {
+          success: false,
+          error: error.message || "Requested range not satisfiable",
+        };
+      }
       logger.error("herbs_get_herbs_failed", {
         error: error instanceof Error ? error.message : JSON.stringify(error),
       });

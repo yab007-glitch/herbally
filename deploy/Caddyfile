@@ -11,6 +11,7 @@ http://api.herbally.app {
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
 		-Server
+		-Via
 	}
 
 	log {
@@ -19,11 +20,15 @@ http://api.herbally.app {
 	}
 
 	handle_path /auth/v1/* {
-		reverse_proxy auth:9999
+		reverse_proxy auth:9999 {
+			header_down -Via
+		}
 	}
 
 	handle_path /rest/v1/* {
-		reverse_proxy rest:3000
+		reverse_proxy rest:3000 {
+			header_down -Via
+		}
 	}
 
 	handle /storage/v1/* {
@@ -40,6 +45,7 @@ http://www.herbally.app {
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
 		-Server
+		-Via
 	}
 	log {
 		output stdout
@@ -54,7 +60,19 @@ http://herbally.app, :80 {
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
 		-Server
+		-Via
 	}
+
+	@public_herbs_dir {
+		path /herbs /fr/herbs
+		expression {http.request.uri.query} == ""
+		not header_regexp Cookie sb-.*-auth-token
+	}
+	header @public_herbs_dir {
+		defer
+		Cache-Control "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400"
+	}
+
 	log {
 		output stdout
 		format json
@@ -83,12 +101,16 @@ http://herbally.app, :80 {
 			header_up X-Forwarded-For {http.request.header.CF-Connecting-IP}
 			header_up X-Real-IP {http.request.header.CF-Connecting-IP}
 			header_up X-Forwarded-Proto https
+			header_down -x-middleware-rewrite
+			header_down -Via
 		}
 	}
 
 	handle {
 		reverse_proxy app:3000 {
 			header_up X-Forwarded-Proto https
+			header_down -x-middleware-rewrite
+			header_down -Via
 		}
 	}
 }
