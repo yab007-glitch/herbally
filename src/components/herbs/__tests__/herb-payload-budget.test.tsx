@@ -62,10 +62,8 @@ import { HerbSourcesView } from "@/components/herbs/herb-sources-view";
 import { HerbRegulatorExcerptsView } from "@/components/herbs/herb-regulator-excerpts-view";
 import { HerbNarrativeView } from "@/components/herbs/herb-narrative-view";
 import { HerbDetailTabs } from "@/components/herbs/herb-detail-tabs";
-import {
-  compactRegulatoryEvidence,
-  RegulatoryEvidenceSection,
-} from "@/components/herbs/regulatory-evidence";
+import { RegulatoryEvidenceSection } from "@/components/herbs/regulatory-evidence";
+import { compactRegulatoryEvidence } from "@/lib/herbs/regulatory-evidence";
 import { GovSourcesView } from "@/components/herbs/gov-sources-view";
 import { HerbFaqSection } from "@/components/herbs/herb-faq-section";
 import { HerbRelatedSection } from "@/components/herbs/herb-related-grid";

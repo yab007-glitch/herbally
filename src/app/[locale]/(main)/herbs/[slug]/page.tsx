@@ -68,10 +68,8 @@ import { CmpBootstrap } from "@/components/ads/cmp-bootstrap";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { ViewTracker } from "@/components/herbs/view-tracker";
 import { GovSources } from "@/components/herbs/gov-sources";
-import {
-  compactRegulatoryEvidence,
-  RegulatoryEvidenceSection,
-} from "@/components/herbs/regulatory-evidence";
+import { RegulatoryEvidenceSection } from "@/components/herbs/regulatory-evidence";
+import { compactRegulatoryEvidence } from "@/lib/herbs/regulatory-evidence";
 import { HerbSources } from "@/components/herbs/herb-sources";
 import { getReviewer } from "@/lib/data/reviewers";
 import {
