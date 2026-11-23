@@ -22,6 +22,8 @@ export interface NarrativeInput {
   interactionCount?: number;
   /** Where the regulatory wording comes from, e.g. "Health Canada". */
   regulator?: string | null;
+  /** True when the herb is in the lethal/poisonous registry. */
+  isDangerous?: boolean;
 }
 
 /**
@@ -49,6 +51,7 @@ export interface NarrativeCopy {
   interactionsOne: string;
   interactionsMany: (n: number) => string;
   interactionsNone: string;
+  dangerousSafetyWarning: string;
   /** "Health Canada's records state" / "Les dossiers de Santé Canada indiquent". */
   regulatorSource: (regulator: string | null) => string;
   /** Punctuation before a quotation: ":" in English, " :" in French. */
@@ -76,7 +79,9 @@ export const NARRATIVE_EN: NarrativeCopy = {
   interactionsOne: "One drug interaction is recorded below.",
   interactionsMany: (n) => `${n} drug interactions are recorded below.`,
   interactionsNone:
-    "No drug interactions are recorded for it in the sources reviewed.",
+    "No curated drug interactions are currently listed below; absence from this table does not rule out interactions.",
+  dangerousSafetyWarning:
+    "This plant is toxic or potentially lethal; do not self-administer or rely on the absence of listed interactions as safety.",
   regulatorSource: (regulator) =>
     regulator ? ` ${regulator}'s records state` : " The source records state",
   colon: ":",
@@ -108,7 +113,9 @@ export const NARRATIVE_FR: NarrativeCopy = {
   interactionsMany: (n) =>
     `${n} interactions médicamenteuses sont consignées ci-dessous.`,
   interactionsNone:
-    "Aucune interaction médicamenteuse n'est consignée dans les sources examinées.",
+    "Aucune interaction médicamenteuse curatée n'est actuellement listée ci-dessous ; l'absence dans ce tableau n'exclut pas un risque d'interaction.",
+  dangerousSafetyWarning:
+    "Cette plante est toxique ou potentiellement mortelle ; ne pas s'automédiquer ni interpréter l'absence d'interactions répertoriées comme une preuve d'innocuité.",
   regulatorSource: (regulator) =>
     regulator
       ? ` Les dossiers de ${regulator} indiquent`
@@ -197,6 +204,7 @@ export function summariseDosage(
   input: NarrativeInput,
   copy: NarrativeCopy = NARRATIVE_EN
 ): string | null {
+  if (input.isDangerous) return null;
   if (!input.dosageAdult?.trim()) return null;
   return dosageSentence(input.name, input.dosageAdult, copy);
 }
@@ -206,6 +214,20 @@ export function summariseSafety(
   copy: NarrativeCopy = NARRATIVE_EN
 ): string | null {
   const parts: string[] = [];
+
+  if (input.isDangerous) {
+    parts.push(copy.pregnancyUnsafe);
+    parts.push(copy.nursingUnsafe);
+    parts.push(copy.dangerousSafetyWarning);
+    if (input.interactionCount && input.interactionCount > 0) {
+      parts.push(
+        input.interactionCount === 1
+          ? copy.interactionsOne
+          : copy.interactionsMany(input.interactionCount)
+      );
+    }
+    return parts.join(" ");
+  }
 
   if (input.pregnancySafe === false) {
     parts.push(copy.pregnancyUnsafe);

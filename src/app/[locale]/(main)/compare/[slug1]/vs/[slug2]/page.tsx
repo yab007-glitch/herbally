@@ -239,6 +239,9 @@ export default async function ComparePage({ params }: Props) {
     },
     { name: `${herbA.name} vs ${herbB.name}`, url: compareUrl },
   ];
+  const allowCompareCalculator =
+    canShowDoseCalculator(slug1, herbA.dosage_adult) &&
+    canShowDoseCalculator(slug2, herbB.dosage_adult);
 
   return (
     <div className="space-y-8">
@@ -257,7 +260,7 @@ export default async function ComparePage({ params }: Props) {
           },
           {
             question: `Which is better, ${herbA.name} or ${herbB.name}?`,
-            answer: `It depends on your goal. Compare evidence levels, pregnancy safety and drug interactions in the table above, then use our free dose calculator. Consult your healthcare provider for personalized advice.`,
+            answer: `It depends on your goal. Compare evidence levels, pregnancy safety and drug interactions in the table above${allowCompareCalculator ? ", then use our free dose calculator" : ""}. Consult your healthcare provider for personalized advice.`,
           },
           {
             question: `Can I take ${herbA.name} and ${herbB.name} together?`,
@@ -533,9 +536,11 @@ export default async function ComparePage({ params }: Props) {
             </summary>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               It depends on your goal. Compare evidence levels, pregnancy safety
-              and drug interactions in the table above, then use our free dose
-              calculator. Consult your healthcare provider for personalized
-              advice.
+              and drug interactions in the table above
+              {allowCompareCalculator
+                ? ", then use our free dose calculator"
+                : ""}
+              . Consult your healthcare provider for personalized advice.
             </p>
           </details>
           <details className="px-4 py-3">

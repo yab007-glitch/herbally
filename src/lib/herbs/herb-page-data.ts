@@ -272,16 +272,10 @@ export function getEvidenceLevel(
 
 export function formatCitations(
   citations: CitationData[] | null | undefined,
-  t: (key: string, params?: Record<string, string | number>) => string
+  _t?: (key: string, params?: Record<string, string | number>) => string
 ): CitationData[] {
   if (!citations || citations.length === 0) {
-    return [
-      {
-        source: t("herbDetailContent.sources.nccih"),
-        title: t("seo.nccihSource"),
-        url: "https://www.nccih.nih.gov/health/herbsataglance",
-      },
-    ];
+    return [];
   }
   return citations;
 }

@@ -155,4 +155,72 @@ describe("HerbSchema reviewer attribution", () => {
     );
     expect(json.reviewedBy).toBeUndefined();
   });
+
+  it("omits dosage, pediatricDose, and medicalUse and forces pregnancy/nursing warnings when isDangerous is true", () => {
+    const json = extractJson(
+      renderToStaticMarkup(
+        <HerbSchema
+          herb={{
+            ...baseHerb,
+            slug: "atropa-belladonna-herb",
+            dosage_adult: "100 mg daily",
+            dosage_child: "10 mg daily",
+            traditional_uses: ["Antispasmodic"],
+            modern_uses: ["Topical analgesic"],
+            pregnancy_safe: true,
+            nursing_safe: true,
+          }}
+          url="https://herbally.app/herbs/atropa-belladonna-herb"
+          isDangerous={true}
+        />
+      )
+    );
+
+    expect(json.dosage).toBeUndefined();
+    expect(json.pediatricDose).toBeUndefined();
+    expect(json.medicalUse).toBeUndefined();
+    const safetyJson = JSON.stringify(json.safetyConsideration);
+    expect(safetyJson).toContain("Not recommended during pregnancy");
+    expect(safetyJson).toContain("Not recommended while nursing");
+  });
+
+  it("omits pediatricDose even when dosage_child is present on a non-dangerous herb", () => {
+    const json = extractJson(
+      renderToStaticMarkup(
+        <HerbSchema
+          herb={{
+            ...baseHerb,
+            dosage_adult: "500 mg daily",
+            dosage_child: "100 mg daily",
+          }}
+          url="https://herbally.app/herbs/test-herb"
+        />
+      )
+    );
+
+    expect((json.dosage as { doseValue?: string } | undefined)?.doseValue).toBe(
+      "500 mg daily"
+    );
+    expect(json.pediatricDose).toBeUndefined();
+  });
+
+  it("omits reviewedBy and does not override dateModified with last_reviewed when isClinicallyReviewed is false", () => {
+    const json = extractJson(
+      renderToStaticMarkup(
+        <HerbSchema
+          herb={{
+            ...baseHerb,
+            reviewed_by: "Yasser Bheekun",
+            last_reviewed: "2026-06-23",
+          }}
+          url="https://herbally.app/herbs/test-herb"
+          dateModified="2026-11-22"
+          isClinicallyReviewed={false}
+        />
+      )
+    );
+
+    expect(json.reviewedBy).toBeUndefined();
+    expect(json.dateModified).toBe("2026-11-22");
+  });
 });

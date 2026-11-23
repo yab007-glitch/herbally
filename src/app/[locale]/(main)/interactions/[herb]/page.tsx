@@ -30,6 +30,7 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { canShowDoseCalculator } from "@/lib/data/dangerous-herbs";
 
 export const revalidate = 86400;
 export const dynamicParams = true;
@@ -376,13 +377,15 @@ export default async function HerbInteractionsHubPage({ params }: Props) {
         <Button variant="outline" render={<Link href="/medications" />}>
           {fr ? "Répertoire des médicaments" : "Medications Directory"}
         </Button>
-        <Button
-          variant="ghost"
-          render={<Link href={`/calculator?herb=${herb.slug}`} />}
-        >
-          <Calculator className="mr-1.5 size-4" />
-          {fr ? "Calculateur de dose" : "Dosage Calculator"}
-        </Button>
+        {canShowDoseCalculator(herb.slug, herb.dosage_adult) && (
+          <Button
+            variant="ghost"
+            render={<Link href={`/calculator?herb=${herb.slug}`} />}
+          >
+            <Calculator className="mr-1.5 size-4" />
+            {fr ? "Calculateur de dose" : "Dosage Calculator"}
+          </Button>
+        )}
       </div>
     </div>
   );

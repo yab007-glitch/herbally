@@ -4,11 +4,74 @@ import { useState } from "react";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type { Interaction } from "@/lib/types/interactions";
 import { drugSlug, pairPath } from "@/lib/interactions/pair-url";
 
 export type { Interaction };
+
+const SEVERITY_PRIORITY: Record<string, number> = {
+  contraindicated: 0,
+  severe: 1,
+  moderate: 2,
+  mild: 3,
+};
+
+export function getInteractionSourceLabel(
+  sourceUrl: string,
+  locale: "en" | "fr" = "en"
+): string {
+  const fr = locale === "fr";
+  try {
+    const parsed = new URL(sourceUrl);
+    const host = parsed.hostname.toLowerCase();
+    const path = parsed.pathname.toLowerCase();
+
+    if (host.includes("pubmed.ncbi.nlm.nih.gov")) {
+      return fr ? "Source : PubMed" : "Source: PubMed";
+    }
+    if (host.includes("pmc.ncbi.nlm.nih.gov")) {
+      return fr
+        ? "Source : PubMed Central (NIH)"
+        : "Source: PubMed Central (NIH)";
+    }
+    if (host.includes("ncbi.nlm.nih.gov") && path.includes("/books/")) {
+      return fr
+        ? "Source : NIH Bookshelf (LiverTox / LactMed)"
+        : "Source: NIH Bookshelf (LiverTox / LactMed)";
+    }
+    if (host.includes("nccih.nih.gov")) {
+      return fr ? "Source : NCCIH (NIH)" : "Source: NCCIH (NIH)";
+    }
+    if (host.includes("ods.od.nih.gov")) {
+      return fr ? "Source : NIH ODS" : "Source: NIH ODS";
+    }
+    if (host.includes("medlineplus.gov")) {
+      return fr ? "Source : MedlinePlus (NIH)" : "Source: MedlinePlus (NIH)";
+    }
+    if (host.includes("ema.europa.eu")) {
+      return fr ? "Source : EMA HMPC" : "Source: EMA HMPC";
+    }
+    if (host.includes("canada.ca") || host.includes("hc-sc.gc.ca")) {
+      return fr ? "Source : Santé Canada" : "Source: Health Canada";
+    }
+    if (host.includes("fda.gov") || host.includes("dailymed.nlm.nih.gov")) {
+      return fr ? "Source : FDA (États-Unis)" : "Source: US FDA";
+    }
+    if (host.includes("who.int")) {
+      return fr ? "Source : OMS" : "Source: WHO";
+    }
+    if (host.includes("tga.gov.au")) {
+      return fr ? "Source : TGA (Australie)" : "Source: TGA Australia";
+    }
+    if (host.includes("mskcc.org")) {
+      return fr ? "Source : MSK About Herbs" : "Source: MSK About Herbs";
+    }
+  } catch {
+    // Fall through to primary source label when URL parsing fails.
+  }
+  return fr ? "Source primaire" : "Primary source";
+}
 
 const severityColors: Record<string, string> = {
   mild: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
@@ -35,24 +98,38 @@ export function InteractionsTable({
   herbSlug?: string;
 }) {
   const t = useTranslations();
+  const locale = useLocale() === "fr" ? "fr" : "en";
   const [expanded, setExpanded] = useState(false);
 
   if (interactions.length === 0) return null;
 
-  const displayInteractions = expanded
-    ? interactions
-    : interactions.slice(0, INITIAL_COUNT);
-  const hasMore = interactions.length > INITIAL_COUNT;
+  const sortedInteractions = [...interactions].sort((a, b) => {
+    const pa = SEVERITY_PRIORITY[a.severity] ?? 9;
+    const pb = SEVERITY_PRIORITY[b.severity] ?? 9;
+    if (pa !== pb) return pa - pb;
+    return (a.display_drug_name || a.drug_name).localeCompare(
+      b.display_drug_name || b.drug_name
+    );
+  });
 
   // Group by severity for summary
   const severityCounts = {
-    severe: interactions.filter((i) => i.severity === "severe").length,
-    moderate: interactions.filter((i) => i.severity === "moderate").length,
-    mild: interactions.filter((i) => i.severity === "mild").length,
-    contraindicated: interactions.filter(
+    severe: sortedInteractions.filter((i) => i.severity === "severe").length,
+    moderate: sortedInteractions.filter((i) => i.severity === "moderate")
+      .length,
+    mild: sortedInteractions.filter((i) => i.severity === "mild").length,
+    contraindicated: sortedInteractions.filter(
       (i) => i.severity === "contraindicated"
     ).length,
   };
+
+  // Never hide Contraindicated or Severe interactions behind the 5-row collapse.
+  const criticalCount = severityCounts.contraindicated + severityCounts.severe;
+  const initialVisible = Math.max(INITIAL_COUNT, criticalCount);
+  const displayInteractions = expanded
+    ? sortedInteractions
+    : sortedInteractions.slice(0, initialVisible);
+  const hasMore = sortedInteractions.length > initialVisible;
 
   return (
     <section>
@@ -151,7 +228,10 @@ export function InteractionsTable({
                       rel="noopener noreferrer"
                       className="mt-1 block text-xs text-primary hover:underline"
                     >
-                      {t("interactions.sourceLink")}
+                      {getInteractionSourceLabel(
+                        interaction.source_url,
+                        locale
+                      )}
                     </a>
                   )}
                 </td>
@@ -179,7 +259,7 @@ export function InteractionsTable({
               <>
                 <ChevronDown className="size-4" />
                 {t("interactions.showMore", {
-                  count: interactions.length - INITIAL_COUNT,
+                  count: sortedInteractions.length - initialVisible,
                 })}
               </>
             )}

@@ -45,6 +45,8 @@ interface SafetyGlanceProps {
   interactions: GlanceInteraction[];
   /** Anchor of the full interaction list (a tab or an inline section). */
   href?: string;
+  /** True when the herb is in the lethal/poisonous registry. */
+  isDangerous?: boolean;
   className?: string;
 }
 
@@ -118,6 +120,7 @@ export function SafetyGlance({
   contraindications,
   interactions,
   href = "#safety",
+  isDangerous = false,
   className,
 }: SafetyGlanceProps) {
   const t = useTranslations("safetyGlance");
@@ -212,9 +215,15 @@ export function SafetyGlance({
           </dt>
           <dd className="mt-1 space-y-1.5">
             {interactions.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                {t("interactionCountNone")}
-              </p>
+              isDangerous ? (
+                <p className="text-sm font-medium text-destructive">
+                  {t("interactionDangerousNone")}
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {t("interactionCountNone")}
+                </p>
+              )
             ) : (
               <>
                 <p className="text-sm font-medium text-foreground">

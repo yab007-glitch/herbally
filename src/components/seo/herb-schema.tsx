@@ -36,6 +36,13 @@ interface HerbSchemaProps {
   url?: string;
   /** Latest ISO modification timestamp for MedicalWebPage.dateModified. */
   dateModified?: string;
+  /** True when the herb is in the lethal/poisonous registry. */
+  isDangerous?: boolean;
+  /**
+   * False when an entry is unreviewed or needs re-review so structured data
+   * omits `reviewedBy` / `last_reviewed`. Defaults true for standalone callers.
+   */
+  isClinicallyReviewed?: boolean;
 }
 
 /**
@@ -50,12 +57,32 @@ function asArray(value: unknown): string[] {
   return typeof value === "string" && value.trim() ? [value.trim()] : [];
 }
 
-export function HerbSchema({ herb, url, dateModified }: HerbSchemaProps) {
-  const reviewer = getReviewer(herb.reviewed_by);
+export function HerbSchema({
+  herb,
+  url,
+  dateModified,
+  isDangerous = false,
+  isClinicallyReviewed = true,
+}: HerbSchemaProps) {
+  const reviewer = isClinicallyReviewed ? getReviewer(herb.reviewed_by) : null;
   const activeCompounds = asArray(herb.active_compounds);
   const traditionalUses = asArray(herb.traditional_uses);
   const contraindications = asArray(herb.contraindications);
   const sideEffects = asArray(herb.side_effects);
+  const pregnancySafety = isDangerous
+    ? "Not recommended during pregnancy"
+    : herb.pregnancy_safe !== null && herb.pregnancy_safe !== undefined
+      ? herb.pregnancy_safe
+        ? "Generally safe during pregnancy"
+        : "Not recommended during pregnancy"
+      : undefined;
+  const breastfeedingSafety = isDangerous
+    ? "Not recommended while nursing"
+    : herb.nursing_safe !== null && herb.nursing_safe !== undefined
+      ? herb.nursing_safe
+        ? "Generally safe while nursing"
+        : "Not recommended while nursing"
+      : undefined;
   const schema = {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
@@ -72,9 +99,10 @@ export function HerbSchema({ herb, url, dateModified }: HerbSchemaProps) {
       ...(activeCompounds.length > 0 && {
         chemicalComposition: activeCompounds.join(", "),
       }),
-      ...(traditionalUses.length > 0 && {
-        medicalUse: traditionalUses.join("; "),
-      }),
+      ...(!isDangerous &&
+        traditionalUses.length > 0 && {
+          medicalUse: traditionalUses.join("; "),
+        }),
     },
     about: {
       "@type": "HealthTopic",
@@ -87,18 +115,8 @@ export function HerbSchema({ herb, url, dateModified }: HerbSchemaProps) {
     },
     safetyConsideration: {
       "@type": "MedicalWarning",
-      ...(herb.pregnancy_safe !== null &&
-        herb.pregnancy_safe !== undefined && {
-          pregnancySafety: herb.pregnancy_safe
-            ? "Generally safe during pregnancy"
-            : "Not recommended during pregnancy",
-        }),
-      ...(herb.nursing_safe !== null &&
-        herb.nursing_safe !== undefined && {
-          breastfeedingSafety: herb.nursing_safe
-            ? "Generally safe while nursing"
-            : "Not recommended while nursing",
-        }),
+      ...(pregnancySafety && { pregnancySafety }),
+      ...(breastfeedingSafety && { breastfeedingSafety }),
       ...(contraindications.length > 0 && {
         contraindication: contraindications.map(stripFieldLabels).join("; "),
       }),
@@ -106,33 +124,21 @@ export function HerbSchema({ herb, url, dateModified }: HerbSchemaProps) {
         adverseEffect: sideEffects.map(stripFieldLabels).join("; "),
       }),
     },
-    ...(herb.dosage_adult && {
-      dosage: {
-        "@type": "MedicalDoseSchedule",
-        doseValue: normalizeDosage(herb.dosage_adult),
-        targetPopulation: "Adults",
-      },
-    }),
-    ...(herb.dosage_child && {
-      pediatricDose: {
-        "@type": "MedicalDoseSchedule",
-        doseValue: herb.dosage_child,
-        targetPopulation: "Children",
-      },
-    }),
+    ...(!isDangerous &&
+      herb.dosage_adult && {
+        dosage: {
+          "@type": "MedicalDoseSchedule",
+          doseValue: normalizeDosage(herb.dosage_adult),
+          targetPopulation: "Adults",
+        },
+      }),
     publisher: {
       "@type": "Organization",
       name: "HerbAlly",
       url: siteUrl(),
     },
     // A reviewer claim is only honest when a specific, named person is on the
-    // record. The registry (`getReviewer`) is the only source of such a person;
-    // every herb row instead carries the generic string "HerbAlly Editorial
-    // Team", and emitting that as a schema.org Person with jobTitle "Medical
-    // herbalists and healthcare professionals" claims review by a body that
-    // cannot be named — fabricated credentials on YMYL content, which is worse
-    // than no reviewer at all. Unregistered values are therefore omitted: the
-    // page claims authorship (true) and leaves review unclaimed.
+    // record AND the current revision has not been invalidated for re-review.
     ...(reviewer && {
       reviewedBy: {
         "@type": "Person",
@@ -168,9 +174,10 @@ export function HerbSchema({ herb, url, dateModified }: HerbSchemaProps) {
       ],
       url: `${siteUrl()}/editorial-policy`,
     },
-    ...(herb.last_reviewed && {
-      dateModified: herb.last_reviewed,
-    }),
+    ...(isClinicallyReviewed &&
+      herb.last_reviewed && {
+        dateModified: herb.last_reviewed,
+      }),
     // datePublished must be stable. Emitting new Date() on every regeneration
     // makes every herb look freshly published daily — a classic thin-content /
     // freshness-spam signal that erodes trust for the 335 crawled-not-indexed

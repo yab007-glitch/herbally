@@ -137,7 +137,7 @@
     "checkerEvidence": "Evidence",
     "checkerMechanism": "How it works",
     "explainerTitle": "Your trusted guide to medicinal herbs",
-    "explainerBody": "HerbAlly is a free medicinal-herb database with 3,150+ herbs. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
+    "explainerBody": "HerbAlly is a free medicinal-herb reference covering hundreds of published herb profiles. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose where established monograph data exists — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
     "explainerNote": "Educational purposes only. Not medical advice. Always confirm with your doctor or pharmacist before combining a herb with a medication.",
     "popularTitle": "Popular herbs",
     "herbLabel": "Herb",
@@ -295,7 +295,7 @@
       "q2": "What is Clark's rule vs Young's rule?",
       "a2": "Both are reference methods. Clark's rule scales by weight (weight in kg / 68 × adult dose). Young's rule scales by age (age / (age + 12) × adult dose). HerbAlly shows both so you can compare, and caps the result at the adult reference dose.",
       "q3": "Is the herbal dosage calculator free?",
-      "a3": "Yes — free, no account required. Reference doses come from our 3,150+ herb database with PubMed, WHO and NCCIH sources."
+      "a3": "Yes — free, no account required. Reference doses come from published clinical monographs (EMA HMPC, Health Canada, WHO, NCCIH, and PubMed) for herbs with an established adult oral dose; high-risk or toxic plants do not display a dose calculator."
     }
   },
   "pharmacist": {
@@ -456,11 +456,12 @@
     "pregUnknown": "The safety of {name} during pregnancy has not been conclusively established. Consult your healthcare provider before use.",
     "interactSome": "Yes, {name} has {count, plural, one {# known drug interaction} other {# known drug interactions}}. {notes}",
     "interactFallbackNotes": "Consult your healthcare provider or pharmacist about potential interactions with your medications.",
-    "interactNone": "{name} has no well-documented major drug interactions in our database, but always inform your healthcare provider about all supplements you take.",
+    "interactNone": "No drug interactions are currently listed in HerbAlly's curated interaction table for {name}. Absence from this table does not mean absence of risk — always check with your pharmacist or prescriber before combining any herb with prescription or OTC medicines.",
     "sideEffects": "What are the side effects of {name}?",
-    "sideEffectsFallback": "Side effects of {name} are generally mild at recommended doses. Use our free dose calculator to stay within the evidence-based range, and consult your healthcare provider for personalized advice.",
+    "sideEffectsFallback": "Reported side effects vary by preparation and dose. Consult a qualified healthcare provider or pharmacist before using {name}.",
+    "sideEffectsDangerous": "{name} is a toxic or potentially lethal plant. Do not self-administer; contact Poison Control or emergency services immediately if exposed.",
     "doseQuestion": "How do I calculate a safe dose of {name}?",
-    "doseAnswer": "Use HerbAlly's free adult dosage calculator — enter the adult reference dose for {name}, plus age and weight, to get a Clark's / Young's rule reference estimate for an adult 18 or older. Never exceed the adult dose.",
+    "doseAnswer": "Use HerbAlly's free adult (18+) dosage reference tool to review weight-scaled estimates from an established adult reference dose for {name}. Never exceed monograph maximums, and confirm dosing with a healthcare provider.",
     "pregQuestion": "Is {name} safe during pregnancy?",
     "interactQuestion": "Does {name} interact with medications?"
   },
@@ -992,7 +993,7 @@
     "freeLink": "making a donation",
     "team": {
       "title": "Founder & Reviewer of Record",
-      "text": "HerbAlly is written, curated, and editorially reviewed by Yasser Bheekun, MLT (OPTMQ · CSMLS) — a Medical Laboratory Technologist holding a DEC in Biomedical Laboratory Technology (Dawson College) working in a hospital laboratory at the McGill University Health Centre in Montreal, Quebec. Every published entry carries cited primary sources and is validated editorially against regulator and clinical references. Editorial review is not physician medical care."
+      "text": "HerbAlly was created and is curated by Yasser Bheekun, MLT (OPTMQ · CSMLS) — a Medical Laboratory Technologist holding a DEC in Biomedical Laboratory Technology (Dawson College) working in a hospital laboratory at the McGill University Health Centre in Montreal, Quebec. Yasser progressively reviews and validates herb profiles against primary clinical and regulator references; each entry displays a status badge showing whether it has been human-verified, AI-summarized, or flagged for re-review. Editorial review is not physician medical care."
     }
   },
   "faqContent": {
@@ -1015,11 +1016,11 @@
       },
       "herbCount": {
         "q": "How many herbs does HerbAlly cover?",
-        "a": "HerbAlly covers 3,150+ medicinal herbs with detailed profiles including active compounds, traditional uses, modern applications, dosage guidance, and drug interactions."
+        "a": "HerbAlly publishes reference profiles for hundreds of medicinal herbs, including active compounds, traditional uses, clinical evidence, drug interactions, and adult dosage guidance where a safe reference dose exists — with additional profiles added as sources are verified."
       },
       "reviewed": {
         "q": "Is the information on HerbAlly medically reviewed?",
-        "a": "Every published herb monograph and interaction page displays its cited primary sources (Health Canada NHP, EMA HMPC, NIH NCCIH, LiverTox, PubMed) and has been editorially validated by Yasser Bheekun, MLT (OPTMQ · CSMLS). Editorial review checks source alignment and safety framing — it is educational information, not a substitute for personal advice from your physician or pharmacist."
+        "a": "Published herb profiles list their cited primary sources (such as Health Canada NHP, EMA HMPC, NIH NCCIH, LiverTox, and PubMed) alongside a review-status badge. Entries are progressively reviewed and editorially validated by Yasser Bheekun, MLT (OPTMQ · CSMLS); AI-summarized drafts and edited profiles awaiting verification are clearly labelled so readers can distinguish them from human-verified monographs. Editorial review checks source alignment and safety framing and is not a substitute for advice from your physician or pharmacist."
       },
       "trustAI": {
         "q": "Can I trust the AI Virtual Herbalist?",
@@ -1081,7 +1082,7 @@
       },
       "update": {
         "q": "How often is the information updated?",
-        "a": "Herb profiles are reviewed regularly by our editorial team. Each herb page shows a 'Last reviewed' date and reviewer credentials. We update interaction data as new research becomes available."
+        "a": "Herb profiles and interaction records are updated as new clinical research and regulator monographs become available. Only entries that have completed human verification display a 'Reviewed' badge, reviewer credentials, and a 'Last reviewed' date; unverified drafts and edited pages awaiting re-check are labelled with their current review status instead."
       }
     },
     "searchPlaceholder": "Search FAQ...",
@@ -1111,7 +1112,7 @@
     },
     "monographProcess": {
       "title": "Monograph Creation Process",
-      "content": "Every published profile follows a traceable five-step editorial workflow:\n\n1. **Source Extraction**: Official regulator monographs (Health Canada, EMA HMPC), government summaries (NCCIH, LiverTox), and PubMed citations are linked verbatim.\n2. **Taxonomic Verification**: Botanical binomials and plant parts are cross-checked against GBIF, ITIS, and NCBI Taxonomy.\n3. **Safety & Interaction Mapping**: Drug interactions, hepatotoxicity ratings, and pregnancy/lactation cautions are tagged to exact source URLs.\n4. **Editorial Review & Validation**: Reviewed and validated against primary references by Yasser Bheekun, MLT (OPTMQ · CSMLS) — editorial verification of evidence grading and safety framing, not physician clinical care.\n5. **Publication & Corrections**: Published with clear source links, evidence grades, and last-reviewed dates; safety corrections are prioritized."
+      "content": "Published profiles follow a traceable five-step workflow with transparent status labelling:\n\n1. **Source Extraction**: Official regulator monographs (Health Canada, EMA HMPC), government summaries (NCCIH, LiverTox), and PubMed citations are linked verbatim.\n2. **Taxonomic Verification**: Botanical binomials and plant parts are cross-checked against GBIF, ITIS, and NCBI Taxonomy for nomenclature only (never for clinical dosing or safety).\n3. **Safety & Interaction Mapping**: Drug interactions, hepatotoxicity ratings, and pregnancy/lactation cautions are mapped against clinical and regulator references, and dose calculators are suppressed on high-risk or toxic plants.\n4. **Progressive Editorial Review**: Entries are progressively verified against primary references by Yasser Bheekun, MLT (OPTMQ · CSMLS) — editorial checking of source alignment and safety framing, not physician clinical care.\n5. **Transparent Labelling & Corrections**: Every profile displays its review state ('Reviewed', 'AI-summarized', 'Not human-reviewed', or 'Needs re-review'). Only human-verified entries show a reviewer 'Last reviewed' date; safety corrections are prioritized."
     },
     "transparency": {
       "title": "Transparency & Limitations",
@@ -1280,6 +1281,8 @@
   "safety": {
     "noInteractionsTitle": "No interactions recorded",
     "noInteractionsMsg": "Our database records no clinically significant drug interactions for this herb. Absence of data is not proof of safety — always consult your healthcare provider before combining herbs with medications.",
+    "dangerousNoInteractionsTitle": "High-risk plant — do not combine with medications",
+    "dangerousNoInteractionsMsg": "Our interaction table does not list specific drug entries for this high-risk or toxic plant, but serious toxicity or medication interactions may still occur. Do not self-administer or combine with any drug without direct medical supervision.",
     "interactionCountTitle": "{count} Known Drug Interaction — Some May Be Serious",
     "interactionCountTitlePlural": "{count} Known Drug Interactions — Some May Be Serious",
     "interactionMessage": "This herb may interact with medications you are taking. Review the interactions table below and consult your healthcare provider before use.",
@@ -1317,6 +1320,9 @@
     "interactions": "Drug interactions",
     "interactionCount": "{count, plural, one {# known interaction} other {# known interactions}}",
     "interactionCountNone": "No interactions recorded in our database",
+    "interactionDangerousNone": "No interaction rows listed — high-risk plant (seek clinical advice)",
+    "toxicPlantBadge": "Toxic / High-Risk Plant",
+    "toxicBadgeShort": "High risk / toxic",
     "mostSerious": "Most serious: {drug} — {severity}",
     "seeList": "See the full list",
     "avoidIf": "Not recommended in these cases",
@@ -1335,6 +1341,7 @@
     "evidence": "Evidence strength",
     "review": "Review status",
     "verifiedDesc": "A person checked this entry against a primary source.",
+    "needsReReviewDesc": "Reviewed previously, then modified; treat as unreviewed until someone reads it again.",
     "aiSummarizedDesc": "An AI summarized the cited sources; no person has reviewed it yet.",
     "notHumanReviewedDesc": "Cites a source, but no person has checked this entry against it.",
     "unverifiedDesc": "Written by AI and not checked against primary sources."
@@ -1350,7 +1357,7 @@
   },
   "pubmedSheet": {
     "compiledTitle": "PubMed-compiled information sheet",
-    "compiledBody": "This sheet was compiled from PubMed (NIH) abstracts using AI assistance. Every factual claim is cited to a real PubMed article (see the source list). It has not yet been human-reviewed — confirm with a healthcare provider before use.",
+    "compiledBody": "This draft summarizes selected PubMed (NIH) abstracts using AI assistance. It has not yet been human-reviewed — verify claims against the listed PubMed articles and consult a healthcare provider before use.",
     "reviewedTitle": "Reviewed information sheet",
     "reviewedBody": "This sheet was compiled from PubMed (NIH) abstracts and has been human-reviewed. Every claim is cited to a real PubMed article (see the source list).",
     "languageNote": "This compiled sheet is in English because the PubMed studies it cites are in English.",
@@ -1659,7 +1666,7 @@
     "virtualHerbalist": "Virtual Herbalist",
     "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
     "doseCalculator": "Herbal Dosage Calculator: Adult Reference Doses by Weight",
-    "doseCalculatorDesc": "Free adult herbal dosage calculator by weight and age (18+): Clark's, Young's & BSA formulas across 3,150+ herbs. No account required.",
+    "doseCalculatorDesc": "Free adult herbal dosage calculator by weight and age (18+): Clark's, Young's & BSA reference scaling for herbs with established monograph doses. No account required.",
     "herbsBySymptom": "Herbs by Symptom",
     "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
     "privacyPolicy": "Privacy Policy",

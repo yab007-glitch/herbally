@@ -8,6 +8,8 @@ interface HerbFAQSchemaProps {
   safetyNotes: string;
   pregnancyCategory: string;
   drugInteractions: number;
+  isDangerous?: boolean;
+  showCalculator?: boolean;
   // Optional pre-generated FAQs from database (for Featured Snippets)
   preGeneratedFaqs?: Array<{
     question: string;
@@ -23,6 +25,8 @@ export function HerbFAQSchema({
   safetyNotes,
   pregnancyCategory,
   drugInteractions,
+  isDangerous = false,
+  showCalculator = true,
   preGeneratedFaqs,
   fallbackFaqs,
 }: HerbFAQSchemaProps & {
@@ -72,6 +76,8 @@ export function HerbFAQSchema({
         safetyNotes,
         pregnancyCategory,
         drugInteractions,
+        isDangerous,
+        showCalculator,
       },
       (key, params) => {
         let template: string =

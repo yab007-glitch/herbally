@@ -76,17 +76,30 @@ interface InteractionAlertProps {
     moderate?: number;
     mild?: number;
   };
+  isDangerous?: boolean;
   className?: string;
 }
 
 export function InteractionAlert({
   interactionCount,
   severityCounts,
+  isDangerous = false,
   className,
 }: InteractionAlertProps) {
   const t = useTranslations();
 
   if (interactionCount === 0) {
+    if (isDangerous) {
+      return (
+        <SafetyAlert
+          severity="critical"
+          title={t("safety.dangerousNoInteractionsTitle")}
+          className={className}
+        >
+          {t("safety.dangerousNoInteractionsMsg")}
+        </SafetyAlert>
+      );
+    }
     return (
       <SafetyAlert
         severity="info"

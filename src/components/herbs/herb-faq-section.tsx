@@ -14,6 +14,8 @@ interface HerbFaqSectionProps {
   pregnancyCategory: string;
   drugInteractions: number;
   commonNames?: string[];
+  isDangerous?: boolean;
+  showCalculator?: boolean;
   preGeneratedFaqs?: Array<{
     question: string;
     answer: string;
@@ -39,6 +41,8 @@ export function HerbFaqSection({
   pregnancyCategory,
   drugInteractions,
   commonNames = [],
+  isDangerous = false,
+  showCalculator = true,
   preGeneratedFaqs,
 }: HerbFaqSectionProps) {
   // Localized templates (herbFaq namespace) via the shared builder also
@@ -54,6 +58,8 @@ export function HerbFaqSection({
       pregnancyCategory,
       drugInteractions,
       commonNames,
+      isDangerous,
+      showCalculator,
     },
     (key, params) =>
       t(key as Parameters<typeof t>[0], params as Parameters<typeof t>[1])

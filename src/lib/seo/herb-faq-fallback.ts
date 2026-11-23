@@ -15,6 +15,8 @@ export interface HerbFallbackFaqInput {
   pregnancyCategory: string;
   drugInteractions: number;
   commonNames?: string[];
+  isDangerous?: boolean;
+  showCalculator?: boolean;
 }
 
 export interface HerbFallbackFaq {
@@ -34,11 +36,14 @@ export function buildHerbFallbackFaqs(
     pregnancyCategory,
     drugInteractions,
     commonNames = [],
+    isDangerous = false,
+    showCalculator = true,
   } = input;
   const topUses = uses.slice(0, 3).map((u) => u.toLowerCase());
   const usesText = topUses.length > 0 ? topUses.join(", ") : t("usesFallback");
 
   const pregnancyText = (() => {
+    if (isDangerous) return t("pregUnsafe", { name: herbName });
     switch (pregnancyCategory) {
       case "safe":
         return t("pregSafe", { name: herbName });
@@ -94,11 +99,17 @@ export function buildHerbFallbackFaqs(
     },
     {
       question: t("sideEffects", { name: herbName }),
-      answer: safetyNotes || t("sideEffectsFallback", { name: herbName }),
+      answer: isDangerous
+        ? t("sideEffectsDangerous", { name: herbName })
+        : safetyNotes || t("sideEffectsFallback", { name: herbName }),
     },
-    {
-      question: t("doseQuestion", { name: herbName }),
-      answer: t("doseAnswer", { name: herbName }),
-    },
+    ...(!isDangerous && showCalculator
+      ? [
+          {
+            question: t("doseQuestion", { name: herbName }),
+            answer: t("doseAnswer", { name: herbName }),
+          },
+        ]
+      : []),
   ];
 }

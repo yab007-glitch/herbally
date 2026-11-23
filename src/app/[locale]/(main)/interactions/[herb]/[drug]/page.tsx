@@ -29,6 +29,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { cn } from "@/lib/utils";
+import { isCalculatorBlockedSlug } from "@/lib/data/dangerous-herbs";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
@@ -616,13 +617,15 @@ export default async function InteractionPairPage({ params }: Props) {
           <MessageCircle className="mr-1 size-4" />
           {fr ? "Poser la question à l'herboriste IA" : "Ask the AI herbalist"}
         </Button>
-        <Button
-          variant="outline"
-          render={<Link href={`/calculator?herb=${pair.herbSlug}`} />}
-        >
-          <Calculator className="mr-1 size-4" />
-          {fr ? "Calculer une dose" : "Calculate a dose"}
-        </Button>
+        {!isCalculatorBlockedSlug(pair.herbSlug) && (
+          <Button
+            variant="outline"
+            render={<Link href={`/calculator?herb=${pair.herbSlug}`} />}
+          >
+            <Calculator className="mr-1 size-4" />
+            {fr ? "Calculer une dose" : "Calculate a dose"}
+          </Button>
+        )}
         <Button
           variant="ghost"
           render={<Link href={`/herbs/${pair.herbSlug}`} />}

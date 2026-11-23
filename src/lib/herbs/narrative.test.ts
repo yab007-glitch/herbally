@@ -82,10 +82,31 @@ describe("summariseSafety", () => {
     expect(text).toContain("3 drug interactions");
   });
 
-  it("says plainly when no interaction is recorded", () => {
+  it("says honestly when no curated interaction is listed without ruling out interactions", () => {
     expect(summariseSafety({ name: "X", interactionCount: 0 })).toContain(
-      "No drug interactions are recorded"
+      "No curated drug interactions are currently listed below; absence from this table does not rule out interactions."
     );
+  });
+
+  it("emits a dangerous safety warning and suppresses safe/dosage prose when isDangerous is true", () => {
+    const text = summariseSafety({
+      name: "Belladonna",
+      pregnancySafe: true,
+      nursingSafe: true,
+      interactionCount: 0,
+      isDangerous: true,
+    });
+    expect(text).toContain("toxic or potentially lethal");
+    expect(text).toContain("not considered safe in pregnancy");
+    expect(text).not.toContain("No curated drug interactions");
+    expect(text).not.toContain("No harm in pregnancy");
+    expect(
+      summariseDosage({
+        name: "Belladonna",
+        dosageAdult: "1-2 mg",
+        isDangerous: true,
+      })
+    ).toBeNull();
   });
 });
 

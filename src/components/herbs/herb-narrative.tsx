@@ -5,6 +5,7 @@ import {
 } from "@/lib/herbs/narrative";
 import { herbPageCopy, type CopyLocale } from "@/lib/i18n/herb-page-copy";
 import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
+import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 
 /**
  * The recorded facts, in sentences.
@@ -22,8 +23,10 @@ export function HerbNarrative({
   herb,
   interactionCount,
   locale = "en",
+  isDangerous,
 }: {
   herb: {
+    slug?: string;
     name: string;
     traditional_uses?: string[] | null;
     modern_uses?: string[] | null;
@@ -36,8 +39,11 @@ export function HerbNarrative({
   };
   interactionCount: number;
   locale?: CopyLocale;
+  isDangerous?: boolean;
 }) {
   const copy: NarrativeCopy = herbPageCopy(locale).narrative;
+  const dangerous =
+    isDangerous ?? (herb.slug ? isDangerousHerb(herb.slug) : false);
   const sections = narrativeSections(
     {
       name: herb.name,
@@ -52,6 +58,7 @@ export function HerbNarrative({
       nursingSafe: herb.nursing_safe,
       interactionCount,
       regulator: regulatorName(herb.provenance, locale),
+      isDangerous: dangerous,
     } satisfies NarrativeInput,
     copy
   );

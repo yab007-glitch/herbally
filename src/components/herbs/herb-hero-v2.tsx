@@ -11,7 +11,11 @@ import {
   SafetyGlance,
   type GlanceInteraction,
 } from "@/components/herbs/herb-safety-glance";
-import { parseProvenance, isVerified } from "@/lib/types/provenance";
+import {
+  parseProvenance,
+  isVerified,
+  getReviewState,
+} from "@/lib/types/provenance";
 import { isBucketCategory } from "@/lib/herbs/category";
 import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 import { cn } from "@/lib/utils";
@@ -66,7 +70,8 @@ export function HerbHeroV2({
   safetyHref = "#safety",
   showCalculator = true,
 }: HerbHeroV2Props) {
-  const allowCalculator = showCalculator && !isDangerousHerb(herb.slug);
+  const dangerous = isDangerousHerb(herb.slug);
+  const allowCalculator = showCalculator && !dangerous;
   const t = useTranslations();
   // Same external-store read as HerbCard: a lazy useState initializer ran
   // against localStorage during the first client render, which disagrees with
@@ -110,30 +115,41 @@ export function HerbHeroV2({
   // than letting an unreviewed PubMed draft below veto primary-source warnings
   // (e.g., White Willow and Black Cohosh are primary_source verified unsafe).
   const verified = isVerified(parsedProvenance);
+  const reviewState = getReviewState(parsedProvenance);
   // When the sheet vetoes a "Verified" claim, pass the adjusted method for the
   // provenance pill below.
   const badgeProvenance =
     sheetNotReviewed && verified
       ? { ...parsedProvenance, verification_method: "ai_summarized" as const }
       : parsedProvenance;
-  // AI-generated pregnancy/nursing flags are not authoritative — only show a
-  // safe/unsafe verdict when the monograph has been human-reviewed against a
-  // primary source (manual / primary_source). Otherwise the safety panel says
-  // "Unknown — not enough data", so a fabricated AI boolean can never read as
-  // advice.
-  const pregnancySafe = verified ? herb.pregnancy_safe : null;
-  const nursingSafe = verified ? herb.nursing_safe : null;
-  // Route of administration matters: an essential oil can be unsafe to swallow
-  // and fine on the skin. Dropping these four flags lost that distinction, so
-  // they are passed through to the safety panel.
-  const pregnancySafeOral = verified
+  // Asymmetric safety-first gating: dangerous herbs always show unsafe (`false`);
+  // human-verified entries show their verified verdicts; `needs_re_review` keeps
+  // explicit negative warnings (`false`) while withholding unverified `safe` (`true`).
+  const pregnancySafe = dangerous
+    ? false
+    : verified
+      ? herb.pregnancy_safe
+      : reviewState?.kind === "needs_re_review" && herb.pregnancy_safe === false
+        ? false
+        : null;
+  const nursingSafe = dangerous
+    ? false
+    : verified
+      ? herb.nursing_safe
+      : reviewState?.kind === "needs_re_review" && herb.nursing_safe === false
+        ? false
+        : null;
+  const routeVerified = !dangerous && verified;
+  const pregnancySafeOral = routeVerified
     ? (herb.pregnancy_safe_oral ?? null)
     : null;
-  const pregnancySafeTopical = verified
+  const pregnancySafeTopical = routeVerified
     ? (herb.pregnancy_safe_topical ?? null)
     : null;
-  const nursingSafeOral = verified ? (herb.nursing_safe_oral ?? null) : null;
-  const nursingSafeTopical = verified
+  const nursingSafeOral = routeVerified
+    ? (herb.nursing_safe_oral ?? null)
+    : null;
+  const nursingSafeTopical = routeVerified
     ? (herb.nursing_safe_topical ?? null)
     : null;
 
@@ -172,14 +188,20 @@ export function HerbHeroV2({
                     {herb.herb_categories.name}
                   </Badge>
                 )}
-              <EvidenceGrade
-                level={
-                  herb.evidence_level &&
-                  ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
-                    ? (herb.evidence_level as "A" | "B" | "C" | "D" | "trad")
-                    : "trad"
-                }
-              />
+              {dangerous ? (
+                <Badge variant="destructive" className="text-xs">
+                  {t("safetyGlance.toxicPlantBadge")}
+                </Badge>
+              ) : (
+                <EvidenceGrade
+                  level={
+                    herb.evidence_level &&
+                    ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
+                      ? (herb.evidence_level as "A" | "B" | "C" | "D" | "trad")
+                      : "trad"
+                  }
+                />
+              )}
             </div>
 
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -220,6 +242,7 @@ export function HerbHeroV2({
           contraindications={herb.contraindications}
           interactions={interactions}
           href={safetyHref}
+          isDangerous={dangerous}
         />
 
         <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">

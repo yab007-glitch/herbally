@@ -137,7 +137,7 @@
     "checkerEvidence": "Preuves",
     "checkerMechanism": "Fonctionnement",
     "explainerTitle": "Votre guide de confiance des plantes médicinales",
-    "explainerBody": "HerbAlly est une base de données gratuite de plantes médicinales avec plus de 3 150 plantes. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, trouver des plantes par symptôme et calculer une dose adulte — le tout sans compte. L'Herboriste Virtuel est là pour expliquer, pas pour remplacer la base de données ou votre pharmacien.",
+    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant des centaines de fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et calculer une dose adulte lorsqu'une posologie sûre existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
     "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
     "popularTitle": "Plantes populaires",
     "herbLabel": "Plante",
@@ -295,7 +295,7 @@
       "q2": "Quelle est la différence entre la règle de Clark et la règle de Young ?",
       "a2": "Les deux sont des méthodes de référence. La règle de Clark ajuste selon le poids (poids en kg / 68 × dose adulte). La règle de Young ajuste selon l'âge (âge / (âge + 12) × dose adulte). HerbAlly affiche les deux pour comparaison et plafonne le résultat à la dose adulte de référence.",
       "q3": "Le calculateur de posologie est-il gratuit ?",
-      "a3": "Oui — gratuit, sans compte. Les doses de référence proviennent de notre base de plus de 3 150 plantes, avec des sources PubMed, OMS et NCCIH."
+      "a3": "Oui — gratuit, sans compte. Les doses de référence proviennent de monographies cliniques publiées (EMA HMPC, Santé Canada, OMS, NCCIH et PubMed) pour les plantes disposant d'une dose orale adulte établie ; les plantes toxiques ou à haut risque n'affichent pas de calculateur."
     }
   },
   "pharmacist": {
@@ -456,11 +456,12 @@
     "pregUnknown": "On ne sait pas encore si {name} est sans danger pendant la grossesse. Consultez votre professionnel de santé avant usage.",
     "interactSome": "Oui, {name} présente {count, plural, one {# interaction médicamenteuse connue} other {# interactions médicamenteuses connues}}. {notes}",
     "interactFallbackNotes": "Consultez votre professionnel de santé ou pharmacien au sujet des interactions potentielles avec vos médicaments.",
-    "interactNone": "{name} ne présente pas d'interaction médicamenteuse majeure bien documentée dans notre base, mais informez toujours votre professionnel de santé de tous les compléments que vous prenez.",
+    "interactNone": "Aucune interaction médicamenteuse n'est actuellement répertoriée dans notre tableau curaté pour {name}. L'absence dans ce tableau ne signifie pas l'absence de risque — vérifiez toujours auprès d'un pharmacien ou médecin avant toute association.",
     "sideEffects": "Quels effets secondaires sont associés à {name} ?",
-    "sideEffectsFallback": "Les effets secondaires associés à {name} sont généralement légers aux doses recommandées. Utilisez notre calculateur de dose gratuit pour rester dans les plages fondées sur des preuves, et consultez votre professionnel de santé pour un avis personnalisé.",
+    "sideEffectsFallback": "Les effets indésirables rapportés varient selon la préparation et la dose. Consultez un professionnel de santé ou un pharmacien qualifié avant d'utiliser {name}.",
+    "sideEffectsDangerous": "{name} est une plante toxique ou potentiellement mortelle. Ne pas s'automédiquer ; contactez immédiatement un centre antipoison ou les urgences en cas d'exposition.",
     "doseQuestion": "Comment calculer une dose sûre pour {name} ?",
-    "doseAnswer": "Utilisez le calculateur de posologie adulte gratuit d'HerbAlly — saisissez la dose de référence adulte pour {name}, ainsi que l'âge et le poids, pour obtenir une estimation de référence selon les règles de Clark / Young pour un adulte de 18 ans ou plus. Ne dépassez jamais la dose adulte.",
+    "doseAnswer": "Utilisez l'outil de référence posologique adulte (18+) d'HerbAlly pour estimer une dose ajustée au poids à partir d'une dose adulte établie pour {name}. Ne dépassez jamais les maximums monographiques et confirmez avec un professionnel de santé.",
     "pregQuestion": "{name} est-il sûr pendant la grossesse ?",
     "interactQuestion": "{name} interagit-il avec les médicaments ?"
   },
@@ -992,7 +993,7 @@
     "freeLink": "faire un don",
     "team": {
       "title": "Fondateur et réviseur de référence",
-      "text": "HerbAlly est rédigé, organisé et révisé sur le plan éditorial par Yasser Bheekun, T.M. (OPTMQ · SCSLM) — technologiste médical diplômé en technologie d'analyses biomédicales (Collège Dawson) travaillant en laboratoire hospitalier au Centre universitaire de santé McGill à Montréal. Chaque fiche publiée indique ses sources primaires et fait l'objet d'une validation éditoriale. Cette révision ne remplace pas un avis médical clinique."
+      "text": "HerbAlly est fondé et administré par Yasser Bheekun, T.M. (OPTMQ · SCSLM) — technologiste médical diplômé en technologie d'analyses biomédicales (Collège Dawson) travaillant en laboratoire hospitalier au Centre universitaire de santé McGill à Montréal. Yasser révise et valide progressivement les fiches à partir des références cliniques et réglementaires primaires ; chaque fiche affiche un badge indiquant s'il s'agit d'une monographie vérifiée par un humain, d'un résumé IA ou d'une fiche à réviser. Cette validation éditoriale ne remplace pas un avis médical clinique."
     }
   },
   "faqContent": {
@@ -1015,11 +1016,11 @@
       },
       "herbCount": {
         "q": "Combien de plantes HerbAlly couvre-t-il ?",
-        "a": "HerbAlly couvre plus de 3 150 plantes médicinales avec des profils détaillés incluant les composés actifs, les utilisations traditionnelles, les applications modernes, les guides de posologie et les interactions médicamenteuses."
+        "a": "HerbAlly publie des fiches de référence pour des centaines de plantes médicinales, incluant les composés actifs, les usages traditionnels, les données cliniques, les interactions médicamenteuses et les repères posologiques pour adultes lorsqu'une dose sûre existe — de nouvelles fiches s'ajoutent à mesure que les sources sont vérifiées."
       },
       "reviewed": {
         "q": "Les informations sur HerbAlly sont-elles revues médicalement ?",
-        "a": "Chaque fiche de plante et page d'interaction publiée affiche ses sources primaires (Santé Canada, EMA HMPC, NIH NCCIH, LiverTox, PubMed) et a fait l'objet d'une validation éditoriale par Yasser Bheekun, T.M. (OPTMQ · SCSLM). Cette révision vérifie la cohérence avec les références scientifiques, sans remplacer l'avis d'un médecin ou d'un pharmacien."
+        "a": "Chaque fiche publiée affiche ses sources primaires (Santé Canada, EMA HMPC, NIH NCCIH, LiverTox, PubMed) ainsi qu'un badge de statut de révision. Les fiches sont progressivement relues et validées sur le plan éditorial par Yasser Bheekun, T.M. (OPTMQ · SCSLM) ; les résumés IA ou fiches modifiées non encore vérifiés par un humain sont clairement indiqués comme tels. Cette révision éditoriale vérifie la cohérence avec les sources sans remplacer l'avis d'un médecin ou d'un pharmacien."
       },
       "trustAI": {
         "q": "Puis-je faire confiance à l'Herboriste Virtuel IA ?",
@@ -1081,7 +1082,7 @@
       },
       "update": {
         "q": "À quelle fréquence les informations sont-elles mises à jour ?",
-        "a": "Les profils de plantes sont examinés régulièrement par notre équipe éditoriale. Chaque page de plante affiche une date de dernière révision et les références du réviseur. Nous mettons à jour les données d'interaction au fur et à mesure que de nouvelles recherches sont publiées."
+        "a": "Les fiches évoluent au fil des publications scientifiques et des monographies réglementaires. Seules les fiches ayant fait l'objet d'une vérification humaine complète affichent un badge « Révisée », le nom du réviseur et une date de « Dernière révision » ; les fiches automatisées ou modifiées affichent « Résumé par IA », « Non révisée par un humain » ou « À réviser de nouveau » jusqu'à relecture."
       }
     },
     "searchPlaceholder": "Rechercher dans la FAQ...",
@@ -1111,7 +1112,7 @@
     },
     "monographProcess": {
       "title": "Processus de Création des Monographies",
-      "content": "Chaque fiche publiée suit un processus éditorial traçable en cinq étapes :\n\n1. **Extraction des sources** : Intégration directe des monographies officielles (Santé Canada, EMA HMPC), synthèses publiques (NIH NCCIH, LiverTox) et citations PubMed.\n2. **Vérification taxonomique** : Recoupement des noms botaniques et parties de plantes via GBIF, ITIS et NCBI Taxonomy.\n3. **Cartographie des risques** : Liaison des interactions médicamenteuses, cotes hépatiques et précautions de grossesse à leurs URL sources exactes.\n4. **Validation éditoriale nommée** : Relue et validée par rapport aux sources primaires par Yasser Bheekun, T.M. (OPTMQ · SCSLM) — vérification éditoriale et biomédicale, distincte d'un avis médical clinique.\n5. **Publication et mises à jour** : Mise en ligne avec date de révision et liens directs vers les sources ; correction prioritaire de tout signalement de sécurité."
+      "content": "Chaque fiche publiée suit un processus traçable en cinq étapes avec étiquetage explicite du statut de révision :\n\n1. **Extraction des sources** : Intégration directe des monographies officielles (Santé Canada, EMA HMPC), synthèses publiques (NIH NCCIH, LiverTox) et citations PubMed.\n2. **Vérification taxonomique** : Recoupement des noms botaniques et parties de plantes via GBIF, ITIS et NCBI Taxonomy pour la nomenclature uniquement (jamais pour la posologie ni la sécurité clinique).\n3. **Cartographie des risques** : Liaison des interactions médicamenteuses, cotes hépatiques et précautions de grossesse aux sources cliniques et réglementaires, avec désactivation du calculateur sur les plantes toxiques ou dangereuses.\n4. **Révision éditoriale progressive** : Vérification progressive par rapport aux sources primaires par Yasser Bheekun, T.M. (OPTMQ · SCSLM) — contrôle éditorial des preuves et de la sécurité, distinct d'un avis médical clinique.\n5. **Publication transparente et corrections** : Affichage clair du statut (« Révisée », « Résumé par IA », « Non révisée par un humain » ou « À réviser de nouveau »). Seules les monographies vérifiées par un humain indiquent une date de dernière révision ; les correctifs de sécurité sont prioritaires."
     },
     "transparency": {
       "title": "Transparence & Limitations",
@@ -1280,6 +1281,8 @@
   "safety": {
     "noInteractionsTitle": "Aucune interaction répertoriée",
     "noInteractionsMsg": "Notre base de données ne répertorie aucune interaction médicamenteuse cliniquement significative pour cette plante. L'absence de données ne prouve pas l'innocuité — consultez toujours votre professionnel de santé avant de combiner des plantes avec des médicaments.",
+    "dangerousNoInteractionsTitle": "Plante à haut risque — ne pas associer aux médicaments",
+    "dangerousNoInteractionsMsg": "Aucune interaction médicamenteuse structurée n'est répertoriée dans notre tableau pour cette plante toxique ou à haut risque, mais une toxicité systémique grave ou des interactions restent possibles. Ne pas utiliser ni associer à un médicament sans suivi médical direct.",
     "interactionCountTitle": "{count} interaction médicamenteuse connue — Certaines peuvent être graves",
     "interactionCountTitlePlural": "{count} interactions médicamenteuses connues — Certaines peuvent être graves",
     "interactionMessage": "Cette plante peut interagir avec les médicaments que vous prenez. Consultez le tableau des interactions ci-dessous et parlez-en à votre professionnel de santé avant l'utilisation.",
@@ -1317,6 +1320,9 @@
     "interactions": "Interactions médicamenteuses",
     "interactionCount": "{count, plural, one {# interaction connue} other {# interactions connues}}",
     "interactionCountNone": "Aucune interaction répertoriée dans notre base",
+    "interactionDangerousNone": "Tableau d'interactions incomplet — plante à haut risque (avis médical requis)",
+    "toxicPlantBadge": "Plante toxique / à haut risque",
+    "toxicBadgeShort": "Haut risque / toxique",
     "mostSerious": "La plus grave : {drug} — {severity}",
     "seeList": "Voir la liste complète",
     "avoidIf": "Déconseillé dans ces cas",
@@ -1335,6 +1341,7 @@
     "evidence": "Niveau de preuve",
     "review": "Statut de révision",
     "verifiedDesc": "Une personne a vérifié cette fiche à partir d'une source primaire.",
+    "needsReReviewDesc": "Déjà révisée auparavant, puis mise à jour ; considérez-la comme non révisée jusqu'à relecture.",
     "aiSummarizedDesc": "Une IA a résumé les sources citées ; aucune personne ne l'a encore révisée.",
     "notHumanReviewedDesc": "Cite une source, mais personne n'a vérifié cette fiche à partir de celle-ci.",
     "unverifiedDesc": "Rédigé par IA et non vérifié auprès de sources primaires."
@@ -1350,7 +1357,7 @@
   },
   "pubmedSheet": {
     "compiledTitle": "Fiche d'information compilée à partir de PubMed",
-    "compiledBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) avec l'assistance d'une IA. Chaque affirmation factuelle est citée par un article PubMed réel (voir la liste des sources). Elle n'a pas encore été révisée par un humain — confirmez auprès d'un professionnel de santé avant utilisation.",
+    "compiledBody": "Cette fiche synthétise des résumés PubMed (NIH) à l'aide d'une IA. Elle n'a pas encore été révisée par un humain — vérifiez les affirmations auprès des articles PubMed listés et consultez un professionnel de santé avant utilisation.",
     "reviewedTitle": "Fiche d'information révisée",
     "reviewedBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) et a été révisée par un humain. Chaque affirmation est citée par un article PubMed réel (voir la liste des sources).",
     "languageNote": "Cette fiche compilée est en anglais parce que les études PubMed qu'elle cite sont en anglais ; l'interface autour reste en français.",
@@ -1659,7 +1666,7 @@
     "virtualHerbalist": "Herboriste Virtuel",
     "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions et la posologie. Réponses sourcées OMS, NCCIH et PubMed, gratuites.",
     "doseCalculator": "Calculateur de Posologie : Doses de Référence pour Adultes",
-    "doseCalculatorDesc": "Calculateur de posologie adulte gratuit (18 ans et plus) selon le poids et l'âge pour 3 150+ plantes médicinales, sans compte.",
+    "doseCalculatorDesc": "Calculateur gratuit de posologie adulte (18 ans et plus) selon le poids et l'âge : formules de Clark, Young et surface corporelle pour les plantes disposant d'une dose de référence établie.",
     "herbsBySymptom": "Plantes par Symptôme",
     "herbsBySymptomDesc": "Trouvez les plantes adaptées à vos symptômes avec niveaux de preuve et sources : anxiété, sommeil, inflammation, digestion et plus encore.",
     "privacyPolicy": "Politique de Confidentialité",

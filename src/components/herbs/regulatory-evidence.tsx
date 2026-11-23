@@ -74,17 +74,95 @@ const COPY = {
 const PEDIATRIC_DOSE_PATTERN =
   /\b(infant|infants|child|children|adolescent|adolescents|pediatric|paediatric|bébé|bébés|enfant|enfants|nourrisson|nourrissons)\b/i;
 
+const GARBAGE_DOSE_PATTERN =
+  /\b(Quantity Unit TBA|Time Unit TBA|Sub Pop to be created|TBA)\b/i;
+
+const HOMEOPATHIC_UNIT_PATTERN =
+  /\b(globule|granule|pellet|tube|homeopath|hom[eé]opath|dilution)\b/i;
+
+const ZERO_ONLY_DOSE_PATTERN = /^\s*0(?:\.0+)?\s+[a-zA-Z]/;
+
 function isPediatricOnlyOrTaggedDose(d: {
+  text?: string | null;
   population?: string | null;
   age_minimum?: number | null;
 }): boolean {
   const pop = d.population ?? "";
-  if (PEDIATRIC_DOSE_PATTERN.test(pop)) return true;
+  const txt = d.text ?? "";
+  if (PEDIATRIC_DOSE_PATTERN.test(pop) || PEDIATRIC_DOSE_PATTERN.test(txt)) {
+    return true;
+  }
   if (
     typeof d.age_minimum === "number" &&
     d.age_minimum > 0 &&
     d.age_minimum < 18
   ) {
+    return true;
+  }
+  return false;
+}
+
+export function isGarbageOrHomeopathicDose(
+  d: { text?: string | null; population?: string | null },
+  isHomeopathic: boolean
+): boolean {
+  const txt = (d.text ?? "").trim();
+  const pop = (d.population ?? "").trim();
+  if (!txt) return true;
+  if (GARBAGE_DOSE_PATTERN.test(txt) || GARBAGE_DOSE_PATTERN.test(pop)) {
+    return true;
+  }
+  if (ZERO_ONLY_DOSE_PATTERN.test(txt)) {
+    return true;
+  }
+  if (isHomeopathic && HOMEOPATHIC_UNIT_PATTERN.test(txt)) {
+    return true;
+  }
+  return false;
+}
+
+export function formatDoseText(raw: string, locale: "en" | "fr"): string {
+  const cleaned = cleanQuotedText(raw);
+  return cleaned.replace(
+    /^0(?:\.0+)?\s*[-–]\s*(\d+(?:\.\d+)?)\s+/i,
+    locale === "fr" ? "jusqu'à $1 " : "up to $1 "
+  );
+}
+
+export function isCrossContaminatedRisk(slug: string, risk: string): boolean {
+  const r = risk.toLowerCase();
+  if (
+    !/green-tea|camellia-sinensis|thea-sinensis/i.test(slug) &&
+    (r.includes("green tea extract") ||
+      (r.includes("liver injury") &&
+        r.includes("dark urine") &&
+        r.includes("jaundice") &&
+        !/black-cohosh|kava|chaparral|gobernadora|fo-ti|chelidonium|germander|comfrey|senecio/i.test(
+          slug
+        )))
+  ) {
+    return true;
+  }
+  if (
+    !/psyllium|plantago/i.test(slug) &&
+    (r.includes("psyllium") ||
+      r.includes("choking if swallowed without sufficient water"))
+  ) {
+    return true;
+  }
+  if (
+    !/bee|propolis|royal-jelly|apitherapy/i.test(slug) &&
+    /\b(bee venom|propolis|royal jelly|allergic to bees|vaccine)\b/i.test(r)
+  ) {
+    return true;
+  }
+  if (
+    !/nicotin|tobacco|lobelia/i.test(slug) &&
+    /\b(nicotine replacement|stop smoking|quit smoking)\b/i.test(r)
+  ) {
+    return true;
+  }
+  if (r.includes("enough drug in this package to seriously harm a child")) {
     return true;
   }
   return false;
@@ -149,13 +227,18 @@ export function RegulatoryEvidenceSection({
     );
   }
 
-  const adultDoses = (evidence.doses ?? []).filter(
-    (d) => !isPediatricOnlyOrTaggedDose(d)
-  );
   const isHomeopathic =
     /\b(homeopath|hom[eé]opath|globule|granule|pellet|organotherapy|dilution)\b/i.test(
       JSON.stringify({ p: evidence.purposes, d: evidence.doses })
     );
+  const adultDoses = (evidence.doses ?? []).filter(
+    (d) =>
+      !isPediatricOnlyOrTaggedDose(d) &&
+      !isGarbageOrHomeopathicDose(d, isHomeopathic)
+  );
+  const filteredRisks = (evidence.risks ?? []).filter(
+    (r) => !isCrossContaminatedRisk(evidence.herb_slug, r)
+  );
 
   return (
     <section
@@ -213,7 +296,7 @@ export function RegulatoryEvidenceSection({
                       key={`${d.text}-${d.population ?? ""}`}
                       className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
                     >
-                      {cleanQuotedText(d.text)}
+                      {formatDoseText(d.text, locale)}
                       {d.population ? ` · ${d.population}` : ""}
                       {typeof d.age_minimum === "number" && d.age_minimum >= 18
                         ? ` · ${d.age_minimum}+`
@@ -224,13 +307,13 @@ export function RegulatoryEvidenceSection({
               </div>
             )}
 
-            {evidence.risks?.length > 0 && (
+            {filteredRisks.length > 0 && (
               <div className="mt-4">
                 <h3 className="text-sm font-semibold text-foreground">
                   {c.risks}
                 </h3>
                 <ul className="mt-2 space-y-1.5">
-                  {evidence.risks.slice(0, 5).map((r) => (
+                  {filteredRisks.slice(0, 5).map((r) => (
                     <li
                       key={r}
                       className="border-l-2 border-amber-500/40 pl-3 text-sm leading-relaxed text-muted-foreground"

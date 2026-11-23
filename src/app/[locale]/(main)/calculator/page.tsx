@@ -4,7 +4,10 @@ import { FAQSchema } from "@/components/seo/faq-schema";
 import { siteUrl } from "@/lib/seo/site-url";
 import { DoseCalculatorForm } from "@/components/calculator/dose-calculator-form";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
-import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
+import {
+  canShowDoseCalculator,
+  isDangerousHerb,
+} from "@/lib/data/dangerous-herbs";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
@@ -65,6 +68,7 @@ export default async function CalculatorPage({
   const herbSlug = params.herb;
   const blockedDangerousSlug =
     herbSlug && isDangerousHerb(herbSlug) ? herbSlug : null;
+  let nonDosableHerbName: string | null = null;
 
   let prefill: {
     herbName: string;
@@ -84,30 +88,34 @@ export default async function CalculatorPage({
     const result = await getHerbBySlug(herbSlug);
     if (result.success && result.data) {
       const herb = result.data;
-      // Only surface a reference adult dose when the monograph has been
-      // human-reviewed against a primary source (manual / primary_source).
-      // AI-generated dosages are unverified — prefilling them would present
-      // an authoritative-looking number from unchecked data, which is
-      // especially dangerous feeding a dose calculator.
-      const verified = isVerified(
-        parseProvenance(herb.provenance as Record<string, unknown> | null)
-      );
-      const parsed = parseDosage(herb.dosage_adult);
-      // Only prefill a single, verified reference dose. A range is never
-      // collapsed to one number here; the form offers explicit low/middle/
-      // high picks from the range instead. Unverified herbs get no prefill.
-      prefill = {
-        herbName: herb.name,
-        adultDose: verified && parsed.dose ? String(parsed.dose) : "",
-        doseUnit: parsed.unit,
-        dosageAdultRaw: herb.dosage_adult,
-        dosageRange:
-          verified && parsed.low !== null && parsed.high !== null
-            ? { low: parsed.low, high: parsed.high, unit: parsed.unit }
-            : null,
-        dosageForms: herb.dosage_forms || [],
-        verified,
-      };
+      if (!canShowDoseCalculator(herb.slug, herb.dosage_adult)) {
+        nonDosableHerbName = herb.name;
+      } else {
+        // Only surface a reference adult dose when the monograph has been
+        // human-reviewed against a primary source (manual / primary_source).
+        // AI-generated dosages are unverified — prefilling them would present
+        // an authoritative-looking number from unchecked data, which is
+        // especially dangerous feeding a dose calculator.
+        const verified = isVerified(
+          parseProvenance(herb.provenance as Record<string, unknown> | null)
+        );
+        const parsed = parseDosage(herb.dosage_adult);
+        // Only prefill a single, verified reference dose. A range is never
+        // collapsed to one number here; the form offers explicit low/middle/
+        // high picks from the range instead. Unverified herbs get no prefill.
+        prefill = {
+          herbName: herb.name,
+          adultDose: verified && parsed.dose ? String(parsed.dose) : "",
+          doseUnit: parsed.unit,
+          dosageAdultRaw: herb.dosage_adult,
+          dosageRange:
+            verified && parsed.low !== null && parsed.high !== null
+              ? { low: parsed.low, high: parsed.high, unit: parsed.unit }
+              : null,
+          dosageForms: herb.dosage_forms || [],
+          verified,
+        };
+      }
     }
   }
 
@@ -152,6 +160,12 @@ export default async function CalculatorPage({
               ? "HerbAlly ne calcule pas de posologie pour les plantes toxiques ou potentiellement mortelles. N'utilisez pas cette plante en automédication et consultez un centre antipoison ou un médecin en cas d'exposition."
               : "HerbAlly does not calculate doses for toxic or potentially lethal plants. Do not self-administer preparations of this plant; contact Poison Control or a licensed clinician if exposure occurs."}
           </div>
+        </div>
+      ) : nonDosableHerbName ? (
+        <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-relaxed text-amber-950 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
+          {locale === "fr"
+            ? `HerbAlly ne calcule pas de posologie ajustée au poids pour ${nonDosableHerbName} : cette entrée correspond à un usage strictement externe, à une préparation homéopathique, à une plante à marge thérapeutique étroite, ou ne dispose pas d'une dose adulte quantitative vérifiée.`
+            : `HerbAlly does not compute weight-scaled doses for ${nonDosableHerbName}: this entry is topical-only, homeopathic, narrow-margin, or lacks an established quantitative oral adult reference dose. Consult a licensed pharmacist or clinician.`}
         </div>
       ) : (
         <DoseCalculatorForm prefill={prefill} />

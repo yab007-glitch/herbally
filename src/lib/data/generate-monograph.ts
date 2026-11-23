@@ -174,68 +174,10 @@ function buildClaims(
 }
 
 function inferEvidenceLevel(
-  use: string,
+  _use: string,
   defaultEv: "A" | "B" | "C" | "D" | "trad"
 ): "A" | "B" | "C" | "D" | "trad" {
-  const lower = use.toLowerCase();
-  const highEvidenceTerms = [
-    "osteoporosis",
-    "osteopenia",
-    "menopause",
-    "hot flash",
-    "cardiovascular",
-    "hypertension",
-    "heart failure",
-    "hyperlipidemia",
-    "diabetes",
-    "type 2 diabetes",
-    "metabolic syndrome",
-    "depression",
-    "anxiety",
-    "insomnia",
-    "cognitive",
-    "osteoarthritis",
-    "rheumatoid arthritis",
-    "inflammatory bowel",
-    "migraine",
-    "migraines",
-    "motion sickness",
-    "nausea",
-    "benign prostatic hyperplasia",
-    "bph",
-    "uti",
-    "urinary tract infection",
-    "common cold",
-    "upper respiratory",
-  ];
-
-  const mediumEvidenceTerms = [
-    "digestive",
-    "constipation",
-    "irritable bowel",
-    "ibs",
-    "premenstrual",
-    "pms",
-    "dysmenorrhea",
-    "menstrual cramps",
-    "eczema",
-    "acne",
-    "skin",
-    "wound healing",
-    "stress",
-    "fatigue",
-    "adaptogen",
-    "immune support",
-    "liver",
-    "hepatoprotective",
-  ];
-
-  if (highEvidenceTerms.some((t) => lower.includes(t)))
-    return defaultEv === "A" || defaultEv === "B" ? defaultEv : "B";
-  if (mediumEvidenceTerms.some((t) => lower.includes(t)))
-    return defaultEv === "A" || defaultEv === "B" || defaultEv === "C"
-      ? defaultEv
-      : "C";
+  // Never upgrade a "trad" or "D" herb to B/C based solely on condition keywords.
   return defaultEv;
 }
 
@@ -502,24 +444,5 @@ function buildKeyCitations(
       year: c.year,
     }));
 
-  if (mapped.length >= 2) {
-    return mapped.slice(0, 6);
-  }
-
-  const standardRefs: Monograph["keyCitations"] = [
-    {
-      source: "WHO",
-      title: "WHO Monographs on Selected Medicinal Plants",
-      url: "https://www.who.int/publications/i/item/9241545378",
-      year: 2009,
-    },
-    {
-      source: "NCCIH",
-      title: "Herbs at a Glance",
-      url: "https://www.nccih.nih.gov/health/herbsataglance.htm",
-      year: 2024,
-    },
-  ];
-
-  return [...mapped, ...standardRefs].slice(0, 6);
+  return mapped.slice(0, 6);
 }

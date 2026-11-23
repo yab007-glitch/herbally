@@ -11,6 +11,7 @@ import { isBucketCategory } from "@/lib/herbs/category";
 import { EvidenceGradeBadge } from "@/components/herbs/evidence-grade";
 import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
+import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 import {
   addToGarden,
   removeFromGarden,
@@ -79,11 +80,19 @@ export function HerbCard({ herb, className }: HerbCardProps) {
   // cards showing the same "Not Common / Pregnancy: Unknown / Nursing:
   // Unknown". A card now shows a safety line only when there is a verdict to
   // show, and the one herb that differs is the one the eye lands on.
+  const dangerous = isDangerousHerb(herb.slug);
   const verified = isVerified(parseProvenance(herb.provenance ?? null));
   const safety = (
     label: string,
     value: boolean | null
   ): { text: string; tone: string; Icon: typeof ShieldCheck } | null => {
+    if (dangerous) {
+      return {
+        text: `${label}: ${t("herbHero.notSafe")}`,
+        tone: "text-destructive",
+        Icon: ShieldX,
+      };
+    }
     if (!verified || value === null) return null;
     return value
       ? {
@@ -183,8 +192,14 @@ export function HerbCard({ herb, className }: HerbCardProps) {
                       {categoryName}
                     </Badge>
                   )}
-                  {evidenceLevel && (
-                    <EvidenceGradeBadge level={evidenceLevel} />
+                  {dangerous ? (
+                    <Badge variant="destructive" className="text-xs">
+                      {t("safetyGlance.toxicBadgeShort")}
+                    </Badge>
+                  ) : (
+                    evidenceLevel && (
+                      <EvidenceGradeBadge level={evidenceLevel} />
+                    )
                   )}
                   {herb.provenance !== undefined && (
                     <ProvenanceBadge

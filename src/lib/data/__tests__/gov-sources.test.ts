@@ -72,4 +72,21 @@ describe("gov-sources", () => {
       authoritative: true,
     });
   });
+
+  it("maps direct EMA, Health Canada, and NCCIH monographs so audited herbs never show a false no-monograph notice", () => {
+    for (const slug of [
+      "comfrey",
+      "wormwood",
+      "hops",
+      "senna-leaf",
+      "chaga",
+      "garcinia-gummi-gutta",
+      "kratom",
+    ]) {
+      expect(hasGovMonograph(slug, [])).toBe(true);
+    }
+
+    expect(hasGovMonograph("conium-maculatum-herb", [])).toBe(false);
+    expect(hasGovMonograph("oryza-sativa", [])).toBe(false);
+  });
 });

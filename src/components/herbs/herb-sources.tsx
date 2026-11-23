@@ -50,22 +50,67 @@ const TAXONOMIC_SOURCES = new Set([
   "Wikidata",
 ]);
 
-/** Split reference/regulatory/medical sources from pure botanical taxonomy registries. */
+const HISTORICAL_SOURCES = new Set([
+  "US Dispensatory 1918",
+  "US Dispensatory 1894",
+  "King's American Dispensatory 1898",
+  "Ellingwood's American Materia Medica 1919",
+  "Fernie's Herbal Simples 1897",
+]);
+
+const REFERENCE_ALIASES: Record<string, string> = {
+  EMA: "European Medicines Agency (HMPC)",
+  "EMA HMPC": "European Medicines Agency (HMPC)",
+  WHO: "WHO Monographs",
+  "Health Canada": "Health Canada NHP",
+};
+
+function isHistoricalBook(name: string): boolean {
+  if (HISTORICAL_SOURCES.has(name)) return true;
+  return (
+    /\b(1894|1897|1898|1918|1919)\b/.test(name) &&
+    /(Dispensatory|Materia Medica|Herbal Simples)/i.test(name)
+  );
+}
+
+/**
+ * Split modern regulatory/clinical references from pure botanical taxonomy
+ * registries and pre-modern historical archival texts, deduplicating aliases.
+ */
 export function partitionSources(sources: string[]): {
   referenceSources: string[];
   taxonomySources: string[];
+  historicalSources: string[];
 } {
-  const clean = [...new Set(sources.map((s) => s.trim()).filter(Boolean))];
+  const seenRef = new Set<string>();
+  const seenTax = new Set<string>();
+  const seenHist = new Set<string>();
   const referenceSources: string[] = [];
   const taxonomySources: string[] = [];
-  for (const name of clean) {
+  const historicalSources: string[] = [];
+
+  for (const raw of sources) {
+    const name = raw.trim();
+    if (!name) continue;
     if (TAXONOMIC_SOURCES.has(name)) {
-      taxonomySources.push(name);
+      if (!seenTax.has(name)) {
+        seenTax.add(name);
+        taxonomySources.push(name);
+      }
+    } else if (isHistoricalBook(name)) {
+      if (!seenHist.has(name)) {
+        seenHist.add(name);
+        historicalSources.push(name);
+      }
     } else {
-      referenceSources.push(name);
+      const canonical = REFERENCE_ALIASES[name] ?? name;
+      if (!seenRef.has(canonical)) {
+        seenRef.add(canonical);
+        referenceSources.push(canonical);
+      }
     }
   }
-  return { referenceSources, taxonomySources };
+  return { referenceSources, taxonomySources, historicalSources };
 }
 
 function SourcePillList({
@@ -111,6 +156,7 @@ export function HerbSources({
   checkedLabel = "Last checked",
   countLabel = (n: number) => `${n} independent sources`,
   taxonomyLabel = "Botanical identity confirmed via:",
+  historicalLabel = "Historical archival texts (pre-modern, not clinical evidence):",
   note = "Cross-checked against these sources; where nothing was found, the page says so rather than filling the gap.",
 }: {
   sources: string[];
@@ -119,10 +165,16 @@ export function HerbSources({
   checkedLabel?: string;
   countLabel?: (n: number) => string;
   taxonomyLabel?: string;
+  historicalLabel?: string;
   note?: string;
 }) {
-  const { referenceSources, taxonomySources } = partitionSources(sources);
-  if (referenceSources.length === 0 && taxonomySources.length === 0) {
+  const { referenceSources, taxonomySources, historicalSources } =
+    partitionSources(sources);
+  if (
+    referenceSources.length === 0 &&
+    taxonomySources.length === 0 &&
+    historicalSources.length === 0
+  ) {
     return null;
   }
 
@@ -168,6 +220,15 @@ export function HerbSources({
               {taxonomyLabel}
             </p>
             <SourcePillList names={taxonomySources} muted />
+          </div>
+        )}
+
+        {historicalSources.length > 0 && (
+          <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-800">
+            <p className="mb-1.5 text-xs font-medium text-neutral-500">
+              {historicalLabel}
+            </p>
+            <SourcePillList names={historicalSources} muted />
           </div>
         )}
 

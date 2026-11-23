@@ -17,6 +17,7 @@ interface HerbOverviewPanelProps {
   monograph: Monograph | null;
   lastReviewed?: string;
   reviewedBy?: string;
+  isClinicallyReviewed?: boolean;
   locale?: CopyLocale;
 }
 
@@ -25,6 +26,7 @@ export function HerbOverviewPanel({
   monograph,
   lastReviewed,
   reviewedBy,
+  isClinicallyReviewed = false,
   locale = "en",
 }: HerbOverviewPanelProps) {
   const t = useTranslations();
@@ -87,13 +89,13 @@ export function HerbOverviewPanel({
 
       {/* Meta info */}
       <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-        {lastReviewed && (
+        {isClinicallyReviewed && lastReviewed && (
           <span className="flex items-center gap-1.5">
             <Clock className="size-3.5" />
             {t("herbDetail.lastReviewedPrefix")} {lastReviewed}
           </span>
         )}
-        {reviewedBy && (
+        {isClinicallyReviewed && reviewedBy && (
           <span>
             {t("herbDetailContent.reviewedBy")} {reviewedBy}
           </span>

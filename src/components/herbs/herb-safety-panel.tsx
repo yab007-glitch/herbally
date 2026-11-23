@@ -20,6 +20,7 @@ import {
 import { useTranslations } from "next-intl";
 import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
+import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 
 interface HerbSafetyPanelProps {
   herb: {
@@ -51,14 +52,17 @@ export function HerbSafetyPanel({
   showInteractions = true,
 }: HerbSafetyPanelProps) {
   const t = useTranslations();
+  const dangerous = isDangerousHerb(herb.slug);
+  const effectivePregnancySafe = dangerous ? false : herb.pregnancy_safe;
+  const effectiveNursingSafe = dangerous ? false : herb.nursing_safe;
 
   return (
     <div className="space-y-6">
       {/* Pregnancy Alert */}
-      {(herb.pregnancy_safe !== true || herb.nursing_safe !== true) && (
+      {(effectivePregnancySafe !== true || effectiveNursingSafe !== true) && (
         <PregnancyAlert
-          pregnancySafe={herb.pregnancy_safe}
-          nursingSafe={herb.nursing_safe}
+          pregnancySafe={effectivePregnancySafe}
+          nursingSafe={effectiveNursingSafe}
           evidenceLevel="limited"
         />
       )}
@@ -67,6 +71,7 @@ export function HerbSafetyPanel({
       <InteractionAlert
         interactionCount={interactions.length}
         severityCounts={severityCounts}
+        isDangerous={dangerous}
       />
 
       {/* Safety Card */}
@@ -85,33 +90,33 @@ export function HerbSafetyPanel({
         <CardContent className="space-y-5">
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
-              {herb.pregnancy_safe === true ? (
+              {effectivePregnancySafe === true ? (
                 <ShieldCheck className="size-5 text-success" />
-              ) : herb.pregnancy_safe === false ? (
+              ) : effectivePregnancySafe === false ? (
                 <ShieldX className="size-5 text-destructive" />
               ) : (
                 <CircleHelp className="size-5 text-muted-foreground" />
               )}
               <span className="text-sm">
-                {herb.pregnancy_safe === true
+                {effectivePregnancySafe === true
                   ? t("herbDetail.safePregnancy")
-                  : herb.pregnancy_safe === false
+                  : effectivePregnancySafe === false
                     ? t("herbDetail.notSafePregnancy")
                     : t("safetyGlance.unknown")}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              {herb.nursing_safe === true ? (
+              {effectiveNursingSafe === true ? (
                 <ShieldCheck className="size-5 text-success" />
-              ) : herb.nursing_safe === false ? (
+              ) : effectiveNursingSafe === false ? (
                 <ShieldX className="size-5 text-destructive" />
               ) : (
                 <CircleHelp className="size-5 text-muted-foreground" />
               )}
               <span className="text-sm">
-                {herb.nursing_safe === true
+                {effectiveNursingSafe === true
                   ? t("herbDetail.safeNursing")
-                  : herb.nursing_safe === false
+                  : effectiveNursingSafe === false
                     ? t("herbDetail.notSafeNursing")
                     : t("safetyGlance.unknown")}
               </span>
@@ -162,14 +167,14 @@ export function HerbSafetyPanel({
           <InteractionExplainer />
           <InteractionsTable interactions={interactions} herbSlug={herb.slug} />
         </>
-      ) : (
+      ) : interactions.length > 0 ? (
         <a
           href="#interactions"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
           {t("herbDetail.knownInteractions", { count: interactions.length })} ↑
         </a>
-      )}
+      ) : null}
 
       {/* CTA */}
       <div className="flex justify-center">

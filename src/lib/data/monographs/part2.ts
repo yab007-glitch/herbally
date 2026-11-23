@@ -4,62 +4,80 @@ export const monographsPart2: Record<string, Monograph> = {
   "saw-palmetto": {
     slug: "saw-palmetto",
     summary:
-      "Saw Palmetto (Serenoa repens) is the leading herbal treatment for benign prostatic hyperplasia (BPH), with over 2 million men in the U.S. using it.",
+      "Saw Palmetto (Serenoa repens) is widely used for benign prostatic hyperplasia (BPH), but high-quality clinical trials and the 2023 Cochrane review conclude that saw palmetto provides little or no benefit over placebo for lower urinary tract symptoms.",
     mechanism:
-      "Liposterolic extract inhibits 5-alpha-reductase, reducing conversion of testosterone to DHT. Also has anti-inflammatory effects via COX and LOX inhibition. Unlike finasteride, doesn't significantly lower PSA.",
+      "Liposterolic extract shows in-vitro 5-alpha-reductase inhibition and anti-inflammatory effects, though clinically meaningful urinary symptom relief has not been confirmed in rigorous trials. Unlike finasteride, it does not lower serum PSA.",
     claims: [
       {
-        claim: "BPH symptoms",
-        evidence: "B",
-        note: "Mixed evidence; earlier positive trials",
+        claim: "BPH urinary symptoms",
+        evidence: "D",
+        note: "Cochrane 2023 & NCCIH: little or no improvement over placebo",
       },
       {
         claim: "Nocturia",
-        evidence: "C",
-        note: "May reduce nighttime urination",
+        evidence: "D",
+        note: "High-quality trials show no clinically meaningful difference vs placebo",
       },
       {
-        claim: "Sexual function",
+        claim: "PSA neutrality",
         evidence: "B",
-        note: "No negative sexual side effects vs finasteride",
+        note: "Does not mask PSA screening values unlike finasteride",
       },
     ],
     safetyNotes: [
-      "Does not significantly affect PSA levels",
-      "Generally well-tolerated",
-      "Typical dose: 160mg BID of liposterolic extract",
-      "4-6 weeks for symptomatic improvement",
+      "Does not replace medical evaluation of urinary symptoms or prostate enlargement",
+      "May increase bleeding risk; rare cases of acute pancreatitis and cholestatic liver injury reported",
+      "Typical trial dose: 160mg BID liposterolic extract",
+      "Discontinue at least 2 weeks before surgery if bleeding risk is a concern",
     ],
     drugInteractions: [
-      { drug: "Finasteride", severity: "mild", detail: "Avoid concurrent use" },
+      {
+        drug: "Finasteride",
+        severity: "mild",
+        detail: "Avoid redundant anti-androgen use",
+      },
+      {
+        drug: "Warfarin / Aspirin",
+        severity: "moderate",
+        detail: "Potential increased bleeding/bruising risk; monitor",
+      },
     ],
     pregnancyCategory: "unsafe",
     keyCitations: [
+      {
+        source: "Cochrane",
+        title: "Serenoa repens for benign prostatic enlargement (2023 update)",
+        year: 2023,
+      },
       {
         source: "N Engl J Med",
         title: "STEP trial: Saw palmetto for BPH",
         year: 2006,
       },
-      { source: "Cochrane", title: "Serenoa repens for BPH", year: 2012 },
+      {
+        source: "JAMA",
+        title: "CAMUS trial: High-dose saw palmetto vs placebo",
+        year: 2011,
+      },
     ],
   },
 
   cranberry: {
     slug: "cranberry",
     summary:
-      "Cranberry (Vaccinium macrocarpon) is the only herb with Level A evidence for urinary tract infection (UTI) prevention. Proanthocyanidins (PACs), particularly A-type dimers and trimers, prevent bacterial adhesion to uroepithelial cells. The minimum effective dose is 36mg PACs daily, which requires concentrated extracts (not juice). Evidence is strongest for recurrent UTIs in women; it's not effective for treatment of active UTIs. Cranberry also has antioxidant and anti-adhesion properties in other systems.",
+      "Cranberry (Vaccinium macrocarpon) has Level A evidence for preventing recurrent UTIs in healthy women, children, and susceptible adults following interventions, but the 2023 Cochrane review found insufficient or no clear benefit in pregnant women, elderly institutionalized adults, or neurogenic bladder. Cranberry does NOT treat active UTIs.",
     mechanism:
       "A-type proanthocyanidins (PACs) are the active constituents, distinct from B-type PACs in other berries. They inhibit P-fimbriae adhesion of uropathogenic E. coli (UPEC) to uroepithelial cells by binding to bacterial adhesins. This anti-adhesion effect is dose-dependent and requires minimum 36mg PACs daily. Cranberry also acidifies urine slightly and may have quorum-sensing inhibition. The effect is bacterial-specific and doesn't significantly alter vaginal or gut microbiome. Antioxidant effects come from flavonols, anthocyanins, and phenolic acids.",
     claims: [
       {
         claim: "UTI prevention (recurrent)",
         evidence: "A",
-        note: "Cochrane: reduces UTI recurrence by 30-35% in women",
+        note: "Cochrane 2023: reduces UTI recurrence in women with recurrent UTIs; no clear benefit proven in pregnancy or elderly/catheter cohorts",
       },
       {
         claim: "UTI treatment",
         evidence: "D",
-        note: "Not effective for active infection",
+        note: "Does NOT treat active UTIs — seek prompt antibiotic care",
       },
       {
         claim: "Bacterial anti-adhesion",
@@ -78,11 +96,11 @@ export const monographsPart2: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Requires minimum 36mg PACs daily for UTI prevention",
-      "Not for treatment of active UTIs—see physician",
-      "High oxalate content—caution with kidney stones",
-      "May increase bleeding risk with warfarin (rare)",
-      "Well-tolerated; some GI upset at high doses",
+      "Does NOT treat active UTIs — do not delay or replace prescribed antibiotics",
+      "Requires minimum 36mg PACs daily for recurrent-UTI prophylaxis",
+      "Concentrated cranberry extracts lack conclusive safety data in pregnancy (Cochrane 2023 found no clear UTI benefit in pregnant women)",
+      "High oxalate content — caution with kidney stones",
+      "Well-tolerated; GI upset at high doses",
     ],
     drugInteractions: [
       {
@@ -91,12 +109,18 @@ export const monographsPart2: Record<string, Monograph> = {
         detail: "Rare case reports of increased INR; monitor",
       },
       {
+        drug: "Tacrolimus",
+        severity: "moderate",
+        detail:
+          "Case reports suggest reduced tacrolimus blood levels; monitor closely",
+      },
+      {
         drug: "H2 blockers/PPIs",
         severity: "mild",
         detail: "May reduce PAC absorption",
       },
     ],
-    pregnancyCategory: "safe",
+    pregnancyCategory: "caution",
     keyCitations: [
       {
         source: "Cochrane",
@@ -121,7 +145,7 @@ export const monographsPart2: Record<string, Monograph> = {
   rhodiola: {
     slug: "rhodiola",
     summary:
-      "Rhodiola (Rhodiola rosea) is an adaptogen with over 2000 years of traditional use in Arctic regions. Standardized extracts (3% rosavins, 1% salidroside) demonstrate benefits for stress, fatigue, and mood. Level B evidence supports its use for physical and mental fatigue in stressful situations, with rapid onset (3-7 days). Unlike many adaptogens, it has stimulating properties and should be taken in the morning. The dual rosavin/salidroside ratio is critical for efficacy.",
+      "Rhodiola (Rhodiola rosea) is traditionally used in European herbal medicine for temporary stress and fatigue, though NCCIH notes available clinical trials remain low to moderate in methodological quality and mostly short-term (up to 12 weeks). EMA recommends 144–400 mg/day standardized extract.",
     mechanism:
       "Rhodiola contains rosavins (rosavin, rosin, rosarin—unique to R. rosea) and salidroside (rhodioloside). Rosavins predominate in the root; salidroside is more concentrated in the rhizome. The mechanism involves modulation of the hypothalamic-pituitary-adrenal (HPA) axis, reducing cortisol response to stress. It increases beta-endorphins and monoamines (serotonin, dopamine, norepinephrine). Rhodiola also enhances mitochondrial function and ATP production. MAO-A inhibition may contribute to mood effects. The adaptogenic effect is bidirectional—normalizing both high and low cortisol states.",
     claims: [
@@ -153,17 +177,24 @@ export const monographsPart2: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Stimulating—take in morning to avoid insomnia",
-      "Standardized to 3% rosavins, 1% salidroside",
-      "Typical dose: 200-400mg daily",
-      "Avoid in bipolar disorder (may trigger mania)",
-      "Generally well-tolerated; rare anxiety, insomnia",
+      "EMA posology: 144-400 mg/day; consult a doctor if symptoms persist beyond 2 weeks (NCCIH trial safety data ~6-12 weeks)",
+      "Stimulating — take in the morning to minimize insomnia",
+      "Avoid in bipolar disorder (may trigger hypomania/mania)",
+      "Avoid in pregnancy, breastfeeding, and children under 18 due to lack of data",
+      "Generally well tolerated; rare anxiety, dizziness, or insomnia",
     ],
     drugInteractions: [
       {
         drug: "Antidepressants (SSRIs/MAOIs)",
         severity: "moderate",
-        detail: "Theoretical serotonin syndrome risk",
+        detail:
+          "Possible serotonin syndrome or additive MAO inhibition — avoid or monitor closely",
+      },
+      {
+        drug: "Warfarin / CYP2C9 substrates",
+        severity: "moderate",
+        detail:
+          "May inhibit CYP2C9 or alter drug levels (e.g., warfarin, losartan); monitor INR",
       },
       {
         drug: "Stimulants",
@@ -201,24 +232,24 @@ export const monographsPart2: Record<string, Monograph> = {
   "green-tea": {
     slug: "green-tea",
     summary:
-      "Green Tea (Camellia sinensis) is one of the most studied beverages for health effects. Level A evidence supports cognitive benefits and cardiovascular risk reduction.",
+      "Green Tea (Camellia sinensis) beverage consumption is associated with cardiovascular and cognitive benefits in observational studies, though NCCIH notes definite clinical conclusions cannot yet be drawn from controlled human trials. Concentrated EGCG extracts require adults-only hepatotoxicity precautions.",
     mechanism:
       "EGCG inhibits COMT, modulates cell signaling pathways, and has antioxidant activity. Caffeine-theanine combination enhances alpha brain wave activity.",
     claims: [
       {
         claim: "Cognitive function",
-        evidence: "A",
-        note: "Improves attention and memory",
+        evidence: "B",
+        note: "NCCIH: suggestive alertness/attention benefits; definite conclusions cannot yet be reached",
       },
       {
         claim: "Cardiovascular risk",
-        evidence: "A",
-        note: "20-30% risk reduction with 2-3 cups daily",
+        evidence: "B",
+        note: "Observational associations with habitual tea drinking; limited interventional confirmation",
       },
       {
         claim: "Weight management",
-        evidence: "B",
-        note: "Modest effect on fat oxidation",
+        evidence: "C",
+        note: "Cochrane: modest, non-clinically significant weight effect",
       },
       {
         claim: "Type 2 diabetes",
@@ -227,20 +258,45 @@ export const monographsPart2: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "High-dose EGCG >800mg linked to rare hepatotoxicity",
-      "Caffeine content: ~25-35mg per cup",
-      "Add lemon to enhance catechin absorption",
+      "Concentrated extracts supplying at or above 800 mg EGCG/day are linked to rare severe hepatotoxicity (EFSA); Health Canada requires adults-only (18+) labeling",
+      "Stop use and consult a physician if symptoms of liver trouble develop (yellowing of skin/eyes, dark urine, stomach pain, unusual tiredness)",
+      "Do not take concentrated green tea extracts on an empty stomach",
+      "Brewed tea caffeine content: ~25-35 mg per cup",
     ],
     drugInteractions: [
       {
+        drug: "Atorvastatin",
+        severity: "moderate",
+        detail:
+          "High doses of green tea extracts may reduce blood levels of atorvastatin (NCCIH)",
+      },
+      {
+        drug: "Nadolol",
+        severity: "moderate",
+        detail:
+          "Significantly reduces plasma levels and blood-pressure effect of nadolol via OATP inhibition (NCCIH)",
+      },
+      {
+        drug: "Raloxifene",
+        severity: "moderate",
+        detail: "May reduce systemic bioavailability",
+      },
+      {
+        drug: "Bortezomib",
+        severity: "severe",
+        detail:
+          "EGCG directly binds and inactivates bortezomib chemotherapy — avoid concurrent green tea extracts",
+      },
+      {
         drug: "Warfarin",
         severity: "moderate",
-        detail: "High vitamin K content",
+        detail:
+          "High vitamin K in whole leaf/matcha or high-dose extracts may alter INR",
       },
       {
         drug: "Iron supplements",
         severity: "mild",
-        detail: "Reduces iron absorption",
+        detail: "Catechins reduce non-heme iron absorption",
       },
     ],
     pregnancyCategory: "caution",
@@ -293,11 +349,10 @@ export const monographsPart2: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Must be enteric-coated for IBS (otherwise causes heartburn)",
-      "Typical dose: 180-200mg ECPO, 2-3x daily before meals",
-      "Contraindicated with hiatal hernia/reflux (relaxes LES)",
-      "Avoid breaking/chewing enteric-coated capsules",
-      "Generally well-tolerated; heartburn if not enteric-coated",
+      "Must be enteric-coated for IBS (otherwise causes heartburn/reflux); swallow whole — NEVER crush or chew enteric capsules",
+      "EMA contraindicates peppermint oil under age 8 orally (and under age 2 in all forms due to fatal laryngospasm/apnea risk from menthol)",
+      "Monitor cumulative pulegone and menthofuran exposure in essential oil products (EMA limit)",
+      "Typical dose: 180-200mg ECPO, 2-3x daily before meals; contraindicated in severe GERD, gallstones, or bile-duct obstruction",
     ],
     drugInteractions: [
       {
@@ -381,11 +436,11 @@ export const monographsPart2: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Silexan (80mg oral) is the evidence-based preparation",
-      "Oral: generally well-tolerated; rare GI upset",
+      "Silexan (80mg oral) is the evidence-based preparation; do NOT ingest unapproved undiluted essential oils",
+      "EMA notes lavender oil is NOT recommended under age 12 or during pregnancy and breastfeeding",
+      "May impair ability to drive and operate machinery; potentiates CNS depressants",
+      "Rare pediatric gynecomastia reported with repeated topical lavender oil products in prepubertal children",
       "Topical: may cause contact dermatitis in sensitive individuals",
-      "Avoid oral ingestion of essential oil (not Silexan)",
-      "Sedating—may enhance effects of other CNS depressants",
     ],
     drugInteractions: [
       {
@@ -434,8 +489,8 @@ export const monographsPart2: Record<string, Monograph> = {
     claims: [
       {
         claim: "Influenza symptom reduction",
-        evidence: "A",
-        note: "3-4 day reduction when started early",
+        evidence: "B",
+        note: "NCCIH notes preliminary evidence from small trials; must not replace antiviral drugs or influenza vaccination",
       },
       {
         claim: "Common cold duration",
@@ -564,14 +619,14 @@ export const monographsPart2: Record<string, Monograph> = {
   hawthorn: {
     slug: "hawthorn",
     summary:
-      "Hawthorn (Crataegus spp., primarily C. laevigata and C. monogyna) has Level A evidence for chronic heart failure (NYHA I-II). Standardized leaf/flower extracts (WS 1442, LI 132) improve cardiac function, exercise tolerance, and reduce symptoms. The mechanism involves multiple cardiac effects: mild positive inotropic, coronary vasodilation, and antioxidant protection. Hawthorn is the most studied botanical for cardiovascular disease in Europe, with over 7,000 patients in clinical trials.",
+      "Hawthorn (Crataegus spp., primarily leaf with flower Crataegi folium cum flore such as WS 1442 and LI 132 — distinct from berry preparations) has mixed clinical evidence as an adjunct in mild heart failure (NYHA I-II): while older symptom trials showed exercise-tolerance gains, the large SPICE trial showed no reduction in mortality or cardiac morbidity, and NCCIH characterizes the evidence as conflicting.",
     mechanism:
       "Flavonoids (hyperoside, vitexin, rutin), oligomeric procyanidins (OPC), and triterpenes are the primary actives. Multiple cardiac mechanisms: (1) Inhibition of phosphodiesterase-3 (PDE3), increasing cAMP and calcium availability (mild positive inotropy); (2) Coronary vasodilation via NO release; (3) ACE inhibition, reducing afterload; (4) Antioxidant protection of myocardial cells; (5) Antiarrhythmic effects. Unlike digoxin, hawthorn's effects are modest and not associated with toxicity. The multi-component nature creates synergistic cardiac benefits.",
     claims: [
       {
         claim: "Chronic heart failure (NYHA I-II)",
-        evidence: "A",
-        note: "Improves symptoms, exercise tolerance, quality of life",
+        evidence: "B",
+        note: "Conflicting clinical evidence: some symptom/exercise gains, but SPICE trial showed no mortality/morbidity benefit; never replace conventional therapy",
       },
       {
         claim: "Angina pectoris",
@@ -591,11 +646,11 @@ export const monographsPart2: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Do NOT use in NYHA III-IV or without physician supervision",
-      "Typical dose: 900mg daily of standardized extract (WS 1442)",
-      "Requires 4-8 weeks for maximal benefit",
-      "Monitor BP and heart rate when initiating",
-      "Generally well-tolerated; rare GI upset, dizziness",
+      "Do NOT replace conventional heart-failure therapy — use only under physician supervision; never use in NYHA III-IV",
+      "WS 1442 is leaf with flower (Crataegi folium cum flore), not berry; clinical trial safety data extends up to ~16 weeks",
+      "Verify product authenticity: 'Mexican hawthorn' (tejocote root) supplements have been adulterated with lethal yellow oleander (Cascabela thevetia)",
+      "Monitor blood pressure and heart rate when initiating alongside cardiac drugs",
+      "Generally well-tolerated short term; rare GI upset, dizziness, palpitations",
     ],
     drugInteractions: [
       {
@@ -679,32 +734,33 @@ export const monographsPart2: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Leaf: high potassium (may interact with potassium-sparing diuretics)",
-      "Root: contains inulin (FODMAP—may cause GI symptoms)",
-      "Avoid with bile duct obstruction, gallbladder disease",
-      "Generally regarded as safe (GRAS) as food",
-      "Leaf as tea: 4-10g dried leaf daily",
+      "Root and leaf have distinct uses: EMA lists leaf for minor urinary complaints/flushing and root/herb for mild digestive/appetite loss",
+      "Contraindicated in conditions requiring reduced fluid intake (e.g., severe heart failure or renal impairment) and bile duct obstruction/gallstones",
+      "Leaf is high in potassium (hyperkalemia caution in renal impairment or K+-sparing diuretics)",
+      "MSK About Herbs notes potential estrogenic activity (caution with hormone-sensitive cancers) and possible CYP enzyme inhibition",
+      "Asteraceae allergy risk; root contains inulin (FODMAP — may trigger GI bloating)",
     ],
     drugInteractions: [
       {
         drug: "Diuretics",
         severity: "moderate",
-        detail: "Additive diuretic effects",
+        detail: "Additive diuretic effects / electrolyte imbalance",
       },
       {
         drug: "Lithium",
         severity: "moderate",
-        detail: "May reduce lithium clearance",
+        detail: "May alter renal lithium clearance; monitor serum lithium",
       },
       {
         drug: "Anticoagulants",
         severity: "mild",
-        detail: "High vitamin K in leaves",
+        detail: "High vitamin K in fresh leaves",
       },
       {
-        drug: "Quinolone antibiotics",
+        drug: "CYP substrates / Quinolone antibiotics",
         severity: "mild",
-        detail: "May reduce absorption",
+        detail:
+          "Theoretical absorption/CYP interaction suggested in preclinical/animal models only; not verified in human trials",
       },
     ],
     pregnancyCategory: "insufficient",
@@ -726,19 +782,19 @@ export const monographsPart2: Record<string, Monograph> = {
   ginkgo: {
     slug: "ginkgo",
     summary:
-      "Ginkgo (Ginkgo biloba) is the oldest living tree species with documented medicinal use spanning over 5,000 years. Standardized extracts containing 24% flavone glycosides and 6% terpene lactones are among the most studied botanicals for cognitive health. Clinical evidence supports modest benefits for age-related cognitive decline, while evidence for dementia and intermittent claudication shows mixed results. The flavonoids provide antioxidant protection, while ginkgolides antagonize platelet-activating factor (PAF), improving cerebral blood flow.",
+      "Ginkgo (Ginkgo biloba) standardized leaf extract (EGb761: 24% flavone glycosides, 6% terpene lactones) is widely studied for circulation and cognitive support, though major trials (such as NCCIH's GEM trial) found no definitive benefit for preventing cognitive decline or dementia.",
     mechanism:
       "Ginkgo biloba extract (GBE) contains two primary active fractions: flavonoid glycosides (quercetin, kaempferol, isorhamnetin) and terpene lactones (ginkgolides A-C, bilobalide). Ginkgolides are potent PAF antagonists, reducing platelet aggregation and improving microcirculation. Bilobalide protects mitochondrial function and reduces oxidative stress. Flavonoids scavenge free radicals and chelate transition metals. GBE also modulates neurotransmitter systems (acetylcholine, norepinephrine, serotonin) and increases brain-derived neurotrophic factor (BDNF) expression.",
     claims: [
       {
         claim: "Age-related cognitive decline",
-        evidence: "B",
-        note: "Modest effect; standardized EGb761 extract shows 2.5-point improvement on ADAS-Cog",
+        evidence: "C",
+        note: "NCCIH notes definitive conclusions cannot be drawn; GEM and Cochrane analyses found inconsistent or null dementia-prevention outcomes",
       },
       {
         claim: "Dementia (Alzheimer's/vascular)",
-        evidence: "B",
-        note: "Systematic reviews show inconsistent results; may stabilize symptoms",
+        evidence: "C",
+        note: "Large controlled trials (GEM) failed to show dementia prevention",
       },
       {
         claim: "Intermittent claudication",
@@ -748,12 +804,12 @@ export const monographsPart2: Record<string, Monograph> = {
       {
         claim: "Tinnitus",
         evidence: "C",
-        note: "Limited evidence; may help when associated with circulatory issues",
+        note: "Limited evidence; Cochrane found no convincing benefit for primary tinnitus",
       },
       {
         claim: "Macular degeneration",
         evidence: "C",
-        note: "Preliminary evidence for antioxidant effects",
+        note: "Preliminary evidence only",
       },
       {
         claim: "Antioxidant support",
@@ -763,21 +819,21 @@ export const monographsPart2: Record<string, Monograph> = {
       {
         claim: "Glaucoma (open-angle)",
         evidence: "C",
-        note: "May modestly improve ocular blood flow",
+        note: "Preliminary ocular blood-flow data",
       },
     ],
     safetyNotes: [
-      "Contraindicated with anticoagulants/antiplatelets due to bleeding risk",
-      "Discontinue 7 days before surgery",
-      "May increase seizure risk in susceptible individuals",
-      "Standardized extract: 120-240mg daily (EGb761 or LI1370)",
-      "Generally well-tolerated; most common side effect is mild GI upset",
+      "Do NOT consume raw or roasted ginkgo seeds — ginkgotoxin causes seizures and coma",
+      "Avoid with anticoagulants/antiplatelets due to hemorrhage risk; stop 7-14 days before surgery",
+      "May lower seizure threshold in susceptible individuals",
+      "Standardized leaf extract: 120-240mg daily under clinician guidance",
     ],
     drugInteractions: [
       {
         drug: "Warfarin/Coumadin",
-        severity: "moderate",
-        detail: "Increased bleeding risk; avoid or monitor INR closely",
+        severity: "severe",
+        detail:
+          "Major hemorrhage and INR risk; avoid concurrent use or monitor closely",
       },
       {
         drug: "Aspirin/NSAIDs",

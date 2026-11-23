@@ -95,6 +95,8 @@ export async function PubmedMonographSheet({
   const t = await getTranslations("pubmedSheet");
   const locale = await getLocale();
   const reviewed = status === "reviewed";
+  const effectiveArticleCount =
+    citations.length > 0 ? citations.length : articleCount;
 
   return (
     <article className="space-y-6">
@@ -125,7 +127,7 @@ export async function PubmedMonographSheet({
                 unfinished and says nothing about the evidence. The article
                 count is the part that matters. */}
             <p className="text-xs text-blue-700 dark:text-blue-300">
-              {t("compiledFrom", { count: articleCount })}
+              {t("compiledFrom", { count: effectiveArticleCount })}
             </p>
           </div>
         </div>
@@ -178,6 +180,13 @@ export async function PubmedMonographSheet({
             <FlaskConical className="size-4 text-primary" />
             {t("clinicalEvidence")}
           </h3>
+          {!reviewed && (
+            <p className="rounded-lg border border-amber-300/70 bg-amber-50/70 px-3 py-2 text-xs text-amber-900 dark:border-amber-700/70 dark:bg-amber-950/30 dark:text-amber-200">
+              {locale === "fr"
+                ? "Notes provisoires : dans les fiches générées par IA non révisées, les niveaux d'étude peuvent inclure des études précliniques ou synthèses narratives jusqu'à validation humaine."
+                : "Provisional grades: study grades in unreviewed AI-compiled drafts may reflect preclinical or review papers until human-reviewed."}
+            </p>
+          )}
           <div className="space-y-3">
             {content.clinicalEvidence.map((e, i) => (
               <div key={i} className="rounded-lg border bg-muted/30 p-3">

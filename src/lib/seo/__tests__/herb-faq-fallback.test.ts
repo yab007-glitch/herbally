@@ -36,4 +36,33 @@ describe("buildHerbFallbackFaqs", () => {
     expect(some[2].answer).toContain("interactSome");
     expect(none[2].answer).toContain("interactNone");
   });
+
+  it("omits dose calculator FAQ and forces unsafe pregnancy/side-effect warnings for dangerous herbs", () => {
+    const faqs = buildHerbFallbackFaqs(
+      {
+        ...base,
+        herbName: "Belladonna",
+        pregnancyCategory: "safe",
+        isDangerous: true,
+        showCalculator: false,
+      },
+      t
+    );
+    expect(faqs).toHaveLength(4);
+    expect(faqs[1].answer).toContain("pregUnsafe");
+    expect(faqs[3].answer).toContain("sideEffectsDangerous");
+    expect(faqs.some((f) => f.question.includes("doseQuestion"))).toBe(false);
+  });
+
+  it("omits doseQuestion when showCalculator is false even for non-dangerous herbs", () => {
+    const faqs = buildHerbFallbackFaqs(
+      {
+        ...base,
+        showCalculator: false,
+      },
+      t
+    );
+    expect(faqs).toHaveLength(4);
+    expect(faqs.some((f) => f.question.includes("doseQuestion"))).toBe(false);
+  });
 });

@@ -116,4 +116,30 @@ describe("HerbCard garden toggle", () => {
       screen.queryAllByRole("button", { name: "garden.save" })
     ).toHaveLength(0);
   });
+
+  it("renders toxicBadgeShort and forces notSafe pregnancy/nursing labels on dangerous herbs", () => {
+    render(
+      <HerbCard
+        herb={{
+          id: "belladonna-1",
+          name: "Belladonna",
+          scientific_name: "Atropa belladonna",
+          slug: "atropa-belladonna-herb",
+          description: "Toxic nightshade.",
+          pregnancy_safe: true,
+          nursing_safe: true,
+          evidence_level: "A",
+          provenance: { review_status: "human_reviewed", sources: ["PubMed"] },
+        }}
+      />
+    );
+
+    expect(screen.getByText("safetyGlance.toxicBadgeShort")).toBeDefined();
+    expect(
+      screen.getByText("herbBadges.pregnancy: herbHero.notSafe")
+    ).toBeDefined();
+    expect(
+      screen.getByText("herbBadges.nursing: herbHero.notSafe")
+    ).toBeDefined();
+  });
 });

@@ -21,7 +21,7 @@ const COPY = {
         body: [
           "HerbAlly is written, maintained, and editorially reviewed by Yasser Bheekun, a medical laboratory technologist certified with the OPTMQ (Ordre professionnel des technologistes médicaux du Québec) and the CSMLS (Canadian Society for Medical Laboratory Science). He holds a DEC in Biomedical Laboratory Technology and works in a hospital laboratory at the McGill University Health Centre in Montreal.",
           "That is the accountability line: one named person, with a health-science education, answerable for what this site publishes. It is not an anonymous content team or hidden board.",
-          "As reviewer of record, Yasser has read through and editorially validated the published herb library against primary regulatory and clinical monographs (Health Canada NHP, EMA HMPC, NIH NCCIH, NIH LiverTox, and PubMed). This editorial validation confirms source traceability and conservative safety framing — it is educational oversight, explicitly distinct from licensed physician clinical care.",
+          "As reviewer of record, Yasser progressively reviews and validates published herb profiles against primary regulatory and clinical monographs (Health Canada NHP, EMA HMPC, NIH NCCIH, NIH LiverTox, and PubMed). Each herb page carries a visible review badge showing whether it has been personally human-reviewed and signed off, flagged as needing re-review after edits, or compiled from cited sources awaiting personal review — educational oversight, explicitly distinct from licensed physician clinical care.",
         ],
       },
       {
@@ -34,9 +34,10 @@ const COPY = {
       {
         heading: "What the labels mean",
         body: [
-          "“Human-verified” (primary source) — the content was checked against a named primary source, and the source is listed on the page.",
+          "“Human-reviewed” — a named reviewer (with date) has personally read and signed off on the current entry against cited primary sources.",
+          "“Needs re-review” — the entry was updated after cross-checking or new evidence and is treated as unreviewed until signed off again.",
           "“AI-summarized” — drafted with AI assistance from published material and edited, but not independently checked against a primary source.",
-          "“Unverified” — not yet checked. Treat it as a starting point, not an answer.",
+          "“Not human-reviewed” / “Unverified” — no person has checked and signed off this page yet. Treat it carefully and verify against the listed primary sources.",
           "“Not clinically reviewed” — no licensed clinician has reviewed this page. This label is shown honestly wherever it applies; it is not a failure of the page, it is a limit you should know about.",
         ],
       },
@@ -78,7 +79,7 @@ const COPY = {
         body: [
           "HerbAlly est rédigé, maintenu et révisé sur le plan éditorial par Yasser Bheekun, technologiste médical certifié par l'OPTMQ (Ordre professionnel des technologistes médicaux du Québec) et la SCSLM (Société canadienne de science de laboratoire médical). Il détient un DEC en technologie d'analyses biomédicales et travaille dans un laboratoire hospitalier du Centre universitaire de santé McGill, à Montréal.",
           "C'est la ligne de responsabilité : une personne nommée, formée en sciences de la santé, répond de ce que ce site publie. Ce n'est ni une équipe de contenu anonyme ni un comité éditorial caché.",
-          "À titre de réviseur de référence, Yasser a relu et validé sur le plan éditorial la bibliothèque publiée par rapport aux monographies réglementaires et cliniques primaires (Santé Canada, EMA HMPC, NIH NCCIH, NIH LiverTox et PubMed). Cette validation éditoriale garantit la traçabilité des sources et la prudence des énoncés — il s'agit d'une révision éditoriale, distincte d'un acte médical clinique.",
+          "À titre de réviseur de référence, Yasser relit et valide progressivement les fiches publiées par rapport aux monographies réglementaires et cliniques primaires (Santé Canada, EMA HMPC, NIH NCCIH, NIH LiverTox et PubMed). Chaque fiche affiche un badge explicite indiquant si elle a été personnellement validée par un humain, marquée « À réviser de nouveau » après mise à jour, ou compilée en attente de validation — une révision éditoriale, distincte d'un acte médical clinique.",
         ],
       },
       {
@@ -91,9 +92,10 @@ const COPY = {
       {
         heading: "Ce que signifient les étiquettes",
         body: [
-          "« Vérifié par un humain » (source primaire) — le contenu a été vérifié contre une source primaire nommée, et la source figure sur la page.",
+          "« Révisé par un humain » — une personne nommée (avec date) a personnellement relu et validé la fiche actuelle par rapport aux sources primaires citées.",
+          "« À réviser de nouveau » — la fiche a été mise à jour après recoupement ou nouvelles données et doit être considérée comme non révisée jusqu'à nouvelle validation.",
           "« Résumé par IA » — rédigé avec l'aide de l'IA à partir de documents publiés et révisé, mais sans vérification indépendante contre une source primaire.",
-          "« Non vérifié » — pas encore vérifié. À traiter comme un point de départ, pas comme une réponse.",
+          "« Non révisé par un humain » / « Non vérifié » — aucune personne n'a encore relu et validé cette page. Vérifiez toujours les sources primaires citées.",
           "« Non révisé cliniquement » — aucun clinicien autorisé n'a révisé cette page. Cette étiquette est affichée honnêtement partout où elle s'applique ; ce n'est pas un échec de la page, c'est une limite que vous devez connaître.",
         ],
       },

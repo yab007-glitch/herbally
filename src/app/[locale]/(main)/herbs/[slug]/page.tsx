@@ -33,7 +33,7 @@ import { fitTitle } from "@/lib/seo/fit-title";
 import { hasDistinctCommonName } from "@/lib/seo/herb-naming";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import { hasManualMonograph, type Monograph } from "@/lib/data/monographs";
-import { parseProvenance } from "@/lib/types/provenance";
+import { parseProvenance, getReviewState } from "@/lib/types/provenance";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
 import type { HerbWithInteractions } from "@/lib/types";
@@ -433,6 +433,19 @@ export default async function HerbDetailPage({ params }: Props) {
     { name: herb.name, url: herbPageUrl },
   ];
 
+  const isDangerous = isDangerousHerb(slug);
+  const showCalculator = canShowDoseCalculator(slug, herb.dosage_adult);
+  const reviewState = getReviewState(provenance);
+  const reviewInvalidated =
+    reviewState?.kind === "needs_re_review" ||
+    reviewState?.kind === "ai_generated" ||
+    reviewState?.kind === "not_reviewed";
+  const isClinicallyReviewed =
+    !reviewInvalidated &&
+    (reviewState?.kind === "human_reviewed" ||
+      isManualMonograph ||
+      (pubmedSheet?.status === "reviewed" && isUsablePubmedSheet(pubmedSheet)));
+
   const fallbackFaqs = buildHerbFallbackFaqs(
     {
       herbName: herb.name,
@@ -445,13 +458,14 @@ export default async function HerbDetailPage({ params }: Props) {
       pregnancyCategory: monograph?.pregnancyCategory || "insufficient",
       drugInteractions: interactions.length,
       commonNames: herb.common_names || [],
+      isDangerous,
+      showCalculator,
     },
     (key, params) => tFaq(key as never, params as never)
   );
 
   const citations = formatCitations(
-    herb.citations as unknown as CitationData[] | null,
-    t
+    herb.citations as unknown as CitationData[] | null
   );
   const registeredReviewer = getReviewer(herb.reviewed_by);
   const lastReviewed =
@@ -476,17 +490,18 @@ export default async function HerbDetailPage({ params }: Props) {
     herb.updated_at,
     herb.last_reviewed
   );
-  const isDangerous = isDangerousHerb(slug);
-  const showCalculator = canShowDoseCalculator(slug, herb.dosage_adult);
-  const isClinicallyReviewed =
-    isManualMonograph ||
-    (pubmedSheet?.status === "reviewed" && isUsablePubmedSheet(pubmedSheet));
-  const provenanceLastVerified =
+  const rawLastVerified =
     typeof (herb.provenance as { last_verified_at?: unknown } | null)
       ?.last_verified_at === "string"
       ? ((herb.provenance as { last_verified_at?: string }).last_verified_at ??
         null)
       : null;
+  const provenanceLastVerified =
+    rawLastVerified &&
+    rawLastVerified.startsWith("2026-06-23") &&
+    reviewState?.kind !== "human_reviewed"
+      ? null
+      : rawLastVerified;
   const sourcesLastChecked = computeLatestModified(
     provenanceLastVerified,
     regulatoryEvidence?.retrieved_at ?? herb.updated_at ?? null
@@ -589,6 +604,8 @@ export default async function HerbDetailPage({ params }: Props) {
         herb={herb}
         url={herbPageUrl}
         dateModified={latestModified ?? undefined}
+        isDangerous={isDangerous}
+        isClinicallyReviewed={isClinicallyReviewed}
       />
       <HerbFAQSchema
         herbName={herb.name}
@@ -601,6 +618,8 @@ export default async function HerbDetailPage({ params }: Props) {
         }
         pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
         drugInteractions={interactions.length}
+        isDangerous={isDangerous}
+        showCalculator={showCalculator}
         preGeneratedFaqs={
           preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
         }
@@ -722,12 +741,15 @@ export default async function HerbDetailPage({ params }: Props) {
           herb={herb}
           interactionCount={interactions.length}
           locale={copyLocale}
+          isDangerous={isDangerous}
         />
 
         <HerbBodyContent
           herb={herb}
           monograph={monograph}
           isManualMonograph={isManualMonograph}
+          isClinicallyReviewed={isClinicallyReviewed}
+          showCalculator={showCalculator}
           lastReviewed={lastReviewed}
           reviewedBy={reviewedBy}
           regulatorName={regulatorName}
@@ -788,6 +810,8 @@ export default async function HerbDetailPage({ params }: Props) {
         pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
         drugInteractions={interactions.length}
         commonNames={herb.common_names || []}
+        isDangerous={isDangerous}
+        showCalculator={showCalculator}
         preGeneratedFaqs={
           preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
         }

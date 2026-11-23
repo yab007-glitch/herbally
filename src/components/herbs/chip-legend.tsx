@@ -32,6 +32,11 @@ const PROVENANCE_SAMPLES: Array<{
     descKey: "verifiedDesc",
   },
   {
+    key: "needs_re_review",
+    provenance: { ...UNVERIFIED, review_status: "needs_re_review" },
+    descKey: "needsReReviewDesc",
+  },
+  {
     key: "ai_summarized",
     provenance: { ...UNVERIFIED, verification_method: "ai_summarized" },
     descKey: "aiSummarizedDesc",

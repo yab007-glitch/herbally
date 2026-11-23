@@ -31,6 +31,7 @@ export function HerbBodyContent({
   herb,
   monograph,
   isManualMonograph,
+  isClinicallyReviewed = false,
   lastReviewed,
   reviewedBy,
   regulatorName,
@@ -44,6 +45,8 @@ export function HerbBodyContent({
   herb: HerbWithInteractions;
   monograph: Monograph | null;
   isManualMonograph: boolean;
+  isClinicallyReviewed?: boolean;
+  showCalculator?: boolean;
   lastReviewed?: string;
   reviewedBy?: string;
   regulatorName: string | null;
@@ -59,6 +62,13 @@ export function HerbBodyContent({
   pubmedSheet: PubmedSheetRow;
   sheet: { content: SheetContent | null; translated: boolean };
 }) {
+  const showNonManualSafetyPanel =
+    interactions.length > 0 ||
+    (herb.contraindications?.length ?? 0) > 0 ||
+    (herb.side_effects?.length ?? 0) > 0 ||
+    herb.pregnancy_safe === false ||
+    herb.nursing_safe === false;
+
   if (isManualMonograph && monograph) {
     return (
       <HerbDetailTabs
@@ -71,6 +81,7 @@ export function HerbBodyContent({
                 monograph={monograph}
                 lastReviewed={lastReviewed}
                 reviewedBy={reviewedBy}
+                isClinicallyReviewed={isClinicallyReviewed}
                 locale={locale}
               />
             ),
@@ -145,7 +156,7 @@ export function HerbBodyContent({
       ) : (
         <GovSourcedBanner />
       )}
-      {interactions.length > 0 && (
+      {showNonManualSafetyPanel && (
         <div id="safety" className="scroll-mt-24">
           <HerbSafetyPanel
             herb={herb}

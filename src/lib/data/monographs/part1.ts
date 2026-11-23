@@ -122,6 +122,8 @@ export const monographsPart1: Record<string, Monograph> = {
       "May cause GI upset in 5-10% of users",
       "Nightshade family — avoid with nightshade sensitivity",
       "Can overstimulate thyroid in hyperthyroid patients",
+      "Rare idiosyncratic hepatotoxicity (LiverTox Category B), including cirrhosis/liver failure cases — stop immediately and seek medical care for jaundice, dark urine, or upper abdominal pain",
+      "Avoid in hormone-sensitive prostate cancer and discontinue at least 2 weeks before surgery",
     ],
     drugInteractions: [
       {
@@ -195,16 +197,17 @@ export const monographsPart1: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Level A safety for pregnancy nausea up to 1.5g/day",
-      "High doses (>4g/day) may increase bleeding risk",
+      "NCCIH notes ginger may be safe for mild nausea in pregnancy at ~1-1.5g/day short term, but EMA classifies use in pregnancy as 'preferable to avoid' as a precaution — consult your obstetric clinician",
+      "High doses (>4g/day) may increase bleeding risk and cause GI irritation",
       "May lower blood glucose — monitor in diabetics",
       "May lower blood pressure",
     ],
     drugInteractions: [
       {
-        drug: "Anticoagulants",
-        severity: "moderate",
-        detail: "High doses may increase bleeding risk",
+        drug: "Anticoagulants (Warfarin)",
+        severity: "severe",
+        detail:
+          "Potential increased INR and severe bleeding risk with warfarin and oral anticoagulants — avoid concurrent high-dose extracts or monitor INR closely",
       },
       {
         drug: "Antidiabetic medications",
@@ -262,10 +265,10 @@ export const monographsPart1: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Generally recognized as safe (GRAS) for food use",
-      "Asteraceae allergy — avoid in ragweed allergy",
+      "Generally recognized as safe (GRAS) for culinary/tea use",
+      "Severe anaphylaxis and bronchospasm reported in individuals with Asteraceae (ragweed, mugwort, chrysanthemum) allergy — avoid if allergic",
       "Mild GI upset in some users",
-      "Safe for children (tea form)",
+      "EMA notes traditional herbal tea preparations, while concentrated extracts lack adequate safety data during pregnancy or under age 12",
     ],
     drugInteractions: [
       {
@@ -384,11 +387,11 @@ export const monographsPart1: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "May take 2-4 weeks for full effect",
-      "Morning grogginess reported by some users",
-      "Raw herb has strong odor",
-      "Generally non-habit forming",
-      "Avoid with other sedatives",
+      "May take 2-4 weeks for subjective benefit; American Academy of Sleep Medicine (2017 guideline) suggests against routine use for chronic insomnia due to weak clinical evidence",
+      "Morning grogginess and rare paradoxical stimulation reported",
+      "EMA notes safety and efficacy in children under 12 years are not established",
+      "Avoid combining with alcohol or prescription CNS depressants",
+      "Do not drive or operate hazardous machinery if drowsy",
     ],
     drugInteractions: [
       {
@@ -430,19 +433,19 @@ export const monographsPart1: Record<string, Monograph> = {
       "Silymarin stabilizes hepatocyte membranes, stimulates protein synthesis and hepatocyte regeneration, and inhibits NF-κB inflammatory pathway. Phosphatidylcholine complexes (silipide) improve bioavailability 3-5x.",
     claims: [
       {
-        claim: "Toxin-induced liver injury",
+        claim: "Amanita poisoning (IV silibinin)",
         evidence: "A",
-        note: "Strong evidence for Amanita mushroom poisoning",
+        note: "Applies strictly to prescription intravenous silibinin in hospital care — do NOT rely on oral milk thistle supplements for mushroom poisoning",
       },
       {
         claim: "NAFLD",
         evidence: "B",
-        note: "Meta-analyses show reduced ALT/AST",
+        note: "Meta-analyses show modest reductions in ALT/AST; clinical outcome benefit remains uncertain",
       },
       {
         claim: "Alcoholic liver disease",
-        evidence: "B",
-        note: "Cochrane: reduced mortality",
+        evidence: "C",
+        note: "2007 Cochrane review found high-quality trials did not confirm significant mortality reduction",
       },
       {
         claim: "Diabetes",
@@ -451,10 +454,10 @@ export const monographsPart1: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Generally very safe; rare GI upset",
-      "Allergic reactions in asteraceae-sensitive individuals",
-      "May have estrogenic effects",
-      "Low oral bioavailability; use standardized extract",
+      "Generally well tolerated; LiverTox Category E (unlikely cause of clinically apparent liver injury); mild GI upset/laxative effect",
+      "Allergic reactions (including rare anaphylaxis) in Asteraceae-sensitive individuals",
+      "Weak estrogenic activity reported in preclinical models — caution with hormone-sensitive conditions",
+      "Oral milk thistle supplements do NOT treat acute mushroom poisoning (requires hospital IV silibinin)",
     ],
     drugInteractions: [
       {
@@ -483,19 +486,19 @@ export const monographsPart1: Record<string, Monograph> = {
   "ginkgo-biloba": {
     slug: "ginkgo-biloba",
     summary:
-      "Ginkgo (Ginkgo biloba) is the oldest living tree species with documented medicinal use spanning over 5,000 years. Standardized extracts (24% flavone glycosides, 6% terpene lactones) are among the most studied botanicals for cognitive health.",
+      "Ginkgo (Ginkgo biloba) standardized leaf extracts (24% flavone glycosides, 6% terpene lactones, e.g., EGb761) have been widely studied for cognitive aging, though large trials such as the NIH GEM study found no conclusive evidence that ginkgo prevents cognitive decline or dementia.",
     mechanism:
       "Ginkgolides are potent PAF antagonists, reducing platelet aggregation. Bilobalide protects mitochondrial function. Flavonoids scavenge free radicals. Also modulates neurotransmitter systems and increases BDNF expression.",
     claims: [
       {
         claim: "Age-related cognitive decline",
-        evidence: "B",
-        note: "Modest effect; EGb761 extract shows benefit",
+        evidence: "C",
+        note: "NCCIH notes no conclusive evidence that ginkgo prevents or slows cognitive decline; trials show inconsistent findings",
       },
       {
         claim: "Dementia",
-        evidence: "B",
-        note: "Systematic reviews show inconsistent results",
+        evidence: "C",
+        note: "Large RCTs (GEM) did not demonstrate prevention of dementia or Alzheimer's disease",
       },
       {
         claim: "Intermittent claudication",
@@ -509,16 +512,17 @@ export const monographsPart1: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Contraindicated with anticoagulants",
-      "Discontinue 7 days before surgery",
-      "May increase seizure risk",
-      "Standardized extract: 120-240mg daily",
+      "Do NOT ingest raw or roasted ginkgo seeds — they contain neurotoxic ginkgotoxin causing seizures and fatal poisoning",
+      "Avoid with anticoagulants/antiplatelets due to hemorrhage risk; discontinue at least 7–14 days before surgery",
+      "May lower seizure threshold",
+      "Standardized leaf extract (EGb761): 120-240mg daily under clinician guidance",
     ],
     drugInteractions: [
       {
         drug: "Warfarin",
-        severity: "moderate",
-        detail: "Increased bleeding risk",
+        severity: "severe",
+        detail:
+          "Major hemorrhage and INR instability risk — avoid combination or monitor closely",
       },
       {
         drug: "Aspirin/NSAIDs",
@@ -570,10 +574,10 @@ export const monographsPart1: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Extensive drug interactions via CYP3A4 and P-gp induction",
+      "Extensive life-threatening drug interactions via CYP3A4, CYP2C9, CYP2C19, and P-gp induction",
+      "Discontinue at least 2 weeks before scheduled surgery (anesthesia/drug-clearance risk)",
       "Photosensitivity with high doses",
-      "May trigger mania in bipolar disorder",
-      "4-6 weeks required for antidepressant effects",
+      "May trigger mania in bipolar disorder; allow 4-6 weeks for antidepressant onset",
     ],
     drugInteractions: [
       {
@@ -600,6 +604,12 @@ export const monographsPart1: Record<string, Monograph> = {
         drug: "Cyclosporine",
         severity: "contraindicated",
         detail: "Organ rejection risk",
+      },
+      {
+        drug: "Irinotecan",
+        severity: "contraindicated",
+        detail:
+          "Sharply reduces active SN-38 chemotherapy metabolite — contraindicated",
       },
       {
         drug: "Digoxin",
@@ -636,8 +646,8 @@ export const monographsPart1: Record<string, Monograph> = {
       },
       {
         claim: "Hypertension",
-        evidence: "A",
-        note: "8-10 mmHg systolic, 5-6 mmHg diastolic reduction",
+        evidence: "B",
+        note: "May modestly reduce blood pressure (5-8 mmHg), though Cochrane finds insufficient evidence to confirm cardiovascular morbidity or mortality reduction",
       },
       {
         claim: "Atherosclerosis progression",
