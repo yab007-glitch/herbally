@@ -186,12 +186,7 @@ export function HerbSafetyPanel({
         <Button
           variant="outline"
           size="lg"
-          render={
-            <Link
-              href={`/herbalist?herb=${herb.slug}`}
-              rel="nofollow"
-            />
-          }
+          render={<Link href={`/herbalist?herb=${herb.slug}`} rel="nofollow" />}
           className="rounded-full"
         >
           <AlertTriangle className="mr-2 size-4" />

@@ -78,7 +78,8 @@ export function HerbBodyContent({
             description: herb.description,
             provenance:
               compactProvenance ??
-              ((herb.provenance as Record<string, unknown> | null) ?? null),
+              (herb.provenance as Record<string, unknown> | null) ??
+              null,
             traditional_uses: herb.traditional_uses ?? null,
             modern_uses: herb.modern_uses ?? null,
             active_compounds: herb.active_compounds ?? null,

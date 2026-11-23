@@ -7,11 +7,11 @@ Repo `/Users/yasser/herbally`; production `https://herbally.app`; DB access as i
 
 Cloudflare Web Analytics (real browsers, bots excluded) for `herbally.app`:
 
-| Window | Page load time | LCP good / needs improvement / poor |
-| --- | --- | --- |
-| Last 24 h | 2,396 ms | 93 % / 4 % / 4 % |
-| Last 7 d | 2,786 ms | 79 % / 9 % / 12 % |
-| Last 30 d | 3,002 ms | 82 % / 7 % / 11 % |
+| Window    | Page load time | LCP good / needs improvement / poor |
+| --------- | -------------- | ----------------------------------- |
+| Last 24 h | 2,396 ms       | 93 % / 4 % / 4 %                    |
+| Last 7 d  | 2,786 ms       | 79 % / 9 % / 12 %                   |
+| Last 30 d | 3,002 ms       | 82 % / 7 % / 11 %                   |
 
 Roughly one load in nine has a **poor LCP**, and median page load is ~3 s. That hurts both
 ranking and the AdSense quality signal.

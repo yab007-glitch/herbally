@@ -225,7 +225,8 @@ function buildTurmericScaleFixture() {
     })),
     risks: Array.from(
       { length: 10 },
-      (_, i) => `Risk statement ${i + 1}: consult a practitioner if symptoms persist.`
+      (_, i) =>
+        `Risk statement ${i + 1}: consult a practitioner if symptoms persist.`
     ),
     products_sampled: 25,
     source_urls: ["https://health-products.canada.ca/lnhpd-bdpsnh/"],
@@ -241,7 +242,8 @@ function buildTurmericScaleFixture() {
     {
       slug: "herb-drug-interactions-blood-thinners",
       title: "Herbs and Blood Thinners",
-      metaDescription: "What to check before combining herbs with warfarin or antiplatelets.",
+      metaDescription:
+        "What to check before combining herbs with warfarin or antiplatelets.",
     },
     {
       slug: "surgery-herb-washout",
@@ -257,8 +259,16 @@ function buildTurmericScaleFixture() {
 
   const relatedHerbs = [
     { name: "Ginger", slug: "ginger", scientific_name: "Zingiber officinale" },
-    { name: "Boswellia", slug: "boswellia", scientific_name: "Boswellia serrata" },
-    { name: "Black Pepper", slug: "black-pepper", scientific_name: "Piper nigrum" },
+    {
+      name: "Boswellia",
+      slug: "boswellia",
+      scientific_name: "Boswellia serrata",
+    },
+    {
+      name: "Black Pepper",
+      slug: "black-pepper",
+      scientific_name: "Piper nigrum",
+    },
   ];
 
   const govItems = Array.from({ length: 10 }, (_, i) => ({
@@ -306,8 +316,11 @@ describe("Herb page payload size budget", () => {
     );
 
     const bytes = Buffer.byteLength(schemaMarkup);
-    const occurrences = schemaMarkup.split("rhizomatous perennial herb").length - 1;
-    console.log(`[budget] HerbSchema JSON-LD: ${(bytes / 1024).toFixed(2)} KB (${bytes} B)`);
+    const occurrences =
+      schemaMarkup.split("rhizomatous perennial herb").length - 1;
+    console.log(
+      `[budget] HerbSchema JSON-LD: ${(bytes / 1024).toFixed(2)} KB (${bytes} B)`
+    );
 
     expect(occurrences).toBe(1);
     expect(bytes).toBeLessThan(8 * 1024);
@@ -378,7 +391,11 @@ describe("Herb page payload size budget", () => {
             interactions={glanceInteractions}
             safetyHref="#interactions"
           />
-          <AuthorByline locale="en" lastReviewed="2026-11-01" isReviewed={false} />
+          <AuthorByline
+            locale="en"
+            lastReviewed="2026-11-01"
+            isReviewed={false}
+          />
           <HerbJumpNav locale="en" hasInteractions={true} />
           <HerbPhoto
             slug="turmeric"
@@ -387,7 +404,10 @@ describe("Herb page payload size budget", () => {
             credit="Wikimedia Author"
             licence="CC BY-SA 4.0"
           />
-          <InteractionsTable interactions={f.interactions} herbSlug="turmeric" />
+          <InteractionsTable
+            interactions={f.interactions}
+            herbSlug="turmeric"
+          />
           <HerbSourcesView
             referenceSources={f.compactProvenance.verified_sources}
             taxonomySources={["GBIF", "ITIS", "POWO"]}
@@ -410,7 +430,10 @@ describe("Herb page payload size budget", () => {
           <HerbNarrativeView
             title="Recorded facts"
             sections={[
-              { heading: "Traditional use", body: "Used for mild digestive discomfort." },
+              {
+                heading: "Traditional use",
+                body: "Used for mild digestive discomfort.",
+              },
               { heading: "Safety", body: "Not recommended in pregnancy." },
             ]}
           />

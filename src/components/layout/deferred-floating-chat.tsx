@@ -4,8 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
 const FloatingChatButton = dynamic(
-  () =>
-    import("./floating-chat-button").then((mod) => mod.FloatingChatButton),
+  () => import("./floating-chat-button").then((mod) => mod.FloatingChatButton),
   { ssr: false }
 );
 
