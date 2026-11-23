@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest";
+import enDict from "@/lib/i18n/dictionaries/en.json";
+import frDict from "@/lib/i18n/dictionaries/fr.json";
 import {
   fitTitle,
   fitsWithSuffix,
@@ -134,6 +136,17 @@ describe("fitTitle", () => {
 
     for (const candidates of cases) {
       const result = fitTitle(candidates);
+      expect(effectiveRenderedLength(result)).toBeLessThanOrEqual(
+        RENDERED_TITLE_MAX
+      );
+    }
+  });
+
+  it("keeps EN and FR homePage titles branded (with HerbAlly) and <= 60 chars", () => {
+    for (const homeTitle of [enDict.meta.homeTitle, frDict.meta.homeTitle]) {
+      const result = fitTitle([homeTitle]);
+      expect(typeof result).toBe("string");
+      expect(`${result}${SITE_SUFFIX}`).toContain("HerbAlly");
       expect(effectiveRenderedLength(result)).toBeLessThanOrEqual(
         RENDERED_TITLE_MAX
       );
