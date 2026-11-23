@@ -2,7 +2,7 @@ import { UnifiedNavbar } from "@/components/layout/unified-navbar";
 import { FDADisclaimerBanner } from "@/components/layout/fda-disclaimer-banner";
 import { UnifiedMobileBar } from "@/components/layout/unified-mobile-bar";
 import { MarketingFooter } from "@/components/layout/marketing-footer";
-import { FloatingChatButton } from "@/components/layout/floating-chat-button";
+import { DeferredFloatingChat } from "@/components/layout/deferred-floating-chat";
 import { AdConsent } from "@/components/ads/ad-consent";
 
 export default function MarketingLayout({
@@ -20,7 +20,7 @@ export default function MarketingLayout({
       <MarketingFooter />
       <AdConsent />
       <UnifiedMobileBar />
-      <FloatingChatButton />
+      <DeferredFloatingChat />
     </div>
   );
 }

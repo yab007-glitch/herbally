@@ -32,91 +32,78 @@ export function MarketingFooter() {
           >
             <Link
               href="/herbs"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("nav.herbs")}
             </Link>
             <Link
               href="/herbalist"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("nav.herbalist")}
             </Link>
             <Link
               href="/calculator"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("nav.calculator")}
             </Link>
             <Link
               href="/symptoms"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.symptoms")}
             </Link>
             <Link
               href="/faq"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.faq")}
             </Link>
             <Link
               href="/guides"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.guides")}
             </Link>
             <Link
               href="/methodology"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.methodology")}
             </Link>
             <Link
               href="/editorial-policy"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.editorialPolicy")}
             </Link>
             <Link
               href="/sponsors"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.sponsorship")}
             </Link>
             <Link
               href="/herb-drug-interactions"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.herbDrugInteractions")}
             </Link>
             <Link
               href="/medications"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.medications")}
             </Link>
             <Link
               href="/surgery-planner"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.surgeryPlanner")}
             </Link>
             <Link
               href="/npn-checker"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("footer.npnChecker")}
@@ -129,7 +116,6 @@ export function MarketingFooter() {
             </Link>
             <Link
               href="/about"
-              prefetch={true}
               className="hover:text-foreground transition-colors"
             >
               {t("nav.about")}
