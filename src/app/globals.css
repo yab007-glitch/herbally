@@ -141,16 +141,6 @@ body {
  */
 .paper-surface {
   background-color: var(--background);
-  background-image: url("/media/paper-grain.webp");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-blend-mode: multiply;
-}
-
-.dark .paper-surface {
-  background-blend-mode: soft-light;
 }
 
 /*

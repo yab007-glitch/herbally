@@ -151,6 +151,7 @@ export function HerbCard({ herb, className }: HerbCardProps) {
               <HerbImage
                 name={herb.name}
                 imageUrl={herb.image_url}
+                sizePx={48}
                 className="size-12 shrink-0 rounded-lg"
               />
               <div className="min-w-0 flex-1">

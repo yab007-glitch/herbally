@@ -163,6 +163,9 @@ export function HerbHeroV2({
             <HerbImage
               name={herb.name}
               imageUrl={herb.image_url}
+              sizePx={96}
+              loading="eager"
+              fetchPriority="high"
               className="size-20 rounded-lg sm:size-24"
             />
             <button

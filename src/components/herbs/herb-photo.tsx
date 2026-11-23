@@ -76,9 +76,8 @@ export function HerbPhoto({
           src={photo.src}
           alt={`${name} — botanical photograph`}
           fill
-          sizes="(max-width: 768px) 100vw, 448px"
+          sizes="(max-width: 480px) calc(100vw - 32px), 448px"
           className="object-cover"
-          priority={true}
           onError={() =>
             setFailedSrcs((prev) =>
               prev.includes(photo.src) ? prev : [...prev, photo.src]

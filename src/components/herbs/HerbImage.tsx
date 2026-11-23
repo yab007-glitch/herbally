@@ -8,6 +8,11 @@ interface HerbImageProps {
   name: string;
   imageUrl?: string | null;
   className?: string;
+  /** Fixed square thumbnail size in CSS px; avoids oversized 9-entry fill srcSets. */
+  sizePx?: number;
+  sizes?: string;
+  loading?: "eager" | "lazy";
+  fetchPriority?: "high" | "low" | "auto";
   priority?: boolean;
 }
 
@@ -64,6 +69,10 @@ export function HerbImage({
   name,
   imageUrl,
   className,
+  sizePx,
+  sizes,
+  loading,
+  fetchPriority,
   priority,
 }: HerbImageProps) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
@@ -73,15 +82,30 @@ export function HerbImage({
   if (imageUrl && failedUrl !== imageUrl) {
     return (
       <div className={cn("relative overflow-hidden", className)}>
-        <Image
-          src={imageUrl}
-          alt={safeName}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
-          priority={priority}
-          onError={() => setFailedUrl(imageUrl)}
-        />
+        {sizePx ? (
+          <Image
+            src={imageUrl}
+            alt={safeName}
+            width={sizePx}
+            height={sizePx}
+            loading={loading}
+            fetchPriority={fetchPriority}
+            className="size-full object-cover"
+            onError={() => setFailedUrl(imageUrl)}
+          />
+        ) : (
+          <Image
+            src={imageUrl}
+            alt={safeName}
+            fill
+            sizes={sizes ?? "(max-width: 768px) 100vw, 448px"}
+            loading={loading}
+            fetchPriority={fetchPriority}
+            className="object-cover"
+            preload={priority}
+            onError={() => setFailedUrl(imageUrl)}
+          />
+        )}
       </div>
     );
   }

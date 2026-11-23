@@ -158,6 +158,7 @@ export function GardenClient() {
                   <HerbImage
                     name={herb.name}
                     imageUrl={herb.image_url}
+                    sizePx={56}
                     className="size-14 shrink-0 rounded-xl shadow-sm transition-transform group-hover:scale-105"
                   />
                   <div className="min-w-0 flex-1">
