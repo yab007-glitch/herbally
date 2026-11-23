@@ -115,7 +115,7 @@
     "sameCheckError": "La plante et le médicament semblent identiques — saisissez deux produits différents.",
     "featuresTitle": "Ce que vous pouvez faire",
     "featureHerbsTitle": "Base de données",
-    "featureHerbsDescription": "Recherchez parmi 3 150+ plantes médicinales avec profils détaillés.",
+    "featureHerbsDescription": "Recherchez des plantes médicinales avec fiches sourcées, usages et précautions.",
     "featureCalculatorTitle": "Calculateur de dosage",
     "featureCalculatorDescription": "Recommandations de dosage basées sur l'âge et le poids.",
     "featureInteractionsTitle": "Vérificateur d'interactions",
@@ -157,7 +157,7 @@
   },
   "herbs": {
     "title": "Base de Données d'Herbes Médicinales",
-    "subtitle": "Explorez plus de 3 150 herbes avec des informations basées sur des preuves",
+    "subtitle": "Explorez des plantes médicinales avec des informations sourcées et fondées sur les preuves",
     "herbOfTheDay": "Plante du Jour",
     "searchPlaceholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
     "recentSearches": "Recherches récentes",
@@ -772,8 +772,8 @@
   "mission": {
     "title": "Notre Mission",
     "description": "Le savoir phytothérapique gratuit pour tous. Nous croyons que l'accès à l'information sur la santé est un droit fondamental, pas un privilège. HerbAlly est conçu pour démocratiser l'accès aux connaissances en phytothérapie basées sur des preuves.",
-    "freeAccess": "Pas de barrières de paiement, pas d'offres premium. Toutes les 3 150+ herbes sont disponibles pour tous, complètement gratuitement.",
-    "herbsCount": "3 150+ Herbes",
+    "freeAccess": "Pas de barrières de paiement, pas d'offres premium. Toutes les fiches publiées sont accessibles gratuitement à tous.",
+    "herbsCount": "Fiches sourcées",
     "herbsDesc": "Base de données complète avec des profils détaillés",
     "aiHerbalist": "Herboriste IA",
     "aiHerbalistDesc": "Obtenez des réponses instantanées à vos questions",
@@ -782,7 +782,7 @@
     "howDonationsHelp": "Comment Votre Don Aide",
     "donationHostings": "Hébergement et Serveurs — Maintenir l'application rapide et disponible 24/7",
     "donationAi": "Coûts IA — Alimenter le chatbot herboriste virtuel",
-    "donationDb": "Base de Données — Stocker et servir 3 150+ profils d'herbes",
+    "donationDb": "Base de Données — Stocker et servir les fiches de plantes et données d'interactions",
     "donationFeatures": "Nouvelles Fonctionnalités — Ajouter plus d'herbes, interactions et outils",
     "promise": "Nous ne facturerons jamais les utilisateurs et ne vendrons pas vos données.",
     "sustained": "HerbAlly est maintenu entièrement par des dons volontaires.",
@@ -980,7 +980,7 @@
     "howItWorks": {
       "title": "Comment ça marche",
       "step1Title": "Rechercher dans notre base de données",
-      "step1Desc": "Parcourez plus de 3 150 herbes médicinales avec des profils détaillés incluant les composés actifs, les utilisations traditionnelles et la recherche moderne.",
+      "step1Desc": "Parcourez des plantes médicinales avec des fiches détaillées incluant composés actifs, usages traditionnels, sécurité et recherche clinique.",
       "step2Title": "Calculer des doses de référence",
       "step2Desc": "Utilisez notre calculateur de référence pour les adultes de 18 ans et plus. Il ne fournit pas de posologie pédiatrique ; consultez un professionnel de santé pédiatrique qualifié pour un enfant ou un adolescent.",
       "step3Title": "Consulter l'Herboriste Virtuel",
@@ -1068,7 +1068,7 @@
     "herbalistCat": {
       "how": {
         "q": "Comment fonctionne l'Herboriste Virtuel IA ?",
-        "a": "L'Herboriste Virtuel utilise l'IA pour fournir des conseils basés sur des preuves sur les plantes, y compris les informations de sécurité, les interactions potentielles et les utilisations traditionnelles. Il s'appuie sur notre base de données de 3 150+ plantes, les monographies de l'OMS, PubMed, le NCCIH et les sources de la Commission E. Chaque réponse inclut des niveaux de preuve et des citations."
+        "a": "L'Herboriste Virtuel utilise l'IA pour fournir des renseignements fondés sur les preuves sur les plantes, incluant la sécurité, les interactions potentielles et les usages traditionnels. Il s'appuie sur notre base de données de plantes médicinales ainsi que les monographies de l'OMS, de l'EMA HMPC, de Santé Canada, de PubMed et du NCCIH. Chaque réponse inclut des niveaux de preuve et des citations."
       },
       "notAsk": {
         "q": "Que ne dois-je PAS demander à l'Herboriste Virtuel ?",
@@ -1126,7 +1126,7 @@
   "donateContent": {
     "title": "Gardez HerbAlly 100% Gratuit",
     "subtitle": "Pas de barrières de paiement. Pas d'offres premium. Juste des connaissances gratuites sur les plantes pour tous — financées par les dons, avec une publicité limitée et clairement identifiée prévue mais pas encore active.",
-    "herbsStat": "3 150+ herbes",
+    "herbsStat": "Fiches de plantes sourcées",
     "freeAI": "Herboriste IA gratuit",
     "freeForever": "100% gratuit pour toujours",
     "chooseImpact": "Choisissez Votre Impact",
@@ -1159,7 +1159,7 @@
       },
       "database": {
         "label": "Base de Données & Stockage",
-        "desc": "Hébergement de base de données Supabase pour 3 150+ plantes et données utilisateur",
+        "desc": "Base de données PostgreSQL auto-hébergée pour les fiches de plantes, interactions et données utilisateur",
         "monthly": "25$"
       },
       "ai": {
@@ -1662,7 +1662,7 @@
   },
   "meta": {
     "herbsDatabase": "Base de Données de Plantes Médicinales",
-    "herbsDatabaseDesc": "Parcourez notre base de données complète de plus de 3 150 plantes médicinales avec des profils détaillés, composants actifs et interactions médicamenteuses.",
+    "herbsDatabaseDesc": "Parcourez notre base de données de plantes médicinales avec fiches sourcées, composés actifs, avertissements de sécurité et interactions médicamenteuses.",
     "virtualHerbalist": "Herboriste Virtuel",
     "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions et la posologie. Réponses sourcées OMS, NCCIH et PubMed, gratuites.",
     "doseCalculator": "Calculateur de Posologie : Doses de Référence pour Adultes",
@@ -1691,7 +1691,7 @@
     "contactDesc": "Comment contacter HerbAlly : adresses courriel générales, de confidentialité et des conditions.",
     "herbDrugInteractions": "Interactions Plante-Médicament",
     "herbDrugInteractionsDesc": "Comprendre les interactions plante-médicament et vérifier vos plantes en quelques secondes : millepertuis, ail, ginkgo, curcuma, kava et warfarine.",
-    "appDescription": "Vérifiez une plante contre vos médicaments : 3 150+ fiches avec sources, niveaux de preuve et calculateur de posologie. Gratuit.",
+    "appDescription": "Vérifiez une plante contre vos médicaments en quelques secondes : fiches sourcées, niveaux de preuve et calculateur de posologie adulte. Gratuit.",
     "herbsFor": "Plantes pour {symptom}",
     "homeTitle": "Vérificateur d'interactions plante-médicament",
     "gardenPageTitle": "Mon Jardin",
@@ -1926,7 +1926,7 @@
     "nccihSource": "Plantes Médicinales en Bref",
     "breadcrumbHome": "Accueil",
     "orgName": "HerbAlly",
-    "orgDesc": "Une bibliothèque de référence de plus de 3 150 plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
+    "orgDesc": "Une bibliothèque de référence de plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
   },
   "brand": {
     "full": "HerbAlly"

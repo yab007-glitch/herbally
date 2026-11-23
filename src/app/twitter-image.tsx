@@ -102,7 +102,7 @@ export default async function TwitterImage() {
         }}
       >
         {[
-          { label: "3,150+", sublabel: "Herbs" },
+          { label: "Cited", sublabel: "Monographs" },
           { label: "Free", sublabel: "Forever" },
           { label: "AI", sublabel: "Herbalist" },
         ].map((stat) => (
