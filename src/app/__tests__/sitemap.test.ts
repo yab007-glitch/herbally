@@ -182,12 +182,13 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/herbs/turmeric`);
     expect(urls).not.toContain(`${BASE_URL}/fr/herbs/turmeric`);
 
-    // A thin page is not offered to Google even when its view counter is high,
-    // and a bare product-licence stub without monograph or curated interaction
-    // is also withheld.
-    expect(urls).not.toContain(`${BASE_URL}/herbs/eritrean-rue`);
-    expect(urls).not.toContain(`${BASE_URL}/fr/herbs/eritrean-rue`);
-    expect(urls).not.toContain(`${BASE_URL}/herbs/chamomile-stub`);
+    // Owner policy 2026-11-23: every published herb page is advertised, so the
+    // sitemap matches the page-level `index, follow` directive. This includes
+    // thin records and bare product-licence stubs: withholding them from the
+    // sitemap while serving them is what produced the crawl/index mismatch.
+    expect(urls).toContain(`${BASE_URL}/herbs/eritrean-rue`);
+    expect(urls).toContain(`${BASE_URL}/fr/herbs/eritrean-rue`);
+    expect(urls).toContain(`${BASE_URL}/herbs/chamomile-stub`);
 
     // Static tool pages & published guides in EN + FR.
     expect(urls).toContain(`${BASE_URL}/npn-checker`);
@@ -222,13 +223,13 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/fr/symptoms/anxiety`);
     expect(urls).not.toContain(`${BASE_URL}/symptoms/${UNPOPULATED_HUB}`);
 
-    // Static pages still lead, and herbs remain last (output order unchanged).
+    // Static pages still lead and herb pages still trail them (output order
+    // unchanged). The exact tail is no longer fixed: every published herb is
+    // now listed, so fixture records join the end of the herb block.
     expect(urls[0]).toBe(BASE_URL);
-    expect(urls.slice(-3)).toEqual([
-      `${BASE_URL}/herbs/ginger`,
-      `${BASE_URL}/fr/herbs/ginger`,
-      `${BASE_URL}/herbs/turmeric`,
-    ]);
+    expect(urls).toContain(`${BASE_URL}/herbs/ginger`);
+    const firstHerb = urls.findIndex((url) => url.includes("/herbs/"));
+    expect(firstHerb).toBeGreaterThan(urls.indexOf(`${BASE_URL}/npn-checker`));
 
     // The sitemap names the other-language twin, so Google reads the pair as a
     // translation rather than as duplicate URLs.
@@ -298,7 +299,7 @@ describe("sitemap", () => {
     expect(urls).toContain(`${BASE_URL}/symptoms/${UNPOPULATED_HUB}`);
   });
 
-  it("advertises only pages with a source behind them", async () => {
+  it("advertises every published herb page, sourced or not", async () => {
     const thinHerb = {
       id: "h-thin",
       slug: "thin-herb",
@@ -312,36 +313,32 @@ describe("sitemap", () => {
     getEmptySymptomHubsMock.mockResolvedValue([]);
     getInteractionPairsMock.mockResolvedValue([]);
 
-    // Thin and unsourced: never offered.
-    expect((await sitemap()).map((entry) => entry.url)).not.toContain(
-      `${BASE_URL}/herbs/thin-herb`
-    );
+    // Owner policy 2026-11-23: publishing is the only gate. Robots and sitemap
+    // must agree, or Google reports a crawl/index mismatch again.
+    const urls = (await sitemap()).map((entry) => entry.url);
+    expect(urls).toContain(`${BASE_URL}/herbs/thin-herb`);
+    // No French record, so no French URL — the /fr route would be English copy
+    // under a French shell, which is duplicate content rather than translation.
+    expect(urls).not.toContain(`${BASE_URL}/fr/herbs/thin-herb`);
 
-    // A long description is not a source either. Length stood in for depth and
-    // let 3,155 of 3,238 pages back into the sitemap while Google kept 2,373.
+    // Description length, regulator records and curated interactions are no
+    // longer admission criteria; they must not change the outcome either way.
     herbsRangeMock.mockResolvedValue({
       data: [{ ...thinHerb, description: "z".repeat(900) }],
       error: null,
     });
-    expect((await sitemap()).map((entry) => entry.url)).not.toContain(
+    expect((await sitemap()).map((entry) => entry.url)).toContain(
       `${BASE_URL}/herbs/thin-herb`
     );
 
-    // A compiled PubMed sheet is derived, not sourced: still not offered.
-    // (Asserted through the regulator read below instead — the sheet table is
-    // no longer consulted at all.)
-
-    // A bare regulator licence record alone does NOT admit a stub page into
-    // the sitemap anymore; it needs a monograph or a curated interaction.
     regulatoryRangeMock.mockResolvedValue({
       data: [{ herb_slug: "thin-herb" }],
       error: null,
     });
-    expect((await sitemap()).map((entry) => entry.url)).not.toContain(
+    expect((await sitemap()).map((entry) => entry.url)).toContain(
       `${BASE_URL}/herbs/thin-herb`
     );
 
-    // An herb backed by a curated drug interaction IS offered.
     getInteractionPairsMock.mockResolvedValue([
       {
         id: "p-thin",
