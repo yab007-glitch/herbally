@@ -1905,10 +1905,10 @@
     "askHerbalist": "Ask the AI Herbalist"
   },
   "herbMeta": {
-    "title": "{name} ({scientific}): Benefits, Dosage, Safety & Evidence",
-    "titleBinomial": "{scientific}: Benefits, Dosage, Safety & Evidence",
-    "titleShort": "{name} ({scientific}): Benefits & Safety",
-    "titleBinomialShort": "{scientific}: Benefits & Safety",
+    "title": "{name} ({scientific}): Benefits, Dosage, Safety, Evidence",
+    "titleBinomial": "{scientific}: Benefits, Dosage, Safety, Evidence",
+    "titleShort": "{name} ({scientific}): Benefits and Safety",
+    "titleBinomialShort": "{scientific}: Benefits and Safety",
     "descWithNames": "{name}, also called {common}: uses, dosage, pregnancy safety and drug interactions, with PubMed-cited evidence, safety ratings and a free dosage calculator.",
     "descFallback": "{name} ({scientific}): uses, dosage, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and a free dosage calculator.",
     "usesFallback": "traditional wellness"
