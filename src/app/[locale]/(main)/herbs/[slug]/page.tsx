@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { unstable_cache } from "next/cache";
-import { isIndexable } from "@/lib/seo/indexable";
 import { isUsablePubmedSheet } from "@/lib/pubmed/usable";
 import { resolveSheetContent } from "@/lib/i18n/sheet-content";
 import type { SheetContent } from "@/components/herbs/pubmed-monograph-sheet";
@@ -201,32 +200,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     (Array.isArray(herb.drug_interactions) &&
       herb.drug_interactions.length > 0) ||
     (Array.isArray(bundleInteractions) && bundleInteractions.length > 0);
-  const sourced =
-    Boolean(bundle?.monograph) ||
-    (bundle?.sources?.length ?? 0) > 0 ||
-    hasManualMonograph(slug) ||
-    hasCuratedInteraction;
-  const thin =
-    !sourced ||
-    !isIndexable({
-      description: herb.description,
-      traditional_uses: herb.traditional_uses,
-      dosage_adult: herb.dosage_adult,
-      hasMonograph:
-        Boolean(bundle?.monograph) ||
-        isUsablePubmedSheet(
-          bundle?.pubmed as {
-            content?: unknown;
-            pmids?: unknown;
-            citations?: unknown;
-          } | null
-        ) ||
-        (bundle?.sources?.length ?? 0) > 0 ||
-        hasManualMonograph(slug) ||
-        hasCuratedInteraction,
-      hasRegulatory: Boolean(bundle?.regulatory),
-    });
-
+  // Owner policy 2026-11-23: every published herb page is indexable. The
+  // sourced/thin gate was removed here and in the sitemap so the robots
+  // directive and the advertised set agree across the whole catalogue.
   return {
     title: titleMeta,
     description,
@@ -266,20 +242,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
     },
-    robots:
-      untranslatedFr || thin
-        ? { index: false, follow: true }
-        : {
-            index: true,
-            follow: true,
-            googleBot: {
-              index: true,
-              follow: true,
-              "max-video-preview": -1,
-              "max-image-preview": "large",
-              "max-snippet": -1,
-            },
-          },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   };
 }
 

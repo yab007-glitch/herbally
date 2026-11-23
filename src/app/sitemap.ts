@@ -12,7 +12,6 @@ import { aggregateMedications } from "@/lib/interactions/medications";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { withTimeout } from "@/lib/utils/with-timeout";
 import { publishedGuides } from "@/lib/guides/guides";
-import { isIndexable } from "@/lib/seo/indexable";
 import { hasManualMonograph } from "@/lib/data/monographs";
 
 // Snapshot of last modification time for static pages.
@@ -838,16 +837,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const herbPages: MetadataRoute.Sitemap = [];
     for (const herb of candidateHerbs) {
-      const hasCuratedInteraction = interactionHerbSlugs.has(herb.slug);
-      if (!herb.hasMonograph && !hasCuratedInteraction) continue;
-      const indexable = isIndexable({
-        description: herb.description,
-        traditional_uses: herb.traditional_uses,
-        dosage_adult: herb.dosage_adult,
-        hasMonograph: herb.hasMonograph || hasCuratedInteraction,
-        hasRegulatory: herb.hasRegulatory,
-      });
-      if (!indexable) continue;
+      // Owner policy 2026-11-23: advertise every published herb page.
       const lastModified = herb.updatedAt
         ? new Date(herb.updatedAt)
         : new Date();

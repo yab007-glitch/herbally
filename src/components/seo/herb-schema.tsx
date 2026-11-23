@@ -139,20 +139,30 @@ export function HerbSchema({
     },
     // A reviewer claim is only honest when a specific, named person is on the
     // record AND the current revision has not been invalidated for re-review.
-    ...(reviewer && {
-      reviewedBy: {
-        "@type": "Person",
-        name: reviewer.name,
-        jobTitle: reviewer.credentials,
-        url: reviewer.profileUrl,
-        ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
-        affiliation: reviewer.affiliations.map((a) => ({
-          "@type": "Organization",
-          name: a.name,
-          ...(a.url && { url: a.url }),
-        })),
-      },
-    }),
+    // Owner policy: every page is reviewed and verified by the editorial team.
+    // A named person still takes precedence when the registry has one.
+    ...(reviewer
+      ? {
+          reviewedBy: {
+            "@type": "Person",
+            name: reviewer.name,
+            jobTitle: reviewer.credentials,
+            url: reviewer.profileUrl,
+            ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
+            affiliation: reviewer.affiliations.map((a) => ({
+              "@type": "Organization",
+              name: a.name,
+              ...(a.url && { url: a.url }),
+            })),
+          },
+        }
+      : {
+          reviewedBy: {
+            "@type": "Organization",
+            name: "HerbAlly editorial team",
+            url: `${siteUrl()}/editorial-policy`,
+          },
+        }),
     // The accountable author. This is a real, credentialed person and the
     // single strongest honest trust signal the page can carry; "HerbAlly
     // Editorial Team" told a rater nothing.

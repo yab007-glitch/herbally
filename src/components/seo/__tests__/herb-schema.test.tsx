@@ -153,7 +153,10 @@ describe("HerbSchema reviewer attribution", () => {
     const json = extractJson(
       renderSchema({ ...baseHerb, reviewed_by: "HerbAlly Editorial Team" })
     );
-    expect(json.reviewedBy).toBeUndefined();
+    const reviewedBy = json.reviewedBy as
+      { name?: string; "@type"?: string } | undefined;
+    expect(reviewedBy?.["@type"]).toBe("Organization");
+    expect(reviewedBy?.name).toBe("HerbAlly editorial team");
   });
 
   it("omits dosage, pediatricDose, and medicalUse and forces pregnancy/nursing warnings when isDangerous is true", () => {
@@ -220,7 +223,9 @@ describe("HerbSchema reviewer attribution", () => {
       )
     );
 
-    expect(json.reviewedBy).toBeUndefined();
+    expect(
+      (json.reviewedBy as { "@type"?: string } | undefined)?.["@type"]
+    ).toBe("Organization");
     expect(json.dateModified).toBe("2026-11-22");
   });
 });

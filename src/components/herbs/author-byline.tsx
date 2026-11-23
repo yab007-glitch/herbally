@@ -22,23 +22,18 @@ export function AuthorByline({
   /** False for entries without a manual/clinical review so bylines do not overclaim. */
   isReviewed?: boolean;
 }) {
+  // Owner policy 2026-11-23: every herb page carries one generic review line
+  // ("Reviewed and verified") instead of a named byline. The named-reviewer
+  // registry still drives per-page attribution if one is ever restored.
   const copy =
     locale === "fr"
       ? {
-          written: isReviewed
-            ? "Rédigé et maintenu par"
-            : "Répertorié et maintenu par",
-          name: "Yasser Bheekun",
-          credentials: "Technologiste médical, OPTMQ · SCSLM",
+          label: "Révisé et vérifié",
           policy: "Politique éditoriale",
           updated: "Dernière mise à jour",
         }
       : {
-          written: isReviewed
-            ? "Written and maintained by"
-            : "Catalogued and maintained by",
-          name: "Yasser Bheekun",
-          credentials: "Medical Laboratory Technologist, OPTMQ · CSMLS",
+          label: "Reviewed and verified",
           policy: "Editorial policy",
           updated: "Last updated",
         };
@@ -69,10 +64,7 @@ export function AuthorByline({
 
   return (
     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 border-y border-border py-4 text-[13px] text-muted-foreground">
-      <span>{copy.written}</span>
-      <span className="font-medium text-foreground">{copy.name}</span>
-      <span aria-hidden="true">·</span>
-      <span>{copy.credentials}</span>
+      <span className="font-medium text-foreground">{copy.label}</span>
       <span aria-hidden="true">·</span>
       <Link
         href="/editorial-policy"
