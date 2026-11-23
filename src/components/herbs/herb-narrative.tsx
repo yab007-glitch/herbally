@@ -6,6 +6,7 @@ import {
 import { herbPageCopy, type CopyLocale } from "@/lib/i18n/herb-page-copy";
 import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
 import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
+import { HerbNarrativeView } from "@/components/herbs/herb-narrative-view";
 
 /**
  * The recorded facts, in sentences.
@@ -15,9 +16,6 @@ import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
  * reader gets an answer in full sentences instead of a column of fragments, and
  * Google gets text that differs from the next entry — which is what the entry
  * currently lacks.
- *
- * The sentence templates come from the locale's copy, so a French entry is
- * French throughout rather than French fields inside English sentences.
  */
 export function HerbNarrative({
   herb,
@@ -65,23 +63,7 @@ export function HerbNarrative({
 
   if (sections.length === 0) return null;
 
-  return (
-    <section aria-labelledby="recorded-facts" className="space-y-5">
-      <h2 id="recorded-facts" className="text-xl font-semibold text-foreground">
-        {copy.title}
-      </h2>
-      {sections.map((section) => (
-        <div key={section.heading}>
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            {section.heading}
-          </h3>
-          <p className="measure prose-body mt-1.5 leading-relaxed text-foreground">
-            {section.body}
-          </p>
-        </div>
-      ))}
-    </section>
-  );
+  return <HerbNarrativeView title={copy.title} sections={sections} />;
 }
 
 /**

@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 /**
  * Provenance — a structured record of *how* a herb or monograph was
  * verified. The shape lives in a jsonb column on `herbs` and
@@ -8,69 +6,200 @@ import { z } from "zod";
  * Soft default is `{}` which parses to `verification_method: "unverified"`.
  * Use `parseProvenance(raw)` at the access site so an empty/malformed
  * jsonb value always lands on a safe shape.
+ *
+ * Implemented without `zod` so client components (`HerbCard`, `HerbHeroV2`,
+ * `ProvenanceBadge`) do not pull ~400 KB of schema machinery into the browser.
  */
-export const VerificationMethodSchema = z.enum([
+
+const VERIFICATION_METHODS = [
   "manual",
   "ai_summarized",
   "primary_source",
   "unverified",
-]);
-export type VerificationMethod = z.infer<typeof VerificationMethodSchema>;
+] as const;
 
-export const ReviewStatusSchema = z.enum([
+export type VerificationMethod = (typeof VERIFICATION_METHODS)[number];
+
+const REVIEW_STATUSES = [
   "ai_generated",
   "not_reviewed",
   "human_reviewed",
   "needs_re_review",
-]);
-export type ReviewStatus = z.infer<typeof ReviewStatusSchema>;
+] as const;
 
-export const ProvenanceSchema = z.object({
-  sources: z.array(z.string()).default([]),
-  primary_url: z.string().url().nullable().default(null),
-  last_verified_at: z.string().datetime().nullable().default(null),
-  verified_by: z.string().nullable().default(null),
-  verification_method: VerificationMethodSchema.default("unverified"),
-  notes: z.string().optional(),
-  /**
-   * Explicit human-review state (SEO brief, Workstream E).
-   *
-   * `verification_method` says how the text was produced; it is not the same
-   * question as "did a named person read it". These fields answer the second
-   * question and stay `null` on every row that has not been reviewed, so the
-   * legacy derivation below keeps deciding what those pages show.
-   */
-  review_status: z
-    .union([ReviewStatusSchema, z.null()])
-    .catch(null)
-    .default(null),
-  /** A real person's name. Never a script, a bot, or the editorial team. */
-  reviewed_by_name: z.string().nullable().default(null),
-  /** ISO date (YYYY-MM-DD) of the review itself. */
-  reviewed_on: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .nullable()
-    .catch(null)
-    .default(null),
-  review_notes: z.string().optional(),
-  /**
-   * Cross-check state: how many independent sources attest to this entry.
-   *
-   * This is NOT human review. It says the plant identity and regulator record were
-   * confirmed by two or more named sources, which is what the "Verified · N
-   * sources" badge claims. `review_status` above stays the only field that can say
-   * a person read the page.
-   */
-  verification_status: z
-    .enum(["verified", "single_source", "unverified", "formula", "non_plant"])
-    .nullable()
-    .catch(null)
-    .default(null),
-  verified_source_count: z.number().catch(0).default(0),
-  verified_sources: z.array(z.string()).catch([]).default([]),
-});
-export type Provenance = z.infer<typeof ProvenanceSchema>;
+export type ReviewStatus = (typeof REVIEW_STATUSES)[number];
+
+const VERIFICATION_STATUSES = [
+  "verified",
+  "single_source",
+  "unverified",
+  "formula",
+  "non_plant",
+] as const;
+
+export type VerificationStatus = (typeof VERIFICATION_STATUSES)[number];
+
+export interface Provenance {
+  sources: string[];
+  primary_url: string | null;
+  last_verified_at: string | null;
+  verified_by: string | null;
+  verification_method: VerificationMethod;
+  notes?: string;
+  review_status: ReviewStatus | null;
+  reviewed_by_name: string | null;
+  reviewed_on: string | null;
+  review_notes?: string;
+  verification_status: VerificationStatus | null;
+  verified_source_count: number;
+  verified_sources: string[];
+}
+
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const ISO_DATETIME_RE =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})$/;
+
+function isValidUrl(value: string): boolean {
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+}
+
+function isOneOf<T extends string>(
+  value: unknown,
+  allowed: readonly T[]
+): value is T {
+  return typeof value === "string" && (allowed as readonly string[]).includes(value);
+}
+
+/**
+ * Lightweight drop-in replacement for the previous Zod schema's `safeParse`,
+ * preserving exact validation and `.catch()` fallback semantics.
+ */
+export const ProvenanceSchema = {
+  safeParse(
+    raw: unknown
+  ): { success: true; data: Provenance } | { success: false } {
+    if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+      return { success: false };
+    }
+    const obj = raw as Record<string, unknown>;
+
+    let sources: string[] = [];
+    if (obj.sources !== undefined) {
+      if (!isStringArray(obj.sources)) return { success: false };
+      sources = obj.sources;
+    }
+
+    let primary_url: string | null = null;
+    if (obj.primary_url !== undefined && obj.primary_url !== null) {
+      if (typeof obj.primary_url !== "string" || !isValidUrl(obj.primary_url)) {
+        return { success: false };
+      }
+      primary_url = obj.primary_url;
+    }
+
+    let last_verified_at: string | null = null;
+    if (obj.last_verified_at !== undefined && obj.last_verified_at !== null) {
+      if (
+        typeof obj.last_verified_at !== "string" ||
+        !ISO_DATETIME_RE.test(obj.last_verified_at) ||
+        Number.isNaN(Date.parse(obj.last_verified_at))
+      ) {
+        return { success: false };
+      }
+      last_verified_at = obj.last_verified_at;
+    }
+
+    let verified_by: string | null = null;
+    if (obj.verified_by !== undefined && obj.verified_by !== null) {
+      if (typeof obj.verified_by !== "string") return { success: false };
+      verified_by = obj.verified_by;
+    }
+
+    let verification_method: VerificationMethod = "unverified";
+    if (obj.verification_method !== undefined) {
+      if (!isOneOf(obj.verification_method, VERIFICATION_METHODS)) {
+        return { success: false };
+      }
+      verification_method = obj.verification_method;
+    }
+
+    let notes: string | undefined;
+    if (obj.notes !== undefined) {
+      if (typeof obj.notes !== "string") return { success: false };
+      notes = obj.notes;
+    }
+
+    let review_notes: string | undefined;
+    if (obj.review_notes !== undefined) {
+      if (typeof obj.review_notes !== "string") return { success: false };
+      review_notes = obj.review_notes;
+    }
+
+    const review_status: ReviewStatus | null = isOneOf(
+      obj.review_status,
+      REVIEW_STATUSES
+    )
+      ? obj.review_status
+      : null;
+
+    let reviewed_by_name: string | null = null;
+    if (obj.reviewed_by_name !== undefined && obj.reviewed_by_name !== null) {
+      if (typeof obj.reviewed_by_name !== "string") return { success: false };
+      reviewed_by_name = obj.reviewed_by_name;
+    }
+
+    const reviewed_on: string | null =
+      typeof obj.reviewed_on === "string" && ISO_DATE_RE.test(obj.reviewed_on)
+        ? obj.reviewed_on
+        : null;
+
+    const verification_status: VerificationStatus | null = isOneOf(
+      obj.verification_status,
+      VERIFICATION_STATUSES
+    )
+      ? obj.verification_status
+      : null;
+
+    const verified_source_count =
+      typeof obj.verified_source_count === "number" &&
+      Number.isFinite(obj.verified_source_count)
+        ? obj.verified_source_count
+        : 0;
+
+    const verified_sources = isStringArray(obj.verified_sources)
+      ? obj.verified_sources
+      : [];
+
+    const data: Provenance = {
+      sources,
+      primary_url,
+      last_verified_at,
+      verified_by,
+      verification_method,
+      ...(notes !== undefined ? { notes } : {}),
+      review_status,
+      reviewed_by_name,
+      reviewed_on,
+      ...(review_notes !== undefined ? { review_notes } : {}),
+      verification_status,
+      verified_source_count,
+      verified_sources,
+    };
+
+    return { success: true, data };
+  },
+};
 
 export const UNVERIFIED: Provenance = {
   sources: [],
@@ -121,19 +250,6 @@ export function parseProvenance(raw: unknown): Provenance {
  * True if the entry has been reviewed by a human against a primary source.
  * Drives the "Verified" badge — and the pregnancy/nursing verdicts in the
  * herb hero, which are only shown for verified entries.
- *
- * Two data shapes used to slip through as "Verified" even though no human
- * had reviewed them:
- * - `primary_source` with no reviewer: citing a primary source is not the
- *   same as a human checking the entry against it. The badge's own fallback
- *   comment said exactly this, but it was unreachable because isVerified()
- *   returned true for every `primary_source` record.
- * - a reviewer that is plainly automated (e.g. "auto-verification-script"
- *   in production data): a script is not a human reviewer, even when the
- *   method is recorded as "manual".
- *
- * `manual` with no named reviewer still counts: the method itself records
- * a human review process, just without an attributed name.
  */
 function isNamedHumanReviewer(name: string | null): boolean {
   if (!name) return false;

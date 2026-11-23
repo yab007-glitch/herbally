@@ -1,3 +1,5 @@
+"use client";
+
 import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
 import { parseProvenance } from "@/lib/types/provenance";
 import { Clock } from "lucide-react";

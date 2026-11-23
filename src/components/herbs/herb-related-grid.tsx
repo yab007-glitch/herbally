@@ -1,8 +1,16 @@
+"use client";
+
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { InternalLinkRail } from "@/components/herbs/internal-link-rail";
 import type { LinkHerb } from "@/lib/data/internal-links";
 import type { Guide } from "@/lib/guides/types";
 import type { CopyLocale } from "@/lib/i18n/herb-page-copy";
+
+export type CompactRelatedGuide = {
+  slug: string;
+  title: string;
+  metaDescription: string;
+};
 
 export function HerbRelatedSection({
   locale,
@@ -27,7 +35,7 @@ export function HerbRelatedSection({
   symptomPeers: LinkHerb[];
   relatedHerbs: Array<{ name: string; slug: string; scientific_name: string }>;
   relatedHeading: string;
-  relatedGuides?: Guide[];
+  relatedGuides?: Array<Guide | CompactRelatedGuide>;
 }) {
   return (
     <>
@@ -59,7 +67,12 @@ export function HerbRelatedSection({
           </h2>
           <div className="grid gap-3 sm:grid-cols-3">
             {relatedGuides.map((guide) => {
-              const gCopy = locale === "fr" ? guide.fr : guide.en;
+              const gCopy =
+                "title" in guide
+                  ? guide
+                  : locale === "fr"
+                    ? guide.fr
+                    : guide.en;
               return (
                 <Link
                   key={guide.slug}

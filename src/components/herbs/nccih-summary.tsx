@@ -1,3 +1,5 @@
+"use client";
+
 import { BookOpen, ExternalLink, ShieldAlert } from "lucide-react";
 
 /**

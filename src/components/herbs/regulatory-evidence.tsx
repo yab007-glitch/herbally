@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 
@@ -168,16 +170,51 @@ export function isCrossContaminatedRisk(slug: string, risk: string): boolean {
   return false;
 }
 
+export function compactRegulatoryEvidence(
+  evidence: RegulatoryEvidence
+): { evidence: RegulatoryEvidence; isHomeopathic: boolean } {
+  const isHomeopathic =
+    /\b(homeopath|hom[eé]opath|globule|granule|pellet|organotherapy|dilution)\b/i.test(
+      JSON.stringify({ p: evidence.purposes, d: evidence.doses })
+    );
+  const adultDoses = (evidence.doses ?? [])
+    .filter(
+      (d) =>
+        !isPediatricOnlyOrTaggedDose(d) &&
+        !isGarbageOrHomeopathicDose(d, isHomeopathic)
+    )
+    .slice(0, 6);
+  const filteredRisks = (evidence.risks ?? [])
+    .filter((r) => !isCrossContaminatedRisk(evidence.herb_slug, r))
+    .slice(0, 5);
+  return {
+    isHomeopathic,
+    evidence: {
+      herb_slug: evidence.herb_slug,
+      source: evidence.source,
+      source_licence: "",
+      purposes: (evidence.purposes ?? []).slice(0, 6),
+      doses: adultDoses,
+      risks: filteredRisks,
+      products_sampled: evidence.products_sampled,
+      source_urls: [],
+      retrieved_at: evidence.retrieved_at,
+    },
+  };
+}
+
 export function RegulatoryEvidenceSection({
   evidence,
   locale,
   className,
   isDangerous = false,
+  isHomeopathic: isHomeopathicProp,
 }: {
   evidence: RegulatoryEvidence | null;
   locale: "en" | "fr";
   className?: string;
   isDangerous?: boolean;
+  isHomeopathic?: boolean;
 }) {
   if (!evidence) return null;
   const hasAny =
@@ -228,6 +265,7 @@ export function RegulatoryEvidenceSection({
   }
 
   const isHomeopathic =
+    isHomeopathicProp ??
     /\b(homeopath|hom[eé]opath|globule|granule|pellet|organotherapy|dilution)\b/i.test(
       JSON.stringify({ p: evidence.purposes, d: evidence.doses })
     );

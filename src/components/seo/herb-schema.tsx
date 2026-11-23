@@ -95,7 +95,6 @@ export function HerbSchema({
       "@type": "MedicalSubstance",
       name: herb.name,
       alternateName: herb.scientific_name,
-      description: herb.description ?? undefined,
       ...(activeCompounds.length > 0 && {
         chemicalComposition: activeCompounds.join(", "),
       }),
@@ -107,7 +106,6 @@ export function HerbSchema({
     about: {
       "@type": "HealthTopic",
       name: herb.name,
-      description: herb.description ?? undefined,
       ...(herb.herb_categories?.name &&
         !isBucketCategory(herb.herb_categories.name) && {
           category: herb.herb_categories.name,

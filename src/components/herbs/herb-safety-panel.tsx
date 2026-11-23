@@ -1,3 +1,5 @@
+"use client";
+
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { AlertTriangle, CircleHelp, ShieldCheck, ShieldX } from "lucide-react";
 import {
@@ -30,7 +32,8 @@ interface HerbSafetyPanelProps {
     contraindications?: string[] | null;
     side_effects?: string[] | null;
   };
-  interactions: Interaction[];
+  interactions?: Interaction[];
+  interactionCount?: number;
   severityCounts: {
     contraindicated: number;
     severe: number;
@@ -47,7 +50,8 @@ interface HerbSafetyPanelProps {
 
 export function HerbSafetyPanel({
   herb,
-  interactions,
+  interactions = [],
+  interactionCount,
   severityCounts,
   showInteractions = true,
 }: HerbSafetyPanelProps) {
@@ -55,6 +59,7 @@ export function HerbSafetyPanel({
   const dangerous = isDangerousHerb(herb.slug);
   const effectivePregnancySafe = dangerous ? false : herb.pregnancy_safe;
   const effectiveNursingSafe = dangerous ? false : herb.nursing_safe;
+  const totalInteractions = interactionCount ?? interactions.length;
 
   return (
     <div className="space-y-6">
@@ -69,7 +74,7 @@ export function HerbSafetyPanel({
 
       {/* Interaction Alert Summary */}
       <InteractionAlert
-        interactionCount={interactions.length}
+        interactionCount={totalInteractions}
         severityCounts={severityCounts}
         isDangerous={dangerous}
       />
@@ -167,12 +172,12 @@ export function HerbSafetyPanel({
           <InteractionExplainer />
           <InteractionsTable interactions={interactions} herbSlug={herb.slug} />
         </>
-      ) : interactions.length > 0 ? (
+      ) : totalInteractions > 0 ? (
         <a
           href="#interactions"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
-          {t("herbDetail.knownInteractions", { count: interactions.length })} ↑
+          {t("herbDetail.knownInteractions", { count: totalInteractions })} ↑
         </a>
       ) : null}
 
@@ -184,8 +189,6 @@ export function HerbSafetyPanel({
           render={
             <Link
               href={`/herbalist?herb=${herb.slug}`}
-              // 2,198 ?herb= URLs were being crawled as duplicates of /herbalist.
-              // The parameter is a client-side preselection, not a different page.
               rel="nofollow"
             />
           }

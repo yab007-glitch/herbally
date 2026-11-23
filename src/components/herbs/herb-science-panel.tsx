@@ -1,3 +1,5 @@
+"use client";
+
 import { FlaskConical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";

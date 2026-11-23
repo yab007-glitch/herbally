@@ -4,6 +4,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { HerbOverviewPanel } from "@/components/herbs/herb-overview-panel";
+import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
+import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
+import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
+import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
+import type { Monograph } from "@/lib/data/monographs";
+import type { CopyLocale } from "@/lib/i18n/herb-page-copy";
 
 const tabConfig = [
   { key: "overview", labelKey: "herbTabs.overview" },
@@ -20,15 +27,52 @@ export interface TabItem {
   content: React.ReactNode;
 }
 
+export interface MonographTabData {
+  herb: {
+    slug: string;
+    description: string;
+    provenance: Record<string, unknown> | null;
+    traditional_uses: string[] | null;
+    modern_uses: string[] | null;
+    active_compounds: string[] | null;
+    dosage_forms: string[] | null;
+    dosage_adult: string | null;
+    preparation_notes: string | null;
+    pregnancy_safe: boolean | null;
+    nursing_safe: boolean | null;
+    contraindications: string[] | null;
+    side_effects: string[] | null;
+  };
+  monograph: {
+    slug: string;
+    summary: string;
+    mechanism: string;
+    claims: Monograph["claims"];
+  };
+  isClinicallyReviewed: boolean;
+  lastReviewed?: string;
+  reviewedBy?: string;
+  regulatorName: string | null;
+  interactionCount: number;
+  severityCounts: {
+    contraindicated: number;
+    severe: number;
+    moderate: number;
+    mild: number;
+  };
+  locale: CopyLocale;
+}
+
 interface HerbDetailTabsProps {
-  tabs: TabItem[];
+  tabs?: TabItem[];
+  data?: MonographTabData;
 }
 
 function isTabKey(value: string): value is TabKey {
   return tabConfig.some((tab) => tab.key === value);
 }
 
-export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
+export function HerbDetailTabs({ tabs, data }: HerbDetailTabsProps) {
   const t = useTranslations();
   const [active, setActive] = useState<TabKey>("overview");
   const rootRef = useRef<HTMLDivElement>(null);
@@ -61,13 +105,61 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
     }
   }, []);
 
-  // One content render, two navigation shells.
-  //
-  // The desktop tab panel and the mobile accordion used to each render the
-  // active tab's content, so every herb page carried the same markup twice in
-  // the DOM: two "Description" headings, ~100 KB of duplicated RSC payload in
-  // a 212 KB document, and double the text for a crawler to read. The nav still
-  // differs by viewport; the content now lives once, below both.
+  const renderDataPanel = (key: TabKey): React.ReactNode => {
+    if (!data) return null;
+    switch (key) {
+      case "overview":
+        return (
+          <HerbOverviewPanel
+            herb={data.herb}
+            monograph={{
+              ...data.monograph,
+              safetyNotes: [],
+              drugInteractions: [],
+              pregnancyCategory: "insufficient",
+              keyCitations: [],
+            }}
+            lastReviewed={data.lastReviewed}
+            reviewedBy={data.reviewedBy}
+            isClinicallyReviewed={data.isClinicallyReviewed}
+            locale={data.locale}
+          />
+        );
+      case "uses":
+        return <HerbUsesPanel herb={data.herb} />;
+      case "science":
+        return (
+          <HerbSciencePanel
+            herb={data.herb}
+            monograph={{
+              ...data.monograph,
+              safetyNotes: [],
+              drugInteractions: [],
+              pregnancyCategory: "insufficient",
+              keyCitations: [],
+            }}
+            locale={data.locale}
+          />
+        );
+      case "dosage":
+        return (
+          <HerbDosagePanel
+            herb={data.herb}
+            regulatorName={data.regulatorName}
+          />
+        );
+      case "safety":
+        return (
+          <HerbSafetyPanel
+            herb={data.herb}
+            interactionCount={data.interactionCount}
+            severityCounts={data.severityCounts}
+            showInteractions={false}
+          />
+        );
+    }
+  };
+
   return (
     <div ref={rootRef} className="scroll-mt-24">
       {/* Desktop: tab bar */}
@@ -102,7 +194,6 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
               <button
                 onClick={() => {
                   if (isOpen) {
-                    // Collapse without writing a "#" hash.
                     setActive("" as TabKey);
                   } else {
                     selectTab(tab.key);
@@ -125,11 +216,12 @@ export function HerbDetailTabs({ tabs }: HerbDetailTabsProps) {
         })}
       </div>
 
-      {/* The single content render. Hidden while the mobile accordion is fully
-          collapsed, matching the previous behaviour. */}
+      {/* The single content render. Hidden while the mobile accordion is fully collapsed. */}
       {active ? (
         <div id="herb-tab-panel" className="mt-6 animate-message-in sm:mt-6">
-          {tabs.find((tab) => tab.key === active)?.content}
+          {data
+            ? renderDataPanel(active)
+            : tabs?.find((tab) => tab.key === active)?.content}
         </div>
       ) : null}
     </div>

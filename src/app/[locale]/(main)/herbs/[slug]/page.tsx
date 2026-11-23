@@ -68,7 +68,10 @@ import { CmpBootstrap } from "@/components/ads/cmp-bootstrap";
 import { UserInteractionAlert } from "@/components/herbs/user-interaction-alert";
 import { ViewTracker } from "@/components/herbs/view-tracker";
 import { GovSources } from "@/components/herbs/gov-sources";
-import { RegulatoryEvidenceSection } from "@/components/herbs/regulatory-evidence";
+import {
+  compactRegulatoryEvidence,
+  RegulatoryEvidenceSection,
+} from "@/components/herbs/regulatory-evidence";
 import { HerbSources } from "@/components/herbs/herb-sources";
 import { getReviewer } from "@/lib/data/reviewers";
 import {
@@ -568,6 +571,29 @@ export default async function HerbDetailPage({ params }: Props) {
     description: ix.description,
     source_url: ix.source_url ?? null,
   }));
+  const glanceInteractions = interactions.map((i) => ({
+    drug_name: i.drug_name,
+    display_drug_name: (i as { display_drug_name?: string }).display_drug_name,
+    severity: i.severity,
+  }));
+  const resolvedFaqs =
+    preGeneratedFaqs.length > 0
+      ? preGeneratedFaqs.map((f) => ({
+          question: f.question,
+          answer: f.answer,
+        }))
+      : fallbackFaqs;
+  const compactRegulatory = regulatoryEvidence
+    ? compactRegulatoryEvidence(regulatoryEvidence)
+    : null;
+  const compactRelatedGuides = relatedGuides.map((guide) => {
+    const gCopy = copyLocale === "fr" ? guide.fr : guide.en;
+    return {
+      slug: guide.slug,
+      title: gCopy.title,
+      metaDescription: gCopy.metaDescription,
+    };
+  });
 
   return (
     <div className="space-y-8">
@@ -632,12 +658,7 @@ export default async function HerbDetailPage({ params }: Props) {
         }
         isManualMonograph={isManualMonograph}
         showCalculator={showCalculator}
-        interactions={interactions.map((i) => ({
-          drug_name: i.drug_name,
-          display_drug_name: (i as { display_drug_name?: string })
-            .display_drug_name,
-          severity: i.severity,
-        }))}
+        interactions={glanceInteractions}
         safetyHref="#interactions"
       />
 
@@ -719,6 +740,7 @@ export default async function HerbDetailPage({ params }: Props) {
 
         <HerbBodyContent
           herb={herb}
+          compactProvenance={compactProvenance}
           monograph={monograph}
           isManualMonograph={isManualMonograph}
           isClinicallyReviewed={isClinicallyReviewed}
@@ -759,7 +781,8 @@ export default async function HerbDetailPage({ params }: Props) {
       )}
 
       <RegulatoryEvidenceSection
-        evidence={regulatoryEvidence}
+        evidence={compactRegulatory?.evidence ?? null}
+        isHomeopathic={compactRegulatory?.isHomeopathic}
         locale={copyLocale}
         isDangerous={isDangerous}
         className="mt-4"
@@ -771,24 +794,7 @@ export default async function HerbDetailPage({ params }: Props) {
         monographSources={sources}
       />
 
-      <HerbFaqSection
-        herbName={herb.name}
-        scientificName={herb.scientific_name}
-        uses={[...(herb.traditional_uses || []), ...(herb.modern_uses || [])]}
-        safetyNotes={
-          monograph?.safetyNotes?.join(". ") ||
-          herb.side_effects?.join(". ") ||
-          ""
-        }
-        pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
-        drugInteractions={interactions.length}
-        commonNames={herb.common_names || []}
-        isDangerous={isDangerous}
-        showCalculator={showCalculator}
-        preGeneratedFaqs={
-          preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
-        }
-      />
+      <HerbFaqSection faqs={resolvedFaqs} />
 
       <HerbRegulatorExcerpts
         herbName={herb.name}
@@ -833,18 +839,13 @@ export default async function HerbDetailPage({ params }: Props) {
       <HerbRelatedSection
         locale={copyLocale}
         herbSlug={slug}
-        interactions={interactions.map((i) => ({
-          drug_name: i.drug_name,
-          display_drug_name: (i as { display_drug_name?: string })
-            .display_drug_name,
-          severity: i.severity,
-        }))}
+        interactions={glanceInteractions.slice(0, 6)}
         prev={prev}
         next={next}
         symptomPeers={symptomPeers}
         relatedHerbs={relatedHerbs}
         relatedHeading={t("herbDetail.relatedHerbs")}
-        relatedGuides={relatedGuides}
+        relatedGuides={compactRelatedGuides}
       />
 
       <NewsletterSignup locale={copyLocale} />

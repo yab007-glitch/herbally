@@ -1,3 +1,5 @@
+"use client";
+
 import { BookOpen, Stethoscope } from "lucide-react";
 import { useTranslations } from "next-intl";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Pill, Calculator } from "lucide-react";
 import {

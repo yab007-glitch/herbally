@@ -1,8 +1,4 @@
 import { HerbDetailTabs } from "@/components/herbs/herb-detail-tabs";
-import { HerbOverviewPanel } from "@/components/herbs/herb-overview-panel";
-import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
-import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
-import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
 import { GovSourcedBanner } from "@/components/herbs/gov-sourced-banner";
 import { PubmedMonographSheet } from "@/components/herbs/pubmed-monograph-sheet";
@@ -29,6 +25,7 @@ type SheetCitation = Parameters<
 
 export function HerbBodyContent({
   herb,
+  compactProvenance,
   monograph,
   isManualMonograph,
   isClinicallyReviewed = false,
@@ -43,6 +40,7 @@ export function HerbBodyContent({
   sheet,
 }: {
   herb: HerbWithInteractions;
+  compactProvenance?: Record<string, unknown> | null;
   monograph: Monograph | null;
   isManualMonograph: boolean;
   isClinicallyReviewed?: boolean;
@@ -70,51 +68,42 @@ export function HerbBodyContent({
     herb.nursing_safe === false;
 
   if (isManualMonograph && monograph) {
+    // Pass only the fields the 5 tab panels read instead of serializing 5
+    // pre-rendered Server Component JSX trees into RSC Flight (~30 KB -> ~5 KB).
     return (
       <HerbDetailTabs
-        tabs={[
-          {
-            key: "overview",
-            content: (
-              <HerbOverviewPanel
-                herb={herb}
-                monograph={monograph}
-                lastReviewed={lastReviewed}
-                reviewedBy={reviewedBy}
-                isClinicallyReviewed={isClinicallyReviewed}
-                locale={locale}
-              />
-            ),
+        data={{
+          herb: {
+            slug: herb.slug,
+            description: herb.description,
+            provenance:
+              compactProvenance ??
+              ((herb.provenance as Record<string, unknown> | null) ?? null),
+            traditional_uses: herb.traditional_uses ?? null,
+            modern_uses: herb.modern_uses ?? null,
+            active_compounds: herb.active_compounds ?? null,
+            dosage_forms: herb.dosage_forms ?? null,
+            dosage_adult: herb.dosage_adult ?? null,
+            preparation_notes: herb.preparation_notes ?? null,
+            pregnancy_safe: herb.pregnancy_safe,
+            nursing_safe: herb.nursing_safe,
+            contraindications: herb.contraindications ?? null,
+            side_effects: herb.side_effects ?? null,
           },
-          { key: "uses", content: <HerbUsesPanel herb={herb} /> },
-          {
-            key: "science",
-            content: (
-              <HerbSciencePanel
-                herb={herb}
-                monograph={monograph}
-                locale={locale}
-              />
-            ),
+          monograph: {
+            slug: monograph.slug,
+            summary: monograph.summary,
+            mechanism: monograph.mechanism,
+            claims: monograph.claims,
           },
-          {
-            key: "dosage",
-            content: (
-              <HerbDosagePanel herb={herb} regulatorName={regulatorName} />
-            ),
-          },
-          {
-            key: "safety",
-            content: (
-              <HerbSafetyPanel
-                herb={herb}
-                interactions={interactions}
-                severityCounts={severityCounts}
-                showInteractions={false}
-              />
-            ),
-          },
-        ]}
+          isClinicallyReviewed,
+          lastReviewed,
+          reviewedBy,
+          regulatorName,
+          interactionCount: interactions.length,
+          severityCounts,
+          locale,
+        }}
       />
     );
   }
@@ -159,8 +148,14 @@ export function HerbBodyContent({
       {showNonManualSafetyPanel && (
         <div id="safety" className="scroll-mt-24">
           <HerbSafetyPanel
-            herb={herb}
-            interactions={interactions}
+            herb={{
+              slug: herb.slug,
+              pregnancy_safe: herb.pregnancy_safe,
+              nursing_safe: herb.nursing_safe,
+              contraindications: herb.contraindications ?? null,
+              side_effects: herb.side_effects ?? null,
+            }}
+            interactionCount={interactions.length}
             severityCounts={severityCounts}
             showInteractions={false}
           />

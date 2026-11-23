@@ -1,3 +1,5 @@
+"use client";
+
 import type { CopyLocale } from "@/lib/i18n/herb-page-copy";
 
 export interface HerbJumpNavProps {
