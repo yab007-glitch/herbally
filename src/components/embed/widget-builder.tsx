@@ -108,7 +108,10 @@ export function WidgetBuilder() {
             {copied ? t("copied") : t("copyCode")}
           </Button>
         </div>
-        <pre className="mt-3 overflow-x-auto rounded-xl border border-border bg-background p-3 text-xs text-muted-foreground">
+        <pre
+          tabIndex={0}
+          className="mt-3 overflow-x-auto rounded-xl border border-border bg-background p-3 text-xs text-muted-foreground"
+        >
           <code>{snippet}</code>
         </pre>
       </div>

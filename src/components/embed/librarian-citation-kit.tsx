@@ -133,7 +133,10 @@ export function LibrarianCitationKit() {
               {copiedKey === "html" ? t("copied") : t("copyHtml")}
             </Button>
           </div>
-          <pre className="mt-2.5 overflow-x-auto rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+          <pre
+            tabIndex={0}
+            className="mt-2.5 overflow-x-auto rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground"
+          >
             <code>{htmlSnippet}</code>
           </pre>
         </div>

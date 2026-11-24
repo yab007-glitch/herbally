@@ -157,12 +157,12 @@ export function HerbCard({ herb, className }: HerbCardProps) {
               <div className="min-w-0 flex-1">
                 {/* Names wrap instead of truncating mid-word: the full name
                   is always visible (up to two lines) and also in title. */}
-                <h3
+                <h2
                   title={herb.name}
                   className="font-medium text-foreground break-words line-clamp-2"
                 >
                   {herb.name}
-                </h3>
+                </h2>
                 {/* Half the library is catalogued under its botanical name, so
                   the italic line repeated the title verbatim ("Abies alba" /
                   "Abies alba"). Print it only when it adds something. */}

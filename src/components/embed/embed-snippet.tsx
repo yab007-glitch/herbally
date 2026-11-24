@@ -34,7 +34,10 @@ export function EmbedSnippet() {
 
   return (
     <div className="mt-3 space-y-3">
-      <pre className="overflow-x-auto rounded-xl border bg-background p-3 text-xs text-muted-foreground">
+      <pre
+        tabIndex={0}
+        className="overflow-x-auto rounded-xl border bg-background p-3 text-xs text-muted-foreground"
+      >
         <code>{snippet}</code>
       </pre>
       <div className="flex items-center gap-3">

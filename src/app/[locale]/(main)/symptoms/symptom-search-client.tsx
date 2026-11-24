@@ -111,13 +111,14 @@ export function SymptomSearchClient() {
           <Button
             type="submit"
             disabled={isLoading || query.trim().length < 5}
+            aria-label={t("symptomsPage.search")}
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg"
             size="sm"
           >
             {isLoading ? (
-              <Loader2 className="size-4 animate-spin" />
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
             ) : (
-              <Search className="size-4" />
+              <Search className="size-4" aria-hidden="true" />
             )}
             <span className="ml-1.5 hidden sm:inline">
               {t("symptomsPage.search")}
