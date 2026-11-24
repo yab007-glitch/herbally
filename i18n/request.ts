@@ -1,11 +1,10 @@
 import { getRequestConfig } from "next-intl/server";
-import enDict from "@/lib/i18n/dictionaries/en.json";
-import frDict from "@/lib/i18n/dictionaries/fr.json";
+import { enDict, frDict } from "@/lib/i18n/dictionaries";
 import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 
 const messages: Record<string, Record<string, unknown>> = {
-  en: enDict as Record<string, unknown>,
-  fr: frDict as Record<string, unknown>,
+  en: enDict as unknown as Record<string, unknown>,
+  fr: frDict as unknown as Record<string, unknown>,
 };
 
 function isLocale(value: unknown): value is Locale {

@@ -1,0 +1,830 @@
+{
+  "about": {
+    "title": "À propos de HerbAlly",
+    "mission": "Notre Mission",
+    "missionText": "Nous croyons que tout le monde mérite un accès à des informations fiables et basées sur des preuves sur la phytothérapie.",
+    "team": "Notre Équipe",
+    "teamText": "Construit par une petite équipe passionnée par la phytothérapie accessible.",
+    "sources": "Nos Sources",
+    "sourcesText": "Informations provenant des monographies de l'OMS, de la Commission E allemande et de la recherche évaluée par les pairs.",
+    "disclaimer": {
+      "title": "Avertissement Médical",
+      "text": "HerbAlly fournit des informations éducatives uniquement. Ce n'est pas un avis médical. Consultez toujours un professionnel de santé qualifié avant d'utiliser tout remède à base de plantes."
+    }
+  },
+  "contact": {
+    "title": "Nous contacter",
+    "intro": "Le courriel est le moyen de nous joindre — HerbAlly n'a pas de formulaire d'assistance. Veuillez ne pas envoyer de renseignements de santé personnels par courriel; pour les questions médicales, adressez-vous à un professionnel de santé qualifié.",
+    "generalTitle": "Questions générales et parrainage",
+    "generalText": "Pour les questions générales, les corrections et les demandes de parrainage, écrivez à :",
+    "privacyTitle": "Questions relatives à la confidentialité",
+    "privacyText": "Pour les questions relatives à la confidentialité, les demandes de suppression de compte et les demandes de données, écrivez à :",
+    "termsTitle": "Questions relatives aux conditions",
+    "termsText": "Pour les questions relatives aux conditions d'utilisation, écrivez à :",
+    "linksTitle": "Pages utiles"
+  },
+  "commandPalette": {
+    "placeholder": "Rechercher des herbes, pages ou actions...",
+    "noResults": "Aucun résultat trouvé.",
+    "searching": "Recherche...",
+    "groups": {
+      "herbs": "Herbes",
+      "pages": "Pages",
+      "quickActions": "Actions Rapides"
+    },
+    "pages": {
+      "browseHerbs": "Parcourir les Herbes",
+      "doseCalculator": "Calculateur de Posologie",
+      "virtualHerbalist": "Herboriste Virtuel"
+    },
+    "actions": {
+      "searchHerbs": "Rechercher des Herbes",
+      "askInteractions": "Demander des Interactions",
+      "calculateDose": "Calculer la Dose"
+    }
+  },
+  "mission": {
+    "title": "Notre Mission",
+    "description": "Le savoir phytothérapique gratuit pour tous. Nous croyons que l'accès à l'information sur la santé est un droit fondamental, pas un privilège. HerbAlly est conçu pour démocratiser l'accès aux connaissances en phytothérapie basées sur des preuves.",
+    "freeAccess": "Pas de barrières de paiement, pas d'offres premium. Toutes les fiches publiées sont accessibles gratuitement à tous.",
+    "herbsCount": "Fiches sourcées",
+    "herbsDesc": "Base de données complète avec des profils détaillés",
+    "aiHerbalist": "Herboriste IA",
+    "aiHerbalistDesc": "Obtenez des réponses instantanées à vos questions",
+    "freeForever": "100% Gratuit",
+    "freeForeverDesc": "Aucun compte requis pour accéder",
+    "howDonationsHelp": "Comment Votre Don Aide",
+    "donationHostings": "Hébergement et Serveurs — Maintenir l'application rapide et disponible 24/7",
+    "donationAi": "Coûts IA — Alimenter le chatbot herboriste virtuel",
+    "donationDb": "Base de Données — Stocker et servir les fiches de plantes et données d'interactions",
+    "donationFeatures": "Nouvelles Fonctionnalités — Ajouter plus d'herbes, interactions et outils",
+    "promise": "Nous ne facturerons jamais les utilisateurs et ne vendrons pas vos données.",
+    "sustained": "HerbAlly est maintenu entièrement par des dons volontaires.",
+    "cta": "Faire un Don"
+  },
+  "admin": {
+    "title": "Tableau de Bord Administrateur",
+    "herbs": {
+      "title": "Gérer les Herbes",
+      "addNew": "Ajouter une Herbe",
+      "edit": "Modifier l'Herbe",
+      "published": "Publié",
+      "draft": "Brouillon"
+    },
+    "interactions": {
+      "title": "Gérer les Interactions"
+    },
+    "users": {
+      "title": "Utilisateurs"
+    },
+    "stats": {
+      "totalHerbs": "Total des Herbes",
+      "herbsDescription": "Publié dans la base de données",
+      "drugInteractions": "Interactions Médicamenteuses",
+      "interactionsDescription": "Interactions connues",
+      "registeredUsers": "Utilisateurs Inscrits",
+      "usersDescription": "Total des comptes",
+      "interactionChecks": "Vérifications d'Interactions",
+      "checksDescription": "Vérifications effectuées"
+    }
+  },
+  "terms": {
+    "title": "Conditions d'Utilisation",
+    "lastUpdated": "Dernière mise à jour : novembre 2026",
+    "acceptance": {
+      "title": "1. Acceptation des Conditions",
+      "text": "En accédant ou en utilisant HerbAlly, vous acceptez d'être lié par ces Conditions d'Utilisation et toutes les lois et réglementations applicables. Si vous n'acceptez pas ces conditions, vous êtes interdit d'utiliser cette plateforme."
+    },
+    "useOfService": {
+      "title": "2. Utilisation du Service",
+      "text": "HerbAlly fournit des informations éducatives sur les herbes médicinales, les calculs de posologie et les conseils d'herboriste alimentés par l'IA. Aucun compte ou inscription n'est requis — le service est librement accessible à tous. Vous acceptez d'utiliser le service uniquement à des fins légales et conformément à ces Conditions.",
+      "items": [
+        "Vous devez avoir au moins 18 ans pour utiliser ce service",
+        "Vous ne devez pas utiliser abusivement ou tenter d'exploiter la plateforme",
+        "Vous ne devez pas utiliser le service à des fins commerciales sans autorisation",
+        "Vous ne devez pas tenter de surcharger ou de perturber le service"
+      ]
+    },
+    "medicalDisclaimer": {
+      "title": "3. Avertissement Médical",
+      "text": "Les informations fournies sur HerbAlly sont à des fins éducatives uniquement. Elles ne sont pas destinées à diagnostiquer, traiter, guérir ou prévenir toute maladie. Consultez toujours un professionnel de santé qualifié avant de prendre toute décision liée à la santé sur la base d'informations trouvées sur cette plateforme."
+    },
+    "aiLimitations": {
+      "title": "4. Limitations du Contenu Généré par IA",
+      "text": "HerbAlly utilise l'intelligence artificielle pour générer des réponses dans l'Herboriste Virtuel. Vous reconnaissez et acceptez que :",
+      "items": [
+        "Les réponses générées par l'IA sont à des fins informatives et éducatives uniquement et ne constituent pas un avis médical",
+        "Les réponses de l'IA peuvent contenir des inexactitudes, omissions ou informations obsolètes malgré nos meilleurs efforts",
+        "L'IA n'a pas accès à votre historique médical personnel et ne peut pas fournir de recommandations médicales personnalisées",
+        "Vous devez toujours vérifier les informations générées par l'IA auprès d'un professionnel de santé qualifié avant de les appliquer",
+        "HerbAlly n'est pas responsable des décisions prises sur la base du contenu généré par l'IA"
+      ]
+    },
+    "intellectualProperty": {
+      "title": "5. Propriété Intellectuelle",
+      "text": "Tout le contenu sur HerbAlly, y compris les textes, graphiques, logos et logiciels, est la propriété d'HerbAlly ou de ses fournisseurs de contenu et est protégé par les lois sur la propriété intellectuelle. Vous ne pouvez pas reproduire, distribuer ou créer des œuvres dérivées sans notre autorisation écrite expresse."
+    },
+    "limitation": {
+      "title": "6. Limitation de Responsabilité",
+      "text": "HerbAlly ne sera pas responsable de tout dommage direct, indirect, accessoire, spécial ou consécutif résultant de l'utilisation ou de l'impossibilité d'utiliser notre service, y compris mais sans s'y limiter les dommages pour perte de profits, de données ou d'autres pertes incorporelles."
+    },
+    "userContent": {
+      "title": "7. Contenu Utilisateur",
+      "text": "Les questions envoyées à l'Herboriste Virtuel sont traitées pour générer des réponses. L'historique de session est géré conformément à notre Politique de confidentialité, et nous ne revendiquons aucun droit de propriété sur vos saisies."
+    },
+    "serviceAvailability": {
+      "title": "8. Disponibilité du Service",
+      "text": "HerbAlly est fourni tel quel et selon la disponibilité. Nous ne garantissons pas un accès ininterrompu au service. Nous nous réservons le droit de modifier, suspendre ou interrompre toute partie du service à tout moment sans préavis."
+    },
+    "changes": {
+      "title": "9. Modifications des Conditions",
+      "text": "Nous nous réservons le droit de modifier ces Conditions à tout moment. Les modifications prennent effet immédiatement après leur publication. Votre utilisation continue du service après les modifications constitue l'acceptation des Conditions modifiées."
+    },
+    "contact": {
+      "title": "10. Nous Contacter",
+      "text": "Si vous avez des questions concernant ces Conditions, veuillez nous contacter à legal@herbally.app."
+    }
+  },
+  "disclaimer": {
+    "title": "Avertissement Médical",
+    "text": "HerbAlly fournit uniquement du contenu éducatif et informatif. Les informations sur ce site ne sont pas destinées à remplacer un avis médical professionnel, un diagnostic ou un traitement.",
+    "consult": "Consultez toujours votre médecin ou un professionnel de santé qualifié avant de commencer tout complément à base de plantes, surtout si vous êtes enceinte, allaitez, prenez des médicaments ou avez une condition médicale.",
+    "fda": "Ces déclarations n'ont pas été évaluées par la Food and Drug Administration. HerbAlly n'est pas destiné à diagnostiquer, traiter, guérir ou prévenir toute maladie.",
+    "emergency": "Si vous pensez avoir une urgence médicale, appelez votre médecin, rendez-vous aux urgences ou appelez immédiatement les services d'urgence.",
+    "reliance": "HerbAlly ne recommande ni n'approuve aucune plante, produit, procédure ou opinion spécifique. Se fier à toute information fournie par HerbAlly se fait à vos propres risques.",
+    "canada": "Au Canada, les produits de santé naturels relèvent de Santé Canada en vertu du Règlement sur les produits de santé naturels. Un produit portant un NPN (ou un DIN-HM pour les produits homéopathiques) a été autorisé à la vente, ce qui ne signifie pas que son efficacité a été démontrée cliniquement. HerbAlly n'est affilié ni à Santé Canada ni à la FDA, et cette page n'est pas un dépôt réglementaire."
+  },
+  "aboutContent": {
+    "header": "À propos d'HerbAlly",
+    "subtitle": "Votre ressource de confiance, fondée sur les preuves, pour les herbes médicinales et les remèdes naturels.",
+    "whatIsTitle": "Qu'est-ce qu'HerbAlly ?",
+    "whatIsText1": "HerbAlly est une plateforme numérique complète conçue pour fournir des informations fiables et fondées sur des preuves concernant les herbes médicinales et les remèdes naturels. Nous combinons une vaste base de données de plantes, des calculateurs de posologie scientifiquement fondés et des conseils alimentés par l'IA pour aider les individus à prendre des décisions éclairées sur les suppléments à base de plantes et leurs interactions potentielles avec les médicaments.",
+    "whatIsText2": "Que vous soyez un professionnel de santé cherchant du matériel de référence rapide, un herboriste recherchant des données d'interaction, ou un individu explorant les options de bien-être naturel, HerbAlly fournit les outils et les informations dont vous avez besoin sur une plateforme accessible.",
+    "mission": {
+      "title": "Notre Mission",
+      "educate": "Éduquer",
+      "educateDesc": "Fournir des informations accessibles et fondées sur des preuves sur les herbes médicinales et leurs utilisations.",
+      "protect": "Protéger",
+      "protectDesc": "Aider les utilisateurs à identifier les interactions plante-médicament potentielles et à faire des choix de suppléments plus sûrs.",
+      "empower": "Responsabiliser",
+      "empowerDesc": "Donner aux individus et aux praticiens les outils pour prendre des décisions éclairées en matière de bien-être par les plantes."
+    },
+    "howItWorks": {
+      "title": "Comment ça marche",
+      "step1Title": "Rechercher dans notre base de données",
+      "step1Desc": "Parcourez des plantes médicinales avec des fiches détaillées incluant composés actifs, usages traditionnels, sécurité et recherche clinique.",
+      "step2Title": "Calculer des doses de référence",
+      "step2Desc": "Utilisez notre calculateur de référence pour les adultes de 18 ans et plus. Il ne fournit pas de posologie pédiatrique ; consultez un professionnel de santé pédiatrique qualifié pour un enfant ou un adolescent.",
+      "step3Title": "Consulter l'Herboriste Virtuel",
+      "step3Desc": "Posez des questions à notre herboriste alimenté par l'IA sur la sécurité des herbes, les interactions médicamenteuses et obtenez des conseils personnalisés."
+    },
+    "freeTitle": "Gratuit, financé par les dons",
+    "freeText1": "HerbAlly est gratuit : pas de barrières de paiement, pas d'offres premium. Nous prévoyons des annonces clairement identifiées sur les pages publiques de plantes pour aider à couvrir les coûts ; la publicité n'est pas encore active. L'Herboriste Virtuel, le vérificateur d'interactions et le calculateur de posologie sont destinés à rester sans publicité.",
+    "freeText2": "Les dons restent importants et financent l'infrastructure, l'usage de l'IA et le développement. Si elle est approuvée, la publicité complétera le soutien de la communauté sans le remplacer.",
+    "freeText3": "Si HerbAlly vous a été utile, veuillez envisager de faire un don pour nous aider à garder cette ressource disponible pour tous.",
+    "freeLink": "faire un don",
+    "team": {
+      "title": "Fondateur et réviseur de référence",
+      "text": "HerbAlly est fondé et administré par Yasser Bheekun, T.M. (OPTMQ · SCSLM) — technologiste médical diplômé en technologie d'analyses biomédicales (Collège Dawson) travaillant en laboratoire hospitalier au Centre universitaire de santé McGill à Montréal. Yasser révise et valide progressivement les fiches à partir des références cliniques et réglementaires primaires ; chaque fiche affiche un badge indiquant s'il s'agit d'une monographie vérifiée par un humain, d'un résumé IA ou d'une fiche à réviser. Cette validation éditoriale ne remplace pas un avis médical clinique."
+    }
+  },
+  "methodologyContent": {
+    "title": "Notre Méthodologie",
+    "subtitle": "Comment nous recherchons, évaluons et présentons les informations sur la médecine par les plantes",
+    "questionsTitle": "Des questions sur nos méthodes ?",
+    "questionsDesc": "Nous sommes engagés envers la transparence. Si vous avez des questions sur notre évaluation des preuves ou souhaitez signaler une erreur, n'hésitez pas à nous contacter.",
+    "viewFaq": "Voir la FAQ",
+    "contactUs": "Nous Contacter",
+    "evidenceGrading": {
+      "title": "Système de Classification des Preuves",
+      "content": "Chaque plante et affirmation dans HerbAlly reçoit un niveau de preuve de A à Utilisation Traditionnelle :\n\n**A (Preuves Solides)** : Multiples essais randomisés contrôlés (ERC), revues systématiques ou méta-analyses démontrant des résultats positifs cohérents. Exemple : Le gingembre pour les nausées de grossesse dispose d'un niveau de preuve A.\n\n**B (Preuves Modérées)** : Certains ERC ou études observationnelles bien conçues montrant des résultats positifs, mais les preuves sont limitées par la taille de l'échantillon, la durée ou la qualité de l'étude. Exemple : L'ashwagandha pour la réduction du stress.\n\n**C (Preuves Limitées)** : Preuves cliniques préliminaires, petites études pilotes ou données mécanistiques prometteuses avec des essais humains insuffisants. Exemple : De nombreuses plantes traditionnelles en attente d'évaluation clinique rigoureuse.\n\n**Utilisation Traditionnelle** : Longue histoire d'utilisation traditionnelle (100+ ans) avec documentation ethnographique, mais essais cliniques modernes limités ou inexistants. Ces plantes peuvent toujours être précieuses, mais les affirmations d'efficacité reposent sur des preuves historiques plutôt que scientifiques.\n\n**D (Anecdotique)** : Uniquement des rapports anecdotiques ou une plausibilité théorique sans données cliniques. Nous les signalons clairement et recommandons la prudence."
+    },
+    "sourceHierarchy": {
+      "title": "Hiérarchie des Sources",
+      "content": "Nous hiérarchisons les sources réglementaires et scientifiques dans cet ordre :\n\n1. **Monographies réglementaires et registres officiels** : Santé Canada (BDPSNH / monographies PSN), Agence européenne des médicaments (EMA / HMPC)\n2. **Références cliniques gouvernementales** : NIH NCCIH, base hépatotoxique NIH LiverTox\n3. **Revues systématiques et essais cliniques** : Cochrane, études PubMed évaluées par des pairs et études pharmacocinétiques d'interactions\n4. **Pharmacopées et matière médicale historique** : Monographies OMS, Commission E, Dispensaire américain (1918), indiqués clairement comme usage traditionnel\n\nNous excluons : les allégations commerciales et les sources sans référence vérifiable."
+    },
+    "safetyAssessment": {
+      "title": "Évaluation de la Sécurité",
+      "content": "Les données de sécurité sont évaluées séparément de l'efficacité :\n\n**Contre-indications** : Conditions où la plante ne doit pas être utilisée (ex. grossesse, maladie hépatique, interactions médicamenteuses spécifiques)\n\n**Précautions** : Conditions nécessitant une supervision médicale ou un ajustement de dose\n\n**Interactions Médicamenteuses** : Basées sur des données pharmacocinétiques et des rapports de cas. Sévérité classifiée comme :\n- Contre-indiqué : Ne jamais combiner\n- Sévère : Risque élevé ; nécessite une surveillance\n- Modéré : Risque modéré ; consulter un professionnel de santé\n- Léger : Risque faible ; surveiller les effets secondaires\n\n**Grossesse & Allaitement** : Évaluées selon les catégories FDA, les données d'utilisation traditionnelle et les études de sécurité clinique. En cas de données insuffisantes, nous privilégions la prudence."
+    },
+    "monographProcess": {
+      "title": "Processus de Création des Monographies",
+      "content": "Chaque fiche publiée suit un processus traçable en cinq étapes avec étiquetage explicite du statut de révision :\n\n1. **Extraction des sources** : Intégration directe des monographies officielles (Santé Canada, EMA HMPC), synthèses publiques (NIH NCCIH, LiverTox) et citations PubMed.\n2. **Vérification taxonomique** : Recoupement des noms botaniques et parties de plantes via GBIF, ITIS et NCBI Taxonomy pour la nomenclature uniquement (jamais pour la posologie ni la sécurité clinique).\n3. **Cartographie des risques** : Liaison des interactions médicamenteuses, cotes hépatiques et précautions de grossesse aux sources cliniques et réglementaires, avec désactivation du calculateur sur les plantes toxiques ou dangereuses.\n4. **Révision éditoriale progressive** : Vérification progressive par rapport aux sources primaires par Yasser Bheekun, T.M. (OPTMQ · SCSLM) — contrôle éditorial des preuves et de la sécurité, distinct d'un avis médical clinique.\n5. **Publication transparente et corrections** : Affichage clair du statut (« Révisée », « Résumé par IA », « Non révisée par un humain » ou « À réviser de nouveau »). Seules les monographies vérifiées par un humain indiquent une date de dernière révision ; les correctifs de sécurité sont prioritaires."
+    },
+    "transparency": {
+      "title": "Transparence & Limitations",
+      "content": "Nous croyons en une communication honnête sur ce que nous savons et ne savons pas :\n\n**Ce Que Nous Faisons** : Fournir des résumés fondés sur des preuves de la recherche en médecine par les plantes\n**Ce Que Nous Ne Faisons Pas** : Faire des recommandations médicales, remplacer la consultation médicale ou garantir des résultats\n\n**Limitations** :\n- La qualité des plantes varie selon la source ; nous ne pouvons pas vérifier votre produit spécifique\n- Les réponses individuelles aux plantes varient considérablement\n- Les preuves traditionnelles ne se traduisent pas toujours en efficacité clinique moderne\n- Des lacunes de recherche existent pour de nombreuses plantes\n\n**Notre Biais** : Nous sommes engagés envers les preuves plutôt que la tradition. Si l'utilisation traditionnelle est en conflit avec des preuves cliniques négatives, nous mettons en évidence les résultats cliniques."
+    },
+    "activeCompounds": {
+      "title": "Analyse des Composés Actifs",
+      "content": "Pour chaque plante, nous identifions :\n\n**Principaux Actifs** : Les composés les plus susceptibles d'être responsables des effets observés\n**Mécanisme** : Comment ces composés interagissent avec la physiologie humaine\n**Biodisponibilité** : Dans quelle mesure les composés sont absorbés et utilisés\n**Standardisation** : Si les extraits commerciaux sont standardisés pour ces composés\n\nCes informations aident les utilisateurs à comprendre :\n- Pourquoi différentes marques peuvent varier en efficacité\n- Ce qu'il faut rechercher sur les étiquettes de suppléments\n- Comment la formulation affecte la biodisponibilité (ex. curcumine + pipérine)"
+    }
+  },
+  "donateContent": {
+    "title": "Gardez HerbAlly 100% Gratuit",
+    "subtitle": "Pas de barrières de paiement. Pas d'offres premium. Juste des connaissances gratuites sur les plantes pour tous — financées par les dons, avec une publicité limitée et clairement identifiée prévue mais pas encore active.",
+    "herbsStat": "Fiches de plantes sourcées",
+    "freeAI": "Herboriste IA gratuit",
+    "freeForever": "100% gratuit pour toujours",
+    "chooseImpact": "Choisissez Votre Impact",
+    "everyDonation": "Chaque don nous aide à continuer",
+    "whereMoneyGoes": "Où Va Votre Argent",
+    "fullTransparency": "Transparence totale sur nos coûts de fonctionnement mensuels",
+    "estimatedCosts": "Coûts mensuels estimés",
+    "monthlyCost": "100+$/mois",
+    "loveHerbAlly": "Pourquoi les Gens Aiment HerbAlly",
+    "promiseTitle": "Notre Promesse envers Vous",
+    "noAds": "Publicité prévue, jamais dans les outils privés.",
+    "noAdsDesc": "Nous prévoyons des annonces clairement identifiées uniquement sur les pages publiques de plantes ; elles ne sont pas encore actives. L'Herboriste Virtuel, le vérificateur d'interactions et le calculateur sont destinés à rester sans publicité.",
+    "noPremium": "Pas de versions premium.",
+    "noPremiumDesc": "Chaque fonctionnalité est gratuite pour tous.",
+    "noDataSelling": "Pas de vente de données.",
+    "noDataSellingDesc": "Vos données restent les vôtres.",
+    "openCosts": "Transparents sur les coûts.",
+    "openCostsDesc": "Nous vous montrons exactement où vont les dons.",
+    "thankYou": "Merci pour votre don ! 💚",
+    "thankYouDesc": "Votre soutien aide à garder HerbAlly gratuit pour tous. Vous êtes incroyable !",
+    "canceled": "Don annulé",
+    "canceledDesc": "Pas de souci ! N'hésitez pas à réessayer quand vous êtes prêt.",
+    "questions": "Des questions ?",
+    "learnMore": "En savoir plus sur HerbAlly",
+    "breakdown": {
+      "hosting": {
+        "label": "Hébergement & Infrastructure",
+        "desc": "Serveurs, CDN et déploiement pour maintenir l'application rapide et fiable",
+        "monthly": "20$"
+      },
+      "database": {
+        "label": "Base de Données & Stockage",
+        "desc": "Base de données PostgreSQL auto-hébergée pour les fiches de plantes, interactions et données utilisateur",
+        "monthly": "25$"
+      },
+      "ai": {
+        "label": "Herboriste IA",
+        "desc": "Coûts de l'API Ollama Cloud pour le chatbot herboriste virtuel",
+        "monthly": "50$+"
+      },
+      "domain": {
+        "label": "Domaine & SSL",
+        "desc": "Enregistrement de domaine et certificats HTTPS sécurisés",
+        "monthly": "5$"
+      }
+    },
+    "testimonials": [
+      {
+        "quote": "Enfin, une ressource gratuite pour l'information sur les plantes !",
+        "author": "Sarah M.",
+        "location": "Portland, OR"
+      },
+      {
+        "quote": "L'herboriste IA m'a aidé à comprendre les interactions plante-médicament.",
+        "author": "James K.",
+        "location": "Austin, TX"
+      },
+      {
+        "quote": "J'utilise cela chaque semaine pour mes recommandations de tisanes.",
+        "author": "Maria L.",
+        "location": "Denver, CO"
+      }
+    ],
+    "supportStripe": "Soutenir HerbAlly",
+    "supportStripeDesc": "Aidez à garder l'information en médecine par les plantes gratuite pour tous",
+    "checkoutError": "Échec de la création de la session de paiement",
+    "taxNote": "Avis fiscal : HerbAlly est un projet éducatif indépendant et non un organisme de bienfaisance enregistré. Les contributions sont volontaires, ne sont pas déductibles d'impôt et ne donnent pas droit à un reçu officiel pour don de bienfaisance."
+  },
+  "govSources": {
+    "title": "Sources gouvernementales",
+    "directMonograph": "monographie directe",
+    "searchFallback": "recherche",
+    "index": "index",
+    "noMonographNotice": "Aucun lien direct vers une monographie du NIH, de l'EMA ou de l'OMS n'est encore associé à cette plante. Utilisez les liens de recherche officiels ci-dessous pour consulter directement les dossiers réglementaires.",
+    "stubTitle": "Aucune monographie rédigée par un humain pour cette plante",
+    "stubBody": "Cette plante ne dispose pas d'une monographie rédigée par un humain. Le contenu de référence de cette page est étiqueté selon son mode de production ; consultez les sources gouvernementales et les études primaires PubMed (NIH) listées ci-dessous pour des informations fiables. Confirmez toujours auprès d'un professionnel de santé avant utilisation."
+  },
+  "compare": {
+    "notFound": "Comparaison de Plantes Non Trouvée",
+    "title": "{name1} vs {name2}",
+    "subtitle": "Comparaison côte à côte des plantes médicinales",
+    "backToHerbs": "Retour aux Herbes",
+    "herb": "Plante",
+    "description": "Description",
+    "activeCompounds": "Composés actifs",
+    "traditionalUses": "Utilisations traditionnelles",
+    "modernUses": "Utilisations modernes",
+    "adultDosage": "Posologie adulte",
+    "contraindications": "Contre-indications",
+    "sideEffects": "Effets secondaires",
+    "drugInteractions": "Interactions médicamenteuses",
+    "knownInteractions": "{count} interactions connues",
+    "pregnancyWarnings": "Avertissements grossesse et allaitement",
+    "safeInPregnancy": "Généralement sûr pendant la grossesse",
+    "notRecommendedPregnancy": "Non recommandé pendant la grossesse",
+    "safeNursing": "Généralement sûr pendant l'allaitement",
+    "notRecommendedNursing": "Non recommandé pendant l'allaitement",
+    "viewDetails": "En savoir plus sur {name}",
+    "notFoundTitle": "Comparaison de Plantes Non Trouvée",
+    "notFoundDesc": "La comparaison de plantes que vous recherchez n'existe pas."
+  },
+  "dosageFormulas": {
+    "clarks_rule": {
+      "name": "Règle de Clark",
+      "description": "Calcul de référence basé sur le poids.",
+      "bestFor": "Adultes, référence basée sur le poids"
+    },
+    "youngs_rule": {
+      "name": "Règle de Young",
+      "description": "Calcul de référence basé sur l'âge, moins précis que les méthodes basées sur le poids.",
+      "bestFor": "Adultes, référence basée sur l'âge"
+    },
+    "bsa": {
+      "name": "Méthode BSA (Mosteller)",
+      "description": "Calcul de référence basé sur la surface corporelle.",
+      "bestFor": "Adultes lorsque la taille et le poids sont connus"
+    },
+    "fried_rule": {
+      "name": "Règle de Fried",
+      "description": "Méthode de référence basée sur l'âge en mois.",
+      "bestFor": "Non applicable aux adultes de 18 ans et plus"
+    }
+  },
+  "sponsorship": {
+    "eyebrow": "Parrainage et partenariats",
+    "status": "Aucun parrain confirmé",
+    "title": "Soutenir l’infrastructure derrière HerbAlly",
+    "subtitle": "Nous explorons un parrainage mensuel ou annuel pour couvrir l’hébergement, l’IA, la base de données et le domaine. Aucun parrain n’est confirmé à ce jour, et aucun parrain n’influence ce que nous publions.",
+    "heroEmail": "Écrire au sujet du parrainage",
+    "heroDonate": "Soutenir par un don",
+    "heroNote": "Cette page décrit notre politique et la situation actuelle. Elle ne constitue pas une offre, un devis ni une page de paiement.",
+    "current": {
+      "title": "Parrains actuels",
+      "description": "Les parrainages confirmés apparaîtront ici. Rien n’est affiché tant qu’une entente n’est pas confirmée.",
+      "emptyTitle": "Aucun parrain confirmé pour le moment",
+      "emptyDescription": "Nous n’avons aucun parrainage payant confirmé à divulguer pour l’instant. Lorsqu’une entente sera confirmée, elle apparaîtra ici avec une mention claire de parrainage — jamais sous forme de logo anonyme ou de placement caché.",
+      "emptyNote": "Cette liste vide reflète la situation actuelle ; ce n’est pas un espace réservé."
+    },
+    "costs": {
+      "title": "Ce que le soutien peut couvrir",
+      "description": "Le parrainage aiderait à payer l’infrastructure qui sert chaque visiteur. Nous sommes ouverts à un soutien mensuel ou annuel pour :",
+      "items": {
+        "hosting": {
+          "label": "Hébergement",
+          "description": "Les serveurs et la diffusion qui gardent les pages et les outils accessibles."
+        },
+        "ai": {
+          "label": "Coûts d’IA",
+          "description": "L’inférence du Herboriste virtuel et l’interprétation des recherches."
+        },
+        "database": {
+          "label": "Base de données",
+          "description": "Le stockage, les requêtes et les sauvegardes des monographies de plantes."
+        },
+        "domain": {
+          "label": "Domaine",
+          "description": "Le nom herbally.app et les services essentiels qui s’y rattachent."
+        }
+      },
+      "terms": "Nous n’affichons aucun prix ni modalité de paiement sur cette page. Toute discussion est exploratoire : rien ici ne constitue une offre, un devis ou une promesse qu’un parrainage sera accepté."
+    },
+    "independence": {
+      "title": "L’indépendance n’est pas négociable",
+      "description": "Le parrainage paie des coûts d’exploitation. Il n’achète pas la confiance des lecteurs.",
+      "items": {
+        "labelled": {
+          "title": "Des mentions claires",
+          "description": "Tout parrainage confirmé sera identifié en toutes lettres près du nom du parrain et sur toute page où il est mentionné."
+        },
+        "medical": {
+          "title": "Aucune influence médicale",
+          "description": "Les parrains n’ont aucune influence sur les renseignements sur les plantes, les classements, les niveaux de preuve, les avertissements de sécurité, les résultats d’interactions ou le Herboriste virtuel."
+        },
+        "safety": {
+          "title": "La sécurité d’abord",
+          "description": "Nous n’accepterons jamais un parrainage conditionné à la modification, à l’atténuation ou à la dissimulation d’une information de sécurité."
+        },
+        "privacy": {
+          "title": "Aucune donnée de santé ou de visiteur",
+          "description": "Nous ne partagerons pas avec les parrains les renseignements de santé individuels, les messages de clavardage, les termes de recherche ni les données analytiques au niveau du visiteur."
+        },
+        "traffic": {
+          "title": "Aucun trafic garanti",
+          "description": "Nous ne vendons ni ne garantissons d’impressions, de trafic, de clics, de conversions ou de positionnement dans les résultats de recherche."
+        }
+      }
+    },
+    "types": {
+      "title": "Dons, crédits en nature et parrainage",
+      "description": "Ce sont des formes de soutien différentes, et nous les identifions différemment.",
+      "donation": {
+        "label": "Don",
+        "title": "Don volontaire",
+        "description": "Un don soutient le fonctionnement général de HerbAlly. Il n’entraîne aucun avantage réciproque, aucune mention de parrainage et aucune influence éditoriale."
+      },
+      "inKind": {
+        "label": "En nature",
+        "title": "Crédit en nature",
+        "description": "Un service ou un crédit fourni gratuitement ou à prix réduit, comme des crédits d’hébergement. Nous le divulguerions séparément et le libellerions « En nature »."
+      },
+      "sponsorship": {
+        "label": "Parrainage",
+        "title": "Parrainage payant",
+        "description": "Une entente payante, mensuelle ou annuelle, liée au soutien de l’infrastructure. Elle serait clairement libellée et n’aurait aucune influence sur le contenu médical ni aucun effet garanti sur le trafic."
+      }
+    },
+    "contact": {
+      "title": "Discuter d’un parrainage",
+      "description": "Si votre organisation souhaite soutenir HerbAlly, écrivez-nous à info@herbally.app.",
+      "emailLabel": "Écrire à info@herbally.app",
+      "emailSubject": "Demande de parrainage",
+      "prompt": "Précisez le type de soutien envisagé (mensuel ou annuel), les coûts qui vous intéressent et le nom de votre organisation.",
+      "privacy": "N’envoyez pas de renseignements de santé personnels. Cette page n’accepte aucun paiement.",
+      "noOffer": "Nous examinerons les messages, mais l’envoi d’un message ne crée aucune entente et ne garantit pas de réponse."
+    },
+    "links": {
+      "methodology": "Lire notre méthodologie",
+      "privacy": "Lire notre politique de confidentialité",
+      "donate": "Faire un don volontaire"
+    },
+    "pageNote": "HerbAlly fournit des renseignements éducatifs, pas des conseils médicaux. Le parrainage ne change rien à cela.",
+    "audience": {
+      "title": "Qui lit HerbAlly",
+      "description": "Un public modeste, décrit honnêtement. Nous préférons vous montrer les chiffres réels plutôt qu'un argumentaire que vous pourriez vérifier et trouver gonflé.",
+      "stats": {
+        "visitors": {
+          "value": "1 800",
+          "label": "visiteurs sur les 30 derniers jours"
+        },
+        "pageviews": {
+          "value": "2 300",
+          "label": "pages vues sur les 30 derniers jours"
+        },
+        "languages": {
+          "value": "EN + FR",
+          "label": "chaque page entièrement traduite"
+        },
+        "markets": {
+          "value": "CA · FR · monde",
+          "label": "où se trouvent les lecteurs"
+        }
+      },
+      "note": "Chiffres bruts de notre propre analytique pour les 30 jours précédant le 29 octobre 2026. Environ la moitié des sessions récentes semblent automatisées : le public humain est donc plus petit que le chiffre affiché. Nous vous le disons ici plutôt que de vous le laisser découvrir plus tard.",
+      "fit": "HerbAlly convient à un commanditaire dont les clients se demandent ce que fait une plante, si elle est compatible avec leurs médicaments, ou quelle quantité prendre — et qui veut associer son nom à cette réponse sans acheter d'influence sur elle."
+    },
+    "packages": {
+      "title": "Formules de commandite",
+      "description": "Tarifs publiés, sans enchère, sans article commandité, et sans mot à dire sur ce que le site affirme au sujet d'une plante. Annulable en tout temps.",
+      "currency": "Tous les prix sont en dollars canadiens.",
+      "items": {
+        "supporter": {
+          "name": "Soutien",
+          "price": "25 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Votre nom et un lien dans le pied de page",
+            "Mention sur cette page",
+            "Annulable en tout temps"
+          ]
+        },
+        "sponsor": {
+          "name": "Commanditaire",
+          "price": "50 $ CA",
+          "cadence": "par mois",
+          "features": [
+            "Tout ce que comprend Soutien",
+            "Une ligne « Soutenu par » sur les pages de plantes",
+            "Un bilan trimestriel de ce que votre soutien a payé"
+          ]
+        },
+        "launch": {
+          "name": "Partenaire de lancement",
+          "price": "150 $ CA",
+          "cadence": "par an",
+          "features": [
+            "Tout ce que comprend Commanditaire",
+            "Votre logo sur la page d'accueil",
+            "Une entrée nommée dans notre registre public de commanditaires"
+          ]
+        }
+      },
+      "cta": "Se renseigner sur cette formule",
+      "note": "Nous publions qui nous soutient. Les commanditaires ne révisent, ne modifient, n'approuvent ni ne bloquent jamais le contenu santé, et aucune formule n'achète une mention favorable d'une plante."
+    }
+  },
+  "meta": {
+    "herbsDatabase": "Base de Données de Plantes Médicinales",
+    "herbsDatabaseDesc": "Parcourez notre base de données de plantes médicinales avec fiches sourcées, composés actifs, avertissements de sécurité et interactions médicamenteuses.",
+    "virtualHerbalist": "Herboriste Virtuel",
+    "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions et la posologie. Réponses sourcées OMS, NCCIH et PubMed, gratuites.",
+    "doseCalculator": "Calculateur de Posologie : Doses de Référence pour Adultes",
+    "doseCalculatorDesc": "Calculateur gratuit de posologie adulte (18 ans et plus) selon le poids et l'âge : formules de Clark, Young et surface corporelle pour les plantes disposant d'une dose de référence établie.",
+    "herbsBySymptom": "Plantes par Symptôme",
+    "herbsBySymptomDesc": "Trouvez les plantes adaptées à vos symptômes avec niveaux de preuve et sources : anxiété, sommeil, inflammation, digestion et plus encore.",
+    "privacyPolicy": "Politique de Confidentialité",
+    "medicalDisclaimer": "Avertissement Médical",
+    "medicalDisclaimerDesc": "Lisez l'avertissement médical complet de HerbAlly, y compris la façon dont la FDA et Santé Canada encadrent les produits à base de plantes.",
+    "faq": "Questions Fréquemment Posées",
+    "faqDesc": "Réponses aux questions fréquentes sur HerbAlly : nos sources, nos méthodes, la sécurité des plantes, la posologie et les interactions médicamenteuses.",
+    "methodology": "Notre Méthodologie",
+    "methodologyDesc": "Comment HerbAlly rédige et vérifie une fiche de plante : les sources utilisées, la signification de chaque niveau de preuve, l’usage de l’IA et les corrections.",
+    "privacyDesc": "Comment HerbAlly traite vos données : ce qui est recueilli, les témoins (cookies), la mesure d’audience et l’exercice de vos droits.",
+    "termsOfService": "Conditions d'Utilisation",
+    "termsDesc": "Conditions d’utilisation de HerbAlly, avertissement médical, limites de l’assistant IA et règles d’accès à notre guide des plantes médicinales.",
+    "supportUs": "Soutenez-nous - Gardez la Médecine par les Plantes Gratuite",
+    "supportUsDesc": "Aidez-nous à garder HerbAlly 100% gratuit. Votre don soutient l'hébergement, les coûts IA et l'accès gratuit pour tous.",
+    "sponsorship": "Parrainage et partenariats",
+    "sponsorshipDesc": "Transparence HerbAlly : indépendance éditoriale, confidentialité et soutien à l'hébergement, à l'IA et à la base de données.",
+    "herbNotFound": "Plante Non Trouvée",
+    "herbComparisonNotFound": "Comparaison de Plantes Non Trouvée",
+    "about": "À Propos",
+    "aboutDesc": "Découvrez HerbAlly, notre mission et comment nous vous aidons à prendre des décisions éclairées sur les plantes médicinales.",
+    "contact": "Nous contacter",
+    "contactDesc": "Comment contacter HerbAlly : adresses courriel générales, de confidentialité et des conditions.",
+    "herbDrugInteractions": "Interactions Plante-Médicament",
+    "herbDrugInteractionsDesc": "Comprendre les interactions plante-médicament et vérifier vos plantes en quelques secondes : millepertuis, ail, ginkgo, curcuma, kava et warfarine.",
+    "appDescription": "Vérifiez une plante contre vos médicaments en quelques secondes : fiches sourcées, niveaux de preuve et calculateur de posologie adulte. Gratuit.",
+    "herbsFor": "Plantes pour {symptom}",
+    "homeTitle": "Interactions plante-médicament et guide",
+    "gardenPageTitle": "Mon Jardin",
+    "gardenSubtitle": "Votre collection personnelle de plantes médicinales. Suivez ce que vous avez exploré et enrichissez vos connaissances.",
+    "profileTitle": "Mon Profil",
+    "profileSubtitle": "Gérez vos données de santé pour un dosage personnalisé et des avertissements de sécurité",
+    "npnChecker": "Décodeur NPN Santé Canada (BDPSNH)",
+    "npnCheckerDesc": "Vérifiez tout numéro NPN ou DIN-HM à 8 chiffres de Santé Canada : ingrédients médicinaux, mises en garde officielles et interactions avec vos médicaments.",
+    "medications": "Médicaments et interactions avec les plantes A–Z",
+    "medicationsDesc": "Parcourez vos médicaments et classes thérapeutiques pour voir toutes les plantes documentées pouvant interagir, classées par gravité et sources.",
+    "surgeryPlanner": "Planificateur d'arrêt des plantes avant chirurgie",
+    "surgeryPlannerDesc": "Calculez les dates de révision préopératoire pour les plantes affectant le saignement, l'anesthésie ou le métabolisme CYP450.",
+    "widgets": "Widget gratuit d'interactions plante-médicament",
+    "widgetsDesc": "Intégrez gratuitement le vérificateur bilingue d'interactions plante-médicament HerbAlly sur votre site clinique, étudiant ou santé."
+  },
+  "symptomMeta": {
+    "anxiety": {
+      "title": "Plantes pour l'Anxiété et le Stress",
+      "desc": "Plantes fondées sur les preuves pour le soulagement de l'anxiété et du stress."
+    },
+    "depression": {
+      "title": "Plantes pour la Dépression et l'Humeur",
+      "desc": "Plantes fondées sur les preuves pour le soutien de la dépression et de l'humeur."
+    },
+    "sleep": {
+      "title": "Plantes pour le Sommeil et l'Insomnie",
+      "desc": "Plantes fondées sur les preuves pour un meilleur sommeil."
+    },
+    "inflammation": {
+      "title": "Plantes pour l'Inflammation",
+      "desc": "Plantes anti-inflammatoires fondées sur les preuves."
+    },
+    "digestion": {
+      "title": "Plantes pour la Santé Digestive",
+      "desc": "Plantes fondées sur les preuves pour les troubles digestifs."
+    },
+    "nausea": {
+      "title": "Plantes pour les Nausées",
+      "desc": "Plantes fondées sur les preuves pour les nausées et les maux d'estomac."
+    },
+    "constipation": {
+      "title": "Plantes pour la Constipation",
+      "desc": "Plantes fondées sur les preuves pour le soulagement de la constipation."
+    },
+    "liver": {
+      "title": "Plantes pour la Santé du Foie",
+      "desc": "Plantes fondées sur les preuves pour le soutien hépatique."
+    },
+    "bloodPressure": {
+      "title": "Plantes pour la Tension Artérielle",
+      "desc": "Plantes fondées sur les preuves pour la gestion de la tension artérielle."
+    },
+    "cholesterol": {
+      "title": "Plantes pour le Cholestérol",
+      "desc": "Plantes fondées sur les preuves pour la gestion du cholestérol."
+    },
+    "circulation": {
+      "title": "Plantes pour la Circulation",
+      "desc": "Plantes fondées sur les preuves pour la circulation et la santé cardiovasculaire."
+    },
+    "immune": {
+      "title": "Plantes pour le Soutien Immunitaire",
+      "desc": "Plantes fondées sur les preuves pour le soutien du système immunitaire."
+    },
+    "allergy": {
+      "title": "Plantes pour les Allergies",
+      "desc": "Plantes fondées sur les preuves pour le soulagement des allergies."
+    },
+    "menstrual": {
+      "title": "Plantes pour la Santé Menstruelle",
+      "desc": "Plantes fondées sur les preuves pour les crampes menstruelles et le SPM."
+    },
+    "menopause": {
+      "title": "Plantes pour la Ménopause",
+      "desc": "Plantes fondées sur les preuves pour le soulagement des symptômes de la ménopause."
+    },
+    "hormonal": {
+      "title": "Plantes pour l'Équilibre Hormonal",
+      "desc": "Plantes fondées sur les preuves pour l'équilibre hormonal."
+    },
+    "skin": {
+      "title": "Plantes pour la Santé de la Peau",
+      "desc": "Plantes fondées sur les preuves pour les affections cutanées."
+    },
+    "wound": {
+      "title": "Plantes pour la Cicatrisation",
+      "desc": "Plantes fondées sur les preuves pour la guérison des plaies."
+    },
+    "acne": {
+      "title": "Plantes pour l'Acné",
+      "desc": "Plantes fondées sur les preuves pour le traitement de l'acné."
+    },
+    "nerve": {
+      "title": "Plantes pour la Santé Nerveuse",
+      "desc": "Plantes fondées sur les preuves pour la santé nerveuse."
+    },
+    "prostate": {
+      "title": "Plantes pour la Santé Prostatique",
+      "desc": "Plantes fondées sur les preuves pour le soutien prostatique."
+    },
+    "diabetes": {
+      "title": "Plantes pour la Glycémie",
+      "desc": "Plantes fondées sur les preuves pour la gestion de la glycémie."
+    },
+    "focus": {
+      "title": "Plantes pour la Concentration et la Mémoire",
+      "desc": "Plantes fondées sur les preuves pour l'amélioration cognitive et la concentration."
+    },
+    "joint": {
+      "title": "Plantes pour les Articulations et les Muscles",
+      "desc": "Plantes fondées sur les preuves pour les douleurs articulaires et musculaires."
+    },
+    "headache": {
+      "title": "Plantes pour les Maux de Tête et Migraines",
+      "desc": "Plantes fondées sur les preuves pour le soulagement des maux de tête et migraines."
+    },
+    "cold": {
+      "title": "Plantes pour le Rhume et la Grippe",
+      "desc": "Plantes fondées sur les preuves pour le soulagement du rhume et de la grippe."
+    }
+  },
+  "symptomsDetail": {
+    "medicalDisclaimer": "Avertissement Médical",
+    "medicalDisclaimerText": "Ces plantes sont répertoriées à des fins éducatives uniquement. L'efficacité varie selon l'individu. Consultez toujours votre professionnel de santé avant d'utiliser des plantes, en particulier si vous prenez des médicaments ou avez une condition médicale.",
+    "herbCount": "{count} plantes trouvées pour cette condition",
+    "noHerbsYet": "Aucune plante trouvée pour cette condition pour le moment.",
+    "compareThese": "Comparer Ces Plantes",
+    "compareDesc": "Comparez l'efficacité, la sécurité et les interactions côte à côte.",
+    "askHerbalist": "Interroger l'herboriste IA"
+  },
+  "herbMeta": {
+    "title": "{name} ({scientific}) : bienfaits, posologie et précautions",
+    "titleBinomial": "{scientific} : bienfaits, posologie et précautions",
+    "titleShort": "{name} ({scientific}) : bienfaits et précautions",
+    "titleBinomialShort": "{scientific} : bienfaits et précautions",
+    "descWithNames": "Bienfaits, posologie, grossesse et interactions médicamenteuses pour {name} ({common}). Sources PubMed et calculateur de doses gratuit.",
+    "descFallback": "Bienfaits, posologie, grossesse, effets secondaires et interactions médicamenteuses pour {name} ({scientific}). Fiche sourcée et calculateur de doses gratuit.",
+    "usesFallback": "le bien-être traditionnel"
+  },
+  "compareMeta": {
+    "title": "{a} ou {b} : différences, bienfaits et laquelle choisir",
+    "shortTitle": "{a} ou {b} : laquelle choisir",
+    "desc": "Comparer {a} et {b} : usages, posologie, grossesse, effets secondaires et interactions médicamenteuses. Verdict fondé sur les preuves et calculateur de doses gratuit."
+  },
+  "seo": {
+    "safePregnancy": "Généralement sûr pendant la grossesse",
+    "notSafePregnancy": "Déconseillé pendant la grossesse",
+    "safeNursing": "Généralement sûr pendant l'allaitement",
+    "notSafeNursing": "Déconseillé pendant l'allaitement",
+    "nccihSource": "Plantes Médicinales en Bref",
+    "breadcrumbHome": "Accueil",
+    "orgName": "HerbAlly",
+    "orgDesc": "Une bibliothèque de référence de plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
+  },
+  "brand": {
+    "full": "HerbAlly"
+  },
+  "homeAI": {
+    "badge": "Assistant Herbaliste IA",
+    "title": "Posez vos questions sur les plantes et la santé naturelle",
+    "subtitle": "Tapez votre question ou appuyez sur une suggestion. Obtenez des réponses basées sur des preuves de l'OMS, du NCCIH et de PubMed — instantanément et gratuitement."
+  },
+  "home": {
+    "heroTitle": "Vérifiez les interactions plante‑médicament",
+    "heroSubtitle": "Tapez une plante et un médicament pour vérifier d'abord la base de données HerbAlly. Si une association n'est pas enregistrée, l'Herboriste Virtuel peut expliquer davantage.",
+    "heroButton": "Explorer les plantes",
+    "herbPlaceholder": "Curcuma, millepertuis…",
+    "medPlaceholder": "warfarine, sertraline…",
+    "checkButton": "Vérifier l'interaction",
+    "suggestion1": "Millepertuis + antidépresseurs",
+    "suggestion2": "Curcuma + anticoagulants",
+    "suggestion3": "Ginkgo + aspirine",
+    "suggestion4": "Échinacée + immunosuppresseurs",
+    "trustLine": "Basé sur des preuves · Gratuit · Sans compte",
+    "symptomsLink": "Pas sûr de quelle plante ? Décrivez vos symptômes →",
+    "emptyCheckError": "Saisissez une plante ou un médicament pour vérifier une interaction.",
+    "sameCheckError": "La plante et le médicament semblent identiques — saisissez deux produits différents.",
+    "featuresTitle": "Ce que vous pouvez faire",
+    "featureHerbsTitle": "Base de données",
+    "featureHerbsDescription": "Recherchez des plantes médicinales avec fiches sourcées, usages et précautions.",
+    "featureCalculatorTitle": "Calculateur de dosage",
+    "featureCalculatorDescription": "Recommandations de dosage basées sur l'âge et le poids.",
+    "featureInteractionsTitle": "Vérificateur d'interactions",
+    "featureInteractionsDescription": "Vérifiez les interactions avant de combiner suppléments et médicaments.",
+    "featureAiTitle": "Herboriste virtuel",
+    "featureAiDescription": "Posez des questions. Réponses basées sur des preuves avec citations.",
+    "checkerChecking": "Vérification dans la base de données…",
+    "checkerFoundTitle": "Résultat de la base de données",
+    "checkerAskHerbalist": "Demander à l'Herboriste Virtuel",
+    "checkerAskPrompt": "Est-il sécuritaire de prendre {herb} avec {drug} ?",
+    "checkerViewPair": "Voir l'interaction complète",
+    "checkerViewHerb": "Voir la page de la plante",
+    "checkerDisclaimer": "Informations éducatives uniquement, pas un avis médical. Confirmez auprès de votre médecin ou pharmacien avant de modifier un médicament.",
+    "checkerNotFoundTitle": "Aucun enregistrement structuré trouvé",
+    "checkerNotFoundBody": "Aucun enregistrement structuré d'interaction trouvé pour {herb} + {drug} dans la base de données HerbAlly.",
+    "checkerAiNote": "L'Herboriste Virtuel peut expliquer davantage, mais sa réponse est une information éducative générée par IA — pas un résultat de la base de données — et doit être vérifiée indépendamment.",
+    "checkerError": "La vérification dans la base de données n'a pas pu s'exécuter. Réessayez ou demandez à l'Herboriste Virtuel.",
+    "checkerSource": "Source",
+    "checkerEvidence": "Preuves",
+    "checkerMechanism": "Fonctionnement",
+    "explainerTitle": "Votre guide de confiance des plantes médicinales",
+    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant des centaines de fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et calculer une dose adulte lorsqu'une posologie sûre existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
+    "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
+    "popularTitle": "Plantes populaires",
+    "herbLabel": "Plante",
+    "medLabel": "Médicament",
+    "eyebrow": "Un ouvrage de référence sur ce que vous prenez ensemble",
+    "stackLinkLabel": "Vérifier plusieurs plantes et médicaments + fiche imprimable",
+    "npnLinkLabel": "Décoder un numéro NPN Santé Canada"
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "lastUpdated": "Dernière mise à jour : novembre 2026",
+    "overview": {
+      "title": "1. Aperçu",
+      "text": "HerbAlly est gratuit et la majeure partie du site fonctionne sans compte. Certaines fonctions, comme l'enregistrement d'un jardin, de calculs ou d'un historique de discussion, nécessitent un compte ou créent une session anonyme. Cette politique explique ce qui est conservé, où, et les choix dont vous disposez."
+    },
+    "infoWeCollect": {
+      "title": "2. Informations que Nous Collectons",
+      "text": "Selon votre utilisation d'HerbAlly, nous pouvons collecter :",
+      "chatMessages": "Les questions envoyées à l'Herboriste Virtuel peuvent être traitées par Ollama Cloud pour générer des réponses. Les conversations des utilisateurs connectés peuvent être enregistrées dans leur compte ; celles des invités peuvent être enregistrées dans une session liée au cookie herbally-guest-id.",
+      "analytics": "Cloudflare Web Analytics recueille des statistiques agrégées sans témoins (cookies) ainsi que des mesures globales de performance Web Vitals.",
+      "cookies": "HerbAlly utilise des cookies pour la langue, les sessions invitées et l'authentification. Votre navigateur peut aussi conserver des entrées et notes de jardin ainsi que les recherches récentes. Si la publicité est activée ultérieurement, Google et ses partenaires peuvent utiliser des cookies ou des identifiants d'appareil.",
+      "notCollect": "Nous ne demandons ni nom ni adresse e-mail, sauf si vous créez un compte ou faites un don. Nous ne vendons pas de renseignements personnels."
+    },
+    "howWeUse": {
+      "title": "3. Comment Nous Utilisons Vos Informations",
+      "items": [
+        "Fournir et maintenir nos services",
+        "Générer des réponses IA dans l'Herboriste Virtuel",
+        "Enregistrer les données de compte facultatives, y compris votre jardin, vos calculs et votre historique de discussion",
+        "Traiter les dons par Stripe et conserver le dossier comptable nécessaire",
+        "Améliorer notre base de données de plantes et les réponses IA grâce à des statistiques agrégées",
+        "Mémoriser votre préférence de langue entre les visites",
+        "Assurer la sécurité et l'intégrité de notre plateforme"
+      ]
+    },
+    "thirdParty": {
+      "title": "4. Services Tiers",
+      "text": "HerbAlly utilise les services tiers suivants :",
+      "supabase": "Infrastructure PostgreSQL / Supabase auto-hébergée à Montréal (Québec, Canada) — conserve de façon sécurisée les comptes facultatifs, profils de santé, jardins sauvegardés, historiques de posologie et journaux de dons.",
+      "vercel": "Cloudflare — DNS, chiffrement TLS, tunnel chiffré et mesure d'audience Cloudflare Web Analytics sans témoins vers notre serveur d'origine à Montréal.",
+      "stripe": "Stripe — traitement des paiements pour les dons. HerbAlly ne voit ni ne stocke jamais vos coordonnées bancaires. Stripe nous transmet le nom, l'e-mail et le statut de paiement du donateur afin d'enregistrer le don.",
+      "ollamaCloud": "Ollama Cloud — traitement IA. Les messages de discussion et les descriptions de symptômes soumises à la recherche assistée par IA peuvent être transmis à Ollama pour générer des réponses ou des mots-clés. Les termes de recherche de symptômes, y compris la description initiale si l'extraction de mots-clés échoue, peuvent figurer dans les URL de recherche et les journaux d'hébergement. Les pratiques de conservation d'Ollama sont régies par sa propre politique de confidentialité.",
+      "adsense": "Google AdSense n'est pas actif. Si la publicité est activée ultérieurement, Google et ses partenaires peuvent recevoir des renseignements sur la page publique consultée et utiliser des cookies ou des identifiants d'appareil pour diffuser et mesurer les annonces. Les annonces sont prévues sur les pages publiques de plantes, et non dans les outils de saisie de données de santé.",
+      "upstash": "Upstash Redis — compteurs temporaires de limitation de requêtes (clés IP hachées ; États-Unis/infonuagique) pour protéger le site et l'assistant IA.",
+      "sentry": "Sentry — surveillance des erreurs techniques avec suppression des en-têtes sensibles et témoins (États-Unis/infonuagique).",
+      "zoho": "Zoho Mail (Canada) — envoi des courriels de confirmation du bulletin de sécurité et traitement des messages adressés au soutien ou à la vie privée.",
+      "crossBorder": "Transferts hors Québec : Bien que notre base de données PostgreSQL soit hébergée à Montréal (Québec, Canada), des fournisseurs comme Cloudflare, Ollama Cloud, Upstash, Sentry et Stripe peuvent traiter certaines métadonnées ou requêtes hors du Québec et du Canada."
+    },
+    "cookiesSection": {
+      "title": "5. Cookies",
+      "onlyOne": "HerbAlly utilise les cookies suivants :",
+      "localeCookie": "herbally-locale — enregistré uniquement lorsque vous changez de langue manuellement, pour mémoriser en ou fr pendant un an au maximum.",
+      "guestCookie": "herbally-guest-id — un cookie HttpOnly qui relie votre navigateur à une session de discussion invitée anonyme afin que vous puissiez y revenir.",
+      "authCookies": "Cookies d'authentification Supabase — déposés uniquement si vous choisissez de vous connecter, pour maintenir votre session active.",
+      "adCookies": "Cookies publicitaires — si la publicité est activée, Google et ses partenaires peuvent déposer des cookies ou utiliser des identifiants pour diffuser et mesurer les annonces. Vous pouvez les contrôler via votre navigateur et les paramètres publicitaires de Google.",
+      "noTracking": "Nous n'utilisons ni Facebook Pixel ni traceurs publicitaires intrusifs. Les statistiques utilisent Cloudflare Web Analytics sans témoins ; les témoins publicitaires ne s'appliqueront que si les annonces sont activées."
+    },
+    "dataRetention": {
+      "title": "6. Conservation des Données",
+      "text": "Les données de compte et les données enregistrées peuvent être conservées jusqu'à leur suppression. Les discussions invitées peuvent subsister indépendamment du cookie invité ; l'expiration du cookie ne supprime pas nécessairement les données du serveur. Les dons peuvent être conservés pour la comptabilité. Les pratiques de conservation d'Ollama sont régies par sa propre politique."
+    },
+    "yourRights": {
+      "title": "7. Vos Droits",
+      "text": "Vous pouvez accéder à vos données, les corriger ou les supprimer :",
+      "access": "Accès : vous pouvez consulter votre profil, votre jardin, vos calculs et votre historique de discussion dans votre compte.",
+      "deletion": "Vous pouvez supprimer des entrées de jardin et des sessions de discussion avec les commandes disponibles dans l'application. Écrivez à privacy@herbally.app pour demander la suppression de votre compte ou d'autres renseignements enregistrés, y compris les calculs. Effacer les données de votre navigateur supprime les données qui y sont stockées.",
+      "complaint": "Plainte : Contactez notre responsable de la protection des renseignements personnels à privacy@herbally.app, ou adressez-vous à la Commission d'accès à l'information du Québec (CAI) ou au Commissariat à la protection de la vie privée du Canada (CPVP).",
+      "portability": "Portabilité et retrait du consentement : En vertu de la Loi 25 du Québec et de la LPRPDE fédérale, vous pouvez demander l'accès, la rectification, la portabilité de vos renseignements fournis, ou retirer votre consentement (y compris vous désabonner en un clic)."
+    },
+    "security": {
+      "title": "8. Sécurité",
+      "text": "Nous mettons en œuvre des mesures techniques appropriées pour protéger le service, notamment le chiffrement HTTPS, la sécurité au niveau des lignes de notre base de données et des vérifications régulières des dépendances et de la sécurité.",
+      "breachNotice": "Incidents de confidentialité : Conformément à la Loi 25 du Québec, nous documentons tout incident de confidentialité et avisons rapidement la CAI et les personnes concernées en cas de risque de préjudice sérieux."
+    },
+    "changes": {
+      "title": "9. Modifications de Cette Politique",
+      "text": "Nous pouvons mettre à jour cette politique périodiquement. Les modifications seront publiées sur cette page avec une date de mise à jour."
+    },
+    "contact": {
+      "title": "10. Contact",
+      "text": "Pour toute question relative à la confidentialité, contactez-nous à privacy@herbally.app.",
+      "officer": "Responsable de la protection des renseignements personnels (Loi 25) : Yasser Bheekun — Montréal (Québec), Canada (privacy@herbally.app)."
+    }
+  }
+}

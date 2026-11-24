@@ -1,5 +1,5 @@
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
-import enDict from "@/lib/i18n/dictionaries/en.json";
+import enHerbs from "@/lib/i18n/dictionaries/en/herbs.json";
 
 interface HerbFAQSchemaProps {
   herbName: string;
@@ -81,7 +81,7 @@ export function HerbFAQSchema({
       },
       (key, params) => {
         let template: string =
-          (enDict.herbFaq as Record<string, string>)[key] ?? key;
+          (enHerbs.herbFaq as Record<string, string>)[key] ?? key;
         for (const [k, v] of Object.entries(params ?? {})) {
           template = template.replaceAll(`{${k}}`, String(v));
         }

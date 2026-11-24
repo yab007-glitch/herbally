@@ -1,14 +1,8 @@
 import type { AbstractIntlMessages } from "next-intl";
 import type { Locale } from "./config";
-import enDict from "./dictionaries/en.json";
-import frDict from "./dictionaries/fr.json";
+import { DICTIONARIES } from "./dictionaries";
 
 export type PickSpec = string | { readonly [key: string]: readonly PickSpec[] };
-
-const DICTIONARIES: Record<Locale, Record<string, unknown>> = {
-  en: enDict as Record<string, unknown>,
-  fr: frDict as Record<string, unknown>,
-};
 
 /**
  * Exact message namespaces and narrow sub-trees required by client components

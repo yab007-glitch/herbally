@@ -1,0 +1,96 @@
+{
+  "citations": {
+    "pending": "Citations pending review. Information based on traditional use and preliminary research.",
+    "reviewedBy": "Reviewed by: ",
+    "lastUpdated": "Last updated: ",
+    "sources": "Sources: ",
+    "researchProfile": "Research profile",
+    "viewSource": "Source",
+    "viewSourceLabel": "Open source: {source}"
+  },
+  "evidence": {
+    "prefix": "Evidence:",
+    "A": {
+      "label": "Strong Evidence",
+      "shortDesc": "Multiple RCTs",
+      "fullDesc": "Strong clinical evidence from multiple randomized controlled trials (RCTs) and systematic reviews."
+    },
+    "B": {
+      "label": "Moderate Evidence",
+      "shortDesc": "Some clinical data",
+      "fullDesc": "Moderate evidence from observational studies, case series, or limited RCTs."
+    },
+    "C": {
+      "label": "Limited Evidence",
+      "shortDesc": "Traditional/preclinical",
+      "fullDesc": "Limited evidence from traditional use, preclinical studies, or expert opinion. More research needed."
+    },
+    "D": {
+      "label": "Anecdotal Only",
+      "shortDesc": "Historical use only",
+      "fullDesc": "Evidence based primarily on historical use and anecdotal reports. Limited scientific validation."
+    },
+    "trad": {
+      "label": "Traditional Use",
+      "shortDesc": "Traditional medicine",
+      "fullDesc": "Used traditionally in herbal medicine systems. Scientific evidence may be limited or ongoing."
+    }
+  },
+  "interactionExplainer": {
+    "title": "What is a herb–drug interaction?",
+    "whatIs": "A herb–drug interaction happens when a plant or supplement changes how a medication works in your body — making it stronger, weaker, or more likely to cause harm. Herbs contain active compounds that can speed up or slow down the enzymes and transporters your body uses to process drugs.",
+    "whyHeading": "Why it matters",
+    "ex1Name": "St. John's Wort",
+    "ex1Effect": "can make birth control, antidepressants, and blood thinners less effective.",
+    "ex2Name": "Garlic",
+    "ex2Effect": "can increase bleeding risk with warfarin and other blood thinners (also ginkgo, ginger, and turmeric).",
+    "ex3Name": "Kava",
+    "ex3Effect": "can amplify sedation when taken with anxiety or sleep medications (also valerian).",
+    "riskLine": "The risk is highest for older adults, anyone taking several medications, and people with chronic conditions.",
+    "actionLine": "Always tell your doctor and pharmacist about every herb and supplement you take — and check a combination before you take it."
+  },
+  "interactions": {
+    "title": "Known Drug Interactions",
+    "showMore": "Show {count} More",
+    "showLess": "Show Less",
+    "coverageNotice": "This list reflects a curated subset of documented interactions and is not exhaustive. The absence of a drug here is not proof that it is safe to combine. Always confirm with a pharmacist or healthcare provider.",
+    "severity": {
+      "contraindicated": "Contraindicated",
+      "severe": "Severe",
+      "moderate": "Moderate",
+      "mild": "Mild"
+    },
+    "headers": {
+      "drug": "Drug",
+      "severity": "Severity",
+      "description": "Description"
+    },
+    "uncitedNote": "These pairs are not yet linked to a primary source. Treat them as a prompt to ask a pharmacist, not as a citation.",
+    "sourceLink": "Source: PubMed record",
+    "allHerbsForDrug": "All herbs interacting with this drug →",
+    "browseMedications": "Browse all 108 medications in reverse lookup →"
+  },
+  "safety": {
+    "noInteractionsTitle": "No interactions recorded",
+    "noInteractionsMsg": "Our database records no clinically significant drug interactions for this herb. Absence of data is not proof of safety — always consult your healthcare provider before combining herbs with medications.",
+    "dangerousNoInteractionsTitle": "High-risk plant — do not combine with medications",
+    "dangerousNoInteractionsMsg": "Our interaction table does not list specific drug entries for this high-risk or toxic plant, but serious toxicity or medication interactions may still occur. Do not self-administer or combine with any drug without direct medical supervision.",
+    "interactionCountTitle": "{count} Known Drug Interaction — Some May Be Serious",
+    "interactionCountTitlePlural": "{count} Known Drug Interactions — Some May Be Serious",
+    "interactionMessage": "This herb may interact with medications you are taking. Review the interactions table below and consult your healthcare provider before use.",
+    "pregnancySafetyTitle": "Pregnancy & Nursing Safety",
+    "pregnancySafeMsg": "Generally considered safe during pregnancy and nursing based on {level} evidence. However, always consult your healthcare provider before using any herbal supplement during pregnancy or while breastfeeding.",
+    "notSafeTitle": "Not Recommended During Pregnancy or Nursing",
+    "notPregnancyMsg": "This herb is NOT recommended during pregnancy due to potential risks to the developing fetus.",
+    "notNursingMsg": "This herb is NOT recommended while breastfeeding as effects on infants are unknown.",
+    "pregnancyUnknownMsg": "Safety in pregnancy is not established in the sources reviewed here.",
+    "nursingUnknownMsg": "Safety while breastfeeding is not established in the sources reviewed here.",
+    "consultProvider": "Consult your healthcare provider before use.",
+    "severityContraindicated": "Contraindicated",
+    "severitySevere": "Severe",
+    "severityModerate": "Moderate",
+    "severityMild": "Mild",
+    "personalizedInteractionsTitle": "Personalized Interaction Warning",
+    "personalizedInteractionsBody": "Based on the medications in your profile, this herb may interact with one or more drugs you are taking. Do not start, stop, or change any medication or supplement without consulting your healthcare provider or pharmacist."
+  }
+}

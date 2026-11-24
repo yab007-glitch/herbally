@@ -1,8 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ChatInterface } from "../chat-interface";
-import en from "@/lib/i18n/dictionaries/en.json";
-import fr from "@/lib/i18n/dictionaries/fr.json";
+import { enDict as en, frDict as fr } from "@/lib/i18n/dictionaries";
 
 // Passthrough translator: assertions target keys, not copy that may change.
 vi.mock("next-intl", () => ({

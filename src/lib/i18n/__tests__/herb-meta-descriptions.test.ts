@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import en from "../dictionaries/en.json";
-import fr from "../dictionaries/fr.json";
+import { enDict as en, frDict as fr } from "../dictionaries";
 
 /**
  * Guards the herb meta-description templates.

@@ -1,0 +1,164 @@
+{
+  "donateButtons": {
+    "coffee": "Café",
+    "supporter": "Soutien",
+    "champion": "Mécène",
+    "coffeeDesc": "Un jour de coûts d'API",
+    "supporterDesc": "Une semaine d'hébergement",
+    "championDesc": "Un demi-mois de fonctionnement",
+    "customAmount": "Ou choisissez un montant personnalisé :",
+    "donate": "Faire un don",
+    "secureViaStripe": "Sécurisé par Stripe",
+    "allCardsAccepted": "Toutes les cartes acceptées",
+    "noCardDataStored": "Aucune donnée de carte stockée",
+    "errorMessage": "Échec du traitement du don. Veuillez réessayer."
+  },
+  "faqContent": {
+    "title": "Questions Fréquemment Posées",
+    "subtitle": "Des réponses fondées sur les preuves concernant les herbes médicinales, la sécurité, les interactions médicamenteuses et le fonctionnement d'HerbAlly.",
+    "stillHaveQuestions": "D'autres questions ?",
+    "askVirtualHerbalist": "Posez vos questions à notre Herboriste Virtuel alimenté par l'IA pour des conseils personnalisés.",
+    "askHerbalistBtn": "Demander à l'Herboriste Virtuel",
+    "findHerbsBtn": "Trouver des herbes par symptôme",
+    "aboutHerbAlly": "À propos d'HerbAlly",
+    "herbSafety": "Sécurité des Herbes",
+    "drugInteractions": "Interactions Médicamenteuses",
+    "dosageUsage": "Posologie & Utilisation",
+    "virtualHerbalist": "Herboriste Virtuel",
+    "sourcesEvidence": "Sources & Preuves",
+    "general": {
+      "free": {
+        "q": "HerbAlly est-il gratuit ?",
+        "a": "Oui, HerbAlly est complètement gratuit. Aucun compte n'est requis pour la plupart des fonctions et il n'y a pas de version premium. Nous prévoyons une publicité limitée et clairement identifiée sur les pages publiques de plantes pour aider à couvrir les coûts ; elle n'est pas encore active. La discussion et le calculateur resteront sans publicité. Nous croyons que l'information sûre sur les plantes devrait être accessible à tous."
+      },
+      "herbCount": {
+        "q": "Combien de plantes HerbAlly couvre-t-il ?",
+        "a": "HerbAlly publie des fiches de référence pour des centaines de plantes médicinales, incluant les composés actifs, les usages traditionnels, les données cliniques, les interactions médicamenteuses et les repères posologiques pour adultes lorsqu'une dose sûre existe — de nouvelles fiches s'ajoutent à mesure que les sources sont vérifiées."
+      },
+      "reviewed": {
+        "q": "Les informations sur HerbAlly sont-elles revues médicalement ?",
+        "a": "Chaque fiche publiée affiche ses sources primaires (Santé Canada, EMA HMPC, NIH NCCIH, LiverTox, PubMed) ainsi qu'un badge de statut de révision. Les fiches sont progressivement relues et validées sur le plan éditorial par Yasser Bheekun, T.M. (OPTMQ · SCSLM) ; les résumés IA ou fiches modifiées non encore vérifiés par un humain sont clairement indiqués comme tels. Cette révision éditoriale vérifie la cohérence avec les sources sans remplacer l'avis d'un médecin ou d'un pharmacien."
+      },
+      "trustAI": {
+        "q": "Puis-je faire confiance à l'Herboriste Virtuel IA ?",
+        "a": "L'herboriste IA fournit des informations éducatives basées sur notre base de données et des sources faisant autorité. Cependant, il ne remplace PAS un avis médical professionnel. Vérifiez toujours auprès de votre professionnel de santé, surtout pour des conditions graves ou des interactions médicamenteuses."
+      }
+    },
+    "safety": {
+      "meds": {
+        "q": "Les plantes sont-elles sûres avec les médicaments sur ordonnance ?",
+        "a": "Certaines plantes peuvent interagir dangereusement avec les médicaments sur ordonnance. Par exemple, le millepertuis peut réduire l'efficacité des antidépresseurs et des contraceptifs oraux. Vérifiez toujours notre base de données d'interactions et consultez votre professionnel de santé avant de combiner des plantes avec des médicaments."
+      },
+      "pregnancy": {
+        "q": "Quelles plantes éviter pendant la grossesse ?",
+        "a": "De nombreuses plantes sont contre-indiquées pendant la grossesse. Des plantes comme l'actée à grappes noires, la dong quai et de fortes doses d'ail peuvent stimuler les contractions utérines ou affecter les hormones. HerbAlly indique la sécurité pendant la grossesse sur chaque page de plante — cherchez le badge de sécurité grossesse."
+      },
+      "children": {
+        "q": "Les enfants peuvent-ils prendre des suppléments à base de plantes ?",
+        "a": "HerbAlly ne calcule pas de posologie de plantes pour les personnes de moins de 18 ans. La concentration des produits à base de plantes varie considérablement et les formules pédiatriques classiques ont été conçues pour des médicaments, pas pour des extraits de plantes. Consultez un pédiatre, un pharmacien ou le médecin de l'enfant avant de donner un produit à base de plantes à un enfant ou un adolescent."
+      },
+      "grades": {
+        "q": "Que signifie le niveau de preuve (A/B/C/D) ?",
+        "a": "Les niveaux de preuve indiquent la force du soutien scientifique : A = Preuves solides de multiples essais randomisés et revues systématiques. B = Preuves modérées d'études cliniques. C = Preuves limitées d'utilisation traditionnelle ou de recherche préclinique. D = Preuves anecdotiques ou historiques uniquement. Utilisation traditionnelle (trad) = Utilisation traditionnelle bien établie avec validation clinique limitée."
+      }
+    },
+    "interactions": {
+      "dangerous": {
+        "q": "Quelles sont les interactions plante-médicament les plus dangereuses ?",
+        "a": "Les interactions les plus graves incluent : le millepertuis avec les antidépresseurs (risque de syndrome sérotoninergique), la warfarine avec de nombreuses plantes (risque hémorragique), l'ail et le ginkgo avec les anticoagulants, et le kava avec les sédatifs. Notre vérificateur classe la sévérité en Contre-indiqué, Sévère, Modéré ou Léger."
+      },
+      "accuracy": {
+        "q": "Quelle est la précision des données d'interaction ?",
+        "a": "Nos données d'interaction proviennent des monographies de l'OMS, d'études cliniques PubMed, des monographies de la Commission E et de la base de données NCCIH. Des niveaux de preuve sont fournis pour chaque interaction. Cependant, aucune base de données n'est complète — vérifiez toujours auprès d'un pharmacien."
+      }
+    },
+    "dosage": {
+      "calculator": {
+        "q": "Comment fonctionne le calculateur de posologie ?",
+        "a": "Le calculateur de posologie d'HerbAlly est destiné aux adultes de 18 ans et plus. Il propose la Règle de Clark (basée sur le poids), la Règle de Young (basée sur l'âge) et la Surface Corporelle (BSA) comme méthodes de référence. Il ne calcule pas de posologie pour les enfants ou les adolescents ; consultez plutôt un professionnel de santé pédiatrique qualifié."
+      },
+      "multiple": {
+        "q": "Puis-je prendre plusieurs plantes en même temps ?",
+        "a": "Certaines plantes fonctionnent bien ensemble (combinaisons), tandis que d'autres peuvent amplifier les effets ou interagir. Recherchez toujours chaque plante individuellement et consultez un herboriste qualifié ou un professionnel de santé avant de combiner des plantes, surtout si vous prenez des médicaments."
+      }
+    },
+    "herbalistCat": {
+      "how": {
+        "q": "Comment fonctionne l'Herboriste Virtuel IA ?",
+        "a": "L'Herboriste Virtuel utilise l'IA pour fournir des renseignements fondés sur les preuves sur les plantes, incluant la sécurité, les interactions potentielles et les usages traditionnels. Il s'appuie sur notre base de données de plantes médicinales ainsi que les monographies de l'OMS, de l'EMA HMPC, de Santé Canada, de PubMed et du NCCIH. Chaque réponse inclut des niveaux de preuve et des citations."
+      },
+      "notAsk": {
+        "q": "Que ne dois-je PAS demander à l'Herboriste Virtuel ?",
+        "a": "Ne l'utilisez pas pour un diagnostic médical, des recommandations de prescription ou des situations d'urgence. L'IA ne peut pas remplacer un avis médical professionnel. En cas d'urgence médicale, appelez le 911 ou votre numéro d'urgence local. Pour le centre antipoison, appelez le 1-800-222-1222."
+      }
+    },
+    "sources": {
+      "what": {
+        "q": "Quelles sources HerbAlly utilise-t-il ?",
+        "a": "Nous référençons : les Monographies de l'OMS sur les Plantes Médicinales Sélectionnées (Volumes 1-4), les monographies de la Commission E allemande, les monographies de plantes de l'Agence Européenne des Médicaments (EMA), la base de données NCCIH Herbs at a Glance, et la recherche évaluée par les pairs PubMed. Chaque page de plante affiche des citations spécifiques avec le type de source et le niveau de preuve."
+      },
+      "update": {
+        "q": "À quelle fréquence les informations sont-elles mises à jour ?",
+        "a": "Les fiches évoluent au fil des publications scientifiques et des monographies réglementaires. Seules les fiches ayant fait l'objet d'une vérification humaine complète affichent un badge « Révisée », le nom du réviseur et une date de « Dernière révision » ; les fiches automatisées ou modifiées affichent « Résumé par IA », « Non révisée par un humain » ou « À réviser de nouveau » jusqu'à relecture."
+      }
+    },
+    "searchPlaceholder": "Rechercher dans la FAQ...",
+    "clearSearch": "Effacer la recherche",
+    "results": "{count} résultats",
+    "result": "{count} résultat",
+    "noResultsFound": "Aucun résultat trouvé. Essayez un autre terme de recherche."
+  },
+  "widgetsPage": {
+    "eyebrow": "Gratuit pour cliniques et formateurs",
+    "heading": "Widget intégrable Plante–Médicament",
+    "intro": "Ajoutez le vérificateur bilingue et sans publicité HerbAlly sur votre blogue de pharmacie, site de clinique ou portail étudiant grâce à un simple code iframe à copier-coller.",
+    "languageLabel": "Langue du widget",
+    "widthLabel": "Largeur maximale",
+    "codeHeading": "Code HTML à intégrer",
+    "copyCode": "Copier le code HTML",
+    "copied": "Copié !",
+    "previewHeading": "Aperçu en direct",
+    "attributionLabel": "Données de sécurité plante-médicament par HerbAlly",
+    "citationKit": {
+      "eyebrow": "Pour bibliothécaires, formateurs et cliniques",
+      "heading": "Citer ou référencer HerbAlly dans un guide de ressources",
+      "intro": "Vous tenez à jour un guide de pharmacie universitaire, une fiche patient ou un portail clinique ? Copiez une description prête à l'emploi ou un lien HTML simple ci-dessous, sans iframe requis.",
+      "blurbHeading": "Description prête à copier pour guide ou répertoire",
+      "copyBlurb": "Copier la description",
+      "htmlHeading": "Lien HTML simple",
+      "copyHtml": "Copier le lien HTML",
+      "copied": "Copié !",
+      "directLinksHeading": "Principaux outils cliniques à référencer directement",
+      "links": {
+        "checker": {
+          "title": "Vérificateur d'interactions plantes–médicaments",
+          "desc": "Vérifiez plusieurs plantes et ordonnances simultanément et imprimez une carte pour le pharmacien."
+        },
+        "medications": {
+          "title": "Répertoire inverse par médicament",
+          "desc": "Consultez plus de 108 médicaments d'ordonnance et classes thérapeutiques reliés à NIH RxNorm."
+        },
+        "surgery": {
+          "title": "Planificateur d'arrêt avant chirurgie",
+          "desc": "Calendrier imprimable basé sur les recommandations préopératoires de l'ASA et de Santé Canada."
+        },
+        "npn": {
+          "title": "Décodeur NPN Santé Canada",
+          "desc": "Lecture en direct des licences BDPSNH à 8 chiffres, ingrédients médicinaux et mises en garde."
+        },
+        "methodology": {
+          "title": "Méthodologie et licences ouvertes",
+          "desc": "Hiérarchie des sources (Santé Canada, EMA HMPC, NIH NCCIH, LiverTox) et gradation des preuves."
+        }
+      }
+    }
+  },
+  "privacy": {
+    "localStorageSection": {
+      "controlTitle": "Effacer les données locales du navigateur",
+      "controlDesc": "Supprime les recherches récentes, notes de jardin locales, l'identifiant de session de clavardage et le compteur de visites enregistrés dans ce navigateur.",
+      "clearButton": "Effacer les données locales",
+      "clearedButton": "Effacé"
+    }
+  }
+}

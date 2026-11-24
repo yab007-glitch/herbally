@@ -1,0 +1,830 @@
+{
+  "about": {
+    "title": "About HerbAlly",
+    "mission": "Our Mission",
+    "missionText": "We believe everyone deserves access to reliable, evidence-based herbal medicine information.",
+    "team": "Our Team",
+    "teamText": "Built by a small team passionate about making herbal medicine accessible.",
+    "sources": "Our Sources",
+    "sourcesText": "Information sourced from WHO monographs, German Commission E, and peer-reviewed research.",
+    "disclaimer": {
+      "title": "Medical Disclaimer",
+      "text": "HerbAlly provides educational information only. This is not medical advice. Always consult a qualified healthcare provider before using any herbal remedy."
+    }
+  },
+  "contact": {
+    "title": "Contact us",
+    "intro": "Email is the way to reach us — HerbAlly has no support form. Please do not send personal health information by email; for medical questions, talk to a qualified healthcare professional.",
+    "generalTitle": "General questions and sponsorship",
+    "generalText": "For general questions, corrections, and sponsorship inquiries, email:",
+    "privacyTitle": "Privacy questions",
+    "privacyText": "For privacy questions, account deletion requests, and data requests, email:",
+    "termsTitle": "Terms questions",
+    "termsText": "For questions about the Terms of Service, email:",
+    "linksTitle": "Helpful pages"
+  },
+  "commandPalette": {
+    "placeholder": "Search herbs, pages, or actions...",
+    "noResults": "No results found.",
+    "searching": "Searching...",
+    "groups": {
+      "herbs": "Herbs",
+      "pages": "Pages",
+      "quickActions": "Quick Actions"
+    },
+    "pages": {
+      "browseHerbs": "Browse Herbs",
+      "doseCalculator": "Dose Calculator",
+      "virtualHerbalist": "Virtual Herbalist"
+    },
+    "actions": {
+      "searchHerbs": "Search Herbs",
+      "askInteractions": "Ask About Interactions",
+      "calculateDose": "Calculate Dose"
+    }
+  },
+  "mission": {
+    "title": "Our Mission",
+    "description": "Free herbal knowledge for everyone. We believe access to health information is a fundamental right, not a privilege. HerbAlly is built to democratize access to evidence-based herbal medicine knowledge.",
+    "freeAccess": "No paywalls, no premium tiers. Every published herb profile is available to everyone, completely free.",
+    "herbsCount": "Cited Monographs",
+    "herbsDesc": "Comprehensive database with detailed profiles",
+    "aiHerbalist": "AI Herbalist",
+    "aiHerbalistDesc": "Get instant answers to your questions",
+    "freeForever": "100% Free",
+    "freeForeverDesc": "No account required to access",
+    "howDonationsHelp": "How Your Donation Helps",
+    "donationHostings": "Hosting & Servers — Keep the app fast and available 24/7",
+    "donationAi": "AI Costs — Power the virtual herbalist chatbot",
+    "donationDb": "Database — Store and serve curated herb profiles and interaction data",
+    "donationFeatures": "New Features — Add more herbs, interactions, and tools",
+    "promise": "We'll never charge users or sell your data.",
+    "sustained": "HerbAlly is sustained entirely by voluntary donations.",
+    "cta": "Make a Donation"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "herbs": {
+      "title": "Manage Herbs",
+      "addNew": "Add New Herb",
+      "edit": "Edit Herb",
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "interactions": {
+      "title": "Manage Interactions"
+    },
+    "users": {
+      "title": "Users"
+    },
+    "stats": {
+      "totalHerbs": "Total Herbs",
+      "herbsDescription": "Published in database",
+      "drugInteractions": "Drug Interactions",
+      "interactionsDescription": "Known interactions",
+      "registeredUsers": "Registered Users",
+      "usersDescription": "Total accounts",
+      "interactionChecks": "Interaction Checks",
+      "checksDescription": "Checks performed"
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated: November 2026",
+    "acceptance": {
+      "title": "1. Acceptance of Terms",
+      "text": "By accessing or using HerbAlly, you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using this platform."
+    },
+    "useOfService": {
+      "title": "2. Use of Service",
+      "text": "HerbAlly provides educational information about medicinal herbs, dosage calculations, and AI-powered herbalist guidance. No account or registration is required — the service is freely available to everyone. You agree to use the service only for lawful purposes and in accordance with these Terms.",
+      "items": [
+        "You must be at least 18 years old to use this service",
+        "You must not misuse or attempt to exploit the platform",
+        "You must not use the service for commercial purposes without permission",
+        "You must not attempt to overload or disrupt the service"
+      ]
+    },
+    "medicalDisclaimer": {
+      "title": "3. Medical Disclaimer",
+      "text": "The information provided on HerbAlly is for educational purposes only. It is not intended to diagnose, treat, cure, or prevent any disease. Always consult a qualified healthcare professional before making any health-related decisions based on information found on this platform."
+    },
+    "aiLimitations": {
+      "title": "4. AI-Generated Content Limitations",
+      "text": "HerbAlly uses artificial intelligence to generate responses in the Virtual Herbalist. You acknowledge and agree that:",
+      "items": [
+        "AI-generated responses are for informational and educational purposes only and do not constitute medical advice",
+        "AI responses may contain inaccuracies, omissions, or outdated information despite our best efforts",
+        "The AI does not have access to your personal medical history and cannot provide personalized medical recommendations",
+        "You should always verify AI-generated information with a qualified healthcare professional before acting on it",
+        "HerbAlly is not liable for any decisions made based on AI-generated content"
+      ]
+    },
+    "intellectualProperty": {
+      "title": "5. Intellectual Property",
+      "text": "All content on HerbAlly, including text, graphics, logos, and software, is the property of HerbAlly or its content suppliers and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without our express written permission."
+    },
+    "limitation": {
+      "title": "6. Limitation of Liability",
+      "text": "HerbAlly shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use our service, including but not limited to damages for loss of profits, data, or other intangible losses."
+    },
+    "userContent": {
+      "title": "7. User Content",
+      "text": "Questions submitted to the Virtual Herbalist are processed to generate responses. Signed-in or guest chat history is handled strictly as described in our Privacy Policy, and we claim no ownership over content you submit."
+    },
+    "serviceAvailability": {
+      "title": "8. Service Availability",
+      "text": "HerbAlly is provided as is and as available. We do not guarantee uninterrupted access to the service. We reserve the right to modify, suspend, or discontinue any part of the service at any time without notice."
+    },
+    "changes": {
+      "title": "9. Changes to Terms",
+      "text": "We reserve the right to modify these Terms at any time. Changes will be effective immediately upon posting. Your continued use of the service after changes constitutes acceptance of the modified Terms."
+    },
+    "contact": {
+      "title": "10. Contact Us",
+      "text": "If you have questions about these Terms, please contact us at legal@herbally.app."
+    }
+  },
+  "disclaimer": {
+    "title": "Medical Disclaimer",
+    "text": "HerbAlly provides educational and informational content only. The information on this site is not intended as medical advice and should not be used as a substitute for professional medical advice, diagnosis, or treatment.",
+    "consult": "Always consult your physician or qualified healthcare provider before starting any herbal supplement, especially if you are pregnant, nursing, taking medication, or have a medical condition.",
+    "fda": "These statements have not been evaluated by the Food and Drug Administration. HerbAlly is not intended to diagnose, treat, cure, or prevent any disease.",
+    "emergency": "If you think you may have a medical emergency, call your doctor, go to the emergency department, or call emergency services immediately.",
+    "reliance": "HerbAlly does not endorse or recommend any specific herbs, products, procedures, or opinions. Reliance on any information provided by HerbAlly is solely at your own risk.",
+    "canada": "In Canada, natural health products are regulated by Health Canada under the Natural Health Products Regulations. A product carrying an NPN (or DIN-HM for homeopathic products) has been licensed for sale, which is not the same as having been proven clinically effective. HerbAlly is not affiliated with Health Canada and this page is not a regulatory filing."
+  },
+  "aboutContent": {
+    "header": "About HerbAlly",
+    "subtitle": "Your trusted, evidence-based resource for medicinal herbs and natural remedies.",
+    "whatIsTitle": "What is HerbAlly?",
+    "whatIsText1": "HerbAlly is a comprehensive digital platform designed to provide reliable, evidence-based information about medicinal herbs and natural remedies. We combine a vast herb database, scientifically grounded dosage calculators, and AI-powered guidance to help individuals make informed decisions about herbal supplements and their potential interactions with medications.",
+    "whatIsText2": "Whether you are a healthcare professional looking for quick reference material, a herbalist seeking interaction data, or an individual exploring natural wellness options, HerbAlly provides the tools and information you need in one accessible platform.",
+    "mission": {
+      "title": "Our Mission",
+      "educate": "Educate",
+      "educateDesc": "Provide accessible, evidence-based information about medicinal herbs and their uses.",
+      "protect": "Protect",
+      "protectDesc": "Help users identify potential drug-herb interactions and make safer supplement choices.",
+      "empower": "Empower",
+      "empowerDesc": "Give individuals and practitioners the tools to make informed herbal wellness decisions."
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1Title": "Search Our Database",
+      "step1Desc": "Browse medicinal herbs with detailed profiles including active compounds, traditional uses, safety notes, and clinical research.",
+      "step2Title": "Calculate Reference Doses",
+      "step2Desc": "Use our reference calculator for adults aged 18 and older. It does not provide pediatric doses; consult a qualified pediatric professional for a child or adolescent.",
+      "step3Title": "Consult the Virtual Herbalist",
+      "step3Desc": "Ask our AI-powered herbalist about herb safety, drug interactions, and get personalized guidance for your situation."
+    },
+    "freeTitle": "Free to Use, Supported by Donations",
+    "freeText1": "HerbAlly is free to use: no paywalls and no premium tiers. We plan to introduce a small number of clearly labelled ads on public herb reference pages to help cover costs; ads are not live yet. The Virtual Herbalist, interaction checker and dosage calculator are intended to remain ad-free.",
+    "freeText2": "Donations remain important and go toward infrastructure, AI usage and development. If approved, advertising will supplement, not replace, community support.",
+    "freeText3": "If HerbAlly has been helpful to you, please consider making a donation to help us keep this resource available for everyone.",
+    "freeLink": "making a donation",
+    "team": {
+      "title": "Founder & Reviewer of Record",
+      "text": "HerbAlly was created and is curated by Yasser Bheekun, MLT (OPTMQ · CSMLS) — a Medical Laboratory Technologist holding a DEC in Biomedical Laboratory Technology (Dawson College) working in a hospital laboratory at the McGill University Health Centre in Montreal, Quebec. Yasser progressively reviews and validates herb profiles against primary clinical and regulator references; each entry displays a status badge showing whether it has been human-verified, AI-summarized, or flagged for re-review. Editorial review is not physician medical care."
+    }
+  },
+  "methodologyContent": {
+    "title": "Our Methodology",
+    "subtitle": "How we research, grade, and present herbal medicine information",
+    "questionsTitle": "Questions About Our Methods?",
+    "questionsDesc": "We're committed to transparency. If you have questions about how we grade evidence or want to report an error, please reach out.",
+    "viewFaq": "View FAQ",
+    "contactUs": "Contact Us",
+    "evidenceGrading": {
+      "title": "Evidence Grading System",
+      "content": "Every herb and claim in HerbAlly receives an evidence grade from A to Traditional Use:\n\n**A (Strong Evidence)**: Multiple randomized controlled trials (RCTs), systematic reviews, or meta-analyses demonstrating consistent positive results. Example: Ginger for pregnancy nausea has Level A evidence.\n\n**B (Moderate Evidence)**: Some RCTs or well-designed observational studies showing positive results, but evidence is limited by sample size, duration, or study quality. Example: Ashwagandha for stress reduction.\n\n**C (Limited Evidence)**: Preliminary clinical evidence, small pilot studies, or promising mechanistic data with insufficient human trials. Example: Many traditional herbs awaiting rigorous clinical evaluation.\n\n**Traditional Use**: Long history of traditional use (100+ years) with ethnographic documentation, but limited or no modern clinical trials. These herbs may still be valuable, but efficacy claims are based on historical rather than scientific evidence.\n\n**D (Anecdotal)**: Only anecdotal reports or theoretical plausibility without clinical data. We flag these clearly and recommend caution."
+    },
+    "sourceHierarchy": {
+      "title": "Source Hierarchy",
+      "content": "We prioritize primary regulatory and clinical sources in this order:\n\n1. **Regulatory Monographs & Product Registers**: Health Canada NHP Monographs & Licensed Natural Health Products Database (LNHPD), European Medicines Agency (EMA / HMPC)\n2. **Government Clinical References**: NIH National Center for Complementary and Integrative Health (NCCIH), NIH LiverTox hepatotoxicity database\n3. **Systematic Reviews & Clinical Trials**: Cochrane Database, PubMed-indexed peer-reviewed RCTs and pharmacokinetic interaction studies\n4. **Pharmacopoeias & Historical Materia Medica**: WHO Monographs, Commission E, US Dispensatory (1918), British/European Pharmacopoeias (marked clearly as Traditional Use)\n\nWe avoid: Marketing claims, unreviewed manufacturer testimonials, and unsourced blogs."
+    },
+    "safetyAssessment": {
+      "title": "Safety Assessment",
+      "content": "Safety data is evaluated separately from efficacy:\n\n**Contraindications**: Conditions where the herb should not be used (e.g., pregnancy, liver disease, specific medication interactions)\n\n**Precautions**: Conditions requiring medical supervision or dose adjustment\n\n**Drug Interactions**: Based on pharmacokinetic data and case reports. Severity classified as:\n- Contraindicated: Never combine\n- Severe: High risk; require monitoring\n- Moderate: Moderate risk; consult healthcare provider\n- Mild: Low risk; monitor for side effects\n\n**Pregnancy & Nursing**: Reviewed against FDA categories, traditional use data, and clinical safety studies. When data is insufficient, we err on the side of caution."
+    },
+    "monographProcess": {
+      "title": "Monograph Creation Process",
+      "content": "Published profiles follow a traceable five-step workflow with transparent status labelling:\n\n1. **Source Extraction**: Official regulator monographs (Health Canada, EMA HMPC), government summaries (NCCIH, LiverTox), and PubMed citations are linked verbatim.\n2. **Taxonomic Verification**: Botanical binomials and plant parts are cross-checked against GBIF, ITIS, and NCBI Taxonomy for nomenclature only (never for clinical dosing or safety).\n3. **Safety & Interaction Mapping**: Drug interactions, hepatotoxicity ratings, and pregnancy/lactation cautions are mapped against clinical and regulator references, and dose calculators are suppressed on high-risk or toxic plants.\n4. **Progressive Editorial Review**: Entries are progressively verified against primary references by Yasser Bheekun, MLT (OPTMQ · CSMLS) — editorial checking of source alignment and safety framing, not physician clinical care.\n5. **Transparent Labelling & Corrections**: Every profile displays its review state ('Reviewed', 'AI-summarized', 'Not human-reviewed', or 'Needs re-review'). Only human-verified entries show a reviewer 'Last reviewed' date; safety corrections are prioritized."
+    },
+    "transparency": {
+      "title": "Transparency & Limitations",
+      "content": "We believe in honest communication about what we know and don't know:\n\n**What We Do**: Provide evidence-based summaries of herbal medicine research\n**What We Don't Do**: Make medical recommendations, replace doctor consultation, or guarantee outcomes\n\n**Limitations**:\n- Herb quality varies by source; we cannot verify your specific product\n- Individual responses to herbs vary significantly\n- Traditional evidence doesn't always translate to modern clinical efficacy\n- Research gaps exist for many herbs\n\n**Our Bias**: We are committed to evidence over tradition. If traditional use conflicts with negative clinical evidence, we highlight the clinical findings."
+    },
+    "activeCompounds": {
+      "title": "Active Compound Analysis",
+      "content": "For each herb, we identify:\n\n**Primary Actives**: The compounds most likely responsible for observed effects\n**Mechanism**: How these compounds interact with human physiology\n**Bioavailability**: How well compounds are absorbed and utilized\n**Standardization**: Whether commercial extracts standardize for these compounds\n\nThis information helps users understand:\n- Why different brands may vary in effectiveness\n- What to look for on supplement labels\n- How formulation affects bioavailability (e.g., curcumin + piperine)"
+    }
+  },
+  "donateContent": {
+    "title": "Keep HerbAlly 100% Free",
+    "subtitle": "No paywalls. No premium tiers. Just free herbal knowledge for everyone — supported by donations, with limited, clearly labelled advertising planned but not yet live.",
+    "herbsStat": "Cited herb profiles",
+    "freeAI": "Free AI herbalist",
+    "freeForever": "100% free forever",
+    "chooseImpact": "Choose Your Impact",
+    "everyDonation": "Every donation helps keep us running",
+    "whereMoneyGoes": "Where Your Money Goes",
+    "fullTransparency": "Full transparency on our monthly operating costs",
+    "estimatedCosts": "Estimated monthly costs",
+    "monthlyCost": "$100+/month",
+    "loveHerbAlly": "Why People Love HerbAlly",
+    "promiseTitle": "Our Promise to You",
+    "noAds": "Planned ads, not in private tools.",
+    "noAdsDesc": "We plan to introduce clearly labelled ads on public herb pages only; ads are not live yet. The Virtual Herbalist, interaction checker and calculator are intended to remain ad-free.",
+    "noPremium": "No premium tiers.",
+    "noPremiumDesc": "Every feature is free for everyone.",
+    "noDataSelling": "No data selling.",
+    "noDataSellingDesc": "Your data stays yours.",
+    "openCosts": "Open about costs.",
+    "openCostsDesc": "We show you exactly where donations go.",
+    "thankYou": "Thank you for your donation! 💚",
+    "thankYouDesc": "Your support helps keep HerbAlly free for everyone. You're amazing!",
+    "canceled": "Donation canceled",
+    "canceledDesc": "No worries! Feel free to try again whenever you're ready.",
+    "questions": "Questions?",
+    "learnMore": "Learn more about HerbAlly",
+    "breakdown": {
+      "hosting": {
+        "label": "Hosting & Infrastructure",
+        "desc": "Servers, CDN, and deployment to keep the app fast and reliable",
+        "monthly": "$20"
+      },
+      "database": {
+        "label": "Database & Storage",
+        "desc": "Self-hosted PostgreSQL database for herb profiles, interactions, and user data",
+        "monthly": "$25"
+      },
+      "ai": {
+        "label": "AI Herbalist",
+        "desc": "Ollama Cloud API costs for the virtual herbalist chatbot",
+        "monthly": "$50+"
+      },
+      "domain": {
+        "label": "Domain & SSL",
+        "desc": "Domain registration and secure HTTPS certificates",
+        "monthly": "$5"
+      }
+    },
+    "testimonials": [
+      {
+        "quote": "Finally, a free resource for herbal information!",
+        "author": "Sarah M.",
+        "location": "Portland, OR"
+      },
+      {
+        "quote": "The AI herbalist helped me understand herb-drug interactions.",
+        "author": "James K.",
+        "location": "Austin, TX"
+      },
+      {
+        "quote": "I use this weekly for my herbal tea recommendations.",
+        "author": "Maria L.",
+        "location": "Denver, CO"
+      }
+    ],
+    "supportStripe": "Support HerbAlly",
+    "supportStripeDesc": "Help keep herbal medicine information free for everyone",
+    "checkoutError": "Failed to create checkout session",
+    "taxNote": "Tax note: HerbAlly is an independent educational project, not a registered charity or non-profit organization. Contributions are voluntary, are not tax-deductible, and no official charitable donation receipt will be issued."
+  },
+  "govSources": {
+    "title": "Government sources",
+    "directMonograph": "direct monograph",
+    "searchFallback": "search",
+    "index": "index",
+    "noMonographNotice": "No direct NIH, EMA, or WHO monograph link is mapped for this herb yet. Use the official registry search links below to inspect primary regulatory records directly.",
+    "stubTitle": "No human-written monograph for this herb",
+    "stubBody": "This herb does not have a human-authored monograph. The reference material on this page is labelled with how it was produced; see the government sources and PubMed (NIH) primary studies listed below for credible information. Always confirm with a healthcare provider before use."
+  },
+  "compare": {
+    "notFound": "Herb Comparison Not Found",
+    "title": "{name1} vs {name2}",
+    "subtitle": "Side-by-side comparison of medicinal herbs",
+    "backToHerbs": "Back to Herbs",
+    "herb": "Herb",
+    "description": "Description",
+    "activeCompounds": "Active Compounds",
+    "traditionalUses": "Traditional Uses",
+    "modernUses": "Modern Uses",
+    "adultDosage": "Adult Dosage",
+    "contraindications": "Contraindications",
+    "sideEffects": "Side Effects",
+    "drugInteractions": "Drug Interactions",
+    "knownInteractions": "{count} known interactions",
+    "pregnancyWarnings": "Pregnancy & Nursing Warnings",
+    "safeInPregnancy": "Generally safe in pregnancy",
+    "notRecommendedPregnancy": "Not recommended in pregnancy",
+    "safeNursing": "Generally safe while nursing",
+    "notRecommendedNursing": "Not recommended while nursing",
+    "viewDetails": "View {name} Details",
+    "notFoundTitle": "Herb Comparison Not Found",
+    "notFoundDesc": "The herb comparison you're looking for doesn't exist."
+  },
+  "dosageFormulas": {
+    "clarks_rule": {
+      "name": "Clark's Rule",
+      "description": "Weight-based reference calculation.",
+      "bestFor": "Adults, weight-based reference"
+    },
+    "youngs_rule": {
+      "name": "Young's Rule",
+      "description": "Age-based reference calculation, less accurate than weight-based methods.",
+      "bestFor": "Adults, age-based reference"
+    },
+    "bsa": {
+      "name": "BSA Method (Mosteller)",
+      "description": "Body surface area reference calculation.",
+      "bestFor": "Adults when height and weight are known"
+    },
+    "fried_rule": {
+      "name": "Fried's Rule",
+      "description": "Age-in-months reference method.",
+      "bestFor": "Not applicable to adults 18+"
+    }
+  },
+  "sponsorship": {
+    "eyebrow": "Sponsorship & partnerships",
+    "status": "No sponsors confirmed",
+    "title": "Support the infrastructure behind HerbAlly",
+    "subtitle": "We are exploring monthly or annual sponsorship for hosting, AI, database, and domain costs. No sponsors are confirmed today, and no sponsor influences what we publish.",
+    "heroEmail": "Email about sponsorship",
+    "heroDonate": "Support with a donation",
+    "heroNote": "This page describes our policy and current status. It is not an offer, quote, or payment page.",
+    "current": {
+      "title": "Current sponsors",
+      "description": "Confirmed sponsorships appear here. Nothing is listed until an agreement is confirmed.",
+      "emptyTitle": "No sponsors confirmed yet",
+      "emptyDescription": "We have no confirmed paid sponsorship to disclose at this time. When an agreement is confirmed, it will appear here with a clear sponsorship label — never as an unnamed logo or a hidden placement.",
+      "emptyNote": "An empty list is the honest current status, not a placeholder."
+    },
+    "costs": {
+      "title": "What support can cover",
+      "description": "Sponsorship would help pay for the infrastructure that serves every visitor. We are open to monthly or annual support toward:",
+      "items": {
+        "hosting": {
+          "label": "Hosting",
+          "description": "Servers and delivery that keep pages and tools available."
+        },
+        "ai": {
+          "label": "AI costs",
+          "description": "Virtual Herbalist inference and search interpretation."
+        },
+        "database": {
+          "label": "Database",
+          "description": "Storage, queries, and backups for herb monographs."
+        },
+        "domain": {
+          "label": "Domain",
+          "description": "The herbally.app name and essential related services."
+        }
+      },
+      "terms": "We do not publish prices or payment terms on this page. Any discussion is exploratory: nothing here is an offer, quote, or promise that a sponsorship will be accepted."
+    },
+    "independence": {
+      "title": "Independence is not negotiable",
+      "description": "Sponsorship pays operating costs. It does not buy reader trust.",
+      "items": {
+        "labelled": {
+          "title": "Clear labels",
+          "description": "Every confirmed sponsorship will be identified in plain language near the sponsor's name and on any page where it is mentioned."
+        },
+        "medical": {
+          "title": "No medical influence",
+          "description": "Sponsors have no influence over herb information, rankings, evidence grades, safety warnings, interaction results, or the Virtual Herbalist."
+        },
+        "safety": {
+          "title": "Safety comes first",
+          "description": "We will not accept sponsorship conditioned on changing, softening, or hiding safety information."
+        },
+        "privacy": {
+          "title": "No health or visitor data",
+          "description": "We will not share individual health information, chat messages, search terms, or visitor-level analytics with sponsors."
+        },
+        "traffic": {
+          "title": "No guaranteed traffic",
+          "description": "We do not sell or guarantee impressions, traffic, clicks, conversions, or search rankings."
+        }
+      }
+    },
+    "types": {
+      "title": "Donations, in-kind credits, and sponsorship",
+      "description": "These are different forms of support, and we label them differently.",
+      "donation": {
+        "label": "Donation",
+        "title": "Voluntary donation",
+        "description": "A gift supports HerbAlly's general operations. It comes with no reciprocal benefit, no sponsorship label, and no editorial influence."
+      },
+      "inKind": {
+        "label": "In-kind",
+        "title": "In-kind credit",
+        "description": "A service or credit provided free or at a reduced price, such as hosting credits. We would disclose it separately and label it as in-kind."
+      },
+      "sponsorship": {
+        "label": "Sponsorship",
+        "title": "Paid sponsorship",
+        "description": "A paid monthly or annual arrangement tied to infrastructure support. It would be clearly labelled and carry no influence over medical content or guarantee of traffic."
+      }
+    },
+    "contact": {
+      "title": "Talk to us about sponsorship",
+      "description": "If your organisation is interested in supporting HerbAlly, email us at info@herbally.app.",
+      "emailLabel": "Email info@herbally.app",
+      "emailSubject": "Sponsorship inquiry",
+      "prompt": "Tell us the kind of support you have in mind (monthly or annual), which costs interest you, and the name of your organisation.",
+      "privacy": "Please do not send personal health information. This page does not accept payments.",
+      "noOffer": "We will review messages, but sending one does not create an agreement or guarantee a response."
+    },
+    "links": {
+      "methodology": "Read our methodology",
+      "privacy": "Read our privacy policy",
+      "donate": "Make a voluntary donation"
+    },
+    "pageNote": "HerbAlly provides educational information, not medical advice. Sponsorship does not change that.",
+    "audience": {
+      "title": "Who reads HerbAlly",
+      "description": "A small audience, described honestly. We would rather show you the real numbers than a pitch you could check and find inflated.",
+      "stats": {
+        "visitors": {
+          "value": "1,800",
+          "label": "visitors in the last 30 days"
+        },
+        "pageviews": {
+          "value": "2,300",
+          "label": "page views in the last 30 days"
+        },
+        "languages": {
+          "value": "EN + FR",
+          "label": "every page fully translated"
+        },
+        "markets": {
+          "value": "CA · FR · global",
+          "label": "where readers are"
+        }
+      },
+      "note": "Raw figures from our own analytics for the 30 days to 29 October 2026. Around half of recent sessions look automated, so the human audience is smaller than the headline number. We tell you that here rather than let you discover it later.",
+      "fit": "HerbAlly suits a sponsor whose customers ask what a herb does, whether it is safe with their medication, or how much of it to take — and who wants their name attached to that answer without buying influence over it."
+    },
+    "packages": {
+      "title": "Sponsorship packages",
+      "description": "Published rates, no auction, no sponsored articles, and no say over what the site states about any herb. Cancel whenever you like.",
+      "currency": "All prices in Canadian dollars.",
+      "items": {
+        "supporter": {
+          "name": "Supporter",
+          "price": "C$25",
+          "cadence": "per month",
+          "features": [
+            "Your name and link in the site footer",
+            "Listed on this page",
+            "Cancel any time"
+          ]
+        },
+        "sponsor": {
+          "name": "Sponsor",
+          "price": "C$50",
+          "cadence": "per month",
+          "features": [
+            "Everything in Supporter",
+            "A “Supported by” line on herb pages",
+            "A quarterly note on what your support paid for"
+          ]
+        },
+        "launch": {
+          "name": "Launch partner",
+          "price": "C$150",
+          "cadence": "per year",
+          "features": [
+            "Everything in Sponsor",
+            "Your logo on the home page",
+            "A named entry in our public sponsorship record"
+          ]
+        }
+      },
+      "cta": "Ask about this package",
+      "note": "We publish who supports us. Sponsors never review, edit, approve or veto health content, and no package buys a favourable mention of any herb."
+    }
+  },
+  "meta": {
+    "herbsDatabase": "Medicinal Herbs Database",
+    "herbsDatabaseDesc": "Browse our evidence-based medicinal herb database with referenced profiles, active compounds, safety warnings, and drug interactions.",
+    "virtualHerbalist": "Virtual Herbalist",
+    "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
+    "doseCalculator": "Herbal Dosage Calculator: Adult Reference Doses by Weight",
+    "doseCalculatorDesc": "Free adult herbal dosage calculator by weight and age (18+): Clark's, Young's & BSA reference scaling for herbs with established monograph doses. No account required.",
+    "herbsBySymptom": "Herbs by Symptom",
+    "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
+    "privacyPolicy": "Privacy Policy",
+    "medicalDisclaimer": "Medical Disclaimer",
+    "medicalDisclaimerDesc": "Read the full medical disclaimer for HerbAlly, including how the FDA and Health Canada regulate herbal products.",
+    "faq": "Frequently Asked Questions",
+    "faqDesc": "Answers to common questions about HerbAlly: our sources, our methods, herb safety, dosage and drug interactions.",
+    "methodology": "Our Methodology",
+    "methodologyDesc": "How HerbAlly writes and checks a herb profile: the sources used, what each evidence grade means, how AI is used, and how corrections are made.",
+    "privacyDesc": "How HerbAlly handles your data: what is collected, cookies, analytics, and how to exercise your rights.",
+    "termsOfService": "Terms of Service",
+    "termsDesc": "HerbAlly terms of service, medical disclaimer notice, AI limitations, and conditions of use for our free medicinal herb reference library.",
+    "supportUs": "Support Us - Keep Herbal Medicine Free",
+    "supportUsDesc": "Help us keep HerbAlly 100% free. Your donation supports hosting, AI costs, and free access for everyone.",
+    "sponsorship": "Sponsorship & Partnerships",
+    "sponsorshipDesc": "How HerbAlly handles sponsorship, editorial independence, privacy, and support for hosting, AI, database, and domain costs. No sponsors are confirmed.",
+    "herbNotFound": "Herb Not Found",
+    "herbComparisonNotFound": "Herb Comparison Not Found",
+    "about": "About",
+    "aboutDesc": "Learn about HerbAlly, our mission, and how we help you make informed decisions about medicinal herbs.",
+    "contact": "Contact us",
+    "contactDesc": "How to contact HerbAlly: general, privacy, and terms email addresses.",
+    "herbDrugInteractions": "Herb–Drug Interactions",
+    "herbDrugInteractionsDesc": "Understand herb–drug interactions and check your supplement against medications in seconds. Covers St. John's Wort, ginkgo, garlic, turmeric, and warfarin.",
+    "appDescription": "Check any herb against your medication in seconds. Evidence-based herb profiles with cited sources, evidence grades, and an adult dosage calculator. Always free.",
+    "herbsFor": "Herbs for {symptom}",
+    "homeTitle": "Herb-Drug Interaction Checker & Guide",
+    "gardenPageTitle": "My Garden",
+    "gardenSubtitle": "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
+    "profileTitle": "My Profile",
+    "profileSubtitle": "Manage your health data for personalized dosing and safety warnings",
+    "npnChecker": "Health Canada NPN Supplement Decoder",
+    "npnCheckerDesc": "Look up any 8-digit Health Canada Natural Product Number (NPN) or DIN-HM: inspect medicinal ingredients, cautions, and cross-check drug interactions.",
+    "medications": "Medications & Herb Interactions A–Z",
+    "medicationsDesc": "Browse prescription medications and drug classes to see every herb documented to interact with each drug, ranked by severity and evidence.",
+    "surgeryPlanner": "Pre-Surgery Herb Washout Planner",
+    "surgeryPlannerDesc": "Calculate pre-operative review dates for bleeding, sedation, and CYP450-active herbs based on ASA and Health Canada surgical safety guidance.",
+    "widgets": "Free Embeddable Herb-Drug Checker",
+    "widgetsDesc": "Embed HerbAlly's free bilingual herb-drug interaction checker widget on your clinic, pharmacy student, or wellness website."
+  },
+  "symptomMeta": {
+    "anxiety": {
+      "title": "Herbs for Anxiety & Stress",
+      "desc": "Evidence-based herbs for anxiety and stress relief. Compare effectiveness, safety, and drug interactions for herbs like Ashwagandha, Valerian, and Lavender."
+    },
+    "depression": {
+      "title": "Herbs for Depression & Mood",
+      "desc": "Evidence-based herbs for depression and mood support. Compare effectiveness, safety, and drug interactions for St. John's Wort, Saffron, and more."
+    },
+    "sleep": {
+      "title": "Herbs for Sleep & Insomnia",
+      "desc": "Evidence-based herbs for better sleep. Compare effectiveness, safety, and drug interactions for Valerian, Chamomile, and Melatonin."
+    },
+    "inflammation": {
+      "title": "Herbs for Inflammation",
+      "desc": "Evidence-based anti-inflammatory herbs. Compare effectiveness, safety, and drug interactions for Turmeric, Ginger, Boswellia, and more."
+    },
+    "digestion": {
+      "title": "Herbs for Digestive Health",
+      "desc": "Evidence-based herbs for digestive issues including bloating, nausea, and IBS. Compare effectiveness and safety for Peppermint, Ginger, Fennel, and more."
+    },
+    "nausea": {
+      "title": "Herbs for Nausea",
+      "desc": "Evidence-based herbs for nausea and upset stomach. Compare effectiveness and safety for Ginger, Peppermint, Fennel, and more."
+    },
+    "constipation": {
+      "title": "Herbs for Constipation",
+      "desc": "Evidence-based herbs for constipation relief. Compare effectiveness and safety for Senna, Cascara, Psyllium, and more."
+    },
+    "liver": {
+      "title": "Herbs for Liver Health",
+      "desc": "Evidence-based herbs for liver support and detoxification. Compare effectiveness and safety for Milk Thistle, Dandelion Root, Turmeric, and more."
+    },
+    "bloodPressure": {
+      "title": "Herbs for Blood Pressure",
+      "desc": "Evidence-based herbs for blood pressure management. Compare effectiveness and safety for Garlic, Hibiscus, Hawthorn, and more."
+    },
+    "cholesterol": {
+      "title": "Herbs for Cholesterol",
+      "desc": "Evidence-based herbs for cholesterol management. Compare effectiveness and safety for Garlic, Red Yeast Rice, Artichoke, and more."
+    },
+    "circulation": {
+      "title": "Herbs for Circulation",
+      "desc": "Evidence-based herbs for circulation and cardiovascular health. Compare effectiveness and safety for Ginkgo, Cayenne, Horse Chestnut, and more."
+    },
+    "immune": {
+      "title": "Herbs for Immune Support",
+      "desc": "Evidence-based herbs for immune system support. Compare effectiveness and safety for Echinacea, Elderberry, Astragalus, and more."
+    },
+    "allergy": {
+      "title": "Herbs for Allergies",
+      "desc": "Evidence-based herbs for allergy relief. Compare effectiveness and safety for Butterbur, Quercetin, Stinging Nettle, and more."
+    },
+    "menstrual": {
+      "title": "Herbs for Menstrual Health",
+      "desc": "Evidence-based herbs for menstrual cramps, PMS, and cycle support. Compare effectiveness and safety for Vitex, Cramp Bark, Ginger, and more."
+    },
+    "menopause": {
+      "title": "Herbs for Menopause",
+      "desc": "Evidence-based herbs for menopause symptom relief. Compare effectiveness and safety for Black Cohosh, Red Clover, Dong Quai, and more."
+    },
+    "hormonal": {
+      "title": "Hormonal Balance",
+      "desc": "Evidence-based herbs for hormonal balance and endocrine support. Compare effectiveness and safety for Vitex, Maca, Ashwagandha, and more."
+    },
+    "skin": {
+      "title": "Herbs for Skin Health",
+      "desc": "Evidence-based herbs for skin conditions including acne, eczema, and wound healing. Compare effectiveness and safety for Tea Tree, Aloe, Calendula, and more."
+    },
+    "wound": {
+      "title": "Herbs for Wound Healing",
+      "desc": "Evidence-based herbs for wound healing and tissue repair. Compare effectiveness and safety for Calendula, Comfrey, Aloe, and more."
+    },
+    "acne": {
+      "title": "Herbs for Acne",
+      "desc": "Evidence-based herbs for acne treatment and prevention. Compare effectiveness and safety for Tea Tree, Zinc, Burdock, and more."
+    },
+    "nerve": {
+      "title": "Herbs for Nerve Health",
+      "desc": "Evidence-based herbs for nerve health and neuropathy support. Compare effectiveness and safety for St. John's Wort, Lion's Mane, and more."
+    },
+    "prostate": {
+      "title": "Herbs for Prostate Health",
+      "desc": "Evidence-based herbs for prostate support. Compare effectiveness and safety for Saw Palmetto, Pygeum, Stinging Nettle Root, and more."
+    },
+    "diabetes": {
+      "title": "Herbs for Blood Sugar",
+      "desc": "Evidence-based herbs for blood sugar management. Compare effectiveness and safety for Gymnema, Fenugreek, Bitter Melon, and more."
+    },
+    "focus": {
+      "title": "Herbs for Focus & Memory",
+      "desc": "Evidence-based herbs for cognitive enhancement and focus."
+    },
+    "joint": {
+      "title": "Herbs for Joint & Muscle Pain",
+      "desc": "Evidence-based herbs for joint pain and muscle soreness."
+    },
+    "headache": {
+      "title": "Herbs for Headaches & Migraines",
+      "desc": "Evidence-based herbs for headache and migraine relief."
+    },
+    "cold": {
+      "title": "Herbs for Colds & Flu",
+      "desc": "Evidence-based herbs for cold and flu relief."
+    }
+  },
+  "symptomsDetail": {
+    "medicalDisclaimer": "Medical Disclaimer",
+    "medicalDisclaimerText": "These herbs are listed for educational purposes only. Effectiveness varies by individual. Always consult your healthcare provider before using herbs, especially if you take medications or have a medical condition.",
+    "herbCount": "{count} herbs found for this condition",
+    "noHerbsYet": "No herbs found for this condition yet.",
+    "compareThese": "Compare These Herbs",
+    "compareDesc": "See side-by-side comparisons of effectiveness, safety, and interactions.",
+    "askHerbalist": "Ask the AI Herbalist"
+  },
+  "herbMeta": {
+    "title": "{name} ({scientific}): Benefits, Dosage, Safety, Evidence",
+    "titleBinomial": "{scientific}: Benefits, Dosage, Safety, Evidence",
+    "titleShort": "{name} ({scientific}): Benefits and Safety",
+    "titleBinomialShort": "{scientific}: Benefits and Safety",
+    "descWithNames": "{name}, also called {common}: uses, dosage, pregnancy safety and drug interactions, with PubMed-cited evidence, safety ratings and a free dosage calculator.",
+    "descFallback": "{name} ({scientific}): uses, dosage, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and a free dosage calculator.",
+    "usesFallback": "traditional wellness"
+  },
+  "compareMeta": {
+    "title": "{a} vs {b}: Difference, Benefits & Which Is Better?",
+    "shortTitle": "{a} vs {b}: Which Is Better?",
+    "desc": "Compare {a} vs {b}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator."
+  },
+  "seo": {
+    "safePregnancy": "Generally safe during pregnancy",
+    "notSafePregnancy": "Not recommended during pregnancy",
+    "safeNursing": "Generally safe while nursing",
+    "notSafeNursing": "Not recommended while nursing",
+    "nccihSource": "Herbs at a Glance",
+    "breadcrumbHome": "Home",
+    "orgName": "HerbAlly",
+    "orgDesc": "A reference library of medicinal herbs with cited sources, evidence grades, an adult dosage calculator, and an herb-drug interaction checker."
+  },
+  "brand": {
+    "full": "HerbAlly"
+  },
+  "homeAI": {
+    "badge": "AI-Powered Herbal Assistant",
+    "title": "Ask anything about herbs and natural health",
+    "subtitle": "Type your question below or tap a suggestion. Get evidence-based answers from WHO, NCCIH, and PubMed — instantly and for free."
+  },
+  "home": {
+    "heroTitle": "Check herb‑drug interactions",
+    "heroSubtitle": "Type any herb and medication to check the HerbAlly database first. If a pair isn't recorded, the Virtual Herbalist can explain more.",
+    "heroButton": "Browse all herbs",
+    "herbPlaceholder": "Turmeric, St. John's Wort…",
+    "medPlaceholder": "warfarin, sertraline…",
+    "checkButton": "Check interaction",
+    "suggestion1": "St. John's Wort + antidepressants",
+    "suggestion2": "Turmeric + blood thinners",
+    "suggestion3": "Ginkgo + aspirin",
+    "suggestion4": "Echinacea + immunosuppressants",
+    "trustLine": "Evidence-based · Free · No account required",
+    "symptomsLink": "Not sure which herb? Describe your symptoms →",
+    "emptyCheckError": "Enter an herb or a medication to check an interaction.",
+    "sameCheckError": "The herb and medication look the same — enter two different products.",
+    "featuresTitle": "What you can do",
+    "featureHerbsTitle": "Herb database",
+    "featureHerbsDescription": "Search medicinal herbs with referenced profiles, uses, safety notes, and evidence grades.",
+    "featureCalculatorTitle": "Dosage calculator",
+    "featureCalculatorDescription": "Get age and weight-based dosage recommendations using evidence-based formulas.",
+    "featureInteractionsTitle": "Interaction checker",
+    "featureInteractionsDescription": "Check for herb-drug interactions before combining supplements with medications.",
+    "featureAiTitle": "Virtual herbalist",
+    "featureAiDescription": "Ask questions about herbs, remedies, and safety. Evidence-based answers with citations.",
+    "checkerChecking": "Checking the database…",
+    "checkerFoundTitle": "Database result",
+    "checkerAskHerbalist": "Ask the Virtual Herbalist",
+    "checkerAskPrompt": "Is {herb} safe to take with {drug}?",
+    "checkerViewPair": "View full interaction",
+    "checkerViewHerb": "View herb page",
+    "checkerDisclaimer": "Educational information only, not medical advice. Confirm with your doctor or pharmacist before changing any medication.",
+    "checkerNotFoundTitle": "No structured record found",
+    "checkerNotFoundBody": "No structured interaction record found for {herb} + {drug} in the HerbAlly database.",
+    "checkerAiNote": "The Virtual Herbalist can explain more, but its answer is AI-generated educational information — not a database result — and should be verified independently.",
+    "checkerError": "The database check could not run. Try again, or ask the Virtual Herbalist.",
+    "checkerSource": "Source",
+    "checkerEvidence": "Evidence",
+    "checkerMechanism": "How it works",
+    "explainerTitle": "Your trusted guide to medicinal herbs",
+    "explainerBody": "HerbAlly is a free medicinal-herb reference covering hundreds of published herb profiles. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose where established monograph data exists — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
+    "explainerNote": "Educational purposes only. Not medical advice. Always confirm with your doctor or pharmacist before combining a herb with a medication.",
+    "popularTitle": "Popular herbs",
+    "herbLabel": "Herb",
+    "medLabel": "Medication",
+    "eyebrow": "A reference for what you take together",
+    "stackLinkLabel": "Check multiple herbs & medications + print sheet",
+    "npnLinkLabel": "Decode a Health Canada bottle NPN"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: November 2026",
+    "overview": {
+      "title": "1. Overview",
+      "text": "HerbAlly is free to use and most of the site works without an account. Some features, such as saving a garden, saving calculations or keeping chat history, need an account or create an anonymous session. This policy explains what is stored, where it is stored, and the choices you have."
+    },
+    "infoWeCollect": {
+      "title": "2. Information We Collect",
+      "text": "Depending on how you use HerbAlly, we may collect:",
+      "chatMessages": "Questions sent to the Virtual Herbalist may be processed by Ollama Cloud to generate replies. Signed-in conversations can be saved to your account; guest conversations may be saved to a session linked to the herbally-guest-id cookie.",
+      "analytics": "Cloudflare Web Analytics collects cookieless, privacy-first aggregate traffic counts and Core Web Vitals performance telemetry.",
+      "cookies": "HerbAlly uses cookies for language preference, guest sessions and authentication. Your browser may also store garden entries and notes and recent searches. If advertising is enabled in the future, Google and its partners may use cookies or device identifiers.",
+      "notCollect": "We do not ask for your name or email unless you create an account or make a donation. We do not sell personal information."
+    },
+    "howWeUse": {
+      "title": "3. How We Use Your Information",
+      "items": [
+        "Provide and maintain our services",
+        "Generate AI responses in the Virtual Herbalist",
+        "Save optional account data, including your garden, saved calculations and chat history",
+        "Process donations through Stripe and keep the necessary accounting record",
+        "Improve our herb database and AI responses using aggregate analytics",
+        "Remember your language preference across visits",
+        "Ensure the security and integrity of our platform"
+      ]
+    },
+    "thirdParty": {
+      "title": "4. Third-Party Services",
+      "text": "HerbAlly uses the following third-party services:",
+      "supabase": "Self-hosted PostgreSQL / Supabase stack operated in Montreal, Quebec, Canada — stores optional user accounts, saved health profiles, garden entries, dosage history, and aggregate donation logs.",
+      "vercel": "Cloudflare — DNS, TLS edge proxy, Cloudflare Tunnel, and cookieless Cloudflare Web Analytics protecting traffic to our Montreal origin server.",
+      "stripe": "Stripe — payment processing for donations. HerbAlly never sees or stores your card details. Stripe provides us the donor name, email and payment status so the donation can be recorded.",
+      "ollamaCloud": "Ollama Cloud — AI processing. Chat messages and symptom descriptions submitted for AI-assisted search may be sent to Ollama to generate responses or search keywords. Symptom search terms, including the original description if keyword extraction fails, may appear in search-request URLs and hosting logs. Ollama's own retention practices are governed by its privacy policy.",
+      "adsense": "Google AdSense is not active. If advertising is enabled in future, Google and its partners may receive information about the public page being viewed and may use cookies or device identifiers to serve and measure ads. The intended placement is on public herb reference pages, not on health-input tools.",
+      "upstash": "Upstash Redis — ephemeral rate-limiting counters (hashed request IP keys; US/cloud) to protect the site and AI endpoint against abuse.",
+      "sentry": "Sentry — error monitoring and crash diagnostics with scrubbed request headers and cookies (US/cloud).",
+      "zoho": "Zoho Mail (Canada) — transactional email delivery for safety-digest opt-in confirmation and privacy/editorial inquiries.",
+      "crossBorder": "Cross-border transfers: While our core PostgreSQL database runs in Montreal, Quebec, Canada, services such as Cloudflare, Ollama Cloud, Upstash, Sentry, and Stripe may process limited request metadata or submitted text outside Quebec and Canada under their respective data-protection frameworks."
+    },
+    "cookiesSection": {
+      "title": "5. Cookies",
+      "onlyOne": "HerbAlly uses the following cookies:",
+      "localeCookie": "herbally-locale — set only when you switch languages, to remember en or fr for up to 1 year.",
+      "guestCookie": "herbally-guest-id — an HttpOnly cookie that links your browser to an anonymous guest chat session so you can return to it.",
+      "authCookies": "Supabase authentication cookies — set only if you choose to sign in, so your session stays active.",
+      "adCookies": "Advertising cookies — if ads are enabled, Google and its partners may set cookies or use identifiers to serve and measure ads. You can control these through your browser and Google's ad settings.",
+      "noTracking": "We do not use Facebook Pixel or invasive third-party trackers. Cookieless Cloudflare Web Analytics provides aggregate page counts, and advertising cookies apply only if ads are enabled."
+    },
+    "dataRetention": {
+      "title": "6. Data Retention",
+      "text": "Account and saved data may be retained until deleted. Guest chat records can persist separately from the guest cookie; cookie expiry does not necessarily delete server records. Donation records may be retained for accounting. Ollama's retention practices are governed by its own policy."
+    },
+    "yourRights": {
+      "title": "7. Your Rights",
+      "text": "You can access, correct or delete the data you control in HerbAlly:",
+      "access": "Access: You can see your saved profile, garden, calculations and chat history in your account.",
+      "deletion": "You can remove garden entries and chat sessions using available app controls. Contact privacy@herbally.app to request deletion of your account or other saved information, including calculations. Clearing browser storage removes local data held there.",
+      "complaint": "Complaint: Contact our Privacy Officer at privacy@herbally.app. You may also file a complaint with the Commission d'accès à l'information du Québec (CAI) or the Office of the Privacy Commissioner of Canada (OPC).",
+      "portability": "Portability & consent withdrawal: Under Quebec Law 25 and Canadian PIPEDA, you may request an export of personal information you provided in structured form, withdraw consent to non-essential storage, or unsubscribe from our digest with one click."
+    },
+    "security": {
+      "title": "8. Security",
+      "text": "We implement appropriate technical measures to protect the service, including HTTPS encryption, Row-Level Security on our database, and regular dependency and security reviews.",
+      "breachNotice": "Confidentiality incidents: In accordance with Quebec Law 25, we maintain technical safeguards and will notify affected individuals and regulators promptly if a confidentiality incident poses a risk of serious injury."
+    },
+    "changes": {
+      "title": "9. Changes to This Policy",
+      "text": "We may update this policy periodically. Changes will be posted on this page with an updated date."
+    },
+    "contact": {
+      "title": "10. Contact",
+      "text": "For privacy questions, contact us at privacy@herbally.app.",
+      "officer": "Privacy Officer (Quebec Law 25 / PIPEDA): Yasser Bheekun — Montreal, Quebec, Canada (privacy@herbally.app)."
+    }
+  }
+}

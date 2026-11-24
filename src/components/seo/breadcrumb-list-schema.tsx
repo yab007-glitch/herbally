@@ -1,8 +1,8 @@
 import { siteUrl } from "@/lib/seo/site-url";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { addLocalePrefix, isLocalePrefixed } from "@/lib/i18n/routing";
-import en from "@/lib/i18n/dictionaries/en.json";
-import fr from "@/lib/i18n/dictionaries/fr.json";
+import enCore from "@/lib/i18n/dictionaries/en/core.json";
+import frCore from "@/lib/i18n/dictionaries/fr/core.json";
 
 interface Crumb {
   name: string;
@@ -28,7 +28,7 @@ export async function BreadcrumbListSchema({ items }: { items: Crumb[] }) {
   if (!items || items.length === 0) return null;
   const locale = await getLocale();
   const base = siteUrl();
-  const homeLabel = locale === "fr" ? fr.common.home : en.common.home;
+  const homeLabel = locale === "fr" ? frCore.common.home : enCore.common.home;
 
   // Callers pass a mix of paths (`/faq`) and absolute self-links
   // (`https://herbally.app/calculator`); both resolve to the active locale,

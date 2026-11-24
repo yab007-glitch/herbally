@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import en from "@/lib/i18n/dictionaries/en.json";
-import fr from "@/lib/i18n/dictionaries/fr.json";
+import { enDict as en, frDict as fr } from "@/lib/i18n/dictionaries";
 
 const { localeState, buildPageMetadataMock } = vi.hoisted(() => ({
   localeState: { value: "en" as "en" | "fr" },

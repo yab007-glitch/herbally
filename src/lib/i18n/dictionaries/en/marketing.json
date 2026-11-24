@@ -1,0 +1,164 @@
+{
+  "donateButtons": {
+    "coffee": "Coffee",
+    "supporter": "Supporter",
+    "champion": "Champion",
+    "coffeeDesc": "One day of API costs",
+    "supporterDesc": "A week of hosting",
+    "championDesc": "Half a month of operations",
+    "customAmount": "Or choose a custom amount:",
+    "donate": "Donate",
+    "secureViaStripe": "Secure via Stripe",
+    "allCardsAccepted": "All cards accepted",
+    "noCardDataStored": "No card data stored",
+    "errorMessage": "Failed to process donation. Please try again."
+  },
+  "faqContent": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Evidence-based answers about medicinal herbs, safety, drug interactions, and how HerbAlly works.",
+    "stillHaveQuestions": "Still have questions?",
+    "askVirtualHerbalist": "Ask our AI-powered Virtual Herbalist for personalized guidance.",
+    "askHerbalistBtn": "Ask the Virtual Herbalist",
+    "findHerbsBtn": "Find Herbs by Symptom",
+    "aboutHerbAlly": "About HerbAlly",
+    "herbSafety": "Herb Safety",
+    "drugInteractions": "Drug Interactions",
+    "dosageUsage": "Dosage & Usage",
+    "virtualHerbalist": "Virtual Herbalist",
+    "sourcesEvidence": "Sources & Evidence",
+    "general": {
+      "free": {
+        "q": "Is HerbAlly free to use?",
+        "a": "Yes, HerbAlly is completely free to use. No account is required for most features and there is no premium tier. We plan to introduce limited, clearly labelled advertising on public herb pages to help cover costs; ads are not live yet. The chat and calculator will remain ad-free. We believe safe herbal information should be accessible to everyone."
+      },
+      "herbCount": {
+        "q": "How many herbs does HerbAlly cover?",
+        "a": "HerbAlly publishes reference profiles for hundreds of medicinal herbs, including active compounds, traditional uses, clinical evidence, drug interactions, and adult dosage guidance where a safe reference dose exists — with additional profiles added as sources are verified."
+      },
+      "reviewed": {
+        "q": "Is the information on HerbAlly medically reviewed?",
+        "a": "Published herb profiles list their cited primary sources (such as Health Canada NHP, EMA HMPC, NIH NCCIH, LiverTox, and PubMed) alongside a review-status badge. Entries are progressively reviewed and editorially validated by Yasser Bheekun, MLT (OPTMQ · CSMLS); AI-summarized drafts and edited profiles awaiting verification are clearly labelled so readers can distinguish them from human-verified monographs. Editorial review checks source alignment and safety framing and is not a substitute for advice from your physician or pharmacist."
+      },
+      "trustAI": {
+        "q": "Can I trust the AI Virtual Herbalist?",
+        "a": "The AI herbalist provides educational information based on our herb database and authoritative sources. However, it is NOT a substitute for professional medical advice. Always verify with your healthcare provider, especially for serious conditions or drug interactions."
+      }
+    },
+    "safety": {
+      "meds": {
+        "q": "Are herbs safe to take with prescription medications?",
+        "a": "Some herbs can interact dangerously with prescription drugs. For example, St. John's Wort can reduce the effectiveness of antidepressants and birth control pills. Always check our interaction database and consult your healthcare provider before combining herbs with medications."
+      },
+      "pregnancy": {
+        "q": "Which herbs should I avoid during pregnancy?",
+        "a": "Many herbs are contraindicated during pregnancy. Herbs like black cohosh, dong quai, and high doses of garlic can stimulate uterine contractions or affect hormones. HerbAlly marks pregnancy safety on every herb page — look for the pregnancy safety badge."
+      },
+      "children": {
+        "q": "Can children take herbal supplements?",
+        "a": "HerbAlly does not calculate herbal doses for anyone under 18. Herbal products vary widely in concentration and the classic pediatric formulas were designed for prescription drugs, not botanical extracts. Speak with a paediatrician, pharmacist or the child's doctor before giving any herbal product to a child or adolescent."
+      },
+      "grades": {
+        "q": "What does the evidence grade (A/B/C/D) mean?",
+        "a": "Evidence grades indicate the strength of scientific support: A = Strong evidence from multiple RCTs and systematic reviews. B = Moderate evidence from clinical studies. C = Limited evidence from traditional use or preclinical research. D = Anecdotal or historical use only. Traditional use (trad) = Well-established traditional use with limited clinical validation."
+      }
+    },
+    "interactions": {
+      "dangerous": {
+        "q": "What are the most dangerous herb-drug interactions?",
+        "a": "The most serious interactions include: St. John's Wort with antidepressants (serotonin syndrome risk), Warfarin with many herbs (bleeding risk), garlic and ginkgo with blood thinners, and kava with sedatives. Our interaction checker rates severity as Contraindicated, Severe, Moderate, or Mild."
+      },
+      "accuracy": {
+        "q": "How accurate is the interaction data?",
+        "a": "Our interaction data is sourced from WHO monographs, PubMed clinical studies, Commission E monographs, and the NCCIH database. Evidence levels are provided for each interaction. However, no database is complete — always verify with a pharmacist."
+      }
+    },
+    "dosage": {
+      "calculator": {
+        "q": "How does the dosage calculator work?",
+        "a": "HerbAlly's dosage calculator is for adults aged 18 and older. It supports Clark's Rule (weight-based), Young's Rule (age-based), and Body Surface Area (BSA) as reference methods. It does not calculate doses for children or adolescents; consult a qualified paediatric healthcare professional instead."
+      },
+      "multiple": {
+        "q": "Can I take multiple herbs at the same time?",
+        "a": "Some herbs work well together (combinations), while others can compound effects or interact. Always research each herb individually and consult with a qualified herbalist or healthcare provider before combining herbs, especially if you take medications."
+      }
+    },
+    "herbalistCat": {
+      "how": {
+        "q": "How does the AI Virtual Herbalist work?",
+        "a": "The Virtual Herbalist uses AI to provide evidence-based guidance about herbs, including safety information, potential interactions, and traditional uses. It draws from our medicinal-herb database alongside WHO monographs, EMA HMPC, Health Canada, PubMed, and NCCIH sources. Each response includes evidence levels and source citations."
+      },
+      "notAsk": {
+        "q": "What should I NOT ask the Virtual Herbalist?",
+        "a": "Do not use it for medical diagnosis, prescription recommendations, or emergency situations. The AI cannot replace professional medical advice. If you're experiencing a medical emergency, call 911 or your local emergency number. For poison control, call 1-800-222-1222."
+      }
+    },
+    "sources": {
+      "what": {
+        "q": "What sources does HerbAlly use?",
+        "a": "We reference: WHO Monographs on Selected Medicinal Plants (Volumes 1-4), German Commission E monographs, European Medicines Agency (EMA) herbal monographs, NCCIH Herbs at a Glance database, and PubMed peer-reviewed research. Each herb page shows specific citations with source type and evidence level."
+      },
+      "update": {
+        "q": "How often is the information updated?",
+        "a": "Herb profiles and interaction records are updated as new clinical research and regulator monographs become available. Only entries that have completed human verification display a 'Reviewed' badge, reviewer credentials, and a 'Last reviewed' date; unverified drafts and edited pages awaiting re-check are labelled with their current review status instead."
+      }
+    },
+    "searchPlaceholder": "Search FAQ...",
+    "clearSearch": "Clear search",
+    "results": "{count} results",
+    "result": "{count} result",
+    "noResultsFound": "No results found. Try a different search term."
+  },
+  "widgetsPage": {
+    "eyebrow": "Free for clinics & educators",
+    "heading": "Embeddable Herb–Drug Checker Widget",
+    "intro": "Add HerbAlly's ad-free, bilingual herb–drug interaction checker directly to your pharmacy blog, integrative clinic site, or student study portal using a single copy-paste iframe snippet.",
+    "languageLabel": "Widget language",
+    "widthLabel": "Maximum width",
+    "codeHeading": "HTML embed snippet",
+    "copyCode": "Copy HTML code",
+    "copied": "Copied!",
+    "previewHeading": "Live widget preview",
+    "attributionLabel": "Herb-drug safety data by HerbAlly",
+    "citationKit": {
+      "eyebrow": "For librarians, educators & clinics",
+      "heading": "Cite or Link HerbAlly in Resource Guides",
+      "intro": "Maintaining a university pharmacy LibGuide, patient handout, or clinical portal? Copy a pre-written description or plain HTML link below—no iframe required.",
+      "blurbHeading": "Copyable LibGuide / resource description",
+      "copyBlurb": "Copy description",
+      "htmlHeading": "Plain HTML resource link",
+      "copyHtml": "Copy HTML link",
+      "copied": "Copied!",
+      "directLinksHeading": "Key clinical & reference tools to link directly",
+      "links": {
+        "checker": {
+          "title": "Herb–Drug Interaction & Stack Checker",
+          "desc": "Screen herbs alongside prescriptions, inspect CYP mechanisms, and print a wallet card."
+        },
+        "medications": {
+          "title": "Reverse Medication Interaction Directory",
+          "desc": "Browse 108+ prescription drugs and therapeutic classes mapped to NIH RxNorm."
+        },
+        "surgery": {
+          "title": "Pre-Surgery Herb Washout Planner",
+          "desc": "Printable stop-timing checklist grounded in ASA and Health Canada guidance."
+        },
+        "npn": {
+          "title": "Health Canada NPN Supplement Decoder",
+          "desc": "Live lookup of 8-digit NPN licences, ingredients, and cautions from Health Canada LNHPD."
+        },
+        "methodology": {
+          "title": "Methodology & Open-Data Licences",
+          "desc": "Source hierarchy (Health Canada, EU EMA HMPC, NIH NCCIH, LiverTox) and evidence grading."
+        }
+      }
+    }
+  },
+  "privacy": {
+    "localStorageSection": {
+      "controlTitle": "Clear local browser data",
+      "controlDesc": "Removes any HerbAlly searches, saved garden notes, chat session pointer, or streak counters stored in this browser.",
+      "clearButton": "Clear browser data",
+      "clearedButton": "Cleared"
+    }
+  }
+}

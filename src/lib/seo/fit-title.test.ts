@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
-import enDict from "@/lib/i18n/dictionaries/en.json";
-import frDict from "@/lib/i18n/dictionaries/fr.json";
+import { enDict, frDict } from "@/lib/i18n/dictionaries";
 import {
   fitTitle,
   fitsWithSuffix,

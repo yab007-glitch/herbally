@@ -1,9 +1,9 @@
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
+import type { AbstractIntlMessages } from "next-intl";
 import { NextIntlClientProvider } from "next-intl";
-import en from "@/lib/i18n/dictionaries/en.json";
-import fr from "@/lib/i18n/dictionaries/fr.json";
+import { enDict as en, frDict as fr } from "@/lib/i18n/dictionaries";
 
 vi.mock("next/link", () => ({
   default: ({
@@ -23,7 +23,7 @@ function renderFooter(locale: "en" | "fr") {
   return render(
     <NextIntlClientProvider
       locale={locale}
-      messages={locale === "fr" ? fr : en}
+      messages={(locale === "fr" ? fr : en) as unknown as AbstractIntlMessages}
       timeZone="America/Toronto"
     >
       <MarketingFooter />

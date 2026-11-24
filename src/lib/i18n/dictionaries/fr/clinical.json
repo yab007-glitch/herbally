@@ -1,0 +1,96 @@
+{
+  "citations": {
+    "pending": "Citations en attente de révision. Informations basées sur l'utilisation traditionnelle et la recherche préliminaire.",
+    "reviewedBy": "Révisé par : ",
+    "lastUpdated": "Dernière mise à jour : ",
+    "sources": "Sources : ",
+    "researchProfile": "Profil de recherche",
+    "viewSource": "Source",
+    "viewSourceLabel": "Ouvrir la source : {source}"
+  },
+  "evidence": {
+    "prefix": "Preuves :",
+    "A": {
+      "label": "Preuves solides",
+      "shortDesc": "Plusieurs ECR",
+      "fullDesc": "Preuves cliniques solides issues de plusieurs essais randomisés contrôlés (ECR) et revues systématiques."
+    },
+    "B": {
+      "label": "Preuves modérées",
+      "shortDesc": "Données cliniques",
+      "fullDesc": "Preuves modérées issues d'études observationnelles, de séries de cas ou d'ECR limités."
+    },
+    "C": {
+      "label": "Preuves limitées",
+      "shortDesc": "Traditionnel/préclinique",
+      "fullDesc": "Preuves limitées issues de l'utilisation traditionnelle, d'études précliniques ou d'opinions d'experts. Recherches supplémentaires nécessaires."
+    },
+    "D": {
+      "label": "Uniquement anecdotique",
+      "shortDesc": "Usage historique",
+      "fullDesc": "Preuves basées principalement sur l'utilisation historique et les rapports anecdotiques. Validation scientifique limitée."
+    },
+    "trad": {
+      "label": "Utilisation traditionnelle",
+      "shortDesc": "Médecine traditionnelle",
+      "fullDesc": "Utilisé traditionnellement dans les systèmes de médecine par les plantes. Les preuves scientifiques peuvent être limitées ou en cours."
+    }
+  },
+  "interactionExplainer": {
+    "title": "Qu'est-ce qu'une interaction plante-médicament ?",
+    "whatIs": "Une interaction plante-médicament se produit lorsqu'une plante ou un complément modifie l'action d'un médicament dans votre organisme — en le rendant plus puissant, moins efficace, ou plus susceptible de provoquer des effets nocifs. Les plantes contiennent des composés actifs qui peuvent accélérer ou ralentir les enzymes et transporteurs utilisés pour métaboliser les médicaments.",
+    "whyHeading": "Pourquoi c'est important",
+    "ex1Name": "Millepertuis",
+    "ex1Effect": "peut rendre la contraception, les antidépresseurs et les anticoagulants moins efficaces.",
+    "ex2Name": "Ail",
+    "ex2Effect": "peut augmenter le risque de saignement avec la warfarine et autres anticoagulants (aussi ginkgo, gingembre et curcuma).",
+    "ex3Name": "Kava",
+    "ex3Effect": "peut amplifier la sédation avec les médicaments contre l'anxiété ou le sommeil (aussi la valériane).",
+    "riskLine": "Le risque est plus élevé chez les personnes âgées, ceux qui prennent plusieurs médicaments et les personnes atteintes de maladies chroniques.",
+    "actionLine": "Indiquez toujours à votre médecin et à votre pharmacien toutes les plantes et compléments que vous prenez — et vérifiez une association avant de la prendre."
+  },
+  "interactions": {
+    "title": "Interactions Médicamenteuses Connues",
+    "showMore": "Afficher {count} de plus",
+    "showLess": "Afficher moins",
+    "coverageNotice": "Cette liste reflète un sous-ensemble sélectionné d'interactions documentées et n'est pas exhaustive. L'absence d'un médicament ici ne prouve pas qu'il est sans danger à combiner. Confirmez toujours auprès d'un pharmacien ou d'un professionnel de santé.",
+    "severity": {
+      "contraindicated": "Contre-indiqué",
+      "severe": "Sévère",
+      "moderate": "Modéré",
+      "mild": "Léger"
+    },
+    "headers": {
+      "drug": "Médicament",
+      "severity": "Sévérité",
+      "description": "Description"
+    },
+    "uncitedNote": "Ces associations ne sont pas encore liées à une source primaire. Considérez-les comme une invitation à consulter un pharmacien, non comme une référence.",
+    "sourceLink": "Source : notice PubMed",
+    "allHerbsForDrug": "Toutes les plantes avec ce médicament →",
+    "browseMedications": "Parcourir l'index inversé des médicaments →"
+  },
+  "safety": {
+    "noInteractionsTitle": "Aucune interaction répertoriée",
+    "noInteractionsMsg": "Notre base de données ne répertorie aucune interaction médicamenteuse cliniquement significative pour cette plante. L'absence de données ne prouve pas l'innocuité — consultez toujours votre professionnel de santé avant de combiner des plantes avec des médicaments.",
+    "dangerousNoInteractionsTitle": "Plante à haut risque — ne pas associer aux médicaments",
+    "dangerousNoInteractionsMsg": "Aucune interaction médicamenteuse structurée n'est répertoriée dans notre tableau pour cette plante toxique ou à haut risque, mais une toxicité systémique grave ou des interactions restent possibles. Ne pas utiliser ni associer à un médicament sans suivi médical direct.",
+    "interactionCountTitle": "{count} interaction médicamenteuse connue — Certaines peuvent être graves",
+    "interactionCountTitlePlural": "{count} interactions médicamenteuses connues — Certaines peuvent être graves",
+    "interactionMessage": "Cette plante peut interagir avec les médicaments que vous prenez. Consultez le tableau des interactions ci-dessous et parlez-en à votre professionnel de santé avant l'utilisation.",
+    "pregnancySafetyTitle": "Sécurité pendant la grossesse et l'allaitement",
+    "pregnancySafeMsg": "Considérée généralement sûre pendant la grossesse et l'allaitement selon des preuves {level}. Cependant, consultez toujours votre professionnel de santé avant d'utiliser tout supplément à base de plantes pendant la grossesse ou l'allaitement.",
+    "notSafeTitle": "Non recommandé pendant la grossesse ou l'allaitement",
+    "notPregnancyMsg": "Cette plante n'est PAS recommandée pendant la grossesse en raison de risques potentiels pour le fœtus en développement.",
+    "notNursingMsg": "Cette plante n'est PAS recommandée pendant l'allaitement car les effets sur les nourrissons sont inconnus.",
+    "pregnancyUnknownMsg": "La sécurité pendant la grossesse n'est pas établie dans les sources examinées ici.",
+    "nursingUnknownMsg": "La sécurité pendant l'allaitement n'est pas établie dans les sources examinées ici.",
+    "consultProvider": "Consultez votre professionnel de santé avant l'utilisation.",
+    "severityContraindicated": "Contre-indiqué",
+    "severitySevere": "Sévère",
+    "severityModerate": "Modéré",
+    "severityMild": "Léger",
+    "personalizedInteractionsTitle": "Avertissement d'interaction personnalisé",
+    "personalizedInteractionsBody": "D'après les médicaments de votre profil, cette plante peut interagir avec un ou plusieurs médicaments que vous prenez. Ne commencez, n'arrêtez ni ne modifiez aucun médicament ou supplément sans consulter votre professionnel de santé ou votre pharmacien."
+  }
+}

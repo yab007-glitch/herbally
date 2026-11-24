@@ -8,8 +8,7 @@ import {
   NextIntlClientProvider,
   useTranslations,
 } from "next-intl";
-import enDict from "@/lib/i18n/dictionaries/en.json";
-import frDict from "@/lib/i18n/dictionaries/fr.json";
+import { enDict, frDict } from "@/lib/i18n/dictionaries";
 import {
   CLIENT_MESSAGE_SCOPES,
   pickClientMessages,
