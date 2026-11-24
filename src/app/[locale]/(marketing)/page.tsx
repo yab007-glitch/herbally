@@ -8,6 +8,7 @@ import { HowItWorks } from "./how-it-works";
 import { WelcomeToast } from "@/components/auth/welcome-toast";
 import { BookOpen, Calculator, ShieldAlert, MessageCircle } from "lucide-react";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 
 // M10 (audit 2026-06-22): the homepage previously had no generateMetadata, so
 // it emitted no canonical URL or hreflang alternates — the highest-traffic
@@ -59,7 +60,7 @@ export default async function HomePage() {
   const t = await getTranslations({ locale });
 
   return (
-    <>
+    <IntlMessagesScope locale={locale} scope="home">
       <Suspense fallback={null}>
         <WelcomeToast />
       </Suspense>
@@ -172,6 +173,6 @@ export default async function HomePage() {
           is what a crawler (and a first-time visitor) can actually judge the
           site on — the tool alone gives neither one anything to read. */}
       <HowItWorks locale={locale} />
-    </>
+    </IntlMessagesScope>
   );
 }

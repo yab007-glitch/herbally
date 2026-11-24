@@ -1,14 +1,11 @@
+import { NextIntlClientProvider } from "next-intl";
 import type { Locale } from "@/lib/i18n/config";
-import { EnLocaleProvider } from "./locale-provider-en";
-import { FrLocaleProvider } from "./locale-provider-fr";
+import { pickClientMessages } from "@/lib/i18n/client-messages";
 
 /**
- * Provides next-intl messages to client components without bundling the inactive
- * language's 120–137 KB dictionary into every page.
- *
- * The active `locale` is passed in from the server root layout, which reads
- * the `[locale]` root param, so the client provider only loads the active
- * locale bundle.
+ * Provides only the shared `core` client messages for the active locale so the
+ * full 125–142 KB dictionaries stay on the server and route-level pages can add
+ * their own narrow scopes via `IntlMessagesScope`.
  */
 export function LocaleProvider({
   locale,
@@ -17,8 +14,15 @@ export function LocaleProvider({
   locale: Locale;
   children: React.ReactNode;
 }) {
-  if (locale === "fr") {
-    return <FrLocaleProvider>{children}</FrLocaleProvider>;
-  }
-  return <EnLocaleProvider>{children}</EnLocaleProvider>;
+  const messages = pickClientMessages(locale, "core");
+
+  return (
+    <NextIntlClientProvider
+      messages={messages}
+      locale={locale}
+      timeZone="America/Toronto"
+    >
+      {children}
+    </NextIntlClientProvider>
+  );
 }

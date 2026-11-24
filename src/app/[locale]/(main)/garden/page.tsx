@@ -1,4 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
+import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { GardenClient } from "./garden-client";
 
 export const generateMetadata = () =>
@@ -11,10 +13,13 @@ export const generateMetadata = () =>
     noindex: true,
   });
 
-export default function GardenPage() {
+export default async function GardenPage() {
+  const locale = await getLocale();
   return (
-    <div className="space-y-8">
-      <GardenClient />
-    </div>
+    <IntlMessagesScope locale={locale} scope="garden">
+      <div className="space-y-8">
+        <GardenClient />
+      </div>
+    </IntlMessagesScope>
   );
 }

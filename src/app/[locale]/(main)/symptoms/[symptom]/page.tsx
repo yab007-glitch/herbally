@@ -8,6 +8,7 @@ import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { notFound } from "next/navigation";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import {
@@ -213,182 +214,186 @@ export default async function SymptomDetailPage({ params }: Props) {
   const herbPathPrefix = `${prefix}/herbs/`;
 
   return (
-    <div className="space-y-8">
-      <BreadcrumbListSchema
-        items={[
-          { name: t("common.home"), url: locale === "fr" ? "/fr" : "/" },
-          {
-            name: t("symptomsPage.title"),
-            url: locale === "fr" ? "/fr/symptoms" : "/symptoms",
-          },
-          { name: pageTitle, url: symptomPath },
-        ]}
-      />
-      <JsonLd
-        id={`symptom-${symptom}-structured-data`}
-        data={{
-          "@context": "https://schema.org",
-          "@type": "MedicalWebPage",
-          name: pageTitle,
-          description: pageDescription,
-          url: `${siteUrl()}${symptomPath}`,
-          mainEntity: {
-            "@type": "ItemList",
+    <IntlMessagesScope locale={locale} scope="symptomDetail">
+      <div className="space-y-8">
+        <BreadcrumbListSchema
+          items={[
+            { name: t("common.home"), url: locale === "fr" ? "/fr" : "/" },
+            {
+              name: t("symptomsPage.title"),
+              url: locale === "fr" ? "/fr/symptoms" : "/symptoms",
+            },
+            { name: pageTitle, url: symptomPath },
+          ]}
+        />
+        <JsonLd
+          id={`symptom-${symptom}-structured-data`}
+          data={{
+            "@context": "https://schema.org",
+            "@type": "MedicalWebPage",
             name: pageTitle,
-            itemListElement: herbs.map((herb, idx) => ({
-              "@type": "ListItem",
-              position: idx + 1,
-              item: {
-                "@type": "MedicalSubstance",
-                name: herb.name,
-                alternateName: herb.scientific_name,
-                url: `${siteUrl()}${herbPathPrefix}${herb.slug}`,
-              },
-            })),
-          },
-        }}
-      />
-      <div>
-        <Link
-          href="/symptoms"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+            description: pageDescription,
+            url: `${siteUrl()}${symptomPath}`,
+            mainEntity: {
+              "@type": "ItemList",
+              name: pageTitle,
+              itemListElement: herbs.map((herb, idx) => ({
+                "@type": "ListItem",
+                position: idx + 1,
+                item: {
+                  "@type": "MedicalSubstance",
+                  name: herb.name,
+                  alternateName: herb.scientific_name,
+                  url: `${siteUrl()}${herbPathPrefix}${herb.slug}`,
+                },
+              })),
+            },
+          }}
+        />
+        <div>
+          <Link
+            href="/symptoms"
+            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            ← {t("symptomsPage.allSymptoms")}
+          </Link>
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground">
+            {pageTitle}
+          </h1>
+          <p className="mt-3 text-lg text-muted-foreground">
+            {pageDescription}
+          </p>
+        </div>
+
+        {/* Medical Disclaimer */}
+        <SafetyAlert
+          severity="info"
+          title={t("symptomsDetail.medicalDisclaimer")}
         >
-          ← {t("symptomsPage.allSymptoms")}
-        </Link>
-        <h1 className="mt-4 text-4xl font-bold tracking-tight text-foreground">
-          {pageTitle}
-        </h1>
-        <p className="mt-3 text-lg text-muted-foreground">{pageDescription}</p>
-      </div>
+          {t("symptomsDetail.medicalDisclaimerText")}
+        </SafetyAlert>
 
-      {/* Medical Disclaimer */}
-      <SafetyAlert
-        severity="info"
-        title={t("symptomsDetail.medicalDisclaimer")}
-      >
-        {t("symptomsDetail.medicalDisclaimerText")}
-      </SafetyAlert>
-
-      {/* Herb Results */}
-      {herbs && herbs.length > 0 ? (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Stethoscope className="size-4" />
-            <span>
-              {t("symptomsDetail.herbCount", { count: herbs.length })}
-            </span>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {herbs.map((herb) => (
-              <Link
-                key={herb.slug}
-                href={`/herbs/${herb.slug}`}
-                className="group"
-              >
-                <Card className="h-full transition-all hover:border-primary/50 hover:shadow-md">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {herb.name}
-                        </h3>
-                        <p className="text-sm italic text-muted-foreground">
-                          {herb.scientific_name}
-                        </p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {t("symptomsPage.matchReasonSymptom", {
-                            symptoms: symptomMatchKeyword(symptom, locale),
-                          })}
-                        </p>
-                        {herb.aliases && herb.aliases.length > 0 && (
-                          <p className="mt-0.5 text-xs text-muted-foreground">
-                            {t("symptomsPage.alsoListedAs", {
-                              names: herb.aliases.join(", "),
+        {/* Herb Results */}
+        {herbs && herbs.length > 0 ? (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Stethoscope className="size-4" />
+              <span>
+                {t("symptomsDetail.herbCount", { count: herbs.length })}
+              </span>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {herbs.map((herb) => (
+                <Link
+                  key={herb.slug}
+                  href={`/herbs/${herb.slug}`}
+                  className="group"
+                >
+                  <Card className="h-full transition-all hover:border-primary/50 hover:shadow-md">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {herb.name}
+                          </h3>
+                          <p className="text-sm italic text-muted-foreground">
+                            {herb.scientific_name}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {t("symptomsPage.matchReasonSymptom", {
+                              symptoms: symptomMatchKeyword(symptom, locale),
                             })}
                           </p>
-                        )}
+                          {herb.aliases && herb.aliases.length > 0 && (
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                              {t("symptomsPage.alsoListedAs", {
+                                names: herb.aliases.join(", "),
+                              })}
+                            </p>
+                          )}
+                        </div>
+                        <EvidenceGrade
+                          level={
+                            (herb.evidence_level || "C") as
+                              "A" | "B" | "C" | "D" | "trad"
+                          }
+                          showLabel={false}
+                        />
                       </div>
-                      <EvidenceGrade
-                        level={
-                          (herb.evidence_level || "C") as
-                            "A" | "B" | "C" | "D" | "trad"
-                        }
-                        showLabel={false}
-                      />
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {(!herb.pregnancy_safe || !herb.nursing_safe) && (
-                        <Badge variant="destructive" className="text-xs">
-                          ⚠️ {t("herbBadges.pregnancyRisk")}
-                        </Badge>
-                      )}
-                      {(herb.traditional_uses || herb.modern_uses || [])
-                        .slice(0, 3)
-                        .map((use: string) => (
-                          <Badge
-                            key={use}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {use}
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {(!herb.pregnancy_safe || !herb.nursing_safe) && (
+                          <Badge variant="destructive" className="text-xs">
+                            ⚠️ {t("herbBadges.pregnancyRisk")}
                           </Badge>
-                        ))}
-                    </div>
-                    <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary">
-                      {t("symptomsPage.viewDetails")}{" "}
-                      <ArrowRight className="size-3" />
-                    </span>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                        )}
+                        {(herb.traditional_uses || herb.modern_uses || [])
+                          .slice(0, 3)
+                          .map((use: string) => (
+                            <Badge
+                              key={use}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {use}
+                            </Badge>
+                          ))}
+                      </div>
+                      <span className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary">
+                        {t("symptomsPage.viewDetails")}{" "}
+                        <ArrowRight className="size-3" />
+                      </span>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
-            {t("symptomsDetail.noHerbsYet")}
-          </p>
-          <Link
-            href="/herbs"
-            className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-          >
-            {t("herbs.browseAll")}
-          </Link>
-        </div>
-      )}
-
-      {/* Compare CTA */}
-      {herbs && herbs.length >= 2 && (
-        <div className="mt-8 rounded-lg border bg-muted/50 p-6 text-center">
-          <h2 className="text-xl font-bold text-foreground">
-            {t("symptomsDetail.compareThese")}
-          </h2>
-          <p className="mt-2 text-muted-foreground">
-            {t("symptomsDetail.compareDesc")}
-          </p>
-          <div className="mt-4 flex flex-wrap justify-center gap-3">
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              {t("symptomsDetail.noHerbsYet")}
+            </p>
             <Link
-              href={`/compare/${herbs[0].slug}/vs/${herbs[1].slug}`}
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              href="/herbs"
+              className="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
             >
-              <Shield className="size-4" />
-              {herbs[0].name} vs {herbs[1].name}
+              {t("herbs.browseAll")}
             </Link>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Bottom CTA */}
-      <div className="mt-8 text-center">
-        <Link
-          href="/herbalist"
-          className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
-        >
-          <Stethoscope className="size-4" />
-          {t("symptomsDetail.askHerbalist")}
-        </Link>
+        {/* Compare CTA */}
+        {herbs && herbs.length >= 2 && (
+          <div className="mt-8 rounded-lg border bg-muted/50 p-6 text-center">
+            <h2 className="text-xl font-bold text-foreground">
+              {t("symptomsDetail.compareThese")}
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              {t("symptomsDetail.compareDesc")}
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
+              <Link
+                href={`/compare/${herbs[0].slug}/vs/${herbs[1].slug}`}
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              >
+                <Shield className="size-4" />
+                {herbs[0].name} vs {herbs[1].name}
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Bottom CTA */}
+        <div className="mt-8 text-center">
+          <Link
+            href="/herbalist"
+            className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+          >
+            <Stethoscope className="size-4" />
+            {t("symptomsDetail.askHerbalist")}
+          </Link>
+        </div>
       </div>
-    </div>
+    </IntlMessagesScope>
   );
 }

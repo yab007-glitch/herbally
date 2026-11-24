@@ -22,6 +22,7 @@ import type { Metadata } from "next";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { redirect } from "next/navigation";
 
 export const generateMetadata = async ({
@@ -171,223 +172,230 @@ export default async function HerbsPage({
   )?.name;
 
   return (
-    <div>
-      <BreadcrumbListSchema
-        items={[
-          { name: "Home", url: "/" },
-          { name: t("herbs.title"), url: "/herbs" },
-        ]}
-      />
-      <JsonLd
-        id="herbs-structured-data"
-        data={{
-          "@context": "https://schema.org",
-          "@type": "ItemList",
-          itemListElement: herbs.map((herb, index) => ({
-            "@type": "ListItem",
-            position: index + 1,
-            item: {
-              "@type": "MedicalWebPage",
-              name: herb.name,
-              alternateName: herb.scientific_name,
-              description: herb.description,
-              url: `${siteUrl()}${prefix}/herbs/${herb.slug || ""}`,
-            },
-          })),
-        }}
-      />
+    <IntlMessagesScope locale={locale} scope="herbList">
+      <div>
+        <BreadcrumbListSchema
+          items={[
+            { name: "Home", url: "/" },
+            { name: t("herbs.title"), url: "/herbs" },
+          ]}
+        />
+        <JsonLd
+          id="herbs-structured-data"
+          data={{
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: herbs.map((herb, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              item: {
+                "@type": "MedicalWebPage",
+                name: herb.name,
+                alternateName: herb.scientific_name,
+                description: herb.description,
+                url: `${siteUrl()}${prefix}/herbs/${herb.slug || ""}`,
+              },
+            })),
+          }}
+        />
 
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          {t("herbs.title")}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("herbs.subtitle")}
-        </p>
-      </div>
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            {t("herbs.title")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("herbs.subtitle")}
+          </p>
+        </div>
 
-      {/* Search. SmartSearch reads `useSearchParams()`, which needs an ancestor
+        {/* Search. SmartSearch reads `useSearchParams()`, which needs an ancestor
           Suspense boundary during prerendering. The boundary used to come from
           the (main) loading.tsx; that file is gone so unknown slugs can return a
           real 404 instead of a 200 soft 404 (a streamed shell cannot change
           status). Keep the requirement satisfied locally. */}
-      <div className="mb-6">
-        <Suspense fallback={null}>
-          <SmartSearch defaultValue={query} category={category} sort={sort} />
-        </Suspense>
-      </div>
-
-      {/* Recently viewed */}
-      {!query && !category && <RecentlyViewed />}
-
-      {/* Daily Herb */}
-      {!query && !category && (
         <div className="mb-6">
-          <DailyHerbBanner />
+          <Suspense fallback={null}>
+            <SmartSearch defaultValue={query} category={category} sort={sort} />
+          </Suspense>
         </div>
-      )}
 
-      {/* Categories — search AND category combine: a category pill keeps
+        {/* Recently viewed */}
+        {!query && !category && <RecentlyViewed />}
+
+        {/* Daily Herb */}
+        {!query && !category && (
+          <div className="mb-6">
+            <DailyHerbBanner />
+          </div>
+        )}
+
+        {/* Categories — search AND category combine: a category pill keeps
           the current search (and sort) and only resets the page. */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        <Link
-          href={buildHerbListUrl({
-            q: query || undefined,
-            sort: sort === "evidence" ? sort : undefined,
-            anchor: null,
-          })}
-        >
-          <Badge
-            variant={!category ? "default" : "outline"}
-            className="h-9 cursor-pointer px-3"
-          >
-            {t("herbs.all")}
-          </Badge>
-        </Link>
-        {categories.slice(0, 8).map((cat: { slug: string; name: string }) => (
+        <div className="mb-6 flex flex-wrap gap-2">
           <Link
-            key={cat.slug}
             href={buildHerbListUrl({
               q: query || undefined,
-              category: cat.slug,
               sort: sort === "evidence" ? sort : undefined,
               anchor: null,
             })}
           >
             <Badge
-              variant={category === cat.slug ? "default" : "outline"}
+              variant={!category ? "default" : "outline"}
               className="h-9 cursor-pointer px-3"
             >
-              {cat.name}
+              {t("herbs.all")}
             </Badge>
           </Link>
-        ))}
-      </div>
+          {categories.slice(0, 8).map((cat: { slug: string; name: string }) => (
+            <Link
+              key={cat.slug}
+              href={buildHerbListUrl({
+                q: query || undefined,
+                category: cat.slug,
+                sort: sort === "evidence" ? sort : undefined,
+                anchor: null,
+              })}
+            >
+              <Badge
+                variant={category === cat.slug ? "default" : "outline"}
+                className="h-9 cursor-pointer px-3"
+              >
+                {cat.name}
+              </Badge>
+            </Link>
+          ))}
+        </div>
 
-      {/* Sort — the data already supports both keys: name (default) and
+        {/* Sort — the data already supports both keys: name (default) and
           evidence level (used for keyword matches). No other sort is offered. */}
-      <div className="mb-6 flex flex-wrap items-center gap-2">
-        <span className="text-sm text-muted-foreground">
-          {t("herbs.sortLabel")}:
-        </span>
-        <Link
-          href={buildHerbListUrl({
-            q: query || undefined,
-            category: category || undefined,
-            anchor: null,
-          })}
-        >
-          <Badge
-            variant={sort === "name" ? "default" : "outline"}
-            className="cursor-pointer"
+        <div className="mb-6 flex flex-wrap items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            {t("herbs.sortLabel")}:
+          </span>
+          <Link
+            href={buildHerbListUrl({
+              q: query || undefined,
+              category: category || undefined,
+              anchor: null,
+            })}
           >
-            {t("herbs.sortName")}
-          </Badge>
-        </Link>
-        <Link
-          href={buildHerbListUrl({
-            q: query || undefined,
-            category: category || undefined,
-            sort: "evidence",
-            anchor: null,
-          })}
-        >
-          <Badge
-            variant={sort === "evidence" ? "default" : "outline"}
-            className="cursor-pointer"
+            <Badge
+              variant={sort === "name" ? "default" : "outline"}
+              className="cursor-pointer"
+            >
+              {t("herbs.sortName")}
+            </Badge>
+          </Link>
+          <Link
+            href={buildHerbListUrl({
+              q: query || undefined,
+              category: category || undefined,
+              sort: "evidence",
+              anchor: null,
+            })}
           >
-            {t("herbs.sortEvidence")}
-          </Badge>
-        </Link>
-      </div>
-
-      {/* Results info — the total is the count for the current
-          search+category+sort combination, not the whole database. */}
-      {(query || category || sort === "evidence") && (
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          {herbs.length > 0 && (
-            <p className="text-sm text-muted-foreground">
-              {query
-                ? t("herbs.resultsFound", { count: total, query })
-                : activeCategoryName
-                  ? t("herbs.resultsInCategory", {
-                      count: total,
-                      category: activeCategoryName,
-                    })
-                  : t("herbs.results", { count: total })}
-            </p>
-          )}
-          <Link href="/herbs" className="text-sm text-primary hover:underline">
-            {t("herbs.clearAll")}
+            <Badge
+              variant={sort === "evidence" ? "default" : "outline"}
+              className="cursor-pointer"
+            >
+              {t("herbs.sortEvidence")}
+            </Badge>
           </Link>
         </div>
-      )}
 
-      {/* A failed listing query must never look like "no results": show
+        {/* Results info — the total is the count for the current
+          search+category+sort combination, not the whole database. */}
+        {(query || category || sort === "evidence") && (
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            {herbs.length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                {query
+                  ? t("herbs.resultsFound", { count: total, query })
+                  : activeCategoryName
+                    ? t("herbs.resultsInCategory", {
+                        count: total,
+                        category: activeCategoryName,
+                      })
+                    : t("herbs.results", { count: total })}
+              </p>
+            )}
+            <Link
+              href="/herbs"
+              className="text-sm text-primary hover:underline"
+            >
+              {t("herbs.clearAll")}
+            </Link>
+          </div>
+        )}
+
+        {/* A failed listing query must never look like "no results": show
           the failure explicitly instead of the empty state. (Page > 1
           failures already redirect to page 1 above.) */}
-      {!herbsResult.success && (
-        <div
-          role="alert"
-          className="mb-6 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-foreground"
-        >
-          {t("herbs.loadError")}
-        </div>
-      )}
+        {!herbsResult.success && (
+          <div
+            role="alert"
+            className="mb-6 rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm text-foreground"
+          >
+            {t("herbs.loadError")}
+          </div>
+        )}
 
-      {/* Legend — the cards show bare chips ("A", "trad", "AI-Generated");
+        {/* Legend — the cards show bare chips ("A", "trad", "AI-Generated");
           this is the one place that explains them. */}
-      <div className="mb-4">
-        <ChipLegend />
-      </div>
+        <div className="mb-4">
+          <ChipLegend />
+        </div>
 
-      {/* Grid — semantic list rendered server-side, id is the pagination scroll target. */}
-      <section
-        id="herb-results"
-        aria-label={t("herbs.title")}
-        className="scroll-mt-24"
-      >
-        {herbs.length > 0 ? (
-          <>
-            <p className="mb-3 text-xs text-muted-foreground">
-              {locale === "fr"
-                ? `Affichage ${(page - 1) * 20 + 1}–${(page - 1) * 20 + herbs.length} sur ${total} plantes`
-                : `Showing ${(page - 1) * 20 + 1}–${(page - 1) * 20 + herbs.length} of ${total} medicinal herbs`}
-            </p>
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {herbs.map((herb) => {
-                const { description: _schemaDesc, ...cardHerb } = herb;
-                return (
-                  <li key={herb.id}>
-                    <HerbCard herb={cardHerb} />
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        ) : (
-          <EmptyState
-            variant="search"
-            title={
-              query ? t("herbs.noHerbsQuery", { query }) : t("herbs.noResults")
-            }
-            description={t("herbs.trySearching")}
-            action={{ label: t("herbs.browseAll"), href: "/herbs" }}
+        {/* Grid — semantic list rendered server-side, id is the pagination scroll target. */}
+        <section
+          id="herb-results"
+          aria-label={t("herbs.title")}
+          className="scroll-mt-24"
+        >
+          {herbs.length > 0 ? (
+            <>
+              <p className="mb-3 text-xs text-muted-foreground">
+                {locale === "fr"
+                  ? `Affichage ${(page - 1) * 20 + 1}–${(page - 1) * 20 + herbs.length} sur ${total} plantes`
+                  : `Showing ${(page - 1) * 20 + 1}–${(page - 1) * 20 + herbs.length} of ${total} medicinal herbs`}
+              </p>
+              <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {herbs.map((herb) => {
+                  const { description: _schemaDesc, ...cardHerb } = herb;
+                  return (
+                    <li key={herb.id}>
+                      <HerbCard herb={cardHerb} />
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          ) : (
+            <EmptyState
+              variant="search"
+              title={
+                query
+                  ? t("herbs.noHerbsQuery", { query })
+                  : t("herbs.noResults")
+              }
+              description={t("herbs.trySearching")}
+              action={{ label: t("herbs.browseAll"), href: "/herbs" }}
+            />
+          )}
+        </section>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <HerbPagination
+            page={page}
+            totalPages={totalPages}
+            query={query}
+            category={category}
+            sort={sort}
           />
         )}
-      </section>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <HerbPagination
-          page={page}
-          totalPages={totalPages}
-          query={query}
-          category={category}
-          sort={sort}
-        />
-      )}
-    </div>
+      </div>
+    </IntlMessagesScope>
   );
 }

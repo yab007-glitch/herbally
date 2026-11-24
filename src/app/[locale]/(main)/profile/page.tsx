@@ -1,5 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileClient } from "./profile-client";
@@ -63,19 +64,21 @@ export default async function ProfilePage() {
     .single();
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          {t("profile.title")}
-        </h1>
-        <p className="mt-2 text-muted-foreground">{t("profile.subtitle")}</p>
-        {profile?.email && (
-          <p className="mt-1 text-sm text-muted-foreground">
-            {profile.full_name} · {profile.email}
-          </p>
-        )}
+    <IntlMessagesScope locale={locale} scope="profile">
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            {t("profile.title")}
+          </h1>
+          <p className="mt-2 text-muted-foreground">{t("profile.subtitle")}</p>
+          {profile?.email && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              {profile.full_name} · {profile.email}
+            </p>
+          )}
+        </div>
+        <ProfileClient />
       </div>
-      <ProfileClient />
-    </div>
+    </IntlMessagesScope>
   );
 }

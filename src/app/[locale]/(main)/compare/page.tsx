@@ -13,6 +13,7 @@ import {
 } from "@/lib/data/herb-count";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { getTranslations } from "next-intl/server";
 import { POPULAR_COMPARISONS } from "./[slug1]/vs/[slug2]/page";
 
@@ -139,93 +140,95 @@ export default async function CompareHubPage() {
     : "Two herbs that look interchangeable often are not. These comparisons put uses, dosage, pregnancy safety and known drug interactions side by side, with the evidence grade behind each claim.";
 
   return (
-    <div className="space-y-8">
-      <WebPageSchema
-        type="CollectionPage"
-        title={heading}
-        description={intro}
-        url={fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`}
-        breadcrumbs={[
-          { name: t("common.home"), url: fr ? `${baseUrl}/fr` : baseUrl },
-          {
-            name: heading,
-            url: fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`,
-          },
-        ]}
-      />
-      <BreadcrumbListSchema
-        items={[
-          { name: "Home", url: "/" },
-          { name: heading, url: "/compare" },
-        ]}
-      />
+    <IntlMessagesScope locale={locale} scope="compare">
+      <div className="space-y-8">
+        <WebPageSchema
+          type="CollectionPage"
+          title={heading}
+          description={intro}
+          url={fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`}
+          breadcrumbs={[
+            { name: t("common.home"), url: fr ? `${baseUrl}/fr` : baseUrl },
+            {
+              name: heading,
+              url: fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`,
+            },
+          ]}
+        />
+        <BreadcrumbListSchema
+          items={[
+            { name: "Home", url: "/" },
+            { name: heading, url: "/compare" },
+          ]}
+        />
 
-      <Breadcrumbs
-        items={[
-          { name: t("common.breadcrumbHome"), href: "/" },
-          { name: heading },
-        ]}
-      />
+        <Breadcrumbs
+          items={[
+            { name: t("common.breadcrumbHome"), href: "/" },
+            { name: heading },
+          ]}
+        />
 
-      <header className="space-y-3">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          {heading}
-        </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          {intro}
-        </p>
-      </header>
+        <header className="space-y-3">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {heading}
+          </h1>
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {intro}
+          </p>
+        </header>
 
-      <ul className="grid gap-4 sm:grid-cols-2">
-        {pairs.map(({ slug1, slug2, name1, name2 }) => (
-          <li key={`${slug1}-${slug2}`}>
-            <Card className="h-full transition-colors hover:border-primary/40">
-              <CardContent className="p-4">
-                <Link
-                  href={`/compare/${slug1}/vs/${slug2}`}
-                  className="group block space-y-2"
-                >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="secondary" className="gap-1">
-                      <Leaf className="size-3" />
-                      {name1}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {fr ? "contre" : "vs"}
-                    </span>
-                    <Badge variant="secondary" className="gap-1">
-                      <Leaf className="size-3" />
-                      {name2}
-                    </Badge>
-                  </div>
-                  <p className="text-sm font-medium text-foreground group-hover:text-primary">
-                    {fr
-                      ? `${name1} ou ${name2} : quelles différences ?`
-                      : `${name1} vs ${name2}: what's the difference?`}
-                  </p>
-                </Link>
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {pairs.map(({ slug1, slug2, name1, name2 }) => (
+            <li key={`${slug1}-${slug2}`}>
+              <Card className="h-full transition-colors hover:border-primary/40">
+                <CardContent className="p-4">
+                  <Link
+                    href={`/compare/${slug1}/vs/${slug2}`}
+                    className="group block space-y-2"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="secondary" className="gap-1">
+                        <Leaf className="size-3" />
+                        {name1}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {fr ? "contre" : "vs"}
+                      </span>
+                      <Badge variant="secondary" className="gap-1">
+                        <Leaf className="size-3" />
+                        {name2}
+                      </Badge>
+                    </div>
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary">
+                      {fr
+                        ? `${name1} ou ${name2} : quelles différences ?`
+                        : `${name1} vs ${name2}: what's the difference?`}
+                    </p>
+                  </Link>
+                </CardContent>
+              </Card>
+            </li>
+          ))}
+        </ul>
 
-      <div className="flex flex-wrap gap-3">
-        <Link
-          href="/herb-drug-interactions"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-        >
-          <ArrowLeft className="size-3.5" />
-          {fr ? "Interactions plante-médicament" : "Herb–drug interactions"}
-        </Link>
-        <Link
-          href="/herbs"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-        >
-          <Leaf className="size-3.5" />
-          {browseLabel}
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/herb-drug-interactions"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          >
+            <ArrowLeft className="size-3.5" />
+            {fr ? "Interactions plante-médicament" : "Herb–drug interactions"}
+          </Link>
+          <Link
+            href="/herbs"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+          >
+            <Leaf className="size-3.5" />
+            {browseLabel}
+          </Link>
+        </div>
       </div>
-    </div>
+    </IntlMessagesScope>
   );
 }

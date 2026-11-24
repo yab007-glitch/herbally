@@ -3,6 +3,7 @@ import { ChatInterface } from "@/components/pharmacist/chat-interface";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { ContinueExploring } from "@/components/shared/continue-exploring";
 import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 
@@ -49,27 +50,29 @@ export default async function PharmacistPage({
   }
 
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          {t("herbalistPage.title")}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("herbalistPage.subtitle")}
-        </p>
-      </div>
+    <IntlMessagesScope locale={locale} scope="herbalist">
+      <div>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            {t("herbalistPage.title")}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t("herbalistPage.subtitle")}
+          </p>
+        </div>
 
-      <ChatInterface
-        herbContext={herbContext}
-        autoQuery={autoQuery}
-        locale={locale}
-      />
-      <div className="mt-8">
-        <NewsletterSignup locale={locale === "fr" ? "fr" : "en"} />
+        <ChatInterface
+          herbContext={herbContext}
+          autoQuery={autoQuery}
+          locale={locale}
+        />
+        <div className="mt-8">
+          <NewsletterSignup locale={locale === "fr" ? "fr" : "en"} />
+        </div>
+        <div className="mt-8">
+          <ContinueExploring />
+        </div>
       </div>
-      <div className="mt-8">
-        <ContinueExploring />
-      </div>
-    </div>
+    </IntlMessagesScope>
   );
 }

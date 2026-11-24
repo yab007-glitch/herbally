@@ -11,6 +11,7 @@ import {
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { ContinueExploring } from "@/components/shared/continue-exploring";
 
@@ -120,77 +121,81 @@ export default async function CalculatorPage({
   }
 
   return (
-    <div className="space-y-8">
-      <BreadcrumbListSchema
-        items={[
-          { name: t("common.home"), url: siteUrl() },
-          { name: t("calculator.title"), url: "/calculator" },
-        ]}
-      />
-      <FAQSchema
-        items={[
-          {
-            question: t("calculator.faq.q1"),
-            answer: t("calculator.faq.a1"),
-          },
-          {
-            question: t("calculator.faq.q2"),
-            answer: t("calculator.faq.a2"),
-          },
-          {
-            question: t("calculator.faq.q3"),
-            answer: t("calculator.faq.a3"),
-          },
-        ]}
-      />
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          {t("calculator.title")}
-        </h1>
-        <p className="mt-2 text-muted-foreground">{t("calculator.subtitle")}</p>
-      </div>
-      {blockedDangerousSlug ? (
-        <div className="space-y-4">
-          <DangerousHerbBanner
-            slug={blockedDangerousSlug}
-            locale={locale === "fr" ? "fr" : "en"}
-          />
-          <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 text-sm leading-relaxed text-foreground">
-            {locale === "fr"
-              ? "HerbAlly ne calcule pas de posologie pour les plantes toxiques ou potentiellement mortelles. N'utilisez pas cette plante en automédication et consultez un centre antipoison ou un médecin en cas d'exposition."
-              : "HerbAlly does not calculate doses for toxic or potentially lethal plants. Do not self-administer preparations of this plant; contact Poison Control or a licensed clinician if exposure occurs."}
+    <IntlMessagesScope locale={locale} scope="calculator">
+      <div className="space-y-8">
+        <BreadcrumbListSchema
+          items={[
+            { name: t("common.home"), url: siteUrl() },
+            { name: t("calculator.title"), url: "/calculator" },
+          ]}
+        />
+        <FAQSchema
+          items={[
+            {
+              question: t("calculator.faq.q1"),
+              answer: t("calculator.faq.a1"),
+            },
+            {
+              question: t("calculator.faq.q2"),
+              answer: t("calculator.faq.a2"),
+            },
+            {
+              question: t("calculator.faq.q3"),
+              answer: t("calculator.faq.a3"),
+            },
+          ]}
+        />
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            {t("calculator.title")}
+          </h1>
+          <p className="mt-2 text-muted-foreground">
+            {t("calculator.subtitle")}
+          </p>
+        </div>
+        {blockedDangerousSlug ? (
+          <div className="space-y-4">
+            <DangerousHerbBanner
+              slug={blockedDangerousSlug}
+              locale={locale === "fr" ? "fr" : "en"}
+            />
+            <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 text-sm leading-relaxed text-foreground">
+              {locale === "fr"
+                ? "HerbAlly ne calcule pas de posologie pour les plantes toxiques ou potentiellement mortelles. N'utilisez pas cette plante en automédication et consultez un centre antipoison ou un médecin en cas d'exposition."
+                : "HerbAlly does not calculate doses for toxic or potentially lethal plants. Do not self-administer preparations of this plant; contact Poison Control or a licensed clinician if exposure occurs."}
+            </div>
           </div>
-        </div>
-      ) : nonDosableHerbName ? (
-        <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-relaxed text-amber-950 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
-          {locale === "fr"
-            ? `HerbAlly ne calcule pas de posologie ajustée au poids pour ${nonDosableHerbName} : cette entrée correspond à un usage strictement externe, à une préparation homéopathique, à une plante à marge thérapeutique étroite, ou ne dispose pas d'une dose adulte quantitative vérifiée.`
-            : `HerbAlly does not compute weight-scaled doses for ${nonDosableHerbName}: this entry is topical-only, homeopathic, narrow-margin, or lacks an established quantitative oral adult reference dose. Consult a licensed pharmacist or clinician.`}
-        </div>
-      ) : (
-        <DoseCalculatorForm prefill={prefill} />
-      )}
-      <section aria-labelledby="calculator-faq-heading" className="pt-4">
-        <h2
-          id="calculator-faq-heading"
-          className="mb-3 text-xl font-semibold text-foreground"
-        >
-          {t("calculator.faq.heading")}
-        </h2>
-        <div className="divide-y rounded-2xl border">
-          {(["1", "2", "3"] as const).map((n) => (
-            <details key={n} className="px-4 py-3">
-              <summary className="cursor-pointer font-medium text-foreground">
-                {t(`calculator.faq.q${n}`)}
-              </summary>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {t(`calculator.faq.a${n}`)}
-              </p>
-            </details>
-          ))}
-        </div>
-      </section>
-      <ContinueExploring />
-    </div>
+        ) : nonDosableHerbName ? (
+          <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-relaxed text-amber-950 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
+            {locale === "fr"
+              ? `HerbAlly ne calcule pas de posologie ajustée au poids pour ${nonDosableHerbName} : cette entrée correspond à un usage strictement externe, à une préparation homéopathique, à une plante à marge thérapeutique étroite, ou ne dispose pas d'une dose adulte quantitative vérifiée.`
+              : `HerbAlly does not compute weight-scaled doses for ${nonDosableHerbName}: this entry is topical-only, homeopathic, narrow-margin, or lacks an established quantitative oral adult reference dose. Consult a licensed pharmacist or clinician.`}
+          </div>
+        ) : (
+          <DoseCalculatorForm prefill={prefill} />
+        )}
+        <section aria-labelledby="calculator-faq-heading" className="pt-4">
+          <h2
+            id="calculator-faq-heading"
+            className="mb-3 text-xl font-semibold text-foreground"
+          >
+            {t("calculator.faq.heading")}
+          </h2>
+          <div className="divide-y rounded-2xl border">
+            {(["1", "2", "3"] as const).map((n) => (
+              <details key={n} className="px-4 py-3">
+                <summary className="cursor-pointer font-medium text-foreground">
+                  {t(`calculator.faq.q${n}`)}
+                </summary>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {t(`calculator.faq.a${n}`)}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+        <ContinueExploring />
+      </div>
+    </IntlMessagesScope>
   );
 }

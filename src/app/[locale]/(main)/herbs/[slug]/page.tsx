@@ -40,6 +40,7 @@ import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
 import { type Locale } from "@/lib/i18n/config";
 import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
 import {
@@ -594,259 +595,264 @@ export default async function HerbDetailPage({ params }: Props) {
   });
 
   return (
-    <div className="space-y-8">
-      <ViewTracker slug={slug} />
-      <BreadcrumbListSchema items={herbCrumbs} />
-      <HerbSchema
-        herb={herb}
-        url={herbPageUrl}
-        dateModified={latestModified ?? undefined}
-        isDangerous={isDangerous}
-        isClinicallyReviewed={isClinicallyReviewed}
-      />
-      <HerbFAQSchema
-        herbName={herb.name}
-        scientificName={herb.scientific_name}
-        uses={[...(herb.traditional_uses || []), ...(herb.modern_uses || [])]}
-        safetyNotes={
-          monograph?.safetyNotes?.join(". ") ||
-          herb.side_effects?.join(". ") ||
-          ""
-        }
-        pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
-        drugInteractions={interactions.length}
-        isDangerous={isDangerous}
-        showCalculator={showCalculator}
-        preGeneratedFaqs={
-          preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
-        }
-        fallbackFaqs={fallbackFaqs}
-      />
-
-      <Breadcrumbs
-        items={[
-          { name: t("common.breadcrumbHome"), href: "/" },
-          { name: t("nav.herbs"), href: "/herbs" },
-          { name: herb.name },
-        ]}
-      />
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="min-h-10"
-        render={<Link href="/herbs" />}
-      >
-        <ArrowLeft className="size-4" />
-        {t("herbDetail.backToHerbs")}
-      </Button>
-
-      <p className="text-xs text-muted-foreground italic">
-        {t("herbDetail.medicalDisclaimerText")}
-      </p>
-
-      <DangerousHerbBanner slug={slug} locale={copyLocale} />
-      <HerbHeroV2
-        herb={heroHerb}
-        provenance={compactProvenance}
-        pubmedSheetStatus={
-          pubmedSheet && isUsablePubmedSheet(pubmedSheet)
-            ? pubmedSheet.status
-            : null
-        }
-        isManualMonograph={isManualMonograph}
-        showCalculator={showCalculator}
-        interactions={glanceInteractions}
-        safetyHref="#interactions"
-      />
-
-      <p className="-mt-4 text-sm text-muted-foreground">
-        <Link
-          href="/methodology"
-          className="inline-flex min-h-9 items-center underline-offset-4 hover:text-foreground hover:underline"
-        >
-          {copy.evidenceLabelsLink}
-        </Link>
-      </p>
-
-      <AuthorByline
-        locale={copyLocale}
-        lastReviewed={
-          isClinicallyReviewed ? latestModified : (herb.updated_at ?? null)
-        }
-        isReviewed={isClinicallyReviewed}
-      />
-
-      <HerbJumpNav
-        locale={copyLocale}
-        hasInteractions={interactions.length > 0}
-      />
-
-      <HerbPhoto
-        slug={slug}
-        name={herb.name}
-        className="mt-2"
-        imageUrl={herb.image_url}
-        credit={imageMeta?.credit}
-        creditUrl={imageMeta?.source}
-        publisher={imageMeta?.publisher}
-        licence={imageMeta?.licence}
-        licenceUrl={imageMeta?.licence_url ?? imageMeta?.licenceUrl}
-      />
-
-      <div id="overview" className="scroll-mt-28 space-y-8">
-        {!isManualMonograph && herb.description?.trim() ? (
-          <p className="measure prose-body leading-relaxed text-foreground">
-            {herb.description}
-          </p>
-        ) : null}
-
-        <UserInteractionAlert herbSlug={slug} />
-      </div>
-
-      {tableInteractions.length > 0 && (
-        <section id="interactions" className="scroll-mt-28">
-          <InteractionsTable interactions={tableInteractions} herbSlug={slug} />
-        </section>
-      )}
-
-      <HerbSources
-        sources={verifiedSources}
-        lastChecked={sourcesLastChecked}
-        label={copy.sources.label}
-        checkedLabel={copy.sources.checkedLabel}
-        countLabel={copy.sources.count}
-        taxonomyLabel={copy.sources.taxonomyLabel}
-        note={copy.sources.note}
-      />
-
-      <HerbRegulatorExcerpts
-        herbName={herb.name}
-        sources={sources}
-        copy={copy}
-        filter="modern"
-        locale={copyLocale}
-      />
-
-      <div id="dosage-safety" className="scroll-mt-28 space-y-8">
-        <HerbNarrative
+    <IntlMessagesScope locale={copyLocale} scope="herbDetail">
+      <div className="space-y-8">
+        <ViewTracker slug={slug} />
+        <BreadcrumbListSchema items={herbCrumbs} />
+        <HerbSchema
           herb={herb}
-          interactionCount={interactions.length}
+          url={herbPageUrl}
+          dateModified={latestModified ?? undefined}
+          isDangerous={isDangerous}
+          isClinicallyReviewed={isClinicallyReviewed}
+        />
+        <HerbFAQSchema
+          herbName={herb.name}
+          scientificName={herb.scientific_name}
+          uses={[...(herb.traditional_uses || []), ...(herb.modern_uses || [])]}
+          safetyNotes={
+            monograph?.safetyNotes?.join(". ") ||
+            herb.side_effects?.join(". ") ||
+            ""
+          }
+          pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
+          drugInteractions={interactions.length}
+          isDangerous={isDangerous}
+          showCalculator={showCalculator}
+          preGeneratedFaqs={
+            preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
+          }
+          fallbackFaqs={fallbackFaqs}
+        />
+
+        <Breadcrumbs
+          items={[
+            { name: t("common.breadcrumbHome"), href: "/" },
+            { name: t("nav.herbs"), href: "/herbs" },
+            { name: herb.name },
+          ]}
+        />
+
+        <Button
+          variant="ghost"
+          size="sm"
+          className="min-h-10"
+          render={<Link href="/herbs" />}
+        >
+          <ArrowLeft className="size-4" />
+          {t("herbDetail.backToHerbs")}
+        </Button>
+
+        <p className="text-xs text-muted-foreground italic">
+          {t("herbDetail.medicalDisclaimerText")}
+        </p>
+
+        <DangerousHerbBanner slug={slug} locale={copyLocale} />
+        <HerbHeroV2
+          herb={heroHerb}
+          provenance={compactProvenance}
+          pubmedSheetStatus={
+            pubmedSheet && isUsablePubmedSheet(pubmedSheet)
+              ? pubmedSheet.status
+              : null
+          }
+          isManualMonograph={isManualMonograph}
+          showCalculator={showCalculator}
+          interactions={glanceInteractions}
+          safetyHref="#interactions"
+        />
+
+        <p className="-mt-4 text-sm text-muted-foreground">
+          <Link
+            href="/methodology"
+            className="inline-flex min-h-9 items-center underline-offset-4 hover:text-foreground hover:underline"
+          >
+            {copy.evidenceLabelsLink}
+          </Link>
+        </p>
+
+        <AuthorByline
+          locale={copyLocale}
+          lastReviewed={
+            isClinicallyReviewed ? latestModified : (herb.updated_at ?? null)
+          }
+          isReviewed={isClinicallyReviewed}
+        />
+
+        <HerbJumpNav
+          locale={copyLocale}
+          hasInteractions={interactions.length > 0}
+        />
+
+        <HerbPhoto
+          slug={slug}
+          name={herb.name}
+          className="mt-2"
+          imageUrl={herb.image_url}
+          credit={imageMeta?.credit}
+          creditUrl={imageMeta?.source}
+          publisher={imageMeta?.publisher}
+          licence={imageMeta?.licence}
+          licenceUrl={imageMeta?.licence_url ?? imageMeta?.licenceUrl}
+        />
+
+        <div id="overview" className="scroll-mt-28 space-y-8">
+          {!isManualMonograph && herb.description?.trim() ? (
+            <p className="measure prose-body leading-relaxed text-foreground">
+              {herb.description}
+            </p>
+          ) : null}
+
+          <UserInteractionAlert herbSlug={slug} />
+        </div>
+
+        {tableInteractions.length > 0 && (
+          <section id="interactions" className="scroll-mt-28">
+            <InteractionsTable
+              interactions={tableInteractions}
+              herbSlug={slug}
+            />
+          </section>
+        )}
+
+        <HerbSources
+          sources={verifiedSources}
+          lastChecked={sourcesLastChecked}
+          label={copy.sources.label}
+          checkedLabel={copy.sources.checkedLabel}
+          countLabel={copy.sources.count}
+          taxonomyLabel={copy.sources.taxonomyLabel}
+          note={copy.sources.note}
+        />
+
+        <HerbRegulatorExcerpts
+          herbName={herb.name}
+          sources={sources}
+          copy={copy}
+          filter="modern"
+          locale={copyLocale}
+        />
+
+        <div id="dosage-safety" className="scroll-mt-28 space-y-8">
+          <HerbNarrative
+            herb={herb}
+            interactionCount={interactions.length}
+            locale={copyLocale}
+            isDangerous={isDangerous}
+          />
+
+          <HerbBodyContent
+            herb={herb}
+            compactProvenance={compactProvenance}
+            monograph={monograph}
+            isManualMonograph={isManualMonograph}
+            isClinicallyReviewed={isClinicallyReviewed}
+            showCalculator={showCalculator}
+            lastReviewed={lastReviewed}
+            reviewedBy={reviewedBy}
+            regulatorName={regulatorName}
+            interactions={interactions}
+            severityCounts={severityCounts}
+            locale={copyLocale}
+            copy={copy}
+            pubmedSheet={pubmedSheet}
+            sheet={sheet}
+          />
+        </div>
+
+        <CmpBootstrap />
+        <AdCmp />
+        <AdSlot
+          slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
+          format="auto"
+          className="my-8 min-h-[100px] no-print"
+        />
+
+        <section id="sources" className="scroll-mt-28 pt-4">
+          <h2 className="mb-3 flex items-center gap-2 text-xl font-semibold text-foreground">
+            {t("herbDetail.sourcesAndCitations")}
+          </h2>
+          <CitationsList citations={citations} />
+        </section>
+
+        {isClinicallyReviewed && (
+          <SourceAttribution
+            reviewedBy={reviewedBy}
+            reviewerCredentials={reviewerCredentials}
+            lastReviewed={lastReviewed}
+          />
+        )}
+
+        <RegulatoryEvidenceSection
+          evidence={compactRegulatory?.evidence ?? null}
+          isHomeopathic={compactRegulatory?.isHomeopathic}
           locale={copyLocale}
           isDangerous={isDangerous}
+          className="mt-4"
         />
 
-        <HerbBodyContent
-          herb={herb}
-          compactProvenance={compactProvenance}
-          monograph={monograph}
-          isManualMonograph={isManualMonograph}
-          isClinicallyReviewed={isClinicallyReviewed}
-          showCalculator={showCalculator}
-          lastReviewed={lastReviewed}
-          reviewedBy={reviewedBy}
-          regulatorName={regulatorName}
-          interactions={interactions}
-          severityCounts={severityCounts}
-          locale={copyLocale}
+        <GovSources
+          slug={slug}
+          displayName={herb.name}
+          monographSources={sources}
+        />
+
+        <HerbFaqSection faqs={resolvedFaqs} />
+
+        <HerbRegulatorExcerpts
+          herbName={herb.name}
+          sources={sources}
           copy={copy}
-          pubmedSheet={pubmedSheet}
-          sheet={sheet}
+          filter="historical"
+          isDangerous={isDangerous}
+          locale={copyLocale}
         />
-      </div>
 
-      <CmpBootstrap />
-      <AdCmp />
-      <AdSlot
-        slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
-        format="auto"
-        className="my-8 min-h-[100px] no-print"
-      />
-
-      <section id="sources" className="scroll-mt-28 pt-4">
-        <h2 className="mb-3 flex items-center gap-2 text-xl font-semibold text-foreground">
-          {t("herbDetail.sourcesAndCitations")}
-        </h2>
-        <CitationsList citations={citations} />
-      </section>
-
-      {isClinicallyReviewed && (
-        <SourceAttribution
-          reviewedBy={reviewedBy}
-          reviewerCredentials={reviewerCredentials}
-          lastReviewed={lastReviewed}
-        />
-      )}
-
-      <RegulatoryEvidenceSection
-        evidence={compactRegulatory?.evidence ?? null}
-        isHomeopathic={compactRegulatory?.isHomeopathic}
-        locale={copyLocale}
-        isDangerous={isDangerous}
-        className="mt-4"
-      />
-
-      <GovSources
-        slug={slug}
-        displayName={herb.name}
-        monographSources={sources}
-      />
-
-      <HerbFaqSection faqs={resolvedFaqs} />
-
-      <HerbRegulatorExcerpts
-        herbName={herb.name}
-        sources={sources}
-        copy={copy}
-        filter="historical"
-        isDangerous={isDangerous}
-        locale={copyLocale}
-      />
-
-      {showCalculator && (
-        <section
-          aria-label={t("herbDetail.calculatorCtaTitle", { name: herb.name })}
-          className="rounded-2xl border bg-muted/50 p-4"
-        >
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="font-semibold text-foreground">
-                {t("herbDetail.calculatorCtaTitle", { name: herb.name })}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {t("herbDetail.calculatorCtaBody")}
-              </p>
+        {showCalculator && (
+          <section
+            aria-label={t("herbDetail.calculatorCtaTitle", { name: herb.name })}
+            className="rounded-2xl border bg-muted/50 p-4"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-semibold text-foreground">
+                  {t("herbDetail.calculatorCtaTitle", { name: herb.name })}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {t("herbDetail.calculatorCtaBody")}
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                className="min-h-10"
+                render={<Link href={`/calculator?herb=${slug}`} />}
+              >
+                {t("herbDetail.calculateDose")}
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              className="min-h-10"
-              render={<Link href={`/calculator?herb=${slug}`} />}
-            >
-              {t("herbDetail.calculateDose")}
-            </Button>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
-      <ShareButtons
-        title={`${herbMetaTitle} - HerbAlly`}
-        url={herbPageUrl}
-        className="pt-4 no-print"
-      />
+        <ShareButtons
+          title={`${herbMetaTitle} - HerbAlly`}
+          url={herbPageUrl}
+          className="pt-4 no-print"
+        />
 
-      <HerbRelatedSection
-        locale={copyLocale}
-        herbSlug={slug}
-        interactions={glanceInteractions.slice(0, 6)}
-        prev={prev}
-        next={next}
-        symptomPeers={symptomPeers}
-        relatedHerbs={relatedHerbs}
-        relatedHeading={t("herbDetail.relatedHerbs")}
-        relatedGuides={compactRelatedGuides}
-      />
+        <HerbRelatedSection
+          locale={copyLocale}
+          herbSlug={slug}
+          interactions={glanceInteractions.slice(0, 6)}
+          prev={prev}
+          next={next}
+          symptomPeers={symptomPeers}
+          relatedHerbs={relatedHerbs}
+          relatedHeading={t("herbDetail.relatedHerbs")}
+          relatedGuides={compactRelatedGuides}
+        />
 
-      <NewsletterSignup locale={copyLocale} />
-    </div>
+        <NewsletterSignup locale={copyLocale} />
+      </div>
+    </IntlMessagesScope>
   );
 }
