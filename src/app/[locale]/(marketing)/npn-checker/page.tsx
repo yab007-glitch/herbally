@@ -33,10 +33,6 @@ export default async function NpnCheckerPage() {
           title={t("heading")}
           description={t("intro")}
           url={url}
-          breadcrumbs={[
-            { name: tCommon("home"), url: siteUrl() },
-            { name: t("heading"), url },
-          ]}
         />
         <BreadcrumbListSchema
           items={[

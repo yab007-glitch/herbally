@@ -56,10 +56,6 @@ export default async function AboutPage() {
         title={t("aboutContent.header")}
         description={t("aboutContent.subtitle")}
         url={url}
-        breadcrumbs={[
-          { name: "Home", url: siteUrl() },
-          { name: t("aboutContent.header"), url },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

@@ -147,13 +147,6 @@ export default async function CompareHubPage() {
           title={heading}
           description={intro}
           url={fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`}
-          breadcrumbs={[
-            { name: t("common.home"), url: fr ? `${baseUrl}/fr` : baseUrl },
-            {
-              name: heading,
-              url: fr ? `${baseUrl}/fr/compare` : `${baseUrl}/compare`,
-            },
-          ]}
         />
         <BreadcrumbListSchema
           items={[

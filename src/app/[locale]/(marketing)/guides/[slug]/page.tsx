@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import { siteUrl } from "@/lib/seo/site-url";
+import { fitTitle } from "@/lib/seo/fit-title";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { listGuides, getGuide } from "@/lib/guides/guides";
@@ -66,7 +67,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = addLocalePrefix(`/guides/${guide.slug}`, locale);
 
   return {
-    title: c.metaTitle,
+    title: fitTitle([c.metaTitle]),
     description: c.metaDescription,
     alternates: {
       canonical: `${base}${path}`,
@@ -116,15 +117,13 @@ export default async function GuidePage({ params }: Props) {
   const reviewer = getReviewer(guide.reviewedBy);
   const base = siteUrl();
   const url = `${base}${addLocalePrefix(`/guides/${guide.slug}`, locale)}`;
-  const home = `${base}${addLocalePrefix("/", locale)}`;
-  const hub = `${base}${addLocalePrefix("/guides", locale)}`;
 
   return (
     <article className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
       <BreadcrumbListSchema
         items={[
-          { name: locale === "fr" ? "Accueil" : "Home", url: home },
-          { name: locale === "fr" ? "Guides" : "Guides", url: hub },
+          { name: locale === "fr" ? "Accueil" : "Home", url: "/" },
+          { name: "Guides", url: "/guides" },
           { name: c.title, url },
         ]}
       />
@@ -133,11 +132,6 @@ export default async function GuidePage({ params }: Props) {
         description={c.metaDescription}
         url={url}
         dateModified={guide.updated}
-        breadcrumbs={[
-          { name: locale === "fr" ? "Accueil" : "Home", url: home },
-          { name: "Guides", url: hub },
-          { name: c.title, url },
-        ]}
       />
 
       <Link

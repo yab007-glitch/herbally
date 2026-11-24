@@ -23,7 +23,7 @@ import {
 } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { siteUrl } from "@/lib/seo/site-url";
-import { pairTitle } from "@/lib/seo/pair-title";
+import { pairTitleMeta } from "@/lib/seo/pair-title";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -254,18 +254,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const displayDrug = fr
+    ? pair.localizedDrugName || pair.drugName
+    : pair.drugName;
   // 105 of the 174 pair pages ran past 60 characters with the old fixed
   // suffix, so Google cut the part that identifies the pair. The budget lives
   // in src/lib/seo/pair-title.ts and accounts for the " | HerbAlly" template
   // that the rendered <title> carries.
-  const title = pairTitle(pair.herbName, pair.drugName, fr);
+  const title = pairTitleMeta(pair.herbName, displayDrug, fr);
+  const ogTitle =
+    typeof title === "string"
+      ? title
+      : title && typeof title === "object" && "absolute" in title
+        ? String(title.absolute)
+        : `${pair.herbName} + ${displayDrug}`;
   // 133 of 174 pairs carry no citation; the old description promised sources
   // on every one of them while the body said "no primary citation recorded".
   const hasCitation = Boolean(pair.source || pair.sourceUrl);
   const description = (
     fr
-      ? `Peut-on associer ${pair.herbName} (${pair.herbScientificName}) et ${pair.drugName} ? Gravité ${severityLabel(pair.severity, true).toLowerCase()}, mécanisme et conduite à tenir${hasCitation ? ", avec sources." : "."}`
-      : `Can you take ${pair.herbName} (${pair.herbScientificName}) with ${pair.drugName}? ${severityLabel(pair.severity, false)} interaction — mechanism, evidence and what to do${hasCitation ? ", with sources." : "."}`
+      ? `Peut-on associer ${pair.herbName} (${pair.herbScientificName}) et ${displayDrug} ? Gravité ${severityLabel(pair.severity, true).toLowerCase()}, mécanisme et conduite à tenir${hasCitation ? ", avec sources." : "."}`
+      : `Can you take ${pair.herbName} (${pair.herbScientificName}) with ${displayDrug}? ${severityLabel(pair.severity, false)} interaction — mechanism, evidence and what to do${hasCitation ? ", with sources." : "."}`
   ).slice(0, 158);
   const path = `/interactions/${pair.herbSlug}/${pair.drugSlug}`;
   const canonicalUrl = fr ? `${baseUrl}/fr${path}` : `${baseUrl}${path}`;
@@ -282,7 +291,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     },
     openGraph: {
-      title,
+      title: ogTitle,
       description,
       // The French page used to share with the English URL here.
       url: canonicalUrl,
@@ -293,14 +302,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           url: "/opengraph-image",
           width: 1200,
           height: 630,
-          alt: title,
+          alt: ogTitle,
         },
       ],
     },
     // Without this the Twitter card inherited the homepage title/description.
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: ["/twitter-image"],
     },
@@ -332,22 +341,25 @@ export default async function InteractionPairPage({ params }: Props) {
   // own EN twin instead of pairing with it through hreflang.
   const path = `${fr ? "/fr" : ""}/interactions/${pair.herbSlug}/${pair.drugSlug}`;
   const url = `${baseUrl}${path}`;
-  const verdict = verdictCopy(pair.severity, pair.herbName, pair.drugName, fr);
+  const displayDrug = fr
+    ? pair.localizedDrugName || pair.drugName
+    : pair.drugName;
+  const verdict = verdictCopy(pair.severity, pair.herbName, displayDrug, fr);
   const checkerQuery = fr
-    ? `Puis-je prendre ${pair.herbName} avec ${pair.drugName} ?`
-    : `Can I take ${pair.herbName} with ${pair.drugName}?`;
+    ? `Puis-je prendre ${pair.herbName} avec ${displayDrug} ?`
+    : `Can I take ${pair.herbName} with ${displayDrug}?`;
 
   const faqs = [
     {
       question: fr
-        ? `Puis-je prendre ${pair.herbName} avec ${pair.drugName} ?`
-        : `Can I take ${pair.herbName} with ${pair.drugName}?`,
+        ? `Puis-je prendre ${pair.herbName} avec ${displayDrug} ?`
+        : `Can I take ${pair.herbName} with ${displayDrug}?`,
       answer: `${verdict.headline}. ${verdict.action} ${pair.description}`,
     },
     {
       question: fr
-        ? `Pourquoi ${pair.herbName} et ${pair.drugName} interagissent-ils ?`
-        : `Why do ${pair.herbName} and ${pair.drugName} interact?`,
+        ? `Pourquoi ${pair.herbName} et ${displayDrug} interagissent-ils ?`
+        : `Why do ${pair.herbName} and ${displayDrug} interact?`,
       answer:
         pair.mechanism ||
         (fr
@@ -368,24 +380,25 @@ export default async function InteractionPairPage({ params }: Props) {
     <div className="space-y-8">
       <WebPageSchema
         type="MedicalWebPage"
-        title={`${pair.herbName} and ${pair.drugName}: Interaction, Severity & Safety`}
+        title={
+          fr
+            ? `${pair.herbName} et ${displayDrug} : interaction, gravité et sécurité`
+            : `${pair.herbName} and ${displayDrug}: Interaction, Severity & Safety`
+        }
         description={pair.description}
         url={url}
         dateModified={pair.updatedAt}
-        breadcrumbs={[
-          { name: "Home", url: baseUrl },
-          {
-            name: "Herb–Drug Interactions",
-            url: `${baseUrl}/herb-drug-interactions`,
-          },
-          { name: `${pair.herbName} + ${pair.drugName}`, url },
-        ]}
       />
       <BreadcrumbListSchema
         items={[
           { name: "Home", url: "/" },
-          { name: "Herb–Drug Interactions", url: "/herb-drug-interactions" },
-          { name: `${pair.herbName} + ${pair.drugName}`, url: path },
+          {
+            name: fr
+              ? "Interactions plante-médicament"
+              : "Herb–Drug Interactions",
+            url: "/herb-drug-interactions",
+          },
+          { name: `${pair.herbName} + ${displayDrug}`, url: path },
         ]}
       />
       <FAQSchema items={faqs} />
@@ -397,7 +410,7 @@ export default async function InteractionPairPage({ params }: Props) {
             name: t("footer.herbDrugInteractions"),
             href: "/herb-drug-interactions",
           },
-          { name: `${pair.herbName} + ${pair.drugName}` },
+          { name: `${pair.herbName} + ${displayDrug}` },
         ]}
       />
 
@@ -463,7 +476,7 @@ export default async function InteractionPairPage({ params }: Props) {
             {fr ? "Médicament" : "Medication"}
           </dt>
           <dd className="mt-0.5 font-semibold text-foreground">
-            {pair.drugName}
+            {displayDrug}
           </dd>
         </div>
         <div>

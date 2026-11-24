@@ -361,4 +361,53 @@ describe("sitemap", () => {
       `${BASE_URL}/herbs/thin-herb`
     );
   });
+
+  it("deduplicates interaction pair URLs when multiple rows map to the same slug", async () => {
+    herbsRangeMock.mockResolvedValue({ data: [], error: null });
+    getEmptySymptomHubsMock.mockResolvedValue([]);
+    getInteractionPairsMock.mockResolvedValue([
+      {
+        id: "p-1",
+        herbSlug: "sage",
+        herbName: "Sage",
+        herbScientificName: "Salvia officinalis",
+        drugName: "Anticonvulsants",
+        drugSlug: "anticonvulsants",
+        severity: "moderate",
+        description: "First row.",
+        mechanism: null,
+        evidenceLevel: "C",
+        source: "NCCIH",
+        sourceUrl: null,
+        updatedAt: "2026-11-10T00:00:00.000Z",
+        hasFr: false,
+      },
+      {
+        id: "p-2",
+        herbSlug: "sage",
+        herbName: "Sage",
+        herbScientificName: "Salvia officinalis",
+        drugName: "Anticonvulsants (Phenytoin, Valproate, Carbamazepine)",
+        drugSlug: "anticonvulsants",
+        severity: "severe",
+        description: "Second row.",
+        mechanism: null,
+        evidenceLevel: "B",
+        source: "PubMed",
+        sourceUrl: null,
+        updatedAt: "2026-11-18T00:00:00.000Z",
+        hasFr: true,
+      },
+    ]);
+
+    const urls = (await sitemap()).map((entry) => entry.url);
+    expect(
+      urls.filter((u) => u === `${BASE_URL}/interactions/sage/anticonvulsants`)
+    ).toHaveLength(1);
+    expect(
+      urls.filter(
+        (u) => u === `${BASE_URL}/fr/interactions/sage/anticonvulsants`
+      )
+    ).toHaveLength(1);
+  });
 });

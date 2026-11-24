@@ -251,24 +251,40 @@ export default async function ComparePage({ params }: Props) {
           title={compareTitle}
           description={compareDescription}
           url={compareUrl}
-          breadcrumbs={compareCrumbs}
         />
         <BreadcrumbListSchema items={compareCrumbs} />
         <FAQSchema
-          items={[
-            {
-              question: `What is the difference between ${herbA.name} and ${herbB.name}?`,
-              answer: `${herbA.name} (${herbA.scientific_name}) is traditionally used for ${(herbA.traditional_uses || []).slice(0, 3).join(", ") || "various wellness applications"}, while ${herbB.name} (${herbB.scientific_name}) is used for ${(herbB.traditional_uses || []).slice(0, 3).join(", ") || "various wellness applications"}. See the comparison table for dosage, safety and interactions.`,
-            },
-            {
-              question: `Which is better, ${herbA.name} or ${herbB.name}?`,
-              answer: `It depends on your goal. Compare evidence levels, pregnancy safety and drug interactions in the table above${allowCompareCalculator ? ", then use our free dose calculator" : ""}. Consult your healthcare provider for personalized advice.`,
-            },
-            {
-              question: `Can I take ${herbA.name} and ${herbB.name} together?`,
-              answer: `Combining herbs can change safety and interactions. Check each herb's interaction profile above and consult your healthcare provider before combining ${herbA.name} with ${herbB.name}.`,
-            },
-          ]}
+          items={
+            locale === "fr"
+              ? [
+                  {
+                    question: `Quelle est la différence entre ${herbA.name} et ${herbB.name} ?`,
+                    answer: `${herbA.name} (${herbA.scientific_name}) est traditionnellement utilisé pour ${(herbA.traditional_uses || []).slice(0, 3).join(", ") || "divers usages de bien-être"}, tandis que ${herbB.name} (${herbB.scientific_name}) est utilisé pour ${(herbB.traditional_uses || []).slice(0, 3).join(", ") || "divers usages de bien-être"}. Consultez le tableau comparatif pour la posologie, la sécurité et les interactions.`,
+                  },
+                  {
+                    question: `Que choisir entre ${herbA.name} et ${herbB.name} ?`,
+                    answer: `Cela dépend de votre objectif. Comparez les niveaux de preuve, la sécurité pendant la grossesse et les interactions médicamenteuses dans le tableau ci-dessus${allowCompareCalculator ? ", puis utilisez notre calculateur de posologie gratuit" : ""}. Consultez un professionnel de santé pour un avis personnalisé.`,
+                  },
+                  {
+                    question: `Peut-on prendre ${herbA.name} et ${herbB.name} ensemble ?`,
+                    answer: `Associer des plantes peut modifier leur sécurité et leurs interactions. Vérifiez le profil d'interaction de chaque plante ci-dessus et consultez un professionnel de santé avant d'associer ${herbA.name} et ${herbB.name}.`,
+                  },
+                ]
+              : [
+                  {
+                    question: `What is the difference between ${herbA.name} and ${herbB.name}?`,
+                    answer: `${herbA.name} (${herbA.scientific_name}) is traditionally used for ${(herbA.traditional_uses || []).slice(0, 3).join(", ") || "various wellness applications"}, while ${herbB.name} (${herbB.scientific_name}) is used for ${(herbB.traditional_uses || []).slice(0, 3).join(", ") || "various wellness applications"}. See the comparison table for dosage, safety and interactions.`,
+                  },
+                  {
+                    question: `Which is better, ${herbA.name} or ${herbB.name}?`,
+                    answer: `It depends on your goal. Compare evidence levels, pregnancy safety and drug interactions in the table above${allowCompareCalculator ? ", then use our free dose calculator" : ""}. Consult your healthcare provider for personalized advice.`,
+                  },
+                  {
+                    question: `Can I take ${herbA.name} and ${herbB.name} together?`,
+                    answer: `Combining herbs can change safety and interactions. Check each herb's interaction profile above and consult your healthcare provider before combining ${herbA.name} with ${herbB.name}.`,
+                  },
+                ]
+          }
         />
         {/* Header */}
         <div>

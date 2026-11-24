@@ -26,10 +26,6 @@ export default async function DisclaimerPage() {
         title={t("disclaimer.title")}
         description={t("meta.medicalDisclaimerDesc")}
         url={url}
-        breadcrumbs={[
-          { name: t("common.home"), url: siteUrl() },
-          { name: t("disclaimer.title"), url },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

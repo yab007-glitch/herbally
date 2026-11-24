@@ -32,10 +32,6 @@ export default async function PrivacyPage() {
           title={t("privacy.title")}
           description={t("meta.privacyDesc")}
           url={url}
-          breadcrumbs={[
-            { name: t("common.home"), url: siteUrl() },
-            { name: t("privacy.title"), url },
-          ]}
         />
         <BreadcrumbListSchema
           items={[

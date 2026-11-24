@@ -53,16 +53,6 @@ export default async function MedicationsIndexPage() {
         title={title}
         description={description}
         url={pageUrl}
-        breadcrumbs={[
-          { name: tCommon("home"), url: `${baseUrl}${fr ? "/fr" : ""}` },
-          {
-            name: fr
-              ? "Interactions plante-médicament"
-              : "Herb–Drug Interactions",
-            url: `${baseUrl}${fr ? "/fr" : ""}/herb-drug-interactions`,
-          },
-          { name: fr ? "Médicaments" : "Medications", url: pageUrl },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

@@ -857,20 +857,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
 
-    const pairPages: MetadataRoute.Sitemap = interactionPairs.flatMap((p) => {
+    const pairMap = new Map<
+      string,
+      { hasFr: boolean; updatedAt: string | null }
+    >();
+    for (const p of interactionPairs) {
       const path = pairPath(p.herbSlug, p.drugName);
+      const prev = pairMap.get(path);
+      const updated =
+        p.updatedAt && (!prev?.updatedAt || p.updatedAt > prev.updatedAt)
+          ? p.updatedAt
+          : (prev?.updatedAt ?? null);
+      pairMap.set(path, {
+        hasFr: (prev?.hasFr ?? false) || p.hasFr,
+        updatedAt: updated,
+      });
+    }
+    const pairPages: MetadataRoute.Sitemap = Array.from(
+      pairMap.entries()
+    ).flatMap(([path, info]) => {
+      const lastModified = info.updatedAt
+        ? new Date(info.updatedAt)
+        : new Date();
       const entries: MetadataRoute.Sitemap = [
         {
           url: `${baseUrl}${path}`,
-          lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+          lastModified,
           changeFrequency: "monthly" as const,
           priority: 0.8,
         },
       ];
-      if (p.hasFr) {
+      if (info.hasFr) {
         entries.push({
           url: `${baseUrl}${FR_BASE}${path}`,
-          lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+          lastModified,
           changeFrequency: "monthly" as const,
           priority: 0.8,
         });

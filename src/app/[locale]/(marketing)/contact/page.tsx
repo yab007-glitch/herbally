@@ -51,10 +51,6 @@ export default async function ContactPage() {
         title={t("contact.title")}
         description={t("contact.intro")}
         url={url}
-        breadcrumbs={[
-          { name: "Home", url: siteUrl() },
-          { name: t("contact.title"), url },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

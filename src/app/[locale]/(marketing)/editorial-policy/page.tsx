@@ -169,15 +169,7 @@ export default async function EditorialPolicyPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
-      <WebPageSchema
-        title={c.title}
-        description={c.description}
-        url={url}
-        breadcrumbs={[
-          { name: "Home", url: siteUrl() },
-          { name: c.title, url },
-        ]}
-      />
+      <WebPageSchema title={c.title} description={c.description} url={url} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

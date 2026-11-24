@@ -282,14 +282,6 @@ export default async function MedicationDetailPage({ params }: Props) {
         description={pageDescription}
         url={pageUrl}
         dateModified={med.updatedAt ?? undefined}
-        breadcrumbs={[
-          { name: tCommon("home"), url: `${baseUrl}${fr ? "/fr" : ""}` },
-          {
-            name: fr ? "Médicaments" : "Medications",
-            url: `${baseUrl}${fr ? "/fr" : ""}/medications`,
-          },
-          { name: med.drugName, url: pageUrl },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

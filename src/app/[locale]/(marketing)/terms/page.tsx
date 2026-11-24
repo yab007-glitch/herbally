@@ -25,10 +25,6 @@ export default async function TermsPage() {
         title={t("terms.title")}
         description={t("meta.termsDesc")}
         url={url}
-        breadcrumbs={[
-          { name: t("common.home"), url: siteUrl() },
-          { name: t("terms.title"), url },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

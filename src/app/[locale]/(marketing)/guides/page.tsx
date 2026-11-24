@@ -18,7 +18,7 @@ import { getReviewer } from "@/lib/data/reviewers";
 const COPY = {
   en: {
     title: "Guides",
-    metaTitle: "Guides",
+    metaTitle: "Herbal Safety & Evidence Guides",
     metaDescription:
       "How to read herb evidence, check an interaction safely, decode a Health Canada NPN label, avoid surgery and liver risks, and use herbal products wisely.",
     intro:
@@ -33,7 +33,7 @@ const COPY = {
   },
   fr: {
     title: "Guides",
-    metaTitle: "Guides",
+    metaTitle: "Guides sur les plantes et preuves",
     metaDescription:
       "Comment lire les preuves sur les plantes, vérifier une interaction, décoder un NPN de Santé Canada et limiter les risques hépatiques, opératoires ou en grossesse.",
     intro:

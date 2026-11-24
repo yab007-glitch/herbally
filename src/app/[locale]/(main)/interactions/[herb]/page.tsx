@@ -210,16 +210,6 @@ export default async function HerbInteractionsHubPage({ params }: Props) {
         title={title}
         description={description}
         url={pageUrl}
-        breadcrumbs={[
-          { name: tCommon("home"), url: `${baseUrl}${fr ? "/fr" : ""}` },
-          {
-            name: fr
-              ? "Interactions plante-médicament"
-              : "Herb–Drug Interactions",
-            url: `${baseUrl}${fr ? "/fr" : ""}/herb-drug-interactions`,
-          },
-          { name: herb.name, url: pageUrl },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

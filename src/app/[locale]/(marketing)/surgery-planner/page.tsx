@@ -41,10 +41,6 @@ export default async function SurgeryPlannerPage() {
         title={heading}
         description={intro}
         url={url}
-        breadcrumbs={[
-          { name: tCommon("home"), url: baseUrl },
-          { name: heading, url },
-        ]}
       />
       <BreadcrumbListSchema
         items={[

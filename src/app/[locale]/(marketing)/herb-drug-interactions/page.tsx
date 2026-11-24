@@ -51,10 +51,6 @@ export default async function HerbDrugInteractionsPage() {
           title={t("heading")}
           description={t("intro")}
           url={url}
-          breadcrumbs={[
-            { name: tCommon("home"), url: siteUrl() },
-            { name: t("heading"), url },
-          ]}
         />
         <BreadcrumbListSchema
           items={[
