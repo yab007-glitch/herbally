@@ -22,8 +22,13 @@ A page with one PMID and a two-line description is thin by any definition. The f
 A citation is the existing JSON shape on `herbs.citations`:
 
 ```json
-{"url":"https://pubmed.ncbi.nlm.nih.gov/PMID/","pmid":"PMID","year":2024,
- "title":"exact article title","source":"PubMed"}
+{
+  "url": "https://pubmed.ncbi.nlm.nih.gov/PMID/",
+  "pmid": "PMID",
+  "year": 2024,
+  "title": "exact article title",
+  "source": "PubMed"
+}
 ```
 
 Nothing else changes: no new descriptions, no new doses, no new safety claims. If a page has no
@@ -55,12 +60,12 @@ source, do not call any API that needs a paid key.
    - the taxon (genus at minimum, species preferred) appears in the title or abstract,
    - it is not a retraction or an erratum,
    - the PMID is not already on the row.
-   Anything that fails validation is logged, never attached.
+     Anything that fails validation is logged, never attached.
 4. Attach up to **3 new citations** per herb, preferring: clinical trials and systematic reviews
    → observational studies → mechanistic/phytochemistry last. Keep safety-relevant papers even
    when they are not efficacy papers.
 5. Run a second, safety-specific query per herb: `taxon AND (adverse effects OR safety OR
-   toxicity OR contraindications OR pregnancy)`. Attach the resulting citations only; do not
+toxicity OR contraindications OR pregnancy)`. Attach the resulting citations only; do not
    convert them into prose.
 6. Deduplicate by PMID across the whole catalogue so one paper does not become the only citation
    on 200 pages (unless it genuinely covers them).

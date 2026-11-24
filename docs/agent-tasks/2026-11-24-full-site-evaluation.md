@@ -21,12 +21,14 @@ Record every finding with **evidence** (URL, status code, response header, DOM s
 row count, Lighthouse number). An issue without evidence is not a finding.
 
 ### 1. Availability and routing
+
 - Fetch every URL in `sitemap.xml` and record status, redirects, canonical target.
 - Internal links: crawl the site from `/`, `/herbs`, `/interactions`, `/symptoms`, `/medications`
   and report 4xx/5xx targets and chains of redirects longer than one hop.
 - Both locales: any `/fr/...` URL that silently renders English content.
 
 ### 2. SEO and structured data
+
 - Missing, duplicate, or over-60-character `<title>`; missing or duplicate meta description.
 - Canonical correctness, hreflang reciprocity, `x-default`.
 - JSON-LD: required fields per type (`MedicalWebPage`, `Article`, `FAQPage`, `BreadcrumbList`,
@@ -34,29 +36,34 @@ row count, Lighthouse number). An issue without evidence is not a finding.
 - `robots` vs sitemap agreement: any sitemap URL serving `noindex`.
 
 ### 3. Content integrity
+
 - Untranslated strings in French UI chrome (not herb names — those are a known human decision).
 - Placeholder or lorem text, "TODO", "as directed" with no source, broken citation URLs
   (HEAD each citation link, report non-200).
 - Images: missing `alt`, 404 image endpoints, images served far larger than their display box.
 
 ### 4. Accessibility (automated, axe-core via Playwright)
+
 Run on `/`, `/herbs/turmeric`, `/fr/herbs/turmeric`, `/herbs`, `/interactions`, `/symptoms`,
 `/medications`, `/npn-checker`, and a 404. Report violations by rule and selector.
 Fix violations with a determinate fix (labels, roles, contrast, heading order, focus). Report
 anything needing a design decision.
 
 ### 5. Performance regression guard
+
 - The existing payload budget test must pass.
 - Measure Lighthouse mobile on the same pages; flag anything above the pass-3 numbers.
 - Confirm Sentry is still deferred and no `MISSING_MESSAGE` appears in either locale.
 
 ### 6. Security and headers
+
 - Check `content-security-policy`, `strict-transport-security`, `x-content-type-options`,
   `referrer-policy`, `permissions-policy`, `x-frame-options`/`frame-ancestors`.
 - Confirm no secret or server-only env value appears in any client chunk.
 - Confirm admin/debug/API routes require auth and are not indexable.
 
 ### 7. Data integrity
+
 - Orphan rows (FAQs, citations, interactions, regulatory evidence pointing at missing herbs).
 - Herbs published with a null slug, duplicate slug, or a slug the sitemap omits.
 - Rows whose `updated_at` is in the future.
@@ -71,7 +78,7 @@ security headers, future timestamps, orphan rows that are safe to delete (record
 **Report only, with a list:** anything needing new medical content, translation judgement, a
 policy change, a layout redesign, or an owner decision. Explicitly include the known open items
 (French names equal to English, pages with no side effects/contraindications, uncited pages,
-unverified provenance, AdSense status) as *reported, not attempted*.
+unverified provenance, AdSense status) as _reported, not attempted_.
 
 ## Deliverables
 

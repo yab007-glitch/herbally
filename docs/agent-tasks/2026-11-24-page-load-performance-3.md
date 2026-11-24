@@ -11,12 +11,12 @@ payload. The bytes moved from a cached JS chunk into the per-page HTML document.
 
 Measured live on the origin (cache-busted), pass 1 → pass 2:
 
-| Page | HTML | Inline JS |
-| --- | --- | --- |
-| `/herbs/turmeric` | 195 → **221 KB** | 77 → **103 KB** |
-| `/fr/herbs/turmeric` | 188 → **217 KB** | 68 → **98 KB** |
-| `/herbs` | 234 → **252 KB** | 66 → **84 KB** |
-| `/` | 71 → **81 KB** | 35 → **45 KB** |
+| Page                 | HTML             | Inline JS       |
+| -------------------- | ---------------- | --------------- |
+| `/herbs/turmeric`    | 195 → **221 KB** | 77 → **103 KB** |
+| `/fr/herbs/turmeric` | 188 → **217 KB** | 68 → **98 KB**  |
+| `/herbs`             | 234 → **252 KB** | 66 → **84 KB**  |
+| `/`                  | 71 → **81 KB**   | 35 → **45 KB**  |
 
 Lighthouse improved anyway (turmeric 56→73, TBT 360→210 ms, total transfer −107 KB) because a
 cached compressed chunk is cheaper than inline bytes. But HTML is render-blocking, uncompressed
