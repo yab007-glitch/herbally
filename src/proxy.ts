@@ -37,7 +37,7 @@ function securityHeaders(opts?: {
 
 function applySecurityHeaders(
   response: NextResponse,
-  opts?: { frameable?: boolean; adHosts?: readonly string[] }
+  opts?: { frameable?: boolean; adHosts?: readonly string[]; noindex?: boolean }
 ): NextResponse {
   const baseSecurityHeaders = securityHeaders(opts);
   for (const [key, value] of Object.entries(baseSecurityHeaders)) {
@@ -56,6 +56,9 @@ function applySecurityHeaders(
   }
   if (opts?.frameable) {
     response.headers.delete("X-Frame-Options");
+  }
+  if (opts?.noindex) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
   }
   if (process.env.NODE_ENV === "production") {
     response.headers.set(
@@ -132,12 +135,18 @@ export default async function proxy(request: NextRequest) {
         ? pathname.slice(3)
         : stripLocalePrefix(pathname);
   const frameable = publicPath === "/embed" || publicPath.startsWith("/embed/");
+  const noindex =
+    publicPath === "/admin" ||
+    publicPath.startsWith("/admin/") ||
+    pathname === "/api" ||
+    pathname.startsWith("/api/");
   // CSP-wide ad permission is granted ONLY to an ad-eligible public herb
   // document and only when the hard launch gate is on. Sensitive documents
   // (chat, checker, calculator, garden, auth, API) never list an ad origin.
   const securityOpts = {
     frameable,
     adHosts: adsCspHosts(ADS_LAUNCH_GATE, publicPath),
+    noindex,
   };
 
   // Internal pass guard. Next re-enters the proxy with the rewritten path
@@ -184,7 +193,8 @@ export default async function proxy(request: NextRequest) {
             status: 429,
             headers: { "Retry-After": "60", "X-RateLimit-Remaining": "0" },
           }
-        )
+        ),
+        securityOpts
       );
     }
     const perDay = await rateLimit(`${ip}:proxy-chat:day`, dayCap, 86_400_000);
@@ -201,7 +211,8 @@ export default async function proxy(request: NextRequest) {
               "X-RateLimit-Remaining": "0",
             },
           }
-        )
+        ),
+        securityOpts
       );
     }
   }
@@ -234,7 +245,7 @@ export default async function proxy(request: NextRequest) {
     if (pathname === "/en" || pathname.startsWith("/en/")) {
       const url = request.nextUrl.clone();
       url.pathname = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
-      return applySecurityHeaders(NextResponse.redirect(url, 308));
+      return applySecurityHeaders(NextResponse.redirect(url, 308), { noindex });
     }
 
     if (isLocalePrefixed(pathname)) {

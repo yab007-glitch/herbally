@@ -120,7 +120,7 @@ export function buildCsp(options: CspOptions = {}): string {
     "img-src 'self' data: blob: https://*.googlesyndication.com https://*.doubleclick.net https://*.googleusercontent.com",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
-    `frame-src *.stripe.com ${ads}`,
+    `frame-src 'self' *.stripe.com ${ads}`,
     "worker-src 'self' blob:",
     ...(framing === "omit"
       ? []

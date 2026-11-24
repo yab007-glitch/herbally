@@ -47,7 +47,7 @@ export function buildContentSecurityPolicy(options: {
     `img-src 'self' data: blob: https://*.googleusercontent.com${adsSuffix}`,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
-    `frame-src *.stripe.com${adsSuffix}`,
+    `frame-src 'self' *.stripe.com${adsSuffix}`,
     // PDF and other blob-backed workers need an explicit worker-src; the
     // browser does not fall back to script-src for them.
     "worker-src 'self' blob:",

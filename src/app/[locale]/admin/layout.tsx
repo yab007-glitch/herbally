@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Leaf, Home, Users, AlertTriangle, ShieldCheck } from "lucide-react";
 import { ClipboardCheck } from "lucide-react";
 import { getAdminAccess } from "@/lib/auth/admin-guard";
 import { AdminMfaGate } from "@/components/admin/admin-mfa-gate";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /**
  * Every admin route reads the signed-in user's session, live DB role, and

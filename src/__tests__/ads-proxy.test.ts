@@ -116,4 +116,23 @@ describe("proxy — security headers with the launch gate off", () => {
       "microphone=()"
     );
   });
+
+  it.each([
+    "/api/health",
+    "/api/ads/region",
+    "/admin",
+    "/fr/admin",
+    "/admin/herbs",
+  ])("sets X-Robots-Tag noindex, nofollow on %s", async (path) => {
+    const response = await fetchPath(path);
+    expect(response.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+
+  it.each(["/", "/herbs/turmeric", "/fr/herbs/turmeric", "/widgets"])(
+    "does not set X-Robots-Tag noindex on public route %s",
+    async (path) => {
+      const response = await fetchPath(path);
+      expect(response.headers.get("x-robots-tag")).toBeNull();
+    }
+  );
 });
