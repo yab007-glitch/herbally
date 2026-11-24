@@ -3,7 +3,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Stethoscope, MessageCircle } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { MarketingMessagesProvider } from "@/components/i18n/marketing-messages-provider";
 import { FaqSearch } from "./faq-search";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 
@@ -72,7 +72,7 @@ export default async function FAQPage() {
   };
 
   return (
-    <IntlMessagesScope locale={locale} scope="faq">
+    <MarketingMessagesProvider locale={locale}>
       <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
         <BreadcrumbListSchema
           items={[
@@ -125,6 +125,6 @@ export default async function FAQPage() {
           </div>
         </div>
       </div>
-    </IntlMessagesScope>
+    </MarketingMessagesProvider>
   );
 }

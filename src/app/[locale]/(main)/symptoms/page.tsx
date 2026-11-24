@@ -4,7 +4,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { LocalizedLink } from "@/components/i18n/localized-link";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { ToolsMessagesProvider } from "@/components/i18n/tools-messages-provider";
 import { ArrowRight } from "lucide-react";
 import { SYMPTOM_SLUGS } from "@/lib/symptoms/symptom-meta";
 import { getEmptySymptomHubs } from "@/lib/symptoms/hub-coverage";
@@ -30,7 +30,7 @@ export default async function SymptomsPage() {
   const emptyHubs = new Set(await getEmptySymptomHubs());
 
   return (
-    <IntlMessagesScope locale={locale} scope="symptoms">
+    <ToolsMessagesProvider locale={locale}>
       <div>
         <BreadcrumbListSchema
           items={[
@@ -79,6 +79,6 @@ export default async function SymptomsPage() {
           </ul>
         </section>
       </div>
-    </IntlMessagesScope>
+    </ToolsMessagesProvider>
   );
 }

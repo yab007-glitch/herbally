@@ -40,7 +40,7 @@ import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider";
 import { type Locale } from "@/lib/i18n/config";
 import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
 import {
@@ -595,7 +595,7 @@ export default async function HerbDetailPage({ params }: Props) {
   });
 
   return (
-    <IntlMessagesScope locale={copyLocale} scope="herbDetail">
+    <HerbsMessagesProvider locale={copyLocale}>
       <div className="space-y-8">
         <ViewTracker slug={slug} />
         <BreadcrumbListSchema items={herbCrumbs} />
@@ -853,6 +853,6 @@ export default async function HerbDetailPage({ params }: Props) {
 
         <NewsletterSignup locale={copyLocale} />
       </div>
-    </IntlMessagesScope>
+    </HerbsMessagesProvider>
   );
 }

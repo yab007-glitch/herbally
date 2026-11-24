@@ -1,5 +1,5 @@
 import { EmbedChecker } from "@/components/embed/embed-checker";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { ToolsMessagesProvider } from "@/components/i18n/tools-messages-provider";
 import { getLocale } from "@/lib/i18n/page-locale";
 
 // Intentionally dynamic (no prerender): ?theme= is read per request and the
@@ -22,12 +22,12 @@ async function EmbedCheckerShell({
   // host page (Tailwind dark: variant is class-based).
   const dark = theme === "dark";
   return (
-    <IntlMessagesScope locale={locale} scope="embed">
+    <ToolsMessagesProvider locale={locale}>
       <div className={dark ? "dark" : undefined}>
         <div className="min-h-dvh bg-background p-3 dark:bg-zinc-950">
           <EmbedChecker />
         </div>
       </div>
-    </IntlMessagesScope>
+    </ToolsMessagesProvider>
   );
 }

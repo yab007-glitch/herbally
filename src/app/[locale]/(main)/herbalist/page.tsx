@@ -3,7 +3,7 @@ import { ChatInterface } from "@/components/pharmacist/chat-interface";
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { ToolsMessagesProvider } from "@/components/i18n/tools-messages-provider";
 import { ContinueExploring } from "@/components/shared/continue-exploring";
 import { NewsletterSignup } from "@/components/marketing/newsletter-signup";
 
@@ -50,7 +50,7 @@ export default async function PharmacistPage({
   }
 
   return (
-    <IntlMessagesScope locale={locale} scope="herbalist">
+    <ToolsMessagesProvider locale={locale}>
       <div>
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -73,6 +73,6 @@ export default async function PharmacistPage({
           <ContinueExploring />
         </div>
       </div>
-    </IntlMessagesScope>
+    </ToolsMessagesProvider>
   );
 }

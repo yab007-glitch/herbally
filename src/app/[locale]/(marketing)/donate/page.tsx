@@ -26,7 +26,7 @@ const DonationButtons = dynamic(() =>
 );
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { MarketingMessagesProvider } from "@/components/i18n/marketing-messages-provider";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -70,7 +70,7 @@ export default async function DonatePage({
   // re-translation round.
 
   return (
-    <IntlMessagesScope locale={locale} scope="donate">
+    <MarketingMessagesProvider locale={locale}>
       <div className="mx-auto max-w-4xl space-y-12 py-8">
         {/* Success/Canceled Messages */}
         {params.success === "true" && (
@@ -261,6 +261,6 @@ export default async function DonatePage({
           </p>
         </div>
       </div>
-    </IntlMessagesScope>
+    </MarketingMessagesProvider>
   );
 }

@@ -1,9 +1,8 @@
 import type { ComponentProps, ReactNode } from "react";
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { NextIntlClientProvider } from "next-intl";
-import { pickClientMessages } from "@/lib/i18n/client-messages";
-import { mergeClientMessages } from "@/lib/i18n/merge-messages";
+import { EnCoreLocaleProvider } from "@/components/i18n/providers/en-core";
+import { EnHerbsMessagesProvider } from "@/components/i18n/providers/en-herbs";
 
 vi.mock("next/link", () => ({
   default: ({
@@ -351,22 +350,10 @@ describe("Herb page payload size budget", () => {
       JSON.stringify(clientPropsPayload)
     );
 
-    const herbMessages = mergeClientMessages(
-      pickClientMessages("en", "core"),
-      pickClientMessages("en", "herbDetail")
-    );
-
     const wrap = (node: ReactNode) => (
-      <NextIntlClientProvider
-        locale="en"
-        messages={herbMessages}
-        timeZone="America/Toronto"
-        onError={(err) => {
-          throw err;
-        }}
-      >
-        {node}
-      </NextIntlClientProvider>
+      <EnCoreLocaleProvider>
+        <EnHerbsMessagesProvider>{node}</EnHerbsMessagesProvider>
+      </EnCoreLocaleProvider>
     );
 
     const html = renderToStaticMarkup(

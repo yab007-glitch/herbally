@@ -22,7 +22,7 @@ import type { Metadata } from "next";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider";
 import { redirect } from "next/navigation";
 
 export const generateMetadata = async ({
@@ -172,7 +172,7 @@ export default async function HerbsPage({
   )?.name;
 
   return (
-    <IntlMessagesScope locale={locale} scope="herbList">
+    <HerbsMessagesProvider locale={locale}>
       <div>
         <BreadcrumbListSchema
           items={[
@@ -396,6 +396,6 @@ export default async function HerbsPage({
           />
         )}
       </div>
-    </IntlMessagesScope>
+    </HerbsMessagesProvider>
   );
 }

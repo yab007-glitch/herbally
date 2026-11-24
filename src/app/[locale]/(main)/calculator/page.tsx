@@ -11,7 +11,7 @@ import {
 import { getHerbBySlug } from "@/lib/actions/herbs";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { ToolsMessagesProvider } from "@/components/i18n/tools-messages-provider";
 import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { ContinueExploring } from "@/components/shared/continue-exploring";
 
@@ -121,7 +121,7 @@ export default async function CalculatorPage({
   }
 
   return (
-    <IntlMessagesScope locale={locale} scope="calculator">
+    <ToolsMessagesProvider locale={locale}>
       <div className="space-y-8">
         <BreadcrumbListSchema
           items={[
@@ -196,6 +196,6 @@ export default async function CalculatorPage({
         </section>
         <ContinueExploring />
       </div>
-    </IntlMessagesScope>
+    </ToolsMessagesProvider>
   );
 }

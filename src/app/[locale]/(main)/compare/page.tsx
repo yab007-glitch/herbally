@@ -13,7 +13,7 @@ import {
 } from "@/lib/data/herb-count";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider";
 import { getTranslations } from "next-intl/server";
 import { POPULAR_COMPARISONS } from "./[slug1]/vs/[slug2]/page";
 
@@ -140,7 +140,7 @@ export default async function CompareHubPage() {
     : "Two herbs that look interchangeable often are not. These comparisons put uses, dosage, pregnancy safety and known drug interactions side by side, with the evidence grade behind each claim.";
 
   return (
-    <IntlMessagesScope locale={locale} scope="compare">
+    <HerbsMessagesProvider locale={locale}>
       <div className="space-y-8">
         <WebPageSchema
           type="CollectionPage"
@@ -229,6 +229,6 @@ export default async function CompareHubPage() {
           </Link>
         </div>
       </div>
-    </IntlMessagesScope>
+    </HerbsMessagesProvider>
   );
 }

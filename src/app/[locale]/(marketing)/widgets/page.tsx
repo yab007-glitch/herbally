@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { MarketingMessagesProvider } from "@/components/i18n/marketing-messages-provider";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
@@ -25,7 +25,7 @@ export default async function WidgetsPage() {
   const url = `${siteUrl()}${locale === "fr" ? "/fr" : ""}/widgets`;
 
   return (
-    <IntlMessagesScope locale={locale} scope="widgets">
+    <MarketingMessagesProvider locale={locale}>
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         <WebPageSchema
           title={t("heading")}
@@ -73,6 +73,6 @@ export default async function WidgetsPage() {
 
         <ClinicalSupportCallout locale={locale} />
       </div>
-    </IntlMessagesScope>
+    </MarketingMessagesProvider>
   );
 }

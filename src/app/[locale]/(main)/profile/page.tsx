@@ -1,6 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { ToolsMessagesProvider } from "@/components/i18n/tools-messages-provider";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileClient } from "./profile-client";
@@ -64,7 +64,7 @@ export default async function ProfilePage() {
     .single();
 
   return (
-    <IntlMessagesScope locale={locale} scope="profile">
+    <ToolsMessagesProvider locale={locale}>
       <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -79,6 +79,6 @@ export default async function ProfilePage() {
         </div>
         <ProfileClient />
       </div>
-    </IntlMessagesScope>
+    </ToolsMessagesProvider>
   );
 }

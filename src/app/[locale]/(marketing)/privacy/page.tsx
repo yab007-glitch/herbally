@@ -5,7 +5,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { MarketingMessagesProvider } from "@/components/i18n/marketing-messages-provider";
 import { ClearLocalDataButton } from "@/components/privacy/clear-local-data-button";
 
 export const generateMetadata = () =>
@@ -26,7 +26,7 @@ export default async function PrivacyPage() {
   );
 
   return (
-    <IntlMessagesScope locale={locale} scope="privacy">
+    <MarketingMessagesProvider locale={locale}>
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
         <WebPageSchema
           title={t("privacy.title")}
@@ -190,6 +190,6 @@ export default async function PrivacyPage() {
           </section>
         </div>
       </div>
-    </IntlMessagesScope>
+    </MarketingMessagesProvider>
   );
 }

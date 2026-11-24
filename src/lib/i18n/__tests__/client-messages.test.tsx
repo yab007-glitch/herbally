@@ -8,13 +8,24 @@ import {
   NextIntlClientProvider,
   useTranslations,
 } from "next-intl";
-import { enDict, frDict } from "@/lib/i18n/dictionaries";
 import {
-  CLIENT_MESSAGE_SCOPES,
-  pickClientMessages,
-  type ClientMessageScope,
+  getClientGroupMessages,
+  type ClientMessageGroup,
 } from "@/lib/i18n/client-messages";
+import { enDict, frDict } from "@/lib/i18n/dictionaries";
 import { mergeClientMessages } from "@/lib/i18n/merge-messages";
+import enClinical from "@/lib/i18n/dictionaries/en/clinical.json";
+import enCore from "@/lib/i18n/dictionaries/en/core.json";
+import enHerbs from "@/lib/i18n/dictionaries/en/herbs.json";
+import enMarketing from "@/lib/i18n/dictionaries/en/marketing.json";
+import enServer from "@/lib/i18n/dictionaries/en/server.json";
+import enTools from "@/lib/i18n/dictionaries/en/tools.json";
+import frClinical from "@/lib/i18n/dictionaries/fr/clinical.json";
+import frCore from "@/lib/i18n/dictionaries/fr/core.json";
+import frHerbs from "@/lib/i18n/dictionaries/fr/herbs.json";
+import frMarketing from "@/lib/i18n/dictionaries/fr/marketing.json";
+import frServer from "@/lib/i18n/dictionaries/fr/server.json";
+import frTools from "@/lib/i18n/dictionaries/fr/tools.json";
 
 function hasPath(obj: unknown, keyPath: string): boolean {
   let cur = obj;
@@ -23,6 +34,22 @@ function hasPath(obj: unknown, keyPath: string): boolean {
     cur = (cur as Record<string, unknown>)[seg];
   }
   return cur !== undefined;
+}
+
+function collectLeafPaths(obj: unknown, prefix = ""): string[] {
+  if (!obj || typeof obj !== "object" || Array.isArray(obj)) {
+    return prefix ? [prefix] : [];
+  }
+  const out: string[] = [];
+  for (const [k, v] of Object.entries(obj)) {
+    const next = prefix ? `${prefix}.${k}` : k;
+    if (v && typeof v === "object" && !Array.isArray(v)) {
+      out.push(...collectLeafPaths(v, next));
+    } else {
+      out.push(next);
+    }
+  }
+  return out;
 }
 
 function walkTsFiles(dir: string): string[] {
@@ -59,27 +86,25 @@ function resolveImport(fromFile: string, spec: string): string | null {
   return null;
 }
 
-const ROUTE_SCOPE_MAP: Record<string, ClientMessageScope> = {
-  "src/app/[locale]/(marketing)/page.tsx": "home",
-  "src/app/[locale]/(main)/herbs/[slug]/page.tsx": "herbDetail",
-  "src/app/[locale]/(main)/herbs/page.tsx": "herbList",
-  "src/app/[locale]/(main)/symptoms/page.tsx": "symptoms",
-  "src/app/[locale]/(main)/symptoms/[symptom]/page.tsx": "symptomDetail",
-  "src/app/[locale]/(marketing)/herb-drug-interactions/page.tsx":
-    "interactionsHub",
-  "src/app/[locale]/(main)/garden/page.tsx": "garden",
-  "src/app/[locale]/(main)/profile/page.tsx": "profile",
-  "src/app/[locale]/(main)/calculator/page.tsx": "calculator",
-  "src/app/[locale]/(main)/herbalist/page.tsx": "herbalist",
-  "src/app/[locale]/(marketing)/faq/page.tsx": "faq",
-  "src/app/[locale]/(marketing)/widgets/page.tsx": "widgets",
-  "src/app/[locale]/(marketing)/donate/page.tsx": "donate",
-  "src/app/[locale]/(marketing)/npn-checker/page.tsx": "npnChecker",
-  "src/app/[locale]/(marketing)/privacy/page.tsx": "privacy",
-  "src/app/[locale]/embed/checker/page.tsx": "embed",
-  "src/app/[locale]/(main)/compare/page.tsx": "compare",
-  "src/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page.tsx": "compare",
-  "src/app/[locale]/(marketing)/methodology/page.tsx": "methodology",
+const ROUTE_GROUP_MAP: Record<string, ClientMessageGroup> = {
+  "src/app/[locale]/(main)/herbs/[slug]/page.tsx": "herbs",
+  "src/app/[locale]/(main)/herbs/page.tsx": "herbs",
+  "src/app/[locale]/(main)/symptoms/[symptom]/page.tsx": "herbs",
+  "src/app/[locale]/(main)/garden/page.tsx": "herbs",
+  "src/app/[locale]/(main)/compare/page.tsx": "herbs",
+  "src/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page.tsx": "herbs",
+  "src/app/[locale]/(marketing)/methodology/page.tsx": "herbs",
+  "src/app/[locale]/(main)/symptoms/page.tsx": "tools",
+  "src/app/[locale]/(marketing)/herb-drug-interactions/page.tsx": "tools",
+  "src/app/[locale]/(main)/profile/page.tsx": "tools",
+  "src/app/[locale]/(main)/calculator/page.tsx": "tools",
+  "src/app/[locale]/(main)/herbalist/page.tsx": "tools",
+  "src/app/[locale]/(marketing)/npn-checker/page.tsx": "tools",
+  "src/app/[locale]/embed/checker/page.tsx": "tools",
+  "src/app/[locale]/(marketing)/faq/page.tsx": "marketing",
+  "src/app/[locale]/(marketing)/widgets/page.tsx": "marketing",
+  "src/app/[locale]/(marketing)/donate/page.tsx": "marketing",
+  "src/app/[locale]/(marketing)/privacy/page.tsx": "marketing",
 };
 
 function extractLiteralTranslationKeys(source: string): string[] {
@@ -105,12 +130,63 @@ function extractLiteralTranslationKeys(source: string): string[] {
   return keys;
 }
 
-describe("client-messages scoped i18n subset", () => {
-  it("prevents client components from reading keys outside the injected subset", () => {
-    const coreMessages = pickClientMessages("en", "core");
+describe("client-messages cacheable i18n slices", () => {
+  it("keeps the six dictionary slices disjoint with full EN/FR leaf parity", () => {
+    const slicesByLocale = {
+      en: {
+        core: enCore,
+        clinical: enClinical,
+        herbs: enHerbs,
+        tools: enTools,
+        marketing: enMarketing,
+        server: enServer,
+      },
+      fr: {
+        core: frCore,
+        clinical: frClinical,
+        herbs: frHerbs,
+        tools: frTools,
+        marketing: frMarketing,
+        server: frServer,
+      },
+    } as const;
+
+    const leafSetsByLocale: Record<"en" | "fr", Record<string, string[]>> = {
+      en: {},
+      fr: {},
+    };
+
+    for (const locale of ["en", "fr"] as const) {
+      const seen = new Map<string, string>();
+      for (const [sliceName, sliceObj] of Object.entries(
+        slicesByLocale[locale]
+      )) {
+        const leaves = collectLeafPaths(sliceObj).sort();
+        leafSetsByLocale[locale][sliceName] = leaves;
+        for (const leaf of leaves) {
+          expect(
+            seen.has(leaf),
+            `[${locale}] duplicate leaf "${leaf}" in "${sliceName}" and "${seen.get(leaf)}"`
+          ).toBe(false);
+          seen.set(leaf, sliceName);
+        }
+      }
+      const fullDict = locale === "en" ? enDict : frDict;
+      expect(seen.size).toBe(collectLeafPaths(fullDict).length);
+    }
+
+    for (const sliceName of Object.keys(slicesByLocale.en)) {
+      expect(leafSetsByLocale.fr[sliceName]).toEqual(
+        leafSetsByLocale.en[sliceName]
+      );
+    }
+  });
+
+  it("prevents client components from reading keys outside their mounted group", () => {
+    const coreMessages = getClientGroupMessages("en", "core");
     const herbMessages = mergeClientMessages(
       coreMessages,
-      pickClientMessages("en", "herbDetail")
+      getClientGroupMessages("en", "herbs")
     );
 
     const OutsideReader = ({ keyPath }: { keyPath: string }) => {
@@ -214,7 +290,7 @@ describe("client-messages scoped i18n subset", () => {
     const missing: string[] = [];
     for (const locale of ["en", "fr"] as const) {
       const fullDict = locale === "en" ? enDict : frDict;
-      const core = pickClientMessages(locale, "core");
+      const core = getClientGroupMessages(locale, "core");
 
       for (const f of collectClientIntlFiles(layoutCoreRoots)) {
         for (const k of extractLiteralTranslationKeys(sources.get(f)!)) {
@@ -225,15 +301,15 @@ describe("client-messages scoped i18n subset", () => {
       }
 
       for (const entry of appEntries) {
-        const scope = ROUTE_SCOPE_MAP[entry];
-        const effective = scope
-          ? mergeClientMessages(core, pickClientMessages(locale, scope))
+        const group = ROUTE_GROUP_MAP[entry];
+        const effective = group
+          ? mergeClientMessages(core, getClientGroupMessages(locale, group))
           : core;
         for (const f of collectClientIntlFiles([entry])) {
           for (const k of extractLiteralTranslationKeys(sources.get(f)!)) {
             if (hasPath(fullDict, k) && !hasPath(effective, k)) {
               missing.push(
-                `[${locale}] ${entry} (scope=${scope ?? "core"}) <- ${f}: ${k}`
+                `[${locale}] ${entry} (group=${group ?? "core"}) <- ${f}: ${k}`
               );
             }
           }
@@ -244,13 +320,13 @@ describe("client-messages scoped i18n subset", () => {
     expect(missing).toEqual([]);
   });
 
-  it("includes every dynamic key family in its route scope for both locales", () => {
+  it("includes every dynamic key family in its route group for both locales", () => {
     const dynamicChecks: Array<{
-      scope: ClientMessageScope;
+      group: ClientMessageGroup;
       keys: string[];
     }> = [
       {
-        scope: "core",
+        group: "core",
         keys: [
           "common.switchToFrench",
           "common.switchToEnglish",
@@ -278,12 +354,14 @@ describe("client-messages scoped i18n subset", () => {
           "herbalistPage.widgetQ3",
           "home.suggestionsTitle",
           "herbs.browseAll",
+          "profile.welcomeRegistered",
+          "profile.welcomeBack",
           "errors.500.title",
           "errors.404.title",
         ],
       },
       {
-        scope: "herbDetail",
+        group: "herbs",
         keys: [
           "herbTabs.overview",
           "herbTabs.uses",
@@ -301,86 +379,57 @@ describe("client-messages scoped i18n subset", () => {
           "herbFaq.q1",
           "interactionExplainer.warfarinName",
           "provenance.primarySource",
-        ],
-      },
-      {
-        scope: "herbList",
-        keys: [
           "chipLegend.gradeADesc",
-          "evidence.A.label",
-          "evidence.B.shortDesc",
-          "provenance.primarySource",
           "herbs.title",
           "search.placeholder",
           "recentSearches.title",
         ],
       },
       {
-        scope: "calculator",
+        group: "tools",
         keys: [
           "calculatorForm.rangeLow",
           "calculatorForm.rangeMid",
           "calculatorForm.rangeHigh",
           "calculatorForm.explanations.standard",
           "profile.self",
-        ],
-      },
-      {
-        scope: "interactionsHub",
-        keys: [
           "stackChecker.severity.severe",
           "herbDrugInteractionsPage.embedLabel",
           "interactionExplainer.warfarinName",
-        ],
-      },
-      {
-        scope: "herbalist",
-        keys: [
           "herbalistPage.greeting.quickCheckHerb",
           "herbalistPage.greeting.quickCheckHerbPrompt",
           "interactions.severity.severe",
           "pharmacist.error",
+          "npnCheckerPage.sample1Label",
         ],
       },
       {
-        scope: "donate",
+        group: "marketing",
         keys: [
           "donateButtons.coffee",
           "donateButtons.coffeeDesc",
           "donateButtons.supporter",
           "donateButtons.champion",
-        ],
-      },
-      {
-        scope: "widgets",
-        keys: [
           "widgetsPage.citationKit.links.herbs.title",
           "widgetsPage.citationKit.links.herbs.desc",
+          "privacy.localStorageSection.clearButton",
         ],
-      },
-      {
-        scope: "npnChecker",
-        keys: ["npnCheckerPage.sample1Label"],
-      },
-      {
-        scope: "privacy",
-        keys: ["privacy.localStorageSection.clearButton"],
       },
     ];
 
     for (const locale of ["en", "fr"] as const) {
       const fullDict = locale === "en" ? enDict : frDict;
-      const core = pickClientMessages(locale, "core");
-      for (const { scope, keys } of dynamicChecks) {
+      const core = getClientGroupMessages(locale, "core");
+      for (const { group, keys } of dynamicChecks) {
         const effective =
-          scope === "core"
+          group === "core"
             ? core
-            : mergeClientMessages(core, pickClientMessages(locale, scope));
+            : mergeClientMessages(core, getClientGroupMessages(locale, group));
         for (const key of keys) {
           if (hasPath(fullDict, key)) {
             expect(
               hasPath(effective, key),
-              `[${locale}] scope=${scope} missing ${key}`
+              `[${locale}] group=${group} missing ${key}`
             ).toBe(true);
           }
         }
@@ -388,41 +437,63 @@ describe("client-messages scoped i18n subset", () => {
     }
   });
 
-  it("keeps core and herbDetail client payloads small and never bundles full dictionaries in client files", () => {
+  it("keeps client message groups small, never bundles server messages on the client, and passes zero message props across the Server->Client boundary", () => {
     for (const locale of ["en", "fr"] as const) {
       const coreBytes = Buffer.byteLength(
-        JSON.stringify(pickClientMessages(locale, "core"))
+        JSON.stringify(getClientGroupMessages(locale, "core"))
       );
-      const herbBytes = Buffer.byteLength(
+      const herbsBytes = Buffer.byteLength(
         JSON.stringify(
           mergeClientMessages(
-            pickClientMessages(locale, "core"),
-            pickClientMessages(locale, "herbDetail")
+            getClientGroupMessages(locale, "core"),
+            getClientGroupMessages(locale, "herbs")
           )
         )
       );
       expect(coreBytes).toBeLessThan(15 * 1024);
-      expect(herbBytes).toBeLessThan(35 * 1024);
+      expect(herbsBytes).toBeLessThan(35 * 1024);
     }
 
-    expect(Object.keys(CLIENT_MESSAGE_SCOPES)).toContain("core");
-
-    for (const clientProvider of [
+    for (const serverSwitch of [
       "src/components/i18n/locale-provider.tsx",
-      "src/components/i18n/merge-intl-provider.tsx",
-      "src/components/i18n/intl-messages-scope.tsx",
+      "src/components/i18n/herbs-messages-provider.tsx",
+      "src/components/i18n/tools-messages-provider.tsx",
+      "src/components/i18n/marketing-messages-provider.tsx",
     ]) {
-      const src = fs.readFileSync(clientProvider, "utf8");
-      expect(src).not.toMatch(/dictionaries\/(en|fr)\.json/);
+      const src = fs.readFileSync(serverSwitch, "utf8");
+      expect(src).not.toMatch(/messages\s*=/);
+      expect(src).not.toMatch(/dictionaries/);
     }
 
-    const clientFiles = walkTsFiles("src").filter((f) =>
-      /^\s*["']use client["']/.test(fs.readFileSync(f, "utf8"))
-    );
-    for (const cf of clientFiles) {
-      expect(fs.readFileSync(cf, "utf8")).not.toMatch(
-        /dictionaries\/(en|fr)\.json/
-      );
+    const files = walkTsFiles("src");
+    const importsOf = new Map<string, string[]>();
+    const isClientFile = new Set<string>();
+    const sources = new Map<string, string>();
+    for (const f of files) {
+      const src = fs.readFileSync(f, "utf8");
+      sources.set(f, src);
+      if (/^\s*["']use client["']/.test(src)) isClientFile.add(f);
+      const deps: string[] = [];
+      for (const m of src.matchAll(/(?:from|import\()\s*["']([^"']+)["']/g)) {
+        const resolved = resolveImport(f, m[1]);
+        if (resolved) deps.push(resolved);
+      }
+      importsOf.set(f, deps);
+    }
+
+    const inClientGraph = new Set<string>();
+    const markClient = (f: string) => {
+      if (inClientGraph.has(f)) return;
+      inClientGraph.add(f);
+      for (const d of importsOf.get(f) ?? []) markClient(d);
+    };
+    for (const f of isClientFile) markClient(f);
+
+    for (const cf of inClientGraph) {
+      const src = sources.get(cf) ?? "";
+      expect(src).not.toMatch(/dictionaries\/(en|fr)\.json/);
+      expect(src).not.toMatch(/dictionaries\/(en|fr)\/server\.json/);
+      expect(src).not.toMatch(/from\s+["']@\/lib\/i18n\/dictionaries["']/);
     }
   });
 });

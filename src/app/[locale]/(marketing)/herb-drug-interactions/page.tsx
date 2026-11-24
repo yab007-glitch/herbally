@@ -3,7 +3,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { AlertTriangle, ArrowRight, ShieldCheck } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { ToolsMessagesProvider } from "@/components/i18n/tools-messages-provider";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
@@ -44,7 +44,7 @@ export default async function HerbDrugInteractionsPage() {
   const url = `${siteUrl()}${fr ? "/fr" : ""}/herb-drug-interactions`;
 
   return (
-    <IntlMessagesScope locale={locale} scope="interactionsHub">
+    <ToolsMessagesProvider locale={locale}>
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         <WebPageSchema
           type="MedicalWebPage"
@@ -214,6 +214,6 @@ export default async function HerbDrugInteractionsPage() {
 
         <ClinicalSupportCallout locale={locale} />
       </div>
-    </IntlMessagesScope>
+    </ToolsMessagesProvider>
   );
 }

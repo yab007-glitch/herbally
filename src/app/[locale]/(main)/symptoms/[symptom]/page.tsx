@@ -8,7 +8,7 @@ import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { SafetyAlert } from "@/components/herbs/safety-alert";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider";
 import { notFound } from "next/navigation";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import {
@@ -214,7 +214,7 @@ export default async function SymptomDetailPage({ params }: Props) {
   const herbPathPrefix = `${prefix}/herbs/`;
 
   return (
-    <IntlMessagesScope locale={locale} scope="symptomDetail">
+    <HerbsMessagesProvider locale={locale}>
       <div className="space-y-8">
         <BreadcrumbListSchema
           items={[
@@ -394,6 +394,6 @@ export default async function SymptomDetailPage({ params }: Props) {
           </Link>
         </div>
       </div>
-    </IntlMessagesScope>
+    </HerbsMessagesProvider>
   );
 }

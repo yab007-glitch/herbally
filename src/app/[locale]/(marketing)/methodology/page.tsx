@@ -13,7 +13,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { ChipLegend } from "@/components/herbs/chip-legend";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getReviewer } from "@/lib/data/reviewers";
 
@@ -50,7 +50,7 @@ export default async function MethodologyPage() {
   const reviewer = getReviewer("yasser-bheekun");
 
   return (
-    <IntlMessagesScope locale={locale} scope="methodology">
+    <HerbsMessagesProvider locale={locale}>
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
         <BreadcrumbListSchema
           items={[
@@ -212,6 +212,6 @@ export default async function MethodologyPage() {
           </div>
         </div>
       </div>
-    </IntlMessagesScope>
+    </HerbsMessagesProvider>
   );
 }

@@ -20,7 +20,7 @@ import { fitTitle } from "@/lib/seo/fit-title";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
-import { IntlMessagesScope } from "@/components/i18n/intl-messages-scope";
+import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import { isBucketCategory } from "@/lib/herbs/category";
@@ -245,7 +245,7 @@ export default async function ComparePage({ params }: Props) {
     canShowDoseCalculator(slug2, herbB.dosage_adult);
 
   return (
-    <IntlMessagesScope locale={locale} scope="compare">
+    <HerbsMessagesProvider locale={locale}>
       <div className="space-y-8">
         <WebPageSchema
           title={compareTitle}
@@ -567,6 +567,6 @@ export default async function ComparePage({ params }: Props) {
           </div>
         </section>
       </div>
-    </IntlMessagesScope>
+    </HerbsMessagesProvider>
   );
 }
