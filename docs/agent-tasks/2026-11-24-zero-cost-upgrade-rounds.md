@@ -41,6 +41,25 @@ line on a bill is spend.
   a stale copy. If you purge Cloudflare, it is the manual dashboard step only.
 - If a round changes nothing measurable, say so plainly instead of manufacturing activity.
 
+## Re-evaluate before every round (mandatory)
+
+A round does not start from a stale list. **Before choosing work, re-scan the live site and the
+repo** and use only fresh evidence. Required checks each round, cheap and bounded:
+
+- **Perf**: document size and inline-script KB for `/`, `/herbs/turmeric`, `/fr/herbs/turmeric`,
+  `/herbs`; the payload budget test; Lighthouse mobile on one herb page. Compare with the last
+  round log and flag any regression.
+- **Correctness**: 4xx/5xx on the current sitemap sample (at least 200 URLs) and on internal
+  links reached from the main nav; any sitemap URL serving `noindex`.
+- **Translations**: a French page for English chrome leakage and `MISSING_MESSAGE` in console.
+- **A11y**: axe on two templates (one herb page, one hub) — keep the violation count.
+- **Structured data**: validate JSON-LD on one herb page and one hub.
+- **Runtime**: health endpoint, recent container errors, and any new error pattern since the
+  last round.
+
+Write the results at the top of the round log, then choose work. If nothing new and nothing
+regressed, say so and pick the next item from the list below — or stop under the stop conditions.
+
 ## Choosing the round's work
 
 Pick the highest-value item that is **zero-cost, determinate, and verifiable**, in roughly this
@@ -66,12 +85,19 @@ order. Skip an item that needs a human decision and note it in the round log.
 
 Each round writes `artifacts/upgrade-rounds/round-<n>.md` with:
 
-- what was chosen and why (one line),
+- the re-evaluation results (perf, correctness, translations, a11y, structured data, runtime),
+- what was chosen and why (one line, citing the fresh evidence),
 - what was measured before and after (numbers, not adjectives),
 - commits,
 - live verification,
 - what was skipped because it needs money or a human decision,
-- the single highest-value item for the next round.
+- **a ranked "new opportunities" list found during the re-evaluation** (at least three, with the
+  expected gain and the cost of doing it — cost must be zero for each),
+- the single highest-value item for the next round, and why it outranks the others.
+
+The next round must start from that list, re-check it, and either take the top item or record
+why it was demoted. Do not silently repeat a round that already ran; check the earlier round
+logs first.
 
 Also append one line to the vault note for the round and keep `INDEX.md` current.
 
