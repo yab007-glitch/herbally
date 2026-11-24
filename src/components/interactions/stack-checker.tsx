@@ -272,13 +272,15 @@ export function StackChecker() {
           {t("printSheetTitle")}
         </p>
         <p className="text-xs text-muted-foreground">
-          {t("printGeneratedLabel")}{" "}
-          {result
-            ? new Date(result.checkedAt).toLocaleString(
+          {result ? (
+            <>
+              {t("printGeneratedLabel")}{" "}
+              {new Date(result.checkedAt).toLocaleString(
                 locale === "fr" ? "fr-CA" : "en-CA"
-              )
-            : new Date().toLocaleString(locale === "fr" ? "fr-CA" : "en-CA")}
-          {" — "}
+              )}
+              {" — "}
+            </>
+          ) : null}
           herbally.app
         </p>
       </div>
