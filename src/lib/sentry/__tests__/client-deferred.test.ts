@@ -63,12 +63,24 @@ describe("deferred client Sentry", () => {
     vi.useRealTimers();
   });
 
-  it("does not initialize Sentry synchronously when instrumentation-client loads", async () => {
+  it("does not initialize Sentry synchronously or on idle when the page is untouched", async () => {
     await import("../../../../instrumentation-client");
+    await new Promise((r) => setTimeout(r, 25));
     expect(Sentry.init).not.toHaveBeenCalled();
   });
 
-  it("captures an early browser error before idle, initializes Sentry once, and detaches early listener", async () => {
+  it("initializes Sentry after a user interaction (pointerdown)", async () => {
+    await import("../../../../instrumentation-client");
+    expect(Sentry.init).not.toHaveBeenCalled();
+
+    window.dispatchEvent(new Event("pointerdown"));
+
+    await vi.waitFor(() => {
+      expect(Sentry.init).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("captures an early browser error before interaction, initializes Sentry once, and detaches early listener", async () => {
     await import("../../../../instrumentation-client");
     expect(Sentry.init).not.toHaveBeenCalled();
 
@@ -98,7 +110,7 @@ describe("deferred client Sentry", () => {
     expect(Sentry.captureException).toHaveBeenCalledWith(err);
   });
 
-  it("has no static value imports of @sentry/nextjs in client files or instrumentation-client.ts", () => {
+  it("has no static value imports of @sentry/nextjs or sentry-sdk-entry in client files or instrumentation-client.ts", () => {
     const clientCandidates = [
       "instrumentation-client.ts",
       ...walkTsFiles("src").filter((f) =>
@@ -110,12 +122,26 @@ describe("deferred client Sentry", () => {
       const src = fs.readFileSync(file, "utf8");
       const staticSentryImports = [
         ...src.matchAll(
-          /^\s*import\s+(?!type\b)[\s\S]*?from\s+["']@sentry\/nextjs["']/gm
+          /^\s*import\s+(?!type\b)[\s\S]*?from\s+["'](?:@sentry\/nextjs|[^"']*sentry-sdk-entry)["']/gm
         ),
       ];
       expect(
         staticSentryImports,
-        `Static @sentry/nextjs import found in ${file}`
+        `Static Sentry import found in ${file}`
+      ).toEqual([]);
+    }
+
+    for (const file of walkTsFiles("src")) {
+      if (file === "src/lib/sentry/sentry-sdk-entry.ts") continue;
+      const src = fs.readFileSync(file, "utf8");
+      const staticEntryImports = [
+        ...src.matchAll(
+          /^\s*import\s+(?!type\b)[\s\S]*?from\s+["'][^"']*sentry-sdk-entry["']/gm
+        ),
+      ];
+      expect(
+        staticEntryImports,
+        `Static sentry-sdk-entry import found in ${file}`
       ).toEqual([]);
     }
   });

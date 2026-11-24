@@ -4,7 +4,6 @@ import {
 } from "./src/lib/sentry/client-deferred";
 
 const MAX_EARLY_ERRORS = 20;
-const IDLE_DELAY_MS = 5_000;
 
 let triggered = false;
 const earlyErrors: unknown[] = [];
@@ -67,39 +66,31 @@ if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_SENTRY_DSN) {
   window.addEventListener("error", onEarlyError);
   window.addEventListener("unhandledrejection", onEarlyRejection);
 
-  const onInteraction = () => triggerInit();
-  const interactionEvents = ["pointerdown", "keydown", "scroll"] as const;
-  for (const ev of interactionEvents) {
-    window.addEventListener(ev, onInteraction, { once: true, passive: true });
-  }
-
-  let delayTimer: number | undefined;
   let idleId: number | undefined;
 
-  const scheduleAfterLoad = () => {
-    delayTimer = window.setTimeout(() => {
-      if ("requestIdleCallback" in window) {
-        idleId = window.requestIdleCallback(() => triggerInit(), {
-          timeout: 2000,
-        });
-      } else {
-        triggerInit();
-      }
-    }, IDLE_DELAY_MS);
+  const scheduleOnIdle = () => {
+    if (cleanupListeners) {
+      cleanupListeners();
+      cleanupListeners = null;
+    }
+    if ("requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(() => triggerInit(), {
+        timeout: 2000,
+      });
+    } else {
+      triggerInit();
+    }
   };
 
-  if (document.readyState === "complete") {
-    scheduleAfterLoad();
-  } else {
-    window.addEventListener("load", scheduleAfterLoad, { once: true });
+  const interactionEvents = ["pointerdown", "keydown", "scroll"] as const;
+  for (const ev of interactionEvents) {
+    window.addEventListener(ev, scheduleOnIdle, { once: true, passive: true });
   }
 
   cleanupListeners = () => {
     for (const ev of interactionEvents) {
-      window.removeEventListener(ev, onInteraction);
+      window.removeEventListener(ev, scheduleOnIdle);
     }
-    window.removeEventListener("load", scheduleAfterLoad);
-    if (delayTimer !== undefined) window.clearTimeout(delayTimer);
     if (idleId !== undefined && "cancelIdleCallback" in window) {
       window.cancelIdleCallback(idleId);
     }

@@ -1,21 +1,22 @@
-import type * as SentryType from "@sentry/nextjs";
 import { CLIENT_IGNORE_ERRORS, scrubEvent } from "./scrub-event";
 
-let sentryMod: typeof SentryType | null = null;
-let initPromise: Promise<typeof SentryType | null> | null = null;
+export type DeferredSentryModule = typeof import("./sentry-sdk-entry");
+
+let sentryMod: DeferredSentryModule | null = null;
+let initPromise: Promise<DeferredSentryModule | null> | null = null;
 
 /**
- * Dynamically loads `@sentry/nextjs` and initializes the browser client once.
- * Keeping the import dynamic keeps the ~120 KB transfer Sentry SDK out of the
- * initial critical-path JS bundle.
+ * Dynamically loads only the needed `@sentry/nextjs` browser exports and
+ * initializes the client once. Keeping the import dynamic keeps the Sentry SDK
+ * out of the initial critical-path JS bundle.
  */
-export async function initSentryClient(): Promise<typeof SentryType | null> {
+export async function initSentryClient(): Promise<DeferredSentryModule | null> {
   if (sentryMod) return sentryMod;
   if (initPromise) return initPromise;
 
   initPromise = (async () => {
     try {
-      const mod = await import("@sentry/nextjs");
+      const mod = await import("./sentry-sdk-entry");
       mod.init({
         // Client must be gated on the PUBLIC env var — SENTRY_DSN is
         // server-only and is NOT inlined into the client bundle.
@@ -50,7 +51,7 @@ export async function initSentryClient(): Promise<typeof SentryType | null> {
   return initPromise;
 }
 
-export function getLoadedSentryClient(): typeof SentryType | null {
+export function getLoadedSentryClient(): DeferredSentryModule | null {
   return sentryMod;
 }
 
