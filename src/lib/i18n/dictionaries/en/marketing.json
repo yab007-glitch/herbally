@@ -136,7 +136,7 @@
         },
         "medications": {
           "title": "Reverse Medication Interaction Directory",
-          "desc": "Browse 108+ prescription drugs and therapeutic classes mapped to NIH RxNorm."
+          "desc": "Browse 142+ prescription drugs and therapeutic classes mapped to NIH RxNorm."
         },
         "surgery": {
           "title": "Pre-Surgery Herb Washout Planner",

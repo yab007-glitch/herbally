@@ -125,10 +125,15 @@ export function aggregateMedications(
     };
 
     const enDrugName = pickWinner(enVotes, sorted[0].drugName);
-    const drugName = pickWinner(
+    const rawDrugName = pickWinner(
       displayVotes,
       sorted[0].localizedDrugName || enDrugName
     );
+    const drugName =
+      slug === "thiazide-and-loop-diuretics" &&
+      rawDrugName === "Diurétiques hypokaliémiants"
+        ? "Diurétiques thiazidiques et de l'anse"
+        : rawDrugName;
 
     result.set(slug, {
       drugSlug: slug,

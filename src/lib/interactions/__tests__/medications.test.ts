@@ -99,4 +99,28 @@ describe("aggregateMedications", () => {
     expect(med.drugName).toBe("Warfarine (Coumadin)");
     expect(med.enDrugName).toBe("Warfarin (Coumadin)");
   });
+
+  it("disambiguates thiazide-and-loop-diuretics from diuretics in French", () => {
+    const grouped = aggregateMedications([
+      makePair({
+        id: "d-1",
+        drugName: "Diuretics (Furosemide, Hydrochlorothiazide)",
+        localizedDrugName: "Diurétiques hypokaliémiants",
+        drugSlug: "diuretics",
+      }),
+      makePair({
+        id: "d-2",
+        drugName: "Thiazide and Loop Diuretics",
+        localizedDrugName: "Diurétiques hypokaliémiants",
+        drugSlug: "thiazide-and-loop-diuretics",
+      }),
+    ]);
+
+    expect(grouped.get("diuretics")?.drugName).toBe(
+      "Diurétiques hypokaliémiants"
+    );
+    expect(grouped.get("thiazide-and-loop-diuretics")?.drugName).toBe(
+      "Diurétiques thiazidiques et de l'anse"
+    );
+  });
 });

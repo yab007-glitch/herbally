@@ -17,7 +17,7 @@ const TOOL_ITEMS = [
     path: "/medications",
     title: "Medications & Herb Interactions Directory A–Z",
     description:
-      "Reverse-lookup directory of 108 prescription medications and drug classes showing every interacting medicinal herb ranked by severity.",
+      "Reverse-lookup directory of 142 prescription medications and drug classes showing every interacting medicinal herb ranked by severity.",
     updated: "2026-11-19",
   },
   {
