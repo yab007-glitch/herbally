@@ -6,12 +6,12 @@ Repo `/Users/yasser/herbally`; production `https://herbally.app`. Builds on
 
 ## Where it stands now (measured live, 2026-11-23)
 
-| Page | HTML | Inline JS |
-| --- | --- | --- |
-| `/herbs/turmeric` | 195 KB | 76 KB |
-| `/fr/herbs/turmeric` | 188 KB | 67 KB |
-| `/` | 71 KB | 34 KB |
-| `/herbs` | 234 KB | 65 KB |
+| Page                 | HTML   | Inline JS |
+| -------------------- | ------ | --------- |
+| `/herbs/turmeric`    | 195 KB | 76 KB     |
+| `/fr/herbs/turmeric` | 188 KB | 67 KB     |
+| `/`                  | 71 KB  | 34 KB     |
+| `/herbs`             | 234 KB | 65 KB     |
 
 Lighthouse mobile: score 75→80, TBT 170→120 ms. Throttled LCP is still ~4.8 s.
 
