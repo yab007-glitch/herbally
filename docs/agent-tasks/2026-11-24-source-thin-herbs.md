@@ -57,10 +57,18 @@ source, do not call any API that needs a paid key.
    `scientific_name`/provenance) in `[Title/Abstract]`, plus the common name as a secondary
    query. Cache every response to disk so reruns cost nothing.
 3. **Validate before attaching.** A hit is only accepted when:
-   - the taxon (genus at minimum, species preferred) appears in the title or abstract,
-   - it is not a retraction or an erratum,
+   - the **species epithet** appears in the title or abstract (genus alone is not enough —
+     `Berkheya zeyheri` is not `Berkheya purpurea`), or the abstract unambiguously names that
+     species by a documented synonym,
+   - it is not a retraction, erratum, correction, genome announcement, first-report virology
+     note, taxonomy/phylogeny paper or "new species" description,
+   - the match is not an artefact of words inside a product or formula name (a decoction called
+     "Restore the Spleen" must not match a paper titled "Protect and restore small wetlands"),
    - the PMID is not already on the row.
      Anything that fails validation is logged, never attached.
+
+   A genus-only pass over the 30 uncited herbs produced five junk candidates and one valid
+   paper — see `artifacts/audit-2026-11-24/uncited-sourcing-report.md`.
 4. Attach up to **3 new citations** per herb, preferring: clinical trials and systematic reviews
    → observational studies → mechanistic/phytochemistry last. Keep safety-relevant papers even
    when they are not efficacy papers.
