@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+import { captureClientException } from "@/lib/sentry/client-deferred";
 import { AlertTriangle, RotateCcw, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -14,7 +14,7 @@ export default function AdminError({
   reset: () => void;
 }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    void captureClientException(error);
   }, [error]);
 
   return (

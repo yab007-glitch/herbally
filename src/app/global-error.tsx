@@ -1,6 +1,6 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
+import { captureClientException } from "@/lib/sentry/client-deferred";
 import { useEffect } from "react";
 
 // global-error replaces the entire app shell (including the root layout and
@@ -14,7 +14,7 @@ export default function GlobalError({
   error: Error & { digest?: string };
 }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    void captureClientException(error);
   }, [error]);
 
   return (

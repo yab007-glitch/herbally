@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import * as Sentry from "@sentry/nextjs";
+import { captureClientException } from "@/lib/sentry/client-deferred";
 import { useTranslations } from "next-intl";
 import { AlertTriangle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export default function GlobalError({
   const t = useTranslations("errors");
 
   useEffect(() => {
-    Sentry.captureException(error);
+    void captureClientException(error);
   }, [error]);
 
   return (

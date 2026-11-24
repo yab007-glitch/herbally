@@ -10,7 +10,13 @@ vi.mock("@sentry/nextjs", () => ({
 describe.each([
   ["server", () => import("./sentry.server.config")],
   ["edge", () => import("./sentry.edge.config")],
-  ["browser", () => import("./instrumentation-client")],
+  [
+    "browser",
+    async () => {
+      const mod = await import("./src/lib/sentry/client-deferred");
+      return mod.initSentryClient();
+    },
+  ],
 ])("%s Sentry config", (_name, loadConfig) => {
   beforeEach(async () => {
     vi.resetModules();

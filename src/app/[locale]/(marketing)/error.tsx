@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+import { captureClientException } from "@/lib/sentry/client-deferred";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
@@ -17,7 +17,7 @@ export default function MarketingError({
   const t = useTranslations("errors");
 
   useEffect(() => {
-    Sentry.captureException(error);
+    void captureClientException(error);
   }, [error]);
 
   return (

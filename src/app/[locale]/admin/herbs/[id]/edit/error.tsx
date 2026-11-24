@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { AlertTriangle, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import * as Sentry from "@sentry/nextjs";
+import { captureClientException } from "@/lib/sentry/client-deferred";
 
 export default function RouteError({
   error,
@@ -14,7 +14,7 @@ export default function RouteError({
   reset: () => void;
 }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    void captureClientException(error);
   }, [error]);
 
   return (
