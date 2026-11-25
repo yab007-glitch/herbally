@@ -33,7 +33,20 @@ test.describe("Migrated-DB Post-00104 E2E", () => {
         const doseVal = String(
           (parsed.dosage as Record<string, unknown>).doseValue ?? ""
         );
-        expect(doseVal).not.toMatch(/\b(children|infant|pediatric)\b/i);
+        // The genuine poisoning warning ("Children who ingest 5 g…") must
+        // survive in the body, so exclude hazard sentences before asserting
+        // that no pediatric dosing context reached structured data.
+        const doseSentences = doseVal
+          .split(/(?<=[.!?])\s+/)
+          .filter(
+            (sentence) =>
+              !/\b(ingest|ingested|poison|overdose|emergency|allergic|swallow)\b/i.test(
+                sentence
+              )
+          );
+        expect(doseSentences.join(" ")).not.toMatch(
+          /\b(children|infant|pediatric)\b/i
+        );
       }
     }
 

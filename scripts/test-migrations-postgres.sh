@@ -582,13 +582,15 @@ INSERT INTO public.herb_monographs (
   'published'
 );
 
-INSERT INTO public.herb_page_bundles (slug, payload) VALUES (
+-- Build the cached bundle from the real herb row, as the production cache does,
+-- then override only the legacy pediatric fields this fixture exercises. A
+-- hand-written five-field herb object makes the page call .trim() on a missing
+-- scientific_name and return 500.
+INSERT INTO public.herb_page_bundles (slug, payload)
+SELECT
   'chamomile',
   jsonb_build_object(
-    'herb', jsonb_build_object(
-      'id', '33333333-3333-3333-3333-333333333333',
-      'slug', 'chamomile',
-      'name', 'Chamomile',
+    'herb', to_jsonb(h) || jsonb_build_object(
       'dosage_adult', 'Adults: 500 mg twice daily. Children 6-12 years: 100 mg daily. Children who ingest 5 g may develop allergic reactions.',
       'dosage_child', '100 mg daily for children',
       'translations', '{"fr":{"name":"Camomille","dosage_child":"100 mg enfant","dosage_adult":"Adultes : 500 mg par jour. Enfant 6-12 ans : 100 mg."}}'::jsonb
@@ -631,7 +633,8 @@ INSERT INTO public.herb_page_bundles (slug, payload) VALUES (
     'sources', '[{"source":"Health Canada","doses":[{"text":"100 mg","population":"Children","age_minimum":6}]}]'::jsonb,
     'pubmed', '{"content":{"dosageAndAdministration":"Adults take 500 mg. Children age 6: 200 mg.","dosage":"Adults 18+: 500 mg. 0-18 years: 50 mg.","recommendedDosage":"Adults: 500 mg. Under-18: 100 mg.","adultDosage":"Adults 18+: 500 mg daily. Children 6-12 years: 100 mg.","childSafety":"Children should not take this product. Must not be given to infants. Not for use in children under 12 years. Not suitable for minors.","minorSideEffects":"Minor side effects: mild nausea if you take on an empty stomach; children should not take this product.","pediatricDosage":"Children: 100 mg.","useInChildren":"100 mg.","use_in_children":"100 mg.","doseInChildren":"50 mg.","dose_in_children":"50 mg.","administrationInChildren":"25 mg.","fr":{"dosageAndAdministration":"Adultes : 500 mg. Moins de 18 ans : 100 mg.","useInChildren":"100 mg."}}}'::jsonb
   )
-);
+FROM public.herbs h
+WHERE h.slug = 'chamomile';
 
 -- Unpublished draft herb & draft PubMed sheet fixtures to verify public view filtering (M4)
 INSERT INTO public.herbs (
@@ -746,5 +749,26 @@ psql "$ADMIN_URL" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS \"${ROLLBACK_DB
 echo "==> Running idempotent contract verifier & clinical-safety integration assertions on main ${PGDATABASE}"
 bash "${REPO_DIR}/scripts/apply-pending-migrations.sh" --test-mode --phase all --verify-only --repo-dir "$REPO_DIR" --psql-url "$DATABASE_URL"
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "${REPO_DIR}/supabase/tests/clinical-safety-integration.sql"
+
+# The integration suite intentionally ends with the seeded chamomile–warfarin
+# pair in retracted_hold after proving the retraction gate. Restore a
+# deterministic published pair so downstream PostgREST smoke and migrated-DB
+# E2E assert the real public contract instead of test residue.
+echo "==> Restoring seeded public interaction pair for downstream PostgREST/E2E"
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+UPDATE public.drug_interaction_citations
+SET retraction_status = 'active'
+WHERE id = '77777777-7777-7777-7777-777777777771';
+
+UPDATE public.drug_interactions
+SET
+  botanical_applicability = 'oral_whole_herb_or_tea',
+  clinical_reviewer_id = 'clinician-1',
+  verified_at = now(),
+  next_review_due_at = now() + interval '180 days',
+  clinical_action_status = 'clinician_approved',
+  publication_status = 'published'
+WHERE id = '44444444-4444-4444-4444-444444444444';
+SQL
 
 echo "✓ Targeted PG16 migration fixture (00097–00104 + expand/contract + real rollback + RLS/triggers) passed."
