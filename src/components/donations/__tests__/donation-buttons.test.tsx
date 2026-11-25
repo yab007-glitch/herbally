@@ -49,8 +49,9 @@ describe("DonationButtons", () => {
 
     render(<DonationButtons />);
     const presetCard = screen.getByRole("button", {
-      name: /donateButtons\.coffee — \$5/,
+      name: /\$5.*donateButtons\.coffee/,
     });
+    expect(presetCard).not.toHaveAttribute("aria-label");
     const customDonateBtn = screen.getByRole("button", {
       name: "donateButtons.donate",
     });

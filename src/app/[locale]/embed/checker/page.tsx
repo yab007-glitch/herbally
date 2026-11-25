@@ -26,6 +26,7 @@ async function EmbedCheckerShell({
       <div className={dark ? "dark" : undefined}>
         <main
           id="main-content"
+          aria-labelledby="embed-checker-heading"
           className="min-h-dvh bg-background p-3 dark:bg-zinc-950"
         >
           <EmbedChecker />

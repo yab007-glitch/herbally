@@ -135,7 +135,12 @@ export function EmbedChecker() {
         <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Leaf className="size-4" aria-hidden />
         </div>
-        <p className="text-sm font-semibold text-foreground">{t("title")}</p>
+        <h1
+          id="embed-checker-heading"
+          className="text-sm font-semibold text-foreground"
+        >
+          {t("title")}
+        </h1>
       </div>
 
       <div className="relative">
