@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Heart, Coffee, Gift, Crown, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +13,7 @@ export function DonationButtons() {
   const t = useTranslations();
   const [customAmount, setCustomAmount] = useState(20);
   const [loading, setLoading] = useState<number | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const suggestedAmounts = [
     {
@@ -38,6 +40,8 @@ export function DonationButtons() {
   ];
 
   const handleDonate = async (amount: number) => {
+    if (loading !== null) return;
+    setErrorMessage(null);
     setLoading(amount);
     try {
       const res = await fetch("/api/donate", {
@@ -46,9 +50,13 @@ export function DonationButtons() {
         body: JSON.stringify({ amount: amount * 100 }),
       });
 
+      if (!res.ok) {
+        throw new Error(`Checkout failed with HTTP ${res.status}`);
+      }
+
       const data = await res.json();
 
-      if (data.url) {
+      if (typeof data?.url === "string" && data.url) {
         // assign() navigates like an href write but satisfies the
         // react-hooks/immutability rule (no property mutation).
         window.location.assign(data.url);
@@ -59,7 +67,9 @@ export function DonationButtons() {
       logger.error("donation_button_error", {
         error: error instanceof Error ? error.message : String(error),
       });
-      alert(t("donateButtons.errorMessage"));
+      const msg = t("donateButtons.errorMessage");
+      setErrorMessage(msg);
+      toast.error(msg);
     } finally {
       setLoading(null);
     }
@@ -136,11 +146,14 @@ export function DonationButtons() {
                 type="number"
                 value={customAmount}
                 aria-label={t("donateButtons.customAmount")}
-                onChange={(e) =>
-                  setCustomAmount(
-                    Math.max(1, Math.min(1000, Number(e.target.value)))
-                  )
-                }
+                onChange={(e) => {
+                  const parsed = Number(e.target.value);
+                  if (Number.isFinite(parsed)) {
+                    setCustomAmount(
+                      Math.max(1, Math.min(1000, Math.round(parsed)))
+                    );
+                  }
+                }}
                 min={1}
                 max={1000}
                 step={1}
@@ -154,7 +167,7 @@ export function DonationButtons() {
                 trackEvent("donation_clicked", { amount: customAmount });
                 handleDonate(customAmount);
               }}
-              disabled={loading === customAmount}
+              disabled={loading !== null}
             >
               {loading === customAmount ? (
                 <Loader2 className="size-5 animate-spin" />
@@ -164,6 +177,14 @@ export function DonationButtons() {
               {t("donateButtons.donate")}
             </Button>
           </div>
+          {errorMessage && (
+            <p
+              role="alert"
+              className="mt-4 text-center text-sm text-destructive"
+            >
+              {errorMessage}
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -171,6 +192,7 @@ export function DonationButtons() {
       <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
         <div className="flex items-center gap-2">
           <svg
+            aria-hidden="true"
             className="size-5 text-emerald-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -187,6 +209,7 @@ export function DonationButtons() {
         </div>
         <div className="flex items-center gap-2">
           <svg
+            aria-hidden="true"
             className="size-5 text-blue-600"
             fill="none"
             viewBox="0 0 24 24"
@@ -203,6 +226,7 @@ export function DonationButtons() {
         </div>
         <div className="flex items-center gap-2">
           <svg
+            aria-hidden="true"
             className="size-5 text-purple-600"
             fill="none"
             viewBox="0 0 24 24"

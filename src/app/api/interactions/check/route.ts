@@ -32,6 +32,12 @@ function getLocale(request: NextRequest): "en" | "fr" {
  * separately (unavailable:true) so the client does not misreport
  * "no record" when it simply could not look.
  */
+const PUBLIC_CHECK_HEADERS = {
+  "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+  Vary: "x-locale",
+};
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+
 export async function GET(request: NextRequest) {
   const { success } = await rateLimit(
     rateLimitKey("interactions-check", getClientIP(request)),
@@ -49,7 +55,7 @@ export async function GET(request: NextRequest) {
         rateLimited: true,
         message: "Too many requests. Try again in a minute.",
       },
-      { status: 429, headers: { "Retry-After": "60" } }
+      { status: 429, headers: { "Retry-After": "60", ...NO_STORE_HEADERS } }
     );
   }
   const parsedQuery = checkQuerySchema.safeParse({
@@ -57,7 +63,10 @@ export async function GET(request: NextRequest) {
     drug: request.nextUrl.searchParams.get("drug") ?? "",
   });
   if (!parsedQuery.success) {
-    return NextResponse.json({ found: false }, { status: 400 });
+    return NextResponse.json(
+      { found: false },
+      { status: 400, headers: NO_STORE_HEADERS }
+    );
   }
   const { herb: herbTerm, drug: drugTerm } = parsedQuery.data;
 
@@ -65,28 +74,36 @@ export async function GET(request: NextRequest) {
   if (!supabase) {
     return NextResponse.json(
       { found: false, unavailable: true },
-      { status: 503 }
+      { status: 503, headers: NO_STORE_HEADERS }
     );
   }
 
   try {
     const locale = getLocale(request);
     const herb = await resolveHerb(herbTerm);
-    if (!herb) return NextResponse.json({ found: false, herb: null });
+    if (!herb) {
+      return NextResponse.json(
+        { found: false, herb: null },
+        { headers: PUBLIC_CHECK_HEADERS }
+      );
+    }
 
     const displayName =
       locale === "fr" && herb.frName ? herb.frName : herb.name;
     const pairs = await getHerbPairs(herb.slug, locale);
     const match = matchInteractionPairDetailed(drugTerm, pairs);
     if (match.kind === "none") {
-      return NextResponse.json({
-        found: false,
-        herb: {
-          slug: herb.slug,
-          name: displayName,
-          scientific_name: herb.scientific_name,
+      return NextResponse.json(
+        {
+          found: false,
+          herb: {
+            slug: herb.slug,
+            name: displayName,
+            scientific_name: herb.scientific_name,
+          },
         },
-      });
+        { headers: PUBLIC_CHECK_HEADERS }
+      );
     }
 
     if (match.kind === "collision") {
@@ -118,36 +135,39 @@ export async function GET(request: NextRequest) {
             pairUrl: pairPath(p.herbSlug, p.drugName),
           })),
         },
-        { headers: { "Cache-Control": "no-store" } }
+        { headers: NO_STORE_HEADERS }
       );
     }
 
     const pair = match.pair;
-    return NextResponse.json({
-      found: true,
-      herb: {
-        slug: herb.slug,
-        name: displayName,
-        scientific_name: herb.scientific_name,
+    return NextResponse.json(
+      {
+        found: true,
+        herb: {
+          slug: herb.slug,
+          name: displayName,
+          scientific_name: herb.scientific_name,
+        },
+        pair: {
+          id: pair.id,
+          drugName: pair.drugName,
+          severity: pair.severity,
+          description: pair.description,
+          mechanism: pair.mechanism,
+          evidenceLevel: pair.evidenceLevel,
+          source: pair.source,
+          sourceUrl: pair.sourceUrl,
+          pairUrl: pairPath(pair.herbSlug, pair.drugName),
+        },
       },
-      pair: {
-        id: pair.id,
-        drugName: pair.drugName,
-        severity: pair.severity,
-        description: pair.description,
-        mechanism: pair.mechanism,
-        evidenceLevel: pair.evidenceLevel,
-        source: pair.source,
-        sourceUrl: pair.sourceUrl,
-        pairUrl: pairPath(pair.herbSlug, pair.drugName),
-      },
-    });
+      { headers: PUBLIC_CHECK_HEADERS }
+    );
   } catch {
     // Never log raw herb/drug terms from upstream errors.
     logger.error("interactions_check_error");
     return NextResponse.json(
       { found: false, unavailable: true },
-      { status: 503 }
+      { status: 503, headers: NO_STORE_HEADERS }
     );
   }
 }

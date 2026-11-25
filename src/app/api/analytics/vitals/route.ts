@@ -47,6 +47,15 @@ const webVitalsPayloadSchema = z.object({
   metrics: z.array(webVitalSchema).min(1).max(10),
 });
 
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { ...NO_STORE_HEADERS, ...(init?.headers ?? {}) },
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { success } = await rateLimit(
@@ -55,14 +64,14 @@ export async function POST(request: NextRequest) {
       60_000
     );
     if (!success) {
-      return NextResponse.json(
+      return jsonNoStore(
         { error: "Too many requests" },
         { status: 429, headers: { "Retry-After": "60" } }
       );
     }
     const bodyResult = await readJsonBodyWithLimit(request, 10 * 1024);
     if (!bodyResult.ok) {
-      return NextResponse.json(
+      return jsonNoStore(
         { error: "Invalid vitals payload" },
         { status: bodyResult.reason === "too_large" ? 413 : 400 }
       );
@@ -72,10 +81,7 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) {
       // L3: don't reflect Zod issue details back to the client — they can
       // echo back the malformed payload shape and leak schema internals.
-      return NextResponse.json(
-        { error: "Invalid vitals payload" },
-        { status: 400 }
-      );
+      return jsonNoStore({ error: "Invalid vitals payload" }, { status: 400 });
     }
 
     // Store in Supabase if configured — uses the server-side service role so
@@ -108,14 +114,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true });
+    return jsonNoStore({ success: true });
   } catch (error) {
     logger.error("web_vitals_endpoint_error", {
       error: error instanceof Error ? error.message : String(error),
     });
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return jsonNoStore({ error: "Internal server error" }, { status: 500 });
   }
 }

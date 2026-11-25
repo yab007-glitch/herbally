@@ -43,6 +43,8 @@ function normalizeTerms(raw: unknown): string[] | null {
   return out;
 }
 
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+
 /**
  * Multi-herb × multi-medication safety checker.
  *
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
         error: "Too many requests. Try again in a minute.",
         rateLimited: true,
       },
-      { status: 429, headers: { "Retry-After": "60" } }
+      { status: 429, headers: { "Retry-After": "60", ...NO_STORE_HEADERS } }
     );
   }
 
@@ -74,7 +76,10 @@ export async function POST(request: NextRequest) {
             ? "Request body too large."
             : "Invalid JSON body.",
       },
-      { status: bodyResult.reason === "too_large" ? 413 : 400 }
+      {
+        status: bodyResult.reason === "too_large" ? 413 : 400,
+        headers: NO_STORE_HEADERS,
+      }
     );
   }
   const rawBody = bodyResult.data;
@@ -85,7 +90,7 @@ export async function POST(request: NextRequest) {
       {
         error: `Provide between 1 and ${MAX_STACK_ITEMS} herbs and between 1 and ${MAX_STACK_ITEMS} medications.`,
       },
-      { status: 400 }
+      { status: 400, headers: NO_STORE_HEADERS }
     );
   }
 
@@ -104,7 +109,7 @@ export async function POST(request: NextRequest) {
       {
         error: `Provide between 1 and ${MAX_STACK_ITEMS} herbs and between 1 and ${MAX_STACK_ITEMS} medications.`,
       },
-      { status: 400 }
+      { status: 400, headers: NO_STORE_HEADERS }
     );
   }
 
@@ -117,7 +122,7 @@ export async function POST(request: NextRequest) {
   if (!supabase) {
     return NextResponse.json(
       { error: "Database unavailable.", unavailable: true },
-      { status: 503 }
+      { status: 503, headers: NO_STORE_HEADERS }
     );
   }
 
@@ -267,7 +272,7 @@ export async function POST(request: NextRequest) {
     logger.error("interactions_check_stack_error");
     return NextResponse.json(
       { error: "Unable to check stack right now.", unavailable: true },
-      { status: 503 }
+      { status: 503, headers: NO_STORE_HEADERS }
     );
   }
 }
