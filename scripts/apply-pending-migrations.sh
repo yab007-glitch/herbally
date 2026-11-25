@@ -104,6 +104,24 @@ run_psql() {
   fi
 }
 
+# PostgREST caches the exposed schema. DDL applied by psql does not refresh it
+# here, so new views/columns otherwise 404 until the container restarts.
+# NOTIFY is asynchronous but normally lands within a second; the deploy builds
+# the image for minutes before switching traffic.
+notify_postgrest_schema_reload() {
+  if [ "$TEST_MODE" = "true" ]; then
+    return 0
+  fi
+  echo "==> Reloading PostgREST schema cache"
+  if ! run_psql -c "NOTIFY pgrst, 'reload schema';" >/dev/null; then
+    echo "WARN: PostgREST schema reload notification failed; API may serve a stale schema" >&2
+  else
+    # NOTIFY is delivered asynchronously; give PostgREST a moment to finish the
+    # reload before the next smoke request depends on the new schema.
+    sleep 2
+  fi
+}
+
 verify_expand_postconditions() {
   echo "==> Verifying expand-phase schema, constraints, triggers, views, RPCs, and RLS postconditions"
   run_psql <<'SQL'
@@ -486,6 +504,7 @@ if [ "$ROLLBACK_CONTRACT" = "true" ]; then
   echo "==> Executing 00104 contract rollback via ${ROLLBACK_SQL}"
   run_psql < "$ROLLBACK_SQL"
   verify_rollback_postconditions
+  notify_postgrest_schema_reload
   echo "✓ 00104 contract rollback applied and verified cleanly."
   exit 0
 fi
@@ -497,6 +516,7 @@ if [ "$VERIFY_ONLY" = "true" ]; then
   if [ "$PHASE" = "contract" ] || [ "$PHASE" = "all" ]; then
     verify_contract_postconditions
   fi
+  notify_postgrest_schema_reload
   echo "✓ Verification for phase '${PHASE}' passed cleanly."
   exit 0
 fi
@@ -568,5 +588,7 @@ fi
 if [ "$PHASE" = "contract" ] || [ "$PHASE" = "all" ]; then
   verify_contract_postconditions
 fi
+
+notify_postgrest_schema_reload
 
 echo "✓ Migration phase '${PHASE}' applied and verified cleanly."
