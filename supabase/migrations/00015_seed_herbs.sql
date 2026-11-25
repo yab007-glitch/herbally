@@ -25,7 +25,7 @@ INSERT INTO public.herb_categories (name, slug, description, icon, sort_order) V
   ('Womens Health', 'womens-health', 'Herbs traditionally used for female reproductive health', 'user', 18),
   ('Analgesic', 'analgesic', 'Herbs used for pain relief', 'pill', 19),
   ('Metabolic', 'metabolic', 'Herbs that support metabolism and blood sugar regulation', 'activity', 20)
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- HERBS: Batch 1 of 10 (Herbs 1-10)

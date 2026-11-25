@@ -368,6 +368,20 @@ GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service_role;
 GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO service_role;
 
+-- Public read policies present on production catalog tables. Without these,
+-- anon SELECT * compatibility tests see zero rows even though column privileges
+-- are correct.
+CREATE POLICY "Anyone can view herb faqs" ON public.herb_faqs
+  FOR SELECT USING (true);
+CREATE POLICY "Anyone can view herb monographs" ON public.herb_monographs
+  FOR SELECT USING (true);
+CREATE POLICY "Anyone can view monograph sources" ON public.herb_monograph_sources
+  FOR SELECT USING (true);
+CREATE POLICY "Anyone can view regulatory evidence" ON public.herb_regulatory_evidence
+  FOR SELECT USING (true);
+CREATE POLICY "Anyone can view pubmed monographs" ON public.herb_pubmed_monographs
+  FOR SELECT USING (true);
+
 -- Seed pre-migration fixtures
 INSERT INTO auth.users (id, email) VALUES
   ('11111111-1111-1111-1111-111111111111', 'user@example.test'),
