@@ -29,13 +29,19 @@ export function SymptomSearchClient() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
+    return () => abortRef.current?.abort();
   }, []);
 
   const search = useCallback(async (q: string) => {
     if (q.trim().length < 5) return;
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setIsLoading(true);
     setHasSearched(true);
 
@@ -53,7 +59,9 @@ export function SymptomSearchClient() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: q }),
+          signal: controller.signal,
         });
+        if (controller.signal.aborted) return;
         if (aiRes.ok) {
           const data = await aiRes.json();
           if (data.keywords?.length > 0) {
@@ -63,9 +71,12 @@ export function SymptomSearchClient() {
             keywords = Array.from(new Set([...originalWords, ...aiKeywords]));
           }
         }
-      } catch {
+      } catch (err) {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         // Fall back to raw query words
       }
+
+      if (controller.signal.aborted) return;
 
       // Search herbs by keywords
       const searchTerm = keywords.join(" ");
@@ -73,8 +84,15 @@ export function SymptomSearchClient() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ q: searchTerm }),
+        signal: controller.signal,
       });
+      if (controller.signal.aborted) return;
+      if (!res.ok) {
+        setResults([]);
+        return;
+      }
       const data = await res.json();
+      if (controller.signal.aborted) return;
       // De-duplicate by plant and order by relevance (matched search
       // terms first, then evidence grade) before capping at 12, so a
       // duplicate can never displace a distinct herb from the list.
@@ -82,10 +100,13 @@ export function SymptomSearchClient() {
         ? sortSymptomResultsByRelevance(dedupeSymptomResults(data))
         : [];
       setResults(processed.slice(0, 12));
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setResults([]);
     } finally {
-      setIsLoading(false);
+      if (!controller.signal.aborted) {
+        setIsLoading(false);
+      }
     }
   }, []);
 

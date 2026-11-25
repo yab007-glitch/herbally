@@ -153,6 +153,11 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
         `/api/herbs/search?q=${encodeURIComponent(term)}`,
         { signal: controller.signal }
       );
+      if (!res.ok) {
+        setHerbResults([]);
+        setShowHerbResults(false);
+        return;
+      }
       const data = await res.json();
       setHerbResults(Array.isArray(data) ? data.slice(0, 5) : []);
       setShowHerbResults(true);

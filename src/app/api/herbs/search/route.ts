@@ -20,10 +20,16 @@ const searchBodySchema = z.object({
   q: z.string().trim().min(2).max(200),
 });
 
+const PUBLIC_SEARCH_HEADERS = {
+  "Cache-Control": "public, s-maxage=300, stale-while-revalidate=3600",
+  Vary: "x-locale",
+};
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+
 function rateLimitedResponse() {
   return NextResponse.json([], {
     status: 429,
-    headers: { "Retry-After": "60" },
+    headers: { "Retry-After": "60", ...NO_STORE_HEADERS },
   });
 }
 
@@ -32,7 +38,11 @@ function getLocale(request: NextRequest): "en" | "fr" {
   return request.headers.get("x-locale") === "fr" ? "fr" : "en";
 }
 
-async function searchHerbs(term: string, locale: "en" | "fr") {
+async function searchHerbs(
+  term: string,
+  locale: "en" | "fr",
+  allowPublicCache: boolean
+) {
   try {
     const supabase = await createClient();
     const expandedKeywords = expandQueryToKeywords(term);
@@ -97,7 +107,7 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     const { data: textResults, error: textError } = textResponse;
 
     if (symptomError && preciseError && anchorError && textError) {
-      return NextResponse.json([]);
+      return NextResponse.json([], { headers: NO_STORE_HEADERS });
     }
 
     // Per-input-word expansions, so a result can say WHICH of the user's
@@ -232,12 +242,13 @@ async function searchHerbs(term: string, locale: "en" | "fr") {
     // the seed entry could win the plant even though the exact name match was
     // the other row.
     return NextResponse.json(
-      dedupeSymptomResults(rankHerbResults(results, term))
+      dedupeSymptomResults(rankHerbResults(results, term)),
+      { headers: allowPublicCache ? PUBLIC_SEARCH_HEADERS : NO_STORE_HEADERS }
     );
   } catch {
     // Upstream errors may include search terms; never log their raw text.
     logger.error("herbs_search_error");
-    return NextResponse.json([]);
+    return NextResponse.json([], { headers: NO_STORE_HEADERS });
   }
 }
 
@@ -250,9 +261,9 @@ export async function GET(request: NextRequest) {
   if (!success) return rateLimitedResponse();
   const term = request.nextUrl.searchParams.get("q");
   if (!term || term.length < 2 || term.length > 200) {
-    return NextResponse.json([]);
+    return NextResponse.json([], { headers: NO_STORE_HEADERS });
   }
-  return searchHerbs(term, getLocale(request));
+  return searchHerbs(term, getLocale(request), true);
 }
 
 export async function POST(request: NextRequest) {
@@ -266,9 +277,12 @@ export async function POST(request: NextRequest) {
   if (!bodyResult.ok) {
     return NextResponse.json([], {
       status: bodyResult.reason === "too_large" ? 413 : 400,
+      headers: NO_STORE_HEADERS,
     });
   }
   const parsed = searchBodySchema.safeParse(bodyResult.data);
-  if (!parsed.success) return NextResponse.json([], { status: 400 });
-  return searchHerbs(parsed.data.q, getLocale(request));
+  if (!parsed.success) {
+    return NextResponse.json([], { status: 400, headers: NO_STORE_HEADERS });
+  }
+  return searchHerbs(parsed.data.q, getLocale(request), false);
 }

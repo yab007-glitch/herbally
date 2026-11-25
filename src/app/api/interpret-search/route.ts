@@ -11,6 +11,14 @@ import { z } from "zod";
 import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 const MAX_BODY_SIZE = 10 * 1024; // 10KB max for search interpretation
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { ...NO_STORE_HEADERS, ...(init?.headers ?? {}) },
+  });
+}
 
 export async function POST(request: NextRequest) {
   // Body size guard
@@ -19,16 +27,13 @@ export async function POST(request: NextRequest) {
     10
   );
   if (contentLength > MAX_BODY_SIZE) {
-    return NextResponse.json(
-      { error: "Request body too large" },
-      { status: 413 }
-    );
+    return jsonNoStore({ error: "Request body too large" }, { status: 413 });
   }
 
   const ip = getClientIP(request);
   const perMinute = await rateLimit(`${ip}:interpret:minute`, 20, 60_000);
   if (!perMinute.success) {
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Too many requests. Please try again later." },
       { status: 429, headers: { "Retry-After": "60" } }
     );
@@ -37,7 +42,7 @@ export async function POST(request: NextRequest) {
   // (20/min alone allows ~28k/day). Matches /api/chat two-tier pattern.
   const perDay = await rateLimit(`${ip}:interpret:day`, 200, 86_400_000);
   if (!perDay.success) {
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Daily limit reached. Please come back tomorrow." },
       { status: 429, headers: { "Retry-After": "3600" } }
     );
@@ -49,19 +54,19 @@ export async function POST(request: NextRequest) {
     const bodyResult = await readJsonBodyWithLimit(request, MAX_BODY_SIZE);
     if (!bodyResult.ok) {
       if (bodyResult.reason === "too_large") {
-        return NextResponse.json(
+        return jsonNoStore(
           { error: "Request body too large" },
           { status: 413 }
         );
       }
-      return NextResponse.json({ keywords: [] });
+      return jsonNoStore({ keywords: [] });
     }
     const parsed = schema.safeParse(bodyResult.data);
     if (!parsed.success) {
       // L6 (audit 2026-06-22): don't reflect the unvalidated `body.query` back
       // to the caller — it bypassed the Zod check and could be any type/size.
       // Return an empty keyword set so the client falls back to its own input.
-      return NextResponse.json({ keywords: [] });
+      return jsonNoStore({ keywords: [] });
     }
     originalQuery = parsed.data.query;
 
@@ -69,12 +74,12 @@ export async function POST(request: NextRequest) {
     const trimmed = originalQuery.trim().slice(0, 200);
     const words = trimmed.split(/\s+/);
     if (words.length <= 2 && /^[a-zA-Z\s]+$/.test(trimmed)) {
-      return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
+      return jsonNoStore({ keywords: [trimmed.toLowerCase()] });
     }
 
     const apiKey = getOllamaCloudApiKey();
     if (!apiKey) {
-      return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
+      return jsonNoStore({ keywords: [trimmed.toLowerCase()] });
     }
 
     const response = await fetch(
@@ -126,7 +131,7 @@ Examples:
     try {
       const parsed = JSON.parse(text);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return NextResponse.json({
+        return jsonNoStore({
           keywords: parsed
             .slice(0, 3)
             .map((k: string) => String(k).toLowerCase()),
@@ -136,20 +141,20 @@ Examples:
       // If AI response isn't valid JSON, fall through to fallback
     }
 
-    return NextResponse.json({ keywords: [trimmed.toLowerCase()] });
+    return jsonNoStore({ keywords: [trimmed.toLowerCase()] });
   } catch (error) {
     // M12: a timeout abort (AbortError/TimeoutError) falls through to the
     // validated-query fallback (not
     // an empty result) so a slow upstream never blanks the search.
     if (["AbortError", "TimeoutError"].includes((error as Error)?.name ?? "")) {
       logger.warn("interpret_search_timeout");
-      return NextResponse.json({
+      return jsonNoStore({
         keywords: [originalQuery.trim().slice(0, 200).toLowerCase() || ""],
       });
     }
     // Error messages can contain user input; log the event, not raw details.
     logger.error("interpret_search_failed");
-    return NextResponse.json({
+    return jsonNoStore({
       keywords: [originalQuery.toLowerCase() || ""],
     });
   }

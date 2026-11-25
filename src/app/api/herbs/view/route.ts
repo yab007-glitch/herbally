@@ -14,6 +14,8 @@ const bodySchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Invalid slug"),
 });
 
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+
 /**
  * POST /api/herbs/view
  *
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
   if (!success) {
     return new NextResponse(null, {
       status: 429,
-      headers: { "Retry-After": "60" },
+      headers: { "Retry-After": "60", ...NO_STORE_HEADERS },
     });
   }
 
@@ -38,11 +40,12 @@ export async function POST(request: NextRequest) {
   if (!bodyResult.ok) {
     return new NextResponse(null, {
       status: bodyResult.reason === "too_large" ? 413 : 400,
+      headers: NO_STORE_HEADERS,
     });
   }
   const parsed = bodySchema.safeParse(bodyResult.data);
   if (!parsed.success) {
-    return new NextResponse(null, { status: 400 });
+    return new NextResponse(null, { status: 400, headers: NO_STORE_HEADERS });
   }
 
   try {
@@ -65,5 +68,5 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  return new NextResponse(null, { status: 204 });
+  return new NextResponse(null, { status: 204, headers: NO_STORE_HEADERS });
 }

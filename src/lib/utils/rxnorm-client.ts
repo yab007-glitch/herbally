@@ -57,17 +57,29 @@ export async function searchDrugsWithAvailability(
     }
 
     const data = await res.json();
-    const candidates = data?.approximateGroup?.candidate || [];
+    const candidates = Array.isArray(data?.approximateGroup?.candidate)
+      ? data.approximateGroup.candidate
+      : [];
 
-    return {
-      results: candidates.map(
-        (c: { rxcui: string; name: string; score: string }) => ({
-          rxcui: c.rxcui,
-          name: c.name,
-          synonym: c.name,
-        })
-      ),
-    };
+    const seenKeys = new Set<string>();
+    const results: RxNormDrug[] = [];
+    for (const c of candidates as Array<{
+      rxcui?: unknown;
+      name?: unknown;
+    }>) {
+      const rxcui = typeof c?.rxcui === "string" ? c.rxcui.trim() : "";
+      const name = typeof c?.name === "string" ? c.name.trim() : "";
+      if (!rxcui || !name) continue;
+      // Deduplicate repeated RxCUI entries and case-variant names returned by
+      // approximateTerm (keeping highest-ranked first occurrence).
+      const dedupeKey = `${rxcui}|${name.toLowerCase()}`;
+      if (seenKeys.has(dedupeKey) || seenKeys.has(`rxcui:${rxcui}`)) continue;
+      seenKeys.add(dedupeKey);
+      seenKeys.add(`rxcui:${rxcui}`);
+      results.push({ rxcui, name, synonym: name });
+    }
+
+    return { results };
   } catch (error) {
     if (isTransientError(error)) {
       logger.warn("rxnorm_search_transient", {

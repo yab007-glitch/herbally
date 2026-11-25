@@ -55,7 +55,10 @@ export async function GET(request: NextRequest) {
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests. Try again in a minute.", rateLimited: true },
-      { status: 429, headers: { "Retry-After": "60" } }
+      {
+        status: 429,
+        headers: { "Retry-After": "60", "Cache-Control": "no-store" },
+      }
     );
   }
 
@@ -72,7 +75,7 @@ export async function GET(request: NextRequest) {
         error:
           "Enter a valid 8-digit Health Canada NPN or DIN-HM (e.g. 80000001).",
       },
-      { status: 400 }
+      { status: 400, headers: { "Cache-Control": "no-store" } }
     );
   }
 
@@ -99,7 +102,7 @@ export async function GET(request: NextRequest) {
               : `No Health Canada LNHPD record found for NPN ${npn}.`,
           notFound: true,
         },
-        { status: 404 }
+        { status: 404, headers: { "Cache-Control": "no-store" } }
       );
     }
 

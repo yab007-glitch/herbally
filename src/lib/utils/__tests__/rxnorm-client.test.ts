@@ -83,6 +83,29 @@ describe("rxnorm-client", () => {
         encodeURIComponent("vitamin c")
       );
     });
+
+    it("filters nameless candidates and deduplicates repeated RxCUI entries", async () => {
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          approximateGroup: {
+            candidate: [
+              { rxcui: "1191" },
+              { rxcui: "1191", name: "Aspirin", score: "100" },
+              { rxcui: "1191", name: "aspirin", score: "100" },
+              { rxcui: "1191", name: "   ", score: "50" },
+              { rxcui: "5640", name: "Ibuprofen", score: "80" },
+            ],
+          },
+        }),
+      });
+
+      const result = await searchDrugs("aspirin");
+      expect(result).toEqual([
+        { rxcui: "1191", name: "Aspirin", synonym: "Aspirin" },
+        { rxcui: "5640", name: "Ibuprofen", synonym: "Ibuprofen" },
+      ]);
+    });
   });
 
   describe("getDrugByRxcui", () => {

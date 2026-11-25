@@ -60,6 +60,7 @@ describe("GET /api/interactions/check availability behavior", () => {
       )
     );
     expect(res.status).toBe(503);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
     const body = await res.json();
     expect(body).toEqual({ found: false, unavailable: true });
   });
@@ -79,6 +80,7 @@ describe("GET /api/interactions/check availability behavior", () => {
       )
     );
     expect(res.status).toBe(503);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
     const body = await res.json();
     expect(body).toEqual({ found: false, unavailable: true });
   });
@@ -91,6 +93,10 @@ describe("GET /api/interactions/check availability behavior", () => {
       )
     );
     expect(res.status).toBe(200);
+    expect(res.headers.get("Cache-Control")).toBe(
+      "public, s-maxage=3600, stale-while-revalidate=86400"
+    );
+    expect(res.headers.get("Vary")).toBe("x-locale");
     const body = await res.json();
     expect(body).toEqual({ found: false, herb: null });
   });
