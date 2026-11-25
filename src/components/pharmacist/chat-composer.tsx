@@ -131,6 +131,9 @@ export function ChatComposer({
             )}
           </div>
         )}
+        <p className="mt-1.5 text-center text-[10px] text-muted-foreground">
+          {t("pharmacist.privacyNotice")}
+        </p>
       </div>
 
       {messageCount >= 3 && (

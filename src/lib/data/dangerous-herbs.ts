@@ -915,6 +915,253 @@ export function isCalculatorBlockedSlug(slug: string): boolean {
 }
 
 /**
+ * True only for plants whose public adult dosing statements must be suppressed
+ * (toxic/lethal/banned plants). Non-dangerous calculator-blocked herbs (e.g.
+ * senna-leaf, calendula) still display sanitized adult reference doses.
+ */
+export function shouldSuppressPublicAdultDose(slug: string): boolean {
+  return isDangerousHerb(slug);
+}
+
+const DANGEROUS_ALIAS_TO_SLUG: ReadonlyArray<readonly [string, string]> = [
+  ["aconite", "aconite-processed"],
+  ["aconit", "aconite-processed"],
+  ["aconitine", "aconite-processed"],
+  ["aconitum", "aconite-processed"],
+  ["wolfsbane", "monkshood"],
+  ["monkshood", "monkshood"],
+  ["cao wu", "cao-wu-analgesic"],
+  ["chuan wu", "chuan-wu-analgesic"],
+  ["abrus", "abrus-precatorius"],
+  ["abrin", "abrus-precatorius"],
+  ["rosary pea", "abrus-precatorius"],
+  ["jequirity", "abrus-precatorius"],
+  ["acokanthera", "acokanthera"],
+  ["aristolochia", "aristolochia-clematitis"],
+  ["birthwort", "aristolochia-clematitis"],
+  ["ma dou ling", "ma-dou-ling"],
+  ["atropa belladonna", "atropa-belladonna-herb"],
+  ["belladonna", "atropa-belladonna-herb"],
+  ["belladone", "atropa-belladonna-herb"],
+  ["deadly nightshade", "atropa-belladonna-herb"],
+  ["pennyroyal", "lamiaceae-pennyroyal"],
+  ["menthe pouliot", "lamiaceae-pennyroyal"],
+  ["oleander", "nerium-oleander"],
+  ["laurier rose", "nerium-oleander"],
+  ["poison hemlock", "conium-maculatum-herb"],
+  ["grande cigue", "conium-maculatum-herb"],
+  ["water hemlock", "cicuta-virosa"],
+  ["cigue aquatique", "cicuta-virosa"],
+  ["hemlock", "conium-maculatum-herb"],
+  ["cigue", "conium-maculatum-herb"],
+  ["kratom", "kratom"],
+  ["mitragyna speciosa", "kratom"],
+  ["wintergreen", "gaulteria-wintergreen"],
+  ["gaultheria", "gaulteria-wintergreen"],
+  ["the des bois", "gaulteria-wintergreen"],
+  ["foxglove", "digitalis-purpurea-herb"],
+  ["digitalis", "digitalis-purpurea-herb"],
+  ["digitale", "digitalis-purpurea-herb"],
+  ["mandrake", "mandragora-officinarum-herb"],
+  ["mandragore", "mandragora-officinarum-herb"],
+  ["ricinus", "ricinus-communis"],
+  ["castor bean", "ricinus-communis"],
+  ["ricin", "ricinus-communis"],
+  ["nux vomica", "strychnos-nux-vomica"],
+  ["strychnine", "strychnos-nux-vomica"],
+  ["strychnos", "strychnos-nux-vomica"],
+  ["taxus", "taxus-baccata"],
+  ["yew", "taxus-baccata"],
+  ["colchicum", "colchicum-autumnale-herb"],
+  ["autumn crocus", "colchicum-autumnale-herb"],
+  ["colchique", "colchicum-autumnale-herb"],
+  ["datura", "datura-stramonium"],
+  ["jimsonweed", "datura-stramonium"],
+  ["stramoine", "datura-stramonium"],
+  ["henbane", "henbane"],
+  ["jusquiame", "henbane"],
+  ["lily of the valley", "convallaria-majalis-herb"],
+  ["muguet", "convallaria-majalis-herb"],
+  ["gelsemium", "gelsemium-elegans"],
+  ["podophyllum", "podophyllum-peltatum-herb"],
+  ["mayapple", "podophyllum-peltatum-herb"],
+  ["pokeweed", "pokeroot"],
+  ["pokeroot", "pokeroot"],
+  ["sassafras", "sassafras"],
+  ["ergot", "secale-cornutum"],
+  ["sanguinaria", "sanguinaria-canadensis-herb"],
+  ["bloodroot", "sanguinaria-canadensis-herb"],
+  ["ephedra", "ephedra-sinica"],
+  ["ma huang", "ephedra-sinica"],
+  ["yohimbe", "corynanthe-yohimbe"],
+  ["germander", "germander"],
+  ["germandree", "germander"],
+  ["tansy", "tansy"],
+  ["tanaisie", "tansy"],
+  ["chaparral", "gobernadora"],
+  ["gobernadora", "gobernadora"],
+  ["soursop", "annona-muricata"],
+  ["graviola", "annona-muricata"],
+  ["corossol", "annona-muricata"],
+  ["mistletoe", "european-mistletoe"],
+  ["gui", "european-mistletoe"],
+  ["lobelia", "lobelia-inflata"],
+  ["blue cohosh", "blue-cohosh-root"],
+  ["celandine", "chelidonium-majus"],
+  ["chelidoine", "chelidonium-majus"],
+  ["camphor", "cinnamomum-camphora"],
+  ["camphre", "cinnamomum-camphora"],
+  ["bitter almond", "bitter-almond"],
+  ["amande amere", "bitter-almond"],
+  ["khat", "khat"],
+  ["betel nut", "betel-nut"],
+  ["areca", "betel-nut"],
+  ["opium poppy", "papaver-somniferum"],
+];
+
+const NON_DOSABLE_ALIAS_TO_SLUG: ReadonlyArray<readonly [string, string]> = [
+  ["comfrey", "comfrey"],
+  ["consoude", "comfrey"],
+  ["symphytum", "comfrey"],
+  ["arnica", "arnica"],
+  ["tea tree", "tea-tree"],
+  ["arbre a the", "tea-tree"],
+  ["kava", "kava"],
+  ["kava kava", "kava"],
+  ["calendula", "calendula"],
+  ["cayenne", "cayenne"],
+  ["butterbur", "butterbur"],
+  ["petasite", "butterbur"],
+  ["red yeast rice", "red-yeast-rice"],
+  ["levure de riz rouge", "red-yeast-rice"],
+  ["senna", "senna-leaf"],
+  ["sene", "senna-leaf"],
+  ["aloe vera", "aloe-vera-leaf"],
+  ["cascara", "rhamnus-purshiana"],
+  ["buckthorn", "buckthorn"],
+  ["gotu kola", "gotu-kola"],
+  ["nutmeg", "nutmeg"],
+  ["muscade", "nutmeg"],
+  ["saffron", "saffron"],
+  ["safran", "saffron"],
+  ["oregano", "oregano"],
+  ["origan", "oregano"],
+  ["stevia", "stevia"],
+  ["tongkat ali", "tongkat-ali"],
+  ["thuja", "thuja"],
+  ["thuya", "thuja"],
+  ["myrrh", "myrrh"],
+  ["myrrhe", "myrrh"],
+  ["boneset", "boneset"],
+  ["blue flag", "blue-flag"],
+  ["wild lettuce", "wild-lettuce"],
+  ["pomegranate peel", "pomegranate-peel"],
+  ["pasque flower", "pasque-flower"],
+  ["rhubarb", "rheum-officinale"],
+];
+
+function foldFreeText(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function containsWholeTerm(
+  normalizedText: string,
+  normalizedTerm: string
+): boolean {
+  if (!normalizedText || !normalizedTerm) return false;
+  const paddedText = ` ${normalizedText} `;
+  const paddedTerm = ` ${normalizedTerm} `;
+  return paddedText.includes(paddedTerm);
+}
+
+function buildSlugTerms(slug: string): string[] {
+  const spaced = slug.replace(/-/g, " ");
+  const stripped = spaced
+    .replace(
+      /\b(herb|root|processed|analgesic|leaf|seed|bark|wood|peel|resin)\b/g,
+      ""
+    )
+    .replace(/\s+/g, " ")
+    .trim();
+  return stripped && stripped.length >= 4 && stripped !== spaced
+    ? [slug, spaced, stripped]
+    : [slug, spaced];
+}
+
+export type CalculatorBlockedMatch =
+  | { kind: "dangerous"; slug: string; entry: DangerousHerb }
+  | { kind: "non_dosable"; slug: string };
+
+/**
+ * Deterministically match free-text herb inputs (EN/FR names, botanical names,
+ * slugs, or compound phrases) against the canonical dangerous-herb registry.
+ */
+export function matchDangerousHerbInput(
+  input: string | null | undefined
+): { slug: string; entry: DangerousHerb } | null {
+  if (!input || !input.trim()) return null;
+  const normalized = foldFreeText(input);
+  if (!normalized) return null;
+
+  for (const [alias, slug] of DANGEROUS_ALIAS_TO_SLUG) {
+    const entry = DANGEROUS_HERBS[slug];
+    if (entry && containsWholeTerm(normalized, foldFreeText(alias))) {
+      return { slug, entry };
+    }
+  }
+
+  for (const [slug, entry] of Object.entries(DANGEROUS_HERBS)) {
+    for (const term of buildSlugTerms(slug)) {
+      if (containsWholeTerm(normalized, foldFreeText(term))) {
+        return { slug, entry };
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Classify a free-text herb input for calculator blocking with hazard
+ * precedence: lethal/dangerous herbs always win over non-dosable notices.
+ */
+export function matchCalculatorBlockedInput(
+  input: string | null | undefined
+): CalculatorBlockedMatch | null {
+  const dangerous = matchDangerousHerbInput(input);
+  if (dangerous) {
+    return { kind: "dangerous", slug: dangerous.slug, entry: dangerous.entry };
+  }
+  if (!input || !input.trim()) return null;
+  const normalized = foldFreeText(input);
+  if (!normalized) return null;
+
+  for (const [alias, slug] of NON_DOSABLE_ALIAS_TO_SLUG) {
+    if (
+      TOPICAL_ONLY_OR_NO_ORAL_CALC_SLUGS.has(slug) &&
+      containsWholeTerm(normalized, foldFreeText(alias))
+    ) {
+      return { kind: "non_dosable", slug };
+    }
+  }
+
+  for (const slug of TOPICAL_ONLY_OR_NO_ORAL_CALC_SLUGS) {
+    for (const term of buildSlugTerms(slug)) {
+      if (containsWholeTerm(normalized, foldFreeText(term))) {
+        return { kind: "non_dosable", slug };
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
  * Gate for offering the interactive dosage calculator on a herb page.
  * Never offer a dosage calculator CTA for toxic/lethal plants, medical-only
  * poisons, topical-only herbs, homeopathic forms, or herbs without a

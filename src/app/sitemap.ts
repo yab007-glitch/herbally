@@ -98,7 +98,7 @@ async function fetchHerbBatch(
   try {
     const { data, error } = await withTimeout(
       supabase
-        .from("herbs")
+        .from("herbs_public" as never)
         .select(
           "id, slug, updated_at, translations, description, traditional_uses, dosage_adult"
         )
@@ -203,7 +203,7 @@ async function fetchImportedSourceSlugs(
       };
       const { data, error } = await withTimeout(
         loose
-          .from("herb_monograph_sources")
+          .from("herb_monograph_sources_public")
           .select("herb_slug")
           .range(from, from + pageSize - 1),
         "sitemap_monograph_sources",
@@ -864,6 +864,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
 
+    const publishedPairs = interactionPairs.filter(
+      (p) => p.publicationStatus === "published"
+    );
     const pairEntries = selectSitemapPairEntries(interactionPairs);
     const pairPages: MetadataRoute.Sitemap = pairEntries.flatMap((info) => {
       const lastModified = info.updatedAt
@@ -889,7 +892,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     const medicationPages: MetadataRoute.Sitemap = Array.from(
-      aggregateMedications(interactionPairs).values()
+      aggregateMedications(publishedPairs).values()
     ).flatMap((med) => {
       const lastModified = med.updatedAt ? new Date(med.updatedAt) : new Date();
       const entries: MetadataRoute.Sitemap = [

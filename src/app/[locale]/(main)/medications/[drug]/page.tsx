@@ -23,6 +23,12 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { getMedicationBySlug } from "@/lib/interactions/medications";
+import { findCollisionsForDrug } from "@/lib/interactions/drug-matching-unified";
+import {
+  getCollisionWarningBanner,
+  getInteractionStatusBadge,
+  summarizeInteractionPublicationStatus,
+} from "@/lib/interactions/evidence";
 import type {
   InteractionPair,
   InteractionSeverity,
@@ -239,7 +245,9 @@ export default async function MedicationDetailPage({ params }: Props) {
 
   const grouped = new Map<InteractionSeverity, InteractionPair[]>();
   for (const sev of SEVERITY_ORDER) {
-    const items = med.interactions.filter((i) => i.severity === sev);
+    const items = med.interactions.filter(
+      (i) => i.severity === sev && i.publicationStatus !== "retracted_hold"
+    );
     if (items.length > 0) grouped.set(sev, items);
   }
 
@@ -342,14 +350,33 @@ export default async function MedicationDetailPage({ params }: Props) {
             : `${med.totalInteractions} medicinal herb${med.totalInteractions === 1 ? " has a" : "s have"} documented interaction${med.totalInteractions === 1 ? "" : "s"} with ${med.drugName}. Select any pair for full clinical notes and references.`}
         </p>
         <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+          <Info className="size-3.5 text-amber-600" aria-hidden="true" />
           <span>
-            {fr
-              ? "Révision éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS"
-              : "Editorially reviewed by Yasser Bheekun — MLT, OPTMQ · CSMLS"}
+            {
+              summarizeInteractionPublicationStatus(
+                Array.from(grouped.values()).flat(),
+                fr ? "fr" : "en"
+              ).banner
+            }
           </span>
         </p>
       </header>
+
+      {(() => {
+        const drugCollisions = findCollisionsForDrug(med.drugSlug);
+        if (drugCollisions.length === 0) return null;
+        return (
+          <div
+            role="alert"
+            className="rounded-xl border border-amber-300 bg-amber-50/70 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+          >
+            {getCollisionWarningBanner(
+              fr ? "fr" : "en",
+              drugCollisions.map((c) => c.path)
+            )}
+          </div>
+        );
+      })()}
 
       <dl className="grid grid-cols-2 gap-3 rounded-2xl border bg-muted/30 p-4 sm:grid-cols-4">
         {SEVERITY_ORDER.map((sev) => (
@@ -413,6 +440,22 @@ export default async function MedicationDetailPage({ params }: Props) {
                         >
                           {severityLabel(pair.severity, fr)}
                         </span>
+                        {(() => {
+                          const pub = getInteractionStatusBadge(
+                            pair.publicationStatus,
+                            fr ? "fr" : "en"
+                          );
+                          return (
+                            <span
+                              className={cn(
+                                "rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                                pub.toneClass
+                              )}
+                            >
+                              {pub.label}
+                            </span>
+                          );
+                        })()}
                         {ev && (
                           <span className="rounded-full border bg-background/80 px-2.5 py-0.5 text-xs text-muted-foreground">
                             {ev}

@@ -77,6 +77,8 @@ export interface ImportContext {
   existingByHerb: ReadonlyMap<string, readonly ExistingPair[]>;
   /** Optional so planner tests and dry reviews can run without a database. */
   herbIds?: ReadonlyMap<string, string>;
+  /** Hard-stop interaction expansion when explicitly false (or during CLI apply without governance flag). */
+  allowExpansion?: boolean;
 }
 
 function coverageFor(
@@ -142,6 +144,17 @@ export function planImport(
       acceptedPairKeys.add(result.pairKey);
       const drugName = pair.drug_name.trim();
       const action = existingNames.has(drugName) ? "update" : "insert";
+      if (ctx.allowExpansion === false && action === "insert") {
+        rejected.push({
+          file: file.path,
+          herbSlug,
+          drugName,
+          code: "EXPANSION_FROZEN",
+          message:
+            "Interaction database expansion is hard-stopped pending owner clinical governance sign-off.",
+        });
+        continue;
+      }
       accepted.push({
         file: file.path,
         herbSlug,
@@ -408,15 +421,25 @@ async function runCli(): Promise<number> {
 
   const files = loadSeedDir(options.dir);
   const pairCount = files.reduce((total, file) => total + file.pairs.length, 0);
+  const allowExpansion =
+    process.env.HERBALLY_ALLOW_INTERACTION_EXPANSION === "true";
   const plan = planImport(files, {
     publishedHerbSlugs: snapshot.publishedHerbSlugs,
     existingByHerb: snapshot.existingByHerb,
     herbIds: snapshot.herbIds,
+    allowExpansion,
   });
 
   if (!options.apply) {
     printDryRun(files, plan, pairCount);
     return 0;
+  }
+
+  if (!allowExpansion) {
+    console.error(
+      "Refusing to apply: interaction database expansion is frozen. Owner clinical governance sign-off and HERBALLY_ALLOW_INTERACTION_EXPANSION=true are required."
+    );
+    return 2;
   }
 
   const fileErrors = files.filter((file) => file.parseError);

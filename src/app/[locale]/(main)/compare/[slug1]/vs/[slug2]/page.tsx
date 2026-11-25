@@ -14,7 +14,11 @@ import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
 import { getHerbBySlug } from "@/lib/actions/herbs";
-import { canShowDoseCalculator } from "@/lib/data/dangerous-herbs";
+import {
+  canShowDoseCalculator,
+  isDangerousHerb,
+} from "@/lib/data/dangerous-herbs";
+import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import { truncateDescription } from "@/lib/seo/truncate-description";
 import { fitTitle } from "@/lib/seo/fit-title";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
@@ -240,7 +244,17 @@ export default async function ComparePage({ params }: Props) {
     },
     { name: `${herbA.name} vs ${herbB.name}`, url: compareUrl },
   ];
+  const herbAVerified = isVerified(
+    parseProvenance(herbA.provenance as Record<string, unknown> | null)
+  );
+  const herbBVerified = isVerified(
+    parseProvenance(herbB.provenance as Record<string, unknown> | null)
+  );
+  const herbADangerous = isDangerousHerb(slug1);
+  const herbBDangerous = isDangerousHerb(slug2);
   const allowCompareCalculator =
+    herbAVerified &&
+    herbBVerified &&
     canShowDoseCalculator(slug1, herbA.dosage_adult) &&
     canShowDoseCalculator(slug2, herbB.dosage_adult);
 
@@ -456,10 +470,26 @@ export default async function ComparePage({ params }: Props) {
                 {t("compare.adultDosage")}
               </div>
               <div className="text-muted-foreground">
-                {herbA.dosage_adult || "—"}
+                {herbADangerous
+                  ? locale === "fr"
+                    ? "Bloqué — plante toxique / à haut risque"
+                    : "Blocked — toxic / high-risk plant"
+                  : !herbAVerified
+                    ? locale === "fr"
+                      ? "Non revue — aucune dose de référence vérifiée"
+                      : "Unreviewed — no verified reference dose"
+                    : herbA.dosage_adult || "—"}
               </div>
               <div className="text-muted-foreground">
-                {herbB.dosage_adult || "—"}
+                {herbBDangerous
+                  ? locale === "fr"
+                    ? "Bloqué — plante toxique / à haut risque"
+                    : "Blocked — toxic / high-risk plant"
+                  : !herbBVerified
+                    ? locale === "fr"
+                      ? "Non revue — aucune dose de référence vérifiée"
+                      : "Unreviewed — no verified reference dose"
+                    : herbB.dosage_adult || "—"}
               </div>
             </div>
             <div className="grid grid-cols-[1fr_2fr_2fr] gap-4 border-b py-3 text-sm">
@@ -529,14 +559,17 @@ export default async function ComparePage({ params }: Props) {
             <Leaf className="size-4" />
             {t("compare.viewDetails", { name: herbB.name })}
           </Link>
-          {canShowDoseCalculator(slug1, herbA.dosage_adult) && (
-            <Link
-              href={`/calculator?herb=${slug1}`}
-              className={buttonVariants({ variant: "outline" })}
-            >
-              Calculate {herbA.name} Dose
-            </Link>
-          )}
+          {herbAVerified &&
+            canShowDoseCalculator(slug1, herbA.dosage_adult) && (
+              <Link
+                href={`/calculator?herb=${slug1}`}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                {locale === "fr"
+                  ? `Vérifier la référence adulte (${herbA.name})`
+                  : `Check ${herbA.name} Adult Reference`}
+              </Link>
+            )}
         </div>
 
         {/* Visible FAQ — must mirror FAQSchema above for rich-result eligibility */}

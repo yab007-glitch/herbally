@@ -1,4 +1,6 @@
 import type { Herb, DrugInteraction, HerbCategory } from "@/lib/types";
+import { stripPediatricDosageSentences } from "@/lib/herbs/regulatory-evidence";
+import { shouldSuppressPublicAdultDose } from "@/lib/data/dangerous-herbs";
 
 interface HerbFr {
   name?: string;
@@ -54,15 +56,121 @@ function toStringArray(value: unknown): string[] | null {
   return null;
 }
 
-/** Overlay French translations onto an herb when locale is "fr". Falls back to English fields when a translation is missing. */
+function sanitizeStringArrayField(value: unknown): unknown {
+  if (!Array.isArray(value)) {
+    return typeof value === "string"
+      ? stripPediatricDosageSentences(value) || null
+      : value;
+  }
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => stripPediatricDosageSentences(item))
+    .filter((item) => item.length > 0);
+}
+
+/**
+ * Strip quarantined pediatric dosing fields (`dosage_child`,
+ * `translations.fr.dosage_child`) and pediatric dosing sentences from public
+ * herb records before serialization or rendering.
+ */
+export function redactPublicHerbFields<T extends Herb>(herb: T): T {
+  const slug = typeof herb.slug === "string" ? herb.slug : "";
+  const rawTranslations =
+    herb.translations && typeof herb.translations === "object"
+      ? (herb.translations as Record<string, unknown>)
+      : null;
+  let cleanedTranslations = herb.translations;
+  if (
+    rawTranslations &&
+    typeof rawTranslations.fr === "object" &&
+    rawTranslations.fr
+  ) {
+    const frObj = { ...(rawTranslations.fr as Record<string, unknown>) };
+    delete frObj.dosage_child;
+    if (typeof frObj.dosage_adult === "string") {
+      frObj.dosage_adult =
+        stripPediatricDosageSentences(frObj.dosage_adult) || null;
+    }
+    if (typeof frObj.description === "string") {
+      frObj.description = stripPediatricDosageSentences(frObj.description);
+    }
+    if (typeof frObj.preparation_notes === "string") {
+      frObj.preparation_notes =
+        stripPediatricDosageSentences(frObj.preparation_notes) || null;
+    }
+    for (const arrKey of [
+      "traditional_uses",
+      "modern_uses",
+      "contraindications",
+      "side_effects",
+      "effets_secondaires",
+    ]) {
+      if (arrKey in frObj && frObj[arrKey] != null) {
+        frObj[arrKey] = sanitizeStringArrayField(frObj[arrKey]);
+      }
+    }
+    cleanedTranslations = {
+      ...rawTranslations,
+      fr: frObj,
+    } as T["translations"];
+  }
+
+  const safeAdultDosage =
+    slug && shouldSuppressPublicAdultDose(slug)
+      ? null
+      : herb.dosage_adult
+        ? stripPediatricDosageSentences(herb.dosage_adult) || null
+        : null;
+
+  return {
+    ...herb,
+    dosage_child: null,
+    dosage_adult: safeAdultDosage,
+    description:
+      typeof herb.description === "string"
+        ? stripPediatricDosageSentences(herb.description)
+        : herb.description,
+    preparation_notes:
+      typeof herb.preparation_notes === "string"
+        ? stripPediatricDosageSentences(herb.preparation_notes) || null
+        : herb.preparation_notes,
+    ...(Array.isArray(herb.traditional_uses)
+      ? {
+          traditional_uses: sanitizeStringArrayField(
+            herb.traditional_uses
+          ) as string[],
+        }
+      : {}),
+    ...(Array.isArray(herb.modern_uses)
+      ? { modern_uses: sanitizeStringArrayField(herb.modern_uses) as string[] }
+      : {}),
+    ...(Array.isArray(herb.contraindications)
+      ? {
+          contraindications: sanitizeStringArrayField(
+            herb.contraindications
+          ) as string[],
+        }
+      : {}),
+    ...(Array.isArray(herb.side_effects)
+      ? {
+          side_effects: sanitizeStringArrayField(herb.side_effects) as string[],
+        }
+      : {}),
+    translations: cleanedTranslations,
+  };
+}
+
+/** Overlay French translations onto an herb when locale is "fr". Falls back to English fields when a translation is missing.
+ * Always quarantines `dosage_child` (`null`) on public-facing objects. */
 export function localizeHerb<T extends Herb>(herb: T, locale: string): T {
-  if (locale !== "fr") return herb;
-  const localized = localizeHerbCategory(herb, locale);
+  const withoutChild = redactPublicHerbFields(herb);
+  if (locale !== "fr") return withoutChild;
+  const localized = localizeHerbCategory(withoutChild, locale);
   const t = fr<HerbFr>(herb.translations);
   if (!t) return localized;
   const record = t as unknown as Record<string, unknown>;
   const commonNames = toStringArray(frField(record, "common_names"));
-  return {
+  return redactPublicHerbFields({
     ...localized,
     name: t.name || herb.name,
     common_names: commonNames?.length ? commonNames : herb.common_names,
@@ -71,13 +179,13 @@ export function localizeHerb<T extends Herb>(herb: T, locale: string): T {
       toStringArray(t.traditional_uses) ?? herb.traditional_uses,
     modern_uses: toStringArray(t.modern_uses) ?? herb.modern_uses,
     dosage_adult: t.dosage_adult || herb.dosage_adult,
-    dosage_child: t.dosage_child || herb.dosage_child,
+    dosage_child: null,
     preparation_notes: t.preparation_notes || herb.preparation_notes,
     contraindications:
       toStringArray(t.contraindications) ?? herb.contraindications,
     side_effects:
       toStringArray(frField(record, "side_effects")) ?? herb.side_effects,
-  };
+  });
 }
 
 /**

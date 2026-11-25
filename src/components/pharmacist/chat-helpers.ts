@@ -52,7 +52,7 @@ export function parseCommand(text: string): {
     return {
       command: "calculator",
       args: rest || null,
-      systemContext: `The user wants to calculate an herbal dosage.${rest ? ` Details: ${rest}` : " Guide them through the dosage calculation by asking about the herb name, patient age, weight, and adult dose."}`,
+      systemContext: `The user invoked /calculator.${rest ? ` Details: ${rest}.` : ""} Direct adults aged 18+ to the /calculator page to verify an unscaled adult reference amount. Do not calculate, scale, or compute doses for children or adolescents, never apply Clark's/Young's/Fried's/BSA scaling, and never collect a patient's age or weight to compute a dose.`,
     };
   }
 

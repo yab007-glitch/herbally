@@ -1,11 +1,12 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getAdminAccess } from "@/lib/auth/admin-guard";
 import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { slugify } from "@/lib/utils";
 import { logger } from "@/lib/utils/logger";
+import { PUBLIC_HERB_COLUMNS } from "@/lib/herbs/public-columns";
 import type { ActionResponse } from "@/lib/types";
 import type { Database } from "@/lib/types/database";
 
@@ -13,22 +14,28 @@ type HerbInsert = Database["public"]["Tables"]["herbs"]["Insert"];
 type Herb = Database["public"]["Tables"]["herbs"]["Row"];
 
 /**
- * Resolve an authenticated Supabase client whose user is an admin, verified
- * against the `profiles.role` column (never against client-supplied JWT
- * metadata). Returns `ok: false` for unauthenticated / non-admin callers so a
- * server action can bail before any write. The admin herb INSERT/UPDATE RLS
- * policies (00005) gate on this same check, so a forged caller still cannot
- * write — defense in depth.
+ * Authorize the caller as an AAL2 admin against `profiles.role` via
+ * `getAdminAccess()`, and only after authorization succeeds return the
+ * service-role admin client so post-00104 INSERT/UPDATE `.select(...)`
+ * RETURNING metadata succeeds even after raw base-table prose/dose SELECT is
+ * revoked from `authenticated`.
  */
 async function requireAdmin(): Promise<{
-  supabase: Awaited<ReturnType<typeof createClient>>;
+  supabase: ReturnType<typeof createAdminClient> | null;
   ok: boolean;
 }> {
   const access = await getAdminAccess();
-  if (access.status === "authorized") {
-    return { supabase: access.supabase, ok: true };
+  if (access.status !== "authorized") {
+    return { supabase: null, ok: false };
   }
-  return { supabase: await createClient(), ok: false };
+  try {
+    return { supabase: createAdminClient(), ok: true };
+  } catch (error) {
+    logger.error("requireAdmin_service_client_unavailable", {
+      error: String(error),
+    });
+    return { supabase: null, ok: false };
+  }
 }
 
 function parseStringArray(value: string | null): string[] {
@@ -55,7 +62,7 @@ function bool(formData: FormData, key: string): boolean {
  * slug is found. Bounded to avoid an unbounded loop on pathological input.
  */
 async function uniqueSlug(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: ReturnType<typeof createAdminClient>,
   base: string
 ): Promise<string> {
   const root = base || "herb";
@@ -80,7 +87,7 @@ function buildRow(formData: FormData): Omit<HerbInsert, "slug"> {
     description: str(formData, "description"),
     common_names: parseStringArray(str(formData, "common_names")),
     dosage_adult: str(formData, "dosage_adult") || null,
-    dosage_child: str(formData, "dosage_child") || null,
+    // Legacy pediatric dosage field is quarantined — do not accept free-text edits.
     pregnancy_safe: bool(formData, "pregnancy_safe"),
     nursing_safe: bool(formData, "nursing_safe"),
     is_published: bool(formData, "is_published"),
@@ -148,7 +155,7 @@ export async function createHerb(
   formData: FormData
 ): Promise<ActionResponse<Herb>> {
   const { supabase, ok } = await requireAdmin();
-  if (!ok) return { success: false, error: "Not authorized" };
+  if (!ok || !supabase) return { success: false, error: "Not authorized" };
 
   const row = buildRow(formData);
   const validationError = validateRow(row);
@@ -159,7 +166,7 @@ export async function createHerb(
     const { error } = await supabase
       .from("herbs")
       .insert({ ...row, slug })
-      .select()
+      .select(PUBLIC_HERB_COLUMNS)
       .single();
     if (error) {
       // L14 (audit 2026-06-22): don't leak the raw PostgREST error to the client
@@ -188,7 +195,7 @@ export async function updateHerb(
   formData: FormData
 ): Promise<ActionResponse<Herb>> {
   const { supabase, ok } = await requireAdmin();
-  if (!ok) return { success: false, error: "Not authorized" };
+  if (!ok || !supabase) return { success: false, error: "Not authorized" };
 
   const id = str(formData, "id");
   if (!id) return { success: false, error: "Missing herb id" };
@@ -213,7 +220,7 @@ export async function updateHerb(
       .from("herbs")
       .update(row)
       .eq("id", id)
-      .select()
+      .select(PUBLIC_HERB_COLUMNS)
       .single();
     if (error) {
       // L14 (audit 2026-06-22): don't leak the raw PostgREST error to the client.
@@ -263,7 +270,7 @@ async function setHerbReview(
   reviewed: boolean
 ): Promise<ActionResponse<{ reviewedOn: string | null }>> {
   const { supabase, ok } = await requireAdmin();
-  if (!ok) return { success: false, error: "Not authorized" };
+  if (!ok || !supabase) return { success: false, error: "Not authorized" };
 
   const id = str(formData, "herb_id");
   const slug = str(formData, "slug");
@@ -283,6 +290,8 @@ async function setHerbReview(
     review_status: reviewed ? "human_reviewed" : null,
     reviewed_by_name: reviewed ? "Yasser Bheekun" : null,
     reviewed_on: reviewedOn,
+    review_role: reviewed ? "editorial" : null,
+    bulk_editorial_import: false,
   };
 
   const { error } = await supabase

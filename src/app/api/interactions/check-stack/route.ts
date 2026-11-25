@@ -13,6 +13,7 @@ import {
   type StackHerbSummary,
   type StackMatchItem,
   type StackUnrecordedItem,
+  type StackWithheldItem,
 } from "@/lib/interactions/stack";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
@@ -135,10 +136,17 @@ export async function POST(request: NextRequest) {
             input,
             candidate: null,
             pairs: [],
+            retractedPairs: [],
           };
         }
-        const pairs = await getHerbPairs(candidate.slug, locale);
-        return { input, candidate, pairs };
+        const allPairs = await getHerbPairs(candidate.slug, locale);
+        const pairs = allPairs.filter(
+          (p) => p.publicationStatus !== "retracted_hold"
+        );
+        const retractedPairs = allPairs.filter(
+          (p) => p.publicationStatus === "retracted_hold"
+        );
+        return { input, candidate, pairs, retractedPairs };
       })
     );
 
@@ -146,6 +154,7 @@ export async function POST(request: NextRequest) {
     const unresolvedHerbs: string[] = [];
     const matches: StackMatchItem[] = [];
     const conflicts: StackConflictItem[] = [];
+    const withheld: StackWithheldItem[] = [];
     const unrecorded: StackUnrecordedItem[] = [];
 
     for (const item of resolvedList) {
@@ -213,6 +222,7 @@ export async function POST(request: NextRequest) {
               source: pair.source,
               sourceUrl: pair.sourceUrl,
               pairUrl: pairPath(item.candidate.slug, pair.drugName),
+              publicationStatus: pair.publicationStatus ?? "legacy_unreviewed",
             })),
           });
         } else if (match.kind === "match") {
@@ -231,14 +241,30 @@ export async function POST(request: NextRequest) {
             source: pair.source,
             sourceUrl: pair.sourceUrl,
             pairUrl: pairPath(item.candidate.slug, pair.drugName),
+            publicationStatus: pair.publicationStatus ?? "legacy_unreviewed",
           });
         } else {
-          unrecorded.push({
-            herbInput: item.input,
-            herbSlug: item.candidate.slug,
-            herbName: displayName,
+          const retractedMatch = matchInteractionPairDetailed(
             drugInput,
-          });
+            item.retractedPairs
+          );
+          if (retractedMatch.kind !== "none") {
+            withheld.push({
+              herbInput: item.input,
+              herbSlug: item.candidate.slug,
+              herbName: displayName,
+              drugInput,
+              status: "withheld",
+              reason: "retracted_hold",
+            });
+          } else {
+            unrecorded.push({
+              herbInput: item.input,
+              herbSlug: item.candidate.slug,
+              herbName: displayName,
+              drugInput,
+            });
+          }
         }
       }
     }
@@ -256,6 +282,7 @@ export async function POST(request: NextRequest) {
           totalCombinations: herbs.length * drugs.length,
           matchedCount: sortedMatches.length,
           unrecordedCount: unrecorded.length,
+          withheldCount: withheld.length,
           conflictCount: conflicts.length,
           hasConflicts: conflicts.length > 0,
           highestSeverity: highestSeverityOf(sortedMatches),
@@ -263,6 +290,7 @@ export async function POST(request: NextRequest) {
         },
         matches: sortedMatches,
         conflicts,
+        withheld,
         unrecorded,
         stackAlerts,
       },

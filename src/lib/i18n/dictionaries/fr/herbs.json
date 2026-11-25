@@ -91,7 +91,7 @@
     "herbsAtAGlance": "Plantes en Bref",
     "askHerbalist": "Demander à l'herboriste",
     "calculatorCtaTitle": "Calculer une dose sûre pour {name}",
-    "calculatorCtaBody": "Calculateur gratuit de posologie — doses de référence adultes selon le poids.",
+    "calculatorCtaBody": "Vérificateur gratuit de référence adulte de monographie (18+ — sans formule pondérale).",
     "adultOnlyNote": "Calculateur de dose : adultes de 18 ans et plus seulement.",
     "noStatedDose": "Les dossiers d'homologation à l'origine de cette fiche ({source}) n'indiquent aucune quantité. Consultez l'étiquette du produit ou un pharmacien — aucun dosage n'a été inventé ici."
   },
@@ -128,8 +128,8 @@
     "sideEffects": "Quels effets secondaires sont associés à {name} ?",
     "sideEffectsFallback": "Les effets indésirables rapportés varient selon la préparation et la dose. Consultez un professionnel de santé ou un pharmacien qualifié avant d'utiliser {name}.",
     "sideEffectsDangerous": "{name} est une plante toxique ou potentiellement mortelle. Ne pas s'automédiquer ; contactez immédiatement un centre antipoison ou les urgences en cas d'exposition.",
-    "doseQuestion": "Comment calculer une dose sûre pour {name} ?",
-    "doseAnswer": "Utilisez l'outil de référence posologique adulte (18+) d'HerbAlly pour estimer une dose ajustée au poids à partir d'une dose adulte établie pour {name}. Ne dépassez jamais les maximums monographiques et confirmez avec un professionnel de santé.",
+    "doseQuestion": "Comment vérifier la dose de référence adulte pour {name} ?",
+    "doseAnswer": "Utilisez l'outil de référence posologique adulte (18+) d'HerbAlly pour consulter la quantité adulte de référence non ajustée issue des monographies pour {name}. Ne dépassez jamais les maximums monographiques et confirmez avec un professionnel de santé.",
     "pregQuestion": "{name} est-il sûr pendant la grossesse ?",
     "interactQuestion": "{name} interagit-il avec les médicaments ?"
   },
@@ -162,7 +162,11 @@
     "notHumanReviewed": "Non révisé par un humain",
     "notHumanReviewedTooltip": "Cette fiche n'a pas été révisée par un humain. Ne la considérez pas comme une monographie vérifiée.",
     "humanReviewed": "Révisé par un humain",
-    "humanReviewedTooltip": "Révisé et vérifié par rapport aux sources indiquées. Révision éditoriale, et non clinique.",
+    "humanReviewedTooltip": "Révisé et vérifié par rapport aux sources indiquées ({reviewer}, {date}). Révision éditoriale, et non clinique.",
+    "clinicallyReviewed": "Révisé par un clinicien",
+    "clinicallyReviewedTooltip": "Révisé cliniquement par {reviewer} le {date}.",
+    "bulkEditorialImport": "Contrôle éditorial · Sans validation clinique",
+    "bulkEditorialImportTooltip": "Import éditorial groupé ({reviewer}, {date}). Ne constitue pas une révision clinique individuelle.",
     "needsReReview": "À réviser de nouveau",
     "needsReReviewTooltip": "Cette fiche a déjà été révisée, puis modifiée. Considérez-la comme non révisée jusqu'à ce que quelqu'un la relise.",
     "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations.",
@@ -229,7 +233,9 @@
       "mild": "{count, plural, one {# légère} other {# légères}}"
     },
     "orally": "Par voie orale",
-    "topically": "En usage local"
+    "topically": "En usage local",
+    "pediatric": "Enfants (<18 ans)",
+    "pediatricUnavailable": "Posologie pédiatrique non disponible — non validée"
   },
   "search": {
     "placeholder": "Rechercher des herbes par nom, symptôme ou utilisation...",

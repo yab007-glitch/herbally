@@ -45,6 +45,7 @@ const COPY = {
         heading: "Safety claims",
         body: [
           "Interaction severity, contraindications and pregnancy/nursing assessments are the highest-risk statements on this site. They are written conservatively: where the evidence is thin, the page says “unknown” rather than guessing.",
+          "Pediatric dosing (under age 18) and classical weight/age scaling formulas (Clark's, Young's, Fried's, BSA) are disabled site-wide. Legacy interaction pairs without a recorded licensed clinical reviewer sign-off carry blocked clinical action notices.",
           "HerbAlly is educational information, not medical advice, diagnosis or treatment. Nothing here replaces your prescriber or pharmacist, who can see your full history and your actual prescriptions.",
         ],
       },
@@ -103,6 +104,7 @@ const COPY = {
         heading: "Les affirmations de sécurité",
         body: [
           "La gravité des interactions, les contre-indications et les évaluations grossesse/allaitement sont les affirmations les plus à risque du site. Elles sont rédigées avec prudence : quand les données sont minces, la page indique « inconnu » plutôt que de deviner.",
+          "La posologie pédiatrique (moins de 18 ans) et les formules classiques d'ajustement selon le poids ou l'âge (Clark, Young, Fried, surface corporelle) sont désactivées sur tout le site. Les anciennes fiches d'interactions sans validation clinique enregistrée affichent un avis de conduite clinique bloquée.",
           "HerbAlly est une information éducative, pas un avis médical, un diagnostic ou un traitement. Rien ici ne remplace votre prescripteur ou votre pharmacien, qui connaissent votre historique complet et vos ordonnances réelles.",
         ],
       },

@@ -926,3 +926,255 @@ describe("POST /api/chat — service-role-only cache access", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("POST /api/chat — pediatric & privacy containment", () => {
+  it("refuses pediatric dosing queries deterministically before calling the LLM", async () => {
+    fetchMock.mockResolvedValue(streamResponse());
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({
+        messages: [
+          {
+            role: "user",
+            content: "What chamomile dose should I give my 6-year-old?",
+          },
+        ],
+        locale: "en",
+      })
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("X-HerbAlly-Answer-Status")).toBe("blocked");
+    expect(fetchMock).not.toHaveBeenCalled();
+    const body = await res.text();
+    expect(body).toMatch(/under 18|pediatric|not available/i);
+  });
+
+  it("blocks pediatric numeric doses returned by fallback models too", async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response("down", { status: 500 }))
+      .mockResolvedValueOnce(
+        new Response(
+          `data: ${JSON.stringify({
+            choices: [
+              {
+                delta: {
+                  content:
+                    "You can give your 6-year-old 250 mg of chamomile tea twice daily.",
+                },
+              },
+            ],
+          })}\n\ndata: [DONE]\n\n`,
+          { status: 200, headers: { "content-type": "text/event-stream" } }
+        )
+      );
+
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({
+        messages: [{ role: "user", content: "Tell me about chamomile" }],
+        locale: "en",
+      })
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("X-HerbAlly-Answer-Status")).toBe("blocked");
+    const text = await res.text();
+    expect(text).not.toContain("250 mg");
+  });
+
+  it("blocks a stale/poisoned cache hit containing a pediatric numeric dose", async () => {
+    createAdminClientMock.mockReturnValue({
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            gt: () => ({
+              single: async () => ({
+                data: {
+                  response: "Give your 5-year-old 120 mg of chamomile extract.",
+                },
+                error: null,
+              }),
+            }),
+          }),
+        }),
+        insert: vi.fn(),
+      }),
+    });
+
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({
+        messages: [{ role: "user", content: "What is chamomile?" }],
+        locale: "en",
+      })
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("X-HerbAlly-Answer-Status")).toBe("blocked");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(await res.text()).not.toContain("120 mg");
+  });
+
+  it("bypasses ai_response_cache read and write for personalized medications, herbContext, or multi-turn chats", async () => {
+    const insert = vi.fn(async () => ({ error: null }));
+    const select = vi.fn();
+    createAdminClientMock.mockReturnValue({
+      from: () => ({ select, insert }),
+    });
+    fetchMock.mockResolvedValue(streamResponse());
+
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({
+        messages: [{ role: "user", content: "Is ginger safe?" }],
+        medications: ["warfarin"],
+        locale: "en",
+      })
+    );
+    expect(res.status).toBe(200);
+    await res.text();
+    expect(select).not.toHaveBeenCalled();
+    expect(insert).not.toHaveBeenCalled();
+
+    const res2 = await POST(
+      makeRequest({
+        messages: [
+          { role: "user", content: "Hi" },
+          { role: "assistant", content: "Hello" },
+          { role: "user", content: "Is ginger safe?" },
+        ],
+        locale: "en",
+      })
+    );
+    expect(res2.status).toBe(200);
+    await res2.text();
+    expect(select).not.toHaveBeenCalled();
+    expect(insert).not.toHaveBeenCalled();
+  });
+
+  it("returns deterministic 911 + Poison Control guidance on acute ingestion without calling LLM", async () => {
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({
+        messages: [
+          {
+            role: "user",
+            content: "My toddler just swallowed wintergreen oil!",
+          },
+        ],
+        locale: "en",
+      })
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("X-HerbAlly-Answer-Reason")).toBe(
+      "emergency_ingestion"
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+    const body = await res.text();
+    expect(body).toMatch(/911/);
+    expect(body).toMatch(/Poison Control/i);
+  });
+
+  it("blocks multi-turn pediatric dosing follow-up before calling LLM", async () => {
+    const { POST } = await loadRoute();
+    const res = await POST(
+      makeRequest({
+        messages: [
+          { role: "user", content: "My 5 year old has a mild cough" },
+          { role: "assistant", content: "Tell me more about symptoms." },
+          { role: "user", content: "How much chamomile tea should I give?" },
+        ],
+        locale: "en",
+      })
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("X-HerbAlly-Answer-Reason")).toBe("pediatric");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("runs emergency and pediatric deterministic refusals BEFORE isOllamaCloudConfigured when AI key is missing", async () => {
+    delete process.env.OLLAMA_CLOUD_API_KEY;
+    const { POST } = await loadRoute();
+
+    const emergencyRes = await POST(
+      makeRequest({
+        messages: [
+          {
+            role: "user",
+            content: "My toddler just swallowed wintergreen oil, what do I do?",
+          },
+        ],
+        locale: "en",
+      })
+    );
+    expect(emergencyRes.status).toBe(200);
+    expect(emergencyRes.headers.get("X-HerbAlly-Answer-Status")).toBe(
+      "blocked"
+    );
+    expect(emergencyRes.headers.get("X-HerbAlly-Answer-Reason")).toBe(
+      "emergency_ingestion"
+    );
+    const emergencyBody = await emergencyRes.text();
+    expect(emergencyBody).toMatch(/911/);
+    expect(emergencyBody).toMatch(/1-800-222-1222/);
+
+    const pedRes = await POST(
+      makeRequest({
+        messages: [
+          {
+            role: "user",
+            content: "What chamomile dose for my 18 months old toddler?",
+          },
+        ],
+        locale: "en",
+      })
+    );
+    expect(pedRes.status).toBe(200);
+    expect(pedRes.headers.get("X-HerbAlly-Answer-Status")).toBe("blocked");
+    expect(pedRes.headers.get("X-HerbAlly-Answer-Reason")).toBe("pediatric");
+
+    const reverseMultiTurnRes = await POST(
+      makeRequest({
+        messages: [
+          { role: "user", content: "How much chamomile should I give?" },
+          { role: "assistant", content: "Who is taking it?" },
+          { role: "user", content: "It is for my 5-year-old." },
+        ],
+        locale: "en",
+      })
+    );
+    expect(reverseMultiTurnRes.status).toBe(200);
+    expect(reverseMultiTurnRes.headers.get("X-HerbAlly-Answer-Status")).toBe(
+      "blocked"
+    );
+    expect(reverseMultiTurnRes.headers.get("X-HerbAlly-Answer-Reason")).toBe(
+      "pediatric"
+    );
+
+    const dangerousRes = await POST(
+      makeRequest({
+        messages: [
+          { role: "user", content: "What aconite dose should I take?" },
+        ],
+        locale: "en",
+      })
+    );
+    expect(dangerousRes.status).toBe(200);
+    expect(dangerousRes.headers.get("X-HerbAlly-Answer-Status")).toBe(
+      "blocked"
+    );
+    expect(dangerousRes.headers.get("X-HerbAlly-Answer-Reason")).toBe(
+      "dangerous_herb"
+    );
+
+    const benignRes = await POST(
+      makeRequest({
+        messages: [{ role: "user", content: "Tell me about ginger tea" }],
+        locale: "en",
+      })
+    );
+    expect(benignRes.status).toBe(503);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

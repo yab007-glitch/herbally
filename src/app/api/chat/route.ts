@@ -7,6 +7,8 @@ import { fetchVerifiedContext } from "@/lib/ai/context-fetcher";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
+  detectEmergencyIngestion,
+  detectPediatricDosingRequest,
   evaluateAssistantContent,
   getSafetyRefusal,
 } from "@/lib/chat/safety-guard";
@@ -369,15 +371,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!isOllamaCloudConfigured()) {
-    logger.error("api_chat_key_missing");
-    return NextResponse.json(
-      { error: "AI service is not configured. Please contact support." },
-      { status: 503 }
-    );
-  }
-  const primaryModel = getOllamaCloudModel();
-
   // Streaming body size guard (enforced before buffering / JSON.parse)
   const bodyResult = await readJsonBodyWithLimit(request, MAX_BODY_SIZE);
   if (!bodyResult.ok) {
@@ -420,14 +413,64 @@ export async function POST(request: NextRequest) {
   }
 
   const { messages, herbContext, medications, locale } = parsed.data;
+  const answerLocale: "en" | "fr" = locale ?? "en";
   // The Zod schema already rejects role:"system", so messages here are
   // user/assistant only — clients cannot inject or override the system prompt.
   const msgArray = messages;
 
-  // ── Pre-fetch verified context from our database ──────────────────
-  // Extract the latest user message to analyze for herb/medication names
-  const lastUserMessage =
-    [...msgArray].reverse().find((m) => m.role === "user")?.content ?? "";
+  // ── Pre-LLM deterministic safety refusals ─────────────────────────
+  // Extract the latest user message and recent user turns to catch multi-turn
+  // pediatric asks and acute accidental ingestion before provider/DB checks.
+  const userMessages = msgArray
+    .filter((m) => m.role === "user")
+    .map((m) => m.content);
+  const lastUserMessage = userMessages.at(-1) ?? "";
+  const priorUserHistory = userMessages.slice(0, -1);
+
+  const emergencyRefusal = detectEmergencyIngestion(
+    lastUserMessage,
+    answerLocale,
+    priorUserHistory
+  );
+  if (emergencyRefusal) {
+    return new NextResponse(emergencyRefusal.message, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache",
+        "X-HerbAlly-Answer-Status": "blocked",
+        "X-HerbAlly-Answer-Reason": emergencyRefusal.kind,
+      },
+    });
+  }
+
+  // Deterministic pre-LLM refusal for pediatric dosing asks & toxic-herb
+  // dosing asks before any provider check, cache lookup, DB grounding, or LLM.
+  const preLlmRefusal = detectPediatricDosingRequest(
+    lastUserMessage,
+    answerLocale,
+    priorUserHistory
+  );
+  if (preLlmRefusal) {
+    return new NextResponse(preLlmRefusal.message, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache",
+        "X-HerbAlly-Answer-Status": "blocked",
+        "X-HerbAlly-Answer-Reason": preLlmRefusal.kind,
+      },
+    });
+  }
+
+  if (!isOllamaCloudConfigured()) {
+    logger.error("api_chat_key_missing");
+    return NextResponse.json(
+      { error: "AI service is not configured. Please contact support." },
+      { status: 503 }
+    );
+  }
+  const primaryModel = getOllamaCloudModel();
 
   let verifiedContext = null;
   try {
@@ -472,12 +515,18 @@ export async function POST(request: NextRequest) {
   // monographs, and herb extraction is ranked. Answers cached under v3 include
   // "no EMA monograph for Sideritis scardica" — a denial the database
   // contradicts. They must never be served again; old rows simply expire.
-  const CACHE_KEY_VERSION = "herbally-chat-cache-v4-regulator-context";
+  // v5: pediatric containment + privacy minimization (skip shared cache when
+  // personalized or multi-turn).
+  const CACHE_KEY_VERSION = "herbally-chat-cache-v6-emergency-guard";
+  const shouldBypassCache =
+    msgArray.length > 1 ||
+    Boolean(medications && medications.length > 0) ||
+    Boolean(herbContext && herbContext.trim().length > 0);
   const promptHash = createHash("sha256")
     .update(CACHE_KEY_VERSION)
     .update(JSON.stringify(chatMessages))
     .digest("hex");
-  const supabase = getCacheClient();
+  const supabase = shouldBypassCache ? null : getCacheClient();
   if (supabase) {
     // Service-role read: the cache has no public SELECT policy. The cache is an
     // optimization, so a hung DB must neither fail the request
@@ -507,17 +556,13 @@ export async function POST(request: NextRequest) {
       typeof cached.response === "string" &&
       cached.response.trim()
     ) {
-      // Re-guard on read in case this entry predates the server-side guard.
-      // The cached body is the fully-assembled assistant text (not SSE
-      // chunks), so mirror the live stream's content-type — a mismatch here
-      // breaks clients that sniff the header to decide how to decode.
-      // Only answers proven complete at write time live under this key
-      // version, so the answer status is honest for cache hits too.
-      return new NextResponse(guardResponse(cached.response, locale ?? "en"), {
+      const guardedHit = applyGuard(cached.response, answerLocale);
+      return new NextResponse(guardedHit.text, {
         status: 200,
         headers: {
           "content-type": "text/plain; charset=utf-8",
-          "X-HerbAlly-Answer-Status": "complete",
+          "X-HerbAlly-Answer-Status":
+            guardedHit.verdict === "block" ? "blocked" : "complete",
           "X-HerbAlly-Answer-Reason": "cache",
         },
       });
@@ -630,7 +675,6 @@ export async function POST(request: NextRequest) {
   // partial text for context, and is NEVER written to the shared cache. The
   // guard still runs for EVERY model in the fallback chain. Cache stores
   // primary-model output only, and only when proven complete.
-  const answerLocale: "en" | "fr" = locale ?? "en";
   const collected = await collectAnswer(response, getStreamIdleTimeoutMs());
 
   // Abort while the answer was being read cancels the upstream body (the
@@ -697,6 +741,7 @@ export async function POST(request: NextRequest) {
         // days would outlive a transient fault. A genuine block keeps the
         // prior behaviour (the refusal, not the model text, is cached).
         if (
+          !shouldBypassCache &&
           collected.complete &&
           servedModel === primaryModel &&
           !guarded.failed

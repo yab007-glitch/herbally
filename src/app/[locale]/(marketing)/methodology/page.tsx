@@ -76,19 +76,15 @@ export default async function MethodologyPage() {
                   jobTitle: reviewer.credentials,
                   url: reviewer.profileUrl,
                 },
-                reviewedBy: {
+                editor: {
                   "@type": "Person",
                   name: reviewer.name,
-                  jobTitle: reviewer.credentials,
+                  jobTitle: `${reviewer.credentials} (Editorial maintainer — not a licensed physician clinical reviewer)`,
                   url: reviewer.profileUrl,
                   affiliation: {
                     "@type": "Organization",
                     name: reviewer.affiliation,
                   },
-                  hasCredential: reviewer.qualifications.map((q) => ({
-                    "@type": "EducationalOccupationalCredential",
-                    name: q,
-                  })),
                 },
               }),
               mainEntity: {

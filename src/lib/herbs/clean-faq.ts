@@ -1,3 +1,8 @@
+import {
+  sanitizeFaqQuestionText,
+  stripPediatricDosageSentences,
+} from "@/lib/herbs/regulatory-evidence";
+
 /**
  * Make an imported FAQ answer read as prose.
  *
@@ -106,7 +111,7 @@ export function stripFieldLabels(raw: string): string {
   return text;
 }
 
-export function cleanFaqText(raw: string): string {
+function formatFaqProse(raw: string): string {
   if (!raw) return raw;
   let text = raw.replace(/\s+/g, " ").trim();
   if (!text) return text;
@@ -132,4 +137,18 @@ export function cleanFaqText(raw: string): string {
   );
 
   return text;
+}
+
+export function cleanFaqText(raw: string): string {
+  if (!raw) return raw;
+  const text = formatFaqProse(raw);
+  if (!text) return text;
+  return stripPediatricDosageSentences(text);
+}
+
+export function cleanFaqQuestion(raw: string): string {
+  if (!raw) return raw;
+  const text = formatFaqProse(raw);
+  if (!text) return text;
+  return sanitizeFaqQuestionText(text);
 }

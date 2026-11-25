@@ -12,6 +12,9 @@
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import type { HerbWithInteractions } from "@/lib/types";
 import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
+import { shouldSuppressPublicAdultDose } from "@/lib/data/dangerous-herbs";
+import { PUBLIC_HERB_COLUMNS } from "@/lib/herbs/public-columns";
+import { stripPediatricDosageSentences } from "@/lib/herbs/regulatory-evidence";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import {
@@ -164,7 +167,7 @@ async function extractHerbNames(message: string): Promise<string[]> {
         })
         .join(",");
       const { data } = await supabase
-        .from("herbs")
+        .from("herbs_public" as never)
         .select("name, scientific_name, slug, translations")
         .eq("is_published", true)
         .or(conditions)
@@ -211,8 +214,10 @@ function mapHerbRowToVerified(
   const localizedInteractions = (localized.drug_interactions ?? []).map((ix) =>
     localizeInteraction(ix, locale)
   );
+  const slug = (localized as { slug?: string }).slug ?? "";
+  const isBlockedHerb = slug ? shouldSuppressPublicAdultDose(slug) : false;
   return {
-    slug: (localized as { slug?: string }).slug ?? "",
+    slug,
     name: localized.name,
     scientific_name: localized.scientific_name,
     description: localized.description ?? "",
@@ -220,11 +225,25 @@ function mapHerbRowToVerified(
     modern_uses: localized.modern_uses ?? [],
     contraindications: localized.contraindications ?? [],
     side_effects: localized.side_effects ?? [],
-    drug_interactions: localizedInteractions.map(
-      (ix) =>
-        `${ix.drug_name} (${ix.severity}): ${ix.mechanism ?? ix.description ?? "unknown mechanism"}`
-    ),
-    dosage_adult: localized.dosage_adult ?? null,
+    drug_interactions: localizedInteractions
+      .filter((ix) => {
+        const pubStatus = (ix as { publication_status?: string | null })
+          .publication_status;
+        return pubStatus !== "retracted_hold";
+      })
+      .map((ix) => {
+        const pubStatus =
+          (ix as { publication_status?: string | null }).publication_status ??
+          "legacy_unreviewed";
+        const statusTag =
+          pubStatus === "published"
+            ? "[published clinician-reviewed]"
+            : `[${pubStatus} — confirm with pharmacist]`;
+        return `${ix.drug_name} (${ix.severity}) ${statusTag}: ${ix.mechanism ?? ix.description ?? "unknown mechanism"}`;
+      }),
+    dosage_adult: isBlockedHerb
+      ? null
+      : stripPediatricDosageSentences(localized.dosage_adult) || null,
     pregnancy_safe: localized.pregnancy_safe,
     nursing_safe: localized.nursing_safe,
     pregnancy_safe_oral:
@@ -256,8 +275,10 @@ async function lookupHerb(
     const s = sanitizeFilterValue(name);
     const slug = sanitizeFilterValue(name.toLowerCase().replace(/\s+/g, "-"));
     const { data, error } = await supabase
-      .from("herbs")
-      .select("*, herb_categories(*), drug_interactions(*)")
+      .from("herbs_public" as never)
+      .select(
+        `${PUBLIC_HERB_COLUMNS}, herb_categories(*), drug_interactions(*)`
+      )
       .or(
         `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`
       )
@@ -300,6 +321,12 @@ async function lookupInteractions(
     const result: VerifiedInteraction[] = [];
     for (const ix of data) {
       const row = ix as Record<string, unknown>;
+      const publicationStatus = String(
+        row.publication_status ?? "legacy_unreviewed"
+      );
+      if (publicationStatus === "retracted_hold") {
+        continue;
+      }
       const drugName = String(row.drug_name ?? "");
       const herbName = String(
         (row.herbs as Record<string, unknown> | undefined)?.name ?? ""
@@ -326,6 +353,7 @@ async function lookupInteractions(
           mechanism,
           evidence,
           recommendation,
+          publication_status: publicationStatus,
         });
       }
     }
@@ -360,8 +388,10 @@ async function batchLookupHerbs(
         .join(",");
 
       const { data, error } = await supabase
-        .from("herbs")
-        .select("*, herb_categories(*), drug_interactions(*)")
+        .from("herbs_public" as never)
+        .select(
+          `${PUBLIC_HERB_COLUMNS}, herb_categories(*), drug_interactions(*)`
+        )
         .or(conditions)
         .eq("is_published", true)
         .limit(5);

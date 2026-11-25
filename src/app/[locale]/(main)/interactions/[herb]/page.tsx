@@ -28,6 +28,12 @@ import {
   isStubSupabase,
 } from "@/lib/interactions/errors";
 import { pairPath } from "@/lib/interactions/pair-url";
+import { findCollisionsForHerb } from "@/lib/interactions/drug-matching-unified";
+import {
+  getCollisionWarningBanner,
+  getInteractionStatusBadge,
+  summarizeInteractionPublicationStatus,
+} from "@/lib/interactions/evidence";
 import { SEVERITY_WEIGHT } from "@/lib/interactions/stack";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
@@ -194,14 +200,16 @@ export default async function HerbInteractionsHubPage({ params }: Props) {
   const { herbResult, pairs } = await loadHerbAndPairs(herbSlug, locale);
   const herb = resolveHerbOr404(herbResult);
 
-  const sortedPairs: InteractionPair[] = [...pairs].sort((a, b) => {
-    const sevDiff =
-      (SEVERITY_WEIGHT[b.severity] ?? 0) - (SEVERITY_WEIGHT[a.severity] ?? 0);
-    if (sevDiff !== 0) return sevDiff;
-    return (a.localizedDrugName || a.drugName).localeCompare(
-      b.localizedDrugName || b.drugName
-    );
-  });
+  const sortedPairs: InteractionPair[] = [...pairs]
+    .filter((p) => p.publicationStatus !== "retracted_hold")
+    .sort((a, b) => {
+      const sevDiff =
+        (SEVERITY_WEIGHT[b.severity] ?? 0) - (SEVERITY_WEIGHT[a.severity] ?? 0);
+      if (sevDiff !== 0) return sevDiff;
+      return (a.localizedDrugName || a.drugName).localeCompare(
+        b.localizedDrugName || b.drugName
+      );
+    });
 
   const baseUrl = siteUrl();
   const pageUrl = `${baseUrl}${fr ? "/fr" : ""}/interactions/${herb.slug}`;
@@ -267,14 +275,33 @@ export default async function HerbInteractionsHubPage({ params }: Props) {
               : `No curated drug interaction pair is recorded yet for ${herb.name} in our table. Absence of a curated record does not prove safety — confirm with your pharmacist.`}
         </p>
         <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+          <Info className="size-3.5 text-amber-600" aria-hidden="true" />
           <span>
-            {fr
-              ? "Révision éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS"
-              : "Editorially reviewed by Yasser Bheekun — MLT, OPTMQ · CSMLS"}
+            {
+              summarizeInteractionPublicationStatus(
+                sortedPairs,
+                fr ? "fr" : "en"
+              ).banner
+            }
           </span>
         </p>
       </header>
+
+      {(() => {
+        const herbCollisions = findCollisionsForHerb(herb.slug);
+        if (herbCollisions.length === 0) return null;
+        return (
+          <div
+            role="alert"
+            className="rounded-xl border border-amber-300 bg-amber-50/70 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+          >
+            {getCollisionWarningBanner(
+              fr ? "fr" : "en",
+              herbCollisions.map((c) => c.path)
+            )}
+          </div>
+        );
+      })()}
 
       {sortedPairs.length > 0 ? (
         <ul className="space-y-4">
@@ -297,15 +324,33 @@ export default async function HerbInteractionsHubPage({ params }: Props) {
                   />
                   <span>{pair.localizedDrugName || pair.drugName}</span>
                 </Link>
-                <span
-                  className={cn(
-                    "inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold",
-                    SEVERITY_BADGE_STYLE[pair.severity]
-                  )}
-                >
-                  <SeverityIcon severity={pair.severity} />
-                  {severityLabel(pair.severity, fr)}
-                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={cn(
+                      "inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+                      SEVERITY_BADGE_STYLE[pair.severity]
+                    )}
+                  >
+                    <SeverityIcon severity={pair.severity} />
+                    {severityLabel(pair.severity, fr)}
+                  </span>
+                  {(() => {
+                    const pub = getInteractionStatusBadge(
+                      pair.publicationStatus,
+                      fr ? "fr" : "en"
+                    );
+                    return (
+                      <span
+                        className={cn(
+                          "inline-flex w-fit items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium",
+                          pub.toneClass
+                        )}
+                      >
+                        {pub.label}
+                      </span>
+                    );
+                  })()}
+                </div>
               </div>
 
               <p className="mt-2.5 text-sm leading-relaxed text-foreground/90">

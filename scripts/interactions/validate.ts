@@ -12,6 +12,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { drugSlug } from "../../src/lib/interactions/pair-url";
+import {
+  evaluatePublicationGate,
+  type ClinicalActionStatus,
+} from "../../src/lib/interactions/evidence";
 import { loadEnvLocal, loadSeedDir, type SeedPair } from "./seed";
 
 /** Severity values accepted by public.interaction_severity. */
@@ -141,7 +145,10 @@ export type RejectionCode =
   | "SOURCE_URL_NOT_HTTPS"
   | "SOURCE_HOST_NOT_ALLOWED"
   | "DUPLICATE_PAIR"
-  | "DRUG_SLUG_COLLISION";
+  | "DRUG_SLUG_COLLISION"
+  | "CLASS_ROW_HAS_SINGLE_RXCUI"
+  | "PUBLICATION_GATE_FAILED"
+  | "EXPANSION_FROZEN";
 
 export interface ExistingPair {
   drugName: string;
@@ -385,6 +392,57 @@ export function validatePair(
       "DRUG_SLUG_COLLISION",
       `drug ${drugName} maps to slug "${drugSlug(drugName)}", already used by ${collision.drugName}`
     );
+  }
+
+  const isDrugClass =
+    pair.is_drug_class === true ||
+    /\(\s*class\s*\)|\b(?:anticoagulants|antiplatelets|ssris|maois|nsaid(?:s)?|benzodiazepines|beta[\s-]blockers|calcium\s+channel\s+blockers|diuretics|statins|immunosuppressants)\b/i.test(
+      drugName
+    );
+  if (
+    isDrugClass &&
+    typeof pair.rxcui === "string" &&
+    pair.rxcui.trim() !== ""
+  ) {
+    return reject(
+      "CLASS_ROW_HAS_SINGLE_RXCUI",
+      `drug class "${drugName}" must not carry a single-ingredient RxCUI (${pair.rxcui})`
+    );
+  }
+
+  if (pair.publication_status === "published") {
+    const gate = evaluatePublicationGate({
+      severity: pair.severity,
+      description: pair.description,
+      botanicalApplicability: pair.botanical_applicability ?? null,
+      clinicalReviewerId: pair.clinical_reviewer_id ?? null,
+      verifiedAt: pair.verified_at ?? null,
+      nextReviewDueAt: pair.next_review_due_at ?? null,
+      clinicalActionStatus:
+        (pair.clinical_action_status as ClinicalActionStatus | undefined) ??
+        "unreviewed_blocked",
+      citations: [
+        {
+          sourceType: declaredSource,
+          sourceLicence: declaredLicence,
+          url: sourceUrl,
+          retractionStatus:
+            (pair.retraction_status as
+              | "active"
+              | "corrected"
+              | "expression_of_concern"
+              | "retracted"
+              | undefined) ?? "active",
+          claimSupportAnchor: pair.claim_support_anchor ?? "",
+        },
+      ],
+    });
+    if (!gate.eligible) {
+      return reject(
+        "PUBLICATION_GATE_FAILED",
+        `published interaction fails publication contract: ${gate.reasons.join(", ")}`
+      );
+    }
   }
 
   return { ok: true, pairKey: key, drugSlug: drugSlug(drugName) };

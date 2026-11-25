@@ -326,25 +326,30 @@
     "notFoundDesc": "The herb comparison you're looking for doesn't exist."
   },
   "dosageFormulas": {
+    "adult_reference": {
+      "name": "Adult Monograph Reference (18+)",
+      "description": "Confirms the unscaled adult reference dose without weight or pediatric formulas.",
+      "bestFor": "Adults aged 18–120 with a reviewed adult monograph dose"
+    },
     "clarks_rule": {
-      "name": "Clark's Rule",
-      "description": "Weight-based reference calculation.",
-      "bestFor": "Adults, weight-based reference"
+      "name": "Clark's Rule (Retired)",
+      "description": "Legacy scaling formula retired for safety.",
+      "bestFor": "No longer available"
     },
     "youngs_rule": {
-      "name": "Young's Rule",
-      "description": "Age-based reference calculation, less accurate than weight-based methods.",
-      "bestFor": "Adults, age-based reference"
+      "name": "Young's Rule (Retired)",
+      "description": "Legacy pediatric scaling formula retired for safety.",
+      "bestFor": "No longer available"
     },
     "bsa": {
-      "name": "BSA Method (Mosteller)",
-      "description": "Body surface area reference calculation.",
-      "bestFor": "Adults when height and weight are known"
+      "name": "BSA Method (Retired)",
+      "description": "Legacy scaling formula retired for safety.",
+      "bestFor": "No longer available"
     },
     "fried_rule": {
-      "name": "Fried's Rule",
-      "description": "Age-in-months reference method.",
-      "bestFor": "Not applicable to adults 18+"
+      "name": "Fried's Rule (Retired)",
+      "description": "Legacy infant scaling formula retired for safety.",
+      "bestFor": "No longer available"
     }
   },
   "sponsorship": {
@@ -514,8 +519,8 @@
     "herbsDatabaseDesc": "Browse our evidence-based medicinal herb database with referenced profiles, active compounds, safety warnings, and drug interactions.",
     "virtualHerbalist": "Virtual Herbalist",
     "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
-    "doseCalculator": "Herbal Dosage Calculator: Adult Reference Doses by Weight",
-    "doseCalculatorDesc": "Free adult herbal dosage calculator by weight and age (18+): Clark's, Young's & BSA reference scaling for herbs with established monograph doses. No account required.",
+    "doseCalculator": "Adult Herbal Reference Dose Checker (18+)",
+    "doseCalculatorDesc": "Free adult herbal monograph reference checker (18+): review unscaled adult reference doses for established monographs without weight, age, or pediatric scaling formulas. No account required.",
     "herbsBySymptom": "Herbs by Symptom",
     "herbsBySymptomDesc": "Find the right herbs for your symptoms. Browse evidence-based herbal recommendations for anxiety, sleep, inflammation, digestion, and more.",
     "privacyPolicy": "Privacy Policy",
@@ -721,8 +726,8 @@
     "featuresTitle": "What you can do",
     "featureHerbsTitle": "Herb database",
     "featureHerbsDescription": "Search medicinal herbs with referenced profiles, uses, safety notes, and evidence grades.",
-    "featureCalculatorTitle": "Dosage calculator",
-    "featureCalculatorDescription": "Get age and weight-based dosage recommendations using evidence-based formulas.",
+    "featureCalculatorTitle": "Adult Reference Checker",
+    "featureCalculatorDescription": "Verify unscaled adult monograph reference amounts for adults aged 18+.",
     "featureInteractionsTitle": "Interaction checker",
     "featureInteractionsDescription": "Check for herb-drug interactions before combining supplements with medications.",
     "featureAiTitle": "Virtual herbalist",

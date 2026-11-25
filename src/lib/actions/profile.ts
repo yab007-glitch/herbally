@@ -2,8 +2,22 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/utils/logger";
-import { matchesDrugInteraction } from "@/lib/utils/drug-match";
-import { assessDoseEligibility } from "@/lib/utils/dosage-safety";
+import { matchDrugQueryUnified } from "@/lib/interactions/drug-matching-unified";
+import {
+  CONSENT_SCOPES,
+  hasRecordedConsent,
+  recordPrivacyConsent,
+  requireExplicitHealthConsent,
+  type ConsentScope,
+} from "@/lib/privacy/consent";
+import {
+  assessDoseEligibility,
+  isLegacyQuarantinedCalculation,
+  MAX_ADULT_WEIGHT_KG,
+  MIN_ADULT_WEIGHT_KG,
+} from "@/lib/utils/dosage-safety";
+import { buildAdultReferenceDose } from "@/lib/utils/dosage-calculations";
+import { matchCalculatorBlockedInput } from "@/lib/data/dangerous-herbs";
 import { z } from "zod";
 import type { ActionResponse } from "@/lib/types";
 import type { Database } from "@/lib/types/database";
@@ -43,10 +57,20 @@ const herbSlugSchema = z.string().trim().min(1).max(200);
 
 const patientProfileSchema = z.object({
   name: z.string().min(1).max(100),
-  relationship: z.string().min(1).max(50),
+  relationship: z
+    .string()
+    .trim()
+    .min(1)
+    .max(50)
+    .refine((v) => !/^child$/i.test(v), {
+      message: "Adult-only profiles: child profiles are not permitted",
+    }),
   weight_kg: boundedNumber(0, 1000),
-  age_years: boundedNumber(0, 130),
-  age_months: boundedNumber(0, 1200),
+  age_years: z.number().finite().min(18).max(120),
+  age_months: z
+    .null()
+    .optional()
+    .transform(() => null),
   height_cm: boundedNumber(0, 300),
   is_default: z
     .boolean()
@@ -55,8 +79,25 @@ const patientProfileSchema = z.object({
   notes: nullableString(2000),
 });
 
-const patientProfileUpdateSchema = patientProfileSchema
-  .partial()
+const patientProfileUpdateSchema = z
+  .object({
+    name: z.string().min(1).max(100).optional(),
+    relationship: z
+      .string()
+      .trim()
+      .min(1)
+      .max(50)
+      .refine((v) => !/^child$/i.test(v), {
+        message: "Adult-only profiles: child profiles are not permitted",
+      })
+      .optional(),
+    weight_kg: boundedNumber(0, 1000).optional(),
+    age_years: z.number().finite().min(18).max(120).optional(),
+    age_months: z.null().optional(),
+    height_cm: boundedNumber(0, 300).optional(),
+    is_default: z.boolean().optional(),
+    notes: nullableString(2000).optional(),
+  })
   .refine((obj) => Object.keys(obj).length > 0, {
     message: "No fields to update",
   });
@@ -80,10 +121,10 @@ const medicationSchema = z.object({
 });
 
 const dosageCalculationSchema = z.object({
-  adult_dose: z.string().min(1).max(100),
-  calculated_dose: z.string().min(1).max(100),
-  formula_used: z.enum(["clarks_rule", "youngs_rule", "bsa", "fried_rule"]),
-  patient_weight_kg: boundedNumber(0, 1000),
+  adult_dose: z.string().trim().min(1).max(100),
+  calculated_dose: z.string().trim().min(1).max(100),
+  formula_used: z.enum(["adult_reference"]),
+  patient_weight_kg: boundedNumber(MIN_ADULT_WEIGHT_KG, MAX_ADULT_WEIGHT_KG),
   patient_age: boundedNumber(0, 130),
   patient_height_cm: boundedNumber(0, 300),
   patient_bsa: boundedNumber(0, 10),
@@ -125,9 +166,9 @@ export async function getPatientProfiles(): Promise<
   }
 }
 
-export async function savePatientProfile(
-  profile: Omit<PatientProfile, "id" | "created_at" | "updated_at" | "user_id">
-): Promise<ActionResponse<PatientProfile>> {
+export async function getPrivacyConsents(): Promise<
+  ActionResponse<Record<ConsentScope, boolean>>
+> {
   try {
     const supabase = await createClient();
     const {
@@ -135,10 +176,88 @@ export async function savePatientProfile(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
-    // M4: validate + strip server-owned/garbage keys before insert.
+    const entries = await Promise.all(
+      CONSENT_SCOPES.map(
+        async (scope) =>
+          [scope, await hasRecordedConsent(supabase, user.id, scope)] as const
+      )
+    );
+    return {
+      success: true,
+      data: Object.fromEntries(entries) as Record<ConsentScope, boolean>,
+    };
+  } catch (error) {
+    logger.error("getPrivacyConsents_failed", { error: String(error) });
+    return { success: false, error: "Failed to load privacy consents" };
+  }
+}
+
+const consentScopeSchema = z.enum(CONSENT_SCOPES);
+
+export async function setPrivacyConsent(
+  scope: ConsentScope,
+  granted: boolean
+): Promise<ActionResponse<{ recorded: boolean; migrationPending?: boolean }>> {
+  try {
+    const parsedScope = consentScopeSchema.safeParse(scope);
+    if (!parsedScope.success) {
+      return { success: false, error: "Invalid consent scope" };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "Not authenticated" };
+
+    const res = await recordPrivacyConsent(
+      supabase,
+      user.id,
+      parsedScope.data,
+      granted ? "granted" : "withdrawn"
+    );
+    if (!res.recorded) {
+      return {
+        success: false,
+        error: res.migrationPending
+          ? "Consent ledger unavailable pending migration 00103"
+          : "Failed to record privacy consent",
+      };
+    }
+    return { success: true, data: res };
+  } catch (error) {
+    logger.error("setPrivacyConsent_failed", { error: String(error) });
+    return { success: false, error: "Failed to record privacy consent" };
+  }
+}
+
+export async function savePatientProfile(
+  profile: Omit<
+    PatientProfile,
+    "id" | "created_at" | "updated_at" | "user_id"
+  > & { health_data_consent?: boolean }
+): Promise<ActionResponse<PatientProfile>> {
+  try {
+    // M4 + Adult-only enforcement BEFORE auth/DB calls
     const parsed = patientProfileSchema.safeParse(profile);
     if (!parsed.success)
       return { success: false, error: "Invalid profile data" };
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "Not authenticated" };
+
+    const consentCheck = await requireExplicitHealthConsent(
+      supabase,
+      user.id,
+      "patient_profile",
+      profile.health_data_consent
+    );
+    if (!consentCheck.ok) {
+      return { success: false, error: consentCheck.error };
+    }
 
     const { data, error } = await supabase
       .from("patient_profiles")
@@ -151,10 +270,7 @@ export async function savePatientProfile(
       return { success: false, error: "Failed to save profile" };
     }
 
-    // Enforce a single default per user atomically. Two rapid "add patient"
-    // calls can both pass is_default=true before either render reflects the
-    // first insert; unsetting every *other* profile after the insert
-    // guarantees exactly one default regardless of the race.
+    // Enforce a single default per user atomically.
     if (data.is_default) {
       const { error: unsetError } = await supabase
         .from("patient_profiles")
@@ -178,24 +294,34 @@ export async function savePatientProfile(
 
 export async function updatePatientProfile(
   id: string,
-  updates: Partial<PatientProfile>
+  updates: Partial<PatientProfile> & { health_data_consent?: boolean }
 ): Promise<ActionResponse<PatientProfile>> {
   try {
+    if (!uuidSchema.safeParse(id).success) {
+      return { success: false, error: "Invalid profile ID" };
+    }
+
+    // Validate updates with Zod so server-owned/immutable keys (id, user_id,
+    // created_at, updated_at) and minor/child values are rejected cleanly.
+    const parsed = patientProfileUpdateSchema.safeParse(updates);
+    if (!parsed.success) {
+      return { success: false, error: "Invalid profile data" };
+    }
+
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
-    if (!uuidSchema.safeParse(id).success) {
-      return { success: false, error: "Invalid profile ID" };
-    }
-
-    // Validate updates with Zod so server-owned/immutable keys (id, user_id,
-    // created_at, updated_at) are stripped and numeric/string bounds hold.
-    const parsed = patientProfileUpdateSchema.safeParse(updates);
-    if (!parsed.success) {
-      return { success: false, error: "Invalid profile data" };
+    const consentCheck = await requireExplicitHealthConsent(
+      supabase,
+      user.id,
+      "patient_profile",
+      updates.health_data_consent
+    );
+    if (!consentCheck.ok) {
+      return { success: false, error: consentCheck.error };
     }
 
     // Update target row FIRST before clearing other defaults so a failed or
@@ -299,27 +425,33 @@ export async function getHealthProfile(): Promise<
 }
 
 export async function saveHealthProfile(
-  profile: Pick<HealthProfile, "conditions" | "allergies">
+  profile: Pick<HealthProfile, "conditions" | "allergies"> & {
+    health_data_consent?: boolean;
+    is_pregnant?: boolean;
+    is_nursing?: boolean;
+    notes?: string | null;
+  }
 ): Promise<ActionResponse<HealthProfile>> {
   try {
+    const parsed = healthProfileSchema.safeParse(profile);
+    if (!parsed.success)
+      return { success: false, error: "Invalid health profile data" };
+
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
-    // NOTE: `medications` is intentionally omitted from the upsert payload.
-    // The profile form manages conditions/allergies only; including
-    // `medications: []` here would wipe the user's medication list (managed
-    // separately via addMedication/removeMedication). PostgREST upsert only
-    // UPDATEs the columns supplied, so the existing medications value is
-    // preserved on conflict and the column default applies on first insert.
-    //
-    // M4: validate + strip server-owned keys (user_id/guest_id/id/timestamps)
-    // before upsert. Only conditions/allergies are carried through.
-    const parsed = healthProfileSchema.safeParse(profile);
-    if (!parsed.success)
-      return { success: false, error: "Invalid health profile data" };
+    const consentCheck = await requireExplicitHealthConsent(
+      supabase,
+      user.id,
+      "health_profile",
+      profile.health_data_consent
+    );
+    if (!consentCheck.ok) {
+      return { success: false, error: consentCheck.error };
+    }
 
     const { data, error } = await supabase
       .from("health_profiles")
@@ -382,19 +514,29 @@ export async function addMedication(
   med: Pick<
     UserMedication,
     "drug_name" | "dosage" | "frequency" | "rxcui" | "notes"
-  >
+  > & { health_data_consent?: boolean }
 ): Promise<ActionResponse<UserMedication>> {
   try {
+    // M4: validate + strip server-owned keys (id/user_id/timestamps/is_active).
+    const parsed = medicationSchema.safeParse(med);
+    if (!parsed.success)
+      return { success: false, error: "Invalid medication data" };
+
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
-    // M4: validate + strip server-owned keys (id/user_id/timestamps/is_active).
-    const parsed = medicationSchema.safeParse(med);
-    if (!parsed.success)
-      return { success: false, error: "Invalid medication data" };
+    const consentCheck = await requireExplicitHealthConsent(
+      supabase,
+      user.id,
+      "medications_list",
+      med.health_data_consent
+    );
+    if (!consentCheck.ok) {
+      return { success: false, error: consentCheck.error };
+    }
 
     const { data, error } = await supabase
       .from("user_medications")
@@ -450,34 +592,37 @@ export async function removeMedication(id: string): Promise<ActionResponse> {
 
 // ─── Dosage Calculation History ───────────────────────────────────
 
+export type DosageHistoryEntry =
+  Database["public"]["Tables"]["dosage_calculations"]["Row"] & {
+    quarantined?: boolean;
+  };
+
+function parseDoseAmountAndUnit(
+  doseText: string
+): { amount: number; unit: string } | null {
+  const match = doseText.trim().match(/^(\d+(?:\.\d+)?)\s*(.*)$/);
+  if (!match) return null;
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+  const unit = match[2].trim() || "mg";
+  return { amount, unit };
+}
+
 export async function saveDosageCalculation(
   calc: Omit<
     Database["public"]["Tables"]["dosage_calculations"]["Row"],
     "id" | "created_at" | "user_id"
-  >
+  > & { health_data_consent?: boolean }
 ): Promise<ActionResponse<{ skipped?: boolean }>> {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    // Distinct skipped state for guests so the UI can tell "saved" apart from
-    // "not signed in" instead of both looking like success.
-    if (!user) return { success: true, data: { skipped: true } };
-
-    // M4: validate + strip server-owned keys (id/created_at/user_id) before
-    // insert.
+    // M4 + Pediatric containment: validate structure, age, adult weight,
+    // blocked herbs, and server-verified reference value BEFORE auth/guest no-op
+    // so direct invocation fails closed for unauthenticated minor payloads too.
     const parsed = dosageCalculationSchema.safeParse(calc);
-    if (!parsed.success)
+    if (!parsed.success) {
       return { success: false, error: "Invalid calculation data" };
+    }
 
-    // ── Pediatric gate (server-side, non-bypassable via the UI) ────────
-    // The calculator UI refuses to produce a number for anyone under 18.
-    // A server action can still be invoked directly with arbitrary JSON, so
-    // re-check here with the same shared rule. A calculation with no age at
-    // all is also rejected: without a confirmed adult age we cannot rule out
-    // a minor, and `dosage_calculations.patient_age` is nullable at the DB
-    // level (see 00034_health_profiles_and_ratings.sql).
     const eligibility = assessDoseEligibility(parsed.data.patient_age);
     if (eligibility.status !== "eligible") {
       logger.warn("saveDosageCalculation_age_gate_rejected", {
@@ -486,16 +631,125 @@ export async function saveDosageCalculation(
       return {
         success: false,
         error:
-          "Dosage calculations are not available for patients under 18. Please consult a qualified pediatric healthcare professional.",
+          "Adult reference calculations require a verified adult age (18-120). Pediatric dosing is not available.",
       };
     }
 
-    const { error } = await supabase
-      .from("dosage_calculations")
-      .insert({ ...parsed.data, user_id: user.id });
+    if (parsed.data.notes) {
+      const blocked = matchCalculatorBlockedInput(parsed.data.notes);
+      if (blocked) {
+        logger.warn("saveDosageCalculation_blocked_herb_rejected", {
+          slug: blocked.slug,
+          kind: blocked.kind,
+        });
+        return {
+          success: false,
+          error:
+            blocked.kind === "dangerous"
+              ? "Blocked: this plant carries severe toxicity hazards and has no safe home dose."
+              : "This herb does not support oral calculator dosing.",
+        };
+      }
+    }
+
+    const parsedAdultDose = parseDoseAmountAndUnit(parsed.data.adult_dose);
+    if (!parsedAdultDose) {
+      return { success: false, error: "Invalid adult reference dose" };
+    }
+
+    const expected = buildAdultReferenceDose({
+      adultDose: parsedAdultDose.amount,
+      unit: parsedAdultDose.unit,
+      ageYears: eligibility.ageYears,
+      weightKg: parsed.data.patient_weight_kg,
+      heightCm: parsed.data.patient_height_cm,
+    });
+    const parsedClientDose = parseDoseAmountAndUnit(
+      parsed.data.calculated_dose
+    );
+    if (
+      !parsedClientDose ||
+      Math.abs(parsedClientDose.amount - expected.dose) > 0.05 ||
+      parsedClientDose.unit.toLowerCase() !== expected.unit.toLowerCase()
+    ) {
+      logger.warn("saveDosageCalculation_tampered_dose_rejected");
+      return {
+        success: false,
+        error: "Submitted dose does not match server-verified adult reference.",
+      };
+    }
+
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    // Distinct skipped state for guests AFTER safety validation passes.
+    if (!user) return { success: true, data: { skipped: true } };
+
+    // Resolve herb_id server-side against public.herbs so client cannot bypass
+    // calculator blocks by clearing notes and sending a blocked herb UUID.
+    if (parsed.data.herb_id) {
+      const { data: herbRecord, error: herbLookupError } = await supabase
+        .from("herbs_public" as never)
+        .select("slug, name")
+        .eq("id", parsed.data.herb_id)
+        .maybeSingle();
+      if (herbLookupError) {
+        logger.error("saveDosageCalculation_herb_lookup_failed", {
+          error: herbLookupError.message,
+        });
+        return { success: false, error: "Could not verify herb eligibility." };
+      }
+      if (!herbRecord) {
+        return { success: false, error: "Referenced herb could not be found." };
+      }
+      const resolvedHerb = herbRecord as {
+        slug?: string | null;
+        name?: string | null;
+      };
+      const blockedById =
+        matchCalculatorBlockedInput(resolvedHerb.slug) ??
+        matchCalculatorBlockedInput(resolvedHerb.name);
+      if (blockedById) {
+        return {
+          success: false,
+          error:
+            blockedById.kind === "dangerous"
+              ? "Blocked: this plant carries severe toxicity hazards and has no safe home dose."
+              : "This herb does not support oral calculator dosing.",
+        };
+      }
+    }
+
+    const consentCheck = await requireExplicitHealthConsent(
+      supabase,
+      user.id,
+      "dosage_history",
+      calc.health_data_consent
+    );
+    if (!consentCheck.ok) {
+      return { success: false, error: consentCheck.error };
+    }
+
+    const verifiedCalculatedDose = `${expected.dose} ${expected.unit}`;
+    const { error } = await supabase.from("dosage_calculations").insert({
+      ...parsed.data,
+      calculated_dose: verifiedCalculatedDose,
+      user_id: user.id,
+    });
 
     if (error) {
       logger.error("saveDosageCalculation_failed", { error: error.message });
+      if (
+        (error as { code?: string }).code === "22P02" &&
+        /adult_reference/i.test(error.message ?? "")
+      ) {
+        return {
+          success: false,
+          error:
+            "Saving adult reference calculations is temporarily unavailable pending schema migration 00100.",
+        };
+      }
       return { success: false, error: "Failed to save calculation" };
     }
     return { success: true };
@@ -506,7 +760,7 @@ export async function saveDosageCalculation(
 }
 
 export async function getDosageHistory(): Promise<
-  ActionResponse<Database["public"]["Tables"]["dosage_calculations"]["Row"][]>
+  ActionResponse<DosageHistoryEntry[]>
 > {
   try {
     const supabase = await createClient();
@@ -526,7 +780,26 @@ export async function getDosageHistory(): Promise<
       logger.error("getDosageHistory_db_failed", { error: error.message });
       return { success: false, error: "Failed to fetch history" };
     }
-    return { success: true, data: data ?? [] };
+
+    const rows: DosageHistoryEntry[] = (data ?? []).map((row) => {
+      const quarantined = isLegacyQuarantinedCalculation(row);
+      if (!quarantined) {
+        return { ...row, quarantined: false };
+      }
+      return {
+        ...row,
+        adult_dose: "[Quarantined legacy record]",
+        calculated_dose: "[Quarantined pediatric/unverified dose removed]",
+        patient_age: null,
+        patient_weight_kg: null,
+        patient_height_cm: null,
+        patient_bsa: null,
+        notes: null,
+        quarantined: true,
+      };
+    });
+
+    return { success: true, data: rows };
   } catch (error) {
     logger.error("getDosageHistory_failed", { error: String(error) });
     return { success: false, error: "Failed to fetch history" };
@@ -616,7 +889,7 @@ export async function checkUserMedicationInteractions(
 
     // Get the herb
     const { data: herb, error: herbError } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("id")
       .eq("slug", cleanSlug)
       .eq("is_published", true)
@@ -633,12 +906,13 @@ export async function checkUserMedicationInteractions(
     }
 
     if (!herb) return { success: false, error: "Herb not found" };
+    const resolvedHerbId = (herb as { id: string }).id;
 
     // Get all drug interactions for this herb
     const { data: interactions, error: interactionsError } = await supabase
       .from("drug_interactions")
       .select("drug_name, severity, description, mechanism")
-      .eq("herb_id", herb.id);
+      .eq("herb_id", resolvedHerbId);
 
     if (interactionsError) {
       logger.error("checkUserMedicationInteractions_interactions_failed", {
@@ -664,7 +938,7 @@ export async function checkUserMedicationInteractions(
     // vs "Oral Contraceptives") and false positives ("na" matching anything
     // containing "na"). Over-warning is the safe direction for a checker.
     const matched = interactions.filter((ix) =>
-      meds.some((m) => matchesDrugInteraction(m.drug_name, ix.drug_name))
+      meds.some((m) => matchDrugQueryUnified(m.drug_name, ix.drug_name))
     );
 
     return {

@@ -207,5 +207,189 @@ describe("interaction check API collision handling via real matcher", () => {
     expect(
       body.conflicts[0].records.map((r: { severity: string }) => r.severity)
     ).toEqual(["moderate", "severe"]);
+    expect(
+      body.conflicts[0].records.every(
+        (r: { publicationStatus?: string }) =>
+          r.publicationStatus === "legacy_unreviewed"
+      )
+    ).toBe(true);
+    expect(body.conflictingPairs === undefined).toBe(true);
+  });
+
+  it("includes publicationStatus on single and conflicting pairs and returns withheld status when only retracted_hold matches", async () => {
+    getHerbPairsMock.mockResolvedValueOnce([
+      {
+        id: "row-retracted",
+        herbSlug: "sage",
+        herbName: "Sage",
+        herbScientificName: "Salvia officinalis",
+        drugName: "Warfarin",
+        drugSlug: "warfarin",
+        severity: "severe" as const,
+        description: "Withheld warfarin entry.",
+        mechanism: null,
+        evidenceLevel: "limited-evidence",
+        source: "NIH",
+        sourceUrl: null,
+        evidenceNote: null,
+        updatedAt: "2026-11-20T00:00:00Z",
+        hasFr: false,
+        publicationStatus: "retracted_hold",
+      },
+      {
+        id: "row-pub",
+        herbSlug: "sage",
+        herbName: "Sage",
+        herbScientificName: "Salvia officinalis",
+        drugName: "Apixaban",
+        drugSlug: "apixaban",
+        severity: "moderate" as const,
+        description: "Published apixaban entry.",
+        mechanism: null,
+        evidenceLevel: "moderate-evidence",
+        source: "NIH",
+        sourceUrl: null,
+        evidenceNote: null,
+        updatedAt: "2026-11-20T00:00:00Z",
+        hasFr: false,
+        publicationStatus: "published",
+      },
+    ]);
+
+    const retractedRes = await GET(
+      makeGetReq(
+        "https://herbally.app/api/interactions/check?herb=sage&drug=warfarin"
+      )
+    );
+    expect(retractedRes.status).toBe(200);
+    expect(retractedRes.headers.get("Cache-Control")).toBe("no-store");
+    const retractedBody = await retractedRes.json();
+    expect(retractedBody).toMatchObject({
+      found: false,
+      withheld: true,
+      status: "withheld",
+      reason: "retracted_hold",
+      pair: null,
+    });
+    expect(retractedBody.message).toMatch(/withheld|retracted/i);
+
+    // Genuinely unrecorded drug still returns generic found:false without withheld
+    getHerbPairsMock.mockResolvedValueOnce([
+      {
+        id: "row-retracted",
+        herbSlug: "sage",
+        herbName: "Sage",
+        herbScientificName: "Salvia officinalis",
+        drugName: "Warfarin",
+        drugSlug: "warfarin",
+        severity: "severe" as const,
+        description: "Withheld warfarin entry.",
+        mechanism: null,
+        evidenceLevel: "limited-evidence",
+        source: "NIH",
+        sourceUrl: null,
+        evidenceNote: null,
+        updatedAt: "2026-11-20T00:00:00Z",
+        hasFr: false,
+        publicationStatus: "retracted_hold",
+      },
+    ]);
+    const unrecordedRes = await GET(
+      makeGetReq(
+        "https://herbally.app/api/interactions/check?herb=sage&drug=metformin"
+      )
+    );
+    expect(unrecordedRes.status).toBe(200);
+    const unrecordedBody = await unrecordedRes.json();
+    expect(unrecordedBody.found).toBe(false);
+    expect(unrecordedBody.withheld).toBeUndefined();
+
+    // Stack endpoint classifies retracted_hold-only pairs under withheld (not unrecorded)
+    getHerbPairsMock.mockResolvedValueOnce([
+      {
+        id: "row-retracted",
+        herbSlug: "sage",
+        herbName: "Sage",
+        herbScientificName: "Salvia officinalis",
+        drugName: "Warfarin",
+        drugSlug: "warfarin",
+        severity: "severe" as const,
+        description: "Withheld warfarin entry.",
+        mechanism: null,
+        evidenceLevel: "limited-evidence",
+        source: "NIH",
+        sourceUrl: null,
+        evidenceNote: null,
+        updatedAt: "2026-11-20T00:00:00Z",
+        hasFr: false,
+        publicationStatus: "retracted_hold",
+      },
+    ]);
+    const stackRes = await POST(
+      makePostReq({ herbs: ["sage"], drugs: ["warfarin", "metformin"] })
+    );
+    expect(stackRes.status).toBe(200);
+    const stackBody = await stackRes.json();
+    expect(stackBody.summary.withheldCount).toBe(1);
+    expect(stackBody.withheld).toEqual([
+      {
+        herbInput: "sage",
+        herbSlug: "sage",
+        herbName: "Sage",
+        drugInput: "warfarin",
+        status: "withheld",
+        reason: "retracted_hold",
+      },
+    ]);
+    expect(stackBody.unrecorded).toEqual([
+      {
+        herbInput: "sage",
+        herbSlug: "sage",
+        herbName: "Sage",
+        drugInput: "metformin",
+      },
+    ]);
+
+    getHerbPairsMock.mockResolvedValueOnce([
+      {
+        id: "row-pub",
+        herbSlug: "sage",
+        herbName: "Sage",
+        herbScientificName: "Salvia officinalis",
+        drugName: "Apixaban",
+        drugSlug: "apixaban",
+        severity: "moderate" as const,
+        description: "Published apixaban entry.",
+        mechanism: null,
+        evidenceLevel: "moderate-evidence",
+        source: "NIH",
+        sourceUrl: null,
+        evidenceNote: null,
+        updatedAt: "2026-11-20T00:00:00Z",
+        hasFr: false,
+        publicationStatus: "published",
+      },
+    ]);
+
+    const publishedRes = await GET(
+      makeGetReq(
+        "https://herbally.app/api/interactions/check?herb=sage&drug=apixaban"
+      )
+    );
+    expect(publishedRes.status).toBe(200);
+    const pubBody = await publishedRes.json();
+    expect(pubBody.found).toBe(true);
+    expect(pubBody.pair.publicationStatus).toBe("published");
+
+    // Conflicting pairs also propagate publicationStatus
+    const conflictRes = await GET(
+      makeGetReq(
+        "https://herbally.app/api/interactions/check?herb=sage&drug=anticonvulsants"
+      )
+    );
+    const conflictBody = await conflictRes.json();
+    expect(conflictBody.conflictingPairs[0].publicationStatus).toBe(
+      "legacy_unreviewed"
+    );
   });
 });

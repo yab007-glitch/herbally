@@ -13,6 +13,7 @@ import {
 } from "@/lib/npn/lnhpd";
 import { resolveHerb } from "@/lib/interactions/resolve-herb";
 import { getHerbPairs } from "@/lib/interactions/pairs";
+import { isPediatricOnlyOrTaggedDose } from "@/lib/herbs/regulatory-evidence";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
@@ -254,13 +255,28 @@ export async function GET(request: NextRequest) {
         text: (r.risk_text ?? "").trim(),
       }));
 
-    const doses = rawDoses.map((d) => ({
-      population: (d.population_type_desc ?? "").trim(),
-      quantity: d.quantity_dose ?? null,
-      unit: (d.uom_type_desc_quantity_dose ?? "").trim(),
-      frequency: d.frequency ?? null,
-      frequencyUnit: (d.uom_type_desc_frequency ?? "").trim(),
-    }));
+    const doses = rawDoses
+      .filter((d) => {
+        const pop = (d.population_type_desc ?? "").trim();
+        const combined = [
+          pop,
+          d.quantity_dose != null ? String(d.quantity_dose) : "",
+          (d.uom_type_desc_quantity_dose ?? "").trim(),
+        ]
+          .filter(Boolean)
+          .join(" ");
+        return !isPediatricOnlyOrTaggedDose({
+          population: pop,
+          text: combined,
+        });
+      })
+      .map((d) => ({
+        population: (d.population_type_desc ?? "").trim(),
+        quantity: d.quantity_dose ?? null,
+        unit: (d.uom_type_desc_quantity_dose ?? "").trim(),
+        frequency: d.frequency ?? null,
+        frequencyUnit: (d.uom_type_desc_frequency ?? "").trim(),
+      }));
 
     const statusInfo = formatLnhpdStatus(licence.flag_product_status, locale);
     const partial = unavailableSections.length > 0 || herbMatchingUnavailable;

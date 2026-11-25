@@ -10,6 +10,8 @@
  * Kept free of React and of the database so it can be unit-tested directly.
  */
 
+import { stripPediatricDosageSentences } from "@/lib/herbs/regulatory-evidence";
+
 export interface NarrativeInput {
   name: string;
   traditionalUses?: string[] | null;
@@ -205,8 +207,9 @@ export function summariseDosage(
   copy: NarrativeCopy = NARRATIVE_EN
 ): string | null {
   if (input.isDangerous) return null;
-  if (!input.dosageAdult?.trim()) return null;
-  return dosageSentence(input.name, input.dosageAdult, copy);
+  const safeAdultDose = stripPediatricDosageSentences(input.dosageAdult);
+  if (!safeAdultDose) return null;
+  return dosageSentence(input.name, safeAdultDose, copy);
 }
 
 export function summariseSafety(

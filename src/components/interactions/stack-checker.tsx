@@ -6,24 +6,29 @@ import { useTranslations, useLocale } from "next-intl";
 import {
   AlertOctagon,
   AlertTriangle,
-  CheckCircle2,
   Info,
   Layers,
   Plus,
   Printer,
-  ShieldCheck,
   Sparkles,
   Trash2,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PrintSafetyFooter } from "@/components/shared/print-safety-footer";
+import {
+  getInteractionStatusBadge,
+  summarizeInteractionPublicationStatus,
+} from "@/lib/interactions/evidence";
+import { cn } from "@/lib/utils";
 import type {
   StackAlert,
   StackConflictItem,
   StackHerbSummary,
   StackMatchItem,
   StackUnrecordedItem,
+  StackWithheldItem,
 } from "@/lib/interactions/stack";
 import type { InteractionSeverity } from "@/lib/interactions/pairs";
 
@@ -39,6 +44,7 @@ interface StackApiResponse {
     totalCombinations: number;
     matchedCount: number;
     unrecordedCount: number;
+    withheldCount?: number;
     conflictCount?: number;
     hasConflicts?: boolean;
     highestSeverity: InteractionSeverity | null;
@@ -46,6 +52,7 @@ interface StackApiResponse {
   };
   matches: StackMatchItem[];
   conflicts?: StackConflictItem[];
+  withheld?: StackWithheldItem[];
   unrecorded: StackUnrecordedItem[];
   stackAlerts: StackAlert[];
 }
@@ -72,6 +79,9 @@ export function StackChecker() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StackApiResponse | null>(null);
   const [showWalletCard, setShowWalletCard] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "published" | "quarantined" | "unreviewed"
+  >("all");
   const hasHydratedRef = useRef(false);
   const requestGenRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -148,6 +158,7 @@ export function StackChecker() {
     setLoading(false);
     setResult(null);
     setShowWalletCard(false);
+    setStatusFilter("all");
     setError(null);
   }
 
@@ -234,6 +245,7 @@ export function StackChecker() {
 
     setResult(null);
     setShowWalletCard(false);
+    setStatusFilter("all");
     setError(null);
     setLoading(true);
     try {
@@ -558,7 +570,13 @@ export function StackChecker() {
                 ...result.matches,
                 ...(result.conflicts ?? []).flatMap((c) => c.records),
               ]
-                .map((m) => `${m.herbName} + ${m.drugName} (${m.severity})`)
+                .map((m) => {
+                  const statusBadge = getInteractionStatusBadge(
+                    m.publicationStatus,
+                    locale
+                  );
+                  return `${m.herbName} + ${m.drugName} (${m.severity} · ${statusBadge.label})`;
+                })
                 .join(" · ")}
             </div>
           )}
@@ -572,14 +590,16 @@ export function StackChecker() {
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 p-4">
             <div className="flex items-start gap-3">
               {result.summary.highestSeverity ||
-              (result.conflicts?.length ?? 0) > 0 ? (
+              (result.conflicts?.length ?? 0) > 0 ||
+              (result.withheld?.length ?? 0) > 0 ? (
                 <AlertTriangle
                   className="mt-0.5 size-5 shrink-0 text-amber-600"
                   aria-hidden="true"
                 />
               ) : (
-                <CheckCircle2
-                  className="mt-0.5 size-5 shrink-0 text-primary"
+                <Info
+                  data-testid="stack-empty-info-icon"
+                  className="mt-0.5 size-5 shrink-0 text-muted-foreground"
                   aria-hidden="true"
                 />
               )}
@@ -674,130 +694,320 @@ export function StackChecker() {
             </div>
           )}
 
-          {/* Conflicting records requiring editorial disambiguation */}
-          {result.conflicts && result.conflicts.length > 0 && (
-            <div role="alert" className="space-y-3">
-              {result.conflicts.map((conflict) => (
-                <div
-                  key={`${conflict.herbSlug}-${conflict.drugSlug}-${conflict.drugInput}`}
-                  className="space-y-3 rounded-xl border border-amber-300 bg-amber-50/70 p-4 dark:border-amber-800 dark:bg-amber-950/30"
-                >
-                  <p className="text-sm font-semibold text-foreground">
-                    {locale === "fr"
-                      ? `${conflict.herbName} + ${conflict.drugInput} : plusieurs fiches d'interaction correspondent à cette recherche`
-                      : `${conflict.herbName} + ${conflict.drugInput}: Multiple interaction records match this lookup`}
-                  </p>
-                  {conflict.records.map((rec, idx) => (
-                    <div
-                      key={`${rec.herbSlug}-${rec.drugName}-${idx}`}
-                      className="rounded-lg border border-border bg-background/80 p-3"
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="text-sm font-semibold text-foreground">
-                          {rec.herbName} + {rec.drugName}
-                        </p>
-                        <span
-                          className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${SEVERITY_BADGE[rec.severity]}`}
-                        >
-                          {severityText(rec.severity)}
-                        </span>
-                      </div>
-                      <p className="mt-1.5 text-sm text-muted-foreground">
-                        {rec.description}
-                      </p>
-                      <div className="no-print mt-2 flex flex-wrap items-center gap-3 text-xs">
-                        <Link
-                          href={rec.pairUrl}
-                          className="font-medium text-primary hover:underline"
-                        >
-                          {t("viewFullPair")} →
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Recorded matches */}
-          {result.matches.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-base font-semibold text-foreground">
-                {t("matchesHeading")}
-              </h3>
-              {result.matches.map((m) => (
-                <div
-                  key={`${m.herbSlug}-${m.drugSlug}-${m.drugInput}`}
-                  className="rounded-xl border border-border bg-background/60 p-4"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-semibold text-foreground">
-                      <Link
-                        href={`/herbs/${m.herbSlug}`}
-                        className="hover:text-primary hover:underline"
-                      >
-                        {m.herbName}
-                      </Link>
-                      {" + "}
-                      <span>{m.drugName}</span>
-                      {m.drugInput.toLowerCase() !==
-                        m.drugName.toLowerCase() && (
-                        <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-                          ({m.drugInput})
-                        </span>
-                      )}
-                    </p>
-                    <span
-                      className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${SEVERITY_BADGE[m.severity]}`}
-                    >
-                      {severityText(m.severity)}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {m.description}
-                  </p>
-                  {m.mechanism && (
-                    <p className="mt-1.5 text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground">
-                        {t("mechanismLabel")}:{" "}
-                      </span>
-                      {m.mechanism}
-                    </p>
-                  )}
-                  <div className="no-print mt-3 flex flex-wrap items-center gap-3 text-xs">
-                    <Link
-                      href={m.pairUrl}
-                      className="font-medium text-primary hover:underline"
-                    >
-                      {t("viewFullPair")} →
-                    </Link>
-                    {m.sourceUrl && (
-                      <a
-                        href={m.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground underline hover:text-foreground"
-                      >
-                        {m.source || t("sourceLink")}
-                      </a>
+          {/* Publication status banner & filter */}
+          {(() => {
+            const allRecords = [
+              ...result.matches,
+              ...(result.conflicts ?? []).flatMap((c) => c.records),
+            ].filter((r) => r.publicationStatus !== "retracted_hold");
+            if (allRecords.length === 0) return null;
+            const pubSummary = summarizeInteractionPublicationStatus(
+              allRecords,
+              locale
+            );
+            const publishedCount = allRecords.filter(
+              (r) => r.publicationStatus === "published"
+            ).length;
+            const quarantinedCount = allRecords.filter(
+              (r) => r.publicationStatus === "quarantined_collision"
+            ).length;
+            const unreviewedCount = allRecords.filter(
+              (r) =>
+                r.publicationStatus !== "published" &&
+                r.publicationStatus !== "quarantined_collision"
+            ).length;
+            return (
+              <div className="space-y-2 rounded-xl border border-border bg-muted/20 p-3">
+                <p className="text-xs text-muted-foreground">
+                  {pubSummary.banner}
+                </p>
+                <div className="no-print flex flex-wrap gap-1.5 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter("all")}
+                    className={cn(
+                      "rounded-full border px-2.5 py-1 font-medium transition-colors",
+                      statusFilter === "all"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-muted-foreground hover:text-foreground"
                     )}
-                  </div>
-                  {m.sourceUrl && (
-                    <p className="print-only mt-1 text-[11px] text-muted-foreground">
-                      Source: {m.source || m.sourceUrl}
+                  >
+                    {locale === "fr"
+                      ? `Toutes (${allRecords.length})`
+                      : `All (${allRecords.length})`}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter("published")}
+                    className={cn(
+                      "rounded-full border px-2.5 py-1 font-medium transition-colors",
+                      statusFilter === "published"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {locale === "fr"
+                      ? `Révisées par clinicien (${publishedCount})`
+                      : `Clinician-reviewed (${publishedCount})`}
+                  </button>
+                  {quarantinedCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setStatusFilter("quarantined")}
+                      className={cn(
+                        "rounded-full border px-2.5 py-1 font-medium transition-colors",
+                        statusFilter === "quarantined"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {locale === "fr"
+                        ? `Conflits en quarantaine (${quarantinedCount})`
+                        : `Quarantined collision (${quarantinedCount})`}
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter("unreviewed")}
+                    className={cn(
+                      "rounded-full border px-2.5 py-1 font-medium transition-colors",
+                      statusFilter === "unreviewed"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {locale === "fr"
+                      ? `Héritées non révisées (${unreviewedCount})`
+                      : `Unreviewed legacy (${unreviewedCount})`}
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Conflicting records requiring editorial disambiguation */}
+          {(() => {
+            const matchesStatus = (status?: string | null) => {
+              if (status === "retracted_hold") return false;
+              if (statusFilter === "published") return status === "published";
+              if (statusFilter === "quarantined")
+                return status === "quarantined_collision";
+              if (statusFilter === "unreviewed")
+                return (
+                  status !== "published" && status !== "quarantined_collision"
+                );
+              return true;
+            };
+            const visibleConflicts = (result.conflicts ?? [])
+              .map((conflict) => ({
+                ...conflict,
+                records: conflict.records.filter((r) =>
+                  matchesStatus(r.publicationStatus)
+                ),
+              }))
+              .filter((conflict) => conflict.records.length > 0);
+            const visibleMatches = result.matches.filter((m) =>
+              matchesStatus(m.publicationStatus)
+            );
+            const hasAnySourceRecords =
+              result.matches.length > 0 || (result.conflicts?.length ?? 0) > 0;
+
+            return (
+              <>
+                {hasAnySourceRecords &&
+                  visibleConflicts.length === 0 &&
+                  visibleMatches.length === 0 && (
+                    <p className="rounded-xl border border-border bg-muted/30 p-4 text-xs text-muted-foreground">
+                      {locale === "fr"
+                        ? "Aucune fiche ne correspond au filtre de statut sélectionné."
+                        : "No interaction records match the selected publication status filter."}
                     </p>
                   )}
-                </div>
-              ))}
+
+                {visibleConflicts.length > 0 && (
+                  <div role="alert" className="space-y-3">
+                    {visibleConflicts.map((conflict) => (
+                      <div
+                        key={`${conflict.herbSlug}-${conflict.drugSlug}-${conflict.drugInput}`}
+                        className="space-y-3 rounded-xl border border-amber-300 bg-amber-50/70 p-4 dark:border-amber-800 dark:bg-amber-950/30"
+                      >
+                        <p className="text-sm font-semibold text-foreground">
+                          {locale === "fr"
+                            ? `${conflict.herbName} + ${conflict.drugInput} : plusieurs fiches d'interaction correspondent à cette recherche`
+                            : `${conflict.herbName} + ${conflict.drugInput}: Multiple interaction records match this lookup`}
+                        </p>
+                        {conflict.records.map((rec, idx) => {
+                          const statusBadge = getInteractionStatusBadge(
+                            rec.publicationStatus,
+                            locale
+                          );
+                          return (
+                            <div
+                              key={`${rec.herbSlug}-${rec.drugName}-${idx}`}
+                              className="rounded-lg border border-border bg-background/80 p-3"
+                            >
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <p className="text-sm font-semibold text-foreground">
+                                  {rec.herbName} + {rec.drugName}
+                                </p>
+                                <div className="flex flex-wrap items-center gap-1.5">
+                                  <span
+                                    className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${SEVERITY_BADGE[rec.severity]}`}
+                                  >
+                                    {severityText(rec.severity)}
+                                  </span>
+                                  <span
+                                    className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${statusBadge.toneClass}`}
+                                  >
+                                    {statusBadge.label}
+                                  </span>
+                                </div>
+                              </div>
+                              <p className="mt-1.5 text-sm text-muted-foreground">
+                                {rec.description}
+                              </p>
+                              <div className="no-print mt-2 flex flex-wrap items-center gap-3 text-xs">
+                                <Link
+                                  href={rec.pairUrl}
+                                  className="font-medium text-primary hover:underline"
+                                >
+                                  {t("viewFullPair")} →
+                                </Link>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Recorded matches */}
+                {visibleMatches.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-base font-semibold text-foreground">
+                      {t("matchesHeading")}
+                    </h3>
+                    {visibleMatches.map((m) => {
+                      const statusBadge = getInteractionStatusBadge(
+                        m.publicationStatus,
+                        locale
+                      );
+                      return (
+                        <div
+                          key={`${m.herbSlug}-${m.drugSlug}-${m.drugInput}`}
+                          className="rounded-xl border border-border bg-background/60 p-4"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="font-semibold text-foreground">
+                              <Link
+                                href={`/herbs/${m.herbSlug}`}
+                                className="hover:text-primary hover:underline"
+                              >
+                                {m.herbName}
+                              </Link>
+                              {" + "}
+                              <span>{m.drugName}</span>
+                              {m.drugInput.toLowerCase() !==
+                                m.drugName.toLowerCase() && (
+                                <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                                  ({m.drugInput})
+                                </span>
+                              )}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span
+                                className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${SEVERITY_BADGE[m.severity]}`}
+                              >
+                                {severityText(m.severity)}
+                              </span>
+                              <span
+                                className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${statusBadge.toneClass}`}
+                              >
+                                {statusBadge.label}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {m.description}
+                          </p>
+                          {m.mechanism && (
+                            <p className="mt-1.5 text-xs text-muted-foreground">
+                              <span className="font-medium text-foreground">
+                                {t("mechanismLabel")}:{" "}
+                              </span>
+                              {m.mechanism}
+                            </p>
+                          )}
+                          <div className="no-print mt-3 flex flex-wrap items-center gap-3 text-xs">
+                            <Link
+                              href={m.pairUrl}
+                              className="font-medium text-primary hover:underline"
+                            >
+                              {t("viewFullPair")} →
+                            </Link>
+                            {m.sourceUrl && (
+                              <a
+                                href={m.sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-muted-foreground underline hover:text-foreground"
+                              >
+                                {m.source || t("sourceLink")}
+                              </a>
+                            )}
+                          </div>
+                          {m.sourceUrl && (
+                            <p className="print-only mt-1 text-[11px] text-muted-foreground">
+                              Source: {m.source || m.sourceUrl}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            );
+          })()}
+
+          {/* Withheld records (retracted_hold under clinical review) */}
+          {(result.withheld?.length ?? 0) > 0 && (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-300/80 bg-red-50/60 p-4 dark:border-red-900 dark:bg-red-950/30"
+            >
+              <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                <AlertTriangle className="size-4 text-red-600" />
+                <span>
+                  {locale === "fr"
+                    ? "Fiches retenues (citation retirée)"
+                    : "Withheld interaction records (retracted citation)"}
+                </span>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {locale === "fr"
+                  ? "Une fiche correspondante pour ces associations est temporairement retenue en raison d'une citation retirée et fait l'objet d'une révision clinique. Consultez un pharmacien."
+                  : "A matching interaction record for these combinations is currently withheld due to a retracted citation and is under clinical review. Do not assume safety — consult a pharmacist."}
+              </p>
+              <ul className="mt-2 flex flex-wrap gap-2 text-xs text-foreground">
+                {(result.withheld ?? []).map((w, idx) => (
+                  <li
+                    key={`${w.herbSlug}-${w.drugInput}-${idx}`}
+                    className="rounded-md border border-red-300/70 bg-background px-2 py-1 font-medium dark:border-red-900"
+                  >
+                    {w.herbName} + {w.drugInput}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
-          {/* Unrecorded pairs */}
+          {/* Unrecorded pairs (neutral/caution framing, never green safe badge) */}
           {result.unrecorded.length > 0 && (
-            <div className="rounded-xl border border-border/70 bg-muted/20 p-4">
+            <div className="rounded-xl border border-amber-300/70 bg-amber-50/40 p-4 dark:border-amber-800/70 dark:bg-amber-950/20">
               <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <ShieldCheck className="size-4 text-muted-foreground" />
+                <AlertTriangle className="size-4 text-amber-600" />
                 <span>{t("unrecordedHeading")}</span>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -820,6 +1030,9 @@ export function StackChecker() {
             <Info className="mr-1 inline size-3.5" aria-hidden="true" />
             {t("clinicalFooterNote")}
           </p>
+          <div className="print-only">
+            <PrintSafetyFooter locale={locale === "fr" ? "fr" : "en"} />
+          </div>
         </div>
       )}
     </section>

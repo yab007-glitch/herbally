@@ -24,7 +24,8 @@ export type DosageForm =
   | "extract"
   | "topical"
   | "other";
-export type FormulaType = "clarks_rule" | "youngs_rule" | "bsa" | "fried_rule";
+export type FormulaType =
+  "adult_reference" | "clarks_rule" | "youngs_rule" | "bsa" | "fried_rule";
 
 // Extended types with joins
 export type HerbWithCategory = Herb & {

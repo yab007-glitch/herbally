@@ -1,5 +1,5 @@
-const CACHE_NAME = "herbally-public-v7";
-const API_CACHE = "herbally-public-api-v3";
+const CACHE_NAME = "herbally-public-v8";
+const API_CACHE = "herbally-public-api-v4";
 
 // Core public reference pages to pre-cache on install (EN and FR).
 // Personalized or authenticated routes (/garden, /profile, /admin) are
@@ -27,7 +27,7 @@ const PUBLIC_API_ALLOWLIST = new Set([
 ]);
 
 const PRIVATE_PATH_RE =
-  /^\/(auth|admin|profile|garden|login|register|forgot-password|reset-password)(\/|$)/;
+  /^\/(auth|admin|profile|account|garden|herbalist|login|register|forgot-password|reset-password)(\/|$)/;
 
 const PUBLIC_ASSET_PREFIXES = [
   "/_next/static/",

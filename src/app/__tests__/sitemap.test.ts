@@ -152,6 +152,7 @@ describe("sitemap", () => {
         sourceUrl: null,
         updatedAt: "2026-02-03T00:00:00.000Z",
         hasFr: true,
+        publicationStatus: "published",
       },
       {
         id: "p2",
@@ -168,6 +169,7 @@ describe("sitemap", () => {
         sourceUrl: null,
         updatedAt: "2026-02-03T00:00:00.000Z",
         hasFr: false,
+        publicationStatus: "published",
       },
     ]);
 
@@ -419,6 +421,7 @@ describe("sitemap", () => {
           severity: "moderate",
           updatedAt: "2026-11-10T00:00:00.000Z",
           hasFr: false,
+          publicationStatus: "published",
         },
         {
           id: "p-2",
@@ -427,6 +430,7 @@ describe("sitemap", () => {
           severity: "severe",
           updatedAt: "2026-11-18T00:00:00.000Z",
           hasFr: true,
+          publicationStatus: "published",
         },
       ],
       { "sage/anticonvulsants": "Anticonvulsants" }
@@ -438,5 +442,84 @@ describe("sitemap", () => {
         updatedAt: "2026-11-10T00:00:00.000Z",
       },
     ]);
+  });
+
+  it("withholds legacy_unreviewed and unpublished interaction pairs from sitemap URLs", async () => {
+    herbsRangeMock.mockResolvedValue({ data: [], error: null });
+    getEmptySymptomHubsMock.mockResolvedValue([]);
+    getInteractionPairsMock.mockResolvedValue([
+      {
+        id: "p-unreviewed",
+        herbSlug: "chamomile",
+        herbName: "Chamomile",
+        herbScientificName: "Matricaria chamomilla",
+        drugName: "Warfarin",
+        drugSlug: "warfarin",
+        severity: "moderate",
+        description: "Legacy record.",
+        mechanism: null,
+        evidenceLevel: "C",
+        source: null,
+        sourceUrl: null,
+        updatedAt: "2026-11-10T00:00:00.000Z",
+        hasFr: true,
+        publicationStatus: "legacy_unreviewed",
+      },
+    ]);
+
+    const urls = (await sitemap()).map((entry) => entry.url);
+    expect(urls).not.toContain(`${BASE_URL}/interactions/chamomile/warfarin`);
+    expect(urls).not.toContain(
+      `${BASE_URL}/fr/interactions/chamomile/warfarin`
+    );
+  });
+
+  it("withholds mixed-status unresolved collisions (one published + one legacy_unreviewed) from sitemap", async () => {
+    herbsRangeMock.mockResolvedValue({ data: [], error: null });
+    getEmptySymptomHubsMock.mockResolvedValue([]);
+    getInteractionPairsMock.mockResolvedValue([
+      {
+        id: "p-mix-1",
+        herbSlug: "valerian",
+        herbName: "Valerian",
+        herbScientificName: "Valeriana officinalis",
+        drugName: "Benzodiazepines",
+        drugSlug: "benzodiazepines",
+        severity: "moderate",
+        description: "Published row.",
+        mechanism: null,
+        evidenceLevel: "B",
+        source: null,
+        sourceUrl: null,
+        updatedAt: "2026-11-10T00:00:00.000Z",
+        hasFr: true,
+        publicationStatus: "published",
+      },
+      {
+        id: "p-mix-2",
+        herbSlug: "valerian",
+        drugName: "Benzodiazepines (Alprazolam, Diazepam)",
+        herbName: "Valerian",
+        herbScientificName: "Valeriana officinalis",
+        drugSlug: "benzodiazepines",
+        severity: "severe",
+        description: "Legacy unreviewed collision row.",
+        mechanism: null,
+        evidenceLevel: "C",
+        source: null,
+        sourceUrl: null,
+        updatedAt: "2026-11-18T00:00:00.000Z",
+        hasFr: true,
+        publicationStatus: "legacy_unreviewed",
+      },
+    ]);
+
+    const urls = (await sitemap()).map((entry) => entry.url);
+    expect(urls).not.toContain(
+      `${BASE_URL}/interactions/valerian/benzodiazepines`
+    );
+    expect(urls).not.toContain(
+      `${BASE_URL}/fr/interactions/valerian/benzodiazepines`
+    );
   });
 });

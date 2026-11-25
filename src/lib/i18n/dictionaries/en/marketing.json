@@ -74,8 +74,8 @@
     },
     "dosage": {
       "calculator": {
-        "q": "How does the dosage calculator work?",
-        "a": "HerbAlly's dosage calculator is for adults aged 18 and older. It supports Clark's Rule (weight-based), Young's Rule (age-based), and Body Surface Area (BSA) as reference methods. It does not calculate doses for children or adolescents; consult a qualified paediatric healthcare professional instead."
+        "q": "How does the adult reference tool work?",
+        "a": "HerbAlly's reference tool is strictly for adults aged 18 to 120. It confirms the unscaled adult monograph reference amount without weight-based, age-based, or pediatric formulas (Clark's Rule, Young's Rule, Fried's Rule, and BSA are permanently disabled). Always verify appropriateness with a qualified clinician or pharmacist."
       },
       "multiple": {
         "q": "Can I take multiple herbs at the same time?",

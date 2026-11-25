@@ -1,207 +1,111 @@
-/** Which translated explanation accompanies a result (see calculatorForm.explanations). */
-export type DoseExplanationKey = "clark" | "young" | "bsa" | "fried";
+import {
+  assessDoseEligibility,
+  MAX_ADULT_WEIGHT_KG,
+  MIN_ADULT_WEIGHT_KG,
+} from "./dosage-safety";
+
+export type DoseExplanationKey = "adult_reference";
 
 export type DoseResult = {
   dose: number;
   unit: string;
   formula: string;
-  /** English-only legacy text. The UI renders the localized explanation instead. */
+  formulaKey: "adult_reference";
+  ageYears: number;
   explanation: string;
-  /** Localized explanation key + values, so /fr is never English. */
   explanationKey: DoseExplanationKey;
   explanationParams: Record<string, string | number>;
-  /**
-   * The uncapped formula result. The UI compares it with the adult reference
-   * dose: a cap within a few percent (70 kg with Clark's Rule is only 2.9 %
-   * over 68 kg) is a rounding-level no-op, and warning about it alarmed
-   * ordinary adults on every page.
-   */
   rawDose: number;
-  /**
-   * True when the raw formula result was capped at the adult reference dose.
-   * Pediatric dosing formulas scale the adult dose by a fraction < 1, so a
-   * computed value greater than the adult dose means implausible input — we
-   * cap it rather than surface a potential overdose.
-   */
-  clamped: boolean;
+  clamped: false;
 };
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
 
 /**
- * Clamp a pediatric dose to the adult reference dose. Returns the (possibly
- * capped) rounded dose and whether clamping occurred.
+ * Build an unscaled adult reference record for a confirmed adult (18..120).
+ *
+ * HerbAlly no longer applies pediatric weight/age scaling formulas (Clark's,
+ * Young's, Fried's, or BSA dose scaling) to botanical products: those drug
+ * formulas lack clinical validation for herbal extracts and previously produced
+ * misleading doses. Instead, only the unscaled adult reference amount is
+ * confirmed after passing the age and adult weight plausibility gates.
  */
-function clampToAdult(
-  dose: number,
-  adultDoseMg: number
-): {
-  dose: number;
-  clamped: boolean;
-} {
-  if (Number.isFinite(dose) && adultDoseMg > 0 && dose > adultDoseMg) {
-    return { dose: round1(adultDoseMg), clamped: true };
+export function buildAdultReferenceDose(params: {
+  adultDose: number;
+  unit?: string;
+  ageYears: number;
+  weightKg?: number | null;
+  heightCm?: number | null;
+}): DoseResult {
+  const { adultDose, unit = "mg", ageYears, weightKg, heightCm } = params;
+  const eligibility = assessDoseEligibility(ageYears);
+  if (eligibility.status !== "eligible") {
+    throw new Error(
+      "Adult age (18-120 years) is required for herbal reference dosing"
+    );
   }
-  return { dose: round1(dose), clamped: false };
-}
+  if (!Number.isFinite(adultDose) || adultDose <= 0) {
+    throw new Error("Adult reference dose must be a positive finite number");
+  }
+  if (weightKg !== undefined && weightKg !== null) {
+    if (
+      !Number.isFinite(weightKg) ||
+      weightKg < MIN_ADULT_WEIGHT_KG ||
+      weightKg > MAX_ADULT_WEIGHT_KG
+    ) {
+      throw new Error(
+        `Adult weight must be between ${MIN_ADULT_WEIGHT_KG} and ${MAX_ADULT_WEIGHT_KG} kg`
+      );
+    }
+  }
+  if (heightCm !== undefined && heightCm !== null) {
+    if (!Number.isFinite(heightCm) || heightCm <= 0 || heightCm > 300) {
+      throw new Error("Height must be a positive number up to 300 cm");
+    }
+  }
 
-/**
- * Clark's Rule: (weight_kg / 68) x adult_dose
- * Weight-based reference calculation.
- */
-export function clarksRule(
-  weightKg: number,
-  adultDoseMg: number,
-  unit: string = "mg"
-): DoseResult {
-  const raw = (weightKg / 68) * adultDoseMg;
-  const { dose, clamped } = clampToAdult(raw, adultDoseMg);
+  const rounded = round1(adultDose);
   return {
-    dose,
-    clamped,
-    rawDose: raw,
+    dose: rounded,
+    rawDose: adultDose,
+    clamped: false,
     unit,
-    formula: `(${weightKg} kg / 68) x ${adultDoseMg} ${unit}`,
-    explanation: `Based on Clark's Rule using patient weight of ${weightKg} kg. The standard adult reference weight is 68 kg (150 lbs).`,
-    explanationKey: "clark",
-    explanationParams: { weight: weightKg },
+    formulaKey: "adult_reference",
+    ageYears: eligibility.ageYears,
+    formula: `Unscaled adult reference (18+): ${rounded} ${unit}`,
+    explanation: `Adult reference dose confirmed for age ${eligibility.ageYears} years (18+). No weight- or age-scaling formula is applied.`,
+    explanationKey: "adult_reference",
+    explanationParams: { age: eligibility.ageYears, dose: rounded, unit },
   };
 }
 
 /**
- * Young's Rule: (age / (age + 12)) x adult_dose
- * Age-based reference calculation. `ageYears` MUST be in years.
+ * Calculate Body Surface Area (m²) using the Mosteller formula for confirmed adults (18+).
  */
-export function youngsRule(
-  ageYears: number,
-  adultDoseMg: number,
-  unit: string = "mg"
-): DoseResult {
-  const raw = (ageYears / (ageYears + 12)) * adultDoseMg;
-  const { dose, clamped } = clampToAdult(raw, adultDoseMg);
-  return {
-    dose,
-    clamped,
-    rawDose: raw,
-    unit,
-    formula: `(${ageYears} / (${ageYears} + 12)) x ${adultDoseMg} ${unit}`,
-    explanation: `Based on Young's Rule using patient age of ${ageYears} years. This is an age-based reference calculation, less accurate than weight-based methods.`,
-    explanationKey: "young",
-    explanationParams: { age: ageYears },
-  };
-}
-
-/**
- * BSA Method (Mosteller): (BSA / 1.73) x adult_dose
- * BSA = sqrt((height_cm x weight_kg) / 3600)
- * Most accurate method
- */
-export function bsaMethod(
+export function calculateBSA(
   heightCm: number,
   weightKg: number,
-  adultDoseMg: number,
-  unit: string = "mg"
-): DoseResult {
-  const bsa = Math.sqrt((heightCm * weightKg) / 3600);
-  const raw = (bsa / 1.73) * adultDoseMg;
-  const { dose, clamped } = clampToAdult(raw, adultDoseMg);
-  return {
-    dose,
-    clamped,
-    rawDose: raw,
-    unit,
-    formula: `(${bsa.toFixed(3)} m² / 1.73) x ${adultDoseMg} ${unit}`,
-    explanation: `Based on BSA method using body surface area of ${bsa.toFixed(3)} m² (height: ${heightCm} cm, weight: ${weightKg} kg). The standard adult BSA is 1.73 m².`,
-    explanationKey: "bsa",
-    explanationParams: {
-      bsa: bsa.toFixed(3),
-      height: heightCm,
-      weight: weightKg,
-    },
-  };
-}
-
-/**
- * Fried's Rule: (age_months / 150) x adult_dose
- * Age-in-months reference method; not applicable to adults 18+.
- */
-export function friedsRule(
-  ageMonths: number,
-  adultDoseMg: number,
-  unit: string = "mg"
-): DoseResult {
-  const raw = (ageMonths / 150) * adultDoseMg;
-  const { dose, clamped } = clampToAdult(raw, adultDoseMg);
-  return {
-    dose,
-    clamped,
-    rawDose: raw,
-    unit,
-    formula: `(${ageMonths} months / 150) x ${adultDoseMg} ${unit}`,
-    explanation: `Based on Fried's Rule using age of ${ageMonths} months. This method is not applicable to adults 18 and over.`,
-    explanationKey: "fried",
-    explanationParams: { months: ageMonths },
-  };
-}
-
-/**
- * Calculate BSA using the Mosteller formula
- */
-export function calculateBSA(heightCm: number, weightKg: number): number {
+  ageYears: number
+): number {
+  const eligibility = assessDoseEligibility(ageYears);
+  if (eligibility.status !== "eligible") {
+    throw new Error("Adult age (18-120 years) is required to calculate BSA");
+  }
+  if (!Number.isFinite(heightCm) || heightCm <= 0) {
+    throw new Error("Height must be a positive number");
+  }
+  if (!Number.isFinite(weightKg) || weightKg <= 0) {
+    throw new Error("Weight must be a positive number");
+  }
   return Math.sqrt((heightCm * weightKg) / 3600);
 }
 
-/**
- * Convert pounds to kilograms
- */
+/** Convert pounds to kilograms. */
 export function lbsToKg(lbs: number): number {
   return Math.round(lbs * 0.453592 * 10) / 10;
 }
 
-/**
- * Convert kilograms to pounds
- */
+/** Convert kilograms to pounds. */
 export function kgToLbs(kg: number): number {
   return Math.round(kg * 2.20462 * 10) / 10;
-}
-
-/**
- * Recommend the best formula based on available patient data.
- * Returns null when there is not enough data to pick a formula — callers must
- * handle this rather than silently defaulting to an age-based formula that
- * produces NaN when no age was supplied.
- */
-export function recommendFormula(params: {
-  ageYears?: number;
-  ageMonths?: number;
-  weightKg?: number;
-  heightCm?: number;
-}): "clarks_rule" | "youngs_rule" | "bsa" | "fried_rule" | null {
-  const { ageYears, ageMonths, weightKg, heightCm } = params;
-
-  // Infants under 2 years
-  if (ageMonths !== undefined && ageMonths < 24) {
-    return "fried_rule";
-  }
-  if (ageYears !== undefined && ageYears < 2) {
-    return "fried_rule";
-  }
-
-  // If both height and weight available, BSA is most accurate
-  if (weightKg && heightCm) {
-    return "bsa";
-  }
-
-  // Weight-based is next best
-  if (weightKg) {
-    return "clarks_rule";
-  }
-
-  // Age-based only when we actually have an age to use
-  if (ageYears !== undefined || ageMonths !== undefined) {
-    return "youngs_rule";
-  }
-
-  // No usable patient data — caller must prompt for input.
-  return null;
 }

@@ -354,4 +354,29 @@ describe("GET /api/herbs/search (legacy callers)", () => {
     expect(response.headers.get("Retry-After")).toBe("60");
     expect(await response.json()).toEqual([]);
   });
+
+  it("never returns dosage_child or pediatric dosing text from search responses", async () => {
+    rateLimitMock.mockResolvedValue({ success: true, remaining: 10 });
+    const leakyRow = {
+      ...symptomRow,
+      dosage_child: "50 mg child",
+      dosage_adult: "Adults: 300 mg. For children 6-12: 50 mg.",
+      translations: {
+        fr: {
+          name: "Camomille",
+          dosage_child: "50 mg enfant",
+        },
+      },
+    } as unknown as HerbRow;
+
+    installSupabase([leakyRow], []);
+    const response = await POST(
+      postRequest(JSON.stringify({ q: "chamomile" }))
+    );
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    const serialized = JSON.stringify(payload);
+    expect(serialized).not.toContain("dosage_child");
+    expect(serialized).not.toContain("50 mg");
+  });
 });

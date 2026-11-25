@@ -69,6 +69,7 @@ export interface VerifiedInteraction {
   mechanism: string;
   evidence: string;
   recommendation: string;
+  publication_status?: string;
 }
 
 export interface VerifiedContext {

@@ -150,7 +150,10 @@ export function SymptomSearchClient() {
 
       {/* Example symptoms */}
       {!hasSearched && (
-        <div className="mb-8">
+        <div className="mb-8 space-y-2">
+          <p className="text-[11px] text-muted-foreground">
+            {t("symptomsPage.privacyMinimizationNotice")}
+          </p>
           <p className="mb-3 text-xs font-medium text-muted-foreground">
             {t("symptomsPage.examples")}
           </p>

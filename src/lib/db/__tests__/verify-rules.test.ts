@@ -4,6 +4,7 @@ import {
   checkSafetyConflicts,
   checkCatalogCardinality,
   classifyPairUrlCollisions,
+  checkInteractionPublicationContract,
   KNOWN_UNRESOLVED_PAIR_COLLISIONS,
 } from "../verify-rules";
 
@@ -391,5 +392,35 @@ describe("checkSafetyConflicts", () => {
       dosage_adult: "1-2 cups tea daily",
     });
     expect(conflicts).toEqual([]);
+  });
+});
+
+describe("checkInteractionPublicationContract", () => {
+  it("flags published rows missing active citations, reviewer sign-off, or holding retracted citations", () => {
+    const issues = checkInteractionPublicationContract([
+      {
+        id: "ix-1",
+        drugName: "Warfarin",
+        publicationStatus: "published",
+        clinicalReviewerId: "clin-1",
+        verifiedAt: "2026-11-20T00:00:00Z",
+        activeCitationCount: 0,
+        retractedCitationCount: 1,
+      },
+      {
+        id: "ix-2",
+        drugName: "Aspirin",
+        publicationStatus: "published",
+        clinicalReviewerId: "clin-1",
+        verifiedAt: "2026-11-20T00:00:00Z",
+        activeCitationCount: 1,
+        retractedCitationCount: 0,
+      },
+    ]);
+
+    expect(issues.map((i) => `${i.id}:${i.code}`)).toEqual([
+      "ix-1:PUBLISHED_WITHOUT_CITATION",
+      "ix-1:PUBLISHED_WITH_RETRACTED_CITATION",
+    ]);
   });
 });

@@ -416,4 +416,318 @@ describe("StackChecker in-flight request generation & ordering", () => {
     expect(screen.getByText("Final cyclosporine result.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "checkButton" })).toBeEnabled();
   });
+
+  it("renders a neutral info indicator (not green check) when no interactions match and puts PrintSafetyFooter inside .print-only", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          checkedAt: "2026-11-25T12:00:00.000Z",
+          locale: "en",
+          herbs: [
+            {
+              input: "Chamomile",
+              found: true,
+              slug: "chamomile",
+              name: "Chamomile",
+              scientificName: "Matricaria chamomilla",
+              pairCount: 0,
+            },
+          ],
+          drugs: ["Metformin"],
+          summary: {
+            totalCombinations: 1,
+            matchedCount: 0,
+            unrecordedCount: 1,
+            conflictCount: 0,
+            hasConflicts: false,
+            highestSeverity: null,
+          },
+          herbsWithNoRecords: ["Chamomile"],
+          stackAlerts: [],
+          matches: [],
+          conflicts: [],
+          unrecorded: [
+            {
+              herbInput: "Chamomile",
+              herbSlug: "chamomile",
+              herbName: "Chamomile",
+              drugInput: "Metformin",
+            },
+          ],
+        }),
+      })
+    );
+
+    const { container } = render(<StackChecker />);
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "loadSample" }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "checkButton" }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(
+      container.querySelector('[data-testid="stack-empty-info-icon"]')
+    ).toBeInTheDocument();
+    expect(
+      container.querySelector(".lucide-circle-check-big")
+    ).not.toBeInTheDocument();
+
+    const footerAside = screen.getByLabelText("Printed safety notice");
+    expect(footerAside.closest(".print-only")).toBeInTheDocument();
+    expect(footerAside.textContent).toMatch(/adults aged 18\+/i);
+
+    vi.unstubAllGlobals();
+  });
+
+  it("renders publication-status badges, summary banner, and status filter on stack results", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          checkedAt: "2026-11-25T12:00:00.000Z",
+          locale: "en",
+          herbs: [
+            {
+              input: "St. John's Wort",
+              found: true,
+              slug: "st-johns-wort",
+              name: "St. John's Wort",
+              scientificName: "Hypericum perforatum",
+              pairCount: 2,
+            },
+          ],
+          drugs: ["warfarin", "sertraline"],
+          summary: {
+            totalCombinations: 2,
+            matchedCount: 2,
+            unrecordedCount: 0,
+            conflictCount: 0,
+            hasConflicts: false,
+            highestSeverity: "contraindicated",
+            unresolvedHerbs: [],
+          },
+          matches: [
+            {
+              herbInput: "St. John's Wort",
+              herbSlug: "st-johns-wort",
+              herbName: "St. John's Wort",
+              drugInput: "warfarin",
+              drugName: "Warfarin",
+              drugSlug: "warfarin",
+              severity: "severe",
+              description: "Published warfarin interaction.",
+              mechanism: null,
+              evidenceLevel: "well-documented",
+              source: "NIH",
+              sourceUrl: null,
+              pairUrl: "/interactions/st-johns-wort/warfarin",
+              publicationStatus: "published",
+            },
+            {
+              herbInput: "St. John's Wort",
+              herbSlug: "st-johns-wort",
+              herbName: "St. John's Wort",
+              drugInput: "sertraline",
+              drugName: "Sertraline",
+              drugSlug: "sertraline",
+              severity: "contraindicated",
+              description: "Legacy sertraline interaction.",
+              mechanism: null,
+              evidenceLevel: "moderate-evidence",
+              source: "Legacy",
+              sourceUrl: null,
+              pairUrl: "/interactions/st-johns-wort/sertraline",
+              publicationStatus: "legacy_unreviewed",
+            },
+          ],
+          conflicts: [],
+          unrecorded: [],
+          stackAlerts: [],
+        }),
+      })
+    );
+
+    render(<StackChecker />);
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "loadSample" }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "checkButton" }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(
+      screen.getByText("Published · Clinician-reviewed")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Unreviewed legacy")).toBeInTheDocument();
+    expect(screen.getByText(/Mixed publication status:/i)).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Clinician-reviewed \(1\)/i })
+    );
+    expect(
+      screen.getByText("Published warfarin interaction.")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Legacy sertraline interaction.")
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Unreviewed legacy \(1\)/i })
+    );
+    expect(
+      screen.queryByText("Published warfarin interaction.")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Legacy sertraline interaction.")
+    ).toBeInTheDocument();
+
+    vi.unstubAllGlobals();
+  });
+
+  it("distinguishes quarantined_collision from unreviewed legacy filters and renders withheld retracted_hold section", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          checkedAt: "2026-11-25T12:00:00.000Z",
+          locale: "en",
+          herbs: [
+            {
+              input: "Sage",
+              found: true,
+              slug: "sage",
+              name: "Sage",
+              scientificName: "Salvia officinalis",
+              pairCount: 2,
+            },
+          ],
+          drugs: ["anticonvulsants", "warfarin"],
+          summary: {
+            totalCombinations: 2,
+            matchedCount: 0,
+            unrecordedCount: 0,
+            withheldCount: 1,
+            conflictCount: 1,
+            hasConflicts: true,
+            highestSeverity: null,
+            unresolvedHerbs: [],
+          },
+          matches: [],
+          conflicts: [
+            {
+              herbInput: "Sage",
+              herbSlug: "sage",
+              herbName: "Sage",
+              drugInput: "anticonvulsants",
+              drugSlug: "anticonvulsants",
+              pairUrl: "/interactions/sage/anticonvulsants",
+              records: [
+                {
+                  herbInput: "Sage",
+                  herbSlug: "sage",
+                  herbName: "Sage",
+                  drugInput: "anticonvulsants",
+                  drugName: "Anticonvulsants",
+                  drugSlug: "anticonvulsants",
+                  severity: "severe",
+                  description: "Quarantined collision stack record.",
+                  mechanism: null,
+                  evidenceLevel: "A",
+                  source: "NIH",
+                  sourceUrl: null,
+                  pairUrl: "/interactions/sage/anticonvulsants",
+                  publicationStatus: "quarantined_collision",
+                },
+                {
+                  herbInput: "Sage",
+                  herbSlug: "sage",
+                  herbName: "Sage",
+                  drugInput: "anticonvulsants",
+                  drugName: "Anticonvulsants (Phenytoin)",
+                  drugSlug: "anticonvulsants",
+                  severity: "moderate",
+                  description: "Legacy unreviewed stack record.",
+                  mechanism: null,
+                  evidenceLevel: "B",
+                  source: "Legacy",
+                  sourceUrl: null,
+                  pairUrl: "/interactions/sage/anticonvulsants",
+                  publicationStatus: "legacy_unreviewed",
+                },
+              ],
+            },
+          ],
+          withheld: [
+            {
+              herbInput: "Sage",
+              herbSlug: "sage",
+              herbName: "Sage",
+              drugInput: "warfarin",
+              status: "withheld",
+              reason: "retracted_hold",
+            },
+          ],
+          unrecorded: [],
+          stackAlerts: [],
+        }),
+      })
+    );
+
+    render(<StackChecker />);
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "loadSample" }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "checkButton" }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const quarBtn = screen.getByRole("button", {
+      name: /Quarantined collision \(1\)/i,
+    });
+    const unrevBtn = screen.getByRole("button", {
+      name: /Unreviewed legacy \(1\)/i,
+    });
+    expect(quarBtn).toBeInTheDocument();
+    expect(unrevBtn).toBeInTheDocument();
+
+    fireEvent.click(quarBtn);
+    expect(
+      screen.getByText("Quarantined collision stack record.")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Legacy unreviewed stack record.")
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(unrevBtn);
+    expect(
+      screen.queryByText("Quarantined collision stack record.")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText("Legacy unreviewed stack record.")
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/Withheld interaction records \(retracted citation\)/i)
+    ).toBeInTheDocument();
+    expect(screen.getByText("Sage + warfarin")).toBeInTheDocument();
+
+    vi.unstubAllGlobals();
+  });
 });

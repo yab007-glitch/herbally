@@ -15,25 +15,38 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 export function AuthorByline({
   locale,
   lastReviewed,
-  isReviewed: _isReviewed = true,
+  isReviewed = true,
+  reviewerName,
+  reviewerCredentials,
 }: {
   locale: "en" | "fr";
   lastReviewed?: string | null;
   /** False for entries without a manual/clinical review so bylines do not overclaim. */
   isReviewed?: boolean;
+  reviewerName?: string | null;
+  reviewerCredentials?: string | null;
 }) {
-  // Owner policy 2026-11-23: every herb page carries one generic review line
-  // ("Reviewed and verified") instead of a named byline. The named-reviewer
-  // registry still drives per-page attribution if one is ever restored.
+  const reviewerSuffix =
+    isReviewed && reviewerName
+      ? `${reviewerName}${reviewerCredentials ? ` (${reviewerCredentials})` : ""}`
+      : null;
   const copy =
     locale === "fr"
       ? {
-          label: "Révisé et vérifié",
+          label: isReviewed
+            ? reviewerSuffix
+              ? `Révision clinique · ${reviewerSuffix}`
+              : "Révision clinique au dossier"
+            : "Compilation éditoriale · Non révisé par un clinicien",
           policy: "Politique éditoriale",
           updated: "Dernière mise à jour",
         }
       : {
-          label: "Reviewed and verified",
+          label: isReviewed
+            ? reviewerSuffix
+              ? `Clinically reviewed by ${reviewerSuffix}`
+              : "Clinically reviewed"
+            : "Editorial compilation · Not clinically reviewed",
           policy: "Editorial policy",
           updated: "Last updated",
         };

@@ -95,7 +95,11 @@ export function findPairUrlCollisions(
  * than OR-ing across conflicting records.
  */
 export function selectSitemapPairEntries<
-  T extends PairSlugCandidate & { hasFr: boolean; updatedAt: string | null },
+  T extends PairSlugCandidate & {
+    hasFr: boolean;
+    updatedAt: string | null;
+    publicationStatus?: string | null;
+  },
 >(
   pairs: T[],
   overrides: Readonly<Record<string, string>> = EDITORIAL_PAIR_CANONICAL_DRUG
@@ -118,6 +122,9 @@ export function selectSitemapPairEntries<
   for (const [key, group] of groups) {
     if (group.length === 1) {
       const only = group[0];
+      if (only.publicationStatus !== "published") {
+        continue;
+      }
       entries.push({
         path: `/interactions/${key}`,
         hasFr: only.hasFr,
@@ -128,11 +135,14 @@ export function selectSitemapPairEntries<
 
     const editorialChoice = overrides[key];
     if (!editorialChoice) {
-      // Unresolved collision -> page is noindex; exclude from sitemap.
+      // Unresolved collision (including mixed published/legacy rows) -> noindex; exclude from sitemap.
+      continue;
+    }
+    if (group.some((r) => r.publicationStatus === "retracted_hold")) {
       continue;
     }
     const chosen = group.find((r) => r.drugName === editorialChoice);
-    if (!chosen) {
+    if (!chosen || chosen.publicationStatus !== "published") {
       continue;
     }
     entries.push({

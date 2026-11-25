@@ -29,18 +29,38 @@ export function ProvenanceBadge({ provenance }: { provenance: Provenance }) {
   // An explicit review state is the site's strongest claim, so it is checked
   // before anything derived from verification_method. `human_reviewed` only
   // exists when a named person and a date were recorded.
-  if (review?.kind === "human_reviewed") {
+  if (review?.kind === "editorial_checked") {
     return (
       <Badge
-        variant="secondary"
-        className="border-green-300 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-300"
-        title={t("humanReviewedTooltip", {
+        variant="outline"
+        className="border-slate-300 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-300"
+        title={t("bulkEditorialImportTooltip", {
           reviewer: review.reviewer,
           date: review.date,
         })}
       >
+        <AlertCircle className="mr-1 size-3" aria-hidden="true" />
+        {t("bulkEditorialImport")}
+      </Badge>
+    );
+  }
+
+  if (review?.kind === "human_reviewed") {
+    const isClinical = review.role === "clinical";
+    return (
+      <Badge
+        variant="secondary"
+        className="border-green-300 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-300"
+        title={t(
+          isClinical ? "clinicallyReviewedTooltip" : "humanReviewedTooltip",
+          {
+            reviewer: review.reviewer,
+            date: review.date,
+          }
+        )}
+      >
         <CheckCircle2 className="mr-1 size-3" aria-hidden="true" />
-        {t("humanReviewed")}
+        {t(isClinical ? "clinicallyReviewed" : "humanReviewed")}
       </Badge>
     );
   }

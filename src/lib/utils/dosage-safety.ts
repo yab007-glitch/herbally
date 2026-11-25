@@ -1,49 +1,39 @@
 /**
- * Age-eligibility gate for the herbal dose calculator.
+ * Age-eligibility gate and legacy quarantine checks for the herbal dose calculator.
  *
- * HerbAlly does not generate a numerical herbal dose for anyone under 18.
- * Pediatric herbal dosing lacks validated, product-specific evidence: the
- * historical Clark's / Young's / Fried's rules scale an *adult drug* dose by
- * weight or age and were never validated for botanical extracts, whose active
- * constituents and concentrations vary by product. The production failure this
- * module exists to prevent: a 60 kg eight-year-old received "441.2 mg
- * turmeric" from Clark's rule even though the herb's own monograph says it is
- * not recommended under 12.
+ * HerbAlly does not compute, extrapolate, prefill, display, persist, retrieve,
+ * cache, print, or synthesize numerical herbal doses for anyone under 18 or for
+ * unknown/unverified ages.
  *
- * HerbalAlly therefore refuses to compute pediatric numbers at all and points
- * the caregiver to a qualified pediatric healthcare professional. Adult doses
- * (18+) remain available and are always labelled as reference estimates, never
- * as medical advice.
- *
- * This is a single source of truth shared by the client form and the server
- * action, so a direct call to `saveDosageCalculation` cannot persist a
- * pediatric calculation by bypassing the UI.
+ * Pediatric herbal dosing lacks validated, preparation-specific pediatric
+ * evidence: historical drug-scaling formulas (Clark's, Young's, Fried's, BSA)
+ * are not validated for botanical products or adult herbal dosing either.
  */
 
-/** The youngest age for which HerbAlly will compute a dose. */
+/** The youngest age for which HerbAlly permits adult reference display. */
 export const MINIMUM_DOSE_AGE_YEARS = 18 as const;
 
 /**
  * Upper sanity bound. Ages above this are typos or fabricated payloads, not
- * patients, and are rejected rather than treated as adults.
+ * patients, and fail closed as unverified.
  */
 export const MAXIMUM_DOSE_AGE_YEARS = 120 as const;
 
+/** Plausible adult weight bounds (kg) when weight is supplied. */
+export const MIN_ADULT_WEIGHT_KG = 20 as const;
+export const MAX_ADULT_WEIGHT_KG = 350 as const;
+
 export type DoseEligibility =
   | { status: "eligible"; ageYears: number }
-  | { status: "minor"; ageYears: number }
-  | { status: "invalid_age" };
+  | { status: "pediatric_unavailable"; ageYears: number }
+  | { status: "age_unverified" };
 
 /**
- * Classify an age (in years) for dose calculation.
+ * Classify an age (in years) for adult reference eligibility.
  *
- * - `minor`       — under 18: never compute a number.
- * - `eligible`    — 18 through 120 inclusive.
- * - `invalid_age` — missing, non-finite, zero/negative, or implausibly old.
- *
- * Note that `0` and negatives are deliberately `invalid_age`, not `minor`:
- * they are absent/erroneous input rather than a real infant, and the UI shows
- * a different message for them. Both are blocked either way.
+ * - `pediatric_unavailable` — 0 through < 18 (includes newborns/infants at 0).
+ * - `eligible`              — 18 through 120 inclusive.
+ * - `age_unverified`        — missing, non-finite, negative, or > 120.
  */
 export function assessDoseEligibility(
   ageYears: number | null | undefined
@@ -52,27 +42,52 @@ export function assessDoseEligibility(
     ageYears === null ||
     ageYears === undefined ||
     !Number.isFinite(ageYears) ||
-    ageYears <= 0 ||
+    ageYears < 0 ||
     ageYears > MAXIMUM_DOSE_AGE_YEARS
   ) {
-    return { status: "invalid_age" };
+    return { status: "age_unverified" };
   }
   if (ageYears < MINIMUM_DOSE_AGE_YEARS) {
-    return { status: "minor", ageYears };
+    return { status: "pediatric_unavailable", ageYears };
   }
   return { status: "eligible", ageYears };
 }
 
-/** Convert months to years. Non-finite input propagates as NaN. */
-export function monthsToYears(months: number): number {
-  return months / 12;
+/** True when age is a valid confirmed minor/infant age (0 <= age < 18). */
+export function isPediatricAge(ageYears: number | null | undefined): boolean {
+  return assessDoseEligibility(ageYears).status === "pediatric_unavailable";
 }
 
 /**
- * Explain, in the calculator's own terms, why no number is shown.
- * Kept here (not in the component) so the rule and its rationale live
- * together and are unit-testable.
+ * True ONLY when a patient profile represents a confirmed adult eligible for
+ * calculator autofill. Child relationships, age_months profiles, <18 ages,
+ * and unknown-age profiles NEVER autofill dosing fields.
  */
-export function isPediatricAge(ageYears: number | null | undefined): boolean {
-  return assessDoseEligibility(ageYears).status === "minor";
+export function isAdultDosingEligibleProfile(profile: {
+  relationship?: string | null;
+  age_years?: number | null;
+  age_months?: number | null;
+}): boolean {
+  if (!profile) return false;
+  if ((profile.relationship ?? "").trim().toLowerCase() === "child") {
+    return false;
+  }
+  if (profile.age_months !== null && profile.age_months !== undefined) {
+    return false;
+  }
+  return assessDoseEligibility(profile.age_years).status === "eligible";
+}
+
+/**
+ * True when a stored dosage_calculations row is a legacy pediatric, unknown-age,
+ * or disabled-formula row that must be quarantined/redacted from display.
+ */
+export function isLegacyQuarantinedCalculation(row: {
+  is_legacy_pediatric_quarantined?: boolean | null;
+  patient_age?: number | null;
+  formula_used?: string | null;
+}): boolean {
+  if (row.is_legacy_pediatric_quarantined === true) return true;
+  if (row.formula_used && row.formula_used !== "adult_reference") return true;
+  return assessDoseEligibility(row.patient_age).status !== "eligible";
 }

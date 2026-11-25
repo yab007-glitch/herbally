@@ -82,14 +82,6 @@ jobs:
           set -euo pipefail
           # deploy/ is excluded on purpose: it holds production secrets and
           # stack config that must not be overwritten by a code push.
-          #
-          # --delete matters: without it, a source file deleted in the repo
-          # stays in /srv/herbally and is rebuilt into every image. That is
-          # how the removed [locale]/[...rest] catch-all survived a deploy
-          # and kept the 404 page broken. Excluded paths (deploy/, backups/,
-          # artifacts/, .git, node_modules, .next) are protected from
-          # deletion as well, so the secrets and the local-only harvest
-          # caches are safe.
           rsync -a --delete \
             --exclude .git \
             --exclude deploy/ \
@@ -99,43 +91,22 @@ jobs:
             --exclude artifacts/ \
             "$GITHUB_WORKSPACE/" /srv/herbally/
 
-      - name: Apply pending SQL migrations (00097–00099) if missing
+      - name: Apply & verify expand-phase SQL migrations (00097–00103) fail-closed before app switch
         if: steps.changes.outputs.deploy_needed == 'true'
         run: |
           set -euo pipefail
-          NEEDS_MIGRATION="$(docker exec -i herbally-db psql -U postgres -d postgres -tAc "
-            SELECT CASE WHEN
-              EXISTS (
-                SELECT 1 FROM pg_proc p
-                JOIN pg_namespace n ON n.oid = p.pronamespace
-                WHERE n.nspname = 'public' AND p.proname = 'is_admin_aal2'
-              )
-              AND EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_schema = 'public'
-                  AND table_name = 'newsletter_subscribers'
-                  AND column_name = 'last_confirmation_sent_at'
-              )
-              AND EXISTS (
-                SELECT 1 FROM information_schema.columns
-                WHERE table_schema = 'public'
-                  AND table_name = 'newsletter_subscribers'
-                  AND column_name = 'confirmation_send_lease_until'
-              )
-            THEN 'no' ELSE 'yes' END;
-          ")"
-          if [ "$NEEDS_MIGRATION" = "yes" ]; then
-            echo "Pending migrations 00097–00099 not yet applied; running backup + migrations..."
+          if bash /srv/herbally/scripts/apply-pending-migrations.sh --phase expand --verify-only; then
+            echo "Expand migrations 00097–00103 already verified in herbally-db."
+          else
+            echo "Pending expand migrations (00097–00103) not yet verified; running backup + expand runner..."
             BACKUP_SCRIPT="$GITHUB_WORKSPACE/deploy/backup-local.sh"
             if [ -x /srv/herbally/deploy/backup-local.sh ]; then
               BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
             elif [ -f /srv/herbally/deploy/backup-local.sh ]; then
-              chmod +x /srv/herbally/deploy/backup-local.sh || true
-              [ -x /srv/herbally/deploy/backup-local.sh ] && BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
+              chmod +x /srv/herbally/deploy/backup-local.sh
+              BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
             fi
-            BACKUP_SCRIPT="$BACKUP_SCRIPT" bash /srv/herbally/scripts/apply-pending-migrations-00097-00099.sh
-          else
-            echo "Migrations 00097–00099 already present in herbally-db; skipping."
+            BACKUP_SCRIPT="$BACKUP_SCRIPT" bash /srv/herbally/scripts/apply-pending-migrations.sh --phase expand
           fi
 
       - name: Build image
@@ -151,9 +122,6 @@ jobs:
         working-directory: /srv/herbally/deploy
         run: |
           set -euo pipefail
-          # Wipe stale Next.js Data/Fetch Cache across upgrades while keeping
-          # optimized next/image files, and force-recreate the app container
-          # so /app/.next/server/route-cache in the writable layer is fresh.
           docker exec -u 0 herbally-app sh -c 'rm -rf /app/.next/cache/fetch-cache/*' 2>/dev/null || true
           docker compose up -d --force-recreate --no-deps app
 
@@ -173,26 +141,69 @@ jobs:
           docker logs herbally-app --tail 60
           exit 1
 
-      - name: Smoke test the public site
+      - name: Smoke test the public site (pre-contract)
         if: steps.changes.outputs.deploy_needed == 'true'
         run: |
           set -euo pipefail
-          home=$(curl -fsS -o /dev/null -w '%{http_code}' https://herbally.app/)
-          api=$(curl -fsS -o /dev/null -w '%{http_code}' 'https://herbally.app/api/interactions/check?herb=ginger&drug=warfarin')
+          for path in "/" "/herbs" "/herbs/aloe-vera" "/calculator?herb=ginger"; do
+            code=$(curl -fsS -o /dev/null -w '%{http_code}' "https://herbally.app${path}")
+            echo "${path} -> ${code}"
+            [ "$code" = "200" ]
+          done
+
+          ix_json=$(curl -fsS 'https://herbally.app/api/interactions/check?herb=ginger&drug=warfarin')
+          printf '%s' "$ix_json" | grep -q '"found":true'
+
+          search_json=$(curl -fsS 'https://herbally.app/api/herbs/search?q=ginger')
+          printf '%s' "$search_json" | grep -qi 'ginger'
+
           sitemap=$(curl -fsS https://herbally.app/sitemap.xml)
           locs=$(printf '%s' "$sitemap" | grep -c '<loc>' || true)
-          echo "home=$home api=$api sitemap_urls=$locs"
-          # Floor of 1,000 catches an empty or truncated sitemap.
-          [ "$home" = "200" ] && [ "$api" = "200" ] && [ "$locs" -ge 1000 ]
-          # Assert a known sourced page is offered, by shell case rather than
-          # `curl | grep -q`: grep closes the pipe on first match, curl exits 23
-          # ("failure writing output") and `set -o pipefail` fails a healthy site.
+          echo "sitemap_urls=$locs"
+          [ "$locs" -ge 1000 ]
           case "$sitemap" in
             *"/herbs/aloe-vera<"*) echo "sourced herb page present" ;;
             *) echo "sourced herb page missing from sitemap"; exit 1 ;;
           esac
 
-          # Record deployed SHA only after smoke test passes
+      - name: Apply & verify post-switch contract migration (00104) & verify public site + admin CRUD
+        if: steps.changes.outputs.deploy_needed == 'true'
+        run: |
+          set -euo pipefail
+          if bash /srv/herbally/scripts/apply-pending-migrations.sh --phase contract --verify-only; then
+            echo "Contract 00104 already enforced and verified in herbally-db."
+          else
+            echo "Applying post-switch 00104 pediatric boundary & dosage_calculations contract..."
+            bash /srv/herbally/scripts/apply-pending-migrations.sh --phase contract
+          fi
+
+          # Verify full expand + contract postconditions together
+          bash /srv/herbally/scripts/apply-pending-migrations.sh --phase all --verify-only
+
+          # Verify post-contract service_role admin CRUD RETURNING compatibility (rolled back cleanly)
+          docker exec -i herbally-db psql -U postgres -d postgres -v ON_ERROR_STOP=1 <<'SQL'
+          BEGIN;
+          SET LOCAL ROLE service_role;
+          INSERT INTO public.herbs (name, slug, scientific_name, description, dosage_adult, is_published)
+          VALUES ('Deploy Smoke Herb', 'deploy-smoke-herb-check', 'Smoke botanical', 'Smoke check.', '100 mg', false)
+          RETURNING id, slug, name, description, dosage_adult;
+          UPDATE public.herbs
+          SET description = 'Updated smoke check.'
+          WHERE slug = 'deploy-smoke-herb-check'
+          RETURNING id, slug, description;
+          ROLLBACK;
+          SQL
+
+          # Re-run full public smoke post-00104
+          for path in "/" "/herbs" "/herbs/aloe-vera" "/calculator?herb=ginger"; do
+            code=$(curl -fsS -o /dev/null -w '%{http_code}' "https://herbally.app${path}")
+            echo "post-contract ${path} -> ${code}"
+            [ "$code" = "200" ]
+          done
+          curl -fsS 'https://herbally.app/api/interactions/check?herb=ginger&drug=warfarin' | grep -q '"found":true'
+          curl -fsS 'https://herbally.app/api/herbs/search?q=ginger' | grep -qi 'ginger'
+
+          # Record deployed SHA only after post-contract smoke passes
           git -C "$GITHUB_WORKSPACE" rev-parse HEAD > /srv/herbally/.last-deployed-sha
 
           # Best-effort IndexNow notification for Bing/DuckDuckGo/ChatGPT Search
@@ -208,8 +219,6 @@ jobs:
         if: steps.changes.outputs.deploy_needed == 'true'
         run: |
           set -euo pipefail
-          # Keep herbally-app:rollback and recent layers so deploys stay fast
-          # while preventing multi-gigabyte build cache bloat on C:.
           docker image prune -f --filter "until=48h" || true
           docker builder prune -f --keep-storage=4GB || true
 
@@ -217,11 +226,26 @@ jobs:
         if: failure() && steps.changes.outputs.deploy_needed == 'true'
         run: |
           set -euo pipefail
-          echo "deploy failed; restoring the previous image"
-          if [ "${{ steps.changes.outputs.migrations_changed }}" = "true" ]; then
-            echo "::warning::SQL migrations changed in this commit. Image rollback restores application code only; manually verify database schema backward-compatibility."
+          echo "Deploy failed; checking whether 00104 contract state was applied before restoring old image..."
+          CONTRACT_APPLIED="$(docker exec -i herbally-db psql -U postgres -d postgres -tAc "
+            SELECT CASE WHEN
+              NOT has_column_privilege('anon', 'public.herbs', 'dosage_adult', 'SELECT')
+              OR NOT has_column_privilege('anon', 'public.herbs', 'dosage_child', 'SELECT')
+              OR EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'dosage_calculations_adult_only_check')
+            THEN 'yes' ELSE 'no' END;
+          ")"
+          if [ "$CONTRACT_APPLIED" = "yes" ]; then
+            echo "00104 contract detected; executing verified rollback-00104-contract.sql BEFORE old-image restoration..."
+            bash /srv/herbally/scripts/apply-pending-migrations.sh --rollback-contract
+          else
+            echo "00104 contract not applied; base-table grants and pre-contract writes remain open."
           fi
+
           if docker image inspect herbally-app:rollback >/dev/null 2>&1; then
+            echo "Restoring herbally-app:rollback image..."
             docker tag herbally-app:rollback herbally-app:local
-            (cd /srv/herbally/deploy && docker compose up -d --force-recreate --no-deps app) || true
+            (cd /srv/herbally/deploy && docker compose up -d --force-recreate --no-deps app)
+          else
+            echo "ERROR: herbally-app:rollback image missing; manual container recovery required." >&2
+            exit 1
           fi

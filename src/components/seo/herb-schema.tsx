@@ -1,6 +1,7 @@
 import { siteUrl } from "@/lib/seo/site-url";
-import { getReviewer } from "@/lib/data/reviewers";
+import { getReviewer, type Reviewer } from "@/lib/data/reviewers";
 import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
+import { stripPediatricDosageSentences } from "@/lib/herbs/regulatory-evidence";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 import { isBucketCategory } from "@/lib/herbs/category";
 
@@ -43,6 +44,8 @@ interface HerbSchemaProps {
    * omits `reviewedBy` / `last_reviewed`. Defaults true for standalone callers.
    */
   isClinicallyReviewed?: boolean;
+  /** DB-resolved clinical reviewer (optional; falls back to static `getReviewer`). */
+  resolvedReviewer?: Reviewer | null;
 }
 
 /**
@@ -63,8 +66,21 @@ export function HerbSchema({
   dateModified,
   isDangerous = false,
   isClinicallyReviewed = true,
+  resolvedReviewer,
 }: HerbSchemaProps) {
-  const reviewer = isClinicallyReviewed ? getReviewer(herb.reviewed_by) : null;
+  const candidateReviewer =
+    resolvedReviewer !== undefined
+      ? resolvedReviewer
+      : (getReviewer(herb.reviewed_by) ?? null);
+  const reviewer =
+    isClinicallyReviewed &&
+    candidateReviewer &&
+    candidateReviewer.role === "clinical" &&
+    candidateReviewer.consentRecorded &&
+    candidateReviewer.publicAttributionAllowed &&
+    candidateReviewer.licenceNumberVerified !== false
+      ? candidateReviewer
+      : null;
   const activeCompounds = asArray(herb.active_compounds);
   const traditionalUses = asArray(herb.traditional_uses);
   const contraindications = asArray(herb.contraindications);
@@ -122,45 +138,45 @@ export function HerbSchema({
         adverseEffect: sideEffects.map(stripFieldLabels).join("; "),
       }),
     },
-    ...(!isDangerous &&
-      herb.dosage_adult && {
+    ...(() => {
+      if (isDangerous || !herb.dosage_adult) return {};
+      const cleanedDose = stripPediatricDosageSentences(herb.dosage_adult);
+      if (!cleanedDose) return {};
+      return {
         dosage: {
           "@type": "MedicalDoseSchedule",
-          doseValue: normalizeDosage(herb.dosage_adult),
+          doseValue: normalizeDosage(cleanedDose),
           targetPopulation: "Adults",
         },
-      }),
+      };
+    })(),
     publisher: {
       "@type": "Organization",
       name: "HerbAlly",
       url: siteUrl(),
     },
-    // A reviewer claim is only honest when a specific, named person is on the
-    // record AND the current revision has not been invalidated for re-review.
-    // Owner policy: every page is reviewed and verified by the editorial team.
-    // A named person still takes precedence when the registry has one.
-    ...(reviewer
+    // Emit reviewedBy ONLY when the record is clinically reviewed by a verified
+    // clinical reviewer (never attribute editorial compilation as clinical review).
+    ...(isClinicallyReviewed && reviewer && reviewer.role === "clinical"
       ? {
           reviewedBy: {
             "@type": "Person",
             name: reviewer.name,
-            jobTitle: reviewer.credentials,
+            jobTitle: reviewer.licenceJurisdiction
+              ? `${reviewer.credentials} · ${reviewer.licenceJurisdiction}`
+              : reviewer.credentials,
             url: reviewer.profileUrl,
             ...(reviewer.researchUrl && { sameAs: reviewer.researchUrl }),
-            affiliation: reviewer.affiliations.map((a) => ({
-              "@type": "Organization",
-              name: a.name,
-              ...(a.url && { url: a.url }),
-            })),
+            ...((reviewer.affiliations?.length ?? 0) > 0 && {
+              affiliation: reviewer.affiliations.map((a) => ({
+                "@type": "Organization",
+                name: a.name,
+                ...(a.url && { url: a.url }),
+              })),
+            }),
           },
         }
-      : {
-          reviewedBy: {
-            "@type": "Organization",
-            name: "HerbAlly editorial team",
-            url: `${siteUrl()}/editorial-policy`,
-          },
-        }),
+      : {}),
     // The accountable author. This is a real, credentialed person and the
     // single strongest honest trust signal the page can carry; "HerbAlly
     // Editorial Team" told a rater nothing.

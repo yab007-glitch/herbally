@@ -156,7 +156,7 @@ export function SafetyGlance({
         {t("title")}
       </h2>
 
-      <dl className="grid divide-y divide-border/70 sm:grid-cols-[1fr_1fr_1.4fr] sm:divide-x sm:divide-y-0">
+      <dl className="grid divide-y divide-border/70 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1.4fr] sm:divide-x sm:divide-y-0">
         <div className="px-4 py-3">
           <dt className="text-xs font-medium text-muted-foreground">
             {t("pregnancy")}
@@ -206,6 +206,15 @@ export function SafetyGlance({
               safeLabel={t("safe")}
               unsafeLabel={t("unsafe")}
             />
+          </dd>
+        </div>
+
+        <div className="px-4 py-3">
+          <dt className="text-xs font-medium text-muted-foreground">
+            {t("pediatric")}
+          </dt>
+          <dd className="mt-1">
+            <Verdict value={false} label={t("pediatricUnavailable")} />
           </dd>
         </div>
 

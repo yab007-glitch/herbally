@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { cn } from "@/lib/utils";
 import { HomeSearchClient } from "./home-search-client";
@@ -21,7 +21,8 @@ export async function InteractionChecker({
   className,
   showBrowseLink = true,
 }: InteractionCheckerProps) {
-  const t = await getTranslations();
+  const [t, rawLocale] = await Promise.all([getTranslations(), getLocale()]);
+  const locale = rawLocale === "fr" ? "fr" : "en";
 
   return (
     <div
@@ -31,6 +32,7 @@ export async function InteractionChecker({
       )}
     >
       <HomeSearchClient
+        locale={locale}
         labels={{
           herbLabel: t("home.herbLabel"),
           medLabel: t("home.medLabel"),

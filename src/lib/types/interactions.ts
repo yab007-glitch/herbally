@@ -10,4 +10,5 @@ export interface Interaction {
    * Absent means no citation is recorded and the page must not imply one.
    */
   source_url?: string | null;
+  publication_status?: string | null;
 }

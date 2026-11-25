@@ -34,7 +34,11 @@ import { addLocalePrefix } from "@/lib/i18n/routing";
 import { hasManualMonograph, type Monograph } from "@/lib/data/monographs";
 import { parseProvenance, getReviewState } from "@/lib/types/provenance";
 import { herbUnavailable, resolveHerbOr404 } from "@/lib/herbs/resolve-herb";
-import { localizeHerb, localizeInteraction } from "@/lib/utils/localize-herb";
+import {
+  localizeHerb,
+  localizeInteraction,
+  redactPublicHerbFields,
+} from "@/lib/utils/localize-herb";
 import type { HerbWithInteractions } from "@/lib/types";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
@@ -72,7 +76,7 @@ import { GovSources } from "@/components/herbs/gov-sources";
 import { RegulatoryEvidenceSection } from "@/components/herbs/regulatory-evidence";
 import { compactRegulatoryEvidence } from "@/lib/herbs/regulatory-evidence";
 import { HerbSources } from "@/components/herbs/herb-sources";
-import { getReviewer } from "@/lib/data/reviewers";
+import { resolvePublicReviewerFromDb } from "@/lib/data/reviewers";
 import {
   canShowDoseCalculator,
   isDangerousHerb,
@@ -124,7 +128,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       async (herbSlug: string, locale: string) => {
         return loadHerb(herbSlug, locale as Locale);
       },
-      ["herb-meta-v2-" + slug],
+      ["herb-meta-v3-" + slug],
       { revalidate: HERB_PAGE_TTL, tags: ["herb-meta-" + slug] }
     );
 
@@ -260,9 +264,8 @@ export default async function HerbDetailPage({ params }: Props) {
     bundle?.herb &&
     Array.isArray((bundle.herb as Record<string, unknown>).drug_interactions)
   ) {
-    const localized = localizeHerb(
-      bundle.herb as unknown as HerbWithInteractions,
-      pageLocale
+    const localized = redactPublicHerbFields(
+      localizeHerb(bundle.herb as unknown as HerbWithInteractions, pageLocale)
     );
     herb = {
       ...localized,
@@ -273,7 +276,7 @@ export default async function HerbDetailPage({ params }: Props) {
   } else {
     const getHerbCached = unstable_cache(
       async (herbSlug: string, locale: Locale) => loadHerb(herbSlug, locale),
-      ["herb-v8-" + slug],
+      ["herb-v9-" + slug],
       { revalidate: HERB_PAGE_TTL, tags: ["herb-" + slug] }
     );
     herb = resolveHerbOr404(await getHerbCached(slug, pageLocale as Locale));
@@ -407,8 +410,12 @@ export default async function HerbDetailPage({ params }: Props) {
     reviewState?.kind === "needs_re_review" ||
     reviewState?.kind === "ai_generated" ||
     reviewState?.kind === "not_reviewed";
+  const resolvedReviewer = await resolvePublicReviewerFromDb(herb.reviewed_by);
+  const clinicalReviewer = resolvedReviewer;
+  const hasClinicalReviewer = clinicalReviewer?.role === "clinical";
   const isClinicallyReviewed =
     !reviewInvalidated &&
+    hasClinicalReviewer &&
     (reviewState?.kind === "human_reviewed" ||
       isManualMonograph ||
       (pubmedSheet?.status === "reviewed" && isUsablePubmedSheet(pubmedSheet)));
@@ -434,7 +441,7 @@ export default async function HerbDetailPage({ params }: Props) {
   const citations = formatCitations(
     herb.citations as unknown as CitationData[] | null
   );
-  const registeredReviewer = getReviewer(herb.reviewed_by);
+  const registeredReviewer = resolvedReviewer;
   const lastReviewed =
     registeredReviewer && herb.last_reviewed
       ? new Date(herb.last_reviewed).toLocaleDateString("en-US", {
@@ -553,6 +560,8 @@ export default async function HerbDetailPage({ params }: Props) {
     review_status: provenance.review_status,
     reviewed_by_name: provenance.reviewed_by_name,
     reviewed_on: provenance.reviewed_on,
+    review_role: provenance.review_role ?? null,
+    bulk_editorial_import: provenance.bulk_editorial_import ?? null,
   };
   const tableInteractions = interactions.map((ix) => ({
     id: ix.id,
@@ -561,6 +570,8 @@ export default async function HerbDetailPage({ params }: Props) {
     severity: ix.severity,
     description: ix.description,
     source_url: ix.source_url ?? null,
+    publication_status:
+      (ix as { publication_status?: string | null }).publication_status ?? null,
   }));
   const glanceInteractions = interactions.map((i) => ({
     drug_name: i.drug_name,
@@ -597,6 +608,7 @@ export default async function HerbDetailPage({ params }: Props) {
           dateModified={latestModified ?? undefined}
           isDangerous={isDangerous}
           isClinicallyReviewed={isClinicallyReviewed}
+          resolvedReviewer={resolvedReviewer}
         />
         <HerbFAQSchema
           herbName={herb.name}
@@ -671,6 +683,8 @@ export default async function HerbDetailPage({ params }: Props) {
             isClinicallyReviewed ? latestModified : (herb.updated_at ?? null)
           }
           isReviewed={isClinicallyReviewed}
+          reviewerName={reviewedBy}
+          reviewerCredentials={reviewerCredentials}
         />
 
         <HerbJumpNav

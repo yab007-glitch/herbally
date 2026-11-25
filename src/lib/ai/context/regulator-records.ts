@@ -1,4 +1,10 @@
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { shouldSuppressPublicAdultDose } from "@/lib/data/dangerous-herbs";
+import {
+  isPediatricOnlyOrTaggedDose,
+  sanitizeAdultInclusiveDose,
+  stripPediatricDosageSentences,
+} from "@/lib/herbs/regulatory-evidence";
 import type { VerifiedHerb } from "./types";
 
 // Caps keep the injected prompt bounded: a popular herb can carry a dozen
@@ -19,11 +25,15 @@ const MONOGRAPH_DOSES_CAP = 4;
 function toLines(value: unknown, cap: number): string[] {
   const out: string[] = [];
 
+  const pushText = (raw: string): void => {
+    const cleaned = stripPediatricDosageSentences(raw.trim());
+    if (cleaned) out.push(cleaned);
+  };
+
   const push = (v: unknown): void => {
     if (v == null) return;
     if (typeof v === "string") {
-      const text = v.trim();
-      if (text) out.push(text);
+      pushText(v);
       return;
     }
     if (typeof v === "number" || typeof v === "boolean") {
@@ -57,14 +67,60 @@ function toLines(value: unknown, cap: number): string[] {
             typeof population === "string" && population.trim()
               ? `${population.trim()}: `
               : "";
-          out.push(`${qualifier}${candidate.trim()}`);
+          pushText(`${qualifier}${candidate.trim()}`);
           return;
         }
       }
       const leaves = Object.values(record).filter(
         (x): x is string => typeof x === "string" && x.trim().length > 0
       );
-      if (leaves.length > 0) out.push(leaves.join(" · "));
+      if (leaves.length > 0) pushText(leaves.join(" · "));
+    }
+  };
+
+  push(value);
+  return Array.from(new Set(out)).slice(0, cap);
+}
+
+function toDoseLines(value: unknown, cap: number): string[] {
+  const out: string[] = [];
+
+  const push = (v: unknown): void => {
+    if (v == null) return;
+    if (typeof v === "string") {
+      const text = stripPediatricDosageSentences(v.trim());
+      if (text && !isPediatricOnlyOrTaggedDose({ text })) out.push(text);
+      return;
+    }
+    if (Array.isArray(v)) {
+      for (const item of v) push(item);
+      return;
+    }
+    if (typeof v === "object") {
+      const record = v as Record<string, unknown>;
+      for (const key of ["text", "dose", "value"]) {
+        const candidate = record[key];
+        if (typeof candidate === "string" && candidate.trim()) {
+          const sanitized = sanitizeAdultInclusiveDose({
+            text: candidate.trim(),
+            population:
+              typeof record.population === "string" ? record.population : null,
+            age_minimum:
+              typeof record.age_minimum === "number"
+                ? record.age_minimum
+                : null,
+          });
+          if (!sanitized) return;
+          const qualifier = sanitized.population
+            ? `${sanitized.population}: `
+            : "";
+          const formatted = `${qualifier}${sanitized.text}`;
+          if (!isPediatricOnlyOrTaggedDose({ text: formatted })) {
+            out.push(formatted);
+          }
+          return;
+        }
+      }
     }
   };
 
@@ -76,6 +132,8 @@ function toStringArray(value: unknown, cap: number): string[] {
   if (!Array.isArray(value)) return [];
   return value
     .filter((v): v is string => typeof v === "string" && v.trim().length > 0)
+    .map((v) => stripPediatricDosageSentences(v.trim()))
+    .filter((v) => v.length > 0)
     .slice(0, cap);
 }
 
@@ -125,17 +183,17 @@ export async function attachRegulatorRecords(
   try {
     const [regulatoryResult, monographResult, sheetResult] = await Promise.all([
       supabase
-        .from("herb_regulatory_evidence")
+        .from("herb_regulatory_evidence_public" as never)
         .select("herb_slug, source, purposes, doses, risks, source_urls")
         .in("herb_slug", slugs),
       supabase
-        .from("herb_monograph_sources" as never)
+        .from("herb_monograph_sources_public" as never)
         .select(
           "herb_slug, source, licence, claims, safety, doses, url, monograph_date"
         )
         .in("herb_slug", slugs),
       supabase
-        .from("herb_pubmed_monographs" as never)
+        .from("herb_pubmed_monographs_public" as never)
         .select("slug, content, pmids, article_count")
         .in("slug", slugs),
     ]);
@@ -170,40 +228,66 @@ export async function attachRegulatorRecords(
     ) => {
       const value = content?.[key];
       if (typeof value !== "string") return null;
-      const text = value.trim();
+      const text = stripPediatricDosageSentences(value.trim());
       if (!text) return null;
       return text.length > cap ? `${text.slice(0, cap).trimEnd()}…` : text;
     };
 
     for (const herb of herbs) {
+      const isBlockedHerb = shouldSuppressPublicAdultDose(herb.slug);
       const regulatory = regulatoryBySlug.get(herb.slug)?.[0];
       if (regulatory) {
         herb.regulatory = {
           source: regulatory.source,
           purposes: toStringArray(regulatory.purposes, REGULATORY_PURPOSES_CAP),
-          doses: toLines(regulatory.doses, REGULATORY_DOSES_CAP),
+          doses: isBlockedHerb
+            ? []
+            : toDoseLines(regulatory.doses, REGULATORY_DOSES_CAP),
           risks: toLines(regulatory.risks, REGULATORY_RISKS_CAP),
           urls: toStringArray(regulatory.source_urls, 3),
         };
       }
 
-      herb.monographs = (monographsBySlug.get(herb.slug) ?? [])
-        .slice(0, 3)
-        .map((row) => ({
-          source: row.source,
-          licence: row.licence ?? null,
-          claims: toLines(row.claims, MONOGRAPH_CLAIMS_CAP),
-          safety: toLines(row.safety, MONOGRAPH_SAFETY_CAP),
-          doses: toLines(row.doses, MONOGRAPH_DOSES_CAP),
-          url: row.url ?? null,
-        }));
+      herb.monographs = isBlockedHerb
+        ? []
+        : (monographsBySlug.get(herb.slug) ?? []).slice(0, 3).map((row) => ({
+            source: row.source,
+            licence: row.licence ?? null,
+            claims: toLines(row.claims, MONOGRAPH_CLAIMS_CAP),
+            safety: toLines(row.safety, MONOGRAPH_SAFETY_CAP),
+            doses: toDoseLines(row.doses, MONOGRAPH_DOSES_CAP),
+            url: row.url ?? null,
+          }));
 
       const sheet = sheetsBySlug.get(herb.slug);
       if (sheet) {
+        const doseKeys = [
+          "dosageAndAdministration",
+          "dosage_and_administration",
+          "dosage",
+          "dose",
+          "doses",
+          "dosing",
+          "recommendedDosage",
+          "recommended_dosage",
+          "adultDosage",
+          "adult_dosage",
+          "administration",
+          "posology",
+          "posologie",
+        ];
+        const rawDosage = doseKeys
+          .map((k) => sheetText(sheet.content, k, 400))
+          .find((v): v is string => Boolean(v));
+        const safeDosage = isBlockedHerb
+          ? null
+          : rawDosage
+            ? stripPediatricDosageSentences(rawDosage) || null
+            : null;
         herb.information_sheet = {
           summary: sheetText(sheet.content, "summary", 600),
           traditional_uses: sheetText(sheet.content, "traditionalUses", 400),
-          dosage: sheetText(sheet.content, "dosageAndAdministration", 400),
+          dosage: safeDosage,
           safety: sheetText(sheet.content, "safetyAndAdverseEffects", 400),
           pregnancy: sheetText(sheet.content, "pregnancyAndLactation", 400),
           drug_interactions: sheetText(sheet.content, "drugInteractions", 400),

@@ -3,18 +3,25 @@
 import { cn } from "@/lib/utils";
 import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 import {
+  filterAdultDoses,
   formatDoseText,
   isCrossContaminatedRisk,
   isGarbageOrHomeopathicDose,
   isHomeopathicEvidence,
   isPediatricOnlyOrTaggedDose,
+  sanitizeAdultInclusiveDose,
+  stripPediatricDosageSentences,
   type RegulatoryEvidence,
 } from "@/lib/herbs/regulatory-evidence";
 
 export {
+  filterAdultDoses,
   formatDoseText,
   isCrossContaminatedRisk,
   isGarbageOrHomeopathicDose,
+  isPediatricOnlyOrTaggedDose,
+  sanitizeAdultInclusiveDose,
+  stripPediatricDosageSentences,
   type RegulatoryEvidence,
 };
 
@@ -123,11 +130,7 @@ export function RegulatoryEvidenceSection({
   }
 
   const isHomeopathic = isHomeopathicProp ?? isHomeopathicEvidence(evidence);
-  const adultDoses = (evidence.doses ?? []).filter(
-    (d) =>
-      !isPediatricOnlyOrTaggedDose(d) &&
-      !isGarbageOrHomeopathicDose(d, isHomeopathic)
-  );
+  const adultDoses = filterAdultDoses(evidence.doses, isHomeopathic);
   const filteredRisks = (evidence.risks ?? []).filter(
     (r) => !isCrossContaminatedRisk(evidence.herb_slug, r)
   );

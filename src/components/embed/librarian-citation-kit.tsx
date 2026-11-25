@@ -30,13 +30,13 @@ export function LibrarianCitationKit() {
 
   const plainBlurb =
     kitLocale === "fr"
-      ? `HerbAlly — Vérificateur d'interactions plantes–médicaments et monographies bilingues (${checkerUrl}). Outil clinique gratuit et sans compte présentant la gravité des interactions, les médicaments d'ordonnance associés et le planificateur préopératoire avec sources réglementaires (BDPSNH de Santé Canada, monographies HMPC de l'EMA, NIH NCCIH et LiverTox). Méthodologie et licences : ${methodologyUrl}.`
-      : `HerbAlly — Herb–Drug Interaction Checker & Monograph Reference (${checkerUrl}). Free, ad-free, bilingual (EN/FR) patient safety tool with severity-graded interaction pairs, reverse prescription-drug lookup, Health Canada NPN decoder, and pre-surgery washout planner grounded in Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, and NIH LiverTox. Methodology and open-data licences: ${methodologyUrl}.`;
+      ? `HerbAlly — Vérificateur d'interactions plantes–médicaments et monographies bilingues (${checkerUrl}). Outil éducatif gratuit et sans compte présentant la gravité des interactions enregistrées, les médicaments associés et le planificateur préopératoire avec sources réglementaires (BDPSNH de Santé Canada, monographies HMPC de l'EMA, NIH NCCIH et LiverTox). Ne constitue pas un avis médical. Méthodologie et licences : ${methodologyUrl}.`
+      : `HerbAlly — Herb–Drug Interaction Checker & Monograph Reference (${checkerUrl}). Free, ad-free, bilingual (EN/FR) educational reference tool showing recorded interaction pairs, reverse prescription-drug lookup, Health Canada NPN decoder, and pre-surgery washout planner citing Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, and NIH LiverTox. Not medical advice. Methodology and open-data licences: ${methodologyUrl}.`;
 
   const htmlSnippet =
     kitLocale === "fr"
-      ? `<a href="${checkerUrl}" rel="noopener">HerbAlly — Vérificateur d'interactions plantes–médicaments</a> : outil clinique gratuit et bilingue appuyé par Santé Canada, l'EMA (HMPC), le NIH NCCIH et LiverTox.`
-      : `<a href="${checkerUrl}" rel="noopener">HerbAlly Herb–Drug Interaction Checker</a> — Free, ad-free clinical screening tool and herbal monograph directory citing Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, and NIH LiverTox.`;
+      ? `<a href="${checkerUrl}" rel="noopener">HerbAlly — Vérificateur d'interactions plantes–médicaments</a> : outil de référence éducatif gratuit et bilingue appuyé par Santé Canada, l'EMA (HMPC), le NIH NCCIH et LiverTox.`
+      : `<a href="${checkerUrl}" rel="noopener">HerbAlly Herb–Drug Interaction Checker</a> — Free, ad-free educational reference tool and herbal monograph directory citing Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, and NIH LiverTox.`;
 
   async function copyText(key: "blurb" | "html", value: string) {
     try {

@@ -326,25 +326,30 @@
     "notFoundDesc": "La comparaison de plantes que vous recherchez n'existe pas."
   },
   "dosageFormulas": {
+    "adult_reference": {
+      "name": "Référence adulte de monographie (18+)",
+      "description": "Confirme la dose de référence adulte sans formule pondérale ni pédiatrique.",
+      "bestFor": "Adultes de 18 à 120 ans avec dose adulte issue d'une source revue"
+    },
     "clarks_rule": {
-      "name": "Règle de Clark",
-      "description": "Calcul de référence basé sur le poids.",
-      "bestFor": "Adultes, référence basée sur le poids"
+      "name": "Règle de Clark (retirée)",
+      "description": "Ancienne formule d'ajustement retirée par sécurité.",
+      "bestFor": "N'est plus disponible"
     },
     "youngs_rule": {
-      "name": "Règle de Young",
-      "description": "Calcul de référence basé sur l'âge, moins précis que les méthodes basées sur le poids.",
-      "bestFor": "Adultes, référence basée sur l'âge"
+      "name": "Règle de Young (retirée)",
+      "description": "Ancienne formule d'ajustement retirée par sécurité.",
+      "bestFor": "N'est plus disponible"
     },
     "bsa": {
-      "name": "Méthode BSA (Mosteller)",
-      "description": "Calcul de référence basé sur la surface corporelle.",
-      "bestFor": "Adultes lorsque la taille et le poids sont connus"
+      "name": "Méthode BSA (retirée)",
+      "description": "Ancienne formule d'ajustement retirée par sécurité.",
+      "bestFor": "N'est plus disponible"
     },
     "fried_rule": {
-      "name": "Règle de Fried",
-      "description": "Méthode de référence basée sur l'âge en mois.",
-      "bestFor": "Non applicable aux adultes de 18 ans et plus"
+      "name": "Règle de Fried (retirée)",
+      "description": "Ancienne formule d'ajustement retirée par sécurité.",
+      "bestFor": "N'est plus disponible"
     }
   },
   "sponsorship": {
@@ -514,8 +519,8 @@
     "herbsDatabaseDesc": "Parcourez notre base de données de plantes médicinales avec fiches sourcées, composés actifs, avertissements de sécurité et interactions médicamenteuses.",
     "virtualHerbalist": "Herboriste Virtuel",
     "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions et la posologie. Réponses sourcées OMS, NCCIH et PubMed, gratuites.",
-    "doseCalculator": "Calculateur de Posologie : Doses de Référence pour Adultes",
-    "doseCalculatorDesc": "Calculateur gratuit de posologie adulte (18 ans et plus) selon le poids et l'âge : formules de Clark, Young et surface corporelle pour les plantes disposant d'une dose de référence établie.",
+    "doseCalculator": "Vérificateur de Posologie Adulte de Référence (18+)",
+    "doseCalculatorDesc": "Vérificateur gratuit de posologie adulte issue de monographies (18 ans et plus) : consultez la dose adulte de référence non ajustée sans formules pondérales, selon l'âge ou pédiatriques. Aucun compte requis.",
     "herbsBySymptom": "Plantes par Symptôme",
     "herbsBySymptomDesc": "Trouvez les plantes adaptées à vos symptômes avec niveaux de preuve et sources : anxiété, sommeil, inflammation, digestion et plus encore.",
     "privacyPolicy": "Politique de Confidentialité",
@@ -741,8 +746,8 @@
     "checkerSource": "Source",
     "checkerEvidence": "Preuves",
     "checkerMechanism": "Fonctionnement",
-    "explainerTitle": "Votre guide de confiance des plantes médicinales",
-    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant des centaines de fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et calculer une dose adulte lorsqu'une posologie sûre existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
+    "explainerTitle": "Votre guide de référence des plantes médicinales",
+    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant des centaines de fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et consulter une dose adulte de référence lorsqu'une monographie établie existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
     "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
     "popularTitle": "Plantes populaires",
     "herbLabel": "Plante",

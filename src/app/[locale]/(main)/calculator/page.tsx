@@ -168,8 +168,8 @@ export default async function CalculatorPage({
         ) : nonDosableHerbName ? (
           <div className="rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-relaxed text-amber-950 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200">
             {locale === "fr"
-              ? `HerbAlly ne calcule pas de posologie ajustée au poids pour ${nonDosableHerbName} : cette entrée correspond à un usage strictement externe, à une préparation homéopathique, à une plante à marge thérapeutique étroite, ou ne dispose pas d'une dose adulte quantitative vérifiée.`
-              : `HerbAlly does not compute weight-scaled doses for ${nonDosableHerbName}: this entry is topical-only, homeopathic, narrow-margin, or lacks an established quantitative oral adult reference dose. Consult a licensed pharmacist or clinician.`}
+              ? `HerbAlly ne calcule ni n'automatise de posologie pour ${nonDosableHerbName} : cette entrée correspond à un usage strictement externe, à une préparation homéopathique, à une plante à marge thérapeutique étroite, ou ne dispose pas d'une dose adulte quantitative vérifiée. Consultez un pharmacien ou un médecin.`
+              : `HerbAlly does not calculate or automate doses for ${nonDosableHerbName}: this entry is topical-only, homeopathic, narrow-margin, or lacks an established quantitative oral adult reference dose. Consult a licensed pharmacist or clinician.`}
           </div>
         ) : (
           <DoseCalculatorForm prefill={prefill} />

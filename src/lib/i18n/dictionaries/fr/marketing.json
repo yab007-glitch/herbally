@@ -74,8 +74,8 @@
     },
     "dosage": {
       "calculator": {
-        "q": "Comment fonctionne le calculateur de posologie ?",
-        "a": "Le calculateur de posologie d'HerbAlly est destiné aux adultes de 18 ans et plus. Il propose la Règle de Clark (basée sur le poids), la Règle de Young (basée sur l'âge) et la Surface Corporelle (BSA) comme méthodes de référence. Il ne calcule pas de posologie pour les enfants ou les adolescents ; consultez plutôt un professionnel de santé pédiatrique qualifié."
+        "q": "Comment fonctionne l'outil de référence adulte ?",
+        "a": "L'outil de référence d'HerbAlly est strictement réservé aux adultes de 18 à 120 ans. Il confirme la quantité adulte de référence issue des monographies sans aucune formule pondérale, selon l'âge ou pédiatrique (les règles de Clark, Young, Fried et BSA sont définitivement désactivées). Vérifiez toujours l'adéquation clinique avec un médecin ou un pharmacien."
       },
       "multiple": {
         "q": "Puis-je prendre plusieurs plantes en même temps ?",

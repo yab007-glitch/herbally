@@ -125,7 +125,7 @@ describe("HerbSchema", () => {
 });
 
 describe("HerbSchema reviewer attribution", () => {
-  it("emits reviewedBy for a registered, named reviewer", () => {
+  it("attributes a registered, consented editor under author (never as clinical reviewedBy)", () => {
     const json = extractJson(
       renderSchema({
         ...baseHerb,
@@ -133,30 +133,29 @@ describe("HerbSchema reviewer attribution", () => {
         last_reviewed: "2026-11-18T00:00:00Z",
       })
     );
-    const reviewedBy = json.reviewedBy as
+    const author = json.author as
       { name?: string; jobTitle?: string; "@type"?: string } | undefined;
-    expect(reviewedBy?.name).toBe("Yasser Bheekun");
-    expect(reviewedBy?.jobTitle).toContain("OPTMQ");
-    expect(reviewedBy?.["@type"]).toBe("Person");
+    expect(author?.name).toBe("Yasser Bheekun");
+    expect(author?.jobTitle).toContain("Medical Laboratory Technologist");
+    expect(author?.["@type"]).toBe("Person");
+    expect(json.reviewedBy).toBeUndefined();
   });
 
-  it("resolves the reviewer by display name as well as by id", () => {
+  it("never exposes unconsented reviewers (dawn-wong) even if referenced by display name", () => {
     const json = extractJson(
-      renderSchema({ ...baseHerb, reviewed_by: "Yasser Bheekun" })
+      renderSchema({ ...baseHerb, reviewed_by: "Dr. Dawn Wong" })
     );
-    expect((json.reviewedBy as { name?: string } | undefined)?.name).toBe(
-      "Yasser Bheekun"
-    );
+    expect(json.reviewedBy).toBeUndefined();
   });
 
-  it("never emits the generic editorial-team string as a person", () => {
+  it("omits reviewedBy when no clinically verified reviewer is on record (even for editorial team strings)", () => {
     const json = extractJson(
       renderSchema({ ...baseHerb, reviewed_by: "HerbAlly Editorial Team" })
     );
-    const reviewedBy = json.reviewedBy as
+    expect(json.reviewedBy).toBeUndefined();
+    const author = json.author as
       { name?: string; "@type"?: string } | undefined;
-    expect(reviewedBy?.["@type"]).toBe("Organization");
-    expect(reviewedBy?.name).toBe("HerbAlly editorial team");
+    expect(author?.name).toBeDefined();
   });
 
   it("omits dosage, pediatricDose, and medicalUse and forces pregnancy/nursing warnings when isDangerous is true", () => {
@@ -213,7 +212,7 @@ describe("HerbSchema reviewer attribution", () => {
         <HerbSchema
           herb={{
             ...baseHerb,
-            reviewed_by: "Yasser Bheekun",
+            reviewed_by: "yasser-bheekun",
             last_reviewed: "2026-06-23",
           }}
           url="https://herbally.app/herbs/test-herb"
@@ -223,9 +222,71 @@ describe("HerbSchema reviewer attribution", () => {
       )
     );
 
-    expect(
-      (json.reviewedBy as { "@type"?: string } | undefined)?.["@type"]
-    ).toBe("Organization");
+    expect(json.reviewedBy).toBeUndefined();
     expect(json.dateModified).toBe("2026-11-22");
+  });
+
+  it("omits reviewedBy even when reviewer has role=editorial instead of clinical", () => {
+    const json = extractJson(
+      renderToStaticMarkup(
+        <HerbSchema
+          herb={{
+            ...baseHerb,
+            reviewed_by: "yasser-bheekun",
+          }}
+          url="https://herbally.app/herbs/test-herb"
+          isClinicallyReviewed={true}
+        />
+      )
+    );
+    expect(json.reviewedBy).toBeUndefined();
+  });
+
+  it("emits clinical reviewedBy when resolvedReviewer from DB registry is consented and licence-verified", () => {
+    const props = {
+      herb: {
+        ...baseHerb,
+        reviewed_by: "db-clinician-1",
+        last_reviewed: "2026-11-20T00:00:00Z",
+      },
+      url: "https://herbally.app/herbs/test-herb",
+      isClinicallyReviewed: true,
+      resolvedReviewer: {
+        id: "db-clinician-1",
+        name: "Dr. Samira Patel",
+        credentials: "MD, FRCPC",
+        role: "clinical",
+        consentRecorded: true,
+        publicAttributionAllowed: true,
+        licenceNumberVerified: true,
+        licenceJurisdiction: "CPSO Ontario",
+      },
+    } as Parameters<typeof HerbSchema>[0];
+
+    const json = extractJson(renderToStaticMarkup(<HerbSchema {...props} />));
+    const reviewedBy = json.reviewedBy as
+      { name?: string; jobTitle?: string } | undefined;
+    expect(reviewedBy?.name).toBe("Dr. Samira Patel");
+    expect(reviewedBy?.jobTitle).toContain("CPSO Ontario");
+  });
+
+  it("strips pediatric dosing sentences from schema dosage.doseValue while keeping adult doses", () => {
+    const json = extractJson(
+      renderToStaticMarkup(
+        <HerbSchema
+          herb={{
+            ...baseHerb,
+            slug: "senna-leaf",
+            dosage_adult:
+              "Adults: 15-30 mg daily. Children 2-12 years: 7.5 mg daily.",
+          }}
+          url="https://herbally.app/herbs/senna-leaf"
+        />
+      )
+    );
+    const doseValue = (json.dosage as { doseValue?: string } | undefined)
+      ?.doseValue;
+    expect(doseValue).toContain("15-30 mg daily");
+    expect(doseValue).not.toContain("7.5 mg");
   });
 });

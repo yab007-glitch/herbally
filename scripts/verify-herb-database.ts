@@ -14,11 +14,13 @@ import { config } from "dotenv";
 import * as fs from "fs";
 import {
   checkCatalogCardinality,
+  checkInteractionPublicationContract,
   checkSafetyConflicts,
   classifyPairUrlCollisions,
   classifySupabaseTarget,
 } from "../src/lib/db/verify-rules";
 import { findPairUrlCollisions } from "../src/lib/interactions/pair-url";
+import { PUBLIC_HERB_COLUMNS } from "../src/lib/herbs/public-columns";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
@@ -253,7 +255,7 @@ async function main() {
   while (true) {
     const { data, error } = await supabase
       .from("herbs")
-      .select("*")
+      .select(PUBLIC_HERB_COLUMNS)
       .eq("is_published", true)
       .order("name")
       .range(page * 1000, (page + 1) * 1000 - 1);
@@ -263,7 +265,7 @@ async function main() {
       process.exit(1);
     }
     if (!data || data.length === 0) break;
-    herbList.push(...(data as HerbRow[]));
+    herbList.push(...(data as unknown as HerbRow[]));
     if (data.length < 1000) break;
     page++;
   }
@@ -290,28 +292,45 @@ async function main() {
     allErrors.push(...validateHerb(herb, validCategoryIds));
   }
 
-  // Check drug_interactions URL collisions across published herbs (paginated)
+  // Check drug_interactions URL collisions across published herbs (paginated),
+  // reading 00101 governance columns when present with pre-migration fallback.
   const interactionRows: Array<{
     id: unknown;
     drug_name: unknown;
     severity: unknown;
+    is_drug_class?: unknown;
+    single_ingredient_rxcui?: unknown;
+    publication_status?: unknown;
+    clinical_reviewer_id?: unknown;
+    verified_at?: unknown;
     herbs: unknown;
   }> = [];
   let ixPage = 0;
+  let hasGovernanceCols = true;
   while (true) {
+    const selectStr = hasGovernanceCols
+      ? "id,drug_name,severity,is_drug_class,single_ingredient_rxcui,publication_status,clinical_reviewer_id,verified_at,herbs!inner(slug,is_published)"
+      : "id,drug_name,severity,herbs!inner(slug,is_published)";
     const { data: ixBatch, error: ixError } = await supabase
       .from("drug_interactions")
-      .select("id,drug_name,severity,herbs!inner(slug,is_published)")
+      .select(selectStr)
       .eq("herbs.is_published", true)
       .order("id", { ascending: true })
       .range(ixPage * 1000, (ixPage + 1) * 1000 - 1);
 
     if (ixError) {
+      if (
+        hasGovernanceCols &&
+        /column|does not exist|schema cache/i.test(ixError.message)
+      ) {
+        hasGovernanceCols = false;
+        continue;
+      }
       console.error(`❌ Failed to query drug_interactions: ${ixError.message}`);
       process.exit(1);
     }
     if (!ixBatch || ixBatch.length === 0) break;
-    interactionRows.push(...ixBatch);
+    interactionRows.push(...(ixBatch as unknown as typeof interactionRows));
     if (ixBatch.length < 1000) break;
     ixPage++;
   }
@@ -327,6 +346,103 @@ async function main() {
       };
     })
     .filter((r) => Boolean(r.herbSlug));
+
+  if (hasGovernanceCols) {
+    const activeCountByInteraction = new Map<string, number>();
+    const retractedCountByInteraction = new Map<string, number>();
+    let citPage = 0;
+    let hasCitationsTable = true;
+    while (hasCitationsTable) {
+      const { data: citBatch, error: citError } = await supabase
+        .from("drug_interaction_citations" as never)
+        .select(
+          "interaction_id,retraction_status,url,source_licence,claim_support_anchor"
+        )
+        .order("id", { ascending: true })
+        .range(citPage * 1000, (citPage + 1) * 1000 - 1);
+
+      if (citError) {
+        if (
+          /does not exist|schema cache|42P01|PGRST205/i.test(citError.message)
+        ) {
+          hasCitationsTable = false;
+          break;
+        }
+        console.error(
+          `❌ Failed to query drug_interaction_citations: ${citError.message}`
+        );
+        process.exit(1);
+      }
+      const rows = (citBatch ?? []) as Array<{
+        interaction_id?: string | null;
+        retraction_status?: string | null;
+        url?: string | null;
+        source_licence?: string | null;
+        claim_support_anchor?: string | null;
+      }>;
+      if (rows.length === 0) break;
+      for (const c of rows) {
+        if (!c.interaction_id) continue;
+        if (c.retraction_status === "retracted") {
+          retractedCountByInteraction.set(
+            c.interaction_id,
+            (retractedCountByInteraction.get(c.interaction_id) ?? 0) + 1
+          );
+        } else if (
+          c.retraction_status === "active" &&
+          Boolean(c.url?.trim()) &&
+          Boolean(c.source_licence?.trim()) &&
+          Boolean(c.claim_support_anchor?.trim())
+        ) {
+          activeCountByInteraction.set(
+            c.interaction_id,
+            (activeCountByInteraction.get(c.interaction_id) ?? 0) + 1
+          );
+        }
+      }
+      if (rows.length < 1000) break;
+      citPage++;
+    }
+
+    for (const issue of checkInteractionPublicationContract(
+      interactionRows.map((row) => {
+        const id = String(row.id);
+        return {
+          id,
+          drugName: String(row.drug_name),
+          isDrugClass: Boolean(row.is_drug_class),
+          singleIngredientRxcui:
+            typeof row.single_ingredient_rxcui === "string"
+              ? row.single_ingredient_rxcui
+              : null,
+          publicationStatus:
+            typeof row.publication_status === "string"
+              ? row.publication_status
+              : null,
+          clinicalReviewerId:
+            typeof row.clinical_reviewer_id === "string"
+              ? row.clinical_reviewer_id
+              : null,
+          verifiedAt:
+            typeof row.verified_at === "string" ? row.verified_at : null,
+          activeCitationCount: hasCitationsTable
+            ? (activeCountByInteraction.get(id) ?? 0)
+            : 0,
+          retractedCitationCount: hasCitationsTable
+            ? (retractedCountByInteraction.get(id) ?? 0)
+            : 0,
+        };
+      })
+    )) {
+      allErrors.push({
+        herb: "INTERACTION_CONTRACT",
+        slug: issue.id,
+        field: issue.code,
+        message: issue.message,
+        severity: "error",
+      });
+    }
+  }
 
   for (const cardErr of checkCatalogCardinality({
     categories: validCategoryIds.size,
@@ -425,8 +541,31 @@ async function checkMigrationFiles() {
   const migrationsDir = "supabase/migrations";
   if (!fs.existsSync(migrationsDir)) return;
 
-  const files = fs.readdirSync(migrationsDir).filter((f) => f.endsWith(".sql"));
-  console.log(`\n📄 Checking ${files.length} migration files...`);
+  const files = fs
+    .readdirSync(migrationsDir)
+    .filter((f) => f.endsWith(".sql"))
+    .sort();
+  console.log(
+    `\n📄 Static lint of ${files.length} migration files (not execution proof — disposable Postgres integration runs in CI)...`
+  );
+
+  const requiredPending = [
+    "00097_admin_aal2_rls.sql",
+    "00098_newsletter_confirmation_sent_at.sql",
+    "00099_newsletter_send_lease.sql",
+    "00099b_formula_type_adult_reference_enum.sql",
+    "00100_pediatric_containment_dosage_calculations.sql",
+    "00101_interaction_publication_contract.sql",
+    "00102_scientific_governance_and_incidents.sql",
+    "00103_privacy_minimization_controls.sql",
+    "00104_pediatric_boundary_contract.sql",
+  ];
+  for (const req of requiredPending) {
+    if (!files.includes(req)) {
+      console.error(`❌ Missing required pending migration: ${req}`);
+      process.exit(1);
+    }
+  }
 
   for (const file of files) {
     const content = fs.readFileSync(`${migrationsDir}/${file}`, "utf-8");
@@ -435,6 +574,33 @@ async function checkMigrationFiles() {
     }
     if (content.includes("DELETE FROM") && !content.includes("WHERE")) {
       console.log(`  ⚠️  ${file}: Contains DELETE FROM without WHERE clause`);
+    }
+    if (/^00(097|098|099|099b|100|101|102|103|104)/.test(file)) {
+      const noComments = content
+        .replace(/--[^\n]*/g, "")
+        .replace(/\/\*[\s\S]*?\*\//g, "");
+      if (/\(\?<[=!]/.test(noComments)) {
+        console.error(
+          `❌ ${file}: Contains PostgreSQL-16-incompatible regex lookbehind (?<= / (?<!`
+        );
+        process.exit(1);
+      }
+      const stripped = noComments.replace(
+        /\$([a-zA-Z_0-9]*)\$[\s\S]*?\$\1\$/g,
+        ""
+      );
+      const begins = (
+        stripped.match(/^\s*(?:BEGIN|START\s+TRANSACTION)\s*;/gim) ?? []
+      ).length;
+      const commits = (
+        stripped.match(/^\s*(?:COMMIT|END\s+TRANSACTION)\s*;/gim) ?? []
+      ).length;
+      if (begins !== commits) {
+        console.error(
+          `❌ ${file}: Unbalanced top-level BEGIN (${begins}) vs COMMIT (${commits})`
+        );
+        process.exit(1);
+      }
     }
   }
 }

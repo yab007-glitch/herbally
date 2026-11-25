@@ -13,6 +13,10 @@ const CUSTOM_BASE_URL = process.env.PLAYWRIGHT_BASE_URL;
  */
 export default defineConfig({
   testDir: "./e2e",
+  testIgnore:
+    process.env.E2E_MIGRATED_DB === "1"
+      ? undefined
+      : ["**/migrated-db.spec.ts"],
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

@@ -9,6 +9,7 @@ import { HerbUsesPanel } from "@/components/herbs/herb-uses-panel";
 import { HerbSciencePanel } from "@/components/herbs/herb-science-panel";
 import { HerbDosagePanel } from "@/components/herbs/herb-dosage-panel";
 import { HerbSafetyPanel } from "@/components/herbs/herb-safety-panel";
+import { PrintSafetyFooter } from "@/components/shared/print-safety-footer";
 import type { Monograph } from "@/lib/data/monographs";
 import type { CopyLocale } from "@/lib/i18n/herb-page-copy";
 
@@ -224,6 +225,21 @@ export function HerbDetailTabs({ tabs, data }: HerbDetailTabsProps) {
           {data
             ? renderDataPanel(active)
             : tabs?.find((tab) => tab.key === active)?.content}
+          {data && active !== "safety" && (
+            <div className="print-only mt-6">
+              <HerbSafetyPanel
+                herb={data.herb}
+                interactionCount={data.interactionCount}
+                severityCounts={data.severityCounts}
+                showInteractions={false}
+              />
+            </div>
+          )}
+          {data && (
+            <div className="print-only">
+              <PrintSafetyFooter locale={data.locale === "fr" ? "fr" : "en"} />
+            </div>
+          )}
         </div>
       ) : null}
     </div>

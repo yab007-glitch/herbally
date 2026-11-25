@@ -49,6 +49,8 @@ export interface Provenance {
   review_status: ReviewStatus | null;
   reviewed_by_name: string | null;
   reviewed_on: string | null;
+  review_role?: "editorial" | "clinical" | null;
+  bulk_editorial_import?: boolean | null;
   review_notes?: string;
   verification_status: VerificationStatus | null;
   verified_source_count: number;
@@ -183,6 +185,18 @@ export const ProvenanceSchema = {
       ? obj.verified_sources
       : [];
 
+    const review_role = isOneOf(obj.review_role, [
+      "editorial",
+      "clinical",
+    ] as const)
+      ? obj.review_role
+      : null;
+
+    const bulk_editorial_import =
+      typeof obj.bulk_editorial_import === "boolean"
+        ? obj.bulk_editorial_import
+        : null;
+
     const data: Provenance = {
       sources,
       primary_url,
@@ -193,6 +207,8 @@ export const ProvenanceSchema = {
       review_status,
       reviewed_by_name,
       reviewed_on,
+      ...(review_role !== null ? { review_role } : {}),
+      ...(bulk_editorial_import !== null ? { bulk_editorial_import } : {}),
       ...(review_notes !== undefined ? { review_notes } : {}),
       verification_status,
       verified_source_count,
@@ -290,7 +306,18 @@ export function isVerified(p: Provenance): boolean {
  * `verification_method` label they already render.
  */
 export type ReviewState =
-  | { kind: "human_reviewed"; reviewer: string; date: string }
+  | {
+      kind: "human_reviewed";
+      reviewer: string;
+      date: string;
+      role?: "editorial" | "clinical";
+    }
+  | {
+      kind: "editorial_checked";
+      reviewer: string;
+      date: string;
+      bulkImport: boolean;
+    }
   | { kind: "needs_re_review"; reviewer: string | null }
   | { kind: "ai_generated" }
   | { kind: "not_reviewed" };
@@ -303,10 +330,24 @@ export function getReviewState(p: Provenance): ReviewState | null {
         p.reviewed_on &&
         isNamedHumanReviewer(p.reviewed_by_name)
       ) {
+        const isBulk00079 =
+          p.bulk_editorial_import === true ||
+          (p.reviewed_by_name === "Yasser Bheekun" &&
+            p.reviewed_on === "2026-11-18" &&
+            p.review_role !== "clinical");
+        if (isBulk00079) {
+          return {
+            kind: "editorial_checked",
+            reviewer: p.reviewed_by_name,
+            date: p.reviewed_on,
+            bulkImport: true,
+          };
+        }
         return {
           kind: "human_reviewed",
           reviewer: p.reviewed_by_name,
           date: p.reviewed_on,
+          ...(p.review_role ? { role: p.review_role } : {}),
         };
       }
       return { kind: "not_reviewed" };

@@ -1240,7 +1240,12 @@ export type Database = {
         | "extract"
         | "topical"
         | "other";
-      formula_type: "clarks_rule" | "youngs_rule" | "bsa" | "fried_rule";
+      formula_type:
+        | "clarks_rule"
+        | "youngs_rule"
+        | "bsa"
+        | "fried_rule"
+        | "adult_reference";
       interaction_severity: "mild" | "moderate" | "severe" | "contraindicated";
       user_role: "user" | "admin";
     };
@@ -1381,7 +1386,13 @@ export const Constants = {
         "topical",
         "other",
       ],
-      formula_type: ["clarks_rule", "youngs_rule", "bsa", "fried_rule"],
+      formula_type: [
+        "clarks_rule",
+        "youngs_rule",
+        "bsa",
+        "fried_rule",
+        "adult_reference",
+      ],
       interaction_severity: ["mild", "moderate", "severe", "contraindicated"],
       user_role: ["user", "admin"],
     },

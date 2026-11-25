@@ -116,12 +116,14 @@ export function HerbForm({ action, mode, herb }: HerbFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="dosage_child">Child Dosage</Label>
+              <Label htmlFor="dosage_child_quarantined">
+                Child Dosage (Quarantined)
+              </Label>
               <Input
-                id="dosage_child"
-                name="dosage_child"
-                defaultValue={herb?.dosage_child ?? ""}
-                placeholder="e.g. consult practitioner"
+                id="dosage_child_quarantined"
+                value="Quarantined: pediatric dosing disabled pending licensed review"
+                disabled
+                readOnly
               />
             </div>
           </div>

@@ -32,6 +32,16 @@ export interface SeedPair {
    * a file-level type error.
    */
   source_url?: string;
+  rxcui?: string | null;
+  is_drug_class?: boolean;
+  publication_status?: string;
+  clinical_reviewer_id?: string | null;
+  verified_at?: string | null;
+  next_review_due_at?: string | null;
+  botanical_applicability?: string | null;
+  clinical_action_status?: string | null;
+  retraction_status?: string | null;
+  claim_support_anchor?: string | null;
 }
 
 /** Top-level shape of `data/interactions/<herb>.json`. */

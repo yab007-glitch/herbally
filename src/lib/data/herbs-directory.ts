@@ -29,6 +29,8 @@ export interface DirectoryHerbCard {
     review_status: string | null;
     reviewed_by_name: string | null;
     reviewed_on: string | null;
+    review_role?: "editorial" | "clinical" | null;
+    bulk_editorial_import?: boolean | null;
   };
 }
 
@@ -70,6 +72,8 @@ export function compactHerbForDirectory(
       review_status: p.review_status,
       reviewed_by_name: p.reviewed_by_name,
       reviewed_on: p.reviewed_on,
+      review_role: p.review_role ?? null,
+      bulk_editorial_import: p.bulk_editorial_import ?? null,
     },
   };
 }
@@ -101,7 +105,7 @@ async function fetchDefaultDirectoryPage(
   }
 
   const { data, count, error } = await supabase
-    .from("herbs")
+    .from("herbs_public" as never)
     .select(DIRECTORY_CARD_SELECT, { count: "estimated" })
     .eq("is_published", true)
     .order(sort === "evidence" ? "evidence_level" : "name", { ascending: true })

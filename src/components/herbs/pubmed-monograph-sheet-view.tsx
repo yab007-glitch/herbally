@@ -8,6 +8,7 @@ import {
   Pill,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { stripPediatricDosageSentences } from "@/lib/herbs/regulatory-evidence";
 import type {
   Citation,
   SheetContent,
@@ -62,6 +63,20 @@ export function PubmedMonographSheetView({
   const t = useTranslations("pubmedSheet");
   const locale = useLocale();
   const reviewed = status === "reviewed";
+  const safeAdultDosageText = hasData(content.dosageAndAdministration)
+    ? stripPediatricDosageSentences(content.dosageAndAdministration)
+    : "";
+  const safeText = (val: string | undefined) =>
+    hasData(val) ? stripPediatricDosageSentences(val) : "";
+  const summaryText = safeText(content.summary);
+  const backgroundText = safeText(content.background);
+  const traditionalUsesText = safeText(content.traditionalUses);
+  const activeCompoundsText = safeText(content.activeCompounds);
+  const mechanismText = safeText(content.mechanismOfAction);
+  const safetyText = safeText(content.safetyAndAdverseEffects);
+  const pregnancyText = safeText(content.pregnancyAndLactation);
+  const interactionsText = safeText(content.drugInteractions);
+  const evidenceSummaryText = safeText(content.evidenceSummary);
   const effectiveArticleCount =
     citations.length > 0 ? citations.length : articleCount;
 
@@ -92,44 +107,44 @@ export function PubmedMonographSheetView({
         </div>
       </div>
 
-      {hasData(content.summary) && (
+      {summaryText.length > 0 && (
         <Section
           icon={<FileText className="size-4 text-primary" />}
           title={t("summary")}
         >
-          {content.summary}
+          {summaryText}
         </Section>
       )}
-      {hasData(content.background) && (
+      {backgroundText.length > 0 && (
         <Section
           icon={<FileText className="size-4 text-primary" />}
           title={t("background")}
         >
-          {content.background}
+          {backgroundText}
         </Section>
       )}
-      {hasData(content.traditionalUses) && (
+      {traditionalUsesText.length > 0 && (
         <Section
           icon={<FileText className="size-4 text-primary" />}
           title={t("traditionalUses")}
         >
-          {content.traditionalUses}
+          {traditionalUsesText}
         </Section>
       )}
-      {hasData(content.activeCompounds) && (
+      {activeCompoundsText.length > 0 && (
         <Section
           icon={<FlaskConical className="size-4 text-primary" />}
           title={t("activeCompounds")}
         >
-          {content.activeCompounds}
+          {activeCompoundsText}
         </Section>
       )}
-      {hasData(content.mechanismOfAction) && (
+      {mechanismText.length > 0 && (
         <Section
           icon={<FlaskConical className="size-4 text-primary" />}
           title={t("mechanism")}
         >
-          {content.mechanismOfAction}
+          {mechanismText}
         </Section>
       )}
 
@@ -147,65 +162,74 @@ export function PubmedMonographSheetView({
             </p>
           )}
           <div className="space-y-3">
-            {content.clinicalEvidence.map((e, i) => (
-              <div key={i} className="rounded-lg border bg-muted/30 p-3">
-                <div className="mb-1 flex items-center gap-2">
-                  {e.evidenceLevel && (
-                    <span
-                      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${levelColor[e.evidenceLevel] ?? levelColor.D}`}
-                    >
-                      {t(`level.${e.evidenceLevel}`)}
+            {content.clinicalEvidence.map((e, i) => {
+              const condText = safeText(e.condition);
+              const findingText = safeText(e.finding);
+              if (!condText && !findingText) return null;
+              return (
+                <div key={i} className="rounded-lg border bg-muted/30 p-3">
+                  <div className="mb-1 flex items-center gap-2">
+                    {e.evidenceLevel && (
+                      <span
+                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${levelColor[e.evidenceLevel] ?? levelColor.D}`}
+                      >
+                        {t(`level.${e.evidenceLevel}`)}
+                      </span>
+                    )}
+                    <span className="font-medium text-foreground">
+                      {condText}
                     </span>
+                  </div>
+                  {findingText && (
+                    <p className="text-sm text-muted-foreground">
+                      {findingText}
+                    </p>
                   )}
-                  <span className="font-medium text-foreground">
-                    {e.condition}
-                  </span>
                 </div>
-                <p className="text-sm text-muted-foreground">{e.finding}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
 
-      {hasData(content.safetyAndAdverseEffects) && (
+      {safetyText.length > 0 && (
         <Section
           icon={<ShieldAlert className="size-4 text-primary" />}
           title={t("safety")}
         >
-          {content.safetyAndAdverseEffects}
+          {safetyText}
         </Section>
       )}
-      {hasData(content.pregnancyAndLactation) && (
+      {pregnancyText.length > 0 && (
         <Section
           icon={<ShieldAlert className="size-4 text-primary" />}
           title={t("pregnancy")}
         >
-          {content.pregnancyAndLactation}
+          {pregnancyText}
         </Section>
       )}
-      {hasData(content.drugInteractions) && (
+      {interactionsText.length > 0 && (
         <Section
           icon={<ShieldAlert className="size-4 text-primary" />}
           title={t("interactions")}
         >
-          {content.drugInteractions}
+          {interactionsText}
         </Section>
       )}
-      {hasData(content.dosageAndAdministration) && (
+      {safeAdultDosageText.length > 0 && (
         <Section
           icon={<Pill className="size-4 text-primary" />}
           title={t("dosage")}
         >
-          {content.dosageAndAdministration}
+          {safeAdultDosageText}
         </Section>
       )}
-      {hasData(content.evidenceSummary) && (
+      {evidenceSummaryText.length > 0 && (
         <Section
           icon={<FileText className="size-4 text-primary" />}
           title={t("evidenceSummary")}
         >
-          {content.evidenceSummary}
+          {evidenceSummaryText}
         </Section>
       )}
 

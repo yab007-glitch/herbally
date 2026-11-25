@@ -65,7 +65,7 @@ async function loadPopular(
   if (!supabase) return [];
   try {
     const { data } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("slug,name,translations")
       .in("slug", POPULAR_SLUGS)
       .eq("is_published", true)

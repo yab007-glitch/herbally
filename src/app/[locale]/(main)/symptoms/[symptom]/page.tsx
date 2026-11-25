@@ -80,12 +80,12 @@ const loadSymptomHerbs = cache(
       const baseQuery =
         locale === "fr"
           ? supabase
-              .from("herbs")
+              .from("herbs_public" as never)
               .select(
                 "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses, translations"
               )
           : supabase
-              .from("herbs")
+              .from("herbs_public" as never)
               .select(
                 "slug, name, scientific_name, evidence_level, pregnancy_safe, nursing_safe, traditional_uses, modern_uses"
               );

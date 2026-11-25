@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     // Get count first (published only — defense-in-depth alongside RLS)
     const { count, error: countError } = await supabase
       .from("herbs")
-      .select("*", { count: "exact", head: true })
+      .select("id", { count: "exact", head: true })
       .eq("is_published", true);
 
     if (countError) {

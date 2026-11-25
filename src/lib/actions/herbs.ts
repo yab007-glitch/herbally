@@ -8,8 +8,10 @@ import {
   localizeHerb,
   localizeInteraction,
   localizeCategoryName,
+  redactPublicHerbFields,
 } from "@/lib/utils/localize-herb";
 import { expandQueryToKeywords } from "@/lib/data/synonym-map";
+import { PUBLIC_HERB_COLUMNS } from "@/lib/herbs/public-columns";
 import { sanitizeFilterValue } from "@/lib/utils/ilike";
 import { buildHerbTextOrFilter } from "@/lib/search/normalize-query";
 import { rankHerbSearchResults } from "@/lib/search/herb-search-union";
@@ -70,8 +72,10 @@ export async function getHerbs(
     // page only needs a page count, and exact counts were a measurable share of
     // DB time on the Nano instance.
     let query = supabase
-      .from("herbs")
-      .select("*, herb_categories(*)", { count: "estimated" })
+      .from("herbs_public" as never)
+      .select(`${PUBLIC_HERB_COLUMNS}, herb_categories(*)`, {
+        count: "estimated",
+      })
       .eq("is_published", true)
       .range(from, to);
 
@@ -95,7 +99,10 @@ export async function getHerbs(
         if (cat) categoryId = cat.id;
       }
       const buildMatchQuery = (select: string) => {
-        let qb = supabase.from("herbs").select(select).eq("is_published", true);
+        let qb = supabase
+          .from("herbs_public" as never)
+          .select(select)
+          .eq("is_published", true);
         if (categoryId) qb = qb.eq("category_id", categoryId);
         if (params.pregnancySafe) qb = qb.eq("pregnancy_safe", true);
         if (params.nursingSafe) qb = qb.eq("nursing_safe", true);
@@ -169,8 +176,8 @@ export async function getHerbs(
       let pageRows: Array<Record<string, unknown>> = [];
       if (pageIds.length > 0) {
         const { data, error } = await supabase
-          .from("herbs")
-          .select("*, herb_categories(*)")
+          .from("herbs_public" as never)
+          .select(`${PUBLIC_HERB_COLUMNS}, herb_categories(*)`)
           .eq("is_published", true)
           .in("id", pageIds);
         if (error) {
@@ -192,7 +199,9 @@ export async function getHerbs(
       }
       const resolvedLocale = await resolveLocale(locale);
       const localizedHerbs = pageRows.map((h) =>
-        localizeHerb(h as HerbWithCategory, resolvedLocale)
+        redactPublicHerbFields(
+          localizeHerb(h as HerbWithCategory, resolvedLocale)
+        )
       );
       return {
         success: true,
@@ -260,7 +269,9 @@ export async function getHerbs(
 
     const resolvedLocale = await resolveLocale(locale);
     const localizedHerbs = (data || []).map((h) =>
-      localizeHerb(h as HerbWithCategory, resolvedLocale)
+      redactPublicHerbFields(
+        localizeHerb(h as HerbWithCategory, resolvedLocale)
+      )
     );
     return {
       success: true,
@@ -298,8 +309,10 @@ export async function getHerbBySlug(
 
     for (let attempt = 1; ; attempt++) {
       const { data, error } = await supabase
-        .from("herbs")
-        .select("*, herb_categories(*), drug_interactions(*)")
+        .from("herbs_public" as never)
+        .select(
+          `${PUBLIC_HERB_COLUMNS}, herb_categories(*), drug_interactions(*)`
+        )
         .eq("slug", slug)
         .eq("is_published", true)
         .single();
@@ -338,7 +351,9 @@ export async function getHerbBySlug(
 
       const locale =
         opts?.locale ?? (opts?.skipCookies ? "en" : await resolveLocale());
-      const herb = localizeHerb(data as HerbWithInteractions, locale);
+      const herb = redactPublicHerbFields(
+        localizeHerb(data as HerbWithInteractions, locale)
+      );
       const interactions = (herb.drug_interactions || []).map((ix) =>
         localizeInteraction(ix, locale)
       );
@@ -405,7 +420,7 @@ export async function getDailyHerb(
     const supabase = await createClient();
 
     const { count } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("id", { count: "exact", head: true })
       .eq("is_published", true);
 
@@ -423,7 +438,7 @@ export async function getDailyHerb(
     const index = dayOfYear % count;
 
     const { data, error } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("slug, name, description, traditional_uses")
       .eq("is_published", true)
       .order("name", { ascending: true })
@@ -496,7 +511,7 @@ export async function getSymptomCounts(
       .join(",");
 
     const { data, error } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("name, description")
       .eq("is_published", true)
       .or(conditions)
@@ -510,14 +525,18 @@ export async function getSymptomCounts(
     }
 
     // Count matches per symptom from the single result set
+    const rows =
+      (data as Array<{
+        name: string | null;
+        description: string | null;
+      }> | null) ?? [];
     for (const symptom of bounded) {
       const lower = symptom.toLowerCase();
-      counts[symptom] =
-        data?.filter(
-          (h) =>
-            h.name?.toLowerCase().includes(lower) ||
-            h.description?.toLowerCase().includes(lower)
-        ).length ?? 0;
+      counts[symptom] = rows.filter(
+        (h) =>
+          h.name?.toLowerCase().includes(lower) ||
+          h.description?.toLowerCase().includes(lower)
+      ).length;
     }
 
     return { success: true, data: counts };
@@ -536,7 +555,7 @@ export async function searchHerbs(
 
     const expandedKeywords = expandQueryToKeywords(safeTerm);
     const { data: keywordResults } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("id, name, slug, scientific_name, evidence_level, translations")
       .eq("is_published", true)
       .overlaps("symptom_keywords", expandedKeywords)
@@ -570,7 +589,7 @@ export async function searchHerbs(
     }
 
     const { data, error } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("id, name, slug, scientific_name, translations")
       .eq("is_published", true)
       .or(buildHerbTextOrFilter(safeTerm))

@@ -1,6 +1,6 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
-import { AlertTriangle, ArrowRight, ShieldCheck } from "lucide-react";
+import { AlertTriangle, ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { ToolsMessagesProvider } from "@/components/i18n/tools-messages-provider";
@@ -78,14 +78,17 @@ export default async function HerbDrugInteractionsPage() {
           </h1>
           <p className="text-lg text-muted-foreground">{t("intro")}</p>
           <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-            <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+            <AlertTriangle
+              className="size-3.5 text-amber-600"
+              aria-hidden="true"
+            />
             <Link
               href="/methodology"
               className="hover:text-foreground hover:underline"
             >
               {fr
-                ? "Révision éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS"
-                : "Editorially reviewed by Yasser Bheekun — MLT, OPTMQ · CSMLS"}
+                ? "Référence éducative issue de monographies publiques — fiches héritées non révisées par un clinicien"
+                : "Educational reference compiled from public monographs — legacy interaction rows lack clinician sign-off"}
             </Link>
           </p>
         </header>

@@ -53,7 +53,7 @@ async function loadNames(fr: boolean): Promise<Map<string, string>> {
   if (!supabase) return map;
   try {
     const { data } = await supabase
-      .from("herbs")
+      .from("herbs_public" as never)
       .select("slug,name,translations")
       .in("slug", slugs)
       .eq("is_published", true)

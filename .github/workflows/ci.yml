@@ -25,8 +25,68 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Verify SQL migration files
+      - name: Static lint of SQL migration files
         run: npx tsx scripts/verify-herb-database.ts --migrations-only
+
+  targeted-migration-fixture:
+    name: Targeted PG16 Migration Fixture (00097–00104)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: herbally_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d herbally_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: herbally_test
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Run targeted PG16 fixture (expand -> old-image compat -> contract -> assertions)
+        run: bash scripts/test-migrations-postgres.sh
+
+  full-migration-replay:
+    name: Full Migration Replay (00001–00104)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: herbally_replay
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d herbally_replay"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: "5433"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: herbally_replay
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Replay full migration chain from 00001
+        run: bash scripts/test-full-migration-replay.sh
 
   verify-db:
     runs-on: ubuntu-latest
@@ -113,12 +173,13 @@ jobs:
       matrix:
         project: [chromium, firefox]
     # Placeholder Supabase env so the standalone server's proxy (updateSession)
-    # can construct a client and start. OPENROUTER_API_KEY is intentionally
-    # unset so /api/chat 503s gracefully and AI-dependent tests skip.
+    # can construct a client and start. AI provider keys are intentionally unset
+    # so E2E_NO_AI_KEY=1 proves deterministic refusals return 200 before 503.
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
       SUPABASE_SERVICE_ROLE_KEY: placeholder
+      E2E_NO_AI_KEY: "1"
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -143,6 +204,96 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
+  postgrest-and-migrated-e2e:
+    name: PostgREST Smoke & Migrated-DB E2E (post-00104)
+    needs: [targeted-migration-fixture]
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: herbally_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d herbally_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: "5432"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: herbally_test
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Migrate & verify PG16 database through 00104
+        run: bash scripts/test-migrations-postgres.sh
+      - name: Start PostgREST and run real PostgREST smoke suite
+        run: |
+          set -euo pipefail
+          JWT_KEY="ci-postgrest-test-signing-key-32bytes"
+          export PGRST_JWT_SECRET="$JWT_KEY"
+          docker run -d --name postgrest --network host \
+            -e PGRST_DB_URI="postgresql://postgres:postgres@127.0.0.1:5432/herbally_test" \
+            -e PGRST_DB_SCHEMAS="public" \
+            -e PGRST_DB_ANON_ROLE="anon" \
+            -e PGRST_JWT_SECRET="$JWT_KEY" \
+            -e PGRST_SERVER_PORT="3001" \
+            postgrest/postgrest:v12.2.3
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3001/ >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+          POSTGREST_URL=http://127.0.0.1:3001 bash scripts/test-postgrest-smoke.sh
+      - name: Build & run migrated-DB Playwright E2E (with no AI key)
+        run: |
+          set -euo pipefail
+          JWT_KEY="ci-postgrest-test-signing-key-32bytes"
+          mint_jwt() {
+            node -e '
+              const crypto = require("node:crypto");
+              const b64 = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
+              const h = b64({ alg: "HS256", typ: "JWT" });
+              const now = Math.floor(Date.now() / 1000);
+              const p = b64({ role: process.argv[2], iss: "herbally-ci", iat: now, exp: now + 3600 });
+              const s = crypto.createHmac("sha256", process.argv[1]).update(h + "." + p).digest("base64url");
+              process.stdout.write(h + "." + p + "." + s);
+            ' "$JWT_KEY" "$1"
+          }
+          export NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:54321"
+          export NEXT_PUBLIC_SUPABASE_ANON_KEY="$(mint_jwt anon)"
+          export SUPABASE_SERVICE_ROLE_KEY="$(mint_jwt service_role)"
+          node scripts/postgrest-supabase-proxy.mjs &
+          PROXY_PID=$!
+          trap 'kill $PROXY_PID ${NEXT_PID:-} >/dev/null 2>&1 || true' EXIT
+          npm run build
+          cp -r .next/static/. .next/standalone/.next/static/
+          cp -r public/. .next/standalone/public/
+          PORT=3100 HOSTNAME=127.0.0.1 node .next/standalone/server.js &
+          NEXT_PID=$!
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3100/ >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+          done
+          npx playwright install --with-deps chromium
+          PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 E2E_MIGRATED_DB=1 E2E_NO_AI_KEY=1 \
+            npx playwright test e2e/migrated-db.spec.ts e2e/calculator.spec.ts --project=chromium
+
   build:
     runs-on: ubuntu-latest
     needs:
@@ -153,6 +304,9 @@ jobs:
         coverage,
         format,
         verify-migrations,
+        targeted-migration-fixture,
+        full-migration-replay,
+        postgrest-and-migrated-e2e,
         verify-db,
         secrets,
       ]

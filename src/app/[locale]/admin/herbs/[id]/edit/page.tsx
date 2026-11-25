@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getAdminAccess } from "@/lib/auth/admin-guard";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { updateHerb } from "@/lib/actions/admin-herbs";
 import { HerbForm } from "@/components/admin/herb-form";
 import { ReviewPanel } from "@/components/admin/review-panel";
 import { getReviewer } from "@/lib/data/reviewers";
+import { PUBLIC_HERB_COLUMNS } from "@/lib/herbs/public-columns";
 import type { Database } from "@/lib/types/database";
 
 type Herb = Database["public"]["Tables"]["herbs"]["Row"];
@@ -16,13 +18,15 @@ type Props = { params: Promise<{ id: string }> };
 
 export default async function EditHerbPage({ params }: Props) {
   const { id } = await params;
-  const supabase = await createClient();
+  const access = await getAdminAccess();
+  if (access.status !== "authorized") {
+    notFound();
+  }
+  const supabase = createAdminClient();
 
-  // The admin layout already verified the caller's role; the "Admins can view
-  // all herbs" RLS policy (00005) authorizes this SELECT.
   const { data: herb, error } = await supabase
     .from("herbs")
-    .select("*")
+    .select(PUBLIC_HERB_COLUMNS)
     .eq("id", id)
     .maybeSingle();
 
@@ -30,24 +34,28 @@ export default async function EditHerbPage({ params }: Props) {
     notFound();
   }
 
-  const provenance = (herb.provenance ?? {}) as {
+  const herbRow = herb as unknown as Herb;
+
+  const provenance = (herbRow.provenance ?? {}) as {
     reviewed_on?: string | null;
     reviewed_by_name?: string | null;
   };
   const reviewerName =
-    provenance.reviewed_by_name ?? getReviewer(herb.reviewed_by)?.name ?? null;
+    provenance.reviewed_by_name ??
+    getReviewer(herbRow.reviewed_by)?.name ??
+    null;
   const reviewedOn =
     provenance.reviewed_on ??
-    (herb.last_reviewed
-      ? new Date(herb.last_reviewed).toISOString().slice(0, 10)
+    (herbRow.last_reviewed
+      ? new Date(herbRow.last_reviewed).toISOString().slice(0, 10)
       : null);
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Edit {herb.name}</h1>
-      <HerbForm action={updateHerb} mode="edit" herb={herb as Herb} />
+      <h1 className="text-2xl font-bold mb-6">Edit {herbRow.name}</h1>
+      <HerbForm action={updateHerb} mode="edit" herb={herbRow} />
       <ReviewPanel
-        herbId={herb.id}
+        herbId={herbRow.id}
         slug={herb.slug}
         reviewerName={reviewerName}
         reviewedOn={reviewedOn}

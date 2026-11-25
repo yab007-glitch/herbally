@@ -165,7 +165,13 @@ export function getSystemPrompt(
     if (verifiedContext.interactions.length > 0) {
       verifiedDataSection += `\n### Known Herb-Drug Interactions (from database)\n`;
       for (const ix of verifiedContext.interactions) {
+        const pubStatus = ix.publication_status ?? "legacy_unreviewed";
+        const statusLabel =
+          pubStatus === "published"
+            ? "published (clinician-reviewed)"
+            : `${pubStatus} (Unreviewed legacy record — state clearly that it lacks clinician sign-off and advise confirming with a pharmacist)`;
         verifiedDataSection += `- ${ix.herb_name} + ${ix.drug_name} → ${ix.severity}\n`;
+        verifiedDataSection += `  Publication status: ${statusLabel}\n`;
         verifiedDataSection += `  Mechanism: ${ix.mechanism}\n`;
         verifiedDataSection += `  Evidence: ${ix.evidence}\n`;
         verifiedDataSection += `  Recommendation: ${ix.recommendation}\n`;

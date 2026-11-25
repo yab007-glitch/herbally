@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { useLocale, useTranslations } from "next-intl";
 import type { Interaction } from "@/lib/types/interactions";
 import { drugSlug, pairPath } from "@/lib/interactions/pair-url";
+import { findCollisionsForHerb } from "@/lib/interactions/drug-matching-unified";
+import {
+  getCollisionWarningBanner,
+  getInteractionStatusBadge,
+  summarizeInteractionPublicationStatus,
+} from "@/lib/interactions/evidence";
 
 export type { Interaction };
 
@@ -141,6 +147,37 @@ export function InteractionsTable({
           "Clinical Studies" with no link. The attributions are gone from the data,
           so the page has to say plainly that no primary citation backs these. */}
       {/* Only warn about missing citations when some rows actually lack one. */}
+      {herbSlug &&
+        (() => {
+          const collisions = findCollisionsForHerb(herbSlug);
+          if (collisions.length === 0) return null;
+          return (
+            <p
+              role="alert"
+              className="mb-4 rounded-lg border border-amber-300 bg-amber-50/70 p-3 text-xs text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+            >
+              {getCollisionWarningBanner(
+                locale === "fr" ? "fr" : "en",
+                collisions.map((c) => c.path)
+              )}
+            </p>
+          );
+        })()}
+      {(() => {
+        const activeInteractions = interactions.filter(
+          (i) => i.publication_status !== "retracted_hold"
+        );
+        const pubSummary = summarizeInteractionPublicationStatus(
+          activeInteractions,
+          locale === "fr" ? "fr" : "en"
+        );
+        if (activeInteractions.length === 0) return null;
+        return (
+          <p className="mb-3 rounded-md border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+            {pubSummary.banner}
+          </p>
+        );
+      })()}
       {interactions.some((i) => !i.source_url) && (
         <p className="mb-4 text-sm text-muted-foreground">
           {t("interactions.uncitedNote")}
@@ -188,55 +225,71 @@ export function InteractionsTable({
             </tr>
           </thead>
           <tbody>
-            {displayInteractions.map((interaction) => (
-              <tr key={interaction.id} className="border-b last:border-0">
-                <td className="px-4 py-3 font-medium text-foreground">
-                  {herbSlug ? (
-                    <div className="space-y-1">
-                      <Link
-                        href={pairPath(herbSlug, interaction.drug_name)}
-                        className="hover:text-primary hover:underline transition-colors"
-                      >
-                        {interaction.display_drug_name || interaction.drug_name}
-                      </Link>
-                      <div>
-                        <Link
-                          href={`/medications/${drugSlug(interaction.drug_name)}`}
-                          className="text-xs font-normal text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
-                        >
-                          {t("interactions.allHerbsForDrug")}
-                        </Link>
-                      </div>
-                    </div>
-                  ) : (
-                    interaction.display_drug_name || interaction.drug_name
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize ${severityColors[interaction.severity] || ""}`}
-                  >
-                    {t(`interactions.severity.${interaction.severity}`)}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">
-                  {interaction.description}
-                  {interaction.source_url && (
-                    <a
-                      href={interaction.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-1 block text-xs text-primary hover:underline"
-                    >
-                      {getInteractionSourceLabel(
-                        interaction.source_url,
-                        locale
+            {displayInteractions
+              .filter((i) => i.publication_status !== "retracted_hold")
+              .map((interaction) => {
+                const statusBadge = getInteractionStatusBadge(
+                  interaction.publication_status,
+                  locale === "fr" ? "fr" : "en"
+                );
+                return (
+                  <tr key={interaction.id} className="border-b last:border-0">
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      {herbSlug ? (
+                        <div className="space-y-1">
+                          <Link
+                            href={pairPath(herbSlug, interaction.drug_name)}
+                            className="hover:text-primary hover:underline transition-colors"
+                          >
+                            {interaction.display_drug_name ||
+                              interaction.drug_name}
+                          </Link>
+                          <div>
+                            <Link
+                              href={`/medications/${drugSlug(interaction.drug_name)}`}
+                              className="text-xs font-normal text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+                            >
+                              {t("interactions.allHerbsForDrug")}
+                            </Link>
+                          </div>
+                        </div>
+                      ) : (
+                        interaction.display_drug_name || interaction.drug_name
                       )}
-                    </a>
-                  )}
-                </td>
-              </tr>
-            ))}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col items-start gap-1">
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize ${severityColors[interaction.severity] || ""}`}
+                        >
+                          {t(`interactions.severity.${interaction.severity}`)}
+                        </span>
+                        <span
+                          className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${statusBadge.toneClass}`}
+                        >
+                          {statusBadge.label}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {interaction.description}
+                      {interaction.source_url && (
+                        <a
+                          href={interaction.source_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 block text-xs text-primary hover:underline"
+                        >
+                          {getInteractionSourceLabel(
+                            interaction.source_url,
+                            locale
+                          )}
+                        </a>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </div>

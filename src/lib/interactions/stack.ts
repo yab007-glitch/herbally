@@ -23,6 +23,7 @@ export interface StackMatchItem {
   source: string | null;
   sourceUrl: string | null;
   pairUrl: string;
+  publicationStatus?: string;
 }
 
 export interface StackUnrecordedItem {
@@ -30,6 +31,15 @@ export interface StackUnrecordedItem {
   herbSlug: string | null;
   herbName: string;
   drugInput: string;
+}
+
+export interface StackWithheldItem {
+  herbInput: string;
+  herbSlug: string;
+  herbName: string;
+  drugInput: string;
+  status: "withheld";
+  reason: "retracted_hold";
 }
 
 export interface StackConflictItem {

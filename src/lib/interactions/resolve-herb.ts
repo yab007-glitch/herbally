@@ -53,7 +53,7 @@ export async function resolveHerb(term: string): Promise<HerbCandidate | null> {
     [preciseResponse, anchorResponse, broadResponse] = await Promise.all([
       preciseFilter
         ? supabase
-            .from("herbs")
+            .from("herbs_public" as never)
             .select(columns)
             .eq("is_published", true)
             .or(preciseFilter)
@@ -61,7 +61,7 @@ export async function resolveHerb(term: string): Promise<HerbCandidate | null> {
         : empty,
       anchorFilter
         ? supabase
-            .from("herbs")
+            .from("herbs_public" as never)
             .select(columns)
             .eq("is_published", true)
             .or(anchorFilter)
@@ -69,7 +69,7 @@ export async function resolveHerb(term: string): Promise<HerbCandidate | null> {
         : empty,
       broadFilter
         ? supabase
-            .from("herbs")
+            .from("herbs_public" as never)
             .select(columns)
             .eq("is_published", true)
             .or(broadFilter)

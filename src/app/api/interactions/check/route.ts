@@ -90,9 +90,40 @@ export async function GET(request: NextRequest) {
 
     const displayName =
       locale === "fr" && herb.frName ? herb.frName : herb.name;
-    const pairs = await getHerbPairs(herb.slug, locale);
+    const allPairs = await getHerbPairs(herb.slug, locale);
+    const pairs = allPairs.filter(
+      (p) => p.publicationStatus !== "retracted_hold"
+    );
+    const retractedPairs = allPairs.filter(
+      (p) => p.publicationStatus === "retracted_hold"
+    );
     const match = matchInteractionPairDetailed(drugTerm, pairs);
     if (match.kind === "none") {
+      const retractedMatch = matchInteractionPairDetailed(
+        drugTerm,
+        retractedPairs
+      );
+      if (retractedMatch.kind !== "none") {
+        return NextResponse.json(
+          {
+            found: false,
+            withheld: true,
+            status: "withheld",
+            reason: "retracted_hold",
+            herb: {
+              slug: herb.slug,
+              name: displayName,
+              scientific_name: herb.scientific_name,
+            },
+            pair: null,
+            message:
+              locale === "fr"
+                ? "Une fiche d'interaction correspondante pour cette association est temporairement retenue en raison d'une citation retirée et fait l'objet d'une révision clinique. Ne supposez pas que l'association est sans risque — consultez un pharmacien."
+                : "A matching interaction record for this combination is currently withheld due to a retracted citation and is under clinical review. Do not assume this combination is safe — consult a pharmacist or prescriber.",
+          },
+          { headers: NO_STORE_HEADERS }
+        );
+      }
       return NextResponse.json(
         {
           found: false,
@@ -133,6 +164,7 @@ export async function GET(request: NextRequest) {
             source: p.source,
             sourceUrl: p.sourceUrl,
             pairUrl: pairPath(p.herbSlug, p.drugName),
+            publicationStatus: p.publicationStatus ?? "legacy_unreviewed",
           })),
         },
         { headers: NO_STORE_HEADERS }
@@ -158,6 +190,7 @@ export async function GET(request: NextRequest) {
           source: pair.source,
           sourceUrl: pair.sourceUrl,
           pairUrl: pairPath(pair.herbSlug, pair.drugName),
+          publicationStatus: pair.publicationStatus ?? "legacy_unreviewed",
         },
       },
       { headers: PUBLIC_CHECK_HEADERS }

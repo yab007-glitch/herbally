@@ -40,7 +40,7 @@ describe("LibrarianCitationKit", () => {
     fireEvent.click(screen.getByRole("button", { name: "Français" }));
 
     expect(
-      screen.getByText(/Outil clinique gratuit et sans compte/i)
+      screen.getByText(/Outil éducatif gratuit et sans compte/i)
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "copyBlurb" }));

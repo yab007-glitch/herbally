@@ -55,3 +55,30 @@ describe("pairPath", () => {
     );
   });
 });
+
+describe("selectSitemapPairEntries collision & publication status handling", () => {
+  it("groups all collision rows before checking publicationStatus so mixed published/legacy collisions are excluded", async () => {
+    const { selectSitemapPairEntries } = await import("../pair-url");
+    const entries = selectSitemapPairEntries(
+      [
+        {
+          herbSlug: "sage",
+          drugName: "Anticonvulsants",
+          hasFr: true,
+          updatedAt: "2026-11-10T00:00:00.000Z",
+          publicationStatus: "published",
+        },
+        {
+          herbSlug: "sage",
+          drugName: "Anticonvulsants (Phenytoin, Valproate)",
+          hasFr: true,
+          updatedAt: "2026-11-18T00:00:00.000Z",
+          publicationStatus: "legacy_unreviewed",
+        },
+      ],
+      {}
+    );
+
+    expect(entries).toEqual([]);
+  });
+});

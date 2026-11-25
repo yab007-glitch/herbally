@@ -17,16 +17,36 @@
  * attribution destroys the very trust this system is meant to build.
  */
 
+import { getAnonClient } from "@/lib/supabase/anonymous";
+
+function sanitizeFilterValue(value: string): string {
+  return value.replace(/[,().*\\]/g, "").trim();
+}
+
 export interface ReviewerAffiliation {
   name: string;
   url?: string;
 }
 
+export type ReviewerRole = "editorial" | "clinical";
+
 export interface Reviewer {
   id: string;
   /** Display name, e.g. "Dr. Dawn Wong". */
   name: string;
-  /** Short credential line shown inline, e.g. "PhD, BM (Chinese Medicine)". */
+  /** Distinct role separating editorial curation from clinical sign-off. */
+  role: ReviewerRole;
+  /** Whether written public attribution consent is recorded in governance logs. */
+  consentRecorded: boolean;
+  /** Fail-closed gate: only reviewers with consent and verified review scope surface publicly. */
+  publicAttributionAllowed: boolean;
+  /** Whether regulatory/professional clinical licence was independently verified. */
+  licenceNumberVerified?: boolean;
+  /** Licensing board / jurisdiction (e.g. "CPSO Ontario"). */
+  licenceJurisdiction?: string | null;
+  /** ISO date when clinical licence expires. */
+  licenceExpiresAt?: string | null;
+  /** Short credential line shown inline, e.g. "MLT, OPTMQ · CSMLS". */
   credentials: string;
   /** Full qualification list for the reviewer profile/tooltip. */
   qualifications: string[];
@@ -48,6 +68,9 @@ export const REVIEWERS: Record<string, Reviewer> = {
   "yasser-bheekun": {
     id: "yasser-bheekun",
     name: "Yasser Bheekun",
+    role: "editorial",
+    consentRecorded: true,
+    publicAttributionAllowed: true,
     credentials: "MLT, OPTMQ · CSMLS",
     qualifications: [
       "DEC in Biomedical Laboratory Technology, Dawson College (2016–2019)",
@@ -73,6 +96,9 @@ export const REVIEWERS: Record<string, Reviewer> = {
   "dawn-wong": {
     id: "dawn-wong",
     name: "Dr. Dawn Wong",
+    role: "clinical",
+    consentRecorded: false,
+    publicAttributionAllowed: false,
     credentials: "PhD (Health Sciences), BM (Chinese Medicine)",
     qualifications: [
       "Bachelor of Medicine (Chinese Medicine), Beijing University of Chinese Medicine",
@@ -106,14 +132,168 @@ export const REVIEWERS: Record<string, Reviewer> = {
 };
 
 /**
+ * Resolve a publicly attributable reviewer from a `reviewed_by` reference.
+ * Fails closed unless consent and public attribution are explicitly recorded.
+ */
+export function getPublicReviewer(ref?: string | null): Reviewer | null {
+  if (!ref) return null;
+  const key = ref.trim().toLowerCase();
+  const candidate =
+    REVIEWERS[key] ??
+    Object.values(REVIEWERS).find((r) => r.name.toLowerCase() === key);
+  if (!candidate) return null;
+  if (!candidate.consentRecorded || !candidate.publicAttributionAllowed) {
+    return null;
+  }
+  return candidate;
+}
+
+/**
  * Resolve a reviewer from a `reviewed_by` value that may be either the stable
- * registry id or the display name. Returns undefined for unregistered values
- * (e.g. the generic "Editorial Team" fallback), so callers can fall back to
- * the existing free-text rendering.
+ * registry id or the display name. Fails closed when consent/verification is absent.
  */
 export function getReviewer(ref?: string | null): Reviewer | undefined {
-  if (!ref) return undefined;
-  const key = ref.trim().toLowerCase();
-  if (REVIEWERS[key]) return REVIEWERS[key];
-  return Object.values(REVIEWERS).find((r) => r.name.toLowerCase() === key);
+  return getPublicReviewer(ref) ?? undefined;
+}
+
+interface ReviewerRegistryRow {
+  reviewer_id?: string | null;
+  display_name?: string | null;
+  credentials?: string | null;
+  reviewer_role?: string | null;
+  consent_recorded?: boolean | null;
+  public_attribution_allowed?: boolean | null;
+  licence_number_verified?: boolean | null;
+  licence_jurisdiction?: string | null;
+  licence_expires_at?: string | null;
+  verified_at?: string | null;
+}
+
+function isUnexpiredLicence(expiresAt: string | null | undefined): boolean {
+  if (!expiresAt) return true;
+  const parsed = Date.parse(expiresAt);
+  return Number.isFinite(parsed) && parsed > Date.now();
+}
+
+function mapRegistryRowToReviewer(
+  row: ReviewerRegistryRow,
+  requireClinical: boolean
+): Reviewer | null {
+  if (!row.reviewer_id || !row.display_name) return null;
+  if (row.consent_recorded !== true || !row.verified_at) return null;
+  if (!requireClinical && row.public_attribution_allowed !== true) return null;
+
+  const role: ReviewerRole =
+    row.reviewer_role === "clinical" ? "clinical" : "editorial";
+  if (requireClinical && role !== "clinical") return null;
+
+  if (role === "clinical") {
+    if (
+      row.licence_number_verified !== true ||
+      !isUnexpiredLicence(row.licence_expires_at)
+    ) {
+      return null;
+    }
+  }
+
+  const staticBase = REVIEWERS[row.reviewer_id.trim().toLowerCase()];
+  return {
+    id: row.reviewer_id,
+    name: row.display_name,
+    role,
+    consentRecorded: true,
+    publicAttributionAllowed: Boolean(row.public_attribution_allowed),
+    licenceNumberVerified: Boolean(row.licence_number_verified),
+    licenceJurisdiction: row.licence_jurisdiction ?? null,
+    licenceExpiresAt: row.licence_expires_at ?? null,
+    credentials: row.credentials?.trim() || staticBase?.credentials || role,
+    qualifications: staticBase?.qualifications ?? [],
+    affiliation:
+      row.licence_jurisdiction?.trim() || staticBase?.affiliation || "",
+    affiliations: row.licence_jurisdiction?.trim()
+      ? [{ name: row.licence_jurisdiction.trim() }]
+      : (staticBase?.affiliations ?? []),
+    expertise: staticBase?.expertise ?? [],
+    languages: staticBase?.languages,
+    profileUrl:
+      staticBase?.profileUrl ?? "https://herbally.app/editorial-policy",
+    researchUrl: staticBase?.researchUrl,
+    bio: staticBase?.bio ?? "",
+  };
+}
+
+async function queryReviewerRegistryRow(
+  ref: string,
+  client: unknown
+): Promise<{ row: ReviewerRegistryRow | null; queried: boolean }> {
+  const safe = sanitizeFilterValue(ref.trim());
+  if (!safe) return { row: null, queried: false };
+  try {
+    const db = client as {
+      from: (table: string) => {
+        select: (cols: string) => {
+          or: (filter: string) => {
+            limit: (n: number) => {
+              maybeSingle: () => Promise<{
+                data: ReviewerRegistryRow | null;
+                error: { code?: string; message?: string } | null;
+              }>;
+            };
+          };
+        };
+      };
+    };
+    const { data, error } = await db
+      .from("reviewer_registry")
+      .select(
+        "reviewer_id, display_name, credentials, reviewer_role, consent_recorded, public_attribution_allowed, licence_number_verified, licence_jurisdiction, licence_expires_at, verified_at"
+      )
+      .or(`reviewer_id.eq.${safe},display_name.ilike.${safe}`)
+      .limit(1)
+      .maybeSingle();
+
+    if (error) return { row: null, queried: false };
+    return { row: data ?? null, queried: true };
+  } catch {
+    return { row: null, queried: false };
+  }
+}
+
+/**
+ * Resolve a publicly attributable reviewer from `reviewer_registry` in DB,
+ * falling back to consented static editorial metadata only when DB lookup is
+ * unavailable/unseeded for a pre-consented entry (never bypassing consent or
+ * clinical licence expiry on DB rows).
+ */
+export async function resolvePublicReviewerFromDb(
+  ref?: string | null,
+  client?: unknown
+): Promise<Reviewer | null> {
+  if (!ref || !ref.trim()) return null;
+  const db = client ?? getAnonClient();
+  if (db) {
+    const { row, queried } = await queryReviewerRegistryRow(ref, db);
+    if (queried && row) {
+      return mapRegistryRowToReviewer(row, false);
+    }
+    if (queried && !row) {
+      return getPublicReviewer(ref);
+    }
+  }
+  return getPublicReviewer(ref);
+}
+
+/**
+ * Verify a clinical reviewer against `reviewer_registry` before stamping
+ * clinical sign-off (PubMed sheets or interactions). Requires explicit consent,
+ * clinical role, verified licence number, verified timestamp, and non-expired licence.
+ */
+export async function resolveVerifiedClinicalReviewer(
+  ref?: string | null,
+  client?: unknown
+): Promise<Reviewer | null> {
+  if (!ref || !ref.trim() || !client) return null;
+  const { row, queried } = await queryReviewerRegistryRow(ref, client);
+  if (!queried || !row) return null;
+  return mapRegistryRowToReviewer(row, true);
 }

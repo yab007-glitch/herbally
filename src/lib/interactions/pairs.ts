@@ -5,6 +5,7 @@ import {
   InteractionUrlCollisionError,
 } from "./errors";
 import { drugSlug, EDITORIAL_PAIR_CANONICAL_DRUG } from "./pair-url";
+import type { EvidenceTier, ExtrapolationScope } from "./evidence";
 
 export type InteractionSeverity =
   "mild" | "moderate" | "severe" | "contraindicated";
@@ -27,8 +28,16 @@ export interface InteractionPair {
   /** What the cited paper actually reported, when it qualifies the severity. */
   evidenceNote: string | null;
   updatedAt: string;
-  /** French translation present (translations->fr), for sitemap gating. */
+  /** French translation present (complete clinical FR parity), for sitemap gating. */
   hasFr: boolean;
+  /** Governance fields from 00101 (with safe legacy fallbacks pre-migration). */
+  publicationStatus?: string;
+  verifiedAt?: string | null;
+  clinicalActionStatus?: string;
+  evidenceTier?: EvidenceTier;
+  extrapolationScope?: ExtrapolationScope;
+  pairSpecificClinicalAction?: string | null;
+  clinicalReviewerId?: string | null;
 }
 
 interface PairRow {
@@ -43,11 +52,19 @@ interface PairRow {
   evidence_note?: string | null;
   updated_at: string;
   translations: Record<string, unknown> | null;
+  publication_status?: string | null;
+  verified_at?: string | null;
+  clinical_action_status?: string | null;
+  evidence_tier?: string | null;
+  extrapolation_scope?: string | null;
+  pair_specific_clinical_action?: string | null;
+  clinical_reviewer_id?: string | null;
   herbs: {
     slug: string;
     name: string;
     scientific_name: string;
-    translations: Record<string, unknown> | null;
+    name_fr?: string | null;
+    translations?: Record<string, unknown> | null;
   } | null;
 }
 
@@ -69,6 +86,31 @@ function frOf(
   return fr && typeof fr === "object" ? (fr as Record<string, unknown>) : null;
 }
 
+/**
+ * French clinical parity gate for sitemap/SEO indexing: requires translated
+ * `drug_name` and `description`, and (when an English `mechanism` exists) a
+ * non-empty French `mechanism`.
+ */
+export function hasCompleteInteractionFrParity(row: {
+  mechanism?: string | null;
+  translations?: Record<string, unknown> | null;
+}): boolean {
+  const frIx = frOf(row.translations) as InteractionFr | null;
+  if (!frIx) return false;
+  if (typeof frIx.drug_name !== "string" || !frIx.drug_name.trim()) {
+    return false;
+  }
+  if (typeof frIx.description !== "string" || !frIx.description.trim()) {
+    return false;
+  }
+  if (typeof row.mechanism === "string" && row.mechanism.trim().length > 0) {
+    if (typeof frIx.mechanism !== "string" || !frIx.mechanism.trim()) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function toPair(row: PairRow, locale: string = "en"): InteractionPair | null {
   if (!row.herbs?.slug) return null;
   const t = row.translations;
@@ -86,10 +128,10 @@ function toPair(row: PairRow, locale: string = "en"): InteractionPair | null {
     if (frIx?.mechanism !== undefined && frIx.mechanism !== null)
       mechanism = frIx.mechanism;
     const frHerb = frOf(row.herbs.translations) as HerbFr | null;
-    if (frHerb?.name) herbName = frHerb.name;
+    if (row.herbs.name_fr) herbName = row.herbs.name_fr;
+    else if (frHerb?.name) herbName = frHerb.name;
   }
-  const hasFr =
-    !!frOf(t) && typeof (frOf(t) as InteractionFr)?.description === "string";
+  const hasFr = hasCompleteInteractionFrParity(row);
   return {
     id: row.id,
     herbSlug: row.herbs.slug,
@@ -107,11 +149,56 @@ function toPair(row: PairRow, locale: string = "en"): InteractionPair | null {
     evidenceNote: row.evidence_note ?? null,
     updatedAt: row.updated_at,
     hasFr,
+    publicationStatus: row.publication_status ?? "legacy_unreviewed",
+    verifiedAt: row.verified_at ?? null,
+    clinicalActionStatus: row.clinical_action_status ?? "unreviewed_blocked",
+    evidenceTier: (row.evidence_tier as EvidenceTier | null) ?? "unknown",
+    extrapolationScope:
+      (row.extrapolation_scope as ExtrapolationScope | null) ?? "unverified",
+    pairSpecificClinicalAction: row.pair_specific_clinical_action ?? null,
+    clinicalReviewerId: row.clinical_reviewer_id ?? null,
   };
 }
 
 const PAIR_SELECT =
   "id,drug_name,severity,description,mechanism,evidence_level,source,source_url,evidence_note,updated_at,translations,herbs!inner(slug,name,scientific_name,is_published,translations)";
+
+const PAIR_SELECT_PUBLIC =
+  "id,drug_name,severity,description,mechanism,evidence_level,source,source_url,evidence_note,updated_at,translations,herbs!inner(slug,name,scientific_name,is_published,name_fr)";
+
+const PAIR_SELECT_GOVERNED =
+  "id,drug_name,severity,description,mechanism,evidence_level,source,source_url,evidence_note,updated_at,translations,publication_status,verified_at,clinical_action_status,evidence_tier,extrapolation_scope,pair_specific_clinical_action,clinical_reviewer_id,herbs!inner(slug,name,scientific_name,is_published,name_fr)";
+
+function isMissingSchemaColumnError(
+  error: {
+    code?: string;
+    message?: string;
+  } | null
+): boolean {
+  if (!error) return false;
+  return (
+    error.code === "42703" ||
+    error.code === "PGRST204" ||
+    /does not exist|schema cache/i.test(error.message ?? "")
+  );
+}
+
+async function runWithGovernanceFallback(
+  runQuery: (selectClause: string) => Promise<{
+    data: unknown;
+    error: { code?: string; message?: string } | null;
+  }>
+) {
+  const primary = await runQuery(PAIR_SELECT_GOVERNED);
+  if (primary.error && isMissingSchemaColumnError(primary.error)) {
+    const publicOnly = await runQuery(PAIR_SELECT_PUBLIC);
+    if (publicOnly.error && isMissingSchemaColumnError(publicOnly.error)) {
+      return await runQuery(PAIR_SELECT);
+    }
+    return publicOnly;
+  }
+  return primary;
+}
 
 // Static generation must never hang the whole build on a slow database —
 // abort stalled queries and degrade to []/null (pages render on demand,
@@ -132,14 +219,18 @@ export async function getInteractionPairs(
   const supabase = getAnonClient();
   if (!supabase) return [];
   try {
-    const { data, error } = await supabase
-      .from("drug_interactions")
-      .select(PAIR_SELECT)
-      .eq("herbs.is_published", true)
-      .order("drug_name", { ascending: true })
-      .order("id", { ascending: true })
-      .limit(5000)
-      .abortSignal(querySignal());
+    const { data, error } = await runWithGovernanceFallback((selectClause) =>
+      Promise.resolve(
+        supabase
+          .from("drug_interactions")
+          .select(selectClause)
+          .eq("herbs.is_published", true)
+          .order("drug_name", { ascending: true })
+          .order("id", { ascending: true })
+          .limit(5000)
+          .abortSignal(querySignal())
+      )
+    );
     if (error || !data) {
       if (error)
         logger.error("interactions_get_pairs_failed", {
@@ -180,15 +271,19 @@ export async function getInteractionPair(
   let data: unknown;
   let error: { message?: string } | null = null;
   try {
-    const res = await supabase
-      .from("drug_interactions")
-      .select(PAIR_SELECT)
-      .eq("herbs.slug", herbSlug)
-      .eq("herbs.is_published", true)
-      .order("drug_name", { ascending: true })
-      .order("id", { ascending: true })
-      .limit(100)
-      .abortSignal(querySignal());
+    const res = await runWithGovernanceFallback((selectClause) =>
+      Promise.resolve(
+        supabase
+          .from("drug_interactions")
+          .select(selectClause)
+          .eq("herbs.slug", herbSlug)
+          .eq("herbs.is_published", true)
+          .order("drug_name", { ascending: true })
+          .order("id", { ascending: true })
+          .limit(100)
+          .abortSignal(querySignal())
+      )
+    );
     data = res.data;
     error = res.error;
   } catch (err) {
@@ -252,15 +347,19 @@ export async function getHerbPairs(
     throw new InteractionDataUnavailableError("Supabase client unavailable");
   }
   try {
-    const { data, error } = await supabase
-      .from("drug_interactions")
-      .select(PAIR_SELECT)
-      .eq("herbs.slug", herbSlug)
-      .eq("herbs.is_published", true)
-      .order("drug_name", { ascending: true })
-      .order("id", { ascending: true })
-      .limit(100)
-      .abortSignal(querySignal());
+    const { data, error } = await runWithGovernanceFallback((selectClause) =>
+      Promise.resolve(
+        supabase
+          .from("drug_interactions")
+          .select(selectClause)
+          .eq("herbs.slug", herbSlug)
+          .eq("herbs.is_published", true)
+          .order("drug_name", { ascending: true })
+          .order("id", { ascending: true })
+          .limit(100)
+          .abortSignal(querySignal())
+      )
+    );
     if (error || !data) {
       logger.error("interactions.getHerbPairs_query_error", {
         herbSlug,
@@ -306,22 +405,30 @@ export async function getRelatedPairs(
   try {
     const drugPrefix = pair.drugName.split(" (")[0].trim();
     const [{ data: herbRows }, { data: drugRows }] = await Promise.all([
-      supabase
-        .from("drug_interactions")
-        .select(PAIR_SELECT)
-        .eq("herbs.slug", pair.herbSlug)
-        .eq("herbs.is_published", true)
-        .neq("id", pair.id)
-        .limit(20)
-        .abortSignal(querySignal()),
-      supabase
-        .from("drug_interactions")
-        .select(PAIR_SELECT)
-        .eq("herbs.is_published", true)
-        .ilike("drug_name", `${drugPrefix}%`)
-        .neq("id", pair.id)
-        .limit(50)
-        .abortSignal(querySignal()),
+      runWithGovernanceFallback((selectClause) =>
+        Promise.resolve(
+          supabase
+            .from("drug_interactions")
+            .select(selectClause)
+            .eq("herbs.slug", pair.herbSlug)
+            .eq("herbs.is_published", true)
+            .neq("id", pair.id)
+            .limit(20)
+            .abortSignal(querySignal())
+        )
+      ),
+      runWithGovernanceFallback((selectClause) =>
+        Promise.resolve(
+          supabase
+            .from("drug_interactions")
+            .select(selectClause)
+            .eq("herbs.is_published", true)
+            .ilike("drug_name", `${drugPrefix}%`)
+            .neq("id", pair.id)
+            .limit(50)
+            .abortSignal(querySignal())
+        )
+      ),
     ]);
     const sameHerb: InteractionPair[] = [];
     for (const row of (herbRows ?? []) as unknown as PairRow[]) {

@@ -1,5 +1,8 @@
 # Medical Reviewer Outreach Strategy
 
+> **STATUS: OUTREACH PLANNING DRAFT ONLY**
+> None of the clinicians listed below have endorsed, consented to public attribution on, or clinically reviewed HerbAlly content as of 2026-11-25. Public reviewer resolution fails closed unless explicit consent and review verification are recorded.
+
 ## Goal
 
 Secure a named MD with herbal medicine credentials to officially review HerbAlly content. This is the #1 trust multiplier for the site.

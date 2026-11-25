@@ -35,7 +35,7 @@ function mockHerbQueryClient(handlers: {
           reject?: (e: unknown) => unknown
         ) => {
           try {
-            if (state.table === "herbs") {
+            if (state.table === "herbs" || state.table === "herbs_public") {
               resolveCall += 1;
               return Promise.resolve(
                 handlers.onResolve

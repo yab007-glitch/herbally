@@ -303,7 +303,12 @@ describe("context-fetcher", () => {
             }),
           };
         }
-        if (columns === "*, herb_categories(*), drug_interactions(*)") {
+        if (
+          columns.includes("herb_categories(*)") &&
+          columns.includes("drug_interactions(*)")
+        ) {
+          expect(columns).not.toContain("*,");
+          expect(columns).not.toContain("dosage_child");
           return {
             or: (conditions: string) => {
               lookupConditions = conditions;
@@ -354,7 +359,12 @@ describe("context-fetcher", () => {
             }),
           };
         }
-        if (columns === "*, herb_categories(*), drug_interactions(*)") {
+        if (
+          columns.includes("herb_categories(*)") &&
+          columns.includes("drug_interactions(*)")
+        ) {
+          expect(columns).not.toContain("*,");
+          expect(columns).not.toContain("dosage_child");
           return {
             or: () => ({
               eq: () => ({ limit: () => ({ data: [herbRow] }) }),
@@ -463,7 +473,12 @@ describe("context-fetcher", () => {
             }),
           };
         }
-        if (columns === "*, herb_categories(*), drug_interactions(*)") {
+        if (
+          columns.includes("herb_categories(*)") &&
+          columns.includes("drug_interactions(*)")
+        ) {
+          expect(columns).not.toContain("*,");
+          expect(columns).not.toContain("dosage_child");
           return {
             or: (conditions: string) => {
               lookupConditions = conditions;
@@ -493,6 +508,96 @@ describe("context-fetcher", () => {
       );
       // Even with 8+ herbs mentioned, only 5 lookups should be attempted
       expect(ctx).toBeDefined();
+    });
+
+    it("carries interaction publication_status into VerifiedContext + system prompt and filters retracted_hold", async () => {
+      mockSelect.mockImplementation((columns: string) => {
+        if (columns.includes("drug_interactions(*)")) {
+          return {
+            or: () => ({
+              eq: () => ({
+                limit: () => ({
+                  data: [
+                    { ...herbRow, name: "Ginger", slug: "ginger" },
+                    { ...herbRow, name: "Turmeric", slug: "turmeric" },
+                  ],
+                  error: null,
+                }),
+              }),
+            }),
+          };
+        }
+        if (columns.includes("herbs!inner(name)")) {
+          return {
+            or: () => ({
+              limit: () => ({
+                data: [
+                  {
+                    drug_name: "Warfarin",
+                    severity: "severe",
+                    mechanism: "CYP2C9 inhibition",
+                    source: "LiverTox",
+                    description: "Monitor INR closely.",
+                    publication_status: "published",
+                    herbs: { name: "Ginger" },
+                  },
+                  {
+                    drug_name: "Warfarin",
+                    severity: "moderate",
+                    mechanism: "Legacy note",
+                    source: null,
+                    description: "Legacy unreviewed bleeding note.",
+                    publication_status: "legacy_unreviewed",
+                    herbs: { name: "Turmeric" },
+                  },
+                  {
+                    drug_name: "Warfarin",
+                    severity: "mild",
+                    mechanism: "Retracted paper",
+                    source: null,
+                    description: "Withheld retracted interaction.",
+                    publication_status: "retracted_hold",
+                    herbs: { name: "Ginger" },
+                  },
+                ],
+                error: null,
+              }),
+            }),
+          };
+        }
+        return {
+          eq: () => ({
+            or: () => ({
+              order: () => ({ limit: () => ({ data: [] }) }),
+              limit: () => ({ data: [] }),
+            }),
+          }),
+          or: () => ({ eq: () => ({ limit: () => ({ data: [] }) }) }),
+        };
+      });
+
+      const ctx = await fetchVerifiedContext(
+        "Are ginger and turmeric safe with warfarin?"
+      );
+      const { getSystemPrompt } = await import("../system-prompt");
+      const prompt = getSystemPrompt(null, ["warfarin"], "en", ctx);
+
+      expect(ctx.interactions.map((i) => i.herb_name)).not.toContain(
+        "Withheld"
+      );
+      expect(
+        ctx.interactions.some(
+          (i) =>
+            i.herb_name === "Turmeric" &&
+            i.publication_status === "legacy_unreviewed"
+        )
+      ).toBe(true);
+      expect(
+        ctx.interactions.some((i) =>
+          i.recommendation.includes("Withheld retracted interaction.")
+        )
+      ).toBe(false);
+      expect(prompt).toMatch(/legacy_unreviewed|Unreviewed legacy record/i);
     });
   });
 });

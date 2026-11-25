@@ -21,6 +21,9 @@ BEGIN
   END IF;
 END $$;
 
+ALTER TABLE public.drug_interactions
+  ADD COLUMN IF NOT EXISTS evidence_note TEXT;
+
 WITH seed (
   herb_slug,
   drug_name,

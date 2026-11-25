@@ -498,4 +498,233 @@ describe("HomeSearchClient stale-result & race-condition protection", () => {
     expect(signals[0]?.aborted).toBe(true);
     expect(pushMock).toHaveBeenCalledTimes(2);
   });
+
+  it("renders truthful publication-status badges and filters for single and conflicting pairs", async () => {
+    const mixedConflicts = {
+      found: true,
+      ambiguous: true,
+      conflict: true,
+      herb: { slug: "sage", name: "Sage" },
+      pair: null,
+      conflictingPairs: [
+        {
+          id: "c-pub",
+          drugName: "Anticonvulsants",
+          severity: "severe" as const,
+          description: "Clinician-reviewed conflict record.",
+          mechanism: null,
+          evidenceLevel: "A",
+          source: "NIH",
+          sourceUrl: null,
+          pairUrl: "/interactions/sage/anticonvulsants",
+          publicationStatus: "published",
+        },
+        {
+          id: "c-leg",
+          drugName: "Anticonvulsants (Phenytoin)",
+          severity: "moderate" as const,
+          description: "Legacy unreviewed conflict record.",
+          mechanism: null,
+          evidenceLevel: "B",
+          source: "Legacy",
+          sourceUrl: null,
+          pairUrl: "/interactions/sage/anticonvulsants",
+          publicationStatus: "legacy_unreviewed",
+        },
+      ],
+    };
+
+    const singleLegacy = {
+      ...makePairResponse("Turmeric", "Warfarin", "May increase bleeding."),
+      pair: {
+        ...makePairResponse("Turmeric", "Warfarin", "May increase bleeding.")
+          .pair,
+        publicationStatus: "legacy_unreviewed",
+      },
+    };
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => mixedConflicts })
+      .mockResolvedValueOnce({ ok: true, json: async () => singleLegacy });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<HomeSearchClient labels={LABELS} />);
+    fireEvent.change(screen.getByLabelText("Herb"), {
+      target: { value: "Sage" },
+    });
+    fireEvent.change(screen.getByLabelText("Medication"), {
+      target: { value: "Anticonvulsants" },
+    });
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Check interactions" })
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(
+      screen.getByText("Published · Clinician-reviewed")
+    ).toBeInTheDocument();
+    expect(screen.getByText("Unreviewed legacy")).toBeInTheDocument();
+    expect(screen.getByText(/Mixed publication status:/i)).toBeInTheDocument();
+
+    // Filter to clinician-reviewed only -> hides legacy conflict card
+    fireEvent.click(
+      screen.getByRole("button", { name: /Clinician-reviewed \(1\)/i })
+    );
+    expect(
+      screen.getByText("Clinician-reviewed conflict record.")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Legacy unreviewed conflict record.")
+    ).not.toBeInTheDocument();
+
+    // Now test a single legacy pair (filter resets on new check)
+    fireEvent.change(screen.getByLabelText("Herb"), {
+      target: { value: "Turmeric" },
+    });
+    fireEvent.change(screen.getByLabelText("Medication"), {
+      target: { value: "Warfarin" },
+    });
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Check interactions" })
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText("Unreviewed legacy")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Unreviewed legacy interaction records without clinician/i
+      )
+    ).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Clinician-reviewed \(0\)/i })
+    );
+    expect(
+      screen.queryByText("May increase bleeding.")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/No matches for the selected status filter/i)
+    ).toBeInTheDocument();
+  });
+
+  it("distinguishes quarantined_collision from unreviewed legacy filters and renders withheld alert for retracted_hold", async () => {
+    const quarantinedAndUnreviewed = {
+      found: true,
+      ambiguous: true,
+      conflict: true,
+      herb: { slug: "sage", name: "Sage" },
+      pair: null,
+      conflictingPairs: [
+        {
+          id: "c-quar",
+          drugName: "Anticonvulsants",
+          severity: "severe" as const,
+          description: "Quarantined collision record.",
+          mechanism: null,
+          evidenceLevel: "A",
+          source: "NIH",
+          sourceUrl: null,
+          pairUrl: "/interactions/sage/anticonvulsants",
+          publicationStatus: "quarantined_collision",
+        },
+        {
+          id: "c-unrev",
+          drugName: "Anticonvulsants (Phenytoin)",
+          severity: "moderate" as const,
+          description: "Unreviewed legacy record.",
+          mechanism: null,
+          evidenceLevel: "B",
+          source: "Legacy",
+          sourceUrl: null,
+          pairUrl: "/interactions/sage/anticonvulsants",
+          publicationStatus: "legacy_unreviewed",
+        },
+      ],
+    };
+
+    const withheldResponse = {
+      found: false,
+      withheld: true,
+      status: "withheld",
+      reason: "retracted_hold",
+      herb: { slug: "sage", name: "Sage" },
+      pair: null,
+      message:
+        "A matching interaction record for this combination is currently withheld due to a retracted citation and is under clinical review.",
+    };
+
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => quarantinedAndUnreviewed,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => withheldResponse,
+      });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<HomeSearchClient labels={LABELS} />);
+    fireEvent.change(screen.getByLabelText("Herb"), {
+      target: { value: "Sage" },
+    });
+    fireEvent.change(screen.getByLabelText("Medication"), {
+      target: { value: "Anticonvulsants" },
+    });
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Check interactions" })
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    const quarBtn = screen.getByRole("button", {
+      name: /Quarantined collision \(1\)/i,
+    });
+    const unrevBtn = screen.getByRole("button", {
+      name: /Unreviewed legacy \(1\)/i,
+    });
+    expect(quarBtn).toBeInTheDocument();
+    expect(unrevBtn).toBeInTheDocument();
+
+    fireEvent.click(quarBtn);
+    expect(
+      screen.getByText("Quarantined collision record.")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Unreviewed legacy record.")
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(unrevBtn);
+    expect(
+      screen.queryByText("Quarantined collision record.")
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("Unreviewed legacy record.")).toBeInTheDocument();
+
+    // Withheld response renders distinct withheld alert, NOT "No interaction found"
+    fireEvent.change(screen.getByLabelText("Medication"), {
+      target: { value: "Warfarin" },
+    });
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: "Check interactions" })
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(
+      screen.getByText(/Interaction record withheld \(retracted citation\)/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByText("No interaction found")).not.toBeInTheDocument();
+  });
 });

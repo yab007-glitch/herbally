@@ -179,4 +179,42 @@ describe("InteractionsTable", () => {
     expect(screen.queryByText("Amlodipine")).toBeNull();
     expect(screen.getByRole("button")).toBeDefined();
   });
+
+  it("surfaces publication status badges per row and renders an accurate mixed-status summary", () => {
+    const interactions: Array<
+      Interaction & { publication_status?: string | null }
+    > = [
+      {
+        id: "pub-1",
+        drug_name: "Warfarin",
+        severity: "severe",
+        description: "INR increase documented.",
+        publication_status: "published",
+      },
+      {
+        id: "leg-1",
+        drug_name: "Ibuprofen",
+        severity: "moderate",
+        description: "Legacy GI irritation record.",
+        publication_status: "legacy_unreviewed",
+      },
+    ];
+
+    render(
+      <InteractionsTable
+        interactions={interactions as Interaction[]}
+        herbSlug="ginkgo-biloba"
+      />
+    );
+
+    expect(
+      screen.getByText(/1 clinician-reviewed published record.*1 unreviewed/i)
+    ).toBeTruthy();
+    expect(screen.getByText("Warfarin").closest("tr")?.textContent).toMatch(
+      /Published · Clinician-reviewed/i
+    );
+    expect(screen.getByText("Ibuprofen").closest("tr")?.textContent).toMatch(
+      /Unreviewed legacy/i
+    );
+  });
 });

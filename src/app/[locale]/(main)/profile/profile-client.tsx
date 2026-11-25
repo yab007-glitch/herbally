@@ -26,6 +26,8 @@ import {
   addMedication,
   removeMedication,
   getDosageHistory,
+  getPrivacyConsents,
+  setPrivacyConsent,
 } from "@/lib/actions/profile";
 
 type PatientProfile = {
@@ -73,6 +75,7 @@ export function ProfileClient() {
   const [showAddMed, setShowAddMed] = useState(false);
   const [newCondition, setNewCondition] = useState("");
   const [newAllergy, setNewAllergy] = useState("");
+  const [healthDataConsent, setHealthDataConsent] = useState(false);
 
   // New patient form state
   const [pName, setPName] = useState("");
@@ -88,11 +91,14 @@ export function ProfileClient() {
   const [medFreq, setMedFreq] = useState("");
 
   const loadAll = useCallback(async () => {
-    const [p, h, m, d] = await Promise.all([
+    const [p, h, m, d, c] = await Promise.all([
       getPatientProfiles(),
       getHealthProfile(),
       getUserMedications(),
       getDosageHistory(),
+      typeof getPrivacyConsents === "function"
+        ? getPrivacyConsents()
+        : Promise.resolve({ success: false, data: undefined }),
     ]);
     if (p.success && p.data) setPatients(p.data);
     if (h.success && h.data) {
@@ -101,17 +107,29 @@ export function ProfileClient() {
     }
     if (m.success && m.data) setMedications(m.data);
     if (d.success && d.data) setCalculations(d.data);
+    if (c.success && c.data) {
+      setHealthDataConsent(
+        Boolean(
+          c.data.health_profile &&
+          c.data.patient_profile &&
+          c.data.medications_list
+        )
+      );
+    }
     setLoading(false);
   }, []);
 
   useEffect(() => {
     let active = true;
     async function init() {
-      const [p, h, m, d] = await Promise.all([
+      const [p, h, m, d, c] = await Promise.all([
         getPatientProfiles(),
         getHealthProfile(),
         getUserMedications(),
         getDosageHistory(),
+        typeof getPrivacyConsents === "function"
+          ? getPrivacyConsents()
+          : Promise.resolve({ success: false, data: undefined }),
       ]);
       if (!active) return;
       if (p.success && p.data) setPatients(p.data);
@@ -121,6 +139,15 @@ export function ProfileClient() {
       }
       if (m.success && m.data) setMedications(m.data);
       if (d.success && d.data) setCalculations(d.data);
+      if (c.success && c.data) {
+        setHealthDataConsent(
+          Boolean(
+            c.data.health_profile &&
+            c.data.patient_profile &&
+            c.data.medications_list
+          )
+        );
+      }
       setLoading(false);
     }
     void init();
@@ -133,6 +160,22 @@ export function ProfileClient() {
     if (!raw.trim()) return null;
     const val = Number(raw);
     return Number.isFinite(val) ? val : null;
+  }
+
+  async function handleConsentToggle(checked: boolean) {
+    setHealthDataConsent(checked);
+    if (typeof setPrivacyConsent === "function") {
+      const results = await Promise.all([
+        setPrivacyConsent("patient_profile", checked),
+        setPrivacyConsent("health_profile", checked),
+        setPrivacyConsent("medications_list", checked),
+        setPrivacyConsent("dosage_history", checked),
+      ]);
+      if (results.some((r) => !r.success)) {
+        setHealthDataConsent(!checked);
+        toast.error(t("common.saveFailed"));
+      }
+    }
   }
 
   async function handleAddPatient() {
@@ -148,6 +191,7 @@ export function ProfileClient() {
         height_cm: parseOptionalNumber(pHeight),
         is_default: patients.length === 0, // First patient is default
         notes: pNotes || null,
+        health_data_consent: healthDataConsent,
       });
       if (result.success) {
         toast.success(t("profile.profileSaved"));
@@ -168,7 +212,10 @@ export function ProfileClient() {
   }
 
   async function handleSetDefault(id: string) {
-    const result = await updatePatientProfile(id, { is_default: true });
+    const result = await updatePatientProfile(id, {
+      is_default: true,
+      health_data_consent: healthDataConsent,
+    } as Parameters<typeof updatePatientProfile>[1]);
     if (result.success) {
       await loadAll();
     } else {
@@ -201,6 +248,7 @@ export function ProfileClient() {
     const result = await saveHealthProfile({
       conditions: updated,
       allergies,
+      health_data_consent: healthDataConsent,
     });
     if (!result.success) {
       setConditions(previous);
@@ -222,6 +270,7 @@ export function ProfileClient() {
     const result = await saveHealthProfile({
       conditions,
       allergies: updated,
+      health_data_consent: healthDataConsent,
     });
     if (!result.success) {
       setAllergies(previous);
@@ -236,6 +285,7 @@ export function ProfileClient() {
     const result = await saveHealthProfile({
       conditions: updated,
       allergies,
+      health_data_consent: healthDataConsent,
     });
     if (!result.success) {
       setConditions(previous);
@@ -250,6 +300,7 @@ export function ProfileClient() {
     const result = await saveHealthProfile({
       conditions,
       allergies: updated,
+      health_data_consent: healthDataConsent,
     });
     if (!result.success) {
       setAllergies(previous);
@@ -267,7 +318,8 @@ export function ProfileClient() {
         frequency: medFreq || null,
         rxcui: null,
         notes: null,
-      });
+        health_data_consent: healthDataConsent,
+      } as Parameters<typeof addMedication>[0]);
       if (result.success) {
         toast.success(t("profile.medicationAdded"));
         setShowAddMed(false);
@@ -304,6 +356,28 @@ export function ProfileClient() {
 
   return (
     <div className="space-y-6">
+      {/* Explicit Opt-In Health Data Storage Consent (Adults 18+) */}
+      <Card>
+        <CardContent className="pt-4">
+          <label className="flex cursor-pointer items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              data-testid="health-data-consent"
+              checked={healthDataConsent}
+              onChange={(e) => {
+                void handleConsentToggle(e.target.checked);
+              }}
+              className="mt-1 size-4 rounded border-border"
+            />
+            <span className="leading-relaxed text-muted-foreground">
+              {locale === "fr"
+                ? "J'accepte explicitement (adulte 18+) que HerbAlly enregistre mes profils adultes, conditions, allergies, médicaments et l'historique de référence sur mon compte."
+                : "I explicitly consent (adults 18+ only) for HerbAlly to store my adult profiles, health conditions, allergies, medications, and adult dosage history on my account."}
+            </span>
+          </label>
+        </CardContent>
+      </Card>
+
       {/* Patient Profiles */}
       <Card>
         <CardHeader>
@@ -385,7 +459,6 @@ export function ProfileClient() {
                     className="h-9 w-full rounded-lg border bg-transparent px-3 text-sm"
                   >
                     <option value="self">{t("profile.self")}</option>
-                    <option value="child">{t("profile.child")}</option>
                     <option value="partner">{t("profile.partner")}</option>
                     <option value="parent">{t("profile.parent")}</option>
                     <option value="other">{t("profile.other")}</option>
@@ -406,6 +479,8 @@ export function ProfileClient() {
                   <Input
                     id="pf-age"
                     type="number"
+                    min={18}
+                    max={120}
                     value={pAge}
                     onChange={(e) => setPAge(e.target.value)}
                     placeholder="35"
@@ -648,26 +723,48 @@ export function ProfileClient() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {calculations.map((c) => (
-                <div
-                  key={c.id}
-                  className="flex items-center justify-between rounded-lg border p-3 text-sm"
-                >
-                  <div>
-                    <p className="font-medium">{c.calculated_dose}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {c.formula_used}
-                      {c.patient_weight_kg && ` · ${c.patient_weight_kg} kg`}
-                      {c.patient_age != null && ` · ${c.patient_age} yrs`}
-                    </p>
+              {calculations.map((c) => {
+                const isQuarantined =
+                  Boolean((c as { quarantined?: boolean }).quarantined) ||
+                  c.formula_used === "fried_rule" ||
+                  c.patient_age === null ||
+                  c.patient_age < 18 ||
+                  c.patient_age > 120;
+                return (
+                  <div
+                    key={c.id}
+                    className="flex items-center justify-between rounded-lg border p-3 text-sm"
+                  >
+                    <div>
+                      {isQuarantined ? (
+                        <div className="space-y-1">
+                          <Badge variant="outline" className="text-xs">
+                            {t("profile.quarantinedHistoryBadge")}
+                          </Badge>
+                          <p className="text-xs text-muted-foreground">
+                            {t("profile.quarantinedHistoryNotice")}
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="font-medium">{c.calculated_dose}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {c.formula_used}
+                            {c.patient_weight_kg &&
+                              ` · ${c.patient_weight_kg} kg`}
+                            {c.patient_age != null && ` · ${c.patient_age} yrs`}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(c.created_at).toLocaleDateString(
+                        locale === "fr" ? "fr-FR" : "en-US"
+                      )}
+                    </span>
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(c.created_at).toLocaleDateString(
-                      locale === "fr" ? "fr-FR" : "en-US"
-                    )}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>

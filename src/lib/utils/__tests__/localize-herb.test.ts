@@ -3,6 +3,7 @@ import {
   localizeHerb,
   localizeInteraction,
   localizeCategoryName,
+  redactPublicHerbFields,
 } from "../localize-herb";
 import type { Herb, DrugInteraction, HerbCategory } from "@/lib/types";
 
@@ -62,7 +63,7 @@ describe("localizeHerb", () => {
     expect(result.traditional_uses).toEqual(["nausées", "digestion"]);
     expect(result.modern_uses).toEqual(["mal des transports"]);
     expect(result.dosage_adult).toBe("1-2g par jour");
-    expect(result.dosage_child).toBe("Consulter un médecin");
+    expect(result.dosage_child).toBeNull();
     expect(result.preparation_notes).toBe("Peut être pris en thé.");
     expect(result.contraindications).toEqual(["calculs biliaires"]);
     expect(result.side_effects).toEqual(["brûlures d'estomac"]);
@@ -255,5 +256,36 @@ describe("localizeCategoryName", () => {
   it("falls back to English when French name is missing", () => {
     const catNoFr = { ...category, name_fr: null };
     expect(localizeCategoryName(catNoFr, "fr")).toBe("Roots");
+  });
+});
+
+describe("redactPublicHerbFields array and prose sanitization", () => {
+  it("strips pediatric dosing clauses from description, preparation_notes, uses, contraindications, and side_effects while keeping warnings", () => {
+    const dirtyHerb = {
+      ...baseHerb,
+      description: "Soothing herb. Give a 5-year-old 100 mg daily.",
+      preparation_notes: "Steep for adults. Children 6-12 years: 50 ml.",
+      traditional_uses: ["Calm sleep", "For children 4-8 years: 200 mg"],
+      modern_uses: ["Digestive support", "Pediatric dose: 5 ml daily"],
+      contraindications: [
+        "Contraindicated in children under 12 years.",
+        "Give a 5-year-old 250 mg; toxic in allergy.",
+      ],
+      side_effects: [
+        "Mild nausea.",
+        "Children 6-12 years: 100 mg may cause drowsiness.",
+      ],
+    } as unknown as Herb;
+
+    const clean = redactPublicHerbFields(dirtyHerb);
+    expect(clean.description).toBe("Soothing herb.");
+    expect(clean.preparation_notes).toBe("Steep for adults.");
+    expect(clean.traditional_uses).toEqual(["Calm sleep"]);
+    expect(clean.modern_uses).toEqual(["Digestive support"]);
+    expect(clean.contraindications).toEqual([
+      "Contraindicated in children under 12 years.",
+      "toxic in allergy.",
+    ]);
+    expect(clean.side_effects).toEqual(["Mild nausea."]);
   });
 });

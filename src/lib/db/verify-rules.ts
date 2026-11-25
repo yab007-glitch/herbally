@@ -279,3 +279,64 @@ export function checkSafetyConflicts(
 
   return conflicts;
 }
+
+export interface PublicationContractRow {
+  id: string;
+  drugName: string;
+  isDrugClass?: boolean;
+  singleIngredientRxcui?: string | null;
+  publicationStatus?: string | null;
+  clinicalReviewerId?: string | null;
+  verifiedAt?: string | null;
+  activeCitationCount?: number;
+  retractedCitationCount?: number;
+}
+
+export interface PublicationContractIssue {
+  id: string;
+  code:
+    | "CLASS_ROW_HAS_SINGLE_RXCUI"
+    | "PUBLISHED_WITHOUT_REVIEW"
+    | "PUBLISHED_WITHOUT_CITATION"
+    | "PUBLISHED_WITH_RETRACTED_CITATION";
+  message: string;
+}
+
+export function checkInteractionPublicationContract(
+  rows: readonly PublicationContractRow[]
+): PublicationContractIssue[] {
+  const issues: PublicationContractIssue[] = [];
+  for (const row of rows) {
+    if (row.isDrugClass && row.singleIngredientRxcui) {
+      issues.push({
+        id: row.id,
+        code: "CLASS_ROW_HAS_SINGLE_RXCUI",
+        message: `${row.drugName}: drug-class row must not carry single-ingredient RxCUI (${row.singleIngredientRxcui})`,
+      });
+    }
+    if (row.publicationStatus === "published") {
+      if (!row.clinicalReviewerId || !row.verifiedAt) {
+        issues.push({
+          id: row.id,
+          code: "PUBLISHED_WITHOUT_REVIEW",
+          message: `${row.drugName}: published interaction row is missing clinical_reviewer_id or verified_at`,
+        });
+      }
+      if ((row.activeCitationCount ?? 0) < 1) {
+        issues.push({
+          id: row.id,
+          code: "PUBLISHED_WITHOUT_CITATION",
+          message: `${row.drugName}: published interaction row has zero active claim-supporting citations`,
+        });
+      }
+      if ((row.retractedCitationCount ?? 0) > 0) {
+        issues.push({
+          id: row.id,
+          code: "PUBLISHED_WITH_RETRACTED_CITATION",
+          message: `${row.drugName}: published interaction row still references ${row.retractedCitationCount} retracted citation(s)`,
+        });
+      }
+    }
+  }
+  return issues;
+}

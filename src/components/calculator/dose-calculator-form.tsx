@@ -21,23 +21,27 @@ import {
   type FormulaKey,
 } from "@/lib/constants/dosage-formulas";
 import {
-  clarksRule,
-  youngsRule,
-  bsaMethod,
-  friedsRule,
+  buildAdultReferenceDose,
   lbsToKg,
   type DoseResult,
 } from "@/lib/utils/dosage-calculations";
 import {
   assessDoseEligibility,
+  MAX_ADULT_WEIGHT_KG,
+  MIN_ADULT_WEIGHT_KG,
   MINIMUM_DOSE_AGE_YEARS,
 } from "@/lib/utils/dosage-safety";
-import { useTranslations } from "next-intl";
+import {
+  matchCalculatorBlockedInput,
+  type DangerousHerb,
+} from "@/lib/data/dangerous-herbs";
+import { useLocale, useTranslations } from "next-intl";
 import {
   useDefaultPatientProfile,
   AutoFillBadge,
   SaveCalcButton,
 } from "./profile-integration";
+import { PrintSafetyFooter } from "@/components/shared/print-safety-footer";
 
 const unitOptions = ["mg", "ml", "g", "drops"] as const;
 
@@ -55,22 +59,12 @@ type PrefillData = {
   verified: boolean;
 } | null;
 
-// fried_rule implements Fried's Rule (age in months / 150) — it was
-// previously labeled "Cowling's Rule", a different rule, contradicting the
-// result explanation. Map to the Fried's keys.
-const FORMULA_KEY_MAP: Record<FormulaKey, string> = {
-  clarks_rule: "clarkRule",
-  youngs_rule: "youngsRule",
-  bsa: "salisburyRule",
-  fried_rule: "friedRule",
-};
-
-const FORMULA_DESC_MAP: Record<FormulaKey, string> = {
-  clarks_rule: "clarkDesc",
-  youngs_rule: "youngDesc",
-  bsa: "salisburyDesc",
-  fried_rule: "friedDesc",
-};
+type SafetyBlockState =
+  | { type: "dangerous_herb"; slug: string; entry: DangerousHerb }
+  | { type: "non_dosable"; slug: string }
+  | { type: "pediatric_unavailable"; ageYears: number }
+  | { type: "age_unverified" }
+  | null;
 
 interface CalculationSnapshot {
   id: number;
@@ -86,8 +80,7 @@ interface CalculationSnapshot {
 
 export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   const t = useTranslations();
-  // mg / g / ml are symbols and read the same in both languages; "drops" is
-  // an English word and was left untranslated on /fr/calculator.
+  const locale = useLocale();
   const unitLabel = (u: string) =>
     u === "drops" ? t("calculatorForm.drops") : u;
   const [herbName, setHerbName] = useState(prefill?.herbName ?? "");
@@ -96,24 +89,21 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     prefill?.doseUnit ?? "mg"
   );
   const [ageYears, setAgeYears] = useState("");
-  const [useMonths, setUseMonths] = useState(false);
-  const [ageMonths, setAgeMonths] = useState("");
   const [weightValue, setWeightValue] = useState("");
   const [useLbs, setUseLbs] = useState(false);
   const [heightCm, setHeightCm] = useState("");
-  const [selectedFormula, setSelectedFormula] =
-    useState<FormulaKey>("clarks_rule");
+  const selectedFormula: FormulaKey = "adult_reference";
   const [snapshot, setSnapshot] = useState<CalculationSnapshot | null>(null);
   const snapshotSeqRef = useRef(0);
   const [error, setError] = useState<string | null>(null);
-  /** Set when the age gate prevents any numeric dose from being shown. */
-  const [safetyBlock, setSafetyBlock] = useState<
-    "minor" | "age_required" | null
-  >(null);
+  /** Set when dangerous/non-dosable herb or age gate blocks calculation. */
+  const [safetyBlock, setSafetyBlock] = useState<SafetyBlockState>(null);
   const [autoFilled, setAutoFilled] = useState(false);
   const { profile, loaded: profileLoaded } = useDefaultPatientProfile();
   const dirtyFieldsRef = useRef({ weight: false, age: false, height: false });
   const appliedProfileRef = useRef(false);
+
+  const liveBlockedHerb = matchCalculatorBlockedInput(herbName);
 
   function invalidateCalculation() {
     setSnapshot(null);
@@ -121,8 +111,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     setError(null);
   }
 
-  // Auto-fill unedited fields from default patient profile when it loads,
-  // and invalidate any prior calculation/safety block if autofill changes fields.
   useEffect(() => {
     if (!profileLoaded || !profile || appliedProfileRef.current) return;
     appliedProfileRef.current = true;
@@ -154,103 +142,87 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     setSnapshot(null);
     setSafetyBlock(null);
 
+    // 1) Hazard precedence: block dangerous or non-dosable free-text herbs
+    // before age or adult-dose checks so toxic plants never get a benign error.
+    const blockedHerb = matchCalculatorBlockedInput(herbName);
+    if (blockedHerb) {
+      if (blockedHerb.kind === "dangerous") {
+        setSafetyBlock({
+          type: "dangerous_herb",
+          slug: blockedHerb.slug,
+          entry: blockedHerb.entry,
+        });
+      } else {
+        setSafetyBlock({ type: "non_dosable", slug: blockedHerb.slug });
+      }
+      return;
+    }
+
+    // 2) Age gate BEFORE adult-dose validation: newborn/infant (0), minor (<18),
+    // and unverified/unknown/out-of-range ages all fail closed distinctly.
+    const trimmedAge = ageYears.trim();
+    const parsedAge = trimmedAge === "" ? null : Number(trimmedAge);
+    const eligibility = assessDoseEligibility(parsedAge);
+    if (eligibility.status === "pediatric_unavailable") {
+      setSafetyBlock({
+        type: "pediatric_unavailable",
+        ageYears: eligibility.ageYears,
+      });
+      return;
+    }
+    if (eligibility.status === "age_unverified") {
+      setSafetyBlock({ type: "age_unverified" });
+      return;
+    }
+
+    // 3) Validate positive finite adult reference dose
     const dose = parseFloat(adultDose);
-    if (!dose || dose <= 0) {
+    if (!Number.isFinite(dose) || dose <= 0) {
       setError(t("calculator.errors.invalidDose"));
       return;
     }
 
-    // `age` is in MONTHS when the months toggle is on, YEARS otherwise.
-    const age = useMonths ? parseFloat(ageMonths) : parseFloat(ageYears);
-    // Young's rule expects YEARS — convert months so an 18-month-old isn't
-    // treated as an 18-year-old (≈5.5x overdose). Named ageInYears to avoid
-    // shadowing the ageYears state variable.
-    const ageInYears = useMonths && Number.isFinite(age) ? age / 12 : age;
-
-    // ── Age gate (clinical safety) ──────────────────────────────────
-    // No numerical dose is produced without a confirmed adult age. This runs
-    // BEFORE the per-formula validation so a 17-year-old who picks Fried's
-    // rule gets the safety message rather than an "under 24 months" error.
-    //
-    // This is the root-cause fix for the production incident: an 8-year-old,
-    // 60 kg, 500 mg adult dose previously produced "441.2 mg" via Clark's
-    // rule. Pediatric herbal dosing is not validated for botanical products,
-    // so we refuse to compute it and direct the caregiver to a professional.
-    if (!Number.isFinite(ageInYears) || ageInYears <= 0) {
-      setSafetyBlock("age_required");
-      return;
-    }
-    const eligibility = assessDoseEligibility(ageInYears);
-    if (eligibility.status === "minor") {
-      setSafetyBlock("minor");
-      return;
-    }
-    if (eligibility.status === "invalid_age") {
-      // Implausibly old (e.g. 200) or otherwise out of range: this is bad
-      // input, not a pediatric case. Keep the distinct age error.
-      setError(t("calculator.errors.ageRequired"));
-      return;
+    // 4) Optional adult weight plausibility check (20..350 kg)
+    const trimmedWeight = weightValue.trim();
+    let weight: number | null = null;
+    if (trimmedWeight !== "") {
+      const rawWeight = Number(trimmedWeight);
+      const converted = useLbs ? lbsToKg(rawWeight) : rawWeight;
+      if (
+        !Number.isFinite(converted) ||
+        converted < MIN_ADULT_WEIGHT_KG ||
+        converted > MAX_ADULT_WEIGHT_KG
+      ) {
+        setError(t("calculator.errors.invalidAdultWeight"));
+        return;
+      }
+      weight = converted;
     }
 
-    const rawWeight = parseFloat(weightValue);
-    const weight = useLbs && rawWeight ? lbsToKg(rawWeight) : rawWeight;
-    const height = parseFloat(heightCm);
+    const trimmedHeight = heightCm.trim();
+    let height: number | null = null;
+    if (trimmedHeight !== "") {
+      const parsedHeight = Number(trimmedHeight);
+      if (
+        !Number.isFinite(parsedHeight) ||
+        parsedHeight <= 0 ||
+        parsedHeight > 300
+      ) {
+        setError(t("calculator.errors.calculationError"));
+        return;
+      }
+      height = parsedHeight;
+    }
 
     try {
-      let calcResult: DoseResult;
+      const calcResult = buildAdultReferenceDose({
+        adultDose: dose,
+        unit: doseUnit,
+        ageYears: eligibility.ageYears,
+        weightKg: weight,
+        heightCm: height,
+      });
 
-      switch (selectedFormula) {
-        case "clarks_rule":
-          if (!weight || weight <= 0) {
-            setError(t("calculator.errors.weightRequired"));
-            return;
-          }
-          calcResult = clarksRule(weight, dose, doseUnit);
-          break;
-        case "youngs_rule":
-          if (!ageInYears || ageInYears <= 0 || !Number.isFinite(ageInYears)) {
-            setError(t("calculator.errors.ageRequired"));
-            return;
-          }
-          calcResult = youngsRule(ageInYears, dose, doseUnit);
-          break;
-        case "bsa":
-          if (!weight || weight <= 0 || !height || height <= 0) {
-            setError(t("calculator.errors.bsaRequired"));
-            return;
-          }
-          calcResult = bsaMethod(height, weight, dose, doseUnit);
-          break;
-        case "fried_rule":
-          if (useMonths) {
-            if (!age || age <= 0) {
-              setError(t("calculator.errors.infantAge"));
-              return;
-            }
-            if (age >= 24) {
-              setError(t("calculator.errors.friedAgeLimit"));
-              return;
-            }
-            calcResult = friedsRule(age, dose, doseUnit);
-          } else {
-            const months = parseFloat(ageYears) * 12;
-            if (!months || months <= 0) {
-              setError(t("calculator.errors.infantAge"));
-              return;
-            }
-            if (months >= 24) {
-              setError(t("calculator.errors.friedAgeLimit"));
-              return;
-            }
-            calcResult = friedsRule(months, dose, doseUnit);
-          }
-          break;
-        default:
-          setError(t("calculator.errors.calculationError"));
-          return;
-      }
-
-      calcResult.unit = doseUnit;
       snapshotSeqRef.current += 1;
       setSnapshot({
         id: snapshotSeqRef.current,
@@ -258,9 +230,9 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
         herbName,
         adultDose,
         doseUnit,
-        weightKg: Number.isFinite(weight) && weight > 0 ? weight : null,
-        ageYears: Number.isFinite(ageInYears) ? ageInYears : null,
-        heightCm: Number.isFinite(height) && height > 0 ? height : null,
+        weightKg: weight,
+        ageYears: eligibility.ageYears,
+        heightCm: height,
         formula: selectedFormula,
       });
     } catch {
@@ -268,24 +240,8 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     }
   }
 
-  // Plausibility note: inputs that compute fine but sit outside any
-  // pediatric range (age 200, weight 999 without triggering the clamp)
-  // previously rendered with zero comment. Advisory only (role="status").
-  // Evaluated strictly against the immutable calculated snapshot.
   const showPlausibilityNote =
     !!snapshot && snapshot.weightKg !== null && snapshot.weightKg > 250;
-
-  // Explain a cap only when it materially changed the number. Clark's Rule at
-  // 70 kg is 2.9 % above the 68 kg adult reference, so every ordinary adult
-  // saw "the dose was capped" beside an unchanged dose (live QA finding).
-  // Above 10 % the cap is real and the explanation is worth showing.
-  const snapshotAdultDose = snapshot ? parseFloat(snapshot.adultDose) : NaN;
-  const showClampWarning =
-    !!snapshot &&
-    snapshot.result.clamped &&
-    Number.isFinite(snapshotAdultDose) &&
-    snapshotAdultDose > 0 &&
-    snapshot.result.rawDose > snapshotAdultDose * 1.1;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
@@ -351,10 +307,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </div>
             )}
 
-            {/* Standard adult range picker — a range is never silently
-              collapsed to a single dose. The user explicitly picks low,
-              middle, or high, which fills the adult dose field. */}
-            {prefill?.dosageRange && (
+            {/* Standard adult range picker — suppressed whenever any safety block
+                or blocked herb input is active so blocked displays never appear
+                alongside clickable adult dose suggestions. */}
+            {prefill?.dosageRange && !safetyBlock && !liveBlockedHerb && (
               <div className="rounded-lg border p-4">
                 <p className="text-sm font-medium text-foreground">
                   {t("calculatorForm.rangePickerTitle")}
@@ -493,46 +449,23 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
 
             <AutoFillBadge show={autoFilled} />
 
-            {/* Age */}
+            {/* Age (years only — pediatric/months unit removed) */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="patient-age">
-                  {t("calculatorForm.childAge")} (
-                  {useMonths
-                    ? t("calculatorForm.months").toLowerCase()
-                    : t("calculatorForm.years").toLowerCase()}
-                  )
-                </Label>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-muted-foreground">
-                    {t("calculatorForm.years")}
-                  </span>
-                  <Switch
-                    checked={useMonths}
-                    onCheckedChange={(checked) => {
-                      dirtyFieldsRef.current.age = true;
-                      setUseMonths(checked);
-                      invalidateCalculation();
-                    }}
-                    aria-label={t("calculatorForm.toggleAgeUnit")}
-                  />
-                  <span className="text-muted-foreground">
-                    {t("calculatorForm.months")}
-                  </span>
-                </div>
-              </div>
+              <Label htmlFor="patient-age">
+                {t("calculatorForm.childAge")} (
+                {t("calculatorForm.years").toLowerCase()})
+              </Label>
               <Input
                 className="h-11"
                 id="patient-age"
                 type="number"
                 min="0"
                 step="any"
-                placeholder={useMonths ? "e.g. 360" : "e.g. 30"}
-                value={useMonths ? ageMonths : ageYears}
+                placeholder="e.g. 30"
+                value={ageYears}
                 onChange={(e) => {
                   dirtyFieldsRef.current.age = true;
-                  if (useMonths) setAgeMonths(e.target.value);
-                  else setAgeYears(e.target.value);
+                  setAgeYears(e.target.value);
                   invalidateCalculation();
                 }}
               />
@@ -599,52 +532,14 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               />
             </div>
 
-            {/* Formula Selection */}
-            <div className="space-y-3">
-              <Label id="formula-label">
-                {t("calculatorForm.calculationFormula")}
-              </Label>
-              <div
-                className="grid gap-3 sm:grid-cols-2"
-                role="radiogroup"
-                aria-labelledby="formula-label"
-              >
-                {(
-                  Object.entries(DOSAGE_FORMULAS) as [
-                    FormulaKey,
-                    (typeof DOSAGE_FORMULAS)[FormulaKey],
-                  ][]
-                )
-                  // Fried's Rule only applies under 24 months, and this
-                  // calculator refuses everyone under 18, so it can never be a
-                  // valid choice here.
-                  .filter(([key]) => key !== "fried_rule")
-                  .map(([key]) => (
-                    <button
-                      key={key}
-                      type="button"
-                      role="radio"
-                      aria-checked={selectedFormula === key}
-                      onClick={() => {
-                        setSelectedFormula(key);
-                        invalidateCalculation();
-                      }}
-                      className={cn(
-                        "rounded-lg border p-3 text-left transition-all",
-                        selectedFormula === key
-                          ? "border-primary bg-primary/5 ring-1 ring-primary"
-                          : "border-border hover:border-primary/50 hover:bg-muted/50"
-                      )}
-                    >
-                      <div className="text-sm font-medium text-foreground">
-                        {t(`calculatorForm.${FORMULA_KEY_MAP[key]}`)}
-                      </div>
-                      <div className="mt-1 text-xs text-muted-foreground">
-                        {t(`calculatorForm.${FORMULA_DESC_MAP[key]}`)}
-                      </div>
-                    </button>
-                  ))}
+            {/* Adult Reference Scope (replaces legacy weight/age scaling radios) */}
+            <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm">
+              <div className="font-medium text-foreground">
+                {t("calculatorForm.adultReferenceTitle")}
               </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("calculatorForm.adultReferenceDesc")}
+              </p>
             </div>
 
             {/* Error */}
@@ -670,33 +565,78 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
       {/* Results Panel */}
       <div className="space-y-6">
         {safetyBlock ? (
-          <Card className="border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
-                <AlertTriangle className="size-5 shrink-0" />
-                {t("calculatorForm.pediatricDoseBlockedTitle")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div
-                role="alert"
-                aria-live="polite"
-                className="text-sm leading-relaxed text-amber-900 dark:text-amber-100"
-              >
-                {safetyBlock === "minor"
-                  ? t("calculatorForm.pediatricDoseBlocked", {
-                      age: MINIMUM_DOSE_AGE_YEARS,
-                    })
-                  : t("calculatorForm.ageRequiredForAdultDose", {
-                      age: MINIMUM_DOSE_AGE_YEARS,
-                    })}
-              </div>
-              <div className="rounded-lg bg-background/80 px-3 py-2 text-xs text-muted-foreground">
-                <Info className="mb-0.5 mr-1 inline-block size-3" />
-                {t("calculatorForm.pediatricDoseBlockedRationale")}
-              </div>
-            </CardContent>
-          </Card>
+          safetyBlock.type === "dangerous_herb" ? (
+            <Card className="border-destructive/40 bg-destructive/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-destructive">
+                  <AlertTriangle className="size-5 shrink-0" />
+                  {t("calculatorForm.dangerousHerbBlockedTitle")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="text-sm leading-relaxed text-foreground"
+                >
+                  {locale === "fr"
+                    ? safetyBlock.entry.reasonFr
+                    : safetyBlock.entry.reason}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {t("calculatorForm.dangerousHerbBlockedFooter")}
+                </p>
+              </CardContent>
+            </Card>
+          ) : safetyBlock.type === "non_dosable" ? (
+            <Card className="border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
+                  <AlertTriangle className="size-5 shrink-0" />
+                  {t("calculatorForm.nonDosableHerbBlockedTitle")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="text-sm leading-relaxed text-amber-900 dark:text-amber-100"
+                >
+                  {t("calculatorForm.nonDosableHerbBlockedDesc")}
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-amber-300 bg-amber-50/60 dark:border-amber-700 dark:bg-amber-950/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
+                  <AlertTriangle className="size-5 shrink-0" />
+                  {safetyBlock.type === "pediatric_unavailable"
+                    ? t("calculatorForm.pediatricDoseBlockedTitle")
+                    : t("calculatorForm.ageUnverifiedTitle")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div
+                  role="alert"
+                  aria-live="polite"
+                  className="text-sm leading-relaxed text-amber-900 dark:text-amber-100"
+                >
+                  {safetyBlock.type === "pediatric_unavailable"
+                    ? t("calculatorForm.pediatricDoseBlocked", {
+                        age: MINIMUM_DOSE_AGE_YEARS,
+                      })
+                    : t("calculatorForm.ageRequiredForAdultDose", {
+                        age: MINIMUM_DOSE_AGE_YEARS,
+                      })}
+                </div>
+                <div className="rounded-lg bg-background/80 px-3 py-2 text-xs text-muted-foreground">
+                  <Info className="mb-0.5 mr-1 inline-block size-3" />
+                  {t("calculatorForm.pediatricDoseBlockedRationale")}
+                </div>
+              </CardContent>
+            </Card>
+          )
         ) : snapshot ? (
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-green-50 dark:to-green-950/20 animate-message-in">
             <CardHeader>
@@ -707,8 +647,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
             <CardContent className="space-y-4">
               <div className="text-center">
                 <div className="text-4xl font-bold text-primary animate-count-up">
-                  {/* A small adult dose scaled to a low weight rounds to 0.0
-                      and read as "0 mg" (live QA finding). It is not zero. */}
                   {snapshot.result.dose > 0 && snapshot.result.dose < 0.1
                     ? "<0.1"
                     : snapshot.result.dose}
@@ -723,16 +661,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 )}
               </div>
 
-              {showClampWarning && (
-                <div
-                  role="alert"
-                  className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
-                >
-                  <Info className="mb-0.5 mr-1 inline-block size-3" />
-                  {t("calculatorForm.clampedWarning")}
-                </div>
-              )}
-
               {showPlausibilityNote && (
                 <div
                   role="status"
@@ -740,56 +668,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 >
                   <Info className="mb-0.5 mr-1 inline-block size-3" />
                   {t("calculatorForm.plausibilityWarning")}
-                </div>
-              )}
-
-              {/* Visual comparison bar */}
-              {snapshot.adultDose && (
-                <div className="space-y-2 rounded-lg bg-background/80 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                    {t("calculatorForm.doseComparison")}
-                  </p>
-                  <div className="space-y-2">
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">
-                          {t("calculatorForm.adultDose")}
-                        </span>
-                        <span className="font-medium">
-                          {snapshot.adultDose} {unitLabel(snapshot.doseUnit)}
-                        </span>
-                      </div>
-                      <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
-                        <div
-                          className="h-full rounded-full bg-primary/30 animate-grow-bar"
-                          style={{ width: "100%" }}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">
-                          {t("calculatorForm.calculatedDose")}
-                        </span>
-                        <span className="font-medium text-primary">
-                          {snapshot.result.dose > 0 &&
-                          snapshot.result.dose < 0.1
-                            ? "<0.1"
-                            : snapshot.result.dose}{" "}
-                          {unitLabel(snapshot.result.unit)}
-                        </span>
-                      </div>
-                      <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
-                        <div
-                          className="h-full rounded-full bg-primary animate-grow-bar"
-                          style={{
-                            width: `${Math.min((parseFloat(String(snapshot.result.dose)) / parseFloat(snapshot.adultDose)) * 100, 100)}%`,
-                            animationDelay: "0.2s",
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
                 </div>
               )}
 
@@ -824,6 +702,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 weightValue={
                   snapshot.weightKg !== null ? String(snapshot.weightKg) : ""
                 }
+                weightUnit="kg"
                 ageYears={
                   snapshot.ageYears !== null ? String(snapshot.ageYears) : ""
                 }
@@ -836,6 +715,12 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">
                 <Info className="mb-0.5 mr-1 inline-block size-3" />
                 {t("calculatorForm.disclaimer")}
+              </div>
+              <div className="print-only">
+                <PrintSafetyFooter
+                  locale={locale === "fr" ? "fr" : "en"}
+                  adultAgeYears={snapshot.ageYears}
+                />
               </div>
             </CardContent>
           </Card>
@@ -854,16 +739,16 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {t(`calculatorForm.${FORMULA_KEY_MAP[selectedFormula]}`)}
+              {t("calculatorForm.adultReferenceTitle")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>{t(`calculatorForm.${FORMULA_DESC_MAP[selectedFormula]}`)}</p>
+            <p>{t("calculatorForm.adultReferenceDesc")}</p>
             <p className="font-mono text-xs">
-              {DOSAGE_FORMULAS[selectedFormula].formula}
+              {DOSAGE_FORMULAS.adult_reference.formula}
             </p>
             <Badge variant="secondary">
-              {t(`calculatorForm.${FORMULA_DESC_MAP[selectedFormula]}`)}
+              {t("calculatorForm.adultReferenceBadge")}
             </Badge>
           </CardContent>
         </Card>

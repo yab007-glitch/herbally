@@ -206,4 +206,31 @@ describe("explicit review status", () => {
     expect(parsed.verification_method).toBe("primary_source");
     expect(parsed.review_status).toBeNull();
   });
+
+  it("demotes 00079 bulk editorial rows (Yasser Bheekun 2026-11-18) so they never claim clinical review", () => {
+    const bulkRow = {
+      ...UNVERIFIED,
+      review_status: "human_reviewed" as const,
+      reviewed_by_name: "Yasser Bheekun",
+      reviewed_on: "2026-11-18",
+      bulk_editorial_import: true,
+      review_role: "editorial" as const,
+    };
+    const state = getReviewState(bulkRow);
+    expect(state).toMatchObject({
+      kind: "editorial_checked",
+      reviewer: "Yasser Bheekun",
+      date: "2026-11-18",
+    });
+    expect(isVerified(bulkRow)).toBe(false);
+
+    // Even when bulk_editorial_import wasn't explicitly set yet, the 00079 stamp without clinical role is demoted
+    const unstampedBulk = {
+      ...UNVERIFIED,
+      review_status: "human_reviewed" as const,
+      reviewed_by_name: "Yasser Bheekun",
+      reviewed_on: "2026-11-18",
+    };
+    expect(getReviewState(unstampedBulk)?.kind).toBe("editorial_checked");
+  });
 });

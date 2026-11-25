@@ -18,7 +18,10 @@ vi.mock("@/lib/utils/logger", () => ({
 }));
 
 import {
+  addMedication,
   saveDosageCalculation,
+  saveHealthProfile,
+  savePatientProfile,
   updatePatientProfile,
   updateGardenNote,
   checkUserMedicationInteractions,
@@ -27,14 +30,15 @@ import {
 function calculation(over: Record<string, unknown> = {}) {
   return {
     adult_dose: "500 mg",
-    calculated_dose: "441.2 mg",
-    formula_used: "clarks_rule" as const,
-    patient_weight_kg: 30,
-    patient_age: 8,
+    calculated_dose: "500 mg",
+    formula_used: "adult_reference" as const,
+    patient_weight_kg: 70,
+    patient_age: 30,
     patient_height_cm: null,
     patient_bsa: null,
     herb_id: null,
     notes: "Turmeric",
+    health_data_consent: true,
     ...over,
   };
 }
@@ -44,16 +48,19 @@ describe("saveDosageCalculation pediatric gate (server-side)", () => {
     vi.clearAllMocks();
     getUserMock.mockResolvedValue({ data: { user: { id: "u1" } } });
     insertMock.mockResolvedValue({ error: null });
-    fromMock.mockImplementation(() => ({ insert: insertMock }));
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_privacy_consents") {
+        return { upsert: async () => ({ error: null }) };
+      }
+      return { insert: insertMock };
+    });
   });
 
   it("rejects persisting a calculation for a patient under 18", async () => {
     const result = await saveDosageCalculation(
-      calculation({ patient_age: 8, calculated_dose: "441.2 mg" })
+      calculation({ patient_age: 8, calculated_dose: "500 mg" })
     );
 
-    // A server action can be invoked directly with arbitrary JSON; the UI gate
-    // alone is bypassable. Nothing may be written for a minor.
     expect(result.success).toBe(false);
     expect(insertMock).not.toHaveBeenCalled();
   });
@@ -63,7 +70,7 @@ describe("saveDosageCalculation pediatric gate (server-side)", () => {
       calculation({
         patient_age: null,
         patient_weight_kg: null,
-        calculated_dose: "441.2 mg",
+        calculated_dose: "500 mg",
       })
     );
 
@@ -85,7 +92,7 @@ describe("saveDosageCalculation pediatric gate (server-side)", () => {
       calculation({
         patient_age: 30,
         patient_weight_kg: 60,
-        calculated_dose: "441.2 mg",
+        calculated_dose: "500 mg",
       })
     );
 
@@ -93,13 +100,22 @@ describe("saveDosageCalculation pediatric gate (server-side)", () => {
     expect(insertMock).toHaveBeenCalledTimes(1);
   });
 
-  it("does not write for guests (skipped) even with a pediatric payload", async () => {
+  it("runs age gate BEFORE guest no-op so pediatric payloads always reject while adult guest payloads return skipped", async () => {
     getUserMock.mockResolvedValue({ data: { user: null } });
-    const result = await saveDosageCalculation(calculation({ patient_age: 8 }));
+    const minorResult = await saveDosageCalculation(
+      calculation({ patient_age: 8 })
+    );
+    expect(minorResult.success).toBe(false);
+    expect(insertMock).not.toHaveBeenCalled();
 
-    // Guest path short-circuits before insert; it must not claim a save.
-    expect(result.success).toBe(true);
-    expect(result).toMatchObject({ success: true, data: { skipped: true } });
+    const adultResult = await saveDosageCalculation(
+      calculation({ patient_age: 30 })
+    );
+    expect(adultResult.success).toBe(true);
+    expect(adultResult).toMatchObject({
+      success: true,
+      data: { skipped: true },
+    });
     expect(insertMock).not.toHaveBeenCalled();
   });
 });
@@ -129,33 +145,163 @@ describe("profile actions hardening", () => {
 
   it("strips immutable columns and does not unset other defaults if target update fails", async () => {
     const updateCalls: Array<Record<string, unknown>> = [];
-    fromMock.mockImplementation(() => ({
-      update: (payload: Record<string, unknown>) => {
-        updateCalls.push(payload);
-        return {
-          eq: () => ({
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_privacy_consents") {
+        return { upsert: async () => ({ error: null }) };
+      }
+      return {
+        update: (payload: Record<string, unknown>) => {
+          updateCalls.push(payload);
+          return {
             eq: () => ({
-              select: () => ({
-                single: async () => ({
-                  data: null,
-                  error: { message: 'violates row-level security policy "p"' },
+              eq: () => ({
+                select: () => ({
+                  single: async () => ({
+                    data: null,
+                    error: {
+                      message: 'violates row-level security policy "p"',
+                    },
+                  }),
                 }),
               }),
             }),
-          }),
-        };
-      },
-    }));
+          };
+        },
+      };
+    });
 
     const res = await updatePatientProfile(VALID_UUID, {
       id: "other-id",
       user_id: "other-user",
       is_default: true,
       name: "Alice",
+      health_data_consent: true,
     } as Record<string, unknown>);
 
     expect(res).toEqual({ success: false, error: "Failed to update profile" });
     expect(updateCalls).toEqual([{ is_default: true, name: "Alice" }]);
+  });
+
+  it("rejects child relationships, age_months, and minor ages on savePatientProfile and updatePatientProfile", async () => {
+    const childSave = await savePatientProfile({
+      name: "Minor",
+      relationship: "child",
+      weight_kg: 25,
+      age_years: 10,
+      age_months: null,
+      height_cm: null,
+      is_default: false,
+      notes: null,
+      health_data_consent: true,
+    });
+    expect(childSave.success).toBe(false);
+
+    const minorUpdate = await updatePatientProfile(VALID_UUID, {
+      age_years: 12,
+      health_data_consent: true,
+    } as Record<string, unknown>);
+    expect(minorUpdate.success).toBe(false);
+    expect(fromMock).not.toHaveBeenCalled();
+  });
+
+  it("enforces explicit opt-in consent or recorded ledger across all health writes", async () => {
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_privacy_consents") {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => ({
+                maybeSingle: async () => ({ data: null, error: null }),
+              }),
+            }),
+          }),
+        };
+      }
+      return { insert: insertMock, upsert: vi.fn(), update: vi.fn() };
+    });
+
+    const pRes = await savePatientProfile({
+      name: "Adult",
+      relationship: "self",
+      weight_kg: 70,
+      age_years: 30,
+      age_months: null,
+      height_cm: null,
+      is_default: false,
+      notes: null,
+    });
+    expect(pRes.success).toBe(false);
+
+    const hRes = await saveHealthProfile({
+      conditions: ["Asthma"],
+      allergies: [],
+    });
+    expect(hRes.success).toBe(false);
+
+    const mRes = await addMedication({
+      drug_name: "Warfarin",
+      dosage: null,
+      frequency: null,
+      rxcui: null,
+      notes: null,
+    });
+    expect(mRes.success).toBe(false);
+
+    const dRes = await saveDosageCalculation(
+      calculation({ health_data_consent: undefined })
+    );
+    expect(dRes.success).toBe(false);
+    expect(insertMock).not.toHaveBeenCalled();
+  });
+
+  it("resolves herb_id server-side in saveDosageCalculation and surfaces pre-00100 22P02 cleanly", async () => {
+    fromMock.mockImplementation((table: string) => {
+      if (table === "herbs" || table === "herbs_public") {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: async () => ({
+                data: { slug: "aconite-processed", name: "Aconite" },
+                error: null,
+              }),
+            }),
+          }),
+        };
+      }
+      if (table === "user_privacy_consents") {
+        return { upsert: async () => ({ error: null }) };
+      }
+      return { insert: insertMock };
+    });
+
+    const blockedRes = await saveDosageCalculation(
+      calculation({ herb_id: VALID_UUID, notes: null })
+    );
+    expect(blockedRes.success).toBe(false);
+    expect(insertMock).not.toHaveBeenCalled();
+
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_privacy_consents") {
+        return { upsert: async () => ({ error: null }) };
+      }
+      if (table === "dosage_calculations") {
+        return {
+          insert: async () => ({
+            error: {
+              code: "22P02",
+              message:
+                'invalid input value for enum formula_type: "adult_reference"',
+            },
+          }),
+        };
+      }
+      return { insert: insertMock };
+    });
+    const enumErrRes = await saveDosageCalculation(calculation());
+    expect(enumErrRes.success).toBe(false);
+    if (!enumErrRes.success) {
+      expect(enumErrRes.error).toMatch(/00100|unavailable/i);
+    }
   });
 
   it("validates herbSlug and note length in updateGardenNote", async () => {
@@ -206,7 +352,7 @@ describe("profile actions hardening", () => {
           }),
         };
       }
-      if (table === "herbs") {
+      if (table === "herbs" || table === "herbs_public") {
         return {
           select: () => ({
             eq: () => ({
@@ -238,5 +384,60 @@ describe("profile actions hardening", () => {
       success: false,
       error: "Failed to check interactions",
     });
+  });
+
+  it("matches user medications via unified matcher across brand/generic aliases", async () => {
+    fromMock.mockImplementation((table: string) => {
+      if (table === "user_medications") {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: async () => ({
+                data: [{ drug_name: "Coumadin 5mg" }],
+                error: null,
+              }),
+            }),
+          }),
+        };
+      }
+      if (table === "herbs" || table === "herbs_public") {
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => ({
+                single: async () => ({
+                  data: { id: "h-1" },
+                  error: null,
+                }),
+              }),
+            }),
+          }),
+        };
+      }
+      if (table === "drug_interactions") {
+        return {
+          select: () => ({
+            eq: async () => ({
+              data: [
+                {
+                  drug_name: "Warfarin (Anticoagulant)",
+                  severity: "severe",
+                  description: "Bleeding risk.",
+                  mechanism: "Antiplatelet effect",
+                },
+              ],
+              error: null,
+            }),
+          }),
+        };
+      }
+      return {};
+    });
+
+    const res = await checkUserMedicationInteractions("ginger");
+    expect(res.success).toBe(true);
+    if (res.success) {
+      expect(res.data?.interactions).toHaveLength(1);
+    }
   });
 });

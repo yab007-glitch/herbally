@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanFaqText, stripFieldLabels } from "./clean-faq";
+import { cleanFaqQuestion, cleanFaqText, stripFieldLabels } from "./clean-faq";
 
 describe("cleanFaqText", () => {
   it("removes a leading regulator field label", () => {
@@ -150,5 +150,21 @@ describe("stripFieldLabels", () => {
     expect(stripFieldLabels("Do not use before surgery.")).toBe(
       "Do not use before surgery."
     );
+  });
+});
+
+describe("cleanFaqQuestion", () => {
+  it("preserves safe child questions without numeric doses and strips numeric pediatric doses from questions", () => {
+    expect(cleanFaqQuestion("Can children take chamomile?")).toBe(
+      "Can children take chamomile?"
+    );
+    expect(cleanFaqQuestion("What is the chamomile dose for children?")).toBe(
+      "What is the chamomile dose for children?"
+    );
+    expect(
+      cleanFaqQuestion(
+        "What is the adult dose? Should children 6-18 years take 100 mg?"
+      )
+    ).toBe("What is the adult dose?");
   });
 });

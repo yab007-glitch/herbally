@@ -35,6 +35,10 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { cn } from "@/lib/utils";
 import { isCalculatorBlockedSlug } from "@/lib/data/dangerous-herbs";
+import {
+  classifyInteractionEvidence,
+  getClinicalActionDisplay,
+} from "@/lib/interactions/evidence";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
@@ -198,42 +202,6 @@ function evidenceLabel(level: string, fr: boolean): string {
   return table[level] ?? level.replace(/-/g, " ");
 }
 
-/**
- * Severity-specific next step. Shared boilerplate ("talk to your doctor") is
- * useless advice on a contraindicated pair, and an over-cautious warning on a
- * mild one trains readers to ignore the page. The sentence has to match the
- * grade the reader is looking at.
- */
-function practicalAdvice(
-  severity: InteractionPair["severity"],
-  herb: string,
-  drug: string,
-  fr: boolean
-): string {
-  if (fr) {
-    switch (severity) {
-      case "contraindicated":
-        return `N'associez pas ${herb} et ${drug}. Si vous prenez déjà les deux, contactez votre médecin ou votre pharmacien aujourd'hui plutôt que d'attendre le prochain rendez-vous : la conduite à tenir se décide avec lui.`;
-      case "severe":
-        return `Évitez d'associer ${herb} et ${drug}, sauf si votre médecin le juge nécessaire et met en place un suivi rapproché. Si vous prenez déjà les deux, parlez-en avant toute nouvelle prise.`;
-      case "moderate":
-        return `${herb} et ${drug} peuvent être associés dans certains cas, mais pas sans surveillance. Demandez à votre pharmacien si un ajustement de dose ou un espacement des prises est indiqué dans votre situation.`;
-      default:
-        return `Aux doses habituelles, le risque est faible. Signalez tout de même la prise de ${herb} à votre pharmacien, en particulier si votre traitement change ou si vous devez être opéré.`;
-    }
-  }
-  switch (severity) {
-    case "contraindicated":
-      return `Do not combine ${herb} and ${drug}. If you already take both, contact your doctor or pharmacist today rather than waiting for your next appointment — what happens next is their call, not yours.`;
-    case "severe":
-      return `Avoid combining ${herb} and ${drug} unless your doctor judges it necessary and sets up close monitoring. If you already take both, raise it before any further dose.`;
-    case "moderate":
-      return `${herb} and ${drug} can be used together in some cases, but not unmonitored. Ask your pharmacist whether a dose adjustment or spacing the doses applies to your situation.`;
-    default:
-      return `At usual doses the risk is low. Still tell your pharmacist that you take ${herb}, especially if your medication changes or you face surgery.`;
-  }
-}
-
 function severityExplainer(fr: boolean): string {
   return fr
     ? "Contre-indiqué et grave signifient que l'association est à éviter ; modéré, qu'elle reste possible sous surveillance ; léger, que le risque est faible aux doses habituelles. Ce niveau décrit la gravité du risque si les deux sont pris ensemble, pas la probabilité de le ressentir."
@@ -324,6 +292,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+    ...(pair.publicationStatus !== "published"
+      ? { robots: { index: false, follow: true } }
+      : {}),
     alternates: {
       canonical: canonicalUrl,
       languages: {
@@ -478,6 +449,29 @@ export default async function InteractionPairPage({ params }: Props) {
     ? pair.localizedDrugName || pair.drugName
     : pair.drugName;
   const verdict = verdictCopy(pair.severity, pair.herbName, displayDrug, fr);
+  const evidenceClass = classifyInteractionEvidence({
+    evidenceLevel: pair.evidenceLevel,
+    evidenceTier: pair.evidenceTier ?? "unknown",
+    extrapolationScope: pair.extrapolationScope ?? "unverified",
+  });
+  const clinicalAction = getClinicalActionDisplay({
+    publicationStatus:
+      (pair.publicationStatus as
+        | "legacy_unreviewed"
+        | "draft"
+        | "clinically_verified"
+        | "published"
+        | "quarantined_collision"
+        | "retracted_hold") ?? "legacy_unreviewed",
+    clinicalActionStatus:
+      (pair.clinicalActionStatus as
+        | "unreviewed_blocked"
+        | "draft_pending_review"
+        | "clinician_approved"
+        | "suspended_collision_conflict") ?? "unreviewed_blocked",
+    pairSpecificClinicalAction: pair.pairSpecificClinicalAction ?? null,
+    locale: fr ? "fr" : "en",
+  });
   const checkerQuery = fr
     ? `Puis-je prendre ${pair.herbName} avec ${displayDrug} ?`
     : `Can I take ${pair.herbName} with ${displayDrug}?`;
@@ -487,7 +481,7 @@ export default async function InteractionPairPage({ params }: Props) {
       question: fr
         ? `Puis-je prendre ${pair.herbName} avec ${displayDrug} ?`
         : `Can I take ${pair.herbName} with ${displayDrug}?`,
-      answer: `${verdict.headline}. ${verdict.action} ${pair.description}`,
+      answer: `${verdict.headline}. ${clinicalAction.text} ${pair.description}`,
     },
     {
       question: fr
@@ -588,8 +582,14 @@ export default async function InteractionPairPage({ params }: Props) {
                   · {evidenceLabel(pair.evidenceLevel, fr)}
                 </span>
               )}
+              <span className="ml-2 text-xs font-normal opacity-90">
+                · {fr ? evidenceClass.badgeFr : evidenceClass.badgeEn}
+              </span>
             </p>
-            <p className="mt-1 text-sm">{verdict.action}</p>
+            <p className="mt-1 text-sm">{clinicalAction.text}</p>
+            <p className="mt-1.5 text-xs opacity-85">
+              {fr ? evidenceClass.explanationFr : evidenceClass.explanationEn}
+            </p>
           </div>
         </div>
       </div>
@@ -672,13 +672,19 @@ export default async function InteractionPairPage({ params }: Props) {
           {pair.updatedAt && (
             <>
               {" · "}
-              {fr ? "Vérifié le " : "Reviewed "}
+              {fr ? "Mis à jour le " : "Updated "}
               {new Date(pair.updatedAt).toLocaleDateString(
                 fr ? "fr-FR" : "en-US",
                 { year: "numeric", month: "long" }
               )}
             </>
           )}
+          {" · "}
+          {pair.verifiedAt
+            ? `${fr ? "Révision clinique le " : "Clinically reviewed "}${pair.verifiedAt}`
+            : fr
+              ? "Statut : fiche héritée non révisée par un clinicien"
+              : "Review status: legacy record — no clinician review recorded"}
         </p>
       </section>
 
@@ -699,14 +705,13 @@ export default async function InteractionPairPage({ params }: Props) {
         </section>
       )}
 
-      {/* What to do — scaled by severity so the advice is about THIS pair,
-          not boilerplate repeated across every page. */}
+      {/* Clinical guidance status (no severity-templated instructions until clinician sign-off) */}
       <section className="space-y-3">
         <h2 className="text-xl font-semibold text-foreground">
-          {fr ? "Que faire concrètement" : "What to do in practice"}
+          {fr ? "Statut de conduite clinique" : "Clinical guidance status"}
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-          {practicalAdvice(pair.severity, pair.herbName, pair.drugName, fr)}
+          {clinicalAction.text}
         </p>
         <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
           {(fr
@@ -768,7 +773,7 @@ export default async function InteractionPairPage({ params }: Props) {
             className={buttonVariants({ variant: "outline" })}
           >
             <Calculator className="mr-1 size-4" />
-            {fr ? "Calculer une dose" : "Calculate a dose"}
+            {fr ? "Vérifier la référence adulte" : "Check adult reference"}
           </Link>
         )}
         <Link
@@ -801,7 +806,8 @@ export default async function InteractionPairPage({ params }: Props) {
                   href={pairPath(p.herbSlug, p.drugName)}
                   className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
                 >
-                  {p.herbName} + {p.drugName}
+                  {p.herbName} +{" "}
+                  {fr ? p.localizedDrugName || p.drugName : p.drugName}
                 </Link>
               ))}
           </div>
@@ -837,7 +843,8 @@ export default async function InteractionPairPage({ params }: Props) {
                   href={pairPath(p.herbSlug, p.drugName)}
                   className="rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary/30 hover:text-foreground"
                 >
-                  {p.herbName} + {p.drugName}
+                  {p.herbName} +{" "}
+                  {fr ? p.localizedDrugName || p.drugName : p.drugName}
                 </Link>
               ))}
           </div>

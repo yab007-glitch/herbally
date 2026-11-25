@@ -4,6 +4,7 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAdminAccess } from "@/lib/auth/admin-guard";
 import { revalidatePath, revalidateTag } from "next/cache";
+import { resolveVerifiedClinicalReviewer } from "@/lib/data/reviewers";
 import { logger } from "@/lib/utils/logger";
 import type { ActionResponse } from "@/lib/types";
 
@@ -11,8 +12,9 @@ const reviewParamSchema = z.string().trim().min(1).max(200);
 
 /**
  * Server action to mark a PubMed-compiled sheet as reviewed by a named
- * reviewer (e.g. Dr. Dawn Wong). Admin-only — requires DB admin role and
- * AAL2 2FA verification before stamping herb_pubmed_monographs.status.
+ * reviewer (e.g. a verified clinician in `reviewer_registry`). Admin-only —
+ * requires DB admin role and AAL2 2FA verification before stamping
+ * herb_pubmed_monographs.status.
  */
 export async function markSheetReviewed(
   slug: string,
@@ -35,12 +37,24 @@ export async function markSheetReviewed(
   }
 
   const admin = createAdminClient();
+  const verifiedReviewer = await resolveVerifiedClinicalReviewer(
+    cleanReviewer,
+    admin
+  );
+  if (!verifiedReviewer) {
+    return {
+      success: false,
+      error:
+        "Reviewer must be a verified, consented clinical reviewer with an active licence in reviewer_registry.",
+    };
+  }
+
   const { error } = await admin
     .from("herb_pubmed_monographs")
     .update({
       status: "reviewed",
       last_reviewed: new Date().toISOString(),
-      reviewed_by: cleanReviewer,
+      reviewed_by: verifiedReviewer.id,
     })
     .eq("slug", cleanSlug);
   if (error) {

@@ -72,14 +72,14 @@ async function searchHerbs(
     const [symptomResponse, preciseResponse, anchorResponse, textResponse] =
       await Promise.all([
         supabase
-          .from("herbs")
+          .from("herbs_public" as never)
           .select(`${herbColumns}, symptom_keywords`)
           .eq("is_published", true)
           .overlaps("symptom_keywords", expandedKeywords)
           .limit(30),
         preciseConditions
           ? supabase
-              .from("herbs")
+              .from("herbs_public" as never)
               .select(herbColumns)
               .eq("is_published", true)
               .or(preciseConditions)
@@ -87,14 +87,14 @@ async function searchHerbs(
           : Promise.resolve({ data: [], error: null }),
         anchorConditions
           ? supabase
-              .from("herbs")
+              .from("herbs_public" as never)
               .select(herbColumns)
               .eq("is_published", true)
               .or(anchorConditions)
               .limit(40)
           : Promise.resolve({ data: [], error: null }),
         supabase
-          .from("herbs")
+          .from("herbs_public" as never)
           .select(herbColumns)
           .eq("is_published", true)
           .or(textConditions)
@@ -130,6 +130,7 @@ async function searchHerbs(
       slug: string;
       scientific_name: string;
       evidence_level: string | null;
+      translations?: unknown;
       matchedBy: string;
       matchedKeywords: string[];
       matchedInputs: string[];
@@ -154,7 +155,12 @@ async function searchHerbs(
         expandedSet.has(k.toLowerCase())
       );
       return {
-        ...localized,
+        id: localized.id,
+        name: localized.name,
+        slug: localized.slug,
+        scientific_name: localized.scientific_name,
+        evidence_level: localized.evidence_level,
+        translations: localized.translations,
         matchedBy: "symptom",
         matchedKeywords,
         matchedInputs: matchedInputsFor(keywords),
@@ -188,7 +194,12 @@ async function searchHerbs(
       if (!seen.has(herb.id)) {
         seen.add(herb.id);
         results.push({
-          ...herb,
+          id: herb.id,
+          name: herb.name,
+          slug: herb.slug,
+          scientific_name: herb.scientific_name,
+          evidence_level: herb.evidence_level,
+          translations: herb.translations,
           matchedBy: "name",
           matchedKeywords: [],
           matchedInputs: [],
@@ -205,7 +216,12 @@ async function searchHerbs(
       if (!seen.has(herb.id)) {
         seen.add(herb.id);
         results.push({
-          ...herb,
+          id: herb.id,
+          name: herb.name,
+          slug: herb.slug,
+          scientific_name: herb.scientific_name,
+          evidence_level: herb.evidence_level,
+          translations: herb.translations,
           matchedBy: "name",
           matchedKeywords: [],
           matchedInputs: [],
@@ -221,7 +237,12 @@ async function searchHerbs(
       if (!seen.has(herb.id)) {
         seen.add(herb.id);
         results.push({
-          ...herb,
+          id: herb.id,
+          name: herb.name,
+          slug: herb.slug,
+          scientific_name: herb.scientific_name,
+          evidence_level: herb.evidence_level,
+          translations: herb.translations,
           matchedBy: "name",
           matchedKeywords: [],
           matchedInputs: [],
@@ -229,22 +250,32 @@ async function searchHerbs(
       }
     }
 
-    // Rank exact/prefix name matches first. Previously symptom matches
-    // (evidence-sorted) always outranked text matches, so typing an exact
-    // herb name like "Turmeric" surfaced obscure variants while the exact
-    // herb sat below the fold. Stable sort preserves the existing
-    // evidence/DB order within each rank.
-    //
-    // Rank BEFORE collapsing rows that share a scientific name: the collapse
-    // keeps the first row per plant, so ranking afterwards lets an arbitrary
-    // database order decide which name represents it. "ginkgo" returned
-    // "Bai Guo" (Ginkgo biloba seed) and "Ginkgo Biloba"; with the old order
-    // the seed entry could win the plant even though the exact name match was
-    // the other row.
-    return NextResponse.json(
-      dedupeSymptomResults(rankHerbResults(results, term)),
-      { headers: allowPublicCache ? PUBLIC_SEARCH_HEADERS : NO_STORE_HEADERS }
+    const safePayload = dedupeSymptomResults(
+      rankHerbResults(results, term)
+    ).map(
+      ({
+        id,
+        name,
+        slug,
+        scientific_name,
+        evidence_level,
+        matchedBy,
+        matchedKeywords,
+        matchedInputs,
+      }) => ({
+        id,
+        name,
+        slug,
+        scientific_name,
+        evidence_level,
+        matchedBy,
+        matchedKeywords,
+        matchedInputs,
+      })
     );
+    return NextResponse.json(safePayload, {
+      headers: allowPublicCache ? PUBLIC_SEARCH_HEADERS : NO_STORE_HEADERS,
+    });
   } catch {
     // Upstream errors may include search terms; never log their raw text.
     logger.error("herbs_search_error");

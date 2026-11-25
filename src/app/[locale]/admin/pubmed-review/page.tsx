@@ -11,7 +11,7 @@ export const metadata = { title: "PubMed Sheet Review" };
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_REVIEWER = "Dr. Dawn Wong";
+const DEFAULT_REVIEWER = "";
 const PAGE_SIZE = 30;
 
 export default async function AdminPubmedReviewPage({
