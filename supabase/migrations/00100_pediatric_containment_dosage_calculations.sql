@@ -972,6 +972,12 @@ WHERE m.status = 'published'
 
 GRANT SELECT ON public.herb_monographs_public TO anon, authenticated, service_role;
 
+-- 00066a keys this table by herb_slug, while hosted projects also carry an id
+-- column created outside the migration chain. Ensure it exists before the
+-- public view and the 00104 column grants reference it.
+ALTER TABLE public.herb_regulatory_evidence
+  ADD COLUMN IF NOT EXISTS id UUID DEFAULT gen_random_uuid();
+
 CREATE OR REPLACE VIEW public.herb_regulatory_evidence_public AS
 SELECT
   r.id,
@@ -1460,7 +1466,7 @@ BEGIN
     public.redact_text_array(h.modern_uses) AS modern_uses,
     public.strip_pediatric_dosage_text(h.dosage_adult) AS dosage_adult,
     NULL::text AS dosage_child,
-    h.dosage_forms,
+    h.dosage_forms::text[],
     public.strip_pediatric_dosage_text(h.preparation_notes) AS preparation_notes,
     public.redact_text_array(h.contraindications) AS contraindications,
     public.redact_text_array(h.side_effects) AS side_effects,

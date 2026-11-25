@@ -57,6 +57,10 @@ CREATE POLICY "Users manage own privacy consents"
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
+-- RLS filters rows; table privileges still gate access.
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_privacy_consents TO authenticated;
+GRANT ALL ON public.user_privacy_consents TO service_role;
+
 -- Retention metadata columns (additive, nullable for safe live rollout)
 ALTER TABLE public.chat_sessions
   ADD COLUMN IF NOT EXISTS retention_expires_at TIMESTAMPTZ;

@@ -20,7 +20,14 @@
 --      table-rewrite IO spike on the Free-tier Nano instance.
 
 -- 1. Supabase Security Advisor: pin search_path on category_herb_counts().
-ALTER FUNCTION public.category_herb_counts() SET search_path = public, pg_temp;
+--    The function exists in the hosted project but not in the migration chain,
+--    so a fresh replay must skip the hardening rather than fail.
+DO $$
+BEGIN
+  IF to_regprocedure('public.category_herb_counts()') IS NOT NULL THEN
+    ALTER FUNCTION public.category_herb_counts() SET search_path = public, pg_temp;
+  END IF;
+END $$;
 
 -- 2. Supabase Performance Advisor: cover the 4 unindexed foreign keys.
 CREATE INDEX IF NOT EXISTS idx_chat_messages_session_id

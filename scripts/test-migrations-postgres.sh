@@ -589,7 +589,7 @@ INSERT INTO public.herb_page_bundles (slug, payload) VALUES (
       'id', '33333333-3333-3333-3333-333333333333',
       'slug', 'chamomile',
       'name', 'Chamomile',
-      'dosage_adult', 'Adults: 500 mg twice daily. Children 6-12 years: 100 mg daily.',
+      'dosage_adult', 'Adults: 500 mg twice daily. Children 6-12 years: 100 mg daily. Children who ingest 5 g may develop allergic reactions.',
       'dosage_child', '100 mg daily for children',
       'translations', '{"fr":{"name":"Camomille","dosage_child":"100 mg enfant","dosage_adult":"Adultes : 500 mg par jour. Enfant 6-12 ans : 100 mg."}}'::jsonb
     ),

@@ -15,6 +15,8 @@
 -- that JSON into the herbs.citations column keyed by slug.
 -- ============================================================================
 
+BEGIN;
+
 CREATE TEMP TABLE _bad_pubmed (slug text, pmid text) ON COMMIT DROP;
 
 INSERT INTO _bad_pubmed (slug, pmid) VALUES
@@ -205,4 +207,6 @@ SET citations = COALESCE((
   )
 ), '[]'::jsonb)
 WHERE jsonb_typeof(h.citations) = 'array' AND jsonb_array_length(h.citations) > 0;
+
+COMMIT;
 

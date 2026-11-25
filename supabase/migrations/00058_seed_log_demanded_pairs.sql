@@ -37,7 +37,10 @@ SELECT
     'description', 'Le varech est riche en iode, ce qui peut déstabiliser les hormones thyroïdiennes et perturber le dosage de la lévothyroxine. Gardez une consommation stable et surveillez la TSH.',
     'mechanism', 'L''apport variable en iode du varech modifie la synthèse des hormones thyroïdiennes et peut provoquer hypo- ou hyperthyroïdie, changeant les besoins en lévothyroxine de façon imprévisible.'
   ))
-WHERE NOT EXISTS (
+WHERE EXISTS (
+  SELECT 1 FROM public.herbs h WHERE h.slug = 'kelp'
+)
+AND NOT EXISTS (
   SELECT 1 FROM public.drug_interactions di
   JOIN public.herbs h ON h.id = di.herb_id
   WHERE h.slug = 'kelp' AND di.drug_name = 'Levothyroxine (Synthroid)'
@@ -56,7 +59,10 @@ SELECT
     'description', 'Le varech peut contenir beaucoup de vitamine K, qui s''oppose à la warfarine, et son iode peut influer sur la coagulation via la thyroïde. Gardez une consommation stable et surveillez l''INR.',
     'mechanism', 'La vitamine K du varech soutient la synthèse des facteurs de coagulation contre la warfarine ; l''apport variable en iode ajoute de l''instabilité via les effets thyroïdiens sur la coagulation.'
   ))
-WHERE NOT EXISTS (
+WHERE EXISTS (
+  SELECT 1 FROM public.herbs h WHERE h.slug = 'kelp'
+)
+AND NOT EXISTS (
   SELECT 1 FROM public.drug_interactions di
   JOIN public.herbs h ON h.id = di.herb_id
   WHERE h.slug = 'kelp' AND di.drug_name = 'Warfarin (Coumadin)'

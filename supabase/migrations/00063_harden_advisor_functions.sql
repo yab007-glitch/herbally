@@ -11,27 +11,51 @@
 -- for the querying role, and it only ever returns whether the current
 -- authenticated user's profile has role = 'admin'.
 
-ALTER FUNCTION public.auto_confirm_user() SET search_path = public, pg_temp;
-ALTER FUNCTION public.is_admin() SET search_path = public, pg_temp;
+-- Harden the helpers that exist in this installation. auto_confirm_user() and
+-- is_admin() are created outside the migration chain in the hosted project, so
+-- a fresh replay must skip them rather than fail on ALTER FUNCTION.
+DO $$
+DECLARE
+  v_fn TEXT;
+BEGIN
+  FOREACH v_fn IN ARRAY ARRAY[
+    'public.auto_confirm_user()',
+    'public.is_admin()',
+    'public.handle_new_user()'
+  ] LOOP
+    IF to_regprocedure(v_fn) IS NOT NULL THEN
+      EXECUTE format('ALTER FUNCTION %s SET search_path = public, pg_temp', v_fn);
+    END IF;
+  END LOOP;
 
-REVOKE EXECUTE ON FUNCTION public.auto_confirm_user() FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC, anon, authenticated;
+  FOREACH v_fn IN ARRAY ARRAY[
+    'public.auto_confirm_user()',
+    'public.handle_new_user()'
+  ] LOOP
+    IF to_regprocedure(v_fn) IS NOT NULL THEN
+      EXECUTE format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC, anon, authenticated', v_fn);
+    END IF;
+  END LOOP;
+END $$;
 
 -- Keep the trigger owner able to run them (service_role/postgres own the
 -- functions, so no explicit grant is required), but assert the post-state so
 -- this migration fails loudly if a later change re-grants them.
 DO $$
+DECLARE
+  v_fn TEXT;
 BEGIN
-  IF has_function_privilege('anon', 'public.auto_confirm_user()', 'EXECUTE') THEN
-    RAISE EXCEPTION 'auto_confirm_user is still executable by anon';
-  END IF;
-  IF has_function_privilege('anon', 'public.handle_new_user()', 'EXECUTE') THEN
-    RAISE EXCEPTION 'handle_new_user is still executable by anon';
-  END IF;
-  IF has_function_privilege('authenticated', 'public.auto_confirm_user()', 'EXECUTE') THEN
-    RAISE EXCEPTION 'auto_confirm_user is still executable by authenticated';
-  END IF;
-  IF has_function_privilege('authenticated', 'public.handle_new_user()', 'EXECUTE') THEN
-    RAISE EXCEPTION 'handle_new_user is still executable by authenticated';
-  END IF;
+  FOREACH v_fn IN ARRAY ARRAY[
+    'public.auto_confirm_user()',
+    'public.handle_new_user()'
+  ] LOOP
+    IF to_regprocedure(v_fn) IS NOT NULL THEN
+      IF has_function_privilege('anon', v_fn, 'EXECUTE') THEN
+        RAISE EXCEPTION '% is still executable by anon', v_fn;
+      END IF;
+      IF has_function_privilege('authenticated', v_fn, 'EXECUTE') THEN
+        RAISE EXCEPTION '% is still executable by authenticated', v_fn;
+      END IF;
+    END IF;
+  END LOOP;
 END $$;

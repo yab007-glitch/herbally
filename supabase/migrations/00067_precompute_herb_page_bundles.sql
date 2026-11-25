@@ -12,6 +12,12 @@
 -- Writes to any source table queue the slug; the next read rebuilds that one slug,
 -- so edits stay fresh without cron, an extension, or another service to pay for.
 
+-- The hosted project gained this column outside the migration chain. Create it
+-- idempotently so fresh installs and replays can build the bundle functions
+-- below, which read related_slugs.
+ALTER TABLE public.herbs
+  ADD COLUMN IF NOT EXISTS related_slugs TEXT[] DEFAULT '{}'::text[];
+
 CREATE TABLE IF NOT EXISTS public.herb_page_bundles (
   slug     text PRIMARY KEY REFERENCES public.herbs (slug) ON UPDATE CASCADE ON DELETE CASCADE,
   payload  jsonb NOT NULL,

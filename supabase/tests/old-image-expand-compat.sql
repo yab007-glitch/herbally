@@ -55,10 +55,14 @@ BEGIN
     RAISE EXCEPTION 'Old-image SELECT * from public.herb_pubmed_monographs failed during expand/rollback';
   END IF;
 
-  -- Old-image anonymous calculator write during expand / post-rollback
-  INSERT INTO public.dosage_calculations (patient_age, patient_weight_kg, adult_dose, calculated_dose, formula_used)
-  VALUES (10, 32, '500 mg', '235 mg', 'clarks_rule')
-  RETURNING id INTO v_anon_calc_id;
+  -- Old-image anonymous calculator write during expand / post-rollback.
+  -- The pre-00104 insert policy permits anonymous rows (user_id IS NULL), but
+  -- RETURNING would additionally require the new row to pass the SELECT policy,
+  -- which production intentionally scopes to user_id = auth.uid(). PostgREST
+  -- inserts do not use RETURNING, so exercise that same shape and verify
+  -- persistence below as the privileged fixture owner.
+  INSERT INTO public.dosage_calculations (patient_age, patient_weight_kg, adult_dose, calculated_dose, formula_used, notes)
+  VALUES (10, 32, '500 mg', '235 mg', 'clarks_rule', 'old-image-anon-compat');
 
   -- New image queries sanitized herbs_public view simultaneously
   SELECT dosage_adult INTO v_pub_dose
@@ -69,6 +73,13 @@ BEGIN
   END IF;
 
   RESET ROLE;
+
+  -- Confirm the anonymous write persisted; anon cannot read its own NULL-user row.
+  SELECT id INTO v_anon_calc_id
+  FROM public.dosage_calculations
+  WHERE notes = 'old-image-anon-compat'
+  ORDER BY created_at DESC
+  LIMIT 1;
 
   -- 2) Old-image authenticated calculator write + new-image adult_reference write during expand / post-rollback
   PERFORM set_config('request.jwt.claim.sub', '11111111-1111-1111-1111-111111111111', true);

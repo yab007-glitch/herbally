@@ -438,6 +438,12 @@ CREATE POLICY "Admins can manage reviewer registry"
   ON public.reviewer_registry FOR ALL TO authenticated
   USING (public.is_admin_aal2()) WITH CHECK (public.is_admin_aal2());
 
+-- Table privileges are required in addition to RLS. Without these grants the
+-- public-attribution and admin-management policies above are inert.
+GRANT SELECT ON public.reviewer_registry TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.reviewer_registry TO authenticated;
+GRANT ALL ON public.reviewer_registry TO service_role;
+
 DROP POLICY IF EXISTS "Public can view active claim citations" ON public.claim_citations;
 CREATE POLICY "Public can view active claim citations"
   ON public.claim_citations FOR SELECT
@@ -483,6 +489,7 @@ DROP POLICY IF EXISTS "Public can view corrections log" ON public.public_correct
 CREATE POLICY "Public can view corrections log"
   ON public.public_corrections_log FOR SELECT
   USING (true);
+GRANT SELECT ON public.public_corrections_log TO anon, authenticated, service_role;
 
 REVOKE INSERT, UPDATE, DELETE ON public.clinical_content_revisions FROM anon, authenticated;
 REVOKE ALL ON public.safety_incidents FROM anon, authenticated;
