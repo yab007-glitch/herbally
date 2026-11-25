@@ -4,6 +4,7 @@ import {
   extractLnhpdArray,
   formatLnhpdStatus,
   normalizeNpnInput,
+  parseLnhpdArray,
 } from "../lnhpd";
 
 describe("Health Canada LNHPD helpers", () => {
@@ -21,6 +22,19 @@ describe("Health Canada LNHPD helpers", () => {
       { id: 2 },
     ]);
     expect(extractLnhpdArray(null)).toEqual([]);
+  });
+
+  it("parseLnhpdArray distinguishes valid empty arrays from unrecognized payload shapes", () => {
+    expect(parseLnhpdArray([])).toEqual({ ok: true, rows: [] });
+    expect(parseLnhpdArray({ metadata: {}, data: [] })).toEqual({
+      ok: true,
+      rows: [],
+    });
+    expect(parseLnhpdArray({})).toEqual({ ok: false });
+    expect(parseLnhpdArray(null)).toEqual({ ok: false });
+    expect(parseLnhpdArray("maintenance")).toEqual({ ok: false });
+    expect(parseLnhpdArray({ error: "busy" })).toEqual({ ok: false });
+    expect(parseLnhpdArray({ data: "unexpected" })).toEqual({ ok: false });
   });
 
   it("strips botanical taxonomic authorities and subspecies", () => {

@@ -21,7 +21,7 @@ import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { getMedicationBySlug } from "@/lib/interactions/medications";
 import type {
   InteractionPair,
@@ -497,16 +497,20 @@ export default async function MedicationDetailPage({ params }: Props) {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            render={<Link href="/herb-drug-interactions#stack-checker" />}
+          <Link
+            href="/herb-drug-interactions#stack-checker"
+            className={buttonVariants()}
           >
             {fr ? "Vérificateur multiple" : "Check Full Stack"}
             <ArrowRight className="ml-1 size-4" />
-          </Button>
-          <Button variant="outline" render={<Link href="/medications" />}>
+          </Link>
+          <Link
+            href="/medications"
+            className={buttonVariants({ variant: "outline" })}
+          >
             <ArrowLeft className="mr-1 size-4" />
             {fr ? "Tous les médicaments" : "All Medications"}
-          </Button>
+          </Link>
         </div>
       </section>
 

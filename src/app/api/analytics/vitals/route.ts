@@ -4,6 +4,7 @@ import { logger } from "@/lib/utils/logger";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 // Core Web Vitals endpoint for real user monitoring.
 //
@@ -59,15 +60,15 @@ export async function POST(request: NextRequest) {
         { status: 429, headers: { "Retry-After": "60" } }
       );
     }
-    const raw = await request.json();
-    if (JSON.stringify(raw).length > 10 * 1024) {
+    const bodyResult = await readJsonBodyWithLimit(request, 10 * 1024);
+    if (!bodyResult.ok) {
       return NextResponse.json(
         { error: "Invalid vitals payload" },
-        { status: 413 }
+        { status: bodyResult.reason === "too_large" ? 413 : 400 }
       );
     }
 
-    const parsed = webVitalsPayloadSchema.safeParse(raw);
+    const parsed = webVitalsPayloadSchema.safeParse(bodyResult.data);
     if (!parsed.success) {
       // L3: don't reflect Zod issue details back to the client — they can
       // echo back the malformed payload shape and leak schema internals.

@@ -802,13 +802,13 @@
     },
     "dataRetention": {
       "title": "6. Data Retention",
-      "text": "Account and saved data may be retained until deleted. Guest chat records can persist separately from the guest cookie; cookie expiry does not necessarily delete server records. Donation records may be retained for accounting. Ollama's retention practices are governed by its own policy."
+      "text": "Account and saved data may be retained until deleted. Guest chat records can persist separately from the guest cookie; cookie expiry does not necessarily delete server records. For performance and safety consistency, Virtual Herbalist replies may also be cached in a shared, prompt-hash-keyed server table (ai_response_cache) for up to 7 days without user, guest, or session identifiers; because those cache entries are unlinked, deleting a conversation removes the chat session and messages immediately while unlinked cache entries expire automatically after 7 days. Donation records may be retained for accounting. Ollama's retention practices are governed by its own policy."
     },
     "yourRights": {
       "title": "7. Your Rights",
       "text": "You can access, correct or delete the data you control in HerbAlly:",
       "access": "Access: You can see your saved profile, garden, calculations and chat history in your account.",
-      "deletion": "You can remove garden entries and chat sessions using available app controls. Contact privacy@herbally.app to request deletion of your account or other saved information, including calculations. Clearing browser storage removes local data held there.",
+      "deletion": "You can remove garden entries and chat sessions (sessions and messages) using available app controls; unlinked 7-day prompt-hash AI cache entries cannot be matched to a conversation and expire automatically. Contact privacy@herbally.app to request deletion of your account or other saved information, including calculations. Clearing browser storage removes local data and browser caches held there.",
       "complaint": "Complaint: Contact our Privacy Officer at privacy@herbally.app. You may also file a complaint with the Commission d'accès à l'information du Québec (CAI) or the Office of the Privacy Commissioner of Canada (OPC).",
       "portability": "Portability & consent withdrawal: Under Quebec Law 25 and Canadian PIPEDA, you may request an export of personal information you provided in structured form, withdraw consent to non-essential storage, or unsubscribe from our digest with one click."
     },

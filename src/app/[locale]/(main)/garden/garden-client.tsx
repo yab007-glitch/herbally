@@ -11,7 +11,7 @@ import {
   Stethoscope,
   BookOpen,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   getGarden,
   removeFromGarden,
@@ -38,13 +38,15 @@ export function GardenClient() {
   // Merge server-side garden into localStorage on mount
   useEffect(() => {
     if (!mounted) return;
+    let active = true;
     mergeServerGarden().then((merged) => {
-      if (merged.length !== garden.length) {
+      if (active) {
         setGarden(merged);
       }
     });
-    // Only run on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      active = false;
+    };
   }, [mounted]);
 
   const handleRemove = useCallback((slug: string) => {
@@ -176,8 +178,9 @@ export function GardenClient() {
                   </div>
                 </Link>
                 <button
+                  type="button"
                   onClick={() => handleRemove(herb.slug)}
-                  className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+                  className="absolute right-2 top-2 flex size-10 items-center justify-center rounded-lg text-muted-foreground opacity-100 transition-all hover:bg-destructive/10 hover:text-destructive focus-visible:opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                   aria-label={`${t("garden.remove")} ${herb.name}`}
                 >
                   <Trash2 className="size-4" />
@@ -191,22 +194,25 @@ export function GardenClient() {
           <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4">
             <Sprout className="size-8" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground">
+          <h2 className="text-lg font-semibold text-foreground">
             {t("garden.emptyTitle") || "Your garden is empty"}
-          </h3>
+          </h2>
           <p className="mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
             {t("garden.emptyDesc") ||
               "Save herbs you discover to build your personal collection. Tap the heart icon on any herb card."}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Button render={<Link href="/herbs" />}>
+            <Link href="/herbs" className={buttonVariants()}>
               <Leaf className="size-4 mr-2" />
               {t("garden.exploreHerbs") || "Explore Herbs"}
-            </Button>
-            <Button variant="outline" render={<Link href="/herbalist" />}>
+            </Link>
+            <Link
+              href="/herbalist"
+              className={buttonVariants({ variant: "outline" })}
+            >
               <Stethoscope className="size-4 mr-2" />
               {t("garden.askHerbalist") || "Ask Herbalist"}
-            </Button>
+            </Link>
           </div>
         </div>
       )}

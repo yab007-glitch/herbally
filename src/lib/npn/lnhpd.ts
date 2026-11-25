@@ -63,19 +63,31 @@ export function normalizeNpnInput(raw: string): string | null {
 }
 
 /**
- * Unwrap Health Canada LNHPD API responses that arrive either as bare arrays
- * (`productlicence`, `productdose`) or inside `{ metadata, data: [...] }`.
+ * Parse a Health Canada LNHPD API response into a typed row array, clearly
+ * distinguishing valid empty arrays (`[]`, `{ data: [] }`) from unrecognized
+ * payload shapes (`{}`, error objects, HTML/text, null).
  */
-export function extractLnhpdArray<T>(payload: unknown): T[] {
-  if (Array.isArray(payload)) return payload as T[];
+export function parseLnhpdArray<T>(
+  payload: unknown
+): { ok: true; rows: T[] } | { ok: false } {
+  if (Array.isArray(payload)) return { ok: true, rows: payload as T[] };
   if (
     payload &&
     typeof payload === "object" &&
     Array.isArray((payload as { data?: unknown }).data)
   ) {
-    return (payload as { data: T[] }).data;
+    return { ok: true, rows: (payload as { data: T[] }).data };
   }
-  return [];
+  return { ok: false };
+}
+
+/**
+ * Unwrap Health Canada LNHPD API responses that arrive either as bare arrays
+ * (`productlicence`, `productdose`) or inside `{ metadata, data: [...] }`.
+ */
+export function extractLnhpdArray<T>(payload: unknown): T[] {
+  const parsed = parseLnhpdArray<T>(payload);
+  return parsed.ok ? parsed.rows : [];
 }
 
 /**

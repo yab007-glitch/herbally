@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { migrateGuestData } from "@/lib/actions/guest-migration";
 import { safeNextPath } from "@/lib/utils/safe-redirect";
+import { siteUrl } from "@/lib/seo/site-url";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * Supabase auth callback (PKCE). Email confirmation and password-reset links
@@ -10,7 +12,10 @@ import { safeNextPath } from "@/lib/utils/safe-redirect";
  */
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const origin = url.origin;
+  const configuredOrigin =
+    process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+    (process.env.NODE_ENV === "production" ? siteUrl() : "");
+  const redirectOrigin = (configuredOrigin || url.origin).replace(/\/+$/, "");
   const code = url.searchParams.get("code");
   // safeNextPath rejects protocol-relative URLs, backslash variants (which
   // browsers normalize to /), percent-encoded backslashes, and explicit
@@ -21,9 +26,12 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (error) {
-      return NextResponse.redirect(
-        `${origin}/login?error=${encodeURIComponent(error.message)}`
+      logger.warn("auth_callback_exchange_failed", { error: error.message });
+      const errRes = NextResponse.redirect(
+        `${redirectOrigin}/login?error=${encodeURIComponent("Authentication link is invalid or expired. Please try again.")}`
       );
+      errRes.headers.set("Cache-Control", "private, no-store");
+      return errRes;
     }
 
     // FUNC-8: a brand-new signup just established its session. Claim the
@@ -35,5 +43,7 @@ export async function GET(request: Request) {
     await migrateGuestData();
   }
 
-  return NextResponse.redirect(`${origin}${safeNext}`);
+  const res = NextResponse.redirect(`${redirectOrigin}${safeNext}`);
+  res.headers.set("Cache-Control", "private, no-store");
+  return res;
 }

@@ -16,11 +16,8 @@ jobs:
       - name: Scan for secrets
         run: ./scripts/detect-secrets.sh --all
 
-  verify-db:
+  verify-migrations:
     runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -28,8 +25,31 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Verify herb database integrity
-        run: npx tsx scripts/verify-herb-database.ts --ci
+      - name: Verify SQL migration files
+        run: npx tsx scripts/verify-herb-database.ts --migrations-only
+
+  verify-db:
+    runs-on: ubuntu-latest
+    env:
+      VERIFY_DB_SUPABASE_URL: ${{ secrets.VERIFY_DB_SUPABASE_URL }}
+      VERIFY_DB_SUPABASE_ANON_KEY: ${{ secrets.VERIFY_DB_SUPABASE_ANON_KEY }}
+      REQUIRE_LIVE_VERIFY_DB: ${{ vars.REQUIRE_LIVE_VERIFY_DB }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify live herb database integrity
+        run: |
+          if [ -n "$VERIFY_DB_SUPABASE_URL" ] && [ -n "$VERIFY_DB_SUPABASE_ANON_KEY" ]; then
+            npx tsx scripts/verify-herb-database.ts --ci --production-only
+          elif [ "$REQUIRE_LIVE_VERIFY_DB" = "true" ]; then
+            npx tsx scripts/verify-herb-database.ts --ci --production-only
+          else
+            echo "::warning::Live verify-db skipped: VERIFY_DB_SUPABASE_URL/KEY secrets are not configured and REQUIRE_LIVE_VERIFY_DB is not 'true'. Only verify-migrations ran."
+          fi
 
   lint:
     runs-on: ubuntu-latest
@@ -125,7 +145,17 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, test, coverage, format, verify-db, secrets]
+    needs:
+      [
+        lint,
+        typecheck,
+        test,
+        coverage,
+        format,
+        verify-migrations,
+        verify-db,
+        secrets,
+      ]
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder

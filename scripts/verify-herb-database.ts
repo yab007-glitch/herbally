@@ -2,29 +2,26 @@
 /**
  * verify-herb-database.ts — Automated quality checks for the HerbAlly database.
  *
- * Validation rules:
- *   1. Scientific names must follow binomial nomenclature (Genus species)
- *   2. No hallucinated PMIDs (must be 7-8 digit integers starting with 1-3)
- *   3. No safety conflicts (can't be both safe AND unsafe for pregnancy/nursing)
- *   4. Evidence levels must be valid (A, B, C, D, or trad)
- *   5. Duplicate slug detection
- *   6. Category must exist
- *   7. Empty required fields (name, scientific_name, slug, description)
- *
  * Usage:
- *   npx tsx scripts/verify-herb-database.ts              # Check all herbs
- *   npx tsx scripts/verify-herb-database.ts --ci         # CI mode (exit non-zero on errors)
- *   npx tsx scripts/verify-herb-database.ts --staged     # Check only staged changes
+ *   npx tsx scripts/verify-herb-database.ts                   # Check all herbs + interactions
+ *   npx tsx scripts/verify-herb-database.ts --ci              # CI mode (fails if DB creds missing/placeholder or errors found)
+ *   npx tsx scripts/verify-herb-database.ts --production-only # Reject legacy hosted supabase.co targets
+ *   npx tsx scripts/verify-herb-database.ts --migrations-only # Static check of supabase/migrations/*.sql only
  */
 
 import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
 import * as fs from "fs";
+import {
+  checkCatalogCardinality,
+  checkSafetyConflicts,
+  classifyPairUrlCollisions,
+  classifySupabaseTarget,
+} from "../src/lib/db/verify-rules";
+import { findPairUrlCollisions } from "../src/lib/interactions/pair-url";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
-
-// ─── Types ──────────────────────────────────────────────────────────
 
 interface HerbRow {
   id: string;
@@ -35,6 +32,8 @@ interface HerbRow {
   evidence_level: string | null;
   pregnancy_safe: boolean | null;
   nursing_safe: boolean | null;
+  contraindications: string[] | null;
+  dosage_adult: string | null;
   citations: unknown;
   category_id: string | null;
   is_published: boolean;
@@ -48,11 +47,8 @@ interface VerificationError {
   severity: "error" | "warning";
 }
 
-// ─── Validation Rules ──────────────────────────────────────────────
-
 const VALID_EVIDENCE_LEVELS = ["A", "B", "C", "D", "trad"];
 const BINOMIAL_REGEX = /^[A-Z][a-z]+ [a-z]+/;
-// Valid historical PubMed IDs from the 1960s-1970s begin at 4-5 digits (e.g. 15766, 49743).
 const PMID_REGEX = /^\d{4,8}$/;
 
 function validateHerb(
@@ -61,19 +57,15 @@ function validateHerb(
 ): VerificationError[] {
   const errors: VerificationError[] = [];
   const {
-    id: _id,
     name,
     slug,
     scientific_name,
     description,
     evidence_level,
-    pregnancy_safe: _pregnancy_safe,
-    nursing_safe: _nursing_safe,
     citations,
     category_id,
   } = herb;
 
-  // 1. Required fields
   if (!name || name.trim().length < 2) {
     errors.push({
       herb: name || slug,
@@ -111,12 +103,11 @@ function validateHerb(
     });
   }
 
-  // 2. Binomial nomenclature check
   if (
     scientific_name &&
     !BINOMIAL_REGEX.test(scientific_name.trim()) &&
-    !/^[A-Z]/.test(scientific_name) && // Skip single-word names
-    !scientific_name.includes("(") && // Skip names with parentheticals
+    !/^[A-Z]/.test(scientific_name) &&
+    !scientific_name.includes("(") &&
     scientific_name.split(" ").length < 2
   ) {
     errors.push({
@@ -128,7 +119,6 @@ function validateHerb(
     });
   }
 
-  // 3. Evidence level validation
   if (evidence_level && !VALID_EVIDENCE_LEVELS.includes(evidence_level)) {
     errors.push({
       herb: name,
@@ -139,9 +129,16 @@ function validateHerb(
     });
   }
 
-  // 4. Safety flag validation (will be expanded for oral vs topical)
+  for (const conflict of checkSafetyConflicts(herb)) {
+    errors.push({
+      herb: conflict.herb,
+      slug: conflict.slug,
+      field: conflict.field,
+      message: conflict.message,
+      severity: "error",
+    });
+  }
 
-  // 5. Citation/PMID validation
   if (Array.isArray(citations)) {
     for (const citation of citations as Array<Record<string, unknown>>) {
       if (citation.pmid) {
@@ -177,7 +174,6 @@ function validateHerb(
     }
   }
 
-  // 6. Category validation
   if (category_id && !validCategoryIds.has(category_id)) {
     errors.push({
       herb: name,
@@ -191,53 +187,89 @@ function validateHerb(
   return errors;
 }
 
-// ─── Main ───────────────────────────────────────────────────────────
-
 async function main() {
   const isCI = process.argv.includes("--ci");
-  const _isStaged = process.argv.includes("--staged");
+  const productionOnly = process.argv.includes("--production-only");
+  const migrationsOnly = process.argv.includes("--migrations-only");
+  const strictCollisions = process.argv.includes("--strict-collisions");
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
-    console.log("⚠️  No Supabase credentials — checking migrations only");
-    await checkMigrationFiles(isCI);
+  if (migrationsOnly) {
+    await checkMigrationFiles();
     return;
+  }
+
+  const url =
+    process.env.VERIFY_DB_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key =
+    process.env.VERIFY_DB_SUPABASE_ANON_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const target = classifySupabaseTarget(url);
+
+  if (
+    !url ||
+    !key ||
+    target === "missing" ||
+    target === "invalid" ||
+    target === "placeholder"
+  ) {
+    console.error(
+      `❌ Live database credentials are missing, invalid, or placeholder (target=${target}). Pass --migrations-only for static migration checks, or configure VERIFY_DB_SUPABASE_URL / VERIFY_DB_SUPABASE_ANON_KEY.`
+    );
+    if (isCI || productionOnly) process.exit(1);
+    await checkMigrationFiles();
+    return;
+  }
+
+  console.log(`🔍 Verifying herb database [target=${target}]...`);
+  if (target !== "production") {
+    console.warn(
+      `⚠️  Target is not the exact HTTPS production origin https://api.herbally.app (target=${target}).`
+    );
+    if (productionOnly) {
+      console.error(
+        `❌ --production-only requires exact https://api.herbally.app origin (got target=${target}).`
+      );
+      process.exit(1);
+    }
   }
 
   const supabase = createClient(url, key);
   const allErrors: VerificationError[] = [];
 
-  // Get valid categories
-  const { data: categories } = await supabase
+  const { data: categories, error: catError } = await supabase
     .from("herb_categories")
     .select("id");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const validCategoryIds = new Set((categories ?? []).map((c: any) => c.id));
+  if (catError) {
+    console.error(`❌ Failed to query herb_categories: ${catError.message}`);
+    process.exit(1);
+  }
+  const validCategoryIds = new Set(
+    (categories ?? []).map((c: { id: string }) => c.id)
+  );
 
-  // Get herbs
-  console.log("🔍 Verifying herb database...");
   const herbList: HerbRow[] = [];
   let page = 0;
 
   while (true) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("herbs")
       .select("*")
       .eq("is_published", true)
       .order("name")
       .range(page * 1000, (page + 1) * 1000 - 1);
 
+    if (error) {
+      console.error(`❌ Failed to query herbs: ${error.message}`);
+      process.exit(1);
+    }
     if (!data || data.length === 0) break;
     herbList.push(...(data as HerbRow[]));
     if (data.length < 1000) break;
     page++;
   }
 
-  console.log(`  Checking ${herbList.length} herbs...`);
+  console.log(`  Checking ${herbList.length} published herbs...`);
 
-  // Check for duplicate slugs
   const slugs = new Map<string, number>();
   for (const herb of herbList) {
     slugs.set(herb.slug, (slugs.get(herb.slug) || 0) + 1);
@@ -254,16 +286,107 @@ async function main() {
     }
   }
 
-  // Validate each herb
   for (const herb of herbList) {
-    const errors = validateHerb(herb, validCategoryIds);
-    allErrors.push(...errors);
+    allErrors.push(...validateHerb(herb, validCategoryIds));
   }
 
-  // Also check migration files
-  await checkMigrationFiles(false);
+  // Check drug_interactions URL collisions across published herbs (paginated)
+  const interactionRows: Array<{
+    id: unknown;
+    drug_name: unknown;
+    severity: unknown;
+    herbs: unknown;
+  }> = [];
+  let ixPage = 0;
+  while (true) {
+    const { data: ixBatch, error: ixError } = await supabase
+      .from("drug_interactions")
+      .select("id,drug_name,severity,herbs!inner(slug,is_published)")
+      .eq("herbs.is_published", true)
+      .order("id", { ascending: true })
+      .range(ixPage * 1000, (ixPage + 1) * 1000 - 1);
 
-  // Report
+    if (ixError) {
+      console.error(`❌ Failed to query drug_interactions: ${ixError.message}`);
+      process.exit(1);
+    }
+    if (!ixBatch || ixBatch.length === 0) break;
+    interactionRows.push(...ixBatch);
+    if (ixBatch.length < 1000) break;
+    ixPage++;
+  }
+
+  const pairCandidates = interactionRows
+    .map((row) => {
+      const herb = Array.isArray(row.herbs) ? row.herbs[0] : row.herbs;
+      return {
+        id: String(row.id),
+        herbSlug: String((herb as { slug?: string } | null)?.slug ?? ""),
+        drugName: String(row.drug_name),
+        severity: String(row.severity),
+      };
+    })
+    .filter((r) => Boolean(r.herbSlug));
+
+  for (const cardErr of checkCatalogCardinality({
+    categories: validCategoryIds.size,
+    herbs: herbList.length,
+    interactions: pairCandidates.length,
+  })) {
+    allErrors.push({
+      herb: "CATALOG",
+      slug: cardErr.field,
+      field: cardErr.field,
+      message: cardErr.message,
+      severity: "error",
+    });
+  }
+
+  const collisions = findPairUrlCollisions(pairCandidates);
+  if (strictCollisions) {
+    for (const col of collisions) {
+      allErrors.push({
+        herb: col.herbSlug,
+        slug: col.drugSlug,
+        field: "drug_interactions.pair_url",
+        message: `Unresolved URL collision at ${col.path} (${col.rows.length} rows, severityConflict=${col.hasSeverityConflict}): ${col.rows.map((r) => `${r.drugName} [${r.severity}]`).join(" vs ")}`,
+        severity: "error",
+      });
+    }
+  } else {
+    const { blocking, knownFailSafe, staleInventory } =
+      classifyPairUrlCollisions(collisions);
+    for (const col of blocking) {
+      allErrors.push({
+        herb: col.herbSlug,
+        slug: col.drugSlug,
+        field: "drug_interactions.pair_url",
+        message: `New or changed URL collision at ${col.path} (${col.rows.length} rows, severityConflict=${col.hasSeverityConflict}): ${col.rows.map((r) => `${r.drugName} [${r.severity}]`).join(" vs ")}`,
+        severity: "error",
+      });
+    }
+    for (const { collision, spec } of knownFailSafe) {
+      allErrors.push({
+        herb: collision.herbSlug,
+        slug: collision.drugSlug,
+        field: "drug_interactions.pair_url",
+        message: `Known fail-safe collision at ${collision.path} (${collision.rows.length} rows; API/page fail-safe & excluded from sitemap). Editorial blocker: ${spec.editorialBlocker}`,
+        severity: "warning",
+      });
+    }
+    for (const stalePath of staleInventory) {
+      allErrors.push({
+        herb: "INVENTORY",
+        slug: stalePath,
+        field: "drug_interactions.pair_url",
+        message: `Known collision ${stalePath} no longer collides in DB — prune from KNOWN_UNRESOLVED_PAIR_COLLISIONS`,
+        severity: "warning",
+      });
+    }
+  }
+
+  await checkMigrationFiles();
+
   const errors = allErrors.filter((e) => e.severity === "error");
   const warnings = allErrors.filter((e) => e.severity === "warning");
 
@@ -289,7 +412,7 @@ async function main() {
   }
 
   if (errors.length === 0 && warnings.length === 0) {
-    console.log("\n✅ All herbs passed validation!");
+    console.log("\n✅ All herbs and interaction pair URLs passed validation!");
   }
 
   if (isCI && errors.length > 0) {
@@ -298,7 +421,7 @@ async function main() {
   }
 }
 
-async function checkMigrationFiles(_isCI: boolean) {
+async function checkMigrationFiles() {
   const migrationsDir = "supabase/migrations";
   if (!fs.existsSync(migrationsDir)) return;
 
@@ -307,8 +430,6 @@ async function checkMigrationFiles(_isCI: boolean) {
 
   for (const file of files) {
     const content = fs.readFileSync(`${migrationsDir}/${file}`, "utf-8");
-
-    // Check for common issues
     if (content.includes("DROP TABLE") && !content.includes("IF EXISTS")) {
       console.log(`  ⚠️  ${file}: Contains DROP TABLE without IF EXISTS`);
     }

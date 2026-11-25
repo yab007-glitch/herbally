@@ -9,6 +9,7 @@ import { migrateGuestData } from "@/lib/actions/guest-migration";
 import { getLocaleFromRequest } from "@/lib/i18n/server-locale";
 import { getTranslations } from "next-intl/server";
 import { safeNextPath } from "@/lib/utils/safe-redirect";
+import { siteUrl } from "@/lib/seo/site-url";
 import type { ActionResponse } from "@/lib/types";
 
 /**
@@ -23,6 +24,12 @@ import type { ActionResponse } from "@/lib/types";
  */
 function safeReturnTo(fd: FormData): string {
   return safeNextPath(fd.get("returnTo") as string | null);
+}
+
+function appendWelcomeParam(path: string, value: string): string {
+  const url = new URL(path, "https://herbally.local");
+  url.searchParams.set("welcome", value);
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 
 /**
@@ -71,10 +78,7 @@ export async function login(formData: FormData): Promise<ActionResponse> {
 
   // Redirect to the return URL (or home). redirect() throws a special
   // error that Next.js intercepts — the browser navigates automatically.
-  redirect(
-    safeReturnTo(formData) +
-      (safeReturnTo(formData) === "/" ? "?welcome=login" : "&welcome=login")
-  );
+  redirect(appendWelcomeParam(safeReturnTo(formData), "login"));
 }
 
 export async function register(formData: FormData): Promise<ActionResponse> {
@@ -90,7 +94,7 @@ export async function register(formData: FormData): Promise<ActionResponse> {
     password,
     options: {
       data: { full_name: fullName },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/`,
+      emailRedirectTo: `${siteUrl()}/auth/callback?next=/`,
     },
   });
 
@@ -102,7 +106,7 @@ export async function register(formData: FormData): Promise<ActionResponse> {
     const msg = error.message.toLowerCase();
     if (msg.includes("already registered") || msg.includes("already exists")) {
       await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/reset-password`,
+        redirectTo: `${siteUrl()}/auth/callback?next=/reset-password`,
       });
       return { success: true };
     }
@@ -154,7 +158,7 @@ export async function register(formData: FormData): Promise<ActionResponse> {
       // and send a password-reset mail: the real owner can get back in, and an
       // attacker learns nothing from the response.
       await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/reset-password`,
+        redirectTo: `${siteUrl()}/auth/callback?next=/reset-password`,
       });
       return { success: true };
     }
@@ -173,7 +177,7 @@ export async function forgotPassword(
   const email = formData.get("email") as string;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback?next=/reset-password`,
+    redirectTo: `${siteUrl()}/auth/callback?next=/reset-password`,
   });
 
   if (error) {

@@ -4,6 +4,7 @@ import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 const bodySchema = z.object({
   slug: z
@@ -33,7 +34,13 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const parsed = bodySchema.safeParse(await request.json().catch(() => null));
+  const bodyResult = await readJsonBodyWithLimit(request, 2 * 1024);
+  if (!bodyResult.ok) {
+    return new NextResponse(null, {
+      status: bodyResult.reason === "too_large" ? 413 : 400,
+    });
+  }
+  const parsed = bodySchema.safeParse(bodyResult.data);
   if (!parsed.success) {
     return new NextResponse(null, { status: 400 });
   }

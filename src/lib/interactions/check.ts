@@ -1,4 +1,4 @@
-import { drugSlug } from "./pair-url";
+import { drugSlug, EDITORIAL_PAIR_CANONICAL_DRUG } from "./pair-url";
 import { stripAccents } from "@/lib/search/normalize-query";
 
 /**
@@ -162,11 +162,17 @@ function singular(token: string): string {
 }
 
 export interface CheckablePair {
+  herbSlug?: string;
   drugName: string;
   drugSlug: string;
   /** Present on real pairs; ranks matches when a class resolves to several. */
   severity?: string;
 }
+
+export type InteractionMatchResult<T extends CheckablePair> =
+  | { kind: "none" }
+  | { kind: "match"; pair: T }
+  | { kind: "collision"; drugSlug: string; pairs: T[] };
 
 /** Slugify a free-text medication input the same way pair URLs do, accent-safe. */
 export function drugInputSlug(input: string): string {
@@ -278,18 +284,40 @@ function matchesByTokens<T extends CheckablePair>(
   return out;
 }
 
-export function matchInteractionPair<T extends CheckablePair>(
+function resolveSlugGroup<T extends CheckablePair>(
+  slug: string,
+  pairs: T[]
+): InteractionMatchResult<T> {
+  const sameSlug = pairs.filter((p) => p.drugSlug === slug);
+  if (sameSlug.length === 0) return { kind: "none" };
+  if (sameSlug.length === 1) return { kind: "match", pair: sameSlug[0] };
+
+  const herbSlug = sameSlug[0].herbSlug;
+  const editorialDrug = herbSlug
+    ? EDITORIAL_PAIR_CANONICAL_DRUG[`${herbSlug}/${slug}`]
+    : undefined;
+  if (editorialDrug) {
+    const chosen = sameSlug.find((p) => p.drugName === editorialDrug);
+    if (chosen) return { kind: "match", pair: chosen };
+  }
+
+  return { kind: "collision", drugSlug: slug, pairs: sameSlug };
+}
+
+export function matchInteractionPairDetailed<T extends CheckablePair>(
   drugInput: string,
   pairs: T[]
-): T | null {
+): InteractionMatchResult<T> {
   const slug = drugInputSlug(drugInput);
-  if (!slug || pairs.length === 0) return null;
+  if (!slug || pairs.length === 0) return { kind: "none" };
 
   const rawTokens = inputTokens(drugInput);
 
   // 1. Exact generic-name match: "warfarin" -> "Warfarin (Coumadin)".
-  for (const pair of pairs) {
-    if (pair.drugSlug === slug) return pair;
+  //    If multiple rows share this slug without editorial disambiguation,
+  //    return a structured collision with all matching rows.
+  if (pairs.some((pair) => pair.drugSlug === slug)) {
+    return resolveSlugGroup(slug, pairs);
   }
 
   // The reader's own words. These are tried before any alias so that a herb
@@ -317,9 +345,9 @@ export function matchInteractionPair<T extends CheckablePair>(
   // 2. Whole-token match against the pair's drug slug or the individual
   //    drug/class words inside its label.
   const typedMatch = pickBest(matchesByTokens(pairs, typed));
-  if (typedMatch) return typedMatch;
+  if (typedMatch) return resolveSlugGroup(typedMatch.drugSlug, pairs);
   const aliasMatch = pickBest(matchesByTokens(pairs, expanded));
-  if (aliasMatch) return aliasMatch;
+  if (aliasMatch) return resolveSlugGroup(aliasMatch.drugSlug, pairs);
 
   // 3. Containment in one direction only.
   const anyToken = new Set([...typed, ...expanded]);
@@ -336,5 +364,22 @@ export function matchInteractionPair<T extends CheckablePair>(
       }
     }
   }
-  return pickBest(contained);
+  const containedBest = pickBest(contained);
+  return containedBest
+    ? resolveSlugGroup(containedBest.drugSlug, pairs)
+    : { kind: "none" };
+}
+
+export function matchInteractionPair<T extends CheckablePair>(
+  drugInput: string,
+  pairs: T[]
+): T | null {
+  const outcome = matchInteractionPairDetailed(drugInput, pairs);
+  if (outcome.kind === "none") return null;
+  if (outcome.kind === "collision") {
+    throw new Error(
+      `Ambiguous interaction collision for slug "${outcome.drugSlug}" (${outcome.pairs.length} rows); use matchInteractionPairDetailed`
+    );
+  }
+  return outcome.pair;
 }

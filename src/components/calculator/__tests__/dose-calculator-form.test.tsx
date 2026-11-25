@@ -17,11 +17,41 @@ vi.mock("next-intl", () => ({
 }));
 
 // The profile integration hook performs a dynamic server-action import in an
-// effect. Stub it so the form test stays isolated from Supabase/auth.
+// effect. Stub it so the form test stays isolated from Supabase/auth while
+// allowing tests to simulate deferred profile arrival.
+const profileHookState: {
+  profile: {
+    weight_kg: number | null;
+    age_years: number | null;
+    height_cm: number | null;
+  } | null;
+  loaded: boolean;
+} = {
+  profile: null,
+  loaded: true,
+};
+
 vi.mock("../profile-integration", () => ({
-  useDefaultPatientProfile: () => ({ profile: null, loaded: true }),
+  useDefaultPatientProfile: () => profileHookState,
   AutoFillBadge: () => null,
-  SaveCalcButton: () => null,
+  SaveCalcButton: (props: {
+    result: { dose: number; unit: string } | null;
+    adultDose: string;
+    doseUnit: string;
+    weightValue: string;
+    ageYears: string;
+    selectedFormula: string;
+  }) =>
+    props.result ? (
+      <div
+        data-testid="save-calc-snapshot"
+        data-dose={`${props.result.dose} ${props.result.unit}`}
+        data-adult-dose={`${props.adultDose} ${props.doseUnit}`}
+        data-weight-kg={props.weightValue}
+        data-age={props.ageYears}
+        data-formula={props.selectedFormula}
+      />
+    ) : null,
 }));
 
 function setValue(label: RegExp, value: string) {
@@ -41,6 +71,8 @@ function renderedDose(container: HTMLElement): string | null {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  profileHookState.profile = null;
+  profileHookState.loaded = true;
 });
 
 describe("DoseCalculatorForm pediatric gate", () => {
@@ -220,5 +252,166 @@ describe("DoseCalculatorForm unverified stated range", () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /rangeLow/ })).toBeNull();
     expect(screen.queryByRole("button", { name: /rangeHigh/ })).toBeNull();
+  });
+});
+
+describe("DoseCalculatorForm stale result & save invalidation", () => {
+  it("invalidates calculated result and SaveCalcButton after any input edit", () => {
+    const { container } = render(<DoseCalculatorForm />);
+    setValue(/calculatorForm.adultDose/, "500");
+    setValue(/calculatorForm.childWeight/, "60");
+    setValue(/calculatorForm.childAge/, "30");
+    calculate();
+
+    expect(renderedDose(container)).toContain("441.2");
+    expect(screen.getByTestId("save-calc-snapshot")).toBeInTheDocument();
+
+    // Edit adult dose -> result and Save button must immediately clear
+    setValue(/calculatorForm.adultDose/, "1000");
+    expect(renderedDose(container)).toBeNull();
+    expect(screen.queryByTestId("save-calc-snapshot")).not.toBeInTheDocument();
+
+    // Recalculate, then change unit -> clears
+    calculate();
+    expect(renderedDose(container)).toContain("882.4");
+    fireEvent.click(screen.getByRole("radio", { name: "ml" }));
+    expect(renderedDose(container)).toBeNull();
+
+    // Recalculate, then change weight -> clears
+    calculate();
+    expect(renderedDose(container)).toContain("882.4");
+    setValue(/calculatorForm.childWeight/, "70");
+    expect(renderedDose(container)).toBeNull();
+
+    // Recalculate, then toggle lbs -> clears
+    calculate();
+    expect(renderedDose(container)).not.toBeNull();
+    fireEvent.click(screen.getByRole("switch", { name: /toggleWeightUnit/i }));
+    expect(renderedDose(container)).toBeNull();
+
+    // Calculate with lbs (154 lbs -> ~69.853 kg): SaveCalcButton receives kg
+    setValue(/calculatorForm.childWeight/, "154");
+    calculate();
+    const snapshotEl = screen.getByTestId("save-calc-snapshot");
+    expect(Number(snapshotEl.getAttribute("data-weight-kg"))).toBeCloseTo(
+      69.9,
+      1
+    );
+
+    // Change formula -> clears
+    fireEvent.click(screen.getByRole("radio", { name: /youngsRule/i }));
+    expect(renderedDose(container)).toBeNull();
+    expect(screen.queryByTestId("save-calc-snapshot")).not.toBeInTheDocument();
+  });
+
+  it("does not overwrite user-edited fields when a profile loads late and invalidates stale results when autofill updates any field", () => {
+    profileHookState.profile = null;
+    profileHookState.loaded = false;
+
+    const { container, rerender } = render(<DoseCalculatorForm />);
+    setValue(/calculatorForm.adultDose/, "500");
+    setValue(/calculatorForm.childWeight/, "60");
+    setValue(/calculatorForm.childAge/, "30");
+    calculate();
+
+    expect(renderedDose(container)).toContain("441.2");
+    expect(screen.getByTestId("save-calc-snapshot")).toBeInTheDocument();
+
+    // Profile arrives late with different weight, age, and an unfilled height
+    profileHookState.profile = {
+      weight_kg: 90,
+      age_years: 50,
+      height_cm: 180,
+    };
+    profileHookState.loaded = true;
+    rerender(<DoseCalculatorForm />);
+
+    // User-edited weight and age must NOT be overwritten
+    expect(
+      (screen.getByLabelText(/calculatorForm.childWeight/) as HTMLInputElement)
+        .value
+    ).toBe("60");
+    expect(
+      (screen.getByLabelText(/calculatorForm.childAge/) as HTMLInputElement)
+        .value
+    ).toBe("30");
+    // Unedited height gets filled, which changes form state and MUST invalidate the prior snapshot
+    expect(
+      (screen.getByLabelText(/calculatorForm.heightCm/) as HTMLInputElement)
+        .value
+    ).toBe("180");
+    expect(renderedDose(container)).toBeNull();
+    expect(screen.queryByTestId("save-calc-snapshot")).not.toBeInTheDocument();
+  });
+
+  it("preserves calculation when late profile arrives and all profile fields were already edited by the user", () => {
+    profileHookState.profile = null;
+    profileHookState.loaded = false;
+
+    const { container, rerender } = render(<DoseCalculatorForm />);
+    setValue(/calculatorForm.adultDose/, "500");
+    setValue(/calculatorForm.childWeight/, "60");
+    setValue(/calculatorForm.childAge/, "30");
+    setValue(/calculatorForm.heightCm/, "170");
+    calculate();
+
+    expect(renderedDose(container)).toContain("441.2");
+
+    profileHookState.profile = {
+      weight_kg: 90,
+      age_years: 50,
+      height_cm: 185,
+    };
+    profileHookState.loaded = true;
+    rerender(<DoseCalculatorForm />);
+
+    expect(
+      (screen.getByLabelText(/calculatorForm.childWeight/) as HTMLInputElement)
+        .value
+    ).toBe("60");
+    expect(
+      (screen.getByLabelText(/calculatorForm.childAge/) as HTMLInputElement)
+        .value
+    ).toBe("30");
+    expect(
+      (screen.getByLabelText(/calculatorForm.heightCm/) as HTMLInputElement)
+        .value
+    ).toBe("170");
+    expect(renderedDose(container)).toContain("441.2");
+  });
+
+  it("clears stale age_required safety block when late profile supplies age", () => {
+    profileHookState.profile = null;
+    profileHookState.loaded = false;
+
+    const { rerender } = render(<DoseCalculatorForm />);
+    setValue(/calculatorForm.adultDose/, "500");
+    setValue(/calculatorForm.childWeight/, "60");
+    calculate();
+
+    expect(
+      screen.getByText("calculatorForm.ageRequiredForAdultDose")
+    ).toBeInTheDocument();
+
+    profileHookState.profile = {
+      weight_kg: 85,
+      age_years: 35,
+      height_cm: null,
+    };
+    profileHookState.loaded = true;
+    rerender(<DoseCalculatorForm />);
+
+    // Weight stays user-edited 60; unedited age fills 35; stale safetyBlock clears
+    expect(
+      (screen.getByLabelText(/calculatorForm.childWeight/) as HTMLInputElement)
+        .value
+    ).toBe("60");
+    expect(
+      (screen.getByLabelText(/calculatorForm.childAge/) as HTMLInputElement)
+        .value
+    ).toBe("35");
+    expect(
+      screen.queryByText("calculatorForm.ageRequiredForAdultDose")
+    ).not.toBeInTheDocument();
   });
 });

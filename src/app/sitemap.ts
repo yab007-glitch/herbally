@@ -9,7 +9,10 @@ import { getEmptySymptomHubs } from "@/lib/symptoms/hub-coverage";
 import { POPULAR_COMPARISONS } from "@/app/[locale]/(main)/compare/[slug1]/vs/[slug2]/page";
 import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { aggregateMedications } from "@/lib/interactions/medications";
-import { pairPath } from "@/lib/interactions/pair-url";
+import {
+  findPairUrlCollisions,
+  selectSitemapPairEntries,
+} from "@/lib/interactions/pair-url";
 import { withTimeout } from "@/lib/utils/with-timeout";
 import { publishedGuides } from "@/lib/guides/guides";
 import { hasManualMonograph } from "@/lib/data/monographs";
@@ -831,9 +834,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       "sitemap_interaction_pairs",
       pairsRemainingMs
     );
-    const interactionHerbSlugs = new Set(
-      interactionPairs.map((p) => p.herbSlug)
-    );
+    const pairCollisions = findPairUrlCollisions(interactionPairs);
+    if (pairCollisions.length > 0) {
+      logger.warn("sitemap_interaction_pair_collisions", {
+        count: pairCollisions.length,
+        paths: pairCollisions.map((c) => c.path),
+      });
+    }
 
     const herbPages: MetadataRoute.Sitemap = [];
     for (const herb of candidateHerbs) {
@@ -857,31 +864,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
 
-    const pairMap = new Map<
-      string,
-      { hasFr: boolean; updatedAt: string | null }
-    >();
-    for (const p of interactionPairs) {
-      const path = pairPath(p.herbSlug, p.drugName);
-      const prev = pairMap.get(path);
-      const updated =
-        p.updatedAt && (!prev?.updatedAt || p.updatedAt > prev.updatedAt)
-          ? p.updatedAt
-          : (prev?.updatedAt ?? null);
-      pairMap.set(path, {
-        hasFr: (prev?.hasFr ?? false) || p.hasFr,
-        updatedAt: updated,
-      });
-    }
-    const pairPages: MetadataRoute.Sitemap = Array.from(
-      pairMap.entries()
-    ).flatMap(([path, info]) => {
+    const pairEntries = selectSitemapPairEntries(interactionPairs);
+    const pairPages: MetadataRoute.Sitemap = pairEntries.flatMap((info) => {
       const lastModified = info.updatedAt
         ? new Date(info.updatedAt)
         : new Date();
       const entries: MetadataRoute.Sitemap = [
         {
-          url: `${baseUrl}${path}`,
+          url: `${baseUrl}${info.path}`,
           lastModified,
           changeFrequency: "monthly" as const,
           priority: 0.8,
@@ -889,7 +879,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ];
       if (info.hasFr) {
         entries.push({
-          url: `${baseUrl}${FR_BASE}${path}`,
+          url: `${baseUrl}${FR_BASE}${info.path}`,
           lastModified,
           changeFrequency: "monthly" as const,
           priority: 0.8,

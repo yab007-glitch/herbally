@@ -15,7 +15,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 export function AuthorByline({
   locale,
   lastReviewed,
-  isReviewed = true,
+  isReviewed: _isReviewed = true,
 }: {
   locale: "en" | "fr";
   lastReviewed?: string | null;

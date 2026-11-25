@@ -835,12 +835,14 @@ export type Database = {
       newsletter_subscribers: {
         Row: {
           confirm_token: string;
+          confirmation_send_lease_until: string | null;
           confirmed_at: string | null;
           consent_text: string | null;
           consented_at: string;
           created_at: string;
           email: string;
           id: string;
+          last_confirmation_sent_at: string | null;
           last_sent_at: string | null;
           locale: string | null;
           source_path: string | null;
@@ -851,12 +853,14 @@ export type Database = {
         };
         Insert: {
           confirm_token?: string;
+          confirmation_send_lease_until?: string | null;
           confirmed_at?: string | null;
           consent_text?: string | null;
           consented_at?: string;
           created_at?: string;
           email: string;
           id?: string;
+          last_confirmation_sent_at?: string | null;
           last_sent_at?: string | null;
           locale?: string | null;
           source_path?: string | null;
@@ -867,12 +871,14 @@ export type Database = {
         };
         Update: {
           confirm_token?: string;
+          confirmation_send_lease_until?: string | null;
           confirmed_at?: string | null;
           consent_text?: string | null;
           consented_at?: string;
           created_at?: string;
           email?: string;
           id?: string;
+          last_confirmation_sent_at?: string | null;
           last_sent_at?: string | null;
           locale?: string | null;
           source_path?: string | null;

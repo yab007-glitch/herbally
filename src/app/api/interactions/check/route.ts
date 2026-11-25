@@ -3,7 +3,7 @@ import { z } from "zod/v4";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getHerbPairs } from "@/lib/interactions/pairs";
 import { resolveHerb } from "@/lib/interactions/resolve-herb";
-import { matchInteractionPair } from "@/lib/interactions/check";
+import { matchInteractionPairDetailed } from "@/lib/interactions/check";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
@@ -77,8 +77,8 @@ export async function GET(request: NextRequest) {
     const displayName =
       locale === "fr" && herb.frName ? herb.frName : herb.name;
     const pairs = await getHerbPairs(herb.slug, locale);
-    const pair = matchInteractionPair(drugTerm, pairs);
-    if (!pair) {
+    const match = matchInteractionPairDetailed(drugTerm, pairs);
+    if (match.kind === "none") {
       return NextResponse.json({
         found: false,
         herb: {
@@ -89,6 +89,40 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    if (match.kind === "collision") {
+      logger.warn("interactions_check_collision", {
+        herbSlug: herb.slug,
+        drugSlug: match.drugSlug,
+        count: match.pairs.length,
+      });
+      return NextResponse.json(
+        {
+          found: true,
+          ambiguous: true,
+          conflict: true,
+          herb: {
+            slug: herb.slug,
+            name: displayName,
+            scientific_name: herb.scientific_name,
+          },
+          pair: null,
+          conflictingPairs: match.pairs.map((p) => ({
+            id: p.id,
+            drugName: p.drugName,
+            severity: p.severity,
+            description: p.description,
+            mechanism: p.mechanism,
+            evidenceLevel: p.evidenceLevel,
+            source: p.source,
+            sourceUrl: p.sourceUrl,
+            pairUrl: pairPath(p.herbSlug, p.drugName),
+          })),
+        },
+        { headers: { "Cache-Control": "no-store" } }
+      );
+    }
+
+    const pair = match.pair;
     return NextResponse.json({
       found: true,
       herb: {

@@ -2,7 +2,7 @@
 
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { AlertCircle, Home, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { useTranslations } from "next-intl";
 
 export default function NotFoundContent() {
@@ -21,14 +21,14 @@ export default function NotFoundContent() {
         {t("errors.404.message")}
       </p>
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Button render={<Link href="/" />}>
+        <Link href="/" className={buttonVariants()}>
           <Home className="mr-2 size-4" />
           {t("errors.404.home")}
-        </Button>
-        <Button variant="outline" render={<Link href="/herbs" />}>
+        </Link>
+        <Link href="/herbs" className={buttonVariants({ variant: "outline" })}>
           <ArrowLeft className="mr-2 size-4" />
           {t("herbs.browseAll")}
-        </Button>
+        </Link>
       </div>
     </div>
   );

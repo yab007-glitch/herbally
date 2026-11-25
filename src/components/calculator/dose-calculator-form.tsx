@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Calculator, Info, Leaf } from "lucide-react";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -72,6 +72,18 @@ const FORMULA_DESC_MAP: Record<FormulaKey, string> = {
   fried_rule: "friedDesc",
 };
 
+interface CalculationSnapshot {
+  id: number;
+  result: DoseResult;
+  herbName: string;
+  adultDose: string;
+  doseUnit: (typeof unitOptions)[number];
+  weightKg: number | null;
+  ageYears: number | null;
+  heightCm: number | null;
+  formula: FormulaKey;
+}
+
 export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   const t = useTranslations();
   // mg / g / ml are symbols and read the same in both languages; "drops" is
@@ -91,7 +103,8 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   const [heightCm, setHeightCm] = useState("");
   const [selectedFormula, setSelectedFormula] =
     useState<FormulaKey>("clarks_rule");
-  const [result, setResult] = useState<DoseResult | null>(null);
+  const [snapshot, setSnapshot] = useState<CalculationSnapshot | null>(null);
+  const snapshotSeqRef = useRef(0);
   const [error, setError] = useState<string | null>(null);
   /** Set when the age gate prevents any numeric dose from being shown. */
   const [safetyBlock, setSafetyBlock] = useState<
@@ -99,30 +112,46 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   >(null);
   const [autoFilled, setAutoFilled] = useState(false);
   const { profile, loaded: profileLoaded } = useDefaultPatientProfile();
+  const dirtyFieldsRef = useRef({ weight: false, age: false, height: false });
+  const appliedProfileRef = useRef(false);
 
-  /* eslint-disable */
-  // Auto-fill from default patient profile when it loads
+  function invalidateCalculation() {
+    setSnapshot(null);
+    setSafetyBlock(null);
+    setError(null);
+  }
+
+  // Auto-fill unedited fields from default patient profile when it loads,
+  // and invalidate any prior calculation/safety block if autofill changes fields.
   useEffect(() => {
-    if (profileLoaded && profile) {
-      if (profile.weight_kg) {
-        setWeightValue(String(profile.weight_kg));
-        setAutoFilled(true);
-      }
-      if (profile.age_years) {
-        setAgeYears(String(profile.age_years));
-        setAutoFilled(true);
-      }
-      if (profile.height_cm) {
-        setHeightCm(String(profile.height_cm));
-        setAutoFilled(true);
-      }
+    if (!profileLoaded || !profile || appliedProfileRef.current) return;
+    appliedProfileRef.current = true;
+
+    let changed = false;
+    if (profile.weight_kg && !dirtyFieldsRef.current.weight) {
+      setWeightValue(String(profile.weight_kg));
+      changed = true;
+    }
+    if (profile.age_years && !dirtyFieldsRef.current.age) {
+      setAgeYears(String(profile.age_years));
+      changed = true;
+    }
+    if (profile.height_cm && !dirtyFieldsRef.current.height) {
+      setHeightCm(String(profile.height_cm));
+      changed = true;
+    }
+
+    if (changed) {
+      setAutoFilled(true);
+      setSnapshot(null);
+      setSafetyBlock(null);
+      setError(null);
     }
   }, [profileLoaded, profile]);
-  /* eslint-enable */
 
   function handleCalculate() {
     setError(null);
-    setResult(null);
+    setSnapshot(null);
     setSafetyBlock(null);
 
     const dose = parseFloat(adultDose);
@@ -222,7 +251,18 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
       }
 
       calcResult.unit = doseUnit;
-      setResult(calcResult);
+      snapshotSeqRef.current += 1;
+      setSnapshot({
+        id: snapshotSeqRef.current,
+        result: calcResult,
+        herbName,
+        adultDose,
+        doseUnit,
+        weightKg: Number.isFinite(weight) && weight > 0 ? weight : null,
+        ageYears: Number.isFinite(ageInYears) ? ageInYears : null,
+        heightCm: Number.isFinite(height) && height > 0 ? height : null,
+        formula: selectedFormula,
+      });
     } catch {
       setError(t("calculator.errors.calculationError"));
     }
@@ -231,35 +271,21 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   // Plausibility note: inputs that compute fine but sit outside any
   // pediatric range (age 200, weight 999 without triggering the clamp)
   // previously rendered with zero comment. Advisory only (role="status").
-  const parsedAgeYears = useMonths
-    ? parseFloat(ageMonths) / 12
-    : parseFloat(ageYears);
-  const parsedWeightKg =
-    useLbs && parseFloat(weightValue)
-      ? lbsToKg(parseFloat(weightValue))
-      : parseFloat(weightValue);
-  // Only IMPLAUSIBLE values should raise the note. This previously compared
-  // age to `> 18`, so every adult — and a perfectly ordinary 50 kg one —
-  // triggered "these inputs look unusual" (live QA finding). Age is already
-  // gated to 18–120 by assessDoseEligibility before a result is shown, so the
-  // note is in practice about weight. The threshold is 250 kg, the point past
-  // which no adult reference dose should be scaled, and the note must survive
-  // clamping: a 300 kg entry was accepted in silence precisely because the
-  // dose had been capped.
+  // Evaluated strictly against the immutable calculated snapshot.
   const showPlausibilityNote =
-    !!result && Number.isFinite(parsedWeightKg) && parsedWeightKg > 250;
+    !!snapshot && snapshot.weightKg !== null && snapshot.weightKg > 250;
 
   // Explain a cap only when it materially changed the number. Clark's Rule at
   // 70 kg is 2.9 % above the 68 kg adult reference, so every ordinary adult
   // saw "the dose was capped" beside an unchanged dose (live QA finding).
   // Above 10 % the cap is real and the explanation is worth showing.
-  const parsedAdultDose = parseFloat(adultDose);
+  const snapshotAdultDose = snapshot ? parseFloat(snapshot.adultDose) : NaN;
   const showClampWarning =
-    !!result &&
-    result.clamped &&
-    Number.isFinite(parsedAdultDose) &&
-    parsedAdultDose > 0 &&
-    result.rawDose > parsedAdultDose * 1.1;
+    !!snapshot &&
+    snapshot.result.clamped &&
+    Number.isFinite(snapshotAdultDose) &&
+    snapshotAdultDose > 0 &&
+    snapshot.result.rawDose > snapshotAdultDose * 1.1;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
@@ -359,6 +385,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       onClick={() => {
                         setAdultDose(String(value));
                         setDoseUnit(prefill.dosageRange!.unit);
+                        invalidateCalculation();
                       }}
                     >
                       {t(
@@ -406,7 +433,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 id="herb-name"
                 placeholder={t("calculatorForm.herbNamePlaceholder")}
                 value={herbName}
-                onChange={(e) => setHerbName(e.target.value)}
+                onChange={(e) => {
+                  setHerbName(e.target.value);
+                  invalidateCalculation();
+                }}
               />
             </div>
 
@@ -424,7 +454,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   step="any"
                   placeholder={t("calculatorForm.adultDosePlaceholder")}
                   value={adultDose}
-                  onChange={(e) => setAdultDose(e.target.value)}
+                  onChange={(e) => {
+                    setAdultDose(e.target.value);
+                    invalidateCalculation();
+                  }}
                 />
               </div>
               <div className="space-y-2">
@@ -440,7 +473,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       type="button"
                       role="radio"
                       aria-checked={doseUnit === unit}
-                      onClick={() => setDoseUnit(unit)}
+                      onClick={() => {
+                        setDoseUnit(unit);
+                        invalidateCalculation();
+                      }}
                       className={cn(
                         "min-h-11 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
                         doseUnit === unit
@@ -473,7 +509,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   </span>
                   <Switch
                     checked={useMonths}
-                    onCheckedChange={setUseMonths}
+                    onCheckedChange={(checked) => {
+                      dirtyFieldsRef.current.age = true;
+                      setUseMonths(checked);
+                      invalidateCalculation();
+                    }}
                     aria-label={t("calculatorForm.toggleAgeUnit")}
                   />
                   <span className="text-muted-foreground">
@@ -489,11 +529,12 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 step="any"
                 placeholder={useMonths ? "e.g. 360" : "e.g. 30"}
                 value={useMonths ? ageMonths : ageYears}
-                onChange={(e) =>
-                  useMonths
-                    ? setAgeMonths(e.target.value)
-                    : setAgeYears(e.target.value)
-                }
+                onChange={(e) => {
+                  dirtyFieldsRef.current.age = true;
+                  if (useMonths) setAgeMonths(e.target.value);
+                  else setAgeYears(e.target.value);
+                  invalidateCalculation();
+                }}
               />
             </div>
 
@@ -507,7 +548,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   <span className="text-muted-foreground">kg</span>
                   <Switch
                     checked={useLbs}
-                    onCheckedChange={setUseLbs}
+                    onCheckedChange={(checked) => {
+                      dirtyFieldsRef.current.weight = true;
+                      setUseLbs(checked);
+                      invalidateCalculation();
+                    }}
                     aria-label={t("calculatorForm.toggleWeightUnit")}
                   />
                   <span className="text-muted-foreground">lbs</span>
@@ -521,7 +566,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 step="any"
                 placeholder={useLbs ? "e.g. 155" : "e.g. 70"}
                 value={weightValue}
-                onChange={(e) => setWeightValue(e.target.value)}
+                onChange={(e) => {
+                  dirtyFieldsRef.current.weight = true;
+                  setWeightValue(e.target.value);
+                  invalidateCalculation();
+                }}
               />
             </div>
 
@@ -542,7 +591,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 step="any"
                 placeholder="e.g. 170"
                 value={heightCm}
-                onChange={(e) => setHeightCm(e.target.value)}
+                onChange={(e) => {
+                  dirtyFieldsRef.current.height = true;
+                  setHeightCm(e.target.value);
+                  invalidateCalculation();
+                }}
               />
             </div>
 
@@ -572,7 +625,10 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       type="button"
                       role="radio"
                       aria-checked={selectedFormula === key}
-                      onClick={() => setSelectedFormula(key)}
+                      onClick={() => {
+                        setSelectedFormula(key);
+                        invalidateCalculation();
+                      }}
                       className={cn(
                         "rounded-lg border p-3 text-left transition-all",
                         selectedFormula === key
@@ -641,7 +697,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               </div>
             </CardContent>
           </Card>
-        ) : result ? (
+        ) : snapshot ? (
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-green-50 dark:to-green-950/20 animate-message-in">
             <CardHeader>
               <CardTitle className="text-primary">
@@ -653,14 +709,16 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 <div className="text-4xl font-bold text-primary animate-count-up">
                   {/* A small adult dose scaled to a low weight rounds to 0.0
                       and read as "0 mg" (live QA finding). It is not zero. */}
-                  {result.dose > 0 && result.dose < 0.1 ? "<0.1" : result.dose}
+                  {snapshot.result.dose > 0 && snapshot.result.dose < 0.1
+                    ? "<0.1"
+                    : snapshot.result.dose}
                   <span className="ml-1 text-lg font-normal text-muted-foreground">
-                    {unitLabel(result.unit)}
+                    {unitLabel(snapshot.result.unit)}
                   </span>
                 </div>
-                {herbName && (
+                {snapshot.herbName && (
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {t("calculatorForm.forHerb", { name: herbName })}
+                    {t("calculatorForm.forHerb", { name: snapshot.herbName })}
                   </p>
                 )}
               </div>
@@ -686,7 +744,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
               )}
 
               {/* Visual comparison bar */}
-              {adultDose && (
+              {snapshot.adultDose && (
                 <div className="space-y-2 rounded-lg bg-background/80 p-4">
                   <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     {t("calculatorForm.doseComparison")}
@@ -698,7 +756,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                           {t("calculatorForm.adultDose")}
                         </span>
                         <span className="font-medium">
-                          {adultDose} {unitLabel(doseUnit)}
+                          {snapshot.adultDose} {unitLabel(snapshot.doseUnit)}
                         </span>
                       </div>
                       <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
@@ -714,17 +772,18 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                           {t("calculatorForm.calculatedDose")}
                         </span>
                         <span className="font-medium text-primary">
-                          {result.dose > 0 && result.dose < 0.1
+                          {snapshot.result.dose > 0 &&
+                          snapshot.result.dose < 0.1
                             ? "<0.1"
-                            : result.dose}{" "}
-                          {unitLabel(result.unit)}
+                            : snapshot.result.dose}{" "}
+                          {unitLabel(snapshot.result.unit)}
                         </span>
                       </div>
                       <div className="h-3 w-full overflow-hidden rounded-full bg-muted">
                         <div
                           className="h-full rounded-full bg-primary animate-grow-bar"
                           style={{
-                            width: `${Math.min((parseFloat(String(result.dose)) / parseFloat(adultDose)) * 100, 100)}%`,
+                            width: `${Math.min((parseFloat(String(snapshot.result.dose)) / parseFloat(snapshot.adultDose)) * 100, 100)}%`,
                             animationDelay: "0.2s",
                           }}
                         />
@@ -740,7 +799,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     {t("calculatorForm.formulaUsed")}
                   </span>
                   <p className="mt-0.5 font-mono text-sm text-foreground">
-                    {result.formula}
+                    {snapshot.result.formula}
                   </p>
                 </div>
                 <div>
@@ -749,24 +808,29 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   </span>
                   <p className="mt-0.5 text-sm text-muted-foreground">
                     {t(
-                      `calculatorForm.explanations.${result.explanationKey}`,
-                      result.explanationParams
+                      `calculatorForm.explanations.${snapshot.result.explanationKey}`,
+                      snapshot.result.explanationParams
                     )}
                   </p>
                 </div>
               </div>
 
               <SaveCalcButton
-                result={result}
-                herbName={herbName}
-                adultDose={adultDose}
-                doseUnit={doseUnit}
-                weightValue={weightValue}
-                ageYears={
-                  Number.isFinite(parsedAgeYears) ? String(parsedAgeYears) : ""
+                key={snapshot.id}
+                result={snapshot.result}
+                herbName={snapshot.herbName}
+                adultDose={snapshot.adultDose}
+                doseUnit={snapshot.doseUnit}
+                weightValue={
+                  snapshot.weightKg !== null ? String(snapshot.weightKg) : ""
                 }
-                heightCm={heightCm}
-                selectedFormula={selectedFormula}
+                ageYears={
+                  snapshot.ageYears !== null ? String(snapshot.ageYears) : ""
+                }
+                heightCm={
+                  snapshot.heightCm !== null ? String(snapshot.heightCm) : ""
+                }
+                selectedFormula={snapshot.formula}
               />
 
               <div className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-900/20 dark:text-amber-300">

@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod/v4";
 import {
   cleanBotanicalIngredientName,
-  extractLnhpdArray,
   formatLnhpdStatus,
   normalizeNpnInput,
+  parseLnhpdArray,
   type LnhpdDoseRow,
   type LnhpdIngredientRow,
   type LnhpdLicenceRow,
@@ -84,7 +84,11 @@ export async function GET(request: NextRequest) {
 
   try {
     const licencePayload = await fetchLnhpdJson("productlicence", npn, locale);
-    const licences = extractLnhpdArray<LnhpdLicenceRow>(licencePayload);
+    const parsedLicences = parseLnhpdArray<LnhpdLicenceRow>(licencePayload);
+    if (!parsedLicences.ok) {
+      throw new Error("Unexpected Health Canada LNHPD productlicence payload");
+    }
+    const licences = parsedLicences.rows;
 
     if (licences.length === 0) {
       return NextResponse.json(
@@ -110,22 +114,59 @@ export async function GET(request: NextRequest) {
         fetchLnhpdJson("productdose", lnhpdId, locale),
       ]);
 
-    const rawIngredients =
-      ingredientsRes.status === "fulfilled"
-        ? extractLnhpdArray<LnhpdIngredientRow>(ingredientsRes.value)
-        : [];
-    const rawPurposes =
-      purposesRes.status === "fulfilled"
-        ? extractLnhpdArray<LnhpdPurposeRow>(purposesRes.value)
-        : [];
-    const rawRisks =
-      risksRes.status === "fulfilled"
-        ? extractLnhpdArray<LnhpdRiskRow>(risksRes.value)
-        : [];
-    const rawDoses =
-      dosesRes.status === "fulfilled"
-        ? extractLnhpdArray<LnhpdDoseRow>(dosesRes.value)
-        : [];
+    function resolveSection<T>(res: PromiseSettledResult<unknown>): {
+      status: "ok" | "unavailable";
+      rows: T[];
+    } {
+      if (res.status !== "fulfilled") {
+        return { status: "unavailable", rows: [] };
+      }
+      const parsed = parseLnhpdArray<T>(res.value);
+      if (!parsed.ok) {
+        return { status: "unavailable", rows: [] };
+      }
+      return { status: "ok", rows: parsed.rows };
+    }
+
+    const ingredientsSection =
+      resolveSection<LnhpdIngredientRow>(ingredientsRes);
+    const purposesSection = resolveSection<LnhpdPurposeRow>(purposesRes);
+    const risksSection = resolveSection<LnhpdRiskRow>(risksRes);
+    const dosesSection = resolveSection<LnhpdDoseRow>(dosesRes);
+
+    const sectionStatus = {
+      ingredients: ingredientsSection.status,
+      purposes: purposesSection.status,
+      risks: risksSection.status,
+      doses: dosesSection.status,
+    };
+
+    const unavailableSections = (
+      Object.entries(sectionStatus) as Array<
+        [keyof typeof sectionStatus, "ok" | "unavailable"]
+      >
+    )
+      .filter(([, status]) => status === "unavailable")
+      .map(([section]) => section);
+
+    if (unavailableSections.length === 4) {
+      logger.error("npn_lookup_all_sections_failed", { npn, lnhpdId });
+      return NextResponse.json(
+        {
+          error:
+            locale === "fr"
+              ? "Impossible de récupérer les détails du produit auprès de Santé Canada pour le moment."
+              : "Could not retrieve product details from Health Canada's LNHPD register right now.",
+          unavailableSections,
+        },
+        { status: 502, headers: { "Cache-Control": "no-store" } }
+      );
+    }
+
+    const rawIngredients = ingredientsSection.rows;
+    const rawPurposes = purposesSection.rows;
+    const rawRisks = risksSection.rows;
+    const rawDoses = dosesSection.rows;
 
     // Resolve distinct botanical names against HerbAlly herbs (cap 12 lookups)
     const uniqueCleaned = new Map<string, string>();
@@ -148,6 +189,7 @@ export async function GET(request: NextRequest) {
       } | null
     >();
 
+    let herbMatchingUnavailable = false;
     await Promise.all(
       [...uniqueCleaned.entries()].slice(0, 12).map(async ([key, cleaned]) => {
         try {
@@ -164,7 +206,11 @@ export async function GET(request: NextRequest) {
             scientificName: matched.scientific_name,
             interactionCount: pairs.length,
           });
-        } catch {
+        } catch (err) {
+          herbMatchingUnavailable = true;
+          logger.warn("npn_herb_matching_unavailable", {
+            error: err instanceof Error ? err.message : String(err),
+          });
           herbMatchMap.set(key, null);
         }
       })
@@ -214,6 +260,7 @@ export async function GET(request: NextRequest) {
     }));
 
     const statusInfo = formatLnhpdStatus(licence.flag_product_status, locale);
+    const partial = unavailableSections.length > 0 || herbMatchingUnavailable;
 
     return NextResponse.json(
       {
@@ -227,6 +274,10 @@ export async function GET(request: NextRequest) {
         licenceDate: licence.licence_date ?? null,
         revisedDate: licence.revised_date ?? null,
         status: statusInfo,
+        partial,
+        unavailableSections,
+        sectionStatus,
+        herbMatchingUnavailable,
         ingredients,
         purposes,
         risks,
@@ -238,8 +289,9 @@ export async function GET(request: NextRequest) {
       },
       {
         headers: {
-          "Cache-Control":
-            "public, s-maxage=3600, stale-while-revalidate=86400",
+          "Cache-Control": partial
+            ? "no-store"
+            : "public, s-maxage=3600, stale-while-revalidate=86400",
         },
       }
     );
@@ -264,7 +316,10 @@ export async function GET(request: NextRequest) {
             : "Could not reach Health Canada's LNHPD register right now.",
         timeout: isTimeout,
       },
-      { status: isTimeout ? 504 : 502 }
+      {
+        status: isTimeout ? 504 : 502,
+        headers: { "Cache-Control": "no-store" },
+      }
     );
   }
 }

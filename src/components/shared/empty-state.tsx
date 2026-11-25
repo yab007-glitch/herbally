@@ -2,6 +2,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Leaf, Search, MessageCircle, Pill } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 
 type IllustrationVariant =
@@ -72,13 +73,12 @@ export function EmptyState({
 
       {action &&
         (action.href ? (
-          <Button
-            className="mt-5"
-            size="sm"
-            render={<Link href={action.href} />}
+          <Link
+            href={action.href}
+            className={cn(buttonVariants({ size: "sm" }), "mt-5")}
           >
             {action.label}
-          </Button>
+          </Link>
         ) : (
           <Button onClick={action.onClick} className="mt-5" size="sm">
             {action.label}

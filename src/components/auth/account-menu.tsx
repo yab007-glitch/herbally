@@ -6,6 +6,7 @@ import { LogIn, LogOut, User, Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { currentUser, logout } from "@/lib/actions/auth";
+import { clearBrowserCaches } from "@/lib/privacy/storage-inventory";
 import { cn } from "@/lib/utils";
 
 type SessionUser = {
@@ -79,7 +80,13 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
           {!compact && <span className="hidden sm:inline">Admin</span>}
         </Link>
       )}
-      <form action={logout} className="inline-flex">
+      <form
+        action={async () => {
+          await clearBrowserCaches();
+          await logout();
+        }}
+        className="inline-flex"
+      >
         <Button
           type="submit"
           variant="ghost"

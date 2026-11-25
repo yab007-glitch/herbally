@@ -1,11 +1,31 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 // Prevent background server-sync fetches from hitting the network. The
-// default responds 200 with an empty object; individual tests override the
-// implementation to return server garden payloads for GET.
+// default responds 200 acknowledging any POSTed slugs; individual tests override
+// the implementation to return server garden payloads or simulate failures.
 vi.stubGlobal(
   "fetch",
-  vi.fn().mockResolvedValue(new Response("{}", { status: 200 }))
+  vi.fn().mockImplementation(async (_url, init?: RequestInit) => {
+    if (init?.method === "POST" && typeof init.body === "string") {
+      const parsed = JSON.parse(init.body) as { herbs?: { slug: string }[] };
+      const slugs = (parsed.herbs ?? []).map((h) => h.slug);
+      return new Response(
+        JSON.stringify({
+          saved: slugs.length,
+          savedSlugs: slugs,
+          errors: [],
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    if (init?.method === "DELETE") {
+      return new Response(JSON.stringify({ removed: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response("{}", { status: 200 });
+  })
 );
 
 const mod = await import("../local-garden");
@@ -21,10 +41,27 @@ const {
 
 beforeEach(() => {
   localStorage.clear();
-  // Reset to the default empty-200 fetch between tests.
-  vi.mocked(fetch).mockImplementation(async () =>
-    Promise.resolve(new Response("{}", { status: 200 }))
-  );
+  vi.mocked(fetch).mockImplementation(async (_url, init?: RequestInit) => {
+    if (init?.method === "POST" && typeof init.body === "string") {
+      const parsed = JSON.parse(init.body) as { herbs?: { slug: string }[] };
+      const slugs = (parsed.herbs ?? []).map((h) => h.slug);
+      return new Response(
+        JSON.stringify({
+          saved: slugs.length,
+          savedSlugs: slugs,
+          errors: [],
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    if (init?.method === "DELETE") {
+      return new Response(JSON.stringify({ removed: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    return new Response("{}", { status: 200 });
+  });
 });
 
 // Flush the fire-and-forget syncHerbToServer POST so markSynced has run before
@@ -44,16 +81,31 @@ const herb = (slug: string) => ({
 function stubServerGet(
   herbs: { slug: string; name: string; scientific_name: string }[]
 ) {
-  vi.mocked(fetch).mockImplementation(async (url) => {
+  vi.mocked(fetch).mockImplementation(async (url, init?: RequestInit) => {
     const u = typeof url === "string" ? url : (url as URL).toString();
-    if (u.includes("/api/garden") && !u.includes("slug=")) {
+    if (
+      (!init?.method || init.method === "GET") &&
+      u.includes("/api/garden") &&
+      !u.includes("slug=")
+    ) {
       return new Response(JSON.stringify({ herbs }), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
     }
-    // POST/DELETE: accept silently.
-    return new Response("{}", { status: 200 });
+    if (init?.method === "POST" && typeof init.body === "string") {
+      const parsed = JSON.parse(init.body) as { herbs?: { slug: string }[] };
+      const slugs = (parsed.herbs ?? []).map((h) => h.slug);
+      return new Response(
+        JSON.stringify({
+          saved: slugs.length,
+          savedSlugs: slugs,
+          errors: [],
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+    return new Response(JSON.stringify({ removed: true }), { status: 200 });
   });
 }
 
@@ -180,5 +232,97 @@ describe("mergeServerGarden — cross-device reconciliation (L20)", () => {
     expect(row.scientific_name).toBe("Curcuma longa");
     expect(row.savedAt).toBe("2026-09-01T00:00:00.000Z");
     expect(isInGarden("turmeric")).toBe(true);
+  });
+
+  it("does NOT mark synced when POST returns HTTP 200 with saved:0 and errors, preserving local herb on merge", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ saved: 0, errors: ["ginger"] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+
+    addToGarden(herb("ginger"));
+    await flushSync();
+
+    // Server returns empty because the POST failed silently; local herb MUST NOT be deleted.
+    stubServerGet([]);
+    const merged = await mergeServerGarden();
+    expect(merged.map((h) => h.slug)).toContain("ginger");
+    expect(isInGarden("ginger")).toBe(true);
+  });
+
+  it("keeps herb unsynced when POST returns HTTP 500 or unacknowledged body", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({}), { status: 200 })
+    );
+    addToGarden(herb("chamomile"));
+    await flushSync();
+
+    stubServerGet([]);
+    const merged = await mergeServerGarden();
+    expect(merged.map((h) => h.slug)).toContain("chamomile");
+  });
+
+  it("keeps synced flag untouched if DELETE fails and clears synced flag when DELETE succeeds", async () => {
+    addToGarden(herb("ginger"));
+    await flushSync();
+    expect(
+      JSON.parse(localStorage.getItem("herbally-garden-synced") ?? "[]")
+    ).toContain("ginger");
+
+    // Failed DELETE (500) must not clear synced tracking prematurely
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: "db down" }), { status: 500 })
+    );
+    removeFromGarden("ginger");
+    await flushSync();
+    expect(
+      JSON.parse(localStorage.getItem("herbally-garden-synced") ?? "[]")
+    ).toContain("ginger");
+
+    // Re-add, then succeed DELETE -> clears synced entry
+    addToGarden(herb("ginger"));
+    await flushSync();
+    vi.mocked(fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ removed: true, slug: "ginger" }), {
+        status: 200,
+      })
+    );
+    removeFromGarden("ginger");
+    await flushSync();
+    expect(
+      JSON.parse(localStorage.getItem("herbally-garden-synced") ?? "[]")
+    ).not.toContain("ginger");
+  });
+
+  it("preserves synced local herbs when GET /api/garden returns HTTP 200 with malformed or non-array payloads", async () => {
+    addToGarden(herb("ginger"));
+    await flushSync();
+    expect(isInGarden("ginger")).toBe(true);
+
+    const badPayloads = [
+      JSON.stringify({}),
+      JSON.stringify([]),
+      JSON.stringify({ herbs: null }),
+      JSON.stringify({ herbs: "bad" }),
+      JSON.stringify({ herbs: [{ wrong: true }] }),
+      "{malformed-json",
+    ];
+
+    for (const body of badPayloads) {
+      vi.mocked(fetch).mockResolvedValueOnce(
+        new Response(body, {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      );
+      const merged = await mergeServerGarden();
+      expect(merged.map((h) => h.slug)).toContain("ginger");
+      expect(isInGarden("ginger")).toBe(true);
+      expect(
+        JSON.parse(localStorage.getItem("herbally-garden-synced") ?? "[]")
+      ).toContain("ginger");
+    }
   });
 });

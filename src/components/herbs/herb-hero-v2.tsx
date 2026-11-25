@@ -3,7 +3,7 @@
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { MessageCircle, Calculator, Heart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { HerbImage } from "@/components/herbs/HerbImage";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
@@ -249,34 +249,33 @@ export function HerbHeroV2({
         />
 
         <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
-          <Button
-            size="sm"
-            render={
-              <Link
-                href={`/herbalist?herb=${herb.slug}`}
-                // 2,198 ?herb= URLs were being crawled as duplicates of /herbalist.
-                // The parameter is a client-side preselection, not a different page.
-                rel="nofollow"
-              />
-            }
-            className="min-h-10 rounded-full px-4"
+          <Link
+            href={`/herbalist?herb=${herb.slug}`}
+            // 2,198 ?herb= URLs were being crawled as duplicates of /herbalist.
+            // The parameter is a client-side preselection, not a different page.
+            rel="nofollow"
+            className={cn(
+              buttonVariants({ size: "sm" }),
+              "min-h-10 rounded-full px-4"
+            )}
           >
             <MessageCircle className="mr-1 size-3.5" aria-hidden="true" />
             {t("herbDetail.askHerbalist")}
-          </Button>
+          </Link>
           {/* Demoted on purpose and suppressed completely for lethal/no-dose
               plants: still a real button for dosable herbs, never rendered for
               poisons or entries without a quantitative dose. */}
           {allowCalculator && (
-            <Button
-              size="sm"
-              variant="outline"
-              render={<Link href={`/calculator?herb=${herb.slug}`} />}
-              className="min-h-10 rounded-full px-4"
+            <Link
+              href={`/calculator?herb=${herb.slug}`}
+              className={cn(
+                buttonVariants({ size: "sm", variant: "outline" }),
+                "min-h-10 rounded-full px-4"
+              )}
             >
               <Calculator className="mr-1 size-3.5" aria-hidden="true" />
               {t("herbDetail.calculateDose")}
-            </Button>
+            </Link>
           )}
         </div>
       </div>

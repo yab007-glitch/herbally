@@ -389,10 +389,10 @@ export async function POST(request: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        const { amountCents, email, status } = await upsertDonation(session);
+        const { status } = await upsertDonation(session);
         logger.info("stripe_donation_completed", {
-          email: email ?? "anonymous",
-          amount: amountCents,
+          eventId: event.id,
+          sessionId: session.id,
           status,
         });
         break;

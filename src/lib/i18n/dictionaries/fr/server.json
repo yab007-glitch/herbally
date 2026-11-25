@@ -802,13 +802,13 @@
     },
     "dataRetention": {
       "title": "6. Conservation des Données",
-      "text": "Les données de compte et les données enregistrées peuvent être conservées jusqu'à leur suppression. Les discussions invitées peuvent subsister indépendamment du cookie invité ; l'expiration du cookie ne supprime pas nécessairement les données du serveur. Les dons peuvent être conservés pour la comptabilité. Les pratiques de conservation d'Ollama sont régies par sa propre politique."
+      "text": "Les données de compte et les données enregistrées peuvent être conservées jusqu'à leur suppression. Les discussions invitées peuvent subsister indépendamment du cookie invité ; l'expiration du cookie ne supprime pas nécessairement les données du serveur. Les réponses de l'Herboriste Virtuel peuvent également être mises en cache jusqu'à 7 jours dans une table serveur partagée (ai_response_cache) indexée uniquement par empreinte de requête, sans identifiant de compte, d'invité ni de session : la suppression d'une discussion supprime immédiatement la session et ses messages, tandis que les entrées de cache non liées expirent automatiquement après 7 jours. Les dons peuvent être conservés pour la comptabilité. Les pratiques de conservation d'Ollama sont régies par sa propre politique."
     },
     "yourRights": {
       "title": "7. Vos Droits",
       "text": "Vous pouvez accéder à vos données, les corriger ou les supprimer :",
       "access": "Accès : vous pouvez consulter votre profil, votre jardin, vos calculs et votre historique de discussion dans votre compte.",
-      "deletion": "Vous pouvez supprimer des entrées de jardin et des sessions de discussion avec les commandes disponibles dans l'application. Écrivez à privacy@herbally.app pour demander la suppression de votre compte ou d'autres renseignements enregistrés, y compris les calculs. Effacer les données de votre navigateur supprime les données qui y sont stockées.",
+      "deletion": "Vous pouvez supprimer des entrées de jardin et des sessions de discussion (session et messages) avec les commandes de l'application ; les entrées de cache IA non liées (7 jours, par empreinte de requête) ne sont rattachées à aucune conversation et expirent automatiquement. Écrivez à privacy@herbally.app pour demander la suppression de votre compte ou d'autres renseignements enregistrés, y compris les calculs. Effacer les données locales supprime le stockage navigateur et les caches locaux.",
       "complaint": "Plainte : Contactez notre responsable de la protection des renseignements personnels à privacy@herbally.app, ou adressez-vous à la Commission d'accès à l'information du Québec (CAI) ou au Commissariat à la protection de la vie privée du Canada (CPVP).",
       "portability": "Portabilité et retrait du consentement : En vertu de la Loi 25 du Québec et de la LPRPDE fédérale, vous pouvez demander l'accès, la rectification, la portabilité de vos renseignements fournis, ou retirer votre consentement (y compris vous désabonner en un clic)."
     },

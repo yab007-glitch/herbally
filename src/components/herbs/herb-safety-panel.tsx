@@ -9,7 +9,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
 import {
   InteractionsTable,
   type Interaction,
@@ -183,15 +184,17 @@ export function HerbSafetyPanel({
 
       {/* CTA */}
       <div className="flex justify-center">
-        <Button
-          variant="outline"
-          size="lg"
-          render={<Link href={`/herbalist?herb=${herb.slug}`} rel="nofollow" />}
-          className="rounded-full"
+        <Link
+          href={`/herbalist?herb=${herb.slug}`}
+          rel="nofollow"
+          className={cn(
+            buttonVariants({ variant: "outline", size: "lg" }),
+            "rounded-full"
+          )}
         >
           <AlertTriangle className="mr-2 size-4" />
           {t("herbDetail.checkInteractions")}
-        </Button>
+        </Link>
       </div>
     </div>
   );

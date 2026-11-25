@@ -362,7 +362,7 @@ describe("sitemap", () => {
     );
   });
 
-  it("deduplicates interaction pair URLs when multiple rows map to the same slug", async () => {
+  it("excludes unresolved interaction pair URL collisions from both EN and FR sitemaps", async () => {
     herbsRangeMock.mockResolvedValue({ data: [], error: null });
     getEmptySymptomHubsMock.mockResolvedValue([]);
     getInteractionPairsMock.mockResolvedValue([
@@ -401,13 +401,42 @@ describe("sitemap", () => {
     ]);
 
     const urls = (await sitemap()).map((entry) => entry.url);
-    expect(
-      urls.filter((u) => u === `${BASE_URL}/interactions/sage/anticonvulsants`)
-    ).toHaveLength(1);
-    expect(
-      urls.filter(
-        (u) => u === `${BASE_URL}/fr/interactions/sage/anticonvulsants`
-      )
-    ).toHaveLength(1);
+    expect(urls).not.toContain(`${BASE_URL}/interactions/sage/anticonvulsants`);
+    expect(urls).not.toContain(
+      `${BASE_URL}/fr/interactions/sage/anticonvulsants`
+    );
+  });
+
+  it("selectSitemapPairEntries derives hasFr and updatedAt solely from the editorially selected row", async () => {
+    const { selectSitemapPairEntries } =
+      await import("@/lib/interactions/pair-url");
+    const entries = selectSitemapPairEntries(
+      [
+        {
+          id: "p-1",
+          herbSlug: "sage",
+          drugName: "Anticonvulsants",
+          severity: "moderate",
+          updatedAt: "2026-11-10T00:00:00.000Z",
+          hasFr: false,
+        },
+        {
+          id: "p-2",
+          herbSlug: "sage",
+          drugName: "Anticonvulsants (Phenytoin, Valproate, Carbamazepine)",
+          severity: "severe",
+          updatedAt: "2026-11-18T00:00:00.000Z",
+          hasFr: true,
+        },
+      ],
+      { "sage/anticonvulsants": "Anticonvulsants" }
+    );
+    expect(entries).toEqual([
+      {
+        path: "/interactions/sage/anticonvulsants",
+        hasFr: false,
+        updatedAt: "2026-11-10T00:00:00.000Z",
+      },
+    ]);
   });
 });

@@ -287,10 +287,29 @@ async function syncHerbToServer(
         ],
       }),
     });
-    // L20: only mark synced when the server actually accepted the write, so
-    // mergeServerGarden can trust "synced but absent from server" as a real
-    // cross-device removal rather than a never-synced local-only herb.
-    if (res.ok) markSynced(herb.slug);
+    if (!res.ok) return;
+
+    const data = (await res.json().catch(() => null)) as {
+      saved?: number;
+      savedSlugs?: string[];
+      errors?: string[];
+    } | null;
+    if (!data) return;
+
+    const failed =
+      Array.isArray(data.errors) && data.errors.includes(herb.slug);
+    if (failed) return;
+
+    // Require explicit acknowledgment: either `savedSlugs` includes this slug,
+    // or a positive `saved` count without this slug in `errors`. Never mark
+    // synced on `{}` or `{ saved: 0 }`.
+    const explicitlyAcked = Array.isArray(data.savedSlugs)
+      ? data.savedSlugs.includes(herb.slug)
+      : typeof data.saved === "number" && data.saved > 0;
+
+    if (explicitlyAcked) {
+      markSynced(herb.slug);
+    }
   } catch {
     // Silently fail — localStorage is the source of truth
   }
@@ -301,11 +320,18 @@ async function syncHerbToServer(
  */
 async function removeHerbFromServer(slug: string): Promise<void> {
   try {
-    await fetch(`/api/garden?slug=${encodeURIComponent(slug)}`, {
+    const res = await fetch(`/api/garden?slug=${encodeURIComponent(slug)}`, {
       method: "DELETE",
     });
+    if (!res.ok) return;
+    const data = (await res.json().catch(() => null)) as {
+      removed?: boolean;
+    } | null;
+    if (data?.removed === true) {
+      clearSyncedSlugs([slug]);
+    }
   } catch {
-    // Silently fail
+    // Silently fail — tombstone remains in TOMBSTONE_KEY
   }
 }
 
@@ -334,6 +360,22 @@ function normalizeServerHerb(
   };
 }
 
+function isValidServerHerbShape(row: unknown): row is GardenHerb & {
+  herb_slug?: string;
+  herb_name?: string;
+  created_at?: string;
+} {
+  if (!row || typeof row !== "object" || Array.isArray(row)) return false;
+  const r = row as Record<string, unknown>;
+  const slug =
+    typeof r.slug === "string"
+      ? r.slug.trim()
+      : typeof r.herb_slug === "string"
+        ? r.herb_slug.trim()
+        : "";
+  return slug.length > 0;
+}
+
 /**
  * Merge server-side garden into localStorage on page load.
  * Call this once on the garden page to pull server data down.
@@ -346,10 +388,22 @@ export async function mergeServerGarden(): Promise<GardenHerb[]> {
     const response = await fetch("/api/garden");
     if (!response.ok) return getGarden();
 
-    const data = (await response.json()) as { herbs?: GardenHerb[] };
-    const serverHerbs: GardenHerb[] = (data.herbs ?? []).map(
-      normalizeServerHerb
-    );
+    const data: unknown = await response.json();
+    if (
+      !data ||
+      typeof data !== "object" ||
+      Array.isArray(data) ||
+      !Array.isArray((data as { herbs?: unknown }).herbs)
+    ) {
+      return getGarden();
+    }
+
+    const rawHerbs = (data as { herbs: unknown[] }).herbs;
+    if (!rawHerbs.every(isValidServerHerbShape)) {
+      return getGarden();
+    }
+
+    const serverHerbs: GardenHerb[] = rawHerbs.map(normalizeServerHerb);
     const serverSlugs = new Set(serverHerbs.map((h) => h.slug));
 
     const local = getGarden();

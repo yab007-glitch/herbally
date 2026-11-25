@@ -7,6 +7,7 @@ import {
   useCallback,
   useMemo,
   useDeferredValue,
+  useSyncExternalStore,
 } from "react";
 import { RotateCcw, ArrowDown } from "lucide-react";
 import { ChatEmptyStateV2 } from "./chat-empty-state-v2";
@@ -32,6 +33,8 @@ import {
   writeStoredSessionId,
 } from "./chat-helpers";
 
+const emptySubscribe = () => () => {};
+
 export function ChatInterface({
   herbContext,
   autoQuery,
@@ -45,6 +48,11 @@ export function ChatInterface({
 }) {
   const t = useTranslations();
   const locale = useLocale();
+  const isHydrated = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   const [messages, setMessages] = useState<Message[]>([]);
   const deferredMessages = useDeferredValue(messages);
@@ -98,6 +106,10 @@ export function ChatInterface({
 
   useEffect(() => {
     mountedRef.current = true;
+    const preHydrationValue = inputRef.current?.value;
+    if (preHydrationValue) {
+      setInput((prev) => (prev ? prev : preHydrationValue));
+    }
     return () => {
       mountedRef.current = false;
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -300,7 +312,7 @@ export function ChatInterface({
     text?: string,
     opts?: { history?: Message[]; isRetry?: boolean }
   ) {
-    const content = (text ?? input).trim();
+    const content = (text ?? (input || inputRef.current?.value || "")).trim();
     if (!content || isLoading || isRestoring || deletingRef.current) return;
 
     const generation = generationRef.current;
@@ -319,6 +331,7 @@ export function ChatInterface({
 
     if (userMessage) setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    if (inputRef.current) inputRef.current.value = "";
     setIsLoading(true);
     setStreamingContent("");
     setShowScrollButton(false);
@@ -539,7 +552,10 @@ export function ChatInterface({
   }, [isEmpty, autoQuery, isRestoring]);
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-12rem)] sm:h-[calc(100dvh-10rem)] rounded-2xl border border-border bg-card overflow-hidden">
+    <div
+      data-chat-ready={isHydrated ? "true" : "false"}
+      className="flex flex-col h-[calc(100dvh-12rem)] sm:h-[calc(100dvh-10rem)] rounded-2xl border border-border bg-card overflow-hidden"
+    >
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto scrollbar-hide"

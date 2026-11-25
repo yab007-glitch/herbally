@@ -3,12 +3,13 @@ import { z } from "zod/v4";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { getHerbPairs } from "@/lib/interactions/pairs";
 import { resolveHerb } from "@/lib/interactions/resolve-herb";
-import { matchInteractionPair } from "@/lib/interactions/check";
+import { matchInteractionPairDetailed } from "@/lib/interactions/check";
 import { pairPath } from "@/lib/interactions/pair-url";
 import {
   computeStackAlerts,
   highestSeverityOf,
   sortStackMatches,
+  type StackConflictItem,
   type StackHerbSummary,
   type StackMatchItem,
   type StackUnrecordedItem,
@@ -16,6 +17,7 @@ import {
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 const MAX_STACK_ITEMS = 10;
 
@@ -63,12 +65,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let rawBody: unknown;
-  try {
-    rawBody = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+  const bodyResult = await readJsonBodyWithLimit(request, 16 * 1024);
+  if (!bodyResult.ok) {
+    return NextResponse.json(
+      {
+        error:
+          bodyResult.reason === "too_large"
+            ? "Request body too large."
+            : "Invalid JSON body.",
+      },
+      { status: bodyResult.reason === "too_large" ? 413 : 400 }
+    );
   }
+  const rawBody = bodyResult.data;
 
   const parsedBody = checkStackBodySchema.safeParse(rawBody);
   if (!parsedBody.success) {
@@ -131,6 +140,7 @@ export async function POST(request: NextRequest) {
     const herbSummaries: StackHerbSummary[] = [];
     const unresolvedHerbs: string[] = [];
     const matches: StackMatchItem[] = [];
+    const conflicts: StackConflictItem[] = [];
     const unrecorded: StackUnrecordedItem[] = [];
 
     for (const item of resolvedList) {
@@ -170,8 +180,38 @@ export async function POST(request: NextRequest) {
       });
 
       for (const drugInput of drugs) {
-        const pair = matchInteractionPair(drugInput, item.pairs);
-        if (pair) {
+        const match = matchInteractionPairDetailed(drugInput, item.pairs);
+        if (match.kind === "collision") {
+          logger.warn("interactions_check_stack_collision", {
+            herbSlug: item.candidate.slug,
+            drugSlug: match.drugSlug,
+            count: match.pairs.length,
+          });
+          conflicts.push({
+            herbInput: item.input,
+            herbSlug: item.candidate.slug,
+            herbName: displayName,
+            drugInput,
+            drugSlug: match.drugSlug,
+            pairUrl: `/interactions/${item.candidate.slug}/${match.drugSlug}`,
+            records: match.pairs.map((pair) => ({
+              herbInput: item.input,
+              herbSlug: item.candidate.slug,
+              herbName: displayName,
+              drugInput,
+              drugName: pair.drugName,
+              drugSlug: pair.drugSlug,
+              severity: pair.severity,
+              description: pair.description,
+              mechanism: pair.mechanism,
+              evidenceLevel: pair.evidenceLevel,
+              source: pair.source,
+              sourceUrl: pair.sourceUrl,
+              pairUrl: pairPath(item.candidate.slug, pair.drugName),
+            })),
+          });
+        } else if (match.kind === "match") {
+          const pair = match.pair;
           matches.push({
             herbInput: item.input,
             herbSlug: item.candidate.slug,
@@ -211,10 +251,13 @@ export async function POST(request: NextRequest) {
           totalCombinations: herbs.length * drugs.length,
           matchedCount: sortedMatches.length,
           unrecordedCount: unrecorded.length,
+          conflictCount: conflicts.length,
+          hasConflicts: conflicts.length > 0,
           highestSeverity: highestSeverityOf(sortedMatches),
           unresolvedHerbs,
         },
         matches: sortedMatches,
+        conflicts,
         unrecorded,
         stackAlerts,
       },

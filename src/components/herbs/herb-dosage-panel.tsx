@@ -9,7 +9,8 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
 import { canShowDoseCalculator } from "@/lib/data/dangerous-herbs";
@@ -93,14 +94,13 @@ export function HerbDosagePanel({ herb, regulatorName }: HerbDosagePanelProps) {
 
       {canShowDoseCalculator(herb.slug, herb.dosage_adult) && (
         <div className="flex justify-center">
-          <Button
-            size="lg"
-            render={<Link href={`/calculator?herb=${herb.slug}`} />}
-            className="rounded-full"
+          <Link
+            href={`/calculator?herb=${herb.slug}`}
+            className={cn(buttonVariants({ size: "lg" }), "rounded-full")}
           >
             <Calculator className="mr-2 size-4" />
             {t("herbDetail.calculateDose")}
-          </Button>
+          </Link>
         </div>
       )}
     </div>

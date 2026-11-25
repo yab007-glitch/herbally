@@ -11,8 +11,8 @@ const COPY = {
     working: "Sending…",
     consent:
       "By subscribing you agree to receive HerbAlly's occasional safety digest. You can unsubscribe at any time.",
-    success: "Check your inbox — there's a confirmation link waiting.",
-    already: "You're already on the list. Nothing else to do.",
+    success:
+      "If you're not already subscribed, check your inbox for a confirmation link.",
     invalid: "That address doesn't look right.",
     unavailable: "Signup isn't available right now. Please try again later.",
     failed: "Something went wrong. Please try again.",
@@ -26,8 +26,7 @@ const COPY = {
     consent:
       "En vous abonnant, vous acceptez de recevoir le résumé de sécurité occasionnel de HerbAlly. Vous pouvez vous désabonner en tout temps.",
     success:
-      "Vérifiez votre boîte de réception — un lien de confirmation vous attend.",
-    already: "Vous êtes déjà sur la liste. Rien d'autre à faire.",
+      "Si vous n'êtes pas déjà inscrit, vérifiez votre boîte de réception pour confirmer votre abonnement.",
     invalid: "Cette adresse ne semble pas valide.",
     unavailable:
       "L'inscription n'est pas disponible pour le moment. Réessayez plus tard.",
@@ -36,13 +35,7 @@ const COPY = {
 } as const;
 
 type Status =
-  | "idle"
-  | "working"
-  | "done"
-  | "already"
-  | "invalid"
-  | "unavailable"
-  | "failed";
+  "idle" | "working" | "done" | "invalid" | "unavailable" | "failed";
 
 export function NewsletterSignup({ locale }: { locale: "en" | "fr" }) {
   const c = COPY[locale];
@@ -66,8 +59,7 @@ export function NewsletterSignup({ locale }: { locale: "en" | "fr" }) {
         }),
       });
       if (response.ok) {
-        const data = (await response.json()) as { status?: string };
-        setStatus(data.status === "already-confirmed" ? "already" : "done");
+        setStatus("done");
         setEmail("");
         return;
       }
@@ -82,15 +74,13 @@ export function NewsletterSignup({ locale }: { locale: "en" | "fr" }) {
   const message =
     status === "done"
       ? c.success
-      : status === "already"
-        ? c.already
-        : status === "invalid"
-          ? c.invalid
-          : status === "unavailable"
-            ? c.unavailable
-            : status === "failed"
-              ? c.failed
-              : null;
+      : status === "invalid"
+        ? c.invalid
+        : status === "unavailable"
+          ? c.unavailable
+          : status === "failed"
+            ? c.failed
+            : null;
 
   return (
     <section

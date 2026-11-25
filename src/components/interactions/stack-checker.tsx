@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type {
   StackAlert,
+  StackConflictItem,
   StackHerbSummary,
   StackMatchItem,
   StackUnrecordedItem,
@@ -38,10 +39,13 @@ interface StackApiResponse {
     totalCombinations: number;
     matchedCount: number;
     unrecordedCount: number;
+    conflictCount?: number;
+    hasConflicts?: boolean;
     highestSeverity: InteractionSeverity | null;
     unresolvedHerbs: string[];
   };
   matches: StackMatchItem[];
+  conflicts?: StackConflictItem[];
   unrecorded: StackUnrecordedItem[];
   stackAlerts: StackAlert[];
 }
@@ -69,6 +73,14 @@ export function StackChecker() {
   const [result, setResult] = useState<StackApiResponse | null>(null);
   const [showWalletCard, setShowWalletCard] = useState(false);
   const hasHydratedRef = useRef(false);
+  const requestGenRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -129,6 +141,16 @@ export function StackChecker() {
     }
   }, [herbs, drugs]);
 
+  function invalidateResult() {
+    requestGenRef.current += 1;
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    setLoading(false);
+    setResult(null);
+    setShowWalletCard(false);
+    setError(null);
+  }
+
   function addTerm(
     draft: string,
     list: string[],
@@ -143,7 +165,7 @@ export function StackChecker() {
     }
     setList([...list, clean]);
     clearDraft();
-    setError(null);
+    invalidateResult();
   }
 
   function loadSample() {
@@ -156,7 +178,7 @@ export function StackChecker() {
     }
     setHerbDraft("");
     setDrugDraft("");
-    setError(null);
+    invalidateResult();
   }
 
   function clearAll() {
@@ -164,8 +186,7 @@ export function StackChecker() {
     setDrugs([]);
     setHerbDraft("");
     setDrugDraft("");
-    setError(null);
-    setResult(null);
+    invalidateResult();
     try {
       window.sessionStorage.removeItem(STORAGE_KEY);
       window.localStorage.removeItem(STORAGE_KEY);
@@ -201,29 +222,45 @@ export function StackChecker() {
     }
 
     if (nextHerbs.length === 0 || nextDrugs.length === 0) {
+      invalidateResult();
       setError(t("needBothError"));
       return;
     }
 
-    setLoading(true);
+    const gen = ++requestGenRef.current;
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    setResult(null);
+    setShowWalletCard(false);
     setError(null);
+    setLoading(true);
     try {
       const res = await fetch("/api/interactions/check-stack", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-locale": locale },
         body: JSON.stringify({ herbs: nextHerbs, drugs: nextDrugs, locale }),
+        signal: controller.signal,
       });
+      if (gen !== requestGenRef.current) return;
       const data = (await res.json()) as StackApiResponse & { error?: string };
+      if (gen !== requestGenRef.current) return;
       if (!res.ok) {
         setError(data.error || t("errorGeneric"));
-        setLoading(false);
         return;
       }
       setResult(data);
     } catch {
+      if (gen !== requestGenRef.current) return;
       setError(t("errorGeneric"));
     } finally {
-      setLoading(false);
+      if (gen === requestGenRef.current) {
+        setLoading(false);
+        if (abortControllerRef.current === controller) {
+          abortControllerRef.current = null;
+        }
+      }
     }
   }
 
@@ -299,7 +336,10 @@ export function StackChecker() {
             <Input
               id="stack-herb-input"
               value={herbDraft}
-              onChange={(e) => setHerbDraft(e.target.value)}
+              onChange={(e) => {
+                setHerbDraft(e.target.value);
+                invalidateResult();
+              }}
               placeholder={t("herbPlaceholder")}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -336,7 +376,10 @@ export function StackChecker() {
                   {h}
                   <button
                     type="button"
-                    onClick={() => setHerbs(herbs.filter((x) => x !== h))}
+                    onClick={() => {
+                      setHerbs(herbs.filter((x) => x !== h));
+                      invalidateResult();
+                    }}
                     className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
                     aria-label={`${t("remove")} ${h}`}
                   >
@@ -360,7 +403,10 @@ export function StackChecker() {
             <Input
               id="stack-drug-input"
               value={drugDraft}
-              onChange={(e) => setDrugDraft(e.target.value)}
+              onChange={(e) => {
+                setDrugDraft(e.target.value);
+                invalidateResult();
+              }}
               placeholder={t("drugPlaceholder")}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -397,7 +443,10 @@ export function StackChecker() {
                   {d}
                   <button
                     type="button"
-                    onClick={() => setDrugs(drugs.filter((x) => x !== d))}
+                    onClick={() => {
+                      setDrugs(drugs.filter((x) => x !== d));
+                      invalidateResult();
+                    }}
                     className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
                     aria-label={`${t("remove")} ${d}`}
                   >
@@ -485,7 +534,7 @@ export function StackChecker() {
                 {t("herbsHeading")}
               </p>
               <p className="mt-0.5 text-muted-foreground">
-                {herbs.join(", ") || "—"}
+                {result.herbs.map((h) => h.name ?? h.input).join(", ") || "—"}
               </p>
             </div>
             <div>
@@ -493,18 +542,22 @@ export function StackChecker() {
                 {t("drugsHeading")}
               </p>
               <p className="mt-0.5 text-muted-foreground">
-                {drugs.join(", ") || "—"}
+                {result.drugs.join(", ") || "—"}
               </p>
             </div>
           </div>
-          {result.matches.length > 0 && (
+          {(result.matches.length > 0 ||
+            (result.conflicts?.length ?? 0) > 0) && (
             <div className="mt-3 border-t border-border/60 pt-2 text-[11px] text-muted-foreground">
               <span className="font-semibold text-foreground">
                 {locale === "fr"
                   ? "Alertes répertoriées : "
                   : "Flagged pairs: "}
               </span>
-              {result.matches
+              {[
+                ...result.matches,
+                ...(result.conflicts ?? []).flatMap((c) => c.records),
+              ]
                 .map((m) => `${m.herbName} + ${m.drugName} (${m.severity})`)
                 .join(" · ")}
             </div>
@@ -518,7 +571,8 @@ export function StackChecker() {
           {/* Summary header */}
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 p-4">
             <div className="flex items-start gap-3">
-              {result.summary.highestSeverity ? (
+              {result.summary.highestSeverity ||
+              (result.conflicts?.length ?? 0) > 0 ? (
                 <AlertTriangle
                   className="mt-0.5 size-5 shrink-0 text-amber-600"
                   aria-hidden="true"
@@ -531,9 +585,12 @@ export function StackChecker() {
               )}
               <div>
                 <p className="font-semibold text-foreground">
-                  {result.summary.matchedCount > 0
+                  {result.summary.matchedCount > 0 ||
+                  (result.conflicts?.length ?? 0) > 0
                     ? t("summaryFound", {
-                        matched: result.summary.matchedCount,
+                        matched:
+                          result.summary.matchedCount +
+                          (result.conflicts?.length ?? 0),
                         total: result.summary.totalCombinations,
                       })
                     : t("summaryNone", {
@@ -612,6 +669,52 @@ export function StackChecker() {
                       </p>
                     </div>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Conflicting records requiring editorial disambiguation */}
+          {result.conflicts && result.conflicts.length > 0 && (
+            <div role="alert" className="space-y-3">
+              {result.conflicts.map((conflict) => (
+                <div
+                  key={`${conflict.herbSlug}-${conflict.drugSlug}-${conflict.drugInput}`}
+                  className="space-y-3 rounded-xl border border-amber-300 bg-amber-50/70 p-4 dark:border-amber-800 dark:bg-amber-950/30"
+                >
+                  <p className="text-sm font-semibold text-foreground">
+                    {locale === "fr"
+                      ? `${conflict.herbName} + ${conflict.drugInput} : plusieurs fiches d'interaction correspondent à cette recherche`
+                      : `${conflict.herbName} + ${conflict.drugInput}: Multiple interaction records match this lookup`}
+                  </p>
+                  {conflict.records.map((rec, idx) => (
+                    <div
+                      key={`${rec.herbSlug}-${rec.drugName}-${idx}`}
+                      className="rounded-lg border border-border bg-background/80 p-3"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="text-sm font-semibold text-foreground">
+                          {rec.herbName} + {rec.drugName}
+                        </p>
+                        <span
+                          className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${SEVERITY_BADGE[rec.severity]}`}
+                        >
+                          {severityText(rec.severity)}
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-sm text-muted-foreground">
+                        {rec.description}
+                      </p>
+                      <div className="no-print mt-2 flex flex-wrap items-center gap-3 text-xs">
+                        <Link
+                          href={rec.pairUrl}
+                          className="font-medium text-primary hover:underline"
+                        >
+                          {t("viewFullPair")} →
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>

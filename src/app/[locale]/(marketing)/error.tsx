@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 
 export default function MarketingError({
   error,
@@ -35,10 +36,10 @@ export default function MarketingError({
           <RefreshCw className="size-4" aria-hidden />
           {t("500.retry")}
         </Button>
-        <Button variant="outline" render={<Link href="/" />}>
+        <Link href="/" className={buttonVariants({ variant: "outline" })}>
           <Home className="mr-2 size-4" aria-hidden />
           {t("goHome")}
-        </Button>
+        </Link>
       </div>
     </div>
   );

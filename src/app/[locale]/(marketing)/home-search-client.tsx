@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useLocalizedRouter as useRouter } from "@/components/i18n/use-localized-router";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 import { ShieldCheck, Sparkles, MessageCircle } from "lucide-react";
 
@@ -64,8 +65,17 @@ interface CheckPair {
 type CheckResult =
   | {
       found: true;
+      ambiguous?: false;
       herb: { slug: string; name: string };
       pair: CheckPair;
+    }
+  | {
+      found: true;
+      ambiguous: true;
+      conflict?: boolean;
+      herb: { slug: string; name: string };
+      pair: null;
+      conflictingPairs: CheckPair[];
     }
   | {
       found: false;
@@ -121,6 +131,8 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
   const searchAbort = useRef<AbortController | null>(null);
   const justSelected = useRef<string | null>(null);
+  const checkGenRef = useRef(0);
+  const checkAbortRef = useRef<AbortController | null>(null);
 
   const searchHerbs = useCallback(async (term: string) => {
     if (term.length < 2) {
@@ -159,7 +171,22 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     };
   }, [herbInput, searchHerbs]);
 
-  useEffect(() => () => searchAbort.current?.abort(), []);
+  useEffect(
+    () => () => {
+      searchAbort.current?.abort();
+      checkAbortRef.current?.abort();
+    },
+    []
+  );
+
+  function invalidateCheck() {
+    checkGenRef.current += 1;
+    checkAbortRef.current?.abort();
+    checkAbortRef.current = null;
+    setChecking(false);
+    setCheckResult(null);
+    setCheckError(null);
+  }
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -177,6 +204,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
   }, []);
 
   async function handleCheck(herbOverride?: string, medOverride?: string) {
+    invalidateCheck();
     setShowHerbResults(false);
     const herbName = (herbOverride ?? herbInput).trim();
     const medName = (medOverride ?? medInput).trim();
@@ -192,8 +220,6 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       setCheckError(labels.sameCheckError);
       return;
     }
-    setCheckError(null);
-    setCheckResult(null);
 
     if (!herbName || !medName) {
       const query = herbName
@@ -203,14 +229,22 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       return;
     }
 
+    const gen = ++checkGenRef.current;
+    checkAbortRef.current?.abort();
+    const controller = new AbortController();
+    checkAbortRef.current = controller;
+
     setChecking(true);
     try {
       const res = await fetch(
-        `/api/interactions/check?herb=${encodeURIComponent(herbName)}&drug=${encodeURIComponent(medName)}`
+        `/api/interactions/check?herb=${encodeURIComponent(herbName)}&drug=${encodeURIComponent(medName)}`,
+        { signal: controller.signal }
       );
+      if (gen !== checkGenRef.current) return;
       const data = (await res.json()) as CheckResult & {
         unavailable?: boolean;
       };
+      if (gen !== checkGenRef.current) return;
       if (!res.ok || data.unavailable) {
         setCheckError(labels.checkerError);
         setCheckResult(null);
@@ -218,15 +252,22 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
       }
       setCheckResult(data);
     } catch {
+      if (gen !== checkGenRef.current) return;
       setCheckError(labels.checkerError);
       setCheckResult(null);
     } finally {
-      setChecking(false);
+      if (gen === checkGenRef.current) {
+        setChecking(false);
+        if (checkAbortRef.current === controller) {
+          checkAbortRef.current = null;
+        }
+      }
     }
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter") {
+      e.preventDefault();
       if (
         showHerbResults &&
         activeHerbIndex >= 0 &&
@@ -257,6 +298,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
     justSelected.current = herb.name;
     setHerbInput(herb.name);
     setShowHerbResults(false);
+    invalidateCheck();
     medRef.current?.focus();
   }
 
@@ -288,7 +330,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
               value={herbInput}
               onChange={(e) => {
                 setHerbInput(e.target.value);
-                setCheckError(null);
+                invalidateCheck();
               }}
               onKeyDown={handleKeyDown}
               onFocus={() => herbInput.length >= 2 && setShowHerbResults(true)}
@@ -336,7 +378,7 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
               value={medInput}
               onChange={(e) => {
                 setMedInput(e.target.value);
-                setCheckError(null);
+                invalidateCheck();
               }}
               placeholder={labels.medPlaceholder}
               className="w-full rounded-md border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-colors"
@@ -362,94 +404,154 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
             </p>
           )}
 
-          {checkResult && checkResult.found && (
-            <div
-              role="status"
-              className="rounded-xl border bg-card p-4 text-left shadow-sm"
-            >
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {labels.checkerFoundTitle}
-              </p>
-              <p className="mt-2 text-base font-semibold text-foreground">
-                {checkResult.herb.name} + {checkResult.pair.drugName}
-              </p>
-              <span
-                className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${SEVERITY_STYLES[checkResult.pair.severity]}`}
+          {checkResult &&
+            checkResult.found &&
+            checkResult.ambiguous &&
+            checkResult.conflictingPairs.length > 0 && (
+              <div
+                role="alert"
+                className="space-y-3 rounded-xl border border-amber-300 bg-amber-50/70 p-4 text-left shadow-sm dark:border-amber-800 dark:bg-amber-950/30"
               >
-                {severityLabel[checkResult.pair.severity]}
-              </span>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                {checkResult.pair.description}
-              </p>
-              {checkResult.pair.mechanism && (
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  <span className="font-medium text-foreground">
-                    {labels.checkerMechanism}:{" "}
-                  </span>
-                  {checkResult.pair.mechanism}
+                <p className="text-sm font-semibold text-foreground">
+                  {checkResult.herb.name}: Multiple interaction records match
+                  this medication — review all entries with a pharmacist.
                 </p>
-              )}
-              <p className="mt-2 text-xs text-muted-foreground">
-                {checkResult.pair.evidenceLevel && (
-                  <span>
-                    {labels.checkerEvidence}: {checkResult.pair.evidenceLevel}
-                    {" · "}
-                  </span>
-                )}
-                {checkResult.pair.source && (
-                  <span>
-                    {labels.checkerSource}:{" "}
-                    {checkResult.pair.sourceUrl ? (
-                      <a
-                        href={checkResult.pair.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
+                <div className="space-y-3">
+                  {checkResult.conflictingPairs.map((cp) => (
+                    <div
+                      key={cp.id}
+                      className="rounded-lg border border-border bg-card p-3"
+                    >
+                      <p className="text-sm font-semibold text-foreground">
+                        {checkResult.herb.name} + {cp.drugName}
+                      </p>
+                      <span
+                        className={`mt-1.5 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${SEVERITY_STYLES[cp.severity]}`}
                       >
-                        {checkResult.pair.source}
-                      </a>
-                    ) : (
-                      checkResult.pair.source
-                    )}
-                  </span>
-                )}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button
-                  size="sm"
-                  render={<Link href={checkResult.pair.pairUrl} />}
-                >
-                  {labels.checkerViewPair}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  render={<Link href={`/herbs/${checkResult.herb.slug}`} />}
-                >
-                  {labels.checkerViewHerb}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  render={
-                    <Link
-                      href={`/herbalist?q=${encodeURIComponent(
-                        labels.checkerAskPrompt
-                          .replace("{herb}", checkResult.herb.name)
-                          .replace("{drug}", checkResult.pair.drugName)
-                      )}`}
-                    />
-                  }
-                >
-                  <MessageCircle className="mr-1 size-3" />
-                  {labels.checkerAskHerbalist}
-                </Button>
+                        {severityLabel[cp.severity]}
+                      </span>
+                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                        {cp.description}
+                      </p>
+                      {cp.mechanism && (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          <span className="font-medium text-foreground">
+                            {labels.checkerMechanism}:{" "}
+                          </span>
+                          {cp.mechanism}
+                        </p>
+                      )}
+                      <div className="mt-2">
+                        <Link
+                          href={cp.pairUrl}
+                          className={buttonVariants({
+                            size: "sm",
+                            variant: "outline",
+                          })}
+                        >
+                          {labels.checkerViewPair}
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {labels.checkerDisclaimer}
+                </p>
               </div>
-              <p className="mt-3 text-xs text-muted-foreground">
-                {labels.checkerDisclaimer}
-              </p>
-            </div>
-          )}
+            )}
+
+          {checkResult &&
+            checkResult.found &&
+            !checkResult.ambiguous &&
+            checkResult.pair && (
+              <div
+                role="status"
+                className="rounded-xl border bg-card p-4 text-left shadow-sm"
+              >
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {labels.checkerFoundTitle}
+                </p>
+                <p className="mt-2 text-base font-semibold text-foreground">
+                  {checkResult.herb.name} + {checkResult.pair.drugName}
+                </p>
+                <span
+                  className={`mt-2 inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${SEVERITY_STYLES[checkResult.pair.severity]}`}
+                >
+                  {severityLabel[checkResult.pair.severity]}
+                </span>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {checkResult.pair.description}
+                </p>
+                {checkResult.pair.mechanism && (
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    <span className="font-medium text-foreground">
+                      {labels.checkerMechanism}:{" "}
+                    </span>
+                    {checkResult.pair.mechanism}
+                  </p>
+                )}
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {checkResult.pair.evidenceLevel && (
+                    <span>
+                      {labels.checkerEvidence}: {checkResult.pair.evidenceLevel}
+                      {" · "}
+                    </span>
+                  )}
+                  {checkResult.pair.source && (
+                    <span>
+                      {labels.checkerSource}:{" "}
+                      {checkResult.pair.sourceUrl ? (
+                        <a
+                          href={checkResult.pair.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          {checkResult.pair.source}
+                        </a>
+                      ) : (
+                        checkResult.pair.source
+                      )}
+                    </span>
+                  )}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Link
+                    href={checkResult.pair.pairUrl}
+                    className={buttonVariants({ size: "sm" })}
+                  >
+                    {labels.checkerViewPair}
+                  </Link>
+                  <Link
+                    href={`/herbs/${checkResult.herb.slug}`}
+                    className={buttonVariants({
+                      size: "sm",
+                      variant: "outline",
+                    })}
+                  >
+                    {labels.checkerViewHerb}
+                  </Link>
+                  <Link
+                    href={`/herbalist?q=${encodeURIComponent(
+                      labels.checkerAskPrompt
+                        .replace("{herb}", checkResult.herb.name)
+                        .replace("{drug}", checkResult.pair.drugName)
+                    )}`}
+                    className={buttonVariants({
+                      size: "sm",
+                      variant: "outline",
+                    })}
+                  >
+                    <MessageCircle className="mr-1 size-3" />
+                    {labels.checkerAskHerbalist}
+                  </Link>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  {labels.checkerDisclaimer}
+                </p>
+              </div>
+            )}
 
           {checkResult && !checkResult.found && (
             <div
@@ -468,22 +570,20 @@ export function HomeSearchClient({ labels }: { labels: Labels }) {
                 {labels.checkerAiNote}
               </p>
               <div className="mt-3">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  render={
-                    <Link
-                      href={`/herbalist?q=${encodeURIComponent(
-                        labels.checkerAskPrompt
-                          .replace("{herb}", herbInput.trim())
-                          .replace("{drug}", medInput.trim())
-                      )}`}
-                    />
-                  }
+                <Link
+                  href={`/herbalist?q=${encodeURIComponent(
+                    labels.checkerAskPrompt
+                      .replace("{herb}", herbInput.trim())
+                      .replace("{drug}", medInput.trim())
+                  )}`}
+                  className={buttonVariants({
+                    size: "sm",
+                    variant: "outline",
+                  })}
                 >
                   <MessageCircle className="mr-1 size-3" />
                   {labels.checkerAskHerbalist}
-                </Button>
+                </Link>
               </div>
             </div>
           )}

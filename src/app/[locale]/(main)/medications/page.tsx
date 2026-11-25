@@ -8,7 +8,7 @@ import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { getMedicationSummaries } from "@/lib/interactions/medications";
 import { MedicationDirectoryClient } from "@/components/interactions/medication-directory-client";
 import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
@@ -164,13 +164,13 @@ export default async function MedicationsIndexPage() {
               : "Screen your entire regimen at once using our Multi-Herb & Medication Stack Checker."}
           </p>
         </div>
-        <Button
-          render={<Link href="/herb-drug-interactions#stack-checker" />}
-          className="shrink-0"
+        <Link
+          href="/herb-drug-interactions#stack-checker"
+          className={buttonVariants({ className: "shrink-0" })}
         >
           {fr ? "Ouvrir le vérificateur multiple" : "Open Stack Checker"}
           <ArrowRight className="ml-1 size-4" />
-        </Button>
+        </Link>
       </section>
 
       <p className="text-xs text-muted-foreground">

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { captureClientException } from "@/lib/sentry/client-deferred";
 import { AlertTriangle, RotateCcw, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import Link from "next/link";
 
 export default function AdminError({
@@ -33,10 +34,10 @@ export default function AdminError({
           <RotateCcw className="mr-2 h-4 w-4" />
           Try again
         </Button>
-        <Button variant="outline" render={<Link href="/admin" />}>
+        <Link href="/admin" className={buttonVariants({ variant: "outline" })}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Admin home
-        </Button>
+        </Link>
       </div>
     </div>
   );
