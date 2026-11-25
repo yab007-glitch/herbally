@@ -63,6 +63,9 @@ describe("GET /api/rxnorm", () => {
     const { GET } = await loadRoute();
     const res = await GET(makeRequest({ term: "asp" }));
     expect(res.status).toBe(200);
+    expect(res.headers.get("cache-control")).toBe(
+      "public, s-maxage=3600, stale-while-revalidate=86400"
+    );
     const json = await res.json();
     expect(json.results).toHaveLength(2);
     expect(json.results[0].name).toBe("Aspirin");
@@ -94,6 +97,7 @@ describe("GET /api/rxnorm", () => {
     const { GET } = await loadRoute();
     const res = await GET(makeRequest({ term: "aspirin" }));
     expect(res.status).toBe(500);
+    expect(res.headers.get("cache-control")).toBe("no-store");
   });
 
   it("returns empty array on a 404 from RxNorm (no matches is expected)", async () => {
@@ -115,7 +119,9 @@ describe("GET /api/rxnorm", () => {
     const { GET } = await loadRoute();
     const res = await GET(makeRequest({ term: "aspirin" }));
     expect(res.status).toBe(200);
+    expect(res.headers.get("cache-control")).toBe("no-store");
     const json = await res.json();
     expect(json.results).toEqual([]);
+    expect(json.unavailable).toBe(true);
   });
 });

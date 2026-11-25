@@ -42,6 +42,11 @@ export function sanitizeOpenFdaTerm(raw: string): string {
     .trim();
 }
 
+const PUBLIC_CACHE_HEADERS = {
+  "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+};
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+
 export async function GET(request: Request) {
   const { success } = await rateLimit(
     rateLimitKey("openfda", getClientIP(request as NextRequest)),
@@ -51,7 +56,7 @@ export async function GET(request: Request) {
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests" },
-      { status: 429, headers: { "Retry-After": "60" } }
+      { status: 429, headers: { "Retry-After": "60", ...NO_STORE_HEADERS } }
     );
   }
   const schema = z.object({ term: z.string().min(1).max(100) });
@@ -61,14 +66,14 @@ export async function GET(request: Request) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: "Missing term parameter" },
-      { status: 400 }
+      { status: 400, headers: NO_STORE_HEADERS }
     );
   }
   const cleanTerm = sanitizeOpenFdaTerm(parsed.data.term);
   if (!cleanTerm) {
     return NextResponse.json(
       { error: "Invalid term parameter" },
-      { status: 400 }
+      { status: 400, headers: NO_STORE_HEADERS }
     );
   }
 
@@ -83,10 +88,16 @@ export async function GET(request: Request) {
 
     if (!res.ok) {
       if (res.status === 404) {
-        return NextResponse.json({ results: [] });
+        return NextResponse.json(
+          { results: [] },
+          { headers: PUBLIC_CACHE_HEADERS }
+        );
       }
       logger.warn("openfda_api_upstream_error", { status: res.status });
-      return NextResponse.json({ results: [], unavailable: true });
+      return NextResponse.json(
+        { results: [], unavailable: true },
+        { headers: NO_STORE_HEADERS }
+      );
     }
 
     const data = await res.json();
@@ -95,7 +106,7 @@ export async function GET(request: Request) {
     // internal query state or confuse the client. Surface only the results
     // array the UI consumes, coerced to an array.
     const results = Array.isArray(data?.results) ? data.results : [];
-    return NextResponse.json({ results });
+    return NextResponse.json({ results }, { headers: PUBLIC_CACHE_HEADERS });
   } catch (error) {
     // Transient network/DNS errors (ENOTFOUND, ECONNREFUSED, timeout) are
     // infrastructure issues, not code bugs — log as a warning and return
@@ -112,6 +123,9 @@ export async function GET(request: Request) {
         error: error instanceof Error ? error.message : String(error),
       });
     }
-    return NextResponse.json({ results: [], unavailable: true });
+    return NextResponse.json(
+      { results: [], unavailable: true },
+      { headers: NO_STORE_HEADERS }
+    );
   }
 }

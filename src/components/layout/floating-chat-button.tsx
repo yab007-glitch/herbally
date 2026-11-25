@@ -177,6 +177,7 @@ export function FloatingChatButton() {
               {t("herbalistPage.greeting.bubbleText")}
             </p>
             <button
+              type="button"
               onClick={dismissTeaser}
               aria-label={t("herbalistPage.greeting.bubbleDismiss")}
               className="-mr-1 -mt-1 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
@@ -186,6 +187,7 @@ export function FloatingChatButton() {
           </div>
           <div className="mt-2.5 flex justify-end gap-2">
             <button
+              type="button"
               onClick={dismissTeaser}
               className="rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
@@ -210,6 +212,7 @@ export function FloatingChatButton() {
           its own "Start chat", and stacking both put a button on the primary
           "Check interaction" CTA on a phone. */}
       <button
+        type="button"
         onClick={() => {
           setOpen(!open);
           setTeaser(false);
@@ -256,6 +259,7 @@ export function FloatingChatButton() {
             {quickQuestions.map((q) => (
               <button
                 key={q}
+                type="button"
                 onClick={() => handleSend(q)}
                 className="block w-full rounded-lg border border-border px-3 py-2 text-left text-sm text-muted-foreground hover:border-primary/30 hover:text-foreground transition-colors"
               >

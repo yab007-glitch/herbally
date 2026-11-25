@@ -37,7 +37,9 @@ function isTransientError(error: unknown): boolean {
   );
 }
 
-export async function searchDrugs(term: string): Promise<RxNormDrug[]> {
+export async function searchDrugsWithAvailability(
+  term: string
+): Promise<{ results: RxNormDrug[]; unavailable?: boolean }> {
   try {
     const res = await fetch(
       `${RXNORM_BASE}/approximateTerm.json?term=${encodeURIComponent(term)}&maxEntries=10`,
@@ -49,7 +51,7 @@ export async function searchDrugs(term: string): Promise<RxNormDrug[]> {
 
     if (!res.ok) {
       // 404 / no-content = "no matches", an expected empty result.
-      if (res.status === 404) return [];
+      if (res.status === 404) return { results: [] };
       // Any other non-2xx is a real upstream bug — throw so the route reports it.
       throw new Error(`rxnorm_search_status_${res.status}`);
     }
@@ -57,19 +59,21 @@ export async function searchDrugs(term: string): Promise<RxNormDrug[]> {
     const data = await res.json();
     const candidates = data?.approximateGroup?.candidate || [];
 
-    return candidates.map(
-      (c: { rxcui: string; name: string; score: string }) => ({
-        rxcui: c.rxcui,
-        name: c.name,
-        synonym: c.name,
-      })
-    );
+    return {
+      results: candidates.map(
+        (c: { rxcui: string; name: string; score: string }) => ({
+          rxcui: c.rxcui,
+          name: c.name,
+          synonym: c.name,
+        })
+      ),
+    };
   } catch (error) {
     if (isTransientError(error)) {
       logger.warn("rxnorm_search_transient", {
         error: error instanceof Error ? error.message : String(error),
       });
-      return [];
+      return { results: [], unavailable: true };
     }
     // Non-transient: rethrow so the route captures it to Sentry.
     logger.error("rxnorm_search_failed", {
@@ -77,6 +81,11 @@ export async function searchDrugs(term: string): Promise<RxNormDrug[]> {
     });
     throw error;
   }
+}
+
+export async function searchDrugs(term: string): Promise<RxNormDrug[]> {
+  const { results } = await searchDrugsWithAvailability(term);
+  return results;
 }
 
 export async function getDrugByRxcui(rxcui: string): Promise<string | null> {

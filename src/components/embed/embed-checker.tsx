@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Leaf, ShieldCheck } from "lucide-react";
 
 interface HerbResult {
@@ -21,6 +21,8 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
  */
 export function EmbedChecker() {
   const t = useTranslations("embed");
+  const locale = useLocale();
+  const localePrefix = locale === "fr" ? "/fr" : "";
   const [herbInput, setHerbInput] = useState("");
   const [medInput, setMedInput] = useState("");
   const [herbResults, setHerbResults] = useState<HerbResult[]>([]);
@@ -45,6 +47,11 @@ export function EmbedChecker() {
         `/api/herbs/search?q=${encodeURIComponent(term)}`,
         { signal: controller.signal }
       );
+      if (!res.ok) {
+        setHerbResults([]);
+        setShowResults(false);
+        return;
+      }
       const data = await res.json();
       setHerbResults(Array.isArray(data) ? data.slice(0, 5) : []);
       setShowResults(true);
@@ -62,7 +69,7 @@ export function EmbedChecker() {
     };
   }, [herbInput, searchHerbs]);
 
-  useEffect(() => searchAbort.current?.abort(), []);
+  useEffect(() => () => searchAbort.current?.abort(), []);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -110,10 +117,16 @@ export function EmbedChecker() {
     }
     setError(null);
     const query =
-      herbName && medName
-        ? `Is ${herbName} safe to take with ${medName}?`
-        : `Tell me about ${herbName || medName}`;
-    openResult(`${APP_URL}/herbalist?q=${encodeURIComponent(query)}`);
+      locale === "fr"
+        ? herbName && medName
+          ? `Est-ce que ${herbName} est sécuritaire avec ${medName} ?`
+          : `Parle-moi de ${herbName || medName}`
+        : herbName && medName
+          ? `Is ${herbName} safe to take with ${medName}?`
+          : `Tell me about ${herbName || medName}`;
+    openResult(
+      `${APP_URL}${localePrefix}/herbalist?q=${encodeURIComponent(query)}`
+    );
   }
 
   return (
@@ -136,6 +149,10 @@ export function EmbedChecker() {
           }}
           onKeyDown={(e) => e.key === "Enter" && handleCheck()}
           onFocus={() => herbInput.length >= 2 && setShowResults(true)}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={showResults && herbResults.length > 0}
+          aria-controls="embed-herb-results"
           placeholder={t("herbPlaceholder")}
           aria-label={t("herbPlaceholder")}
           autoComplete="off"
@@ -144,11 +161,16 @@ export function EmbedChecker() {
         {showResults && herbResults.length > 0 && (
           <div
             ref={resultsRef}
+            id="embed-herb-results"
+            role="listbox"
             className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-xl border border-border bg-background shadow-lg"
           >
             {herbResults.map((herb) => (
               <button
                 key={herb.id}
+                type="button"
+                role="option"
+                aria-selected={herbInput === herb.name}
                 onClick={() => {
                   setHerbInput(herb.name);
                   setShowResults(false);
@@ -185,6 +207,7 @@ export function EmbedChecker() {
       />
 
       <button
+        type="button"
         onClick={handleCheck}
         className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
       >
@@ -200,7 +223,7 @@ export function EmbedChecker() {
 
       <p className="mt-3 text-center text-[11px] text-muted-foreground">
         <a
-          href={APP_URL}
+          href={`${APP_URL}${localePrefix || "/"}`}
           target="_blank"
           rel="noopener"
           className="hover:text-foreground hover:underline"

@@ -125,6 +125,7 @@ describe("/api/garden write acknowledgments", () => {
     deleteEqMock.mockResolvedValueOnce({ error: null });
     const okRes = await DELETE(makeDelete("ginger"));
     expect(okRes.status).toBe(200);
+    expect(okRes.headers.get("cache-control")).toBe("private, no-store");
     expect(await okRes.json()).toEqual({ removed: true, slug: "ginger" });
   });
 });

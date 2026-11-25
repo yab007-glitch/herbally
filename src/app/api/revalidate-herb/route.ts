@@ -24,6 +24,15 @@ const Body = z.object({
   secret: z.string(),
 });
 
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store" };
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { ...NO_STORE_HEADERS, ...(init?.headers ?? {}) },
+  });
+}
+
 export async function POST(request: NextRequest) {
   const { success } = await rateLimit(
     rateLimitKey("revalidate-herb", getClientIP(request)),
@@ -31,7 +40,7 @@ export async function POST(request: NextRequest) {
     60_000
   );
   if (!success) {
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Too many requests" },
       { status: 429, headers: { "Retry-After": "60" } }
     );
@@ -40,7 +49,7 @@ export async function POST(request: NextRequest) {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) {
     logger.error("revalidate_secret_not_configured");
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Revalidation is not configured" },
       { status: 503 }
     );
@@ -48,7 +57,7 @@ export async function POST(request: NextRequest) {
 
   const bodyResult = await readJsonBodyWithLimit(request, 32 * 1024);
   if (!bodyResult.ok) {
-    return NextResponse.json(
+    return jsonNoStore(
       {
         error:
           bodyResult.reason === "too_large"
@@ -62,13 +71,13 @@ export async function POST(request: NextRequest) {
 
   const parsed = Body.safeParse(raw);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonNoStore({ error: "Unauthorized" }, { status: 401 });
   }
   // Constant-time comparison to prevent timing attacks.
   const a = Buffer.from(parsed.data.secret);
   const b = Buffer.from(secret);
   if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonNoStore({ error: "Unauthorized" }, { status: 401 });
   }
 
   const slugs = [...new Set(parsed.data.slugs)];
@@ -98,10 +107,16 @@ export async function POST(request: NextRequest) {
     revalidatePath(`/fr/herbs/${slug}`);
   }
 
+  // Localized cross-herb hubs and comparison pages also surface herb metadata.
+  for (const prefix of ["", "/en", "/fr"]) {
+    revalidatePath(`${prefix}/compare`, "layout");
+    revalidatePath(`${prefix}/symptoms`, "layout");
+  }
+
   // The sitemap is a separately cached route (`revalidate = 3600`). Any
   // correction that changes which herbs or pages are listable must refresh it
   // too, or a degraded copy keeps being served for up to an hour.
   revalidatePath("/sitemap.xml");
 
-  return NextResponse.json({ ok: true, revalidated: slugs.length });
+  return jsonNoStore({ ok: true, revalidated: slugs.length });
 }

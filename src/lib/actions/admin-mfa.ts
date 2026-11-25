@@ -100,9 +100,14 @@ export async function startAdminTotpEnrollment(): Promise<EnrollTotpResult> {
     });
 
     if (error || !data || data.type !== "totp") {
+      if (error) {
+        logger.error("admin_mfa_enroll_upstream_failed", {
+          error: error.message,
+        });
+      }
       return {
         success: false,
-        error: error?.message ?? "Could not start authenticator setup.",
+        error: "Could not start authenticator setup.",
       };
     }
 
@@ -202,7 +207,10 @@ export async function removeAdminTotpFactor(
     };
   }
   const { error } = await access.supabase.auth.mfa.unenroll({ factorId });
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    logger.error("admin_mfa_unenroll_failed", { error: error.message });
+    return { success: false, error: "Could not remove authenticator factor." };
+  }
   revalidatePath("/admin", "layout");
   return { success: true };
 }

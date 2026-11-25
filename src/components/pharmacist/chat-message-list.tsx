@@ -71,6 +71,7 @@ export function ChatMessageList({
                   <div className="group relative rounded-2xl rounded-bl-md bg-muted/60 px-4 py-2.5 text-sm leading-relaxed text-foreground">
                     <ChatMarkdown>{message.content}</ChatMarkdown>
                     <button
+                      type="button"
                       onClick={() => onCopy(message.content, message.id)}
                       className="absolute -bottom-1 right-0 translate-y-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-muted"
                       aria-label={t("common.copyResponseLabel")}

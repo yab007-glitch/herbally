@@ -15,6 +15,15 @@ import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
  *
  * Secured by REVALIDATE_SECRET (shared with the ingestion script). Rate-limited.
  */
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store" };
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { ...NO_STORE_HEADERS, ...(init?.headers ?? {}) },
+  });
+}
+
 export async function POST(request: NextRequest) {
   const { success } = await rateLimit(
     rateLimitKey("revalidate-pubmed-sheet", getClientIP(request)),
@@ -22,7 +31,7 @@ export async function POST(request: NextRequest) {
     60_000
   );
   if (!success) {
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Too many requests" },
       { status: 429, headers: { "Retry-After": "60" } }
     );
@@ -31,7 +40,7 @@ export async function POST(request: NextRequest) {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) {
     logger.error("revalidate_secret_not_configured");
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Revalidation is not configured" },
       { status: 503 }
     );
@@ -39,7 +48,7 @@ export async function POST(request: NextRequest) {
 
   const bodyResult = await readJsonBodyWithLimit(request, 4 * 1024);
   if (!bodyResult.ok) {
-    return NextResponse.json(
+    return jsonNoStore(
       {
         error:
           bodyResult.reason === "too_large"
@@ -58,13 +67,13 @@ export async function POST(request: NextRequest) {
     })
     .safeParse(raw);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonNoStore({ error: "Unauthorized" }, { status: 401 });
   }
   // Constant-time comparison to prevent timing attacks.
   const a = Buffer.from(parsed.data.secret);
   const b = Buffer.from(secret);
   if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return jsonNoStore({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Slug is validated (1-200 chars) before being interpolated into the tag.
@@ -73,5 +82,5 @@ export async function POST(request: NextRequest) {
   revalidatePath(`/herbs/${parsed.data.slug}`);
   revalidatePath(`/en/herbs/${parsed.data.slug}`);
   revalidatePath(`/fr/herbs/${parsed.data.slug}`);
-  return NextResponse.json({ ok: true, slug: parsed.data.slug });
+  return jsonNoStore({ ok: true, slug: parsed.data.slug });
 }

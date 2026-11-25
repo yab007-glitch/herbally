@@ -24,9 +24,12 @@ async function EmbedCheckerShell({
   return (
     <ToolsMessagesProvider locale={locale}>
       <div className={dark ? "dark" : undefined}>
-        <div className="min-h-dvh bg-background p-3 dark:bg-zinc-950">
+        <main
+          id="main-content"
+          className="min-h-dvh bg-background p-3 dark:bg-zinc-950"
+        >
           <EmbedChecker />
-        </div>
+        </main>
       </div>
     </ToolsMessagesProvider>
   );

@@ -2,11 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import * as actions from "./herbs";
 
 const getMock = vi.fn();
+let requestLocaleHeader = "en";
 
 vi.mock("next/headers", () => ({
   cookies: async () => ({
     get: getMock,
   }),
+  headers: async () => new Headers({ "x-locale": requestLocaleHeader }),
 }));
 
 const fromMock = vi.fn();
@@ -22,6 +24,7 @@ describe("herbs actions", () => {
     vi.clearAllMocks();
     getMock.mockReset();
     getMock.mockReturnValue({ value: "en" });
+    requestLocaleHeader = "en";
     fromMock.mockReset();
   });
 
@@ -68,9 +71,8 @@ describe("herbs actions", () => {
 
       const result = await actions.getHerbs({});
       expect(result.success).toBe(false);
-      expect(!result.success && result.error).toMatch(
-        /db timeout|Failed to fetch herbs/
-      );
+      expect(!result.success && result.error).toBe("Failed to fetch herbs");
+      expect(!result.success && result.error).not.toContain("db timeout");
     });
 
     it("handles PGRST103 range-not-satisfiable cleanly without error log", async () => {
@@ -147,7 +149,7 @@ describe("herbs actions", () => {
       expect(result.success).toBe(false);
     });
 
-    it("marks a database failure as unavailable", async () => {
+    it("marks a database failure as unavailable without leaking raw DB error text", async () => {
       fromMock.mockReturnValueOnce({
         select: () => ({
           eq: () => ({
@@ -155,7 +157,7 @@ describe("herbs actions", () => {
               single: () =>
                 Promise.resolve({
                   data: null,
-                  error: { message: "db timeout" },
+                  error: { message: 'relation "herbs" password leak' },
                 }),
             }),
           }),
@@ -165,6 +167,7 @@ describe("herbs actions", () => {
       const result = await actions.getHerbBySlug("ginger");
       expect(result.success).toBe(false);
       expect(!result.success && result.reason).toBe("unavailable");
+      expect(!result.success && result.error).toBe("Failed to fetch herb");
     });
 
     it("marks PGRST116 (0 rows) as not_found", async () => {
@@ -264,6 +267,41 @@ describe("herbs actions", () => {
       const result = await actions.searchHerbs("xyz123");
       expect(result.success).toBe(true);
       expect(result.success && result.data).toEqual([]);
+    });
+
+    it("localizes keyword matches into French using selected translations", async () => {
+      requestLocaleHeader = "fr";
+      let selectedCols = "";
+      fromMock.mockReturnValueOnce({
+        select: (cols: string) => {
+          selectedCols = cols;
+          return {
+            eq: () => ({
+              overlaps: () => ({
+                limit: () =>
+                  Promise.resolve({
+                    data: [
+                      {
+                        id: "h1",
+                        name: "Ginger",
+                        slug: "ginger",
+                        scientific_name: "Zingiber officinale",
+                        evidence_level: "A",
+                        translations: { fr: { name: "Gingembre" } },
+                      },
+                    ],
+                    error: null,
+                  }),
+              }),
+            }),
+          };
+        },
+      });
+
+      const result = await actions.searchHerbs("nausea");
+      expect(selectedCols).toContain("translations");
+      expect(result.success).toBe(true);
+      expect(result.success && result.data?.[0]?.name).toBe("Gingembre");
     });
   });
 });

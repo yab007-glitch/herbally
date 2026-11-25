@@ -266,6 +266,7 @@ export function UnifiedNavbar() {
                     <AccountMenu compact />
                   </div>
                   <button
+                    type="button"
                     onClick={() => {
                       setOpen(false);
                       setShowLangDrawer(true);
@@ -293,6 +294,7 @@ export function UnifiedNavbar() {
                         return (
                           <button
                             key={th}
+                            type="button"
                             onClick={() => handleMobileThemeChange(th)}
                             className={cn(
                               "inline-flex size-8 items-center justify-center rounded-sm transition-colors",

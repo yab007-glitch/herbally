@@ -23,6 +23,15 @@ const bodySchema = z.object({
   // guest's garden by sending a different id (SEC-9).
 });
 
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store" };
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { ...NO_STORE_HEADERS, ...(init?.headers ?? {}) },
+  });
+}
+
 async function rateLimited(request: NextRequest) {
   const { success } = await rateLimit(
     rateLimitKey("garden", getClientIP(request)),
@@ -30,7 +39,7 @@ async function rateLimited(request: NextRequest) {
     60_000
   );
   if (!success) {
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Too many requests. Please try again later." },
       { status: 429, headers: { "Retry-After": "60" } }
     );
@@ -53,7 +62,7 @@ export async function POST(request: NextRequest) {
 
   const bodyResult = await readJsonBodyWithLimit(request, 100 * 1024);
   if (!bodyResult.ok) {
-    return NextResponse.json(
+    return jsonNoStore(
       {
         error:
           bodyResult.reason === "too_large"
@@ -67,15 +76,12 @@ export async function POST(request: NextRequest) {
   try {
     const parsed = bodySchema.safeParse(bodyResult.data);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Invalid request body" },
-        { status: 400 }
-      );
+      return jsonNoStore({ error: "Invalid request body" }, { status: 400 });
     }
     const { herbs } = parsed.data;
 
     if (herbs.length === 0) {
-      return NextResponse.json({ saved: 0, savedSlugs: [], errors: [] });
+      return jsonNoStore({ saved: 0, savedSlugs: [], errors: [] });
     }
 
     const supabase = await createClient();
@@ -144,23 +150,20 @@ export async function POST(request: NextRequest) {
     }
 
     if (result.saved === 0 && result.errors.length > 0) {
-      return NextResponse.json(
+      return jsonNoStore(
         { ...result, error: "Failed to sync garden" },
         { status: 500 }
       );
     }
     if (result.errors.length > 0) {
-      return NextResponse.json(result, { status: 207 });
+      return jsonNoStore(result, { status: 207 });
     }
-    return NextResponse.json(result);
+    return jsonNoStore(result);
   } catch (err) {
     logger.error("garden_sync_error", {
       error: err instanceof Error ? err.message : String(err),
     });
-    return NextResponse.json(
-      { error: "Failed to sync garden" },
-      { status: 500 }
-    );
+    return jsonNoStore({ error: "Failed to sync garden" }, { status: 500 });
   }
 }
 
@@ -214,7 +217,7 @@ export async function GET(request: NextRequest) {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return NextResponse.json({
+      return jsonNoStore({
         herbs: ((data ?? []) as GardenHerbRow[]).map(toGardenHerb),
       });
     }
@@ -230,17 +233,14 @@ export async function GET(request: NextRequest) {
       .eq("guest_id", guestId)
       .order("created_at", { ascending: false });
     if (error) throw error;
-    return NextResponse.json({
+    return jsonNoStore({
       herbs: ((data ?? []) as GardenHerbRow[]).map(toGardenHerb),
     });
   } catch (err) {
     logger.error("garden_fetch_error", {
       error: err instanceof Error ? err.message : String(err),
     });
-    return NextResponse.json(
-      { error: "Failed to fetch garden" },
-      { status: 500 }
-    );
+    return jsonNoStore({ error: "Failed to fetch garden" }, { status: 500 });
   }
 }
 
@@ -260,7 +260,7 @@ export async function DELETE(request: NextRequest) {
     const slugRaw = url.searchParams.get("slug");
     const parsedSlug = slugSchema.safeParse(slugRaw);
     if (!parsedSlug.success) {
-      return NextResponse.json({ error: "slug is required" }, { status: 400 });
+      return jsonNoStore({ error: "slug is required" }, { status: 400 });
     }
     const slug = parsedSlug.data;
 
@@ -280,12 +280,9 @@ export async function DELETE(request: NextRequest) {
           slug,
           error: error.message,
         });
-        return NextResponse.json(
-          { error: "Failed to remove herb" },
-          { status: 500 }
-        );
+        return jsonNoStore({ error: "Failed to remove herb" }, { status: 500 });
       }
-      return NextResponse.json({ removed: true, slug });
+      return jsonNoStore({ removed: true, slug });
     }
 
     const guestId = await getGuestId();
@@ -297,19 +294,13 @@ export async function DELETE(request: NextRequest) {
       .eq("herb_slug", slug);
     if (error) {
       logger.error("garden_delete_guest_error", { slug, error: error.message });
-      return NextResponse.json(
-        { error: "Failed to remove herb" },
-        { status: 500 }
-      );
+      return jsonNoStore({ error: "Failed to remove herb" }, { status: 500 });
     }
-    return NextResponse.json({ removed: true, slug });
+    return jsonNoStore({ removed: true, slug });
   } catch (err) {
     logger.error("garden_delete_error", {
       error: err instanceof Error ? err.message : String(err),
     });
-    return NextResponse.json(
-      { error: "Failed to remove herb" },
-      { status: 500 }
-    );
+    return jsonNoStore({ error: "Failed to remove herb" }, { status: 500 });
   }
 }

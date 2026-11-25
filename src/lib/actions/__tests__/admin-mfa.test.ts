@@ -43,7 +43,11 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 
-import { startAdminTotpEnrollment, verifyAdminTotpCode } from "../admin-mfa";
+import {
+  startAdminTotpEnrollment,
+  verifyAdminTotpCode,
+  removeAdminTotpFactor,
+} from "../admin-mfa";
 
 describe("admin MFA enrollment and verification boundaries", () => {
   beforeEach(() => {
@@ -161,5 +165,49 @@ describe("admin MFA enrollment and verification boundaries", () => {
     const res = await startAdminTotpEnrollment();
     expect(res.success).toBe(true);
     expect(enrollMock).toHaveBeenCalledOnce();
+  });
+
+  it("sanitizes raw GoTrue error strings on enroll and unenroll failures", async () => {
+    listFactorsMock.mockResolvedValue({
+      data: { totp: [] },
+      error: null,
+    });
+    getAalMock.mockResolvedValue({
+      data: { currentLevel: "aal1", nextLevel: "aal1" },
+      error: null,
+    });
+    enrollMock.mockResolvedValueOnce({
+      data: null,
+      error: { message: "internal gotrue postgres constraint secret" },
+    });
+
+    const enrollRes = await startAdminTotpEnrollment();
+    expect(enrollRes).toEqual({
+      success: false,
+      error: "Could not start authenticator setup.",
+    });
+
+    listFactorsMock.mockResolvedValue({
+      data: {
+        totp: [
+          { id: "f-1", status: "verified" },
+          { id: "f-2", status: "verified" },
+        ],
+      },
+      error: null,
+    });
+    getAalMock.mockResolvedValue({
+      data: { currentLevel: "aal2", nextLevel: "aal2" },
+      error: null,
+    });
+    unenrollMock.mockResolvedValueOnce({
+      error: { message: "raw mfa delete stack trace" },
+    });
+
+    const removeRes = await removeAdminTotpFactor("f-2");
+    expect(removeRes).toEqual({
+      success: false,
+      error: "Could not remove authenticator factor.",
+    });
   });
 });

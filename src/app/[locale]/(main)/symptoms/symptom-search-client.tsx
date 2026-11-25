@@ -137,6 +137,7 @@ export function SymptomSearchClient() {
             {t.raw("symptomsPage.exampleSymptoms").map((example: string) => (
               <button
                 key={example}
+                type="button"
                 onClick={() => {
                   setQuery(example);
                   search(example);

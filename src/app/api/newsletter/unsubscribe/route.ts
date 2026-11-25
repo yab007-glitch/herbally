@@ -11,6 +11,12 @@ const unsubscribeQuerySchema = z.object({
   token: z.string().trim().uuid(),
 });
 
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store" };
+
+function noStoreRedirect(url: string) {
+  return NextResponse.redirect(url, { status: 302, headers: NO_STORE_HEADERS });
+}
+
 /**
  * One-click unsubscribe, on a GET so it works from a plain link in any mail
  * client — CASL requires the opt-out to be easy, and "reply with a special
@@ -28,7 +34,7 @@ export async function GET(request: NextRequest) {
   if (!success) {
     return NextResponse.json(
       { error: "Too many requests" },
-      { status: 429, headers: { "Retry-After": "60" } }
+      { status: 429, headers: { "Retry-After": "60", ...NO_STORE_HEADERS } }
     );
   }
 
@@ -38,7 +44,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!parsed.success) {
-    return NextResponse.redirect(`${done}?status=invalid`, 302);
+    return noStoreRedirect(`${done}?status=invalid`);
   }
   const token = parsed.data.token;
 
@@ -58,7 +64,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       logger.error("newsletter: unsubscribe failed", { error: error.message });
-      return NextResponse.redirect(`${done}?status=error`, 302);
+      return noStoreRedirect(`${done}?status=error`);
     }
     if (data && typeof data.email === "string") {
       invalidateNewsletterSendLease({
@@ -67,11 +73,11 @@ export async function GET(request: NextRequest) {
         confirmToken: data.confirm_token,
       });
     }
-    return NextResponse.redirect(`${done}?status=done`, 302);
+    return noStoreRedirect(`${done}?status=done`);
   } catch (error) {
     logger.error("newsletter: unsubscribe threw", {
       detail: error instanceof Error ? error.message : String(error),
     });
-    return NextResponse.redirect(`${done}?status=error`, 302);
+    return noStoreRedirect(`${done}?status=error`);
   }
 }

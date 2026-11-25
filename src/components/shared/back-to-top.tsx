@@ -21,6 +21,7 @@ export function BackToTop() {
 
   return (
     <button
+      type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label={t("common.backToTopLabel")}
       className={cn(
