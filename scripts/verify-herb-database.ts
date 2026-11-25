@@ -20,10 +20,18 @@ import {
   classifySupabaseTarget,
 } from "../src/lib/db/verify-rules";
 import { findPairUrlCollisions } from "../src/lib/interactions/pair-url";
-import { PUBLIC_HERB_COLUMNS } from "../src/lib/herbs/public-columns";
 
 config({ path: ".env.local" });
 config({ path: ".env" });
+
+/**
+ * Post-00104 the public read path is public.herbs_public. Select only the
+ * columns the validators inspect: pulling PUBLIC_HERB_COLUMNS would force the
+ * redacted translations and other expensive functions over every 1,000-row
+ * batch and trip PostgREST's statement timeout.
+ */
+const VERIFY_HERB_COLUMNS =
+  "id,name,slug,scientific_name,description,evidence_level,citations,category_id,contraindications,dosage_adult,pregnancy_safe,nursing_safe";
 
 interface HerbRow {
   id: string;
@@ -250,15 +258,22 @@ async function main() {
   );
 
   const herbList: HerbRow[] = [];
-  let page = 0;
+  let lastSlug: string | null = null;
 
   while (true) {
-    const { data, error } = await supabase
-      .from("herbs")
-      .select(PUBLIC_HERB_COLUMNS)
+    // Post-00104, anon has no table-wide SELECT on public.herbs; the sanitized
+    // view is the only public read path. Keyset pagination on the unique slug:
+    // OFFSET makes the view compute its sanitising functions for every skipped
+    // row and trips the 3s anon statement timeout near the end of the library.
+    let query = supabase
+      .from("herbs_public" as never)
+      .select(VERIFY_HERB_COLUMNS)
       .eq("is_published", true)
-      .order("name")
-      .range(page * 1000, (page + 1) * 1000 - 1);
+      .order("slug")
+      .limit(1000);
+    if (lastSlug) query = query.gt("slug", lastSlug);
+
+    const { data, error } = await query;
 
     if (error) {
       console.error(`❌ Failed to query herbs: ${error.message}`);
@@ -267,7 +282,7 @@ async function main() {
     if (!data || data.length === 0) break;
     herbList.push(...(data as unknown as HerbRow[]));
     if (data.length < 1000) break;
-    page++;
+    lastSlug = String((data[data.length - 1] as unknown as HerbRow).slug);
   }
 
   console.log(`  Checking ${herbList.length} published herbs...`);
