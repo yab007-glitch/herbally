@@ -65,8 +65,9 @@ test.describe("AI Herbalist chat", () => {
     });
 
     // Hold client JS chunks until the SSR textarea is filled so hydration
-    // deterministically lands AFTER pre-hydration input across all browsers
-    // (Firefox can otherwise hydrate before a fixed timer / domcontentloaded).
+    // deterministically lands AFTER pre-hydration input across all browsers.
+    // All Next.js chunk scripts are async, so domcontentloaded waits for the
+    // streamed SSR HTML and Suspense $RC reveal without waiting on JS chunks.
     let releaseChunks!: () => void;
     const chunksGate = new Promise<void>((resolve) => {
       releaseChunks = resolve;
@@ -77,8 +78,10 @@ test.describe("AI Herbalist chat", () => {
     });
 
     try {
-      await page.goto("/herbalist", { waitUntil: "commit" });
-      await expect(page.locator('[data-chat-ready="false"]')).toBeVisible();
+      await page.goto("/herbalist", { waitUntil: "domcontentloaded" });
+      await expect(page.locator('[data-chat-ready="false"]')).toBeVisible({
+        timeout: 15_000,
+      });
 
       const input = page.locator('textarea[aria-label="Chat message input"]');
       await input.fill("Tell me about turmeric evidence");
