@@ -1421,6 +1421,11 @@ SET payload = public.redact_herb_page_bundle(payload),
     built_at = now();
 
 -- Update search_herbs_by_symptom so it never exposes dosage_child or pediatric dosing text.
+-- Hosted projects still carry the legacy SETOF herbs signature, which cannot be
+-- changed with CREATE OR REPLACE. There are no dependent objects; recreate it
+-- with the sanitized table shape.
+DROP FUNCTION IF EXISTS public.search_herbs_by_symptom(text);
+
 CREATE OR REPLACE FUNCTION public.search_herbs_by_symptom(search_term text)
 RETURNS TABLE (
   id uuid,

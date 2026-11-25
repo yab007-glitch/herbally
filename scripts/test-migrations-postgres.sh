@@ -163,6 +163,19 @@ GRANT SELECT ON public.herbs TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.herbs TO authenticated;
 CREATE POLICY "Anyone can view published herbs" ON public.herbs FOR SELECT USING (is_published = true);
 
+-- Hosted projects still carry the legacy SETOF herbs signature. 00100 must drop
+-- and recreate it; without the DROP this fixture reproduces the same
+-- "cannot change return type of existing function" error production hit.
+CREATE OR REPLACE FUNCTION public.search_herbs_by_symptom(search_term text)
+RETURNS SETOF public.herbs
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT * FROM public.herbs h
+  WHERE h.is_published
+    AND h.name ILIKE '%' || search_term || '%';
+$$;
+
 CREATE TABLE public.drug_interactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   herb_id UUID NOT NULL REFERENCES public.herbs(id) ON DELETE CASCADE,
