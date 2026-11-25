@@ -49,7 +49,7 @@ async function searchHerbs(
 
     // Sanitize each token to prevent ILIKE wildcard & PostgREST `.or()` filter
     // injection, matching English names, Latin binomials, descriptions, and
-    // French translated names (`translations->fr->>name`).
+    // French translated names via the generated name_fr column.
     const textConditions = buildHerbTextOrFilter(term);
     // Rows whose OWN name carries every word the reader typed. The broad
     // filter above matches any word in any field, and `limit` samples that set

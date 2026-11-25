@@ -207,7 +207,7 @@ describe("POST /api/herbs/search", () => {
     // the broad one is always last.
     expect(orConditions).toHaveLength(3);
     expect(orConditions.at(-1)).toBe(
-      "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,description.ilike.%paindanger%,translations->fr->>name.ilike.%paindanger%"
+      "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,description.ilike.%paindanger%,name_fr.ilike.%paindanger%"
     );
   });
 
@@ -219,7 +219,7 @@ describe("POST /api/herbs/search", () => {
     // Precise, anchor, broad — in that order, each as its own query.
     expect(orConditions).toHaveLength(3);
     expect(orConditions[0]).toContain(
-      "and(name.ilike.%milk%,name.ilike.%thistle%),and(scientific_name.ilike.%milk%,scientific_name.ilike.%thistle%),and(translations->fr->>name.ilike.%milk%,translations->fr->>name.ilike.%thistle%)"
+      "and(name.ilike.%milk%,name.ilike.%thistle%),and(scientific_name.ilike.%milk%,scientific_name.ilike.%thistle%),and(name_fr.ilike.%milk%,name_fr.ilike.%thistle%)"
     );
     // The anchor is a separate request, so its loose rows can never crowd the
     // precise rows out of one unordered limit window.
@@ -244,13 +244,11 @@ describe("POST /api/herbs/search", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(orConditions.at(-1)).toContain(
-      "translations->fr->>name.ilike.%chardon-marie%"
-    );
+    expect(orConditions.at(-1)).toContain("name_fr.ilike.%chardon-marie%");
     // A hyphenated name also has to be searchable without its hyphen, so the
     // precise filter splits it into two required words.
     expect(orConditions[0]).toContain(
-      "and(translations->fr->>name.ilike.%chardon%,translations->fr->>name.ilike.%marie%)"
+      "and(name_fr.ilike.%chardon%,name_fr.ilike.%marie%)"
     );
     const results = await response.json();
     expect(results[0]).toEqual(
@@ -265,9 +263,7 @@ describe("POST /api/herbs/search", () => {
       new NextRequest("https://example.test/api/herbs/search?q=l%27ail")
     );
 
-    expect(orConditions.at(-1)).toContain(
-      "translations->fr->>name.ilike.%ail%"
-    );
+    expect(orConditions.at(-1)).toContain("name_fr.ilike.%ail%");
   });
 
   it.each([

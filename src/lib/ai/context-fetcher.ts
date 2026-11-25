@@ -163,7 +163,7 @@ async function extractHerbNames(message: string): Promise<string[]> {
       const conditions = searchTerms
         .map((w) => {
           const s = sanitizeFilterValue(w);
-          return `name.ilike.%${s}%,scientific_name.ilike.%${s}%,translations->fr->>name.ilike.%${s}%`;
+          return `name.ilike.%${s}%,scientific_name.ilike.%${s}%,name_fr.ilike.%${s}%`;
         })
         .join(",");
       const { data } = await supabase
@@ -280,7 +280,7 @@ async function lookupHerb(
         `${PUBLIC_HERB_COLUMNS}, herb_categories(*), drug_interactions(*)`
       )
       .or(
-        `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`
+        `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},name_fr.ilike.${s}`
       )
       .eq("is_published", true)
       .limit(1)
@@ -383,7 +383,7 @@ async function batchLookupHerbs(
           const slug = sanitizeFilterValue(
             n.toLowerCase().replace(/\s+/g, "-")
           );
-          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},translations->fr->>name.ilike.${s}`;
+          return `name.ilike.${s},scientific_name.ilike.${s},slug.eq.${slug},name_fr.ilike.${s}`;
         })
         .join(",");
 

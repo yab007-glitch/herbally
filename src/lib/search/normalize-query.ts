@@ -118,7 +118,7 @@ export function buildHerbTextOrFilter(
         ...(includeDescription && token.length >= 4
           ? [`description.ilike.%${safe}%`]
           : []),
-        `translations->fr->>name.ilike.%${safe}%`,
+        `name_fr.ilike.%${safe}%`,
       ];
       return fields;
     })
@@ -158,7 +158,7 @@ export function buildHerbPreciseNameFilter(
   const safe = tokens.map(sanitizeFilterValue).filter(Boolean);
   if (safe.length === 0) return "";
 
-  return ["name", "scientific_name", "translations->fr->>name"]
+  return ["name", "scientific_name", "name_fr"]
     .map(
       (field) => `and(${safe.map((t) => `${field}.ilike.%${t}%`).join(",")})`
     )
@@ -259,7 +259,7 @@ export function buildHerbNameAnchorFilter(
       return [
         `name.ilike.%${safe}%`,
         `scientific_name.ilike.%${safe}%`,
-        `translations->fr->>name.ilike.%${safe}%`,
+        `name_fr.ilike.%${safe}%`,
       ];
     })
     .join(",");

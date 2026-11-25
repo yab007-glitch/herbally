@@ -35,7 +35,7 @@ describe("buildHerbPreciseNameFilter", () => {
       [
         "and(name.ilike.%milk%,name.ilike.%thistle%)",
         "and(scientific_name.ilike.%milk%,scientific_name.ilike.%thistle%)",
-        "and(translations->fr->>name.ilike.%milk%,translations->fr->>name.ilike.%thistle%)",
+        "and(name_fr.ilike.%milk%,name_fr.ilike.%thistle%)",
       ].join(",")
     );
   });
@@ -79,7 +79,7 @@ describe("buildHerbNameAnchorFilter", () => {
       [
         "name.ilike.%ginkgo%",
         "scientific_name.ilike.%ginkgo%",
-        "translations->fr->>name.ilike.%ginkgo%",
+        "name_fr.ilike.%ginkgo%",
       ].join(",")
     );
   });
