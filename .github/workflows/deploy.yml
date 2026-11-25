@@ -41,6 +41,7 @@ jobs:
           if [ -f /srv/herbally/.last-deployed-sha ]; then
             PREV_SHA="$(tr -d '\r\n' < /srv/herbally/.last-deployed-sha)"
           fi
+          echo "previous_sha=${PREV_SHA:-<none>}"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$PREV_SHA" ] || ! git cat-file -e "$PREV_SHA^{commit}" 2>/dev/null; then
             echo "deploy_needed=true" >> "$GITHUB_OUTPUT"
             echo "migrations_changed=unknown" >> "$GITHUB_OUTPUT"
@@ -89,6 +90,7 @@ jobs:
             --exclude .next \
             --exclude backups/ \
             --exclude artifacts/ \
+            --exclude .last-deployed-sha \
             "$GITHUB_WORKSPACE/" /srv/herbally/
 
       - name: Apply & verify expand-phase SQL migrations (00097–00103) fail-closed before app switch
