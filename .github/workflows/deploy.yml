@@ -126,7 +126,14 @@ jobs:
           ")"
           if [ "$NEEDS_MIGRATION" = "yes" ]; then
             echo "Pending migrations 00097–00099 not yet applied; running backup + migrations..."
-            bash /srv/herbally/scripts/apply-pending-migrations-00097-00099.sh
+            BACKUP_SCRIPT="$GITHUB_WORKSPACE/deploy/backup-local.sh"
+            if [ -x /srv/herbally/deploy/backup-local.sh ]; then
+              BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
+            elif [ -f /srv/herbally/deploy/backup-local.sh ]; then
+              chmod +x /srv/herbally/deploy/backup-local.sh || true
+              [ -x /srv/herbally/deploy/backup-local.sh ] && BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
+            fi
+            BACKUP_SCRIPT="$BACKUP_SCRIPT" bash /srv/herbally/scripts/apply-pending-migrations-00097-00099.sh
           else
             echo "Migrations 00097–00099 already present in herbally-db; skipping."
           fi
