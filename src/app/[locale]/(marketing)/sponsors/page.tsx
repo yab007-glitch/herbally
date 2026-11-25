@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import {
@@ -53,6 +54,27 @@ const supportTypes = [
 ] as const;
 
 const SPONSOR_EMAIL = "info@herbally.app";
+
+/**
+ * Split literal email occurrences across separate DOM spans so Cloudflare
+ * Scrape Shield Email Obfuscation does not rewrite SSR text nodes into
+ * `<a class="__cf_email__">` anchors and trigger React #418 hydration errors.
+ */
+function renderTextWithSafeEmail(text: string): ReactNode {
+  if (!text.includes(SPONSOR_EMAIL)) return text;
+  const [user, domain] = SPONSOR_EMAIL.split("@");
+  const parts = text.split(SPONSOR_EMAIL);
+  return parts.flatMap((part, idx) =>
+    idx < parts.length - 1
+      ? [
+          part,
+          <span key={idx} className="whitespace-nowrap">
+            <span>{user}</span>@<span>{domain}</span>
+          </span>,
+        ]
+      : [part]
+  );
+}
 
 const audienceKeys = ["visitors", "pageviews", "languages", "markets"] as const;
 
@@ -380,7 +402,7 @@ export default async function SponsorsPage() {
                 {t("sponsorship.contact.title")}
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                {t("sponsorship.contact.description")}
+                {renderTextWithSafeEmail(t("sponsorship.contact.description"))}
               </p>
               <ul className="mt-4 space-y-2 text-sm leading-6 text-muted-foreground">
                 <li className="flex gap-2">
@@ -405,7 +427,7 @@ export default async function SponsorsPage() {
                 href={mailtoHref}
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               >
-                {t("sponsorship.contact.emailLabel")}
+                {renderTextWithSafeEmail(t("sponsorship.contact.emailLabel"))}
                 <Mail className="size-4" aria-hidden="true" />
               </a>
               <p className="max-w-xs text-xs leading-5 text-muted-foreground">

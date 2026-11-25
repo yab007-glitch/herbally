@@ -116,7 +116,7 @@ export function NccihSummary({
             <>
               {background.length > 0 && (
                 <div className="mb-5">
-                  <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+                  <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                     {claimsHeading}
                   </h3>
                   {renderAs === "prose" ? (
@@ -147,7 +147,7 @@ export function NccihSummary({
 
               {safetyNotes.length > 0 && (
                 <div className="mb-5">
-                  <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-neutral-500">
+                  <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                     <ShieldAlert className="h-4 w-4" aria-hidden="true" />
                     {safetyHeading}
                   </h3>
@@ -181,7 +181,7 @@ export function NccihSummary({
           );
         })()}
 
-        <p className="border-t border-neutral-200 pt-4 text-sm text-neutral-500 dark:border-neutral-800">
+        <p className="border-t border-neutral-200 pt-4 text-sm text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
           {reproducedLabel}{" "}
           {url ? (
             <a

@@ -111,14 +111,14 @@ export function HerbSourcesView({
           </div>
         )}
 
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
           {countText}
           {date ? ` · ${checkedLabel} ${date}` : null}
         </p>
 
         {taxonomySources.length > 0 && (
           <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-800">
-            <p className="mb-1.5 text-xs font-medium text-neutral-500">
+            <p className="mb-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400">
               {taxonomyLabel}
             </p>
             <SourcePillList names={taxonomySources} muted />
@@ -127,14 +127,16 @@ export function HerbSourcesView({
 
         {historicalSources.length > 0 && (
           <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-800">
-            <p className="mb-1.5 text-xs font-medium text-neutral-500">
+            <p className="mb-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400">
               {historicalLabel}
             </p>
             <SourcePillList names={historicalSources} muted />
           </div>
         )}
 
-        <p className="mt-2 text-xs leading-relaxed text-neutral-500">{note}</p>
+        <p className="mt-2 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+          {note}
+        </p>
       </div>
     </section>
   );

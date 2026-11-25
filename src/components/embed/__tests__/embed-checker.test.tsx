@@ -27,6 +27,8 @@ describe("EmbedChecker", () => {
 
   it("shows emptyError when both inputs are blank and uses explicit type='button'", () => {
     render(<EmbedChecker />);
+    const heading = screen.getByRole("heading", { level: 1, name: "title" });
+    expect(heading).toHaveAttribute("id", "embed-checker-heading");
     const submitBtn = screen.getByRole("button", { name: "checkButton" });
     expect(submitBtn).toHaveAttribute("type", "button");
 

@@ -84,7 +84,7 @@ export function ChipLegend({
 
       <div className="grid gap-5 border-t border-border px-4 py-4 sm:grid-cols-2">
         <div>
-          <h3 className="eyebrow">{t("evidence")}</h3>
+          <p className="eyebrow">{t("evidence")}</p>
           <ul className="mt-2 space-y-1.5">
             {LEVELS.map((level) => (
               <li key={level} className="flex flex-wrap items-center gap-2">
@@ -99,7 +99,7 @@ export function ChipLegend({
         </div>
 
         <div>
-          <h3 className="eyebrow">{t("review")}</h3>
+          <p className="eyebrow">{t("review")}</p>
           <ul className="mt-2 space-y-1.5">
             {PROVENANCE_SAMPLES.map((sample) => (
               <li

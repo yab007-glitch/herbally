@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Leaf } from "lucide-react";
 import { FDADisclaimerBanner } from "@/components/layout/fda-disclaimer-banner";
 import { UnifiedNavbar } from "@/components/layout/unified-navbar";
@@ -30,23 +29,26 @@ export default async function AuthLayout({
     <div className="flex min-h-dvh flex-col bg-background">
       <FDADisclaimerBanner />
       <UnifiedNavbar />
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-12">
-        <Link
+      <main
+        id="main-content"
+        className="flex flex-1 flex-col items-center justify-center px-4 py-12"
+      >
+        <LocalizedLink
           href="/"
           className="mb-8 flex items-center gap-2"
           aria-label="HerbAlly home"
         >
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Leaf className="size-4" />
+            <Leaf className="size-4" aria-hidden="true" />
           </div>
           <span className="text-base font-semibold">
             Herb<span className="gradient-text">Ally</span>
           </span>
-        </Link>
+        </LocalizedLink>
         <div className="w-full max-w-sm">{children}</div>
         <nav
           className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground"
-          aria-label={t("common.navFooter")}
+          aria-label={locale === "fr" ? "Liens légaux" : "Legal links"}
         >
           <LocalizedLink href="/privacy" className="hover:text-foreground">
             {t("footer.privacy")}

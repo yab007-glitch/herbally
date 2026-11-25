@@ -125,9 +125,14 @@ export default async function MethodologyPage() {
           {methodologySections.map((section) => (
             <Card key={section.title}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <section.icon className="size-6 text-primary" />
-                  {section.title}
+                <CardTitle>
+                  <h2 className="flex items-center gap-3">
+                    <section.icon
+                      className="size-6 text-primary"
+                      aria-hidden="true"
+                    />
+                    {section.title}
+                  </h2>
                 </CardTitle>
               </CardHeader>
               <CardContent>

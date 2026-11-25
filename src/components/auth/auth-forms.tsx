@@ -94,7 +94,10 @@ export function LoginForm() {
           </Link>
           <span>
             {t("login.noAccount")}{" "}
-            <Link href="/register" className="text-primary hover:underline">
+            <Link
+              href="/register"
+              className="text-primary underline underline-offset-4 hover:text-primary/80"
+            >
               {t("login.register")}
             </Link>
           </span>
@@ -162,7 +165,10 @@ export function RegisterForm() {
         </Button>
         <p className="text-center text-xs text-muted-foreground">
           {t("register.haveAccount")}{" "}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link
+            href="/login"
+            className="text-primary underline underline-offset-4 hover:text-primary/80"
+          >
             {t("register.signIn")}
           </Link>
         </p>
@@ -209,7 +215,10 @@ export function ForgotPasswordForm() {
           {pending ? t("forgot.submitting") : t("forgot.submit")}
         </Button>
         <p className="text-center text-xs">
-          <Link href="/login" className="text-primary hover:underline">
+          <Link
+            href="/login"
+            className="text-primary underline underline-offset-4 hover:text-primary/80"
+          >
             {t("forgot.back")}
           </Link>
         </p>
@@ -254,7 +263,10 @@ export function ResetPasswordForm() {
           {pending ? t("reset.submitting") : t("reset.submit")}
         </Button>
         <p className="text-center text-xs">
-          <Link href="/login" className="text-primary hover:underline">
+          <Link
+            href="/login"
+            className="text-primary underline underline-offset-4 hover:text-primary/80"
+          >
             {t("reset.back")}
           </Link>
         </p>

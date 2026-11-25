@@ -144,6 +144,12 @@ describe("Sponsorship page", () => {
       expect(id).toBeTruthy();
       expect(container.querySelector(`#${id}`)).not.toBeNull();
     }
+
+    const contactSection = container.querySelector("#contact");
+    expect(contactSection?.textContent).toContain("info@herbally.app");
+    expect(contactSection?.innerHTML).toContain(
+      "<span>info</span>@<span>herbally.app</span>"
+    );
   });
 
   it("renders the French page and keeps internal links in the French locale", async () => {

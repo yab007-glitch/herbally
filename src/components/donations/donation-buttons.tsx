@@ -91,7 +91,6 @@ export function DonationButtons() {
               key={tier.amount}
               role="button"
               tabIndex={0}
-              aria-label={`${t(tier.labelKey)} — $${tier.amount}`}
               className="group relative cursor-pointer overflow-hidden transition-all hover:scale-[1.02] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={trigger}
               onKeyDown={(e) => {
@@ -110,12 +109,15 @@ export function DonationButtons() {
               />
               <CardContent className="flex flex-col items-center py-8 text-center relative">
                 {isLoading ? (
-                  <Loader2 className="h-10 w-10 text-primary mb-3 animate-spin" />
+                  <Loader2
+                    aria-hidden="true"
+                    className="h-10 w-10 text-primary mb-3 animate-spin"
+                  />
                 ) : (
                   <div
                     className={`flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br ${tier.color} mb-3 transition-transform group-hover:scale-110`}
                   >
-                    <Icon className="h-6 w-6 text-white" />
+                    <Icon aria-hidden="true" className="h-6 w-6 text-white" />
                   </div>
                 )}
                 <p className="text-3xl font-bold text-foreground">
@@ -170,9 +172,9 @@ export function DonationButtons() {
               disabled={loading !== null}
             >
               {loading === customAmount ? (
-                <Loader2 className="size-5 animate-spin" />
+                <Loader2 aria-hidden="true" className="size-5 animate-spin" />
               ) : (
-                <Heart className="size-5 fill-white" />
+                <Heart aria-hidden="true" className="size-5 fill-white" />
               )}
               {t("donateButtons.donate")}
             </Button>
