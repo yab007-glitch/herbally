@@ -65,10 +65,11 @@ const STATIC_PAGE_MODIFIED = staticPageModified();
 const SPONSORSHIP_PAGE_MODIFIED = new Date("2026-10-28T00:00:00Z");
 
 /**
- * Rows per herb query. The herb row carries a large `translations` jsonb; 1,000
- * rows in one response is several megabytes and times out under load, which used
- * to cost the sitemap every herb URL. 500 still finishes the whole library in
- * six requests on a healthy database.
+ * Rows per herb query. The sitemap only needs identifiers and the generated
+ * French name, never the redacted prose columns: selecting those made PostgREST
+ * evaluate the sanitising PL/pgSQL functions for every row and time out at its
+ * statement limit, dropping whole batches. 500 finishes the library in seven
+ * cheap requests.
  */
 const HERB_BATCH_SIZE = 500;
 
@@ -76,10 +77,7 @@ type HerbSitemapRow = {
   id: string;
   slug: string;
   updated_at: string | null;
-  translations: unknown;
-  description: string | null;
-  traditional_uses: string[] | null;
-  dosage_adult: string | null;
+  name_fr: string | null;
 };
 
 /**
@@ -99,9 +97,7 @@ async function fetchHerbBatch(
     const { data, error } = await withTimeout(
       supabase
         .from("herbs_public" as never)
-        .select(
-          "id, slug, updated_at, translations, description, traditional_uses, dosage_adult"
-        )
+        .select("id, slug, updated_at, name_fr")
         .eq("is_published", true)
         .order("slug", { ascending: true })
         .range(from, from + size - 1),
@@ -699,9 +695,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       hasFr: boolean;
       hasMonograph: boolean;
       hasRegulatory: boolean;
-      description: string | null;
-      traditional_uses: string[] | null;
-      dosage_adult: string | null;
     };
     const candidateHerbs: CandidateHerb[] = [];
     // Symptom hubs are emitted only for symptoms that actually match a
@@ -756,22 +749,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           monographSlugs.has(herb.id) ||
           sourceSlugs.has(herb.slug) ||
           hasManualMonograph(herb.slug);
-        const t = herb.translations as Record<string, unknown> | null;
-        const frRecord =
-          t && typeof t === "object" ? (t as { fr?: unknown }).fr : null;
         const hasFr =
-          !!frRecord &&
-          typeof frRecord === "object" &&
-          Object.keys(frRecord).length > 0;
+          typeof herb.name_fr === "string" && herb.name_fr.trim().length > 0;
         candidateHerbs.push({
           slug: herb.slug,
           updatedAt: herb.updated_at,
           hasFr,
           hasMonograph,
           hasRegulatory,
-          description: herb.description,
-          traditional_uses: herb.traditional_uses,
-          dosage_adult: herb.dosage_adult,
         });
       }
 

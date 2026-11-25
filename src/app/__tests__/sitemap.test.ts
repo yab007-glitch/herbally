@@ -80,7 +80,7 @@ describe("sitemap", () => {
           id: "h-ginger",
           slug: "ginger",
           updated_at: "2026-01-02T00:00:00.000Z",
-          translations: { fr: { name: "Gingembre" } },
+          name_fr: "Gingembre",
           description: "Ginger root.",
           traditional_uses: null,
           dosage_adult: null,
@@ -92,7 +92,7 @@ describe("sitemap", () => {
           id: "h-turmeric",
           slug: "turmeric",
           updated_at: null,
-          translations: null,
+          name_fr: null,
           description: "x".repeat(420),
           traditional_uses: null,
           dosage_adult: null,
@@ -104,7 +104,7 @@ describe("sitemap", () => {
           id: "h-chamomile-stub",
           slug: "chamomile-stub",
           updated_at: null,
-          translations: null,
+          name_fr: null,
           description: "y".repeat(420),
           traditional_uses: null,
           dosage_adult: null,
@@ -117,7 +117,7 @@ describe("sitemap", () => {
           id: "h-rue",
           slug: "eritrean-rue",
           updated_at: null,
-          translations: { fr: { name: "Rue" } },
+          name_fr: "Rue",
           description: "y".repeat(260),
           traditional_uses: null,
           dosage_adult: null,
@@ -176,8 +176,8 @@ describe("sitemap", () => {
     const result = await sitemap();
     const urls = result.map((entry) => entry.url);
 
-    // A French URL is listed only when the herb has a French record: the /fr route
-    // resolves for every slug, but without translations.fr it is English content
+    // A French URL is listed only when the herb has a French name: the /fr route
+    // resolves for every slug, but without name_fr it is English content
     // under a French shell, which is duplicate content rather than a translation.
     expect(urls).toContain(`${BASE_URL}/herbs/ginger`);
     expect(urls).toContain(`${BASE_URL}/fr/herbs/ginger`);
@@ -306,7 +306,7 @@ describe("sitemap", () => {
       id: "h-thin",
       slug: "thin-herb",
       updated_at: null,
-      translations: null,
+      name_fr: null,
       description: "z".repeat(260),
       traditional_uses: null,
       dosage_adult: null,
