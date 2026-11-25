@@ -64,19 +64,32 @@ test.describe("AI Herbalist chat", () => {
       });
     });
 
-    // Delay client chunks so fill() reliably lands on the unhydrated SSR DOM
-    await page.route("**/_next/static/chunks/*.js", async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 250));
+    // Hold client JS chunks until the SSR textarea is filled so hydration
+    // deterministically lands AFTER pre-hydration input across all browsers
+    // (Firefox can otherwise hydrate before a fixed timer / domcontentloaded).
+    let releaseChunks!: () => void;
+    const chunksGate = new Promise<void>((resolve) => {
+      releaseChunks = resolve;
+    });
+    await page.route("**/_next/static/chunks/**/*.js", async (route) => {
+      await chunksGate;
       await route.continue();
     });
 
-    await page.goto("/herbalist", { waitUntil: "domcontentloaded" });
-    await expect(page.locator('[data-chat-ready="false"]')).toBeVisible();
+    try {
+      await page.goto("/herbalist", { waitUntil: "commit" });
+      await expect(page.locator('[data-chat-ready="false"]')).toBeVisible();
+
+      const input = page.locator('textarea[aria-label="Chat message input"]');
+      await input.fill("Tell me about turmeric evidence");
+
+      releaseChunks();
+    } finally {
+      releaseChunks();
+    }
 
     const input = page.locator('textarea[aria-label="Chat message input"]');
     const sendBtn = page.locator('button[aria-label="Send message"]');
-    await input.fill("Tell me about turmeric evidence");
-
     await expect(page.locator('[data-chat-ready="true"]')).toBeVisible();
     await expect(input).toHaveValue("Tell me about turmeric evidence");
     await expect(sendBtn).toBeEnabled();
