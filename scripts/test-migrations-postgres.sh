@@ -636,6 +636,35 @@ SELECT
 FROM public.herbs h
 WHERE h.slug = 'chamomile';
 
+-- Cached bundle with an empty French preparation note, reproducing the
+-- production payload shape that made redaction assign SQL NULL and violate the
+-- herb_page_bundles.payload NOT NULL constraint during 00100.
+INSERT INTO public.herbs (
+  id, name, slug, scientific_name, description, dosage_adult, is_published, category_id
+) VALUES (
+  '33333333-3333-3333-3333-333333333337',
+  'Bundle Redaction Regression',
+  'bundle-redaction-regression',
+  'Testus regressionis',
+  'Fixture only.',
+  '500 mg',
+  false,
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1'
+);
+
+INSERT INTO public.herb_page_bundles (slug, payload) VALUES (
+  'bundle-redaction-regression',
+  jsonb_build_object(
+    'herb', jsonb_build_object(
+      'slug', 'bundle-redaction-regression',
+      'name', 'Bundle Redaction Regression',
+      'translations', '{"fr":{"preparation_notes":"","dosage_adult":"2–3 gouttes 2–3× par jour","dosage_child":""}}'::jsonb
+    ),
+    'regulatory', 'null'::jsonb,
+    'monograph', 'null'::jsonb
+  )
+);
+
 -- Unpublished draft herb & draft PubMed sheet fixtures to verify public view filtering (M4)
 INSERT INTO public.herbs (
   id, name, slug, scientific_name, description, dosage_adult, is_published, category_id

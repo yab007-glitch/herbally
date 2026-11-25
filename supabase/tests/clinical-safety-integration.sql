@@ -46,6 +46,20 @@ BEGIN
     RAISE EXCEPTION 'Expected adult-inclusive regulatory dose retained and pediatric-only dropped, got %', v_bundle->'regulatory'->'doses';
   END IF;
 
+  -- Regression: an empty localised preparation note must redact to JSON null,
+  -- not collapse the whole cached payload to SQL NULL.
+  IF EXISTS (
+    SELECT 1 FROM public.herb_page_bundles
+    WHERE slug = 'bundle-redaction-regression'
+      AND (
+        payload IS NULL
+        OR jsonb_typeof(payload->'herb'->'translations'->'fr') <> 'object'
+        OR jsonb_typeof(payload->'herb'->'translations'->'fr'->'preparation_notes') <> 'null'
+      )
+  ) THEN
+    RAISE EXCEPTION 'Cached bundle redaction collapsed payload or French note to SQL NULL';
+  END IF;
+
   -- Verify translations.fr.dosage_child was archived and stripped
   SELECT translations->'fr'->>'dosage_child' INTO v_fr_child
   FROM public.herbs WHERE slug = 'chamomile';

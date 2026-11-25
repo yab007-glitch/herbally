@@ -393,15 +393,15 @@ BEGIN
     v_fr := (v_out->'translations'->'fr') - 'dosage_child';
     IF v_fr ? 'dosage_adult' THEN
       v_fr_adult := public.strip_pediatric_dosage_text(v_fr->>'dosage_adult');
-      v_fr := jsonb_set(v_fr, '{dosage_adult}', to_jsonb(v_fr_adult), true);
+      v_fr := jsonb_set(v_fr, '{dosage_adult}', COALESCE(to_jsonb(v_fr_adult), 'null'::jsonb), true);
     END IF;
     IF v_fr ? 'preparation_notes' THEN
       v_fr_prep := public.strip_pediatric_dosage_text(v_fr->>'preparation_notes');
-      v_fr := jsonb_set(v_fr, '{preparation_notes}', to_jsonb(v_fr_prep), true);
+      v_fr := jsonb_set(v_fr, '{preparation_notes}', COALESCE(to_jsonb(v_fr_prep), 'null'::jsonb), true);
     END IF;
     IF v_fr ? 'description' THEN
       v_fr_desc := public.strip_pediatric_dosage_text(v_fr->>'description');
-      v_fr := jsonb_set(v_fr, '{description}', to_jsonb(v_fr_desc), true);
+      v_fr := jsonb_set(v_fr, '{description}', COALESCE(to_jsonb(v_fr_desc), 'null'::jsonb), true);
     END IF;
     IF jsonb_typeof(v_fr->'traditional_uses') = 'array' THEN
       v_fr := jsonb_set(v_fr, '{traditional_uses}', public.redact_text_array_jsonb(v_fr->'traditional_uses'), true);
@@ -437,13 +437,13 @@ BEGIN
 
   v_fr := (p_translations->'fr') - 'dosage_child';
   IF v_fr ? 'dosage_adult' THEN
-    v_fr := jsonb_set(v_fr, '{dosage_adult}', to_jsonb(public.strip_pediatric_dosage_text(v_fr->>'dosage_adult')), true);
+    v_fr := jsonb_set(v_fr, '{dosage_adult}', COALESCE(to_jsonb(public.strip_pediatric_dosage_text(v_fr->>'dosage_adult')), 'null'::jsonb), true);
   END IF;
   IF v_fr ? 'preparation_notes' THEN
-    v_fr := jsonb_set(v_fr, '{preparation_notes}', to_jsonb(public.strip_pediatric_dosage_text(v_fr->>'preparation_notes')), true);
+    v_fr := jsonb_set(v_fr, '{preparation_notes}', COALESCE(to_jsonb(public.strip_pediatric_dosage_text(v_fr->>'preparation_notes')), 'null'::jsonb), true);
   END IF;
   IF v_fr ? 'description' THEN
-    v_fr := jsonb_set(v_fr, '{description}', to_jsonb(public.strip_pediatric_dosage_text(v_fr->>'description')), true);
+    v_fr := jsonb_set(v_fr, '{description}', COALESCE(to_jsonb(public.strip_pediatric_dosage_text(v_fr->>'description')), 'null'::jsonb), true);
   END IF;
   IF jsonb_typeof(v_fr->'traditional_uses') = 'array' THEN
     v_fr := jsonb_set(v_fr, '{traditional_uses}', public.redact_text_array_jsonb(v_fr->'traditional_uses'), true);
