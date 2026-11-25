@@ -99,6 +99,38 @@ jobs:
             --exclude artifacts/ \
             "$GITHUB_WORKSPACE/" /srv/herbally/
 
+      - name: Apply pending SQL migrations (00097–00099) if missing
+        if: steps.changes.outputs.deploy_needed == 'true'
+        run: |
+          set -euo pipefail
+          NEEDS_MIGRATION="$(docker exec -i herbally-db psql -U postgres -d postgres -tAc "
+            SELECT CASE WHEN
+              EXISTS (
+                SELECT 1 FROM pg_proc p
+                JOIN pg_namespace n ON n.oid = p.pronamespace
+                WHERE n.nspname = 'public' AND p.proname = 'is_admin_aal2'
+              )
+              AND EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'newsletter_subscribers'
+                  AND column_name = 'last_confirmation_sent_at'
+              )
+              AND EXISTS (
+                SELECT 1 FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = 'newsletter_subscribers'
+                  AND column_name = 'confirmation_send_lease_until'
+              )
+            THEN 'no' ELSE 'yes' END;
+          ")"
+          if [ "$NEEDS_MIGRATION" = "yes" ]; then
+            echo "Pending migrations 00097–00099 not yet applied; running backup + migrations..."
+            bash /srv/herbally/scripts/apply-pending-migrations-00097-00099.sh
+          else
+            echo "Migrations 00097–00099 already present in herbally-db; skipping."
+          fi
+
       - name: Build image
         if: steps.changes.outputs.deploy_needed == 'true'
         working-directory: /srv/herbally/deploy
