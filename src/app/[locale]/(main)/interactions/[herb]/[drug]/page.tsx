@@ -10,7 +10,7 @@ import {
   ArrowLeft,
   Leaf,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
@@ -21,6 +21,11 @@ import {
   getRelatedPairs,
   type InteractionPair,
 } from "@/lib/interactions/pairs";
+import {
+  InteractionDataUnavailableError,
+  InteractionUrlCollisionError,
+  isStubSupabase,
+} from "@/lib/interactions/errors";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { siteUrl } from "@/lib/seo/site-url";
 import { pairTitleMeta } from "@/lib/seo/pair-title";
@@ -57,8 +62,31 @@ const PRERENDER_PAIR_LIMIT = 0;
  * dedupes them within one render pass — which is every render here, since this
  * route is never served from a prerender.
  */
-const loadPair = cache((herb: string, drug: string, locale: string) =>
-  getInteractionPair(herb, drug, locale)
+type PairLookupOutcome =
+  | { kind: "ok"; pair: InteractionPair }
+  | { kind: "not_found" }
+  | { kind: "collision"; pairs: InteractionPair[] };
+
+const loadPair = cache(
+  async (
+    herb: string,
+    drug: string,
+    locale: string
+  ): Promise<PairLookupOutcome> => {
+    try {
+      const pair = await getInteractionPair(herb, drug, locale);
+      return pair ? { kind: "ok", pair } : { kind: "not_found" };
+    } catch (err) {
+      if (err instanceof InteractionUrlCollisionError) {
+        return { kind: "collision", pairs: err.pairs };
+      }
+      if (err instanceof InteractionDataUnavailableError) {
+        if (isStubSupabase()) return { kind: "not_found" };
+        throw err;
+      }
+      throw err;
+    }
+  }
 );
 
 /**
@@ -241,9 +269,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = siteUrl();
   const locale = await getLocale();
   const fr = locale === "fr";
-  const pair = await loadPair(herb, drug, locale);
+  const outcome = await loadPair(herb, drug, locale);
 
-  if (!pair) {
+  if (outcome.kind === "collision") {
+    const first = outcome.pairs[0];
+    return {
+      title: {
+        absolute: fr
+          ? `${first?.herbName ?? herb} : plusieurs fiches d'interaction | HerbAlly`
+          : `${first?.herbName ?? herb}: Multiple Interaction Records | HerbAlly`,
+      },
+      robots: { index: false, follow: false },
+    };
+  }
+
+  if (outcome.kind === "not_found") {
     return {
       title: {
         absolute: fr
@@ -253,6 +293,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       robots: { index: false, follow: false },
     };
   }
+
+  const pair = outcome.pair;
 
   const displayDrug = fr
     ? pair.localizedDrugName || pair.drugName
@@ -329,9 +371,100 @@ export default async function InteractionPairPage({ params }: Props) {
   const locale = await getLocale();
   const fr = locale === "fr";
   const t = await getTranslations({ locale });
-  const pair = await loadPair(herb, drug, locale);
+  const outcome = await loadPair(herb, drug, locale);
 
-  if (!pair) notFound();
+  if (outcome.kind === "not_found") notFound();
+
+  if (outcome.kind === "collision") {
+    const lead = outcome.pairs[0];
+    return (
+      <div className="space-y-6">
+        <Breadcrumbs
+          items={[
+            { name: t("common.breadcrumbHome"), href: "/" },
+            {
+              name: fr
+                ? "Interactions plante-médicament"
+                : "Herb–Drug Interactions",
+              href: "/herb-drug-interactions",
+            },
+            { name: `${lead.herbName} + ${drug}` },
+          ]}
+        />
+        <div
+          role="alert"
+          className="rounded-2xl border border-amber-300 bg-amber-50/70 p-5 text-sm dark:border-amber-800 dark:bg-amber-950/30"
+        >
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-700 dark:text-amber-300" />
+            <div className="space-y-1">
+              <h1 className="text-lg font-bold text-foreground">
+                {fr
+                  ? `${lead.herbName} : plusieurs fiches d'interaction correspondent à cette adresse`
+                  : `${lead.herbName}: Multiple interaction records match this URL`}
+              </h1>
+              <p className="text-muted-foreground">
+                {fr
+                  ? "Plusieurs fiches médicament distinctes partagent ce chemin et attendent une révision éditoriale. Toutes les fiches enregistrées sont affichées ci-dessous sans en masquer aucune — vérifiez auprès d'un pharmacien."
+                  : "Multiple distinct medication records share this URL and are pending editorial disambiguation. All recorded entries are shown below rather than choosing one — confirm with a pharmacist."}
+              </p>
+            </div>
+          </div>
+        </div>
+        <ul className="space-y-4">
+          {outcome.pairs.map((p) => {
+            const label = fr ? p.localizedDrugName || p.drugName : p.drugName;
+            return (
+              <li
+                key={p.id}
+                className={cn(
+                  "rounded-2xl border p-5",
+                  SEVERITY_STYLE[p.severity]
+                )}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h2 className="text-base font-semibold text-foreground">
+                    {p.herbName} + {label}
+                  </h2>
+                  <span className="text-xs font-semibold uppercase">
+                    {severityLabel(p.severity, fr)}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-foreground/90">
+                  {p.description}
+                </p>
+                {p.mechanism && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    <strong>{fr ? "Mécanisme : " : "Mechanism: "}</strong>
+                    {p.mechanism}
+                  </p>
+                )}
+                {(p.sourceUrl || p.source) && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {fr ? "Source : " : "Source: "}
+                    {p.sourceUrl ? (
+                      <a
+                        href={p.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        {p.source || p.sourceUrl}
+                      </a>
+                    ) : (
+                      p.source
+                    )}
+                  </p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+
+  const pair = outcome.pair;
 
   const [{ sameHerb, sameDrug }] = await Promise.all([
     getRelatedPairs(pair, locale),
@@ -622,30 +755,29 @@ export default async function InteractionPairPage({ params }: Props) {
 
       {/* CTAs */}
       <div className="flex flex-wrap gap-3">
-        <Button
-          render={
-            <Link href={`/herbalist?q=${encodeURIComponent(checkerQuery)}`} />
-          }
+        <Link
+          href={`/herbalist?q=${encodeURIComponent(checkerQuery)}`}
+          className={buttonVariants()}
         >
           <MessageCircle className="mr-1 size-4" />
           {fr ? "Poser la question à l'herboriste IA" : "Ask the AI herbalist"}
-        </Button>
+        </Link>
         {!isCalculatorBlockedSlug(pair.herbSlug) && (
-          <Button
-            variant="outline"
-            render={<Link href={`/calculator?herb=${pair.herbSlug}`} />}
+          <Link
+            href={`/calculator?herb=${pair.herbSlug}`}
+            className={buttonVariants({ variant: "outline" })}
           >
             <Calculator className="mr-1 size-4" />
             {fr ? "Calculer une dose" : "Calculate a dose"}
-          </Button>
+          </Link>
         )}
-        <Button
-          variant="ghost"
-          render={<Link href={`/herbs/${pair.herbSlug}`} />}
+        <Link
+          href={`/herbs/${pair.herbSlug}`}
+          className={buttonVariants({ variant: "ghost" })}
         >
           <ArrowLeft className="mr-1 size-4" />
           {pair.herbName}
-        </Button>
+        </Link>
       </div>
 
       {/* Related pairs */}

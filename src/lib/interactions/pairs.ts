@@ -1,6 +1,10 @@
 import { getAnonClient } from "@/lib/supabase/anonymous";
 import { logger } from "@/lib/utils/logger";
-import { drugSlug } from "./pair-url";
+import {
+  InteractionDataUnavailableError,
+  InteractionUrlCollisionError,
+} from "./errors";
+import { drugSlug, EDITORIAL_PAIR_CANONICAL_DRUG } from "./pair-url";
 
 export type InteractionSeverity =
   "mild" | "moderate" | "severe" | "contraindicated";
@@ -133,6 +137,7 @@ export async function getInteractionPairs(
       .select(PAIR_SELECT)
       .eq("herbs.is_published", true)
       .order("drug_name", { ascending: true })
+      .order("id", { ascending: true })
       .limit(5000)
       .abortSignal(querySignal());
     if (error || !data) {
@@ -158,6 +163,10 @@ export async function getInteractionPairs(
  * One pair by URL slugs. Drug lookup matches the slugified generic name
  * (see drugSlug) against the herb's rows. Pass the page locale for
  * translated content; URL slugs always resolve on English names.
+ *
+ * Throws `InteractionDataUnavailableError` when the database cannot be read,
+ * and `InteractionUrlCollisionError` when multiple rows share the same
+ * `(herbSlug, drugSlug)` without an explicit editorial override.
  */
 export async function getInteractionPair(
   herbSlug: string,
@@ -165,28 +174,65 @@ export async function getInteractionPair(
   locale: string = "en"
 ): Promise<InteractionPair | null> {
   const supabase = getAnonClient();
-  if (!supabase) return null;
+  if (!supabase) {
+    throw new InteractionDataUnavailableError("Supabase client unavailable");
+  }
+  let data: unknown;
+  let error: { message?: string } | null = null;
   try {
-    const { data, error } = await supabase
+    const res = await supabase
       .from("drug_interactions")
       .select(PAIR_SELECT)
       .eq("herbs.slug", herbSlug)
       .eq("herbs.is_published", true)
+      .order("drug_name", { ascending: true })
+      .order("id", { ascending: true })
       .limit(100)
       .abortSignal(querySignal());
-    if (error || !data) return null;
-    for (const row of data as unknown as PairRow[]) {
-      const pair = toPair(row, locale);
-      if (pair && pair.drugSlug === drug) return pair;
-    }
-    return null;
-  } catch (error) {
+    data = res.data;
+    error = res.error;
+  } catch (err) {
     logger.error("interactions.getPair_failed", {
       herbSlug,
-      error: String(error),
+      error: String(err),
     });
-    return null;
+    throw new InteractionDataUnavailableError(
+      err instanceof Error ? err.message : "Failed to load interaction pair"
+    );
   }
+  if (error || !Array.isArray(data)) {
+    logger.error("interactions.getPair_query_error", {
+      herbSlug,
+      error: error?.message ?? "No data returned",
+    });
+    throw new InteractionDataUnavailableError(
+      error?.message ?? "Failed to load interaction pair"
+    );
+  }
+
+  const matches: InteractionPair[] = [];
+  for (const row of data as unknown as PairRow[]) {
+    const pair = toPair(row, locale);
+    if (pair && pair.drugSlug === drug) matches.push(pair);
+  }
+
+  if (matches.length === 0) return null;
+  if (matches.length === 1) return matches[0];
+
+  const editorialDrug = EDITORIAL_PAIR_CANONICAL_DRUG[`${herbSlug}/${drug}`];
+  if (editorialDrug) {
+    const chosen = matches.find((m) => m.drugName === editorialDrug);
+    if (chosen) return chosen;
+  }
+
+  logger.error("interactions_pair_url_collision", {
+    herbSlug,
+    drugSlug: drug,
+    rowIds: matches.map((m) => m.id),
+    drugNames: matches.map((m) => m.drugName),
+    severities: matches.map((m) => m.severity),
+  });
+  throw new InteractionUrlCollisionError(herbSlug, drug, matches);
 }
 
 /**
@@ -194,22 +240,36 @@ export async function getInteractionPair(
  * The checker matches the user's free-text medication against these
  * rows (see lib/interactions/check.ts) instead of jumping straight
  * to the AI chat, so a known pair is answered from the database first.
+ *
+ * Throws `InteractionDataUnavailableError` when the database cannot be read.
  */
 export async function getHerbPairs(
   herbSlug: string,
   locale: string = "en"
 ): Promise<InteractionPair[]> {
   const supabase = getAnonClient();
-  if (!supabase) return [];
+  if (!supabase) {
+    throw new InteractionDataUnavailableError("Supabase client unavailable");
+  }
   try {
     const { data, error } = await supabase
       .from("drug_interactions")
       .select(PAIR_SELECT)
       .eq("herbs.slug", herbSlug)
       .eq("herbs.is_published", true)
+      .order("drug_name", { ascending: true })
+      .order("id", { ascending: true })
       .limit(100)
       .abortSignal(querySignal());
-    if (error || !data) return [];
+    if (error || !data) {
+      logger.error("interactions.getHerbPairs_query_error", {
+        herbSlug,
+        error: error?.message ?? "No data returned",
+      });
+      throw new InteractionDataUnavailableError(
+        error?.message ?? "Failed to load herb interaction pairs"
+      );
+    }
     const pairs: InteractionPair[] = [];
     for (const row of data as unknown as PairRow[]) {
       const pair = toPair(row, locale);
@@ -217,11 +277,16 @@ export async function getHerbPairs(
     }
     return pairs;
   } catch (error) {
+    if (error instanceof InteractionDataUnavailableError) throw error;
     logger.error("interactions.getHerbPairs_failed", {
       herbSlug,
       error: String(error),
     });
-    return [];
+    throw new InteractionDataUnavailableError(
+      error instanceof Error
+        ? error.message
+        : "Failed to load herb interaction pairs"
+    );
   }
 }
 

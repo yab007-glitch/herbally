@@ -37,6 +37,10 @@ const nullableString = (max: number) =>
     .nullish()
     .transform((v) => (v === undefined ? null : v));
 
+const uuidSchema = z.string().uuid();
+
+const herbSlugSchema = z.string().trim().min(1).max(200);
+
 const patientProfileSchema = z.object({
   name: z.string().min(1).max(100),
   relationship: z.string().min(1).max(50),
@@ -49,6 +53,17 @@ const patientProfileSchema = z.object({
     .nullish()
     .transform((v) => v ?? false),
   notes: nullableString(2000),
+});
+
+const patientProfileUpdateSchema = patientProfileSchema
+  .partial()
+  .refine((obj) => Object.keys(obj).length > 0, {
+    message: "No fields to update",
+  });
+
+const gardenNoteSchema = z.object({
+  herbSlug: herbSlugSchema,
+  note: z.string().max(2000),
 });
 
 const healthProfileSchema = z.object({
@@ -99,7 +114,10 @@ export async function getPatientProfiles(): Promise<
       .order("is_default", { ascending: false })
       .order("created_at", { ascending: true });
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("getPatientProfiles_db_failed", { error: error.message });
+      return { success: false, error: "Failed to fetch profiles" };
+    }
     return { success: true, data: data ?? [] };
   } catch (error) {
     logger.error("getPatientProfiles_failed", { error: String(error) });
@@ -128,19 +146,27 @@ export async function savePatientProfile(
       .select()
       .single();
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("savePatientProfile_db_failed", { error: error.message });
+      return { success: false, error: "Failed to save profile" };
+    }
 
     // Enforce a single default per user atomically. Two rapid "add patient"
     // calls can both pass is_default=true before either render reflects the
     // first insert; unsetting every *other* profile after the insert
     // guarantees exactly one default regardless of the race.
     if (data.is_default) {
-      await supabase
+      const { error: unsetError } = await supabase
         .from("patient_profiles")
         .update({ is_default: false })
         .eq("user_id", user.id)
         .eq("is_default", true)
         .neq("id", data.id);
+      if (unsetError) {
+        logger.warn("savePatientProfile_unset_default_failed", {
+          error: unsetError.message,
+        });
+      }
     }
 
     return { success: true, data };
@@ -161,36 +187,50 @@ export async function updatePatientProfile(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
-    // If setting as default, unset other defaults first
-    if (updates.is_default) {
-      await supabase
-        .from("patient_profiles")
-        .update({ is_default: false })
-        .eq("user_id", user.id)
-        .eq("is_default", true)
-        .neq("id", id);
+    if (!uuidSchema.safeParse(id).success) {
+      return { success: false, error: "Invalid profile ID" };
     }
 
-    // Strip immutable/identity columns a caller must never overwrite — a
-    // row-transfer or stale payload could otherwise reassign the profile to
-    // another user. Only allow genuine profile fields through.
-    const {
-      id: _id,
-      user_id: _userId,
-      created_at: _createdAt,
-      updated_at: _updatedAt,
-      ...safeUpdates
-    } = updates;
+    // Validate updates with Zod so server-owned/immutable keys (id, user_id,
+    // created_at, updated_at) are stripped and numeric/string bounds hold.
+    const parsed = patientProfileUpdateSchema.safeParse(updates);
+    if (!parsed.success) {
+      return { success: false, error: "Invalid profile data" };
+    }
 
+    // Update target row FIRST before clearing other defaults so a failed or
+    // nonexistent target never leaves the user without a default profile.
     const { data, error } = await supabase
       .from("patient_profiles")
-      .update(safeUpdates)
+      .update(parsed.data)
       .eq("id", id)
       .eq("user_id", user.id)
       .select()
       .single();
 
-    if (error) return { success: false, error: error.message };
+    if (error || !data) {
+      if (error) {
+        logger.error("updatePatientProfile_db_failed", {
+          error: error.message,
+        });
+      }
+      return { success: false, error: "Failed to update profile" };
+    }
+
+    if (data.is_default) {
+      const { error: unsetError } = await supabase
+        .from("patient_profiles")
+        .update({ is_default: false })
+        .eq("user_id", user.id)
+        .eq("is_default", true)
+        .neq("id", data.id);
+      if (unsetError) {
+        logger.warn("updatePatientProfile_unset_default_failed", {
+          error: unsetError.message,
+        });
+      }
+    }
+
     return { success: true, data };
   } catch (error) {
     logger.error("updatePatientProfile_failed", { error: String(error) });
@@ -208,13 +248,20 @@ export async function deletePatientProfile(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
+    if (!uuidSchema.safeParse(id).success) {
+      return { success: false, error: "Invalid profile ID" };
+    }
+
     const { error } = await supabase
       .from("patient_profiles")
       .delete()
       .eq("id", id)
       .eq("user_id", user.id);
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("deletePatientProfile_db_failed", { error: error.message });
+      return { success: false, error: "Failed to delete profile" };
+    }
     return { success: true };
   } catch (error) {
     logger.error("deletePatientProfile_failed", { error: String(error) });
@@ -240,7 +287,10 @@ export async function getHealthProfile(): Promise<
       .eq("user_id", user.id)
       .maybeSingle();
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("getHealthProfile_db_failed", { error: error.message });
+      return { success: false, error: "Failed to fetch health profile" };
+    }
     return { success: true, data: data ?? null };
   } catch (error) {
     logger.error("getHealthProfile_failed", { error: String(error) });
@@ -284,7 +334,10 @@ export async function saveHealthProfile(
       .select()
       .single();
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("saveHealthProfile_db_failed", { error: error.message });
+      return { success: false, error: "Failed to save health profile" };
+    }
     return { success: true, data };
   } catch (error) {
     logger.error("saveHealthProfile_failed", { error: String(error) });
@@ -314,7 +367,10 @@ export async function getUserMedications(): Promise<
       .eq("is_active", true)
       .order("created_at", { ascending: true });
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("getUserMedications_db_failed", { error: error.message });
+      return { success: false, error: "Failed to fetch medications" };
+    }
     return { success: true, data: data ?? [] };
   } catch (error) {
     logger.error("getUserMedications_failed", { error: String(error) });
@@ -346,7 +402,10 @@ export async function addMedication(
       .select()
       .single();
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("addMedication_db_failed", { error: error.message });
+      return { success: false, error: "Failed to add medication" };
+    }
     return { success: true, data };
   } catch (error) {
     logger.error("addMedication_failed", { error: String(error) });
@@ -362,6 +421,10 @@ export async function removeMedication(id: string): Promise<ActionResponse> {
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
+    if (!uuidSchema.safeParse(id).success) {
+      return { success: false, error: "Invalid medication ID" };
+    }
+
     // L21 (audit 2026-06-22): soft-delete by toggling is_active=false instead
     // of hard-deleting the row, so the medication history is preserved as an
     // audit trail and the user can no longer trigger interactions on it
@@ -374,7 +437,10 @@ export async function removeMedication(id: string): Promise<ActionResponse> {
       .eq("user_id", user.id)
       .eq("is_active", true);
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("removeMedication_db_failed", { error: error.message });
+      return { success: false, error: "Failed to remove medication" };
+    }
     return { success: true };
   } catch (error) {
     logger.error("removeMedication_failed", { error: String(error) });
@@ -430,7 +496,7 @@ export async function saveDosageCalculation(
 
     if (error) {
       logger.error("saveDosageCalculation_failed", { error: error.message });
-      return { success: false, error: error.message };
+      return { success: false, error: "Failed to save calculation" };
     }
     return { success: true };
   } catch (error) {
@@ -456,7 +522,10 @@ export async function getDosageHistory(): Promise<
       .order("created_at", { ascending: false })
       .limit(20);
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("getDosageHistory_db_failed", { error: error.message });
+      return { success: false, error: "Failed to fetch history" };
+    }
     return { success: true, data: data ?? [] };
   } catch (error) {
     logger.error("getDosageHistory_failed", { error: String(error) });
@@ -477,13 +546,21 @@ export async function updateGardenNote(
     } = await supabase.auth.getUser();
     if (!user) return { success: false, error: "Not authenticated" };
 
+    const parsed = gardenNoteSchema.safeParse({ herbSlug, note });
+    if (!parsed.success) {
+      return { success: false, error: "Invalid note data" };
+    }
+
     const { error } = await supabase
       .from("garden_herbs")
-      .update({ note })
+      .update({ note: parsed.data.note })
       .eq("user_id", user.id)
-      .eq("herb_slug", herbSlug);
+      .eq("herb_slug", parsed.data.herbSlug);
 
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      logger.error("updateGardenNote_db_failed", { error: error.message });
+      return { success: false, error: "Failed to update note" };
+    }
     return { success: true };
   } catch (error) {
     logger.error("updateGardenNote_failed", { error: String(error) });
@@ -507,6 +584,12 @@ export async function checkUserMedicationInteractions(
   }>
 > {
   try {
+    const parsedSlug = herbSlugSchema.safeParse(herbSlug);
+    if (!parsedSlug.success) {
+      return { success: false, error: "Invalid herb slug" };
+    }
+    const cleanSlug = parsedSlug.data;
+
     const supabase = await createClient();
     const {
       data: { user },
@@ -515,30 +598,54 @@ export async function checkUserMedicationInteractions(
       return { success: true, data: { interactions: [], userMedications: [] } };
 
     // Get user's active medications
-    const { data: meds } = await supabase
+    const { data: meds, error: medsError } = await supabase
       .from("user_medications")
       .select("drug_name")
       .eq("user_id", user.id)
       .eq("is_active", true);
 
+    if (medsError) {
+      logger.error("checkUserMedicationInteractions_meds_failed", {
+        error: medsError.message,
+      });
+      return { success: false, error: "Failed to check interactions" };
+    }
+
     if (!meds || meds.length === 0)
       return { success: true, data: { interactions: [], userMedications: [] } };
 
     // Get the herb
-    const { data: herb } = await supabase
+    const { data: herb, error: herbError } = await supabase
       .from("herbs")
       .select("id")
-      .eq("slug", herbSlug)
+      .eq("slug", cleanSlug)
       .eq("is_published", true)
       .single();
+
+    if (herbError) {
+      if ((herbError as { code?: string }).code !== "PGRST116") {
+        logger.error("checkUserMedicationInteractions_herb_failed", {
+          error: herbError.message,
+        });
+        return { success: false, error: "Failed to check interactions" };
+      }
+      return { success: false, error: "Herb not found" };
+    }
 
     if (!herb) return { success: false, error: "Herb not found" };
 
     // Get all drug interactions for this herb
-    const { data: interactions } = await supabase
+    const { data: interactions, error: interactionsError } = await supabase
       .from("drug_interactions")
       .select("drug_name, severity, description, mechanism")
       .eq("herb_id", herb.id);
+
+    if (interactionsError) {
+      logger.error("checkUserMedicationInteractions_interactions_failed", {
+        error: interactionsError.message,
+      });
+      return { success: false, error: "Failed to check interactions" };
+    }
 
     if (!interactions || interactions.length === 0)
       return {

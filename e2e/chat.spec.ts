@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 /**
  * E2E for /herbalist — the full chat page. The /api/chat route is mocked
@@ -7,6 +7,15 @@ import { test, expect } from "@playwright/test";
  * markdown enrichment (PMID link, evidence pill) renders correctly and
  * that a safety-guard verdict appends the warning string.
  */
+
+async function submitChatMessage(page: Page, text: string) {
+  await expect(page.locator('[data-chat-ready="true"]')).toBeVisible();
+  const input = page.locator('textarea[aria-label="Chat message input"]');
+  const sendBtn = page.locator('button[aria-label="Send message"]');
+  await input.fill(text);
+  await expect(sendBtn).toBeEnabled();
+  await input.press("Enter");
+}
 
 test.describe("AI Herbalist chat", () => {
   test("renders the chat shell with the welcome empty state", async ({
@@ -34,9 +43,44 @@ test.describe("AI Herbalist chat", () => {
     });
 
     await page.goto("/herbalist");
+    await submitChatMessage(page, "Tell me about turmeric evidence");
+
+    const pubmedLink = page.locator(
+      'a[href*="pubmed.ncbi.nlm.nih.gov/32747204"]'
+    );
+    await expect(pubmedLink).toBeVisible({ timeout: 10000 });
+    await expect(pubmedLink).toHaveAttribute("target", "_blank");
+  });
+
+  test("recovers and submits text typed into the SSR textarea before hydration completes", async ({
+    page,
+  }) => {
+    await page.route("**/api/chat", async (route) => {
+      const body = "See PMID:32747204 for **Strong evidence**.";
+      await route.fulfill({
+        status: 200,
+        contentType: "text/plain; charset=utf-8",
+        body,
+      });
+    });
+
+    // Delay client chunks so fill() reliably lands on the unhydrated SSR DOM
+    await page.route("**/_next/static/chunks/*.js", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      await route.continue();
+    });
+
+    await page.goto("/herbalist", { waitUntil: "domcontentloaded" });
+    await expect(page.locator('[data-chat-ready="false"]')).toBeVisible();
+
     const input = page.locator('textarea[aria-label="Chat message input"]');
+    const sendBtn = page.locator('button[aria-label="Send message"]');
     await input.fill("Tell me about turmeric evidence");
-    await page.keyboard.press("Enter");
+
+    await expect(page.locator('[data-chat-ready="true"]')).toBeVisible();
+    await expect(input).toHaveValue("Tell me about turmeric evidence");
+    await expect(sendBtn).toBeEnabled();
+    await input.press("Enter");
 
     const pubmedLink = page.locator(
       'a[href*="pubmed.ncbi.nlm.nih.gov/32747204"]'
@@ -62,9 +106,7 @@ test.describe("AI Herbalist chat", () => {
     });
 
     await page.goto("/herbalist");
-    const input = page.locator('textarea[aria-label="Chat message input"]');
-    await input.fill("What is this rash?");
-    await page.keyboard.press("Enter");
+    await submitChatMessage(page, "What is this rash?");
 
     await expect(
       page.getByText(/⚠️.*educational information only/i)
@@ -91,9 +133,7 @@ test.describe("AI Herbalist chat", () => {
     });
 
     await page.goto("/herbalist");
-    const input = page.locator('textarea[aria-label="Chat message input"]');
-    await input.fill("Can I stop my insulin?");
-    await page.keyboard.press("Enter");
+    await submitChatMessage(page, "Can I stop my insulin?");
 
     await expect(
       page.getByText(/consult a qualified healthcare provider/i)

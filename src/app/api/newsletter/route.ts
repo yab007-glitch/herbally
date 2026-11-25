@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 import { subscribe } from "@/lib/newsletter/subscribe";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
+
+const MAX_BODY_SIZE = 4 * 1024;
 
 const bodySchema = z.object({
   email: z.string().min(3).max(254),
@@ -15,19 +18,25 @@ const bodySchema = z.object({
 export async function POST(request: NextRequest) {
   const ip = getClientIP(request);
   // Generous for a human, hostile to a script: one address per few seconds.
-  const limited = await rateLimit(`newsletter:${ip}`, 5, 60_000);
+  const limited = await rateLimit(rateLimitKey("newsletter", ip), 5, 60_000);
   if (!limited.success) {
     return NextResponse.json({ error: "rate-limited" }, { status: 429 });
   }
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "invalid-json" }, { status: 400 });
+  const bodyResult = await readJsonBodyWithLimit(request, MAX_BODY_SIZE);
+  if (!bodyResult.ok) {
+    return NextResponse.json(
+      {
+        error:
+          bodyResult.reason === "too_large"
+            ? "Request body too large"
+            : "invalid-json",
+      },
+      { status: bodyResult.reason === "too_large" ? 413 : 400 }
+    );
   }
 
-  const parsed = bodySchema.safeParse(body);
+  const parsed = bodySchema.safeParse(bodyResult.data);
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid-email" }, { status: 400 });
   }

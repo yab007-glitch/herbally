@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 
 export default function ErrorBoundary({
   error,
@@ -35,10 +36,10 @@ export default function ErrorBoundary({
           <RefreshCw className="size-4" aria-hidden />
           {t("500.retry")}
         </Button>
-        <Button variant="outline" render={<Link href="/" />}>
+        <Link href="/" className={buttonVariants({ variant: "outline" })}>
           <Home className="mr-2 size-4" aria-hidden />
           {t("goHome")}
-        </Button>
+        </Link>
       </div>
       {process.env.NODE_ENV === "development" && (
         <div className="mt-8 max-w-2xl overflow-auto rounded-lg border border-destructive/20 bg-destructive/5 p-4 text-left text-sm">

@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
+import { hydrateRoot } from "react-dom/client";
 import { ChatInterface } from "../chat-interface";
 import { enDict as en, frDict as fr } from "@/lib/i18n/dictionaries";
 
@@ -124,5 +126,75 @@ describe("verified-data copy", () => {
   it("is removed from both the English and French dictionaries", () => {
     expect(en.common).not.toHaveProperty("verifiedData");
     expect(fr.common).not.toHaveProperty("verifiedData");
+  });
+});
+
+describe("ChatInterface pre-hydration input preservation", () => {
+  it("preserves text typed into the SSR textarea before hydration, enables Send, and submits on Enter", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        chatResponse("See PMID:32747204 for turmeric evidence.", "database")
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+
+    const root = (() => {
+      container.innerHTML = renderToString(<ChatInterface locale="en" />);
+      const ssrTextarea = container.querySelector(
+        'textarea[aria-label="common.chatInputlabel"]'
+      ) as HTMLTextAreaElement;
+      expect(ssrTextarea).not.toBeNull();
+      // Simulate user typing into SSR HTML before React hydrates onChange
+      ssrTextarea.value = "Tell me about turmeric evidence";
+
+      let hydratedRoot!: ReturnType<typeof hydrateRoot>;
+      act(() => {
+        hydratedRoot = hydrateRoot(container, <ChatInterface locale="en" />);
+      });
+      return hydratedRoot;
+    })();
+
+    try {
+      const readyRoot = container.querySelector('[data-chat-ready="true"]');
+      expect(readyRoot).not.toBeNull();
+
+      const textarea = container.querySelector(
+        'textarea[aria-label="common.chatInputlabel"]'
+      ) as HTMLTextAreaElement;
+      const sendBtn = container.querySelector(
+        'button[aria-label="common.sendMessageLabel"]'
+      ) as HTMLButtonElement;
+
+      expect(textarea.value).toBe("Tell me about turmeric evidence");
+      expect(sendBtn.disabled).toBe(false);
+
+      await act(async () => {
+        fireEvent.keyDown(textarea, { key: "Enter", shiftKey: false });
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/chat",
+        expect.objectContaining({
+          method: "POST",
+          body: expect.stringContaining("Tell me about turmeric evidence"),
+        })
+      );
+      expect(
+        await screen.findByText(/See .*turmeric evidence/i)
+      ).toBeInTheDocument();
+      expect(textarea.value).toBe("");
+    } finally {
+      act(() => {
+        root.unmount();
+      });
+      container.remove();
+      vi.unstubAllGlobals();
+    }
   });
 });

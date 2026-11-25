@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -47,6 +47,15 @@ interface NpnLookupResult {
   licenceDate: string | null;
   revisedDate: string | null;
   status: { active: boolean; label: string };
+  partial?: boolean;
+  unavailableSections?: Array<"ingredients" | "purposes" | "risks" | "doses">;
+  sectionStatus?: {
+    ingredients: "ok" | "unavailable";
+    purposes: "ok" | "unavailable";
+    risks: "ok" | "unavailable";
+    doses: "ok" | "unavailable";
+  };
+  herbMatchingUnavailable?: boolean;
   ingredients: NpnIngredient[];
   purposes: string[];
   risks: Array<{ type: string; subType: string; text: string }>;
@@ -68,6 +77,21 @@ interface StackMatchResult {
     severity: "mild" | "moderate" | "severe" | "contraindicated";
     description: string;
     pairUrl: string;
+  }>;
+  conflicts?: Array<{
+    herbName: string;
+    herbSlug: string;
+    drugInput: string;
+    drugSlug: string;
+    pairUrl: string;
+    records: Array<{
+      herbName: string;
+      herbSlug: string;
+      drugName: string;
+      severity: "mild" | "moderate" | "severe" | "contraindicated";
+      description: string;
+      pairUrl: string;
+    }>;
   }>;
   unrecorded: Array<{ herbName: string; drugInput: string }>;
 }
@@ -92,34 +116,77 @@ export function NpnCheckerClient() {
   const [medError, setMedError] = useState<string | null>(null);
   const [medResult, setMedResult] = useState<StackMatchResult | null>(null);
 
+  const npnGenRef = useRef(0);
+  const npnAbortRef = useRef<AbortController | null>(null);
+  const medGenRef = useRef(0);
+  const medAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      npnAbortRef.current?.abort();
+      medAbortRef.current?.abort();
+    };
+  }, []);
+
+  function invalidateMedCheck() {
+    medGenRef.current += 1;
+    medAbortRef.current?.abort();
+    medAbortRef.current = null;
+    setCheckingMed(false);
+    setMedResult(null);
+    setMedError(null);
+  }
+
   async function lookupNpn(targetNpn: string) {
     const trimmed = targetNpn.trim();
     if (!trimmed) {
+      npnGenRef.current += 1;
+      npnAbortRef.current?.abort();
+      npnAbortRef.current = null;
+      setLoading(false);
+      setData(null);
       setError(t("emptyError"));
+      invalidateMedCheck();
       return;
     }
+
+    const gen = ++npnGenRef.current;
+    npnAbortRef.current?.abort();
+    const controller = new AbortController();
+    npnAbortRef.current = controller;
+
     setLoading(true);
     setError(null);
-    setMedResult(null);
-    setMedError(null);
+    setData(null);
+    invalidateMedCheck();
+
     try {
       const res = await fetch(
-        `/api/npn/lookup?npn=${encodeURIComponent(trimmed)}&locale=${locale}`
+        `/api/npn/lookup?npn=${encodeURIComponent(trimmed)}&locale=${locale}`,
+        { signal: controller.signal }
       );
+      if (gen !== npnGenRef.current) return;
       const payload = (await res.json()) as NpnLookupResult & {
         error?: string;
       };
+      if (gen !== npnGenRef.current) return;
       if (!res.ok) {
         setData(null);
         setError(payload.error || t("errorGeneric"));
-        setLoading(false);
         return;
       }
       setData(payload);
     } catch {
+      if (gen !== npnGenRef.current) return;
+      setData(null);
       setError(t("errorGeneric"));
     } finally {
-      setLoading(false);
+      if (gen === npnGenRef.current) {
+        setLoading(false);
+        if (npnAbortRef.current === controller) {
+          npnAbortRef.current = null;
+        }
+      }
     }
   }
 
@@ -135,12 +202,19 @@ export function NpnCheckerClient() {
     ];
     const drug = medInput.trim();
     if (matchedNames.length === 0 || drug.length < 2) {
+      invalidateMedCheck();
       setMedError(t("medCheckNeedInput"));
       return;
     }
 
+    const gen = ++medGenRef.current;
+    medAbortRef.current?.abort();
+    const controller = new AbortController();
+    medAbortRef.current = controller;
+
     setCheckingMed(true);
     setMedError(null);
+    setMedResult(null);
     try {
       const res = await fetch("/api/interactions/check-stack", {
         method: "POST",
@@ -150,19 +224,30 @@ export function NpnCheckerClient() {
           drugs: [drug],
           locale,
         }),
+        signal: controller.signal,
       });
+      if (gen !== medGenRef.current) return;
       const payload = (await res.json()) as StackMatchResult & {
         error?: string;
       };
+      if (gen !== medGenRef.current) return;
       if (!res.ok) {
+        setMedResult(null);
         setMedError(payload.error || t("errorGeneric"));
         return;
       }
       setMedResult(payload);
     } catch {
+      if (gen !== medGenRef.current) return;
+      setMedResult(null);
       setMedError(t("errorGeneric"));
     } finally {
-      setCheckingMed(false);
+      if (gen === medGenRef.current) {
+        setCheckingMed(false);
+        if (medAbortRef.current === controller) {
+          medAbortRef.current = null;
+        }
+      }
     }
   }
 
@@ -188,7 +273,16 @@ export function NpnCheckerClient() {
           <Input
             id="npn-number-input"
             value={npnInput}
-            onChange={(e) => setNpnInput(e.target.value)}
+            onChange={(e) => {
+              setNpnInput(e.target.value);
+              npnGenRef.current += 1;
+              npnAbortRef.current?.abort();
+              npnAbortRef.current = null;
+              setLoading(false);
+              setError(null);
+              setData(null);
+              invalidateMedCheck();
+            }}
             placeholder={t("inputPlaceholder")}
             inputMode="numeric"
             className="sm:flex-1"
@@ -270,56 +364,96 @@ export function NpnCheckerClient() {
             </a>
           </div>
 
+          {/* Partial upstream failure banner */}
+          {data.partial && (
+            <div
+              role="alert"
+              className="rounded-xl border border-amber-300 bg-amber-50/80 p-4 text-xs leading-relaxed text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+            >
+              <p className="font-semibold">
+                {locale === "fr"
+                  ? "Fiche partielle : certaines données de Santé Canada ou de correspondance n'ont pas pu être chargées."
+                  : "Incomplete record: some Health Canada sections or interaction checks could not be loaded."}
+              </p>
+              <p className="mt-1 opacity-90">
+                {locale === "fr"
+                  ? "Ne considérez pas une section absente ou vide comme une absence de mise en garde. Consultez la fiche officielle Santé Canada ou un pharmacien."
+                  : "Do not interpret missing or empty sections as absence of ingredients or cautions. Verify the official Health Canada listing or ask a pharmacist."}
+              </p>
+            </div>
+          )}
+
           {/* Medicinal Ingredients */}
           <div>
             <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
               <FlaskConical className="size-4 text-primary" />
-              {t("ingredientsHeading")} ({data.ingredients.length})
+              {t("ingredientsHeading")}{" "}
+              {data.sectionStatus?.ingredients === "unavailable"
+                ? ""
+                : `(${data.ingredients.length})`}
             </h3>
-            <ul className="mt-3 space-y-2">
-              {data.ingredients.map((ing, idx) => (
-                <li
-                  key={`${ing.name}-${idx}`}
-                  className="flex flex-col justify-between gap-2 rounded-xl border border-border/80 bg-background/60 p-3 sm:flex-row sm:items-center"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {ing.name}
-                    </p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      {[
-                        ing.quantity && ing.unit
-                          ? `${ing.quantity} ${ing.unit}`
-                          : null,
-                        ing.dhe && ing.dheUnit
-                          ? `DHE/QBE ${ing.dhe} ${ing.dheUnit}`
-                          : null,
-                        ing.potencyAmount && ing.potencyConstituent
-                          ? `${ing.potencyAmount} ${ing.potencyUnit ?? ""} ${ing.potencyConstituent}`
-                          : null,
-                        ing.sourceMaterial,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                  </div>
-                  {ing.matchedHerb && (
-                    <Link
-                      href={`/herbs/${ing.matchedHerb.slug}`}
-                      className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/15"
-                    >
-                      <Leaf className="size-3.5" />
-                      {ing.matchedHerb.name}
-                      {ing.matchedHerb.interactionCount > 0 && (
-                        <span className="opacity-80">
-                          ({ing.matchedHerb.interactionCount})
-                        </span>
-                      )}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
+            {data.sectionStatus?.ingredients === "unavailable" ? (
+              <p
+                role="alert"
+                className="mt-2 rounded-lg border border-amber-300 bg-amber-50/70 p-3 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+              >
+                {locale === "fr"
+                  ? "Les ingrédients médicinaux n'ont pas pu être récupérés depuis le registre de Santé Canada."
+                  : "Medicinal ingredients could not be loaded from Health Canada right now."}
+              </p>
+            ) : (
+              <ul className="mt-3 space-y-2">
+                {data.ingredients.map((ing, idx) => (
+                  <li
+                    key={`${ing.name}-${idx}`}
+                    className="flex flex-col justify-between gap-2 rounded-xl border border-border/80 bg-background/60 p-3 sm:flex-row sm:items-center"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {ing.name}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {[
+                          ing.quantity && ing.unit
+                            ? `${ing.quantity} ${ing.unit}`
+                            : null,
+                          ing.dhe && ing.dheUnit
+                            ? `DHE/QBE ${ing.dhe} ${ing.dheUnit}`
+                            : null,
+                          ing.potencyAmount && ing.potencyConstituent
+                            ? `${ing.potencyAmount} ${ing.potencyUnit ?? ""} ${ing.potencyConstituent}`
+                            : null,
+                          ing.sourceMaterial,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    </div>
+                    {ing.matchedHerb && (
+                      <Link
+                        href={`/herbs/${ing.matchedHerb.slug}`}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/15"
+                      >
+                        <Leaf className="size-3.5" />
+                        {ing.matchedHerb.name}
+                        {ing.matchedHerb.interactionCount > 0 && (
+                          <span className="opacity-80">
+                            ({ing.matchedHerb.interactionCount})
+                          </span>
+                        )}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {data.herbMatchingUnavailable && (
+              <p className="mt-2 text-xs text-amber-800 dark:text-amber-300">
+                {locale === "fr"
+                  ? "La correspondance avec les fiches d'interactions HerbAlly est temporairement indisponible."
+                  : "HerbAlly interaction cross-referencing is temporarily unavailable."}
+              </p>
+            )}
           </div>
 
           {/* Quick Medication Cross-Check */}
@@ -338,7 +472,10 @@ export function NpnCheckerClient() {
               <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                 <Input
                   value={medInput}
-                  onChange={(e) => setMedInput(e.target.value)}
+                  onChange={(e) => {
+                    setMedInput(e.target.value);
+                    invalidateMedCheck();
+                  }}
                   placeholder={t("medCheckPlaceholder")}
                   className="bg-background sm:flex-1"
                 />
@@ -351,6 +488,36 @@ export function NpnCheckerClient() {
               )}
               {medResult && (
                 <div className="mt-3 space-y-2">
+                  {medResult.conflicts && medResult.conflicts.length > 0 && (
+                    <div role="alert" className="space-y-2">
+                      {medResult.conflicts.flatMap((c) =>
+                        c.records.map((r, idx) => (
+                          <div
+                            key={`${c.herbSlug}-${r.drugName}-${idx}`}
+                            className="rounded-lg border border-amber-300 bg-background p-3 text-xs"
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="font-semibold text-foreground">
+                                {r.herbName} + {r.drugName}
+                              </span>
+                              <span className="font-semibold uppercase text-amber-800 dark:text-amber-300">
+                                {r.severity}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-muted-foreground">
+                              {r.description}
+                            </p>
+                            <Link
+                              href={r.pairUrl}
+                              className="mt-1.5 inline-block font-medium text-primary hover:underline"
+                            >
+                              {t("readInteractionDetails")} →
+                            </Link>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
                   {medResult.matches.length > 0 ? (
                     medResult.matches.map((m, i) => (
                       <div
@@ -376,52 +543,76 @@ export function NpnCheckerClient() {
                         </Link>
                       </div>
                     ))
-                  ) : (
+                  ) : (medResult.conflicts?.length ?? 0) === 0 ? (
                     <p className="text-xs text-muted-foreground">
                       {t("medCheckNoMatches")}
                     </p>
-                  )}
+                  ) : null}
                 </div>
               )}
             </form>
           )}
 
           {/* Recommended Uses */}
-          {data.purposes.length > 0 && (
+          {(data.purposes.length > 0 ||
+            data.sectionStatus?.purposes === "unavailable") && (
             <div>
               <h3 className="text-base font-semibold text-foreground">
                 {t("purposesHeading")}
               </h3>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-                {data.purposes.map((p) => (
-                  <li key={p}>{p}</li>
-                ))}
-              </ul>
+              {data.sectionStatus?.purposes === "unavailable" ? (
+                <p
+                  role="alert"
+                  className="mt-2 rounded-lg border border-amber-300 bg-amber-50/70 p-3 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+                >
+                  {locale === "fr"
+                    ? "Les usages recommandés par Santé Canada n'ont pas pu être chargés."
+                    : "Recommended uses could not be loaded from Health Canada right now."}
+                </p>
+              ) : (
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+                  {data.purposes.map((p) => (
+                    <li key={p}>{p}</li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
 
           {/* Official Health Canada Risks / Cautions */}
-          {data.risks.length > 0 && (
+          {(data.risks.length > 0 ||
+            data.sectionStatus?.risks === "unavailable") && (
             <div>
               <h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
                 <ShieldAlert className="size-4 text-amber-600" />
                 {t("risksHeading")}
               </h3>
-              <ul className="mt-2 space-y-2">
-                {data.risks.map((r, i) => (
-                  <li
-                    key={`${r.text}-${i}`}
-                    className="rounded-lg border border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground"
-                  >
-                    {r.type && (
-                      <span className="mr-1.5 font-semibold text-foreground">
-                        {r.type}:
-                      </span>
-                    )}
-                    {r.text}
-                  </li>
-                ))}
-              </ul>
+              {data.sectionStatus?.risks === "unavailable" ? (
+                <p
+                  role="alert"
+                  className="mt-2 rounded-lg border border-amber-300 bg-amber-50/70 p-3 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+                >
+                  {locale === "fr"
+                    ? "Les mises en garde et énoncés de risque officiels de Santé Canada n'ont pas pu être chargés. Consultez la fiche officielle ou demandez conseil à un pharmacien."
+                    : "Official Health Canada cautions and risk statements could not be loaded right now. Check the official Health Canada record or ask a pharmacist."}
+                </p>
+              ) : (
+                <ul className="mt-2 space-y-2">
+                  {data.risks.map((r, i) => (
+                    <li
+                      key={`${r.text}-${i}`}
+                      className="rounded-lg border border-border/70 bg-muted/30 p-3 text-xs leading-relaxed text-muted-foreground"
+                    >
+                      {r.type && (
+                        <span className="mr-1.5 font-semibold text-foreground">
+                          {r.type}:
+                        </span>
+                      )}
+                      {r.text}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
         </div>

@@ -8,6 +8,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 import { z } from "zod";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 const MAX_BODY_SIZE = 10 * 1024; // 10KB max for search interpretation
 
@@ -45,16 +46,17 @@ export async function POST(request: NextRequest) {
   let originalQuery = "";
   try {
     const schema = z.object({ query: z.string().min(2).max(200) });
-    const body = await request.json();
-    // Chunked-encoding bypass guard: content-length may be missing, so
-    // enforce a post-parse size cap before Zod validation.
-    if (JSON.stringify(body).length > MAX_BODY_SIZE) {
-      return NextResponse.json(
-        { error: "Request body too large" },
-        { status: 413 }
-      );
+    const bodyResult = await readJsonBodyWithLimit(request, MAX_BODY_SIZE);
+    if (!bodyResult.ok) {
+      if (bodyResult.reason === "too_large") {
+        return NextResponse.json(
+          { error: "Request body too large" },
+          { status: 413 }
+        );
+      }
+      return NextResponse.json({ keywords: [] });
     }
-    const parsed = schema.safeParse(body);
+    const parsed = schema.safeParse(bodyResult.data);
     if (!parsed.success) {
       // L6 (audit 2026-06-22): don't reflect the unvalidated `body.query` back
       // to the caller — it bypassed the Zod check and could be any type/size.

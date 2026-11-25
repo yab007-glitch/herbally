@@ -92,6 +92,56 @@ describe("GET /api/openfda", () => {
     expect(url).toContain("aspirin");
   });
 
+  it("quotes multi-word drug names inside the medicinalproduct search", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ results: [] }), { status: 200 })
+    );
+
+    const { GET } = await loadRoute();
+    const res = await GET(makeRequest({ term: "warfarin sodium" }));
+
+    expect(res.status).toBe(200);
+    const url = fetchMock.mock.calls[0][0] as string;
+    expect(url).toContain(
+      `patient.drug.medicinalproduct:${encodeURIComponent('"warfarin sodium"')}`
+    );
+  });
+
+  it("strips Lucene query metacharacters to prevent query injection", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ results: [] }), { status: 200 })
+    );
+
+    const { GET } = await loadRoute();
+    const res = await GET(
+      makeRequest({ term: 'aspirin" OR _exists_:patient.reaction' })
+    );
+
+    expect(res.status).toBe(200);
+    const url = fetchMock.mock.calls[0][0] as string;
+    const decodedSearch = decodeURIComponent(url.split("search=")[1] ?? "");
+    expect(decodedSearch).toMatch(/^patient\.drug\.medicinalproduct:"[^"]+"&/);
+    expect(decodedSearch).not.toContain("_exists_:");
+  });
+
+  it("returns 400 when term contains only metacharacters", async () => {
+    const { GET } = await loadRoute();
+    const res = await GET(makeRequest({ term: '"*()' }));
+    expect(res.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("flags unavailable: true on non-404 upstream errors such as 503", async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response("Service Unavailable", { status: 503 })
+    );
+
+    const { GET } = await loadRoute();
+    const res = await GET(makeRequest({ term: "aspirin" }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ results: [], unavailable: true });
+  });
+
   it("includes the Next.js fetch cache revalidation option", async () => {
     fetchMock.mockResolvedValueOnce(
       new Response(JSON.stringify({ results: [] }), { status: 200 })

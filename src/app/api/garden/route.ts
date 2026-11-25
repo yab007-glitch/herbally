@@ -6,6 +6,7 @@ import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { z } from "zod";
 import { getGuestId } from "@/lib/actions/guest-id";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 const herbSchema = z.object({
   slug: z.string().min(1).max(200),
@@ -50,27 +51,21 @@ export async function POST(request: NextRequest) {
   const limited = await rateLimited(request);
   if (limited) return limited;
 
-  // Bound body before parsing (chunked-encoding may omit content-length).
-  const contentLength = parseInt(
-    request.headers.get("content-length") || "0",
-    10
-  );
-  if (contentLength > 100 * 1024) {
+  const bodyResult = await readJsonBodyWithLimit(request, 100 * 1024);
+  if (!bodyResult.ok) {
     return NextResponse.json(
-      { error: "Request body too large" },
-      { status: 413 }
+      {
+        error:
+          bodyResult.reason === "too_large"
+            ? "Request body too large"
+            : "Invalid request body",
+      },
+      { status: bodyResult.reason === "too_large" ? 413 : 400 }
     );
   }
 
   try {
-    const body = await request.json();
-    if (JSON.stringify(body).length > 100 * 1024) {
-      return NextResponse.json(
-        { error: "Request body too large" },
-        { status: 413 }
-      );
-    }
-    const parsed = bodySchema.safeParse(body);
+    const parsed = bodySchema.safeParse(bodyResult.data);
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid request body" },
@@ -80,7 +75,7 @@ export async function POST(request: NextRequest) {
     const { herbs } = parsed.data;
 
     if (herbs.length === 0) {
-      return NextResponse.json({ saved: 0, errors: [] });
+      return NextResponse.json({ saved: 0, savedSlugs: [], errors: [] });
     }
 
     const supabase = await createClient();
@@ -88,7 +83,11 @@ export async function POST(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const result = { saved: 0, errors: [] as string[] };
+    const result = {
+      saved: 0,
+      savedSlugs: [] as string[],
+      errors: [] as string[],
+    };
 
     if (user) {
       // Authenticated: RLS-scoped server client.
@@ -110,7 +109,10 @@ export async function POST(request: NextRequest) {
             error: error.message,
           });
           result.errors.push(herb.slug);
-        } else result.saved++;
+        } else {
+          result.saved++;
+          result.savedSlugs.push(herb.slug);
+        }
       }
     } else {
       // Guest: identity from the HttpOnly cookie, not the request body.
@@ -134,10 +136,22 @@ export async function POST(request: NextRequest) {
             error: error.message,
           });
           result.errors.push(herb.slug);
-        } else result.saved++;
+        } else {
+          result.saved++;
+          result.savedSlugs.push(herb.slug);
+        }
       }
     }
 
+    if (result.saved === 0 && result.errors.length > 0) {
+      return NextResponse.json(
+        { ...result, error: "Failed to sync garden" },
+        { status: 500 }
+      );
+    }
+    if (result.errors.length > 0) {
+      return NextResponse.json(result, { status: 207 });
+    }
     return NextResponse.json(result);
   } catch (err) {
     logger.error("garden_sync_error", {
@@ -271,7 +285,7 @@ export async function DELETE(request: NextRequest) {
           { status: 500 }
         );
       }
-      return NextResponse.json({ removed: true });
+      return NextResponse.json({ removed: true, slug });
     }
 
     const guestId = await getGuestId();
@@ -288,7 +302,7 @@ export async function DELETE(request: NextRequest) {
         { status: 500 }
       );
     }
-    return NextResponse.json({ removed: true });
+    return NextResponse.json({ removed: true, slug });
   } catch (err) {
     logger.error("garden_delete_error", {
       error: err instanceof Error ? err.message : String(err),

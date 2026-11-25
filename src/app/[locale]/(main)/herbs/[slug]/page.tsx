@@ -5,7 +5,7 @@ import { isUsablePubmedSheet } from "@/lib/pubmed/usable";
 import { resolveSheetContent } from "@/lib/i18n/sheet-content";
 import type { SheetContent } from "@/components/herbs/pubmed-monograph-sheet";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { ShareButtons } from "@/components/shared/share-buttons";
 import { HerbSchema } from "@/components/seo/herb-schema";
@@ -194,14 +194,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           })
         );
 
-  const untranslatedFr = metaLocale === "fr" && !hasFr;
-  const bundleInteractions = (
-    bundle?.herb as Record<string, unknown> | null | undefined
-  )?.drug_interactions;
-  const hasCuratedInteraction =
-    (Array.isArray(herb.drug_interactions) &&
-      herb.drug_interactions.length > 0) ||
-    (Array.isArray(bundleInteractions) && bundleInteractions.length > 0);
   // Owner policy 2026-11-23: every published herb page is indexable. The
   // sourced/thin gate was removed here and in the sitemap so the robots
   // directive and the advertised set agree across the whole catalogue.
@@ -633,15 +625,17 @@ export default async function HerbDetailPage({ params }: Props) {
           ]}
         />
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="min-h-10"
-          render={<Link href="/herbs" />}
+        <Link
+          href="/herbs"
+          className={buttonVariants({
+            variant: "ghost",
+            size: "sm",
+            className: "min-h-10",
+          })}
         >
           <ArrowLeft className="size-4" />
           {t("herbDetail.backToHerbs")}
-        </Button>
+        </Link>
 
         <p className="text-xs text-muted-foreground italic">
           {t("herbDetail.medicalDisclaimerText")}
@@ -822,13 +816,15 @@ export default async function HerbDetailPage({ params }: Props) {
                   {t("herbDetail.calculatorCtaBody")}
                 </p>
               </div>
-              <Button
-                variant="outline"
-                className="min-h-10"
-                render={<Link href={`/calculator?herb=${slug}`} />}
+              <Link
+                href={`/calculator?herb=${slug}`}
+                className={buttonVariants({
+                  variant: "outline",
+                  className: "min-h-10",
+                })}
               >
                 {t("herbDetail.calculateDose")}
-              </Button>
+              </Link>
             </div>
           </section>
         )}

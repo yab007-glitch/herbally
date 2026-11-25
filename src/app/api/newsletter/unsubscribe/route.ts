@@ -5,6 +5,7 @@ import { logger } from "@/lib/utils/logger";
 import { siteUrl } from "@/lib/seo/site-url";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import { invalidateNewsletterSendLease } from "@/lib/newsletter/subscribe";
 
 const unsubscribeQuerySchema = z.object({
   token: z.string().trim().uuid(),
@@ -43,18 +44,28 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = createAdminClient();
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("newsletter_subscribers")
       .update({
         status: "unsubscribed",
         subscribed: false,
         unsubscribed_at: new Date().toISOString(),
+        confirmation_send_lease_until: null,
       })
-      .eq("unsubscribe_token", token);
+      .eq("unsubscribe_token", token)
+      .select("id, email, confirm_token")
+      .maybeSingle();
 
     if (error) {
       logger.error("newsletter: unsubscribe failed", { error: error.message });
       return NextResponse.redirect(`${done}?status=error`, 302);
+    }
+    if (data && typeof data.email === "string") {
+      invalidateNewsletterSendLease({
+        email: data.email,
+        rowId: data.id,
+        confirmToken: data.confirm_token,
+      });
     }
     return NextResponse.redirect(`${done}?status=done`, 302);
   } catch (error) {

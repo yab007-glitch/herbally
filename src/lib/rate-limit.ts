@@ -6,42 +6,68 @@
  * - upstash: Production-ready, requires UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
  */
 
+import { createHmac } from "crypto";
 import { logger } from "@/lib/utils/logger";
 
 type RateLimitResult = { success: boolean; remaining: number };
 
+const DEFAULT_UPSTASH_TIMEOUT_MS = 2500;
+const MAX_MEMORY_KEYS = 10_000;
+
 /**
  * Namespaced limiter key.
- *
- * Routes used to pass the bare client IP, so every endpoint shared one counter:
- * a burst on /api/interactions/check also throttled /api/health, and a route's
- * own limit (5/min, 10/min, 60/min) was compared against traffic it does not
- * own. Scoping by route makes each limit mean what its number says.
  */
 export function rateLimitKey(route: string, ip: string): string {
   return `${route}:${ip}`;
 }
 
+function getRateLimitHashSecret(): string | null {
+  const secret = (
+    process.env.RATE_LIMIT_HASH_SECRET ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    ""
+  ).trim();
+  return secret.length > 0 ? secret : null;
+}
+
+/**
+ * Keyed HMAC-SHA256 digest of a rate-limit identifier so literal client IPs
+ * are not stored in external Redis keys. Requires a configured server secret.
+ */
+export function hashRateLimitKey(rawKey: string): string {
+  const secret = getRateLimitHashSecret();
+  if (!secret) {
+    throw new Error("Rate limit hash secret is not configured");
+  }
+  return createHmac("sha256", secret).update(rawKey).digest("hex").slice(0, 32);
+}
+
 // Memory-based rate limiter (default)
-const requestLog = new Map<string, number[]>();
+interface MemoryEntry {
+  timestamps: number[];
+  windowMs: number;
+}
+
+const requestLog = new Map<string, MemoryEntry>();
 const CLEANUP_INTERVAL = 60_000;
 let lastCleanup = Date.now();
-
-// One warning per process. This used to print on every rate-limited call in
-// production (357 lines in a five-minute stress window), which drowned any real
-// error in the logs. The condition is a deployment fact, not a per-request one.
 let memoryBackendWarned = false;
 
-function cleanup(windowMs: number) {
+function cleanup() {
   const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) return;
-  lastCleanup = now;
-  for (const [key, timestamps] of requestLog) {
-    const valid = timestamps.filter((t) => now - t < windowMs);
+  if (now < lastCleanup) {
+    lastCleanup = now;
+  } else if (now - lastCleanup < CLEANUP_INTERVAL) {
+    return;
+  } else {
+    lastCleanup = now;
+  }
+  for (const [key, entry] of requestLog) {
+    const valid = entry.timestamps.filter((t) => now - t < entry.windowMs);
     if (valid.length === 0) {
       requestLog.delete(key);
     } else {
-      requestLog.set(key, valid);
+      requestLog.set(key, { timestamps: valid, windowMs: entry.windowMs });
     }
   }
 }
@@ -51,19 +77,43 @@ function memoryRateLimit(
   limit: number,
   windowMs: number
 ): RateLimitResult {
-  cleanup(windowMs);
+  cleanup();
   const now = Date.now();
-  const timestamps = requestLog.get(key) ?? [];
-  const valid = timestamps.filter((t) => now - t < windowMs);
+  const entry = requestLog.get(key);
+  const valid = (entry?.timestamps ?? []).filter((t) => now - t < windowMs);
 
   if (valid.length >= limit) {
     return { success: false, remaining: 0 };
   }
 
+  if (!requestLog.has(key) && requestLog.size >= MAX_MEMORY_KEYS) {
+    const oldestKey = requestLog.keys().next().value;
+    if (oldestKey !== undefined) requestLog.delete(oldestKey);
+  }
+
   valid.push(now);
-  requestLog.set(key, valid);
+  requestLog.set(key, {
+    timestamps: valid,
+    windowMs: Math.max(entry?.windowMs ?? 0, windowMs),
+  });
   return { success: true, remaining: limit - valid.length };
 }
+
+// Atomic sliding-window check-and-record in Lua:
+// KEYS[1] = redisKey
+// ARGV[1] = now (ms), ARGV[2] = windowStart (ms), ARGV[3] = limit, ARGV[4] = windowMs, ARGV[5] = member
+const LUA_SLIDING_WINDOW = [
+  "redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', ARGV[2])",
+  "local count = redis.call('ZCARD', KEYS[1])",
+  "local limit = tonumber(ARGV[3])",
+  "if count >= limit then",
+  "  redis.call('PEXPIRE', KEYS[1], tonumber(ARGV[4]))",
+  "  return {0, 0}",
+  "end",
+  "redis.call('ZADD', KEYS[1], tonumber(ARGV[1]), ARGV[5])",
+  "redis.call('PEXPIRE', KEYS[1], tonumber(ARGV[4]))",
+  "return {1, limit - count - 1}",
+].join("\n");
 
 // Upstash Redis rate limiter
 async function upstashRateLimit(
@@ -81,29 +131,42 @@ async function upstashRateLimit(
     return memoryRateLimit(key, limit, windowMs);
   }
 
-  const redisKey = `ratelimit:${key}`;
+  if (!getRateLimitHashSecret()) {
+    logger.error("rate_limit_upstash_missing_hash_secret", {
+      backend: "upstash",
+    });
+    return memoryRateLimit(key, limit, windowMs);
+  }
+
+  const redisKey = `ratelimit:v1:${hashRateLimitKey(key)}`;
   const now = Date.now();
   const windowStart = now - windowMs;
+  const member = `${now}-${Math.random().toString(36).slice(2)}`;
+  const rawTimeout = Number(process.env.RATE_LIMIT_UPSTASH_TIMEOUT_MS);
+  const timeoutMs =
+    Number.isFinite(rawTimeout) && rawTimeout > 0
+      ? rawTimeout
+      : DEFAULT_UPSTASH_TIMEOUT_MS;
 
   try {
-    // Use Upstash REST API
-    const response = await fetch(`${url}/pipeline`, {
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify([
-        ["ZREMRANGEBYSCORE", redisKey, "-inf", windowStart.toString()],
-        ["ZCARD", redisKey],
-        [
-          "ZADD",
-          redisKey,
-          now.toString(),
-          `${now}-${Math.random().toString(36).slice(2)}`,
-        ],
-        ["PEXPIRE", redisKey, windowMs.toString()],
+        "EVAL",
+        LUA_SLIDING_WINDOW,
+        "1",
+        redisKey,
+        now.toString(),
+        windowStart.toString(),
+        limit.toString(),
+        windowMs.toString(),
+        member,
       ]),
+      signal: AbortSignal.timeout(timeoutMs),
     });
 
     if (!response.ok) {
@@ -113,17 +176,20 @@ async function upstashRateLimit(
       return memoryRateLimit(key, limit, windowMs);
     }
 
-    // Upstash /pipeline answers [{ "result": n }, ...]; the ZCARD reply is the
-    // second entry. Reading it as an [error, value] tuple yielded undefined on
-    // every call, so the count was always 0 and no limit was ever enforced.
-    const results = (await response.json()) as Array<{ result?: number }>;
-    const count = Number(results[1]?.result ?? 0);
-
-    if (count >= limit) {
-      return { success: false, remaining: 0 };
+    const payload = (await response.json()) as {
+      result?: [number, number] | number[];
+      error?: string;
+    };
+    if (payload.error || !Array.isArray(payload.result)) {
+      logger.error("rate_limit_upstash_lua_error", {
+        error: payload.error ?? "unexpected_response",
+      });
+      return memoryRateLimit(key, limit, windowMs);
     }
 
-    return { success: true, remaining: limit - count - 1 };
+    const allowed = Number(payload.result[0]) === 1;
+    const remaining = Math.max(0, Number(payload.result[1] ?? 0));
+    return { success: allowed, remaining };
   } catch (error) {
     logger.error("rate_limit_upstash_exception", {
       error: error instanceof Error ? error.message : String(error),
@@ -134,11 +200,6 @@ async function upstashRateLimit(
 
 /**
  * Rate limit by key (IP, user ID, etc.)
- *
- * @param key - Unique identifier (IP address, user ID, etc.)
- * @param limit - Maximum requests per window
- * @param windowMs - Time window in milliseconds
- * @returns { success, remaining }
  */
 export async function rateLimit(
   key: string,
@@ -151,9 +212,6 @@ export async function rateLimit(
     return upstashRateLimit(key, limit, windowMs);
   }
 
-  // In production, warn once that memory rate limiting doesn't scale. HerbAlly
-  // runs a single app container, so this is expected — it must not be an error
-  // on every request.
   if (
     process.env.NODE_ENV === "production" &&
     backend === "memory" &&
@@ -169,7 +227,6 @@ export async function rateLimit(
   return memoryRateLimit(key, limit, windowMs);
 }
 
-// Synchronous version for backwards compatibility (uses memory only)
 export function rateLimitSync(
   ip: string,
   limit: number = 20,

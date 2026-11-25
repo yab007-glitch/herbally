@@ -8,8 +8,16 @@
 http://api.herbally.app {
 	encode zstd gzip
 
+	request_body {
+		max_size 1MB
+	}
+
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		X-Robots-Tag "noindex, nofollow"
 		-Server
 		-Via
 	}
@@ -56,6 +64,10 @@ http://www.herbally.app {
 
 http://herbally.app, :80 {
 	encode zstd gzip
+
+	request_body {
+		max_size 2MB
+	}
 
 	header {
 		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"

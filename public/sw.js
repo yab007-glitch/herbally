@@ -1,7 +1,9 @@
-const CACHE_NAME = "herbally-v6";
-const API_CACHE = "herbally-api-v2";
+const CACHE_NAME = "herbally-public-v7";
+const API_CACHE = "herbally-public-api-v3";
 
-// Core pages to cache on install (both EN and FR)
+// Core public reference pages to pre-cache on install (EN and FR).
+// Personalized or authenticated routes (/garden, /profile, /admin) are
+// intentionally excluded.
 const STATIC_URLS = [
   "/",
   "/fr",
@@ -9,11 +11,8 @@ const STATIC_URLS = [
   "/fr/herbs",
   "/symptoms",
   "/fr/symptoms",
-  "/herbalist",
-  "/fr/herbalist",
   "/calculator",
   "/fr/calculator",
-  "/garden",
   "/faq",
   "/fr/faq",
   "/about",
@@ -21,10 +20,64 @@ const STATIC_URLS = [
   "/offline.html",
 ];
 
-// API endpoints to cache for offline herb browsing
-const DB_CACHE_URLS = ["/api/herbs/search", "/api/herbs/random"];
+// Strictly public catalog API endpoints safe for offline fallback.
+const PUBLIC_API_ALLOWLIST = new Set([
+  "/api/herbs/search",
+  "/api/herbs/random",
+]);
 
-const API_URLS = [...DB_CACHE_URLS];
+const PRIVATE_PATH_RE =
+  /^\/(auth|admin|profile|garden|login|register|forgot-password|reset-password)(\/|$)/;
+
+const PUBLIC_ASSET_PREFIXES = [
+  "/_next/static/",
+  "/icons/",
+  "/images/",
+  "/offline.html",
+];
+
+const PUBLIC_PAGE_RE =
+  /^(\/|\/(herbs|symptoms|medications|guides|compare|interactions|herb-drug-interactions|calculator|npn-checker|surgery-planner|widgets|about|faq|methodology|editorial-policy|privacy|terms)(\/.*)?)$/;
+
+function stripLocalePrefix(pathname) {
+  if (pathname === "/en" || pathname === "/fr") return "/";
+  if (pathname.startsWith("/en/")) return pathname.slice(3);
+  if (pathname.startsWith("/fr/")) return pathname.slice(3);
+  return pathname;
+}
+
+function isPrivatePath(pathname) {
+  if (pathname.startsWith("/auth/") || pathname.startsWith("/api/")) {
+    return true;
+  }
+  return PRIVATE_PATH_RE.test(stripLocalePrefix(pathname));
+}
+
+function isPublicAsset(pathname) {
+  return PUBLIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+function isAllowlistedPublicPage(pathname) {
+  if (isPrivatePath(pathname)) return false;
+  return PUBLIC_PAGE_RE.test(stripLocalePrefix(pathname));
+}
+
+function isCacheablePublicResponse(response) {
+  if (!response || response.status !== 200) return false;
+  if (response.type !== "basic" && response.type !== "default") return false;
+  if (response.headers.has("Set-Cookie")) return false;
+  const cacheControl = (
+    response.headers.get("Cache-Control") || ""
+  ).toLowerCase();
+  if (
+    cacheControl.includes("private") ||
+    cacheControl.includes("no-store") ||
+    cacheControl.includes("no-cache")
+  ) {
+    return false;
+  }
+  return true;
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -37,35 +90,59 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      // Clean up ALL old caches — both page cache and API cache — so stale
-      // entries (e.g. the old /api/herbs/list reference) are purged on deploy.
-      return Promise.all(
-        cacheNames
-          .filter((name) => name !== CACHE_NAME && name !== API_CACHE)
-          .map((name) => caches.delete(name))
-      );
-    })
+    caches
+      .keys()
+      .then((cacheNames) =>
+        Promise.all(
+          cacheNames
+            .filter((name) => name !== CACHE_NAME && name !== API_CACHE)
+            .map((name) => caches.delete(name))
+        )
+      )
   );
   self.clients.claim();
 });
 
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "CLEAR_CACHES") {
+    const work = caches
+      .keys()
+      .then((names) => Promise.all(names.map((name) => caches.delete(name))))
+      .then((results) => {
+        const ok = results.every(Boolean);
+        if (event.ports && event.ports[0]) {
+          event.ports[0].postMessage({ ok });
+        }
+      })
+      .catch(() => {
+        if (event.ports && event.ports[0]) {
+          event.ports[0].postMessage({ ok: false });
+        }
+      });
+    if (typeof event.waitUntil === "function") {
+      event.waitUntil(work);
+    }
+  }
+});
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  if (event.request.headers && event.request.headers.get("Authorization")) {
+    return;
+  }
 
   const url = new URL(event.request.url);
-
-  // Skip non-app requests
   if (url.origin !== self.location.origin) return;
-  if (url.pathname.startsWith("/auth/")) return;
-  if (url.pathname.startsWith("/api/chat")) return; // Don't cache AI chat
 
-  // API requests: network-first, cache for offline
+  // Allowlisted public API endpoints only — private/auth/garden/admin/chat APIs
+  // pass straight through to the network without interception or caching.
   if (url.pathname.startsWith("/api/")) {
+    if (!PUBLIC_API_ALLOWLIST.has(url.pathname)) return;
+
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          if (response.ok) {
+          if (isCacheablePublicResponse(response)) {
             const clone = response.clone();
             caches.open(API_CACHE).then((cache) => {
               cache.put(event.request, clone);
@@ -76,43 +153,76 @@ self.addEventListener("fetch", (event) => {
         .catch(async () => {
           const cached = await caches.match(event.request);
           if (cached) return cached;
-          return new Response(JSON.stringify([]), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({
+              error: "Offline: data unavailable.",
+              offline: true,
+              unavailable: true,
+            }),
+            {
+              status: 503,
+              headers: {
+                "Content-Type": "application/json",
+                "Cache-Control": "no-store",
+              },
+            }
+          );
         })
     );
     return;
   }
 
-  // Herb detail pages (including /fr/herbs/*): cache-first, network update
-  const pathParts = url.pathname.split("/").filter(Boolean);
-  const isHerbDetail =
-    (pathParts[0] === "herbs" ||
-      (pathParts[0] === "fr" && pathParts[1] === "herbs")) &&
-    pathParts.length === (pathParts[0] === "fr" ? 3 : 2);
+  // Never intercept or cache private, auth, account, garden, or admin routes.
+  if (isPrivatePath(url.pathname)) return;
+
+  const isAsset = isPublicAsset(url.pathname);
+  const isPublicPage = isAllowlistedPublicPage(url.pathname);
+  if (!isAsset && !isPublicPage) return;
+
+  // Public herb detail pages: cache-first with background refresh.
+  const stripped = stripLocalePrefix(url.pathname);
+  const parts = stripped.split("/").filter(Boolean);
+  const isHerbDetail = parts[0] === "herbs" && parts.length === 2;
 
   if (isHerbDetail) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(event.request);
-        const networkFetch = fetch(event.request)
-          .then((response) => {
-            if (response.ok) cache.put(event.request, response.clone());
-            return response;
-          })
-          .catch(() => cached);
-        return cached || networkFetch;
+        if (cached) {
+          fetch(event.request)
+            .then((response) => {
+              if (isCacheablePublicResponse(response)) {
+                return cache.put(event.request, response.clone());
+              }
+            })
+            .catch(() => {});
+          return cached;
+        }
+        try {
+          const response = await fetch(event.request);
+          if (isCacheablePublicResponse(response)) {
+            cache.put(event.request, response.clone());
+          }
+          return response;
+        } catch {
+          return new Response("Offline", {
+            status: 503,
+            headers: {
+              "Content-Type": "text/plain; charset=utf-8",
+              "Cache-Control": "no-store",
+            },
+          });
+        }
       })
     );
     return;
   }
 
-  // Navigation & static: network-first with cache fallback
+  // Public pages & static assets: network-first with cache fallback.
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        if (response.ok) {
+        if (isCacheablePublicResponse(response)) {
           const clone = response.clone();
           caches
             .open(CACHE_NAME)
@@ -127,7 +237,10 @@ self.addEventListener("fetch", (event) => {
           const offline = await caches.match("/offline.html");
           if (offline) return offline;
         }
-        return new Response("Offline", { status: 503 });
+        return new Response("Offline", {
+          status: 503,
+          headers: { "Cache-Control": "no-store" },
+        });
       })
   );
 });

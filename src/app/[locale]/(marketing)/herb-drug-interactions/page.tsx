@@ -12,7 +12,7 @@ import { InteractionExplainer } from "@/components/herbs/interaction-explainer";
 import { EmbedSnippet } from "@/components/embed/embed-snippet";
 import { StackChecker } from "@/components/interactions/stack-checker";
 import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { InteractionChecker } from "../interaction-checker";
 
 export const generateMetadata = () =>
@@ -114,10 +114,13 @@ export default async function HerbDrugInteractionsPage() {
               {t("npnBannerBody")}
             </p>
           </div>
-          <Button render={<Link href="/npn-checker" />} className="shrink-0">
+          <Link
+            href="/npn-checker"
+            className={buttonVariants({ className: "shrink-0" })}
+          >
             {t("npnBannerButton")}
             <ArrowRight className="ml-1 size-4" />
-          </Button>
+          </Link>
         </section>
 
         <section className="mt-4 flex flex-col justify-between gap-3 rounded-2xl border bg-muted/30 p-5 sm:flex-row sm:items-center">
@@ -129,14 +132,16 @@ export default async function HerbDrugInteractionsPage() {
               {t("medicationsBannerBody")}
             </p>
           </div>
-          <Button
-            variant="outline"
-            render={<Link href="/medications" />}
-            className="shrink-0"
+          <Link
+            href="/medications"
+            className={buttonVariants({
+              variant: "outline",
+              className: "shrink-0",
+            })}
           >
             {t("medicationsBannerButton")}
             <ArrowRight className="ml-1 size-4" />
-          </Button>
+          </Link>
         </section>
 
         <section className="mt-4 flex flex-col justify-between gap-3 rounded-2xl border bg-muted/30 p-5 sm:flex-row sm:items-center">
@@ -148,14 +153,16 @@ export default async function HerbDrugInteractionsPage() {
               {t("surgeryBannerBody")}
             </p>
           </div>
-          <Button
-            variant="outline"
-            render={<Link href="/surgery-planner" />}
-            className="shrink-0"
+          <Link
+            href="/surgery-planner"
+            className={buttonVariants({
+              variant: "outline",
+              className: "shrink-0",
+            })}
           >
             {t("surgeryBannerButton")}
             <ArrowRight className="ml-1 size-4" />
-          </Button>
+          </Link>
         </section>
 
         <div className="mt-8">
@@ -201,10 +208,10 @@ export default async function HerbDrugInteractionsPage() {
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">{t("ctaBody")}</p>
           <div className="mt-4">
-            <Button render={<Link href="/herbalist" />}>
+            <Link href="/herbalist" className={buttonVariants()}>
               {t("ctaButton")}
               <ArrowRight className="ml-1 size-4" />
-            </Button>
+            </Link>
           </div>
         </section>
 

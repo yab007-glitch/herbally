@@ -142,7 +142,7 @@ export function RegisterForm() {
             name="password"
             type="password"
             required
-            minLength={8}
+            minLength={12}
             autoComplete="new-password"
             placeholder={t("register.passwordPlaceholder")}
           />
@@ -235,7 +235,7 @@ export function ResetPasswordForm() {
             name="password"
             type="password"
             required
-            minLength={8}
+            minLength={12}
             autoComplete="new-password"
             placeholder={t("reset.passwordPlaceholder")}
           />

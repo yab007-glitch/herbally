@@ -241,7 +241,7 @@
       "fullNamePlaceholder": "Jane Doe",
       "email": "Email",
       "password": "Password",
-      "passwordPlaceholder": "At least 8 characters",
+      "passwordPlaceholder": "At least 12 characters",
       "submit": "Create account",
       "submitting": "Creating...",
       "haveAccount": "Already have an account?",
@@ -262,7 +262,7 @@
     "reset": {
       "title": "Set a new password",
       "password": "New password",
-      "passwordPlaceholder": "At least 8 characters",
+      "passwordPlaceholder": "At least 12 characters",
       "submit": "Update password",
       "submitting": "Updating...",
       "success": "Password updated. You can now sign in.",
@@ -270,7 +270,7 @@
     },
     "errors": {
       "invalidEmail": "Please enter a valid email.",
-      "shortPassword": "Password must be at least 8 characters.",
+      "shortPassword": "Password must be at least 12 characters.",
       "nameRequired": "Please enter your name."
     }
   },

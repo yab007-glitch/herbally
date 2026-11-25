@@ -75,6 +75,35 @@ describe("auth actions", () => {
       expect(redirectMock).toHaveBeenCalledWith("/?welcome=login");
     });
 
+    it("appends welcome=login cleanly with ? or & depending on returnTo", async () => {
+      signInMock.mockResolvedValue({ error: null });
+
+      const fd1 = new FormData();
+      fd1.set("email", "user@example.com");
+      fd1.set("password", "secret123456");
+      fd1.set("returnTo", "/profile");
+      await expect(login(fd1)).rejects.toThrow("NEXT_REDIRECT");
+      expect(redirectMock).toHaveBeenLastCalledWith("/profile?welcome=login");
+
+      const fd2 = new FormData();
+      fd2.set("email", "user@example.com");
+      fd2.set("password", "secret123456");
+      fd2.set("returnTo", "/profile?tab=garden");
+      await expect(login(fd2)).rejects.toThrow("NEXT_REDIRECT");
+      expect(redirectMock).toHaveBeenLastCalledWith(
+        "/profile?tab=garden&welcome=login"
+      );
+
+      const fd3 = new FormData();
+      fd3.set("email", "user@example.com");
+      fd3.set("password", "secret123456");
+      fd3.set("returnTo", "/profile#notes");
+      await expect(login(fd3)).rejects.toThrow("NEXT_REDIRECT");
+      expect(redirectMock).toHaveBeenLastCalledWith(
+        "/profile?welcome=login#notes"
+      );
+    });
+
     it("returns error when sign-in fails", async () => {
       signInMock.mockResolvedValueOnce({
         error: { message: "Invalid login credentials" },

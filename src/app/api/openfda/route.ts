@@ -31,6 +31,17 @@ function isTransientNetworkError(error: unknown): boolean {
   );
 }
 
+/**
+ * Strip OpenFDA Lucene query metacharacters so user input cannot break out of
+ * the quoted medicinalproduct term or inject boolean/field clauses.
+ */
+export function sanitizeOpenFdaTerm(raw: string): string {
+  return raw
+    .replace(/["\\():[\]{}*?^~!+]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export async function GET(request: Request) {
   const { success } = await rateLimit(
     rateLimitKey("openfda", getClientIP(request as NextRequest)),
@@ -53,11 +64,17 @@ export async function GET(request: Request) {
       { status: 400 }
     );
   }
-  const term = parsed.data.term;
+  const cleanTerm = sanitizeOpenFdaTerm(parsed.data.term);
+  if (!cleanTerm) {
+    return NextResponse.json(
+      { error: "Invalid term parameter" },
+      { status: 400 }
+    );
+  }
 
   try {
     const res = await fetch(
-      `${OPENFDA_BASE}/drug/event.json?search=patient.drug.medicinalproduct:${encodeURIComponent(term)}&limit=5`,
+      `${OPENFDA_BASE}/drug/event.json?search=patient.drug.medicinalproduct:${encodeURIComponent(`"${cleanTerm}"`)}&limit=5`,
       {
         next: { revalidate: 86400 },
         signal: AbortSignal.timeout(OPENFDA_TIMEOUT_MS),
@@ -65,7 +82,11 @@ export async function GET(request: Request) {
     );
 
     if (!res.ok) {
-      return NextResponse.json({ results: [] });
+      if (res.status === 404) {
+        return NextResponse.json({ results: [] });
+      }
+      logger.warn("openfda_api_upstream_error", { status: res.status });
+      return NextResponse.json({ results: [], unavailable: true });
     }
 
     const data = await res.json();
@@ -91,6 +112,6 @@ export async function GET(request: Request) {
         error: error instanceof Error ? error.message : String(error),
       });
     }
-    return NextResponse.json({ results: [] });
+    return NextResponse.json({ results: [], unavailable: true });
   }
 }

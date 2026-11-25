@@ -11,6 +11,7 @@ import {
 import { logger } from "@/lib/utils/logger";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 import { rankHerbResults } from "@/lib/search/rank-results";
 import { dedupeSymptomResults } from "@/lib/search/symptom-results";
 import type { Herb } from "@/lib/types";
@@ -261,29 +262,13 @@ export async function POST(request: NextRequest) {
     60_000
   );
   if (!success) return rateLimitedResponse();
-  try {
-    const contentLength = Number(request.headers.get("content-length") || "0");
-    if (contentLength > 10_240) return NextResponse.json([], { status: 413 });
-    if (!request.body) return NextResponse.json([], { status: 400 });
-    const reader = request.body.getReader();
-    const decoder = new TextDecoder();
-    let text = "";
-    let bytes = 0;
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      bytes += value.byteLength;
-      if (bytes > 10_240) {
-        await reader.cancel();
-        return NextResponse.json([], { status: 413 });
-      }
-      text += decoder.decode(value, { stream: true });
-    }
-    text += decoder.decode();
-    const parsed = searchBodySchema.safeParse(JSON.parse(text));
-    if (!parsed.success) return NextResponse.json([], { status: 400 });
-    return searchHerbs(parsed.data.q, getLocale(request));
-  } catch {
-    return NextResponse.json([], { status: 400 });
+  const bodyResult = await readJsonBodyWithLimit(request, 10_240);
+  if (!bodyResult.ok) {
+    return NextResponse.json([], {
+      status: bodyResult.reason === "too_large" ? 413 : 400,
+    });
   }
+  const parsed = searchBodySchema.safeParse(bodyResult.data);
+  if (!parsed.success) return NextResponse.json([], { status: 400 });
+  return searchHerbs(parsed.data.q, getLocale(request));
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { ArrowLeft, Leaf } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -295,10 +295,13 @@ export default async function ComparePage({ params }: Props) {
               { name: `${herbA.name} vs ${herbB.name}` },
             ]}
           />
-          <Button variant="ghost" size="sm" render={<Link href="/herbs" />}>
+          <Link
+            href="/herbs"
+            className={buttonVariants({ variant: "ghost", size: "sm" })}
+          >
             <ArrowLeft className="size-4" />
             {t("herbDetail.backToHerbs")}
-          </Button>
+          </Link>
           <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">
             {t("compare.title", { name1: herbA.name, name2: herbB.name })}
           </h1>
@@ -515,21 +518,24 @@ export default async function ComparePage({ params }: Props) {
 
         {/* CTA */}
         <div className="flex flex-wrap gap-3">
-          <Button render={<Link href={`/herbs/${slug1}`} />}>
+          <Link href={`/herbs/${slug1}`} className={buttonVariants()}>
             <Leaf className="size-4" />
             {t("compare.viewDetails", { name: herbA.name })}
-          </Button>
-          <Button variant="outline" render={<Link href={`/herbs/${slug2}`} />}>
+          </Link>
+          <Link
+            href={`/herbs/${slug2}`}
+            className={buttonVariants({ variant: "outline" })}
+          >
             <Leaf className="size-4" />
             {t("compare.viewDetails", { name: herbB.name })}
-          </Button>
+          </Link>
           {canShowDoseCalculator(slug1, herbA.dosage_adult) && (
-            <Button
-              variant="outline"
-              render={<Link href={`/calculator?herb=${slug1}`} />}
+            <Link
+              href={`/calculator?herb=${slug1}`}
+              className={buttonVariants({ variant: "outline" })}
             >
               Calculate {herbA.name} Dose
-            </Button>
+            </Link>
           )}
         </div>
 

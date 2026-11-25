@@ -6,6 +6,7 @@ import { defineConfig, devices } from "@playwright/test";
  * `true` (see scripts/e2e-gate-on-server.mjs); the committed gate stays off.
  */
 const GATE_ON = process.env.E2E_GATE_ON === "1";
+const CUSTOM_BASE_URL = process.env.PLAYWRIGHT_BASE_URL;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -25,7 +26,9 @@ export default defineConfig({
   /* Shared settings for all the projects below. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: GATE_ON ? "http://localhost:3100" : "http://localhost:3000",
+    baseURL:
+      CUSTOM_BASE_URL ??
+      (GATE_ON ? "http://localhost:3100" : "http://localhost:3000"),
 
     /* Collect trace when retrying the failed test. */
     trace: "on-first-retry",
@@ -67,19 +70,21 @@ export default defineConfig({
    * copies .next/static + public into the standalone tree (the build does not do
    * this automatically — same as the Dockerfile). .env.local is sourced when
    * present (local dev); CI omits it. */
-  webServer: GATE_ON
-    ? {
-        command: "node scripts/e2e-gate-on-server.mjs",
-        url: "http://localhost:3100",
-        reuseExistingServer: !process.env.CI,
-        timeout: 600_000,
-        stdout: "pipe",
-      }
-    : {
-        command:
-          "npm run build && cp -r .next/static/. .next/standalone/.next/static/ && cp -r public/. .next/standalone/public/ && (set -a; [ -f .env.local ] && . .env.local; cd .next/standalone && PORT=3000 HOSTNAME=127.0.0.1 node server.js)",
-        url: "http://localhost:3000",
-        reuseExistingServer: !process.env.CI,
-        timeout: 240_000,
-      },
+  webServer: CUSTOM_BASE_URL
+    ? undefined
+    : GATE_ON
+      ? {
+          command: "node scripts/e2e-gate-on-server.mjs",
+          url: "http://localhost:3100",
+          reuseExistingServer: !process.env.CI,
+          timeout: 600_000,
+          stdout: "pipe",
+        }
+      : {
+          command:
+            "npm run build && cp -r .next/static/. .next/standalone/.next/static/ && cp -r public/. .next/standalone/public/ && (set -a; [ -f .env.local ] && . .env.local; cd .next/standalone && PORT=3000 HOSTNAME=127.0.0.1 node server.js)",
+          url: "http://localhost:3000",
+          reuseExistingServer: !process.env.CI,
+          timeout: 240_000,
+        },
 });

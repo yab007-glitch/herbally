@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { timingSafeEqual } from "crypto";
 import { z } from "zod";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 /**
  * On-demand revalidation of a herb's PubMed-compiled sheet cache. Called by
@@ -36,15 +37,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
+  const bodyResult = await readJsonBodyWithLimit(request, 4 * 1024);
+  if (!bodyResult.ok) {
     return NextResponse.json(
-      { error: "Invalid request body" },
-      { status: 400 }
+      {
+        error:
+          bodyResult.reason === "too_large"
+            ? "Request body too large"
+            : "Invalid request body",
+      },
+      { status: bodyResult.reason === "too_large" ? 413 : 400 }
     );
   }
+  const raw = bodyResult.data;
 
   const parsed = z
     .object({
@@ -63,6 +68,10 @@ export async function POST(request: NextRequest) {
   }
 
   // Slug is validated (1-200 chars) before being interpolated into the tag.
-  revalidateTag(`pubmed-sheet-${parsed.data.slug}`, "max");
+  revalidateTag(`pubmed-sheet-${parsed.data.slug}`, { expire: 0 });
+  revalidateTag(`herb-page-bundle-${parsed.data.slug}`, { expire: 0 });
+  revalidatePath(`/herbs/${parsed.data.slug}`);
+  revalidatePath(`/en/herbs/${parsed.data.slug}`);
+  revalidatePath(`/fr/herbs/${parsed.data.slug}`);
   return NextResponse.json({ ok: true, slug: parsed.data.slug });
 }

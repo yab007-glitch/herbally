@@ -4,6 +4,7 @@ import { logger } from "@/lib/utils/logger";
 import { z } from "zod";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 let stripeInstance: Stripe | null = null;
@@ -53,14 +54,25 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const body = await req.json();
+    const bodyResult = await readJsonBodyWithLimit(req, 4 * 1024);
+    if (!bodyResult.ok) {
+      return NextResponse.json(
+        {
+          error:
+            bodyResult.reason === "too_large"
+              ? "Request body too large"
+              : "Invalid request body",
+        },
+        { status: bodyResult.reason === "too_large" ? 413 : 400 }
+      );
+    }
     // Amount in cents: $1 min, $10,000 max. The schema enforces bounds, so no
     // redundant clamp is needed (the previous Math.max/Math.min could mask a
     // bad input as a valid donation).
     const schema = z.object({
       amount: z.number().int().min(100).max(1_000_000),
     });
-    const parsed = schema.safeParse(body);
+    const parsed = schema.safeParse(bodyResult.data);
     if (!parsed.success) {
       return NextResponse.json(
         { error: "Invalid request body" },

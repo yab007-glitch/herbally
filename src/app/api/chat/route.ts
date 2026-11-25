@@ -13,6 +13,7 @@ import {
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { withTimeout } from "@/lib/utils/with-timeout";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 import {
   isOllamaCloudConfigured,
   getOllamaCloudModel,
@@ -377,36 +378,21 @@ export async function POST(request: NextRequest) {
   }
   const primaryModel = getOllamaCloudModel();
 
-  // Body size guard
-  const contentLength = parseInt(
-    request.headers.get("content-length") || "0",
-    10
-  );
-  if (contentLength > MAX_BODY_SIZE) {
-    return NextResponse.json(
-      { error: "Request body too large" },
-      { status: 413 }
-    );
-  }
-
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
+  // Streaming body size guard (enforced before buffering / JSON.parse)
+  const bodyResult = await readJsonBodyWithLimit(request, MAX_BODY_SIZE);
+  if (!bodyResult.ok) {
+    if (bodyResult.reason === "too_large") {
+      return NextResponse.json(
+        { error: "Request body too large" },
+        { status: 413 }
+      );
+    }
     return NextResponse.json(
       { error: "Invalid request body" },
       { status: 400 }
     );
   }
-
-  // Chunked-encoding bypass guard: content-length may be missing, so
-  // enforce a post-parse size cap before Zod validation.
-  if (JSON.stringify(raw).length > MAX_BODY_SIZE * 10) {
-    return NextResponse.json(
-      { error: "Request body too large" },
-      { status: 413 }
-    );
-  }
+  const raw = bodyResult.data;
 
   const chatSchema = z.object({
     messages: z

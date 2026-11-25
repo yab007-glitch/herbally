@@ -109,13 +109,21 @@ function invalidateHerbTags(slug: string): void {
     `herb-page-bundle-${slug}`,
     `monograph-${slug}`,
     `herb-faqs-${slug}`,
+    `herb-regulatory-evidence-${slug}`,
+    `sources-${slug}`,
+    `pubmed-sheet-${slug}`,
     `related-herbs-${slug}`,
   ]) {
-    // Next 16: revalidateTag now takes a cache-life profile as the second
-    // argument (passing only the tag is deprecated). "max" is the longest-
-    // lived profile, appropriate for "purge and let the next request refill".
-    revalidateTag(tag, "max");
+    // Next 16: `{ expire: 0 }` forces immediate invalidation so the next
+    // request refills from Postgres instead of serving stale SWR data.
+    revalidateTag(tag, { expire: 0 });
   }
+}
+
+function invalidateHerbPaths(slug: string): void {
+  revalidatePath(`/herbs/${slug}`);
+  revalidatePath(`/en/herbs/${slug}`);
+  revalidatePath(`/fr/herbs/${slug}`);
 }
 
 /**
@@ -127,10 +135,13 @@ function invalidateHerbTags(slug: string): void {
  */
 function invalidateCrossHerbCaches(): void {
   // Next 16: revalidatePath's second arg is the literal 'layout' | 'page', not
-  // an options object.
-  revalidatePath("/herbs", "layout");
-  revalidatePath("/compare", "layout");
-  revalidatePath("/symptoms", "layout");
+  // an options object. Revalidate unprefixed, /en, and /fr paths.
+  for (const prefix of ["", "/en", "/fr"]) {
+    revalidatePath(`${prefix}/herbs`, "layout");
+    revalidatePath(`${prefix}/compare`, "layout");
+    revalidatePath(`${prefix}/symptoms`, "layout");
+  }
+  revalidatePath("/sitemap.xml");
 }
 
 export async function createHerb(
@@ -162,7 +173,9 @@ export async function createHerb(
     invalidateHerbTags(slug);
     invalidateCrossHerbCaches();
     revalidatePath("/herbs");
-    revalidatePath(`/herbs/${slug}`);
+    revalidatePath("/en/herbs");
+    revalidatePath("/fr/herbs");
+    invalidateHerbPaths(slug);
     revalidatePath("/admin/herbs");
   } catch (error) {
     logger.error("createHerb_exception", { error: String(error) });
@@ -218,7 +231,9 @@ export async function updateHerb(
       invalidateCrossHerbCaches();
     }
     revalidatePath("/herbs");
-    if (slug) revalidatePath(`/herbs/${slug}`);
+    revalidatePath("/en/herbs");
+    revalidatePath("/fr/herbs");
+    if (slug) invalidateHerbPaths(slug);
     revalidatePath(`/admin/herbs/${id}/edit`);
     revalidatePath("/admin/herbs");
   } catch (error) {
@@ -284,7 +299,7 @@ async function setHerbReview(
   }
 
   invalidateHerbTags(slug);
-  revalidatePath(`/herbs/${slug}`);
+  invalidateHerbPaths(slug);
   revalidatePath(`/admin/herbs/${id}/edit`);
   return { success: true, data: { reviewedOn } };
 }

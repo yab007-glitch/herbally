@@ -5,6 +5,7 @@ import { z } from "zod";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
+import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 
 /**
  * On-demand revalidation of herb detail pages after a data-only correction.
@@ -45,15 +46,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let raw: unknown;
-  try {
-    raw = await request.json();
-  } catch {
+  const bodyResult = await readJsonBodyWithLimit(request, 32 * 1024);
+  if (!bodyResult.ok) {
     return NextResponse.json(
-      { error: "Invalid request body" },
-      { status: 400 }
+      {
+        error:
+          bodyResult.reason === "too_large"
+            ? "Request body too large"
+            : "Invalid request body",
+      },
+      { status: bodyResult.reason === "too_large" ? 413 : 400 }
     );
   }
+  const raw = bodyResult.data;
 
   const parsed = Body.safeParse(raw);
   if (!parsed.success) {

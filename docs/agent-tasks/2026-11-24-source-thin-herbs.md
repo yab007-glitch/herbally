@@ -69,6 +69,7 @@ source, do not call any API that needs a paid key.
 
    A genus-only pass over the 30 uncited herbs produced five junk candidates and one valid
    paper — see `artifacts/audit-2026-11-24/uncited-sourcing-report.md`.
+
 4. Attach up to **3 new citations** per herb, preferring: clinical trials and systematic reviews
    → observational studies → mechanistic/phytochemistry last. Keep safety-relevant papers even
    when they are not efficacy papers.

@@ -1,9 +1,13 @@
 "use server";
 
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAdminAccess } from "@/lib/auth/admin-guard";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { logger } from "@/lib/utils/logger";
 import type { ActionResponse } from "@/lib/types";
+
+const reviewParamSchema = z.string().trim().min(1).max(200);
 
 /**
  * Server action to mark a PubMed-compiled sheet as reviewed by a named
@@ -14,8 +18,13 @@ export async function markSheetReviewed(
   slug: string,
   reviewer: string
 ): Promise<ActionResponse<{ slug: string; status: string }>> {
-  if (!slug || !reviewer)
-    return { success: false, error: "Missing slug or reviewer." };
+  const parsedSlug = reviewParamSchema.safeParse(slug);
+  const parsedReviewer = reviewParamSchema.safeParse(reviewer);
+  if (!parsedSlug.success || !parsedReviewer.success)
+    return { success: false, error: "Missing or invalid slug or reviewer." };
+
+  const cleanSlug = parsedSlug.data;
+  const cleanReviewer = parsedReviewer.data;
 
   const access = await getAdminAccess();
   if (access.status !== "authorized") {
@@ -31,13 +40,20 @@ export async function markSheetReviewed(
     .update({
       status: "reviewed",
       last_reviewed: new Date().toISOString(),
-      reviewed_by: reviewer,
+      reviewed_by: cleanReviewer,
     })
-    .eq("slug", slug);
-  if (error) return { success: false, error: error.message };
+    .eq("slug", cleanSlug);
+  if (error) {
+    logger.error("markSheetReviewed_failed", { error: error.message });
+    return { success: false, error: "Failed to mark sheet as reviewed." };
+  }
 
-  revalidatePath(`/herbs/${slug}`);
-  return { success: true, data: { slug, status: "reviewed" } };
+  revalidateTag(`pubmed-sheet-${cleanSlug}`, { expire: 0 });
+  revalidateTag(`herb-page-bundle-${cleanSlug}`, { expire: 0 });
+  revalidatePath(`/herbs/${cleanSlug}`);
+  revalidatePath(`/en/herbs/${cleanSlug}`);
+  revalidatePath(`/fr/herbs/${cleanSlug}`);
+  return { success: true, data: { slug: cleanSlug, status: "reviewed" } };
 }
 
 /**

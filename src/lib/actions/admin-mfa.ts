@@ -63,8 +63,29 @@ export async function startAdminTotpEnrollment(): Promise<EnrollTotpResult> {
   if (!auth.ok) return { success: false, error: auth.error };
 
   try {
+    const [{ data: listed, error: listErr }, { data: aal, error: aalErr }] =
+      await Promise.all([
+        auth.supabase.auth.mfa.listFactors(),
+        auth.supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+      ]);
+
+    if (listErr || aalErr) {
+      return { success: false, error: "Could not verify MFA session state." };
+    }
+
+    const verifiedTotp = (listed?.totp ?? []).filter(
+      (f) => f.status === "verified"
+    );
+    if (verifiedTotp.length > 0 && aal?.currentLevel !== "aal2") {
+      logger.warn("admin_mfa_enroll_denied_aal1", { userId: auth.userId });
+      return {
+        success: false,
+        error:
+          "Two-factor verification (AAL2) is required before enrolling another authenticator.",
+      };
+    }
+
     // Clear any stale unverified TOTP factors before creating a fresh enrollment
-    const { data: listed } = await auth.supabase.auth.mfa.listFactors();
     const unverified = (listed?.totp ?? []).filter(
       (f) => f.status !== "verified"
     );
@@ -121,6 +142,35 @@ export async function verifyAdminTotpCode(
   }
 
   try {
+    const [{ data: listed, error: listErr }, { data: aal, error: aalErr }] =
+      await Promise.all([
+        auth.supabase.auth.mfa.listFactors(),
+        auth.supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+      ]);
+    if (listErr || aalErr) {
+      return { success: false, error: "Could not verify MFA session state." };
+    }
+
+    const totpFactors = listed?.totp ?? [];
+    const verifiedTotp = totpFactors.filter((f) => f.status === "verified");
+    const target = totpFactors.find((f) => f.id === factorId);
+    if (!target) {
+      return { success: false, error: "Authenticator factor not found." };
+    }
+    if (
+      verifiedTotp.length > 0 &&
+      aal?.currentLevel !== "aal2" &&
+      target.status !== "verified"
+    ) {
+      logger.warn("admin_mfa_verify_unverified_denied_aal1", {
+        userId: auth.userId,
+      });
+      return {
+        success: false,
+        error: "Verify your existing authenticator factor first.",
+      };
+    }
+
     const { error } = await auth.supabase.auth.mfa.challengeAndVerify({
       factorId,
       code,

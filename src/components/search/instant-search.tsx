@@ -68,6 +68,8 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
         const data = await response.json();
         setResults(Array.isArray(data) ? data : data.herbs || []);
         setSettledQuery(searchQuery);
+      } else if (abortRef.current === controller) {
+        setResults([]);
       }
     } catch (error) {
       // Aborted requests are expected when a newer query supersedes this one.
@@ -158,15 +160,20 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
           onKeyDown={handleKeyDown}
           placeholder={resolvedPlaceholder}
           className="h-12 pl-10 pr-10"
+          role="combobox"
           aria-label={t("search.search")}
           aria-autocomplete="list"
           aria-controls="search-results"
           aria-expanded={isOpen && results.length > 0}
+          aria-activedescendant={
+            selectedIndex >= 0 ? `search-option-${selectedIndex}` : undefined
+          }
         />
         {isLoading ? (
           <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
         ) : query ? (
           <button
+            type="button"
             onClick={clearSearch}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             aria-label={t("common.clearSearch")}
@@ -186,6 +193,7 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
             {results.map((herb, index) => (
               <li
                 key={herb.id}
+                id={`search-option-${index}`}
                 role="option"
                 aria-selected={index === selectedIndex}
               >

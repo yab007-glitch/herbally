@@ -46,13 +46,15 @@ export default defineConfig({
         "src/**/*.d.ts",
         "src/lib/types/database.ts",
       ],
-      // No fake thresholds. Actual coverage (June 2026): ~27% statements,
-      // ~19% branches. Previous config set thresholds at 18/22/25/25 —
-      // deliberately below actuals so CI always passed, which masked the
-      // real gap. Removed until coverage meaningfully improves. Target:
-      // 40% statements / 30% branches by end of Q3 2026. Re-enable
-      // thresholds at that point, set BELOW actuals minus a 2pt margin
-      // so they catch regressions without being cosmetic.
+      // Ratchet configured 2026-11-24 (~2 percentage points below post-remediation
+      // observed actuals: 52.78% statements, 43.25% branches, 46.99% functions,
+      // 53.84% lines) to prevent coverage regressions without fake targets.
+      thresholds: {
+        statements: 50,
+        branches: 41,
+        functions: 44,
+        lines: 51,
+      },
     },
   },
   resolve: {

@@ -116,9 +116,11 @@ export function SaveCalcButton({
       } else if (res.success) {
         setSaved(true);
         toast.success(t("profile.calculationSaved"));
+      } else {
+        toast.error(res.error || "Could not save calculation");
       }
     } catch {
-      // Not logged in or error — silently skip
+      toast.error("Could not save calculation");
     }
   }
 

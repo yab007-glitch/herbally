@@ -32,6 +32,16 @@ export interface StackUnrecordedItem {
   drugInput: string;
 }
 
+export interface StackConflictItem {
+  herbInput: string;
+  herbSlug: string;
+  herbName: string;
+  drugInput: string;
+  drugSlug: string;
+  pairUrl: string;
+  records: StackMatchItem[];
+}
+
 export interface StackAlert {
   code: "bleeding_overlap" | "sedation_overlap" | "cyp_enzyme_overlap";
   severity: "severe" | "moderate";

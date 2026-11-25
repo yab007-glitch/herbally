@@ -68,6 +68,7 @@ export function ProfileClient() {
   const [conditions, setConditions] = useState<string[]>([]);
   const [allergies, setAllergies] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [showAddPatient, setShowAddPatient] = useState(false);
   const [showAddMed, setShowAddMed] = useState(false);
   const [newCondition, setNewCondition] = useState("");
@@ -103,47 +104,85 @@ export function ProfileClient() {
     setLoading(false);
   }, []);
 
-  /* eslint-disable */
   useEffect(() => {
-    loadAll();
-  }, [loadAll]);
-  /* eslint-enable */
+    let active = true;
+    async function init() {
+      const [p, h, m, d] = await Promise.all([
+        getPatientProfiles(),
+        getHealthProfile(),
+        getUserMedications(),
+        getDosageHistory(),
+      ]);
+      if (!active) return;
+      if (p.success && p.data) setPatients(p.data);
+      if (h.success && h.data) {
+        setConditions(h.data.conditions ?? []);
+        setAllergies(h.data.allergies ?? []);
+      }
+      if (m.success && m.data) setMedications(m.data);
+      if (d.success && d.data) setCalculations(d.data);
+      setLoading(false);
+    }
+    void init();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  function parseOptionalNumber(raw: string): number | null {
+    if (!raw.trim()) return null;
+    const val = Number(raw);
+    return Number.isFinite(val) ? val : null;
+  }
 
   async function handleAddPatient() {
-    if (!pName.trim()) return;
-    const result = await savePatientProfile({
-      name: pName,
-      relationship: pRel,
-      weight_kg: pWeight ? parseFloat(pWeight) : null,
-      age_years: pAge ? parseFloat(pAge) : null,
-      age_months: null,
-      height_cm: pHeight ? parseFloat(pHeight) : null,
-      is_default: patients.length === 0, // First patient is default
-      notes: pNotes || null,
-    });
-    if (result.success) {
-      toast.success(t("profile.profileSaved"));
-      setShowAddPatient(false);
-      setPName("");
-      setPRel("self");
-      setPWeight("");
-      setPAge("");
-      setPHeight("");
-      setPNotes("");
-      loadAll();
-    } else if (!result.success && result.error) {
-      toast.error(result.error);
+    if (!pName.trim() || saving) return;
+    setSaving(true);
+    try {
+      const result = await savePatientProfile({
+        name: pName.trim(),
+        relationship: pRel,
+        weight_kg: parseOptionalNumber(pWeight),
+        age_years: parseOptionalNumber(pAge),
+        age_months: null,
+        height_cm: parseOptionalNumber(pHeight),
+        is_default: patients.length === 0, // First patient is default
+        notes: pNotes || null,
+      });
+      if (result.success) {
+        toast.success(t("profile.profileSaved"));
+        setShowAddPatient(false);
+        setPName("");
+        setPRel("self");
+        setPWeight("");
+        setPAge("");
+        setPHeight("");
+        setPNotes("");
+        await loadAll();
+      } else {
+        toast.error(result.error || t("common.saveFailed"));
+      }
+    } finally {
+      setSaving(false);
     }
   }
 
   async function handleSetDefault(id: string) {
-    await updatePatientProfile(id, { is_default: true });
-    loadAll();
+    const result = await updatePatientProfile(id, { is_default: true });
+    if (result.success) {
+      await loadAll();
+    } else {
+      toast.error(result.error || t("common.saveFailed"));
+    }
   }
 
   async function handleDeletePatient(id: string) {
-    await deletePatientProfile(id);
-    loadAll();
+    const result = await deletePatientProfile(id);
+    if (result.success) {
+      await loadAll();
+    } else {
+      toast.error(result.error || t("common.deleteFailed"));
+    }
   }
 
   async function handleAddCondition() {
@@ -155,13 +194,18 @@ export function ProfileClient() {
       setNewCondition("");
       return;
     }
+    const previous = conditions;
     const updated = [...conditions, trimmed];
     setConditions(updated);
     setNewCondition("");
-    await saveHealthProfile({
+    const result = await saveHealthProfile({
       conditions: updated,
       allergies,
     });
+    if (!result.success) {
+      setConditions(previous);
+      toast.error(result.error || t("common.saveFailed"));
+    }
   }
 
   async function handleAddAllergy() {
@@ -171,51 +215,71 @@ export function ProfileClient() {
       setNewAllergy("");
       return;
     }
+    const previous = allergies;
     const updated = [...allergies, trimmed];
     setAllergies(updated);
     setNewAllergy("");
-    await saveHealthProfile({
+    const result = await saveHealthProfile({
       conditions,
       allergies: updated,
     });
+    if (!result.success) {
+      setAllergies(previous);
+      toast.error(result.error || t("common.saveFailed"));
+    }
   }
 
   async function handleRemoveCondition(idx: number) {
+    const previous = conditions;
     const updated = conditions.filter((_, i) => i !== idx);
     setConditions(updated);
-    await saveHealthProfile({
+    const result = await saveHealthProfile({
       conditions: updated,
       allergies,
     });
+    if (!result.success) {
+      setConditions(previous);
+      toast.error(result.error || t("common.saveFailed"));
+    }
   }
 
   async function handleRemoveAllergy(idx: number) {
+    const previous = allergies;
     const updated = allergies.filter((_, i) => i !== idx);
     setAllergies(updated);
-    await saveHealthProfile({
+    const result = await saveHealthProfile({
       conditions,
       allergies: updated,
     });
+    if (!result.success) {
+      setAllergies(previous);
+      toast.error(result.error || t("common.saveFailed"));
+    }
   }
 
   async function handleAddMedication() {
-    if (!medName.trim()) return;
-    const result = await addMedication({
-      drug_name: medName,
-      dosage: medDosage || null,
-      frequency: medFreq || null,
-      rxcui: null,
-      notes: null,
-    });
-    if (result.success) {
-      toast.success(t("profile.medicationAdded"));
-      setShowAddMed(false);
-      setMedName("");
-      setMedDosage("");
-      setMedFreq("");
-      loadAll();
-    } else if (!result.success && result.error) {
-      toast.error(result.error);
+    if (!medName.trim() || saving) return;
+    setSaving(true);
+    try {
+      const result = await addMedication({
+        drug_name: medName.trim(),
+        dosage: medDosage || null,
+        frequency: medFreq || null,
+        rxcui: null,
+        notes: null,
+      });
+      if (result.success) {
+        toast.success(t("profile.medicationAdded"));
+        setShowAddMed(false);
+        setMedName("");
+        setMedDosage("");
+        setMedFreq("");
+        await loadAll();
+      } else {
+        toast.error(result.error || t("common.saveFailed"));
+      }
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -223,7 +287,9 @@ export function ProfileClient() {
     const result = await removeMedication(id);
     if (result.success) {
       toast.success(t("profile.medicationRemoved"));
-      loadAll();
+      await loadAll();
+    } else {
+      toast.error(result.error || t("common.deleteFailed"));
     }
   }
 
@@ -290,6 +356,7 @@ export function ProfileClient() {
                 <Button
                   size="sm"
                   variant="ghost"
+                  aria-label={`${t("profile.deletePatient")}: ${p.name}`}
                   onClick={() => handleDeletePatient(p.id)}
                 >
                   <Trash2 className="size-4" />
@@ -356,7 +423,7 @@ export function ProfileClient() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" onClick={handleAddPatient}>
+                <Button size="sm" disabled={saving} onClick={handleAddPatient}>
                   {t("profile.save")}
                 </Button>
                 <Button
@@ -402,6 +469,8 @@ export function ProfileClient() {
                   key={c}
                   variant="secondary"
                   className="cursor-pointer"
+                  aria-label={`${t("common.delete")} ${c}`}
+                  render={<button type="button" />}
                   onClick={() => handleRemoveCondition(i)}
                 >
                   {c} ×
@@ -417,7 +486,12 @@ export function ProfileClient() {
                 placeholder={t("profile.addCondition")}
                 className="h-8"
               />
-              <Button size="sm" variant="outline" onClick={handleAddCondition}>
+              <Button
+                size="sm"
+                variant="outline"
+                aria-label={t("profile.addCondition")}
+                onClick={handleAddCondition}
+              >
                 <Plus className="size-4" />
               </Button>
             </div>
@@ -432,6 +506,8 @@ export function ProfileClient() {
                   key={a}
                   variant="secondary"
                   className="cursor-pointer"
+                  aria-label={`${t("common.delete")} ${a}`}
+                  render={<button type="button" />}
                   onClick={() => handleRemoveAllergy(i)}
                 >
                   {a} ×
@@ -447,7 +523,12 @@ export function ProfileClient() {
                 placeholder={t("profile.addAllergy")}
                 className="h-8"
               />
-              <Button size="sm" variant="outline" onClick={handleAddAllergy}>
+              <Button
+                size="sm"
+                variant="outline"
+                aria-label={t("profile.addAllergy")}
+                onClick={handleAddAllergy}
+              >
                 <Plus className="size-4" />
               </Button>
             </div>
@@ -486,6 +567,7 @@ export function ProfileClient() {
               <Button
                 size="sm"
                 variant="ghost"
+                aria-label={`${t("profile.removeMedication")}: ${m.drug_name}`}
                 onClick={() => handleRemoveMedication(m.id)}
               >
                 <Trash2 className="size-4" />
@@ -524,7 +606,11 @@ export function ProfileClient() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" onClick={handleAddMedication}>
+                <Button
+                  size="sm"
+                  disabled={saving}
+                  onClick={handleAddMedication}
+                >
                   {t("profile.save")}
                 </Button>
                 <Button

@@ -1,62 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Trash2 } from "lucide-react";
+import { AlertTriangle, Check, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-
-const EXACT_KEYS = [
-  "herbally-my-stack-v1",
-  "herbally-recent-searches",
-  "herbally-chat-session-id",
-  "herbally-garden",
-  "herbally-streak",
-  "herbally-last-visit",
-  "herbally-explored-herbs",
-  "herbally-explored-count",
-  "herbally.chat.teaser.dismissedAt",
-  "herbally.chat.teaser.seen",
-];
-
-const KEY_PREFIXES = ["herbally-viewed-"];
-
-function wipeStorage(storage: Storage | undefined) {
-  if (!storage) return;
-  for (const key of EXACT_KEYS) {
-    try {
-      storage.removeItem(key);
-    } catch {
-      // Ignore storage access errors in restricted browsing modes
-    }
-  }
-  try {
-    const keysToDelete: string[] = [];
-    for (let i = 0; i < storage.length; i++) {
-      const k = storage.key(i);
-      if (k && KEY_PREFIXES.some((prefix) => k.startsWith(prefix))) {
-        keysToDelete.push(k);
-      }
-    }
-    for (const k of keysToDelete) {
-      storage.removeItem(k);
-    }
-  } catch {
-    // Ignore enumeration errors
-  }
-}
+import { clearAllLocalHerbAllyData } from "@/lib/privacy/storage-inventory";
 
 export function ClearLocalDataButton() {
   const t = useTranslations("privacy.localStorageSection");
   const fr = useLocale() === "fr";
-  const [cleared, setCleared] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "clearing" | "cleared" | "error"
+  >("idle");
 
-  function handleClear() {
-    if (typeof window !== "undefined") {
-      wipeStorage(window.localStorage);
-      wipeStorage(window.sessionStorage);
+  async function handleClear() {
+    setStatus("clearing");
+    try {
+      const result = await clearAllLocalHerbAllyData();
+      setStatus(result.ok ? "cleared" : "error");
+    } catch {
+      setStatus("error");
     }
-    setCleared(true);
   }
+
+  const cleared = status === "cleared";
+  const failed = status === "error";
+  const clearing = status === "clearing";
 
   return (
     <div className="mt-4 rounded-xl border border-border bg-muted/20 p-4">
@@ -71,12 +40,18 @@ export function ClearLocalDataButton() {
           type="button"
           variant={cleared ? "outline" : "secondary"}
           size="sm"
+          disabled={clearing}
           onClick={handleClear}
           className="shrink-0"
         >
           {cleared ? (
             <Check
               className="mr-1.5 size-4 text-emerald-600"
+              aria-hidden="true"
+            />
+          ) : failed ? (
+            <AlertTriangle
+              className="mr-1.5 size-4 text-destructive"
               aria-hidden="true"
             />
           ) : (
@@ -92,8 +67,19 @@ export function ClearLocalDataButton() {
           className="mt-2 text-xs font-medium text-emerald-700 dark:text-emerald-400"
         >
           {fr
-            ? "Toutes les données locales HerbAlly enregistrées dans ce navigateur ont été supprimées."
-            : "All local HerbAlly browser data has been removed from this browser."}
+            ? "Les données locales HerbAlly (stockage local, session et cache navigateur) ont été supprimées de ce navigateur."
+            : "Local HerbAlly browser data (local storage, session storage, and browser cache) has been removed from this browser."}
+        </p>
+      )}
+      {failed && (
+        <p
+          role="alert"
+          aria-live="polite"
+          className="mt-2 text-xs font-medium text-destructive"
+        >
+          {fr
+            ? "Certaines données locales ou caches n'ont pas pu être supprimés par ce navigateur. Effacez manuellement les données du site dans les réglages du navigateur."
+            : "Some browser storage or Cache Storage entries could not be cleared automatically. Please clear site data in your browser settings."}
         </p>
       )}
     </div>

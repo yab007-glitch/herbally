@@ -153,6 +153,20 @@ describe("POST /api/webhooks/stripe", () => {
     const res = await POST(fakeRequest("payload", "sig"));
     expect(res.status).toBe(200);
     expect(responses).toHaveLength(0);
+
+    const { logger } = await import("@/lib/utils/logger");
+    const infoCalls = vi.mocked(logger.info).mock.calls;
+    const completedLog = infoCalls.find(
+      ([msg]) => msg === "stripe_donation_completed"
+    );
+    expect(completedLog).toBeDefined();
+    expect(completedLog?.[1]).toEqual({
+      eventId: "evt_1",
+      sessionId: "cs_1",
+      status: "completed",
+    });
+    expect(JSON.stringify(completedLog)).not.toContain("a@b.com");
+    expect(JSON.stringify(completedLog)).not.toContain("2500");
   });
 
   it("returns 500 on DB upsert error so Stripe retries", async () => {

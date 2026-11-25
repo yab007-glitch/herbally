@@ -5,6 +5,7 @@ import { logger } from "@/lib/utils/logger";
 import { siteUrl } from "@/lib/seo/site-url";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
+import { invalidateNewsletterSendLease } from "@/lib/newsletter/subscribe";
 
 const confirmQuerySchema = z.object({
   token: z.string().trim().uuid(),
@@ -41,15 +42,27 @@ export async function GET(request: NextRequest) {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("newsletter_subscribers")
-      .update({ status: "confirmed", confirmed_at: new Date().toISOString() })
+      .update({
+        status: "confirmed",
+        subscribed: true,
+        confirmed_at: new Date().toISOString(),
+        confirmation_send_lease_until: null,
+      })
       .eq("confirm_token", token)
       .eq("status", "pending")
-      .select("id")
+      .select("id, email, confirm_token")
       .maybeSingle();
 
     if (error) {
       logger.error("newsletter: confirm failed", { error: error.message });
       return NextResponse.redirect(`${done}?status=error`, 302);
+    }
+    if (data && typeof data.email === "string") {
+      invalidateNewsletterSendLease({
+        email: data.email,
+        rowId: data.id,
+        confirmToken: data.confirm_token ?? token,
+      });
     }
     // No row updated: already confirmed, already unsubscribed, or a stale
     // token. All three are "already settled" from the visitor's point of view.

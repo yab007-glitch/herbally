@@ -23,12 +23,16 @@ import {
   type InteractionPair,
   type InteractionSeverity,
 } from "@/lib/interactions/pairs";
+import {
+  InteractionDataUnavailableError,
+  isStubSupabase,
+} from "@/lib/interactions/errors";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { SEVERITY_WEIGHT } from "@/lib/interactions/stack";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
 import { canShowDoseCalculator } from "@/lib/data/dangerous-herbs";
 
@@ -44,7 +48,12 @@ type Props = { params: Promise<{ herb: string }> };
 const loadHerbAndPairs = cache(async (herbSlug: string, locale: string) => {
   const [herbResult, pairs] = await Promise.all([
     getHerbBySlug(herbSlug, { locale, skipCookies: true }),
-    getHerbPairs(herbSlug, locale),
+    getHerbPairs(herbSlug, locale).catch((err) => {
+      if (err instanceof InteractionDataUnavailableError && isStubSupabase()) {
+        return [] as InteractionPair[];
+      }
+      throw err;
+    }),
   ]);
   return { herbResult, pairs };
 });
@@ -352,29 +361,32 @@ export default async function HerbInteractionsHubPage({ params }: Props) {
       ) : null}
 
       <div className="flex flex-wrap gap-3">
-        <Button render={<Link href={`/herbs/${herb.slug}`} />}>
+        <Link href={`/herbs/${herb.slug}`} className={buttonVariants()}>
           <Leaf className="mr-1.5 size-4" />
           {fr
             ? `Fiche complète de ${herb.name}`
             : `Full ${herb.name} monograph`}
-        </Button>
-        <Button
-          variant="outline"
-          render={<Link href="/herb-drug-interactions#stack-checker" />}
+        </Link>
+        <Link
+          href="/herb-drug-interactions#stack-checker"
+          className={buttonVariants({ variant: "outline" })}
         >
           {fr ? "Tester plusieurs médicaments" : "Check Multi-Drug Stack"}
-        </Button>
-        <Button variant="outline" render={<Link href="/medications" />}>
+        </Link>
+        <Link
+          href="/medications"
+          className={buttonVariants({ variant: "outline" })}
+        >
           {fr ? "Répertoire des médicaments" : "Medications Directory"}
-        </Button>
+        </Link>
         {canShowDoseCalculator(herb.slug, herb.dosage_adult) && (
-          <Button
-            variant="ghost"
-            render={<Link href={`/calculator?herb=${herb.slug}`} />}
+          <Link
+            href={`/calculator?herb=${herb.slug}`}
+            className={buttonVariants({ variant: "ghost" })}
           >
             <Calculator className="mr-1.5 size-4" />
             {fr ? "Calculateur de dose" : "Dosage Calculator"}
-          </Button>
+          </Link>
         )}
       </div>
     </div>
