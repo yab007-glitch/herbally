@@ -15,17 +15,29 @@ const bodySchema = z.object({
   hp: z.string().max(200).optional(),
 });
 
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store" };
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { ...NO_STORE_HEADERS, ...(init?.headers ?? {}) },
+  });
+}
+
 export async function POST(request: NextRequest) {
   const ip = getClientIP(request);
   // Generous for a human, hostile to a script: one address per few seconds.
   const limited = await rateLimit(rateLimitKey("newsletter", ip), 5, 60_000);
   if (!limited.success) {
-    return NextResponse.json({ error: "rate-limited" }, { status: 429 });
+    return jsonNoStore(
+      { error: "rate-limited" },
+      { status: 429, headers: { "Retry-After": "60" } }
+    );
   }
 
   const bodyResult = await readJsonBodyWithLimit(request, MAX_BODY_SIZE);
   if (!bodyResult.ok) {
-    return NextResponse.json(
+    return jsonNoStore(
       {
         error:
           bodyResult.reason === "too_large"
@@ -38,7 +50,7 @@ export async function POST(request: NextRequest) {
 
   const parsed = bodySchema.safeParse(bodyResult.data);
   if (!parsed.success) {
-    return NextResponse.json({ error: "invalid-email" }, { status: 400 });
+    return jsonNoStore({ error: "invalid-email" }, { status: 400 });
   }
 
   const outcome = await subscribe({
@@ -50,15 +62,15 @@ export async function POST(request: NextRequest) {
 
   if (!outcome.ok) {
     if (outcome.reason === "invalid-email") {
-      return NextResponse.json({ error: "invalid-email" }, { status: 400 });
+      return jsonNoStore({ error: "invalid-email" }, { status: 400 });
     }
     if (outcome.reason === "mail-not-configured") {
       // Honest, not decorative: nothing was stored, nothing was sent.
       logger.error("newsletter: subscribe attempted while SMTP unconfigured");
-      return NextResponse.json({ error: "not-configured" }, { status: 503 });
+      return jsonNoStore({ error: "not-configured" }, { status: 503 });
     }
-    return NextResponse.json({ error: "failed" }, { status: 500 });
+    return jsonNoStore({ error: "failed" }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, status: outcome.status });
+  return jsonNoStore({ ok: true, status: outcome.status });
 }

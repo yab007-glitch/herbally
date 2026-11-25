@@ -121,7 +121,7 @@ export async function getHerbs(
         });
         return {
           success: false,
-          error: keywordRes.error.message || "Failed to fetch herbs",
+          error: "Failed to fetch herbs",
         };
       }
       if (keywordRes.error) {
@@ -178,7 +178,7 @@ export async function getHerbs(
             error:
               error instanceof Error ? error.message : JSON.stringify(error),
           });
-          return { success: false, error: error.message };
+          return { success: false, error: "Failed to fetch herbs" };
         }
         const rows =
           (data as Array<Record<string, unknown> & { id: string }> | null) ||
@@ -255,7 +255,7 @@ export async function getHerbs(
       logger.error("herbs_get_herbs_failed", {
         error: error instanceof Error ? error.message : JSON.stringify(error),
       });
-      return { success: false, error: error.message };
+      return { success: false, error: "Failed to fetch herbs" };
     }
 
     const resolvedLocale = await resolveLocale(locale);
@@ -331,7 +331,7 @@ export async function getHerbBySlug(
         }
         return {
           success: false,
-          error: isNotFound ? "Herb not found" : error.message,
+          error: isNotFound ? "Herb not found" : "Failed to fetch herb",
           reason: isNotFound ? "not_found" : "unavailable",
         };
       }
@@ -373,7 +373,7 @@ export async function getHerbCategories(locale?: string) {
       logger.error("herbs_get_categories_failed", {
         error: error instanceof Error ? error.message : JSON.stringify(error),
       });
-      return { success: false, error: error.message };
+      return { success: false, error: "Failed to fetch categories" };
     }
 
     const resolvedLocale = await resolveLocale(locale);
@@ -506,7 +506,7 @@ export async function getSymptomCounts(
       logger.error("herbs_get_symptom_counts_failed", {
         error: error instanceof Error ? error.message : JSON.stringify(error),
       });
-      return { success: false, error: error.message };
+      return { success: false, error: "Failed to fetch symptom counts" };
     }
 
     // Count matches per symptom from the single result set
@@ -537,7 +537,7 @@ export async function searchHerbs(
     const expandedKeywords = expandQueryToKeywords(safeTerm);
     const { data: keywordResults } = await supabase
       .from("herbs")
-      .select("id, name, slug, scientific_name, evidence_level")
+      .select("id, name, slug, scientific_name, evidence_level, translations")
       .eq("is_published", true)
       .overlaps("symptom_keywords", expandedKeywords)
       .limit(10);
@@ -580,7 +580,7 @@ export async function searchHerbs(
       logger.error("herbs_search_failed", {
         error: error instanceof Error ? error.message : JSON.stringify(error),
       });
-      return { success: false, error: error.message };
+      return { success: false, error: "Failed to search herbs" };
     }
 
     return {

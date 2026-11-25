@@ -48,6 +48,7 @@ export function LanguageSelector() {
           <div className="px-2 py-2 text-xs text-muted-foreground border-b mb-1">
             <span>{t("common.suggested")}</span>{" "}
             <button
+              type="button"
               onClick={() => {
                 trackEvent("language_changed", {
                   locale: detectedLocale,

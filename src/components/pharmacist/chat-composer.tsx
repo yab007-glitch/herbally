@@ -94,6 +94,7 @@ export function ChatComposer({
           <div className="mt-2 mx-auto max-w-2xl">
             <div className="flex items-center justify-between">
               <button
+                type="button"
                 onClick={onClear}
                 disabled={isDeleting || isRestoring}
                 className="text-[10px] text-muted-foreground hover:text-muted-foreground transition-colors disabled:opacity-50"

@@ -96,6 +96,7 @@ export function FirstVisitBanner() {
             {switchTo}
           </Button>
           <button
+            type="button"
             onClick={handleDismiss}
             aria-label={dismissLabel}
             className="inline-flex size-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"

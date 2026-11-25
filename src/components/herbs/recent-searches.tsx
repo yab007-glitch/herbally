@@ -56,6 +56,7 @@ export function RecentSearches() {
           <span>{t("recentSearches.title")}</span>
         </div>
         <button
+          type="button"
           onClick={clearAll}
           className="text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
@@ -71,6 +72,7 @@ export function RecentSearches() {
             >
               {term}
               <button
+                type="button"
                 onClick={(e) => clearSearch(term, e)}
                 className="absolute right-1 top-1/2 -translate-y-1/2 p-0.5 rounded-full opacity-0 group-hover:opacity-100 hover:bg-muted-foreground/10 transition-opacity"
               >

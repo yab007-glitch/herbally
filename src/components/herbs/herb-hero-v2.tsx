@@ -169,6 +169,7 @@ export function HerbHeroV2({
               className="size-20 rounded-lg sm:size-24"
             />
             <button
+              type="button"
               onClick={handleSave}
               className={cn(
                 "absolute -right-2 -top-2 flex size-10 items-center justify-center rounded-full shadow-md ring-2 ring-card transition-transform hover:scale-110",

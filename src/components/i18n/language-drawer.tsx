@@ -52,6 +52,7 @@ export function LanguageDrawer({
             <div className="px-2 py-1.5 text-xs text-muted-foreground border-b">
               <span>{t("common.suggested")}</span>
               <button
+                type="button"
                 onClick={() => {
                   trackEvent("language_changed", {
                     locale: detectedLocale,
@@ -69,6 +70,7 @@ export function LanguageDrawer({
           {LANGUAGES.map((lang) => (
             <button
               key={lang.code}
+              type="button"
               onClick={() => {
                 trackEvent("language_changed", {
                   locale: lang.code,

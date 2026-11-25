@@ -606,6 +606,7 @@ export function ChatInterface({
 
       {showScrollButton && (
         <button
+          type="button"
           onClick={() => {
             scrollToBottom(true);
             setShowScrollButton(false);

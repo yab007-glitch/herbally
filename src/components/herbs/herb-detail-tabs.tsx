@@ -169,6 +169,7 @@ export function HerbDetailTabs({ tabs, data }: HerbDetailTabsProps) {
             {tabConfig.map((tab) => (
               <button
                 key={tab.key}
+                type="button"
                 onClick={() => selectTab(tab.key)}
                 aria-pressed={active === tab.key}
                 className={cn(
@@ -192,6 +193,7 @@ export function HerbDetailTabs({ tabs, data }: HerbDetailTabsProps) {
           return (
             <div key={tab.key} className="rounded-xl border border-border">
               <button
+                type="button"
                 onClick={() => {
                   if (isOpen) {
                     setActive("" as TabKey);

@@ -29,6 +29,15 @@ function getStripe(): Stripe | null {
   return stripeInstance;
 }
 
+const NO_STORE_HEADERS = { "Cache-Control": "private, no-store" };
+
+function jsonNoStore(body: unknown, init?: ResponseInit) {
+  return NextResponse.json(body, {
+    ...init,
+    headers: { ...NO_STORE_HEADERS, ...(init?.headers ?? {}) },
+  });
+}
+
 export async function POST(req: NextRequest) {
   const { success } = await rateLimit(
     rateLimitKey("donate", getClientIP(req)),
@@ -36,7 +45,7 @@ export async function POST(req: NextRequest) {
     60_000
   );
   if (!success) {
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Too many requests. Please try again later." },
       { status: 429, headers: { "Retry-After": "60" } }
     );
@@ -45,7 +54,7 @@ export async function POST(req: NextRequest) {
 
   if (!stripe) {
     logger.error("stripe_donate_not_configured");
-    return NextResponse.json(
+    return jsonNoStore(
       {
         error: "Donations are not currently available. Please try again later.",
       },
@@ -56,7 +65,7 @@ export async function POST(req: NextRequest) {
   try {
     const bodyResult = await readJsonBodyWithLimit(req, 4 * 1024);
     if (!bodyResult.ok) {
-      return NextResponse.json(
+      return jsonNoStore(
         {
           error:
             bodyResult.reason === "too_large"
@@ -74,10 +83,7 @@ export async function POST(req: NextRequest) {
     });
     const parsed = schema.safeParse(bodyResult.data);
     if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Invalid request body" },
-        { status: 400 }
-      );
+      return jsonNoStore({ error: "Invalid request body" }, { status: 400 });
     }
     const donationAmount = parsed.data.amount;
 
@@ -112,7 +118,7 @@ export async function POST(req: NextRequest) {
 
     const session = await stripe.checkout.sessions.create(createParams);
 
-    return NextResponse.json({ url: session.url });
+    return jsonNoStore({ url: session.url });
   } catch (error) {
     const err = error as Error & { type?: string; code?: string };
     logger.error("stripe_checkout_error", {
@@ -121,7 +127,7 @@ export async function POST(req: NextRequest) {
       code: err.code,
     });
     // Don't leak Stripe/internal error details to the client.
-    return NextResponse.json(
+    return jsonNoStore(
       { error: "Failed to create checkout session" },
       { status: 500 }
     );
