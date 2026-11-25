@@ -100,10 +100,7 @@ jobs:
           else
             echo "Pending expand migrations (00097–00103) not yet verified; running backup + expand runner..."
             BACKUP_SCRIPT="$GITHUB_WORKSPACE/deploy/backup-local.sh"
-            if [ -x /srv/herbally/deploy/backup-local.sh ]; then
-              BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
-            elif [ -f /srv/herbally/deploy/backup-local.sh ]; then
-              chmod +x /srv/herbally/deploy/backup-local.sh
+            if [ -f /srv/herbally/deploy/backup-local.sh ]; then
               BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
             fi
             BACKUP_SCRIPT="$BACKUP_SCRIPT" bash /srv/herbally/scripts/apply-pending-migrations.sh --phase expand

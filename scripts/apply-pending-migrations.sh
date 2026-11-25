@@ -541,12 +541,19 @@ PY
 done
 
 if [ "$TEST_MODE" != "true" ] && { [ "$PHASE" = "expand" ] || [ "$PHASE" = "all" ]; }; then
-  if [ ! -x "$BACKUP_SCRIPT" ]; then
-    echo "Backup script not executable or missing: ${BACKUP_SCRIPT}" >&2
+  if [ ! -f "$BACKUP_SCRIPT" ]; then
+    echo "Backup script missing: ${BACKUP_SCRIPT}" >&2
     exit 1
   fi
   echo "==> Running pre-migration encrypted backup via ${BACKUP_SCRIPT}"
-  "$BACKUP_SCRIPT"
+  if [ "$(id -u)" -eq 0 ] || [ -r "$BACKUP_SCRIPT" ]; then
+    bash "$BACKUP_SCRIPT"
+  else
+    # The production backup script and its passphrase are intentionally
+    # root-only. The self-hosted runner executes this one fixed script through
+    # a narrowly scoped NOPASSWD sudoers rule instead of widening file modes.
+    sudo -n "$BACKUP_SCRIPT"
+  fi
 fi
 
 for rel in "${SELECTED_MIGRATIONS[@]}"; do
