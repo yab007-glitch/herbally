@@ -39,6 +39,8 @@ describe("00105 & 00106 governance/reconciliation migrations", () => {
     expect(sql).toMatch(/^\s*BEGIN\s*;/im);
     expect(sql).toMatch(/^\s*COMMIT\s*;/im);
     expect(sql).toMatch(/Jiang et al\. \(Br J Clin Pharmacol, 2005/i);
+    expect(sql).toMatch(/COALESCE\(/i);
+    expect(sql).toMatch(/'null'::jsonb/i);
     expect(sql).not.toMatch(/\(\?<[=!]/);
   });
 });

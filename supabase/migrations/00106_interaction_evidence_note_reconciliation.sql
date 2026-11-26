@@ -57,18 +57,21 @@ SET
     THEN jsonb_set(
       translations,
       '{fr,evidence_note}',
-      to_jsonb(
-        NULLIF(
-          trim(
-            regexp_replace(
-              translations->'fr'->>'evidence_note',
-              '\s*(Grade\s+lowered|Note\s+abaiss|Gravité\s+abaiss|Niveau\s+abaiss)[^.]*\.?',
-              '',
-              'gi'
-            )
-          ),
-          ''
-        )
+      COALESCE(
+        to_jsonb(
+          NULLIF(
+            trim(
+              regexp_replace(
+                translations->'fr'->>'evidence_note',
+                '\s*(Grade\s+lowered|Note\s+abaiss|Gravité\s+abaiss|Niveau\s+abaiss)[^.]*\.?',
+                '',
+                'gi'
+              )
+            ),
+            ''
+          )
+        ),
+        'null'::jsonb
       ),
       true
     )
