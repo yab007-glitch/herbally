@@ -437,7 +437,7 @@ export async function POST(request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
+        "Cache-Control": "no-store",
         "X-HerbAlly-Answer-Status": "blocked",
         "X-HerbAlly-Answer-Reason": emergencyRefusal.kind,
       },
@@ -456,7 +456,7 @@ export async function POST(request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
+        "Cache-Control": "no-store",
         "X-HerbAlly-Answer-Status": "blocked",
         "X-HerbAlly-Answer-Reason": preLlmRefusal.kind,
       },

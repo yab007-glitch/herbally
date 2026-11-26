@@ -388,7 +388,7 @@
           "description": "The herbally.app name and essential related services."
         }
       },
-      "terms": "We do not publish prices or payment terms on this page. Any discussion is exploratory: nothing here is an offer, quote, or promise that a sponsorship will be accepted."
+      "terms": "The indicative monthly and annual tiers below describe exploratory infrastructure support. Nothing on this page is a binding offer, quote, or payment checkout, and no sponsorship takes effect until confirmed in writing."
     },
     "independence": {
       "title": "Independence is not negotiable",
@@ -471,7 +471,7 @@
           "label": "where readers are"
         }
       },
-      "note": "Raw figures from our own analytics for the 30 days to 29 October 2026. Around half of recent sessions look automated, so the human audience is smaller than the headline number. We tell you that here rather than let you discover it later.",
+      "note": "Snapshot from our own analytics for the 30 days ending 29 October 2026 (next periodic refresh pending). Around half of recent sessions look automated, so the human audience is smaller than the headline number. We tell you that here rather than let you discover it later.",
       "fit": "HerbAlly suits a sponsor whose customers ask what a herb does, whether it is safe with their medication, or how much of it to take — and who wants their name attached to that answer without buying influence over it."
     },
     "packages": {
@@ -500,10 +500,11 @@
           ]
         },
         "launch": {
-          "name": "Launch partner",
+          "name": "Launch partner (introductory)",
           "price": "C$150",
           "cadence": "per year",
           "features": [
+            "Introductory founding annual rate (75% off standard Sponsor pricing for initial launch partners)",
             "Everything in Sponsor",
             "Your logo on the home page",
             "A named entry in our public sponsorship record"
@@ -556,8 +557,8 @@
     "npnCheckerDesc": "Look up any 8-digit Health Canada Natural Product Number (NPN) or DIN-HM: inspect medicinal ingredients, cautions, and cross-check drug interactions.",
     "medications": "Medications & Herb Interactions A–Z",
     "medicationsDesc": "Browse prescription medications and drug classes to see every herb documented to interact with each drug, ranked by severity and evidence.",
-    "surgeryPlanner": "Pre-Surgery Herb Washout Planner",
-    "surgeryPlannerDesc": "Calculate pre-operative review dates for bleeding, sedation, and CYP450-active herbs based on ASA and Health Canada surgical safety guidance.",
+    "surgeryPlanner": "Pre-Surgery Supplement Review Checklist",
+    "surgeryPlannerDesc": "Prepare a printable pre-operative checklist for herbs linked to bleeding, sedation, and CYP450 interactions aligned with ASA patient advisories and Canadian surgical pre-op guides.",
     "widgets": "Free Embeddable Herb-Drug Checker",
     "widgetsDesc": "Embed HerbAlly's free bilingual herb-drug interaction checker widget on your clinic, pharmacy student, or wellness website."
   },
@@ -747,7 +748,7 @@
     "checkerEvidence": "Evidence",
     "checkerMechanism": "How it works",
     "explainerTitle": "Your trusted guide to medicinal herbs",
-    "explainerBody": "HerbAlly is a free medicinal-herb reference covering hundreds of published herb profiles. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and calculate an adult dose where established monograph data exists — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
+    "explainerBody": "HerbAlly is a free medicinal-herb reference covering over 3,000 published herb profiles. Each profile covers uses, safety information, and evidence grades, and you can check herb–drug interactions, find herbs by symptom, and review an adult monograph dose where established data exists — all without an account. The Virtual Herbalist is there to explain, not to replace the database or your pharmacist.",
     "explainerNote": "Educational purposes only. Not medical advice. Always confirm with your doctor or pharmacist before combining a herb with a medication.",
     "popularTitle": "Popular herbs",
     "herbLabel": "Herb",
@@ -789,7 +790,7 @@
       "supabase": "Self-hosted PostgreSQL / Supabase stack operated in Montreal, Quebec, Canada — stores optional user accounts, saved health profiles, garden entries, dosage history, and aggregate donation logs.",
       "vercel": "Cloudflare — DNS, TLS edge proxy, Cloudflare Tunnel, and cookieless Cloudflare Web Analytics protecting traffic to our Montreal origin server.",
       "stripe": "Stripe — payment processing for donations. HerbAlly never sees or stores your card details. Stripe provides us the donor name, email and payment status so the donation can be recorded.",
-      "ollamaCloud": "Ollama Cloud — AI processing. Chat messages and symptom descriptions submitted for AI-assisted search may be sent to Ollama to generate responses or search keywords. Symptom search terms, including the original description if keyword extraction fails, may appear in search-request URLs and hosting logs. Ollama's own retention practices are governed by its privacy policy.",
+      "ollamaCloud": "Ollama Cloud — AI processing. Chat messages and symptom descriptions submitted for AI-assisted search may be sent via POST request bodies (outside search URLs) to Ollama to generate responses or extract search keywords. Avoid entering sensitive personal health details in URL-based keyword search bars (/herbs?q=). Ollama's own retention practices are governed by its privacy policy.",
       "adsense": "Google AdSense is not active. If advertising is enabled in future, Google and its partners may receive information about the public page being viewed and may use cookies or device identifiers to serve and measure ads. The intended placement is on public herb reference pages, not on health-input tools.",
       "upstash": "Upstash Redis — ephemeral rate-limiting counters (hashed request IP keys; US/cloud) to protect the site and AI endpoint against abuse.",
       "sentry": "Sentry — error monitoring and crash diagnostics with scrubbed request headers and cookies (US/cloud).",
@@ -807,7 +808,7 @@
     },
     "dataRetention": {
       "title": "6. Data Retention",
-      "text": "Account and saved data may be retained until deleted. Guest chat records can persist separately from the guest cookie; cookie expiry does not necessarily delete server records. For performance and safety consistency, Virtual Herbalist replies may also be cached in a shared, prompt-hash-keyed server table (ai_response_cache) for up to 7 days without user, guest, or session identifiers; because those cache entries are unlinked, deleting a conversation removes the chat session and messages immediately while unlinked cache entries expire automatically after 7 days. Donation records may be retained for accounting. Ollama's retention practices are governed by its own policy."
+      "text": "Account and saved data may be retained until deleted. Anonymous guest chat sessions carry an explicit 30-day server retention schedule (retention_expires_at) from creation, and expiry of the guest cookie ends browser linkage earlier. For performance and safety consistency, single-turn stateless public educational Virtual Herbalist replies may be cached in a shared, prompt-hash-keyed server table (ai_response_cache) for up to 7 days without user, guest, or session identifiers, while personalized queries (with saved medications or herb context) and multi-turn conversations bypass shared caching completely. Deleting a conversation removes the chat session and messages immediately while unlinked public cache entries expire automatically after 7 days. Donation records may be retained for accounting. Ollama's retention practices are governed by its own policy."
     },
     "yourRights": {
       "title": "7. Your Rights",

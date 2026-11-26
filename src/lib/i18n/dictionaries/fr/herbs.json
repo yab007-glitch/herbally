@@ -140,7 +140,8 @@
     "notSafe": "Déconseillé",
     "unsafeOrally": "Déconseillé par voie orale",
     "safeTopically": "Sûr en application topique",
-    "unknown": "Données insuffisantes"
+    "unknown": "Données insuffisantes",
+    "evidenceScopeNote": "Ce niveau reflète l'indication la mieux documentée — les preuves varient selon l'usage et la préparation ; consultez chaque source ci-dessous."
   },
   "herbTabs": {
     "overview": "Aperçu",
@@ -170,9 +171,9 @@
     "needsReReview": "À réviser de nouveau",
     "needsReReviewTooltip": "Cette fiche a déjà été révisée, puis modifiée. Considérez-la comme non révisée jusqu'à ce que quelqu'un la relise.",
     "unverifiedTooltip": "Cette fiche a été générée par IA et n'a pas encore été vérifiée auprès de sources primaires. Vérifiez avec un professionnel de santé avant de vous fier à ces informations.",
-    "sourceVerified": "Vérifié · {count} sources",
+    "sourceVerified": "Sources recoupées · {count} sources",
     "sourceVerifiedTooltip": "Recoupé auprès de {count} sources indépendantes : {sources}. Cela confirme l'identité de la plante et son dossier réglementaire — ce n'est pas une affirmation qu'une personne a relu cette fiche.",
-    "identityVerified": "Identité vérifiée · {count} sources",
+    "identityVerified": "Identité recoupée · {count} sources",
     "identityVerifiedTooltip": "Le nom de la plante est confirmé par {count} sources taxonomiques indépendantes ({sources}). Aucun organisme de réglementation n'a publié de monographie pour cette plante; rien d'autre que son identité n'est affirmé ici.",
     "formula": "Formule multi-herbes",
     "formulaTooltip": "Cette fiche décrit un produit multi-herbes et non une plante unique : il n'y a donc pas de nom botanique à recouper. Les ingrédients sont listés sur la page; la formule elle-même n'a pas d'identité taxonomique.",

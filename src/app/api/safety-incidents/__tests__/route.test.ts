@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-const { rpcMock, fromMock, rateLimitMock } = vi.hoisted(() => ({
+const { rpcMock, fromMock, anonFromMock, rateLimitMock } = vi.hoisted(() => ({
   rpcMock: vi.fn(),
   fromMock: vi.fn(),
+  anonFromMock: vi.fn(),
   rateLimitMock: vi.fn(),
 }));
 
@@ -11,6 +12,12 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({
     rpc: rpcMock,
     from: fromMock,
+  }),
+}));
+
+vi.mock("@/lib/supabase/anonymous", () => ({
+  getAnonClient: () => ({
+    from: anonFromMock,
   }),
 }));
 
@@ -27,7 +34,7 @@ vi.mock("@/lib/utils/logger", () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-import { POST } from "../route";
+import { GET, POST } from "../route";
 
 function makeRequest(body: Record<string, unknown>) {
   return new NextRequest("https://herbally.test/api/safety-incidents", {
@@ -132,5 +139,45 @@ describe("POST /api/safety-incidents", () => {
     const res = await POST(makeRequest(VALID_PAYLOAD));
     expect(res.status).toBe(500);
     expect(deleteEqMock).toHaveBeenCalledWith("id", "inc-fallback-1");
+  });
+});
+
+describe("GET /api/safety-incidents", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    rateLimitMock.mockResolvedValue({ success: true, remaining: 59 });
+  });
+
+  it("reads public_corrections_log via anon client (never service_role)", async () => {
+    anonFromMock.mockReturnValueOnce({
+      select: () => ({
+        order: () => ({
+          limit: async () => ({
+            data: [{ id: "c1", correction_summary: "Updated note" }],
+            error: null,
+          }),
+        }),
+      }),
+    });
+
+    const res = await GET(
+      new NextRequest("https://herbally.test/api/safety-incidents")
+    );
+    expect(res.status).toBe(200);
+    expect(anonFromMock).toHaveBeenCalledWith("public_corrections_log");
+    expect(fromMock).not.toHaveBeenCalled();
+    expect(await res.json()).toEqual({
+      corrections: [{ id: "c1", correction_summary: "Updated note" }],
+      available: true,
+    });
+  });
+
+  it("returns 429 when rate limited", async () => {
+    rateLimitMock.mockResolvedValue({ success: false, remaining: 0 });
+    const res = await GET(
+      new NextRequest("https://herbally.test/api/safety-incidents")
+    );
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
   });
 });

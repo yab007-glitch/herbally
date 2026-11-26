@@ -16,6 +16,7 @@ interface HerbPaginationProps {
   query?: string;
   category?: string;
   sort?: string;
+  evidence?: string;
 }
 
 /**
@@ -37,6 +38,7 @@ export function HerbPagination({
   query,
   category,
   sort,
+  evidence,
 }: HerbPaginationProps) {
   const t = useTranslations();
   const router = useRouter();
@@ -63,7 +65,7 @@ export function HerbPagination({
   }, [page]);
 
   const urlFor = (target: number) =>
-    buildHerbListUrl({ q: query, category, sort, page: target });
+    buildHerbListUrl({ q: query, category, sort, evidence, page: target });
 
   const navigate = (target: number) => {
     if (target === page) {

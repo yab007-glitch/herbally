@@ -136,4 +136,32 @@ describe("EmbedChecker", () => {
     unmount();
     expect(capturedSignal?.aborted).toBe(true);
   });
+
+  it("labels dangerous plants as Toxic in the autocomplete dropdown", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValueOnce(
+        new Response(
+          JSON.stringify([
+            {
+              id: "99",
+              name: "Rosary Pea",
+              slug: "abrus-precatorius",
+              scientific_name: "Abrus precatorius",
+              isDangerous: true,
+            },
+          ]),
+          { status: 200 }
+        )
+      )
+    );
+
+    render(<EmbedChecker />);
+    const input = screen.getByRole("combobox", { name: "herbPlaceholder" });
+    fireEvent.change(input, { target: { value: "abrus" } });
+
+    const option = await screen.findByRole("option");
+    expect(option).toHaveTextContent("Rosary Pea");
+    expect(option).toHaveTextContent("Toxic");
+  });
 });

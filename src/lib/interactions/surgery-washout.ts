@@ -21,7 +21,7 @@ export const SURGERY_HERB_RULES: SurgeryHerbRule[] = [
     category: "bleeding",
     aliases: ["garlic", "allium sativum", "ail"],
     enRationale:
-      "Inhibits platelet aggregation irreversibly via ajoene and allicin derivatives; ASA/clinical surgical guidance recommends pausing concentrated garlic supplements at least 7 days pre-op.",
+      "Inhibits platelet aggregation irreversibly via ajoene and allicin derivatives; perioperative clinical guidance commonly advises reviewing concentrated garlic supplements at least 7 days pre-op.",
     frRationale:
       "Inhibe l'agrégation plaquettaire de manière prolongée (ajoène/allicine) ; il est généralement conseillé d'arrêter les suppléments concentrés au moins 7 jours avant l'opération.",
   },
@@ -92,7 +92,7 @@ export const SURGERY_HERB_RULES: SurgeryHerbRule[] = [
       "millepertuis",
     ],
     enRationale:
-      "Potent CYP3A4, CYP2C9, CYP2C19, and P-gp inducer: accelerates clearance of midazolam, fentanyl, opioids, anticoagulants, and vasopressors (ASA guidelines highlight high interaction risk).",
+      "Potent CYP3A4, CYP2C9, CYP2C19, and P-gp inducer: accelerates clearance of midazolam, fentanyl, opioids, anticoagulants, and vasopressors (perioperative literature highlights high interaction risk).",
     frRationale:
       "Puissant inducteur du CYP3A4 et de la P-gp : réduit l'efficacité de nombreux anesthésiques, opioïdes et anticoagulants périopératoires.",
   },
@@ -248,7 +248,7 @@ export interface PlannedWashoutItem {
   alreadyPastWindow: boolean;
 }
 
-/** Match user free-text herb list against clinical ASA/Health Canada pre-op washout rules. */
+/** Match user free-text herb list against perioperative anesthesia/surgical review rules. */
 export function matchSurgeryHerb(input: string): SurgeryHerbRule | null {
   const norm = input.trim().toLowerCase();
   if (!norm) return null;

@@ -52,6 +52,7 @@ interface HerbResult {
   name: string;
   slug: string;
   scientific_name: string;
+  isDangerous?: boolean;
 }
 
 interface CheckPair {
@@ -385,6 +386,11 @@ export function HomeSearchClient({
                     <span className="text-xs italic text-muted-foreground">
                       {herb.scientific_name}
                     </span>
+                    {herb.isDangerous && (
+                      <span className="ml-auto rounded-full bg-destructive/15 px-2 py-0.5 text-[11px] font-semibold text-destructive">
+                        {locale === "fr" ? "Toxique" : "Toxic — do not use"}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -706,18 +712,45 @@ export function HomeSearchClient({
                       <p className="mt-3 text-base font-semibold text-foreground">
                         {checkResult.herb.name} + {pair.drugName}
                       </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${SEVERITY_STYLES[pair.severity]}`}
-                        >
-                          {severityLabel[pair.severity]}
-                        </span>
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-medium ${statusBadge.toneClass}`}
-                        >
-                          {statusBadge.label}
-                        </span>
-                      </div>
+                      <dl className="mt-2 grid gap-2 rounded-lg border bg-muted/30 p-2.5 text-xs sm:grid-cols-3">
+                        <div>
+                          <dt className="font-medium text-muted-foreground">
+                            {locale === "fr"
+                              ? "Gravité potentielle"
+                              : "Potential severity"}
+                          </dt>
+                          <dd className="mt-1">
+                            <span
+                              className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${SEVERITY_STYLES[pair.severity]}`}
+                            >
+                              {severityLabel[pair.severity]}
+                            </span>
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="font-medium text-muted-foreground">
+                            {labels.checkerEvidence}
+                          </dt>
+                          <dd className="mt-1 text-foreground">
+                            {pair.evidenceLevel ||
+                              (locale === "fr" ? "Non précisé" : "Unspecified")}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="font-medium text-muted-foreground">
+                            {locale === "fr"
+                              ? "Statut éditorial"
+                              : "Editorial status"}
+                          </dt>
+                          <dd className="mt-1">
+                            <span
+                              className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-medium ${statusBadge.toneClass}`}
+                            >
+                              {statusBadge.label}
+                            </span>
+                          </dd>
+                        </div>
+                      </dl>
                       <p className="mt-2 rounded-md border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
                         {pubSummary.banner}
                       </p>
@@ -732,14 +765,8 @@ export function HomeSearchClient({
                           {pair.mechanism}
                         </p>
                       )}
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        {pair.evidenceLevel && (
-                          <span>
-                            {labels.checkerEvidence}: {pair.evidenceLevel}
-                            {" · "}
-                          </span>
-                        )}
-                        {pair.source && (
+                      {pair.source && (
+                        <p className="mt-2 text-xs text-muted-foreground">
                           <span>
                             {labels.checkerSource}:{" "}
                             {pair.sourceUrl ? (
@@ -755,7 +782,15 @@ export function HomeSearchClient({
                               pair.source
                             )}
                           </span>
-                        )}
+                        </p>
+                      )}
+                      <p className="mt-2 text-xs text-foreground">
+                        <span className="font-semibold">
+                          {locale === "fr" ? "Que faire : " : "What to do: "}
+                        </span>
+                        {locale === "fr"
+                          ? "Discutez de cette association avec votre pharmacien ou médecin avant tout changement ; n'interrompez jamais un médicament prescrit de votre propre initiative."
+                          : "Discuss this combination with your pharmacist or prescriber before making changes; do not stop prescribed medication independently."}
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         <Link

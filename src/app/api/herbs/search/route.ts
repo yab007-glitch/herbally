@@ -14,6 +14,7 @@ import { getClientIP } from "@/lib/utils/client-ip";
 import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
 import { rankHerbResults } from "@/lib/search/rank-results";
 import { dedupeSymptomResults } from "@/lib/search/symptom-results";
+import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 import type { Herb } from "@/lib/types";
 
 const searchBodySchema = z.object({
@@ -50,7 +51,9 @@ async function searchHerbs(
     // Sanitize each token to prevent ILIKE wildcard & PostgREST `.or()` filter
     // injection, matching English names, Latin binomials, descriptions, and
     // French translated names via the generated name_fr column.
-    const textConditions = buildHerbTextOrFilter(term);
+    const textConditions = buildHerbTextOrFilter(term, {
+      includeDescription: false,
+    });
     // Rows whose OWN name carries every word the reader typed. The broad
     // filter above matches any word in any field, and `limit` samples that set
     // in whatever order the database returns: on 2026-11-17 "licorice root"
@@ -67,7 +70,7 @@ async function searchHerbs(
     // returned contained none of the rows whose name carries every typed word.
     const anchorConditions = buildHerbNameAnchorFilter(term);
     const herbColumns =
-      "id, name, slug, scientific_name, evidence_level, translations";
+      "id, name, slug, scientific_name, evidence_level, name_fr";
 
     const [symptomResponse, preciseResponse, anchorResponse, textResponse] =
       await Promise.all([
@@ -143,11 +146,23 @@ async function searchHerbs(
       trad: 4,
     };
 
+    const localizeCandidate = (h: Record<string, unknown>) => {
+      const frName =
+        typeof h.name_fr === "string" && h.name_fr.trim()
+          ? h.name_fr.trim()
+          : null;
+      const withTranslations =
+        !h.translations && frName
+          ? { ...h, translations: { fr: { name: frName } } }
+          : h;
+      return localizeHerb(withTranslations as Herb, locale);
+    };
+
     // Localize symptom results, attaching which keywords/inputs matched.
     // symptom_keywords is only used to explain the match; it is not
     // returned as a new filter and does not change which rows qualify.
     const localizedSymptomResults = (symptomResults || []).map((h) => {
-      const localized = localizeHerb(h as Herb, locale);
+      const localized = localizeCandidate(h as Record<string, unknown>);
       const keywords =
         ((h as { symptom_keywords?: unknown }).symptom_keywords as
           string[] | null) ?? null;
@@ -188,7 +203,7 @@ async function searchHerbs(
     // matches. Ranking still sorts by name similarity; this order decides
     // ties and which row survives de-duplication.
     const localizedPreciseResults = (preciseResults || []).map((h) =>
-      localizeHerb(h as Herb, locale)
+      localizeCandidate(h as Record<string, unknown>)
     );
     for (const herb of localizedPreciseResults) {
       if (!seen.has(herb.id)) {
@@ -210,7 +225,7 @@ async function searchHerbs(
     // Anchor matches for qualified names ("ginkgo leaf"), behind the exact
     // name rows and ahead of the broad matches.
     const localizedAnchorResults = (anchorResults || []).map((h) =>
-      localizeHerb(h as Herb, locale)
+      localizeCandidate(h as Record<string, unknown>)
     );
     for (const herb of localizedAnchorResults) {
       if (!seen.has(herb.id)) {
@@ -231,7 +246,7 @@ async function searchHerbs(
 
     // Localize text results
     const localizedTextResults = (textResults || []).map((h) =>
-      localizeHerb(h as Herb, locale)
+      localizeCandidate(h as Record<string, unknown>)
     );
     for (const herb of localizedTextResults) {
       if (!seen.has(herb.id)) {
@@ -268,6 +283,7 @@ async function searchHerbs(
         slug,
         scientific_name,
         evidence_level,
+        isDangerous: isDangerousHerb(slug),
         matchedBy,
         matchedKeywords,
         matchedInputs,

@@ -80,7 +80,10 @@ export function normalizeMatchText(value: string): string {
 
 /**
  * Build a PostgREST `.or(...)` filter matching herb English names, Latin
- * binomials, French translated names, and (for search) descriptions.
+ * binomials, French translated names (`name_fr`), and (when explicitly opted in)
+ * descriptions. Description filtering is disabled by default because
+ * `herbs_public.description` runs a PL/pgSQL sanitizer per row and triggers
+ * PostgREST statement timeouts on broad searches.
  */
 export function buildHerbTextOrFilter(
   term: string,
@@ -91,7 +94,7 @@ export function buildHerbTextOrFilter(
   } = {}
 ): string {
   const {
-    includeDescription = true,
+    includeDescription = false,
     maxTokens = 10,
     minTokenLength = 2,
   } = options;

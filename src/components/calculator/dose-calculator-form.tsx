@@ -91,7 +91,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   const [ageYears, setAgeYears] = useState("");
   const [weightValue, setWeightValue] = useState("");
   const [useLbs, setUseLbs] = useState(false);
-  const [heightCm, setHeightCm] = useState("");
   const selectedFormula: FormulaKey = "adult_reference";
   const [snapshot, setSnapshot] = useState<CalculationSnapshot | null>(null);
   const snapshotSeqRef = useRef(0);
@@ -100,7 +99,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   const [safetyBlock, setSafetyBlock] = useState<SafetyBlockState>(null);
   const [autoFilled, setAutoFilled] = useState(false);
   const { profile, loaded: profileLoaded } = useDefaultPatientProfile();
-  const dirtyFieldsRef = useRef({ weight: false, age: false, height: false });
+  const dirtyFieldsRef = useRef({ weight: false, age: false });
   const appliedProfileRef = useRef(false);
 
   const liveBlockedHerb = matchCalculatorBlockedInput(herbName);
@@ -122,10 +121,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     }
     if (profile.age_years && !dirtyFieldsRef.current.age) {
       setAgeYears(String(profile.age_years));
-      changed = true;
-    }
-    if (profile.height_cm && !dirtyFieldsRef.current.height) {
-      setHeightCm(String(profile.height_cm));
       changed = true;
     }
 
@@ -199,28 +194,13 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
       weight = converted;
     }
 
-    const trimmedHeight = heightCm.trim();
-    let height: number | null = null;
-    if (trimmedHeight !== "") {
-      const parsedHeight = Number(trimmedHeight);
-      if (
-        !Number.isFinite(parsedHeight) ||
-        parsedHeight <= 0 ||
-        parsedHeight > 300
-      ) {
-        setError(t("calculator.errors.calculationError"));
-        return;
-      }
-      height = parsedHeight;
-    }
-
     try {
       const calcResult = buildAdultReferenceDose({
         adultDose: dose,
         unit: doseUnit,
         ageYears: eligibility.ageYears,
         weightKg: weight,
-        heightCm: height,
+        heightCm: null,
       });
 
       snapshotSeqRef.current += 1;
@@ -232,7 +212,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
         doseUnit,
         weightKg: weight,
         ageYears: eligibility.ageYears,
-        heightCm: height,
+        heightCm: null,
         formula: selectedFormula,
       });
     } catch {
@@ -290,16 +270,21 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     )}
 
                     {prefill.dosageForms.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {prefill.dosageForms.map((form) => (
-                          <Badge
-                            key={form}
-                            variant="secondary"
-                            className="text-xs"
-                          >
-                            {form.replace("_", " ")}
-                          </Badge>
-                        ))}
+                      <div className="space-y-1 pt-1">
+                        <div className="flex flex-wrap gap-1">
+                          {prefill.dosageForms.map((form) => (
+                            <Badge
+                              key={form}
+                              variant="secondary"
+                              className="text-xs"
+                            >
+                              {form.replace("_", " ")}
+                            </Badge>
+                          ))}
+                        </div>
+                        <p className="text-xs text-green-800 dark:text-green-200">
+                          {t("calculatorForm.preparationNotInterchangeable")}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -502,31 +487,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 onChange={(e) => {
                   dirtyFieldsRef.current.weight = true;
                   setWeightValue(e.target.value);
-                  invalidateCalculation();
-                }}
-              />
-            </div>
-
-            {/* Height (optional, for BSA) */}
-            <div className="space-y-2">
-              <Label htmlFor="patient-height">
-                {t("calculatorForm.heightCm")}
-                <span className="text-muted-foreground">
-                  {" "}
-                  — {t("calculatorForm.optionalForBsa")}
-                </span>
-              </Label>
-              <Input
-                className="h-11"
-                id="patient-height"
-                type="number"
-                min="0"
-                step="any"
-                placeholder="e.g. 170"
-                value={heightCm}
-                onChange={(e) => {
-                  dirtyFieldsRef.current.height = true;
-                  setHeightCm(e.target.value);
                   invalidateCalculation();
                 }}
               />

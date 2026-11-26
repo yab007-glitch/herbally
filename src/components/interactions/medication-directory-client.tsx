@@ -48,8 +48,41 @@ export type MedicationCardSummary = Pick<
   | "totalInteractions"
   | "highestSeverity"
 > & {
+  publishedCount?: number;
+  countsBySeverity?: Record<InteractionSeverity, number>;
   sampleHerbs: Array<{ slug: string; name: string }>;
 };
+
+function formatSeverityBreakdown(
+  counts: Record<InteractionSeverity, number> | undefined,
+  fr: boolean
+): string | null {
+  if (!counts) return null;
+  const parts: string[] = [];
+  for (const sev of SEVERITY_ORDER) {
+    const n = counts[sev] ?? 0;
+    if (n <= 0) continue;
+    const label = fr
+      ? sev === "contraindicated"
+        ? n > 1
+          ? "contre-indiquées"
+          : "contre-indiquée"
+        : sev === "severe"
+          ? n > 1
+            ? "graves"
+            : "grave"
+          : sev === "moderate"
+            ? n > 1
+              ? "modérées"
+              : "modérée"
+            : n > 1
+              ? "légères"
+              : "légère"
+      : sev;
+    parts.push(`${n} ${label}`);
+  }
+  return parts.length > 0 ? parts.join(" · ") : null;
+}
 
 interface Props {
   medications: MedicationCardSummary[];
@@ -168,60 +201,85 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
         </div>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((med) => (
-            <li key={med.drugSlug}>
-              <Link
-                href={`/medications/${med.drugSlug}`}
-                className="group flex h-full flex-col justify-between rounded-2xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-muted/30"
-              >
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <h2 className="text-base font-semibold text-foreground group-hover:text-primary">
-                      {med.drugName}
-                    </h2>
-                    <span
-                      className={cn(
-                        "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
-                        SEVERITY_BADGE[med.highestSeverity]
-                      )}
-                    >
-                      <ShieldAlert className="size-3" aria-hidden="true" />
-                      {severityLabel(med.highestSeverity, fr)}
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-muted-foreground">
-                    {fr
-                      ? `${med.totalInteractions} plante${med.totalInteractions > 1 ? "s" : ""} avec interaction documentée`
-                      : `${med.totalInteractions} interacting herb${med.totalInteractions === 1 ? "" : "s"}`}
-                  </p>
-
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {med.sampleHerbs.slice(0, 4).map((h) => (
+          {filtered.map((med) => {
+            const highestCount =
+              med.countsBySeverity?.[med.highestSeverity] ??
+              med.totalInteractions;
+            const isMixed = highestCount < med.totalInteractions;
+            const breakdown = formatSeverityBreakdown(med.countsBySeverity, fr);
+            return (
+              <li key={med.drugSlug}>
+                <Link
+                  href={`/medications/${med.drugSlug}`}
+                  className="group flex h-full flex-col justify-between rounded-2xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-muted/30"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <h2 className="text-base font-semibold text-foreground group-hover:text-primary">
+                        {med.drugName}
+                      </h2>
                       <span
-                        key={h.slug}
-                        className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
+                        className={cn(
+                          "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
+                          SEVERITY_BADGE[med.highestSeverity]
+                        )}
                       >
-                        {h.name}
+                        <ShieldAlert className="size-3" aria-hidden="true" />
+                        {isMixed
+                          ? fr
+                            ? `Jusqu'à ${severityLabel(med.highestSeverity, fr)}`
+                            : `Up to ${severityLabel(med.highestSeverity, fr)}`
+                          : severityLabel(med.highestSeverity, fr)}
                       </span>
-                    ))}
-                  </div>
-                </div>
+                    </div>
 
-                <div className="mt-4 flex items-center justify-between border-t pt-2.5 text-xs font-medium text-primary">
-                  <span>
-                    {fr
-                      ? "Voir les plantes concernées"
-                      : "View interacting herbs"}
-                  </span>
-                  <ArrowRight
-                    className="size-3.5 transition-transform group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </div>
-              </Link>
-            </li>
-          ))}
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <p>
+                        {fr
+                          ? `${med.totalInteractions} plante${med.totalInteractions > 1 ? "s" : ""} avec interaction documentée`
+                          : `${med.totalInteractions} interacting herb${med.totalInteractions === 1 ? "" : "s"}`}
+                      </p>
+                      {breakdown && (
+                        <p className="text-[11px] text-muted-foreground">
+                          {breakdown}
+                        </p>
+                      )}
+                      {med.publishedCount === 0 && (
+                        <span className="inline-block rounded-md border border-amber-300/70 bg-amber-50/70 px-1.5 py-0.5 text-[10px] font-medium text-amber-900 dark:border-amber-800/70 dark:bg-amber-950/30 dark:text-amber-200">
+                          {fr
+                            ? "En attente de révision clinique"
+                            : "Awaiting clinical review"}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {med.sampleHerbs.slice(0, 4).map((h) => (
+                        <span
+                          key={h.slug}
+                          className="rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
+                        >
+                          {h.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between border-t pt-2.5 text-xs font-medium text-primary">
+                    <span>
+                      {fr
+                        ? "Voir les plantes concernées"
+                        : "View interacting herbs"}
+                    </span>
+                    <ArrowRight
+                      className="size-3.5 transition-transform group-hover:translate-x-0.5"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

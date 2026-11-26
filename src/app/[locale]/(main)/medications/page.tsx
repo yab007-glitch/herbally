@@ -136,13 +136,27 @@ export default async function MedicationsIndexPage() {
         </div>
       </dl>
 
+      {medications.length > 0 &&
+        medications.every((m) => m.publishedCount === 0) && (
+          <div
+            role="note"
+            className="rounded-xl border border-amber-300 bg-amber-50/70 px-4 py-3 text-xs leading-relaxed text-amber-950 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200"
+          >
+            {fr
+              ? "Statut éditorial : ces fiches héritées proviennent de sources primaires et attendent une validation indépendante par un clinicien agréé. Utilisez-les pour préparer une vérification avec votre pharmacien ou médecin."
+              : "Review status: These legacy interaction records come from cited source compilations and await independent licensed clinician sign-off. Use them as a screening prompt with your pharmacist or prescriber."}
+          </div>
+        )}
+
       <MedicationDirectoryClient
         medications={medications.map((m) => ({
           drugSlug: m.drugSlug,
           drugName: m.drugName,
           enDrugName: m.enDrugName,
           totalInteractions: m.totalInteractions,
+          publishedCount: m.publishedCount,
           highestSeverity: m.highestSeverity,
+          countsBySeverity: m.countsBySeverity,
           sampleHerbs: m.sampleHerbs.slice(0, 4).map((h) => ({
             slug: h.slug,
             name: h.name,

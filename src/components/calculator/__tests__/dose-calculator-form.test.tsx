@@ -68,10 +68,13 @@ beforeEach(() => {
 });
 
 describe("DoseCalculatorForm pediatric & formula containment", () => {
-  it("removes months toggle and all pediatric/adult-derived scaling formula radios", () => {
+  it("removes months toggle, unused height field, and all pediatric/adult-derived scaling formula radios", () => {
     render(<DoseCalculatorForm />);
     expect(
       screen.queryByRole("switch", { name: /toggleAgeUnit/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/calculatorForm.heightCm/i)
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("radio", {
@@ -331,11 +334,10 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
         .value
     ).toBe("30");
     expect(
-      (screen.getByLabelText(/calculatorForm.heightCm/) as HTMLInputElement)
-        .value
-    ).toBe("180");
-    expect(renderedDose(container)).toBeNull();
-    expect(screen.queryByTestId("save-calc-snapshot")).not.toBeInTheDocument();
+      screen.queryByLabelText(/calculatorForm.heightCm/)
+    ).not.toBeInTheDocument();
+    expect(renderedDose(container)).toContain("500");
+    expect(screen.getByTestId("save-calc-snapshot")).toBeInTheDocument();
   });
 
   it("preserves calculation when late profile arrives and all profile fields were already edited by the user", () => {
@@ -346,7 +348,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
     setValue(/calculatorForm.adultDose/, "500");
     setValue(/calculatorForm.childWeight/, "60");
     setValue(/calculatorForm.childAge/, "30");
-    setValue(/calculatorForm.heightCm/, "170");
     calculate();
 
     expect(renderedDose(container)).toContain("500");
@@ -367,10 +368,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
       (screen.getByLabelText(/calculatorForm.childAge/) as HTMLInputElement)
         .value
     ).toBe("30");
-    expect(
-      (screen.getByLabelText(/calculatorForm.heightCm/) as HTMLInputElement)
-        .value
-    ).toBe("170");
     expect(renderedDose(container)).toContain("500");
   });
 

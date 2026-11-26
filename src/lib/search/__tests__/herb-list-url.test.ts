@@ -21,10 +21,10 @@ describe("buildHerbListUrl", () => {
     );
   });
 
-  it("keeps a non-default sort and a page above 1", () => {
-    expect(buildHerbListUrl({ sort: "evidence", page: 3 })).toBe(
-      "/herbs?sort=evidence&page=3#herb-results"
-    );
+  it("keeps a non-default sort, clinical evidence filter, and a page above 1", () => {
+    expect(
+      buildHerbListUrl({ sort: "evidence", evidence: "clinical", page: 3 })
+    ).toBe("/herbs?sort=evidence&evidence=clinical&page=3#herb-results");
   });
 
   it("trims values and drops empties", () => {
