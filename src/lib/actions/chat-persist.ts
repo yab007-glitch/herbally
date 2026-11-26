@@ -375,7 +375,19 @@ export async function createChatSession(
       logFailure("chat_persist_create_guest_session", error);
       return { ok: false, code: "unavailable" };
     }
-    return { ok: true, data: toSession(data) };
+    const created = toSession(data);
+    // Stamp explicit 30-day retention_expires_at metadata (migration 00103)
+    // best-effort so guest chat retention policy is enforced in schema.
+    try {
+      const expiresAt = new Date(Date.now() + 30 * 86_400_000).toISOString();
+      await supabase
+        .from("chat_sessions")
+        .update({ retention_expires_at: expiresAt })
+        .eq("id", created.id);
+    } catch {
+      // Non-fatal if pre-00103 or mocked RPC client omits update chain
+    }
+    return { ok: true, data: created };
   } catch (error) {
     logFailure("chat_persist_create_session", error);
     return { ok: false, code: "unavailable" };

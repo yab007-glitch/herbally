@@ -2,9 +2,16 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
-import { Search, Loader2, Leaf, ArrowRight, Sparkles } from "lucide-react";
+import {
+  Search,
+  Loader2,
+  Leaf,
+  ArrowRight,
+  Sparkles,
+  AlertTriangle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   dedupeSymptomResults,
   sortSymptomResultsByRelevance,
@@ -16,6 +23,7 @@ interface HerbResult {
   slug: string;
   scientific_name: string;
   evidence_level: string | null;
+  isDangerous?: boolean;
   matchedBy: string;
   matchedKeywords?: string[];
   matchedInputs?: string[];
@@ -24,6 +32,7 @@ interface HerbResult {
 
 export function SymptomSearchClient() {
   const t = useTranslations();
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<HerbResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -199,10 +208,24 @@ export function SymptomSearchClient() {
                   <Link
                     key={herb.id}
                     href={`/herbs/${herb.slug}`}
-                    className="group flex items-center gap-4 rounded-xl border border-border p-4 transition-all hover:border-primary/30 hover:bg-accent/20"
+                    className={`group flex items-center gap-4 rounded-xl border p-4 transition-all ${
+                      herb.isDangerous
+                        ? "border-destructive/50 bg-destructive/5 hover:border-destructive"
+                        : "border-border hover:border-primary/30 hover:bg-accent/20"
+                    }`}
                   >
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                      <Leaf className="size-5" />
+                    <div
+                      className={`flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                        herb.isDangerous
+                          ? "bg-destructive/15 text-destructive"
+                          : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"
+                      }`}
+                    >
+                      {herb.isDangerous ? (
+                        <AlertTriangle className="size-5" aria-hidden="true" />
+                      ) : (
+                        <Leaf className="size-5" />
+                      )}
                     </div>
                     <div className="min-w-0 flex-1">
                       <h3 className="font-medium text-foreground truncate">
@@ -227,11 +250,19 @@ export function SymptomSearchClient() {
                           })}
                         </p>
                       )}
-                      {herb.evidence_level && (
-                        <span className="mt-1 inline-flex items-center rounded-full bg-primary/5 px-2 py-0.5 text-[10px] font-medium text-primary">
-                          {t("symptomsPage.evidenceLabel")}:{" "}
-                          {herb.evidence_level}
+                      {herb.isDangerous ? (
+                        <span className="mt-1 inline-flex items-center rounded-full bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold text-destructive">
+                          {locale === "fr"
+                            ? "Plante toxique — ne pas utiliser"
+                            : "Toxic plant — do not use"}
                         </span>
+                      ) : (
+                        herb.evidence_level && (
+                          <span className="mt-1 inline-flex items-center rounded-full bg-primary/5 px-2 py-0.5 text-[10px] font-medium text-primary">
+                            {t("symptomsPage.evidenceLabel")}:{" "}
+                            {herb.evidence_level}
+                          </span>
+                        )
                       )}
                     </div>
                     <ArrowRight className="size-4 shrink-0 text-muted-foreground/40 group-hover:text-primary transition-colors" />

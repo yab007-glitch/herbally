@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getAnonClient } from "@/lib/supabase/anonymous";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
@@ -20,8 +21,21 @@ function getAdminSafely() {
   }
 }
 
-export async function GET() {
-  const supabase = getAdminSafely();
+export async function GET(request: NextRequest) {
+  const ip = getClientIP(request);
+  const rl = await rateLimit(
+    rateLimitKey("safety-incidents-get", ip),
+    60,
+    60_000
+  );
+  if (!rl.success) {
+    return NextResponse.json(
+      { corrections: [], available: false },
+      { status: 429, headers: NO_STORE }
+    );
+  }
+
+  const supabase = getAnonClient();
   if (!supabase) {
     return NextResponse.json(
       { corrections: [], available: false },

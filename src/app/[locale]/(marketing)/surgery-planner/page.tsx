@@ -28,11 +28,11 @@ export default async function SurgeryPlannerPage() {
   const baseUrl = siteUrl();
   const url = `${baseUrl}${fr ? "/fr" : ""}/surgery-planner`;
   const heading = fr
-    ? "Planificateur d'arrêt des plantes avant chirurgie"
-    : "Pre-Surgery Herb & Supplement Washout Planner";
+    ? "Liste préopératoire des plantes et suppléments"
+    : "Pre-Surgery Supplement Review Checklist";
   const intro = fr
-    ? "Indiquez la date de votre chirurgie et les plantes que vous prenez pour générer un calendrier imprimable à vérifier avec votre anesthésiste ou chirurgien."
-    : "Enter your upcoming surgery date and current botanicals to build a printable washout checklist grounded in ASA and Health Canada guidance for your surgical team.";
+    ? "Indiquez la date de votre chirurgie et les plantes que vous prenez pour préparer une liste imprimable à vérifier avec votre anesthésiste ou chirurgien."
+    : "Enter your upcoming surgery date and current botanicals to prepare a printable supplement checklist for review with your surgical and anesthesia team.";
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">

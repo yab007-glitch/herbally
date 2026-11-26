@@ -44,7 +44,7 @@
     "restoreFailed": "Couldn't load your saved conversation.",
     "copy": "Copy",
     "verifyCitation": "verify",
-    "citationsDisclaimer": "Citations may be AI-generated — verify independently.",
+    "citationsDisclaimer": "Answers combine HerbAlly database records with AI summarization — verify external citations against the primary source.",
     "toggleLanguage": "Toggle language",
     "navPrimary": "Primary",
     "navMobile": "Mobile menu",
@@ -71,7 +71,7 @@
   "nav": {
     "symptoms": "By Symptom",
     "herbs": "Herbs",
-    "calculator": "Calculator",
+    "calculator": "Dose Reference",
     "herbalist": "Herbalist",
     "about": "About",
     "support": "Support Us",

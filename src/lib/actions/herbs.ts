@@ -53,6 +53,7 @@ export async function getHerbs(
     category?: string;
     pregnancySafe?: boolean;
     nursingSafe?: boolean;
+    evidence?: "clinical";
     page?: number;
     sort?: "name" | "evidence";
   },
@@ -106,16 +107,19 @@ export async function getHerbs(
         if (categoryId) qb = qb.eq("category_id", categoryId);
         if (params.pregnancySafe) qb = qb.eq("pregnancy_safe", true);
         if (params.nursingSafe) qb = qb.eq("nursing_safe", true);
+        if (params.evidence === "clinical") {
+          qb = qb.in("evidence_level", ["A", "B", "C"]);
+        }
         return qb;
       };
       const expandedKeywords = expandQueryToKeywords(trimmedQuery);
-      const keywordQuery = buildMatchQuery(
-        "id, name, evidence_level, translations"
-      )
+      const keywordQuery = buildMatchQuery("id, name, evidence_level, name_fr")
         .overlaps("symptom_keywords", expandedKeywords)
         .limit(500);
-      const nameConditions = buildHerbTextOrFilter(trimmedQuery);
-      const nameQuery = buildMatchQuery("id, name, translations")
+      const nameConditions = buildHerbTextOrFilter(trimmedQuery, {
+        includeDescription: false,
+      });
+      const nameQuery = buildMatchQuery("id, name, name_fr")
         .or(nameConditions)
         .limit(500);
       const [keywordRes, nameRes] = await Promise.all([
@@ -149,12 +153,14 @@ export async function getHerbs(
           id: string;
           name: string;
           evidence_level: string | null;
+          name_fr?: string | null;
           translations?: unknown;
         }> | null) || [];
       const nameRows =
         (nameRes.data as Array<{
           id: string;
           name: string;
+          name_fr?: string | null;
           translations?: unknown;
         }> | null) || [];
       const rankedIds = rankHerbSearchResults({
@@ -163,11 +169,13 @@ export async function getHerbs(
           id: h.id,
           name: h.name,
           evidence_level: h.evidence_level,
+          name_fr: h.name_fr,
           translations: h.translations,
         })),
         nameMatches: nameRows.map((h) => ({
           id: h.id,
           name: h.name,
+          name_fr: h.name_fr,
           translations: h.translations,
         })),
         sort: params.sort === "evidence" ? "evidence" : "name",
@@ -235,6 +243,10 @@ export async function getHerbs(
 
     if (params.nursingSafe) {
       query = query.eq("nursing_safe", true);
+    }
+
+    if (params.evidence === "clinical") {
+      query = query.in("evidence_level", ["A", "B", "C"]);
     }
 
     // Explicit sort (Phase 3) overrides the implicit keyword behaviour:

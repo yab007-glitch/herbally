@@ -230,6 +230,11 @@ export function HerbHeroV2({
             <div className="mt-2 flex justify-center sm:justify-start">
               <ProvenanceBadge provenance={badgeProvenance} />
             </div>
+            {!dangerous && (
+              <p className="mt-1.5 max-w-xl text-xs text-muted-foreground">
+                {t("herbHero.evidenceScopeNote")}
+              </p>
+            )}
           </div>
         </div>
 

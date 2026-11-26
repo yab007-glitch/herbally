@@ -15,6 +15,7 @@ export interface HerbListParams {
   q?: string;
   category?: string;
   sort?: string;
+  evidence?: string;
   page?: number;
   anchor?: string | null;
 }
@@ -27,6 +28,8 @@ export function buildHerbListUrl(params: HerbListParams = {}): string {
   if (category) sp.set("category", category);
   const sort = params.sort?.trim();
   if (sort && sort !== "name") sp.set("sort", sort);
+  const evidence = params.evidence?.trim();
+  if (evidence === "clinical") sp.set("evidence", evidence);
   const page = params.page;
   if (page !== undefined && Number.isFinite(page) && page > 1) {
     sp.set("page", String(Math.floor(page)));

@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { getAnonClient } from "@/lib/supabase/anonymous";
 
 /**
@@ -18,6 +19,21 @@ export async function loadPublishedHerbCount(): Promise<number | null> {
     return count ?? null;
   } catch {
     return null;
+  }
+}
+
+const getCachedCountInner = unstable_cache(
+  async () => loadPublishedHerbCount(),
+  ["published-herb-count-v1"],
+  { revalidate: 3600, tags: ["herbs-directory"] }
+);
+
+/** Cached exact count wrapper with fallback for non-request test contexts. */
+export async function getCachedPublishedHerbCount(): Promise<number | null> {
+  try {
+    return await getCachedCountInner();
+  } catch {
+    return loadPublishedHerbCount();
   }
 }
 

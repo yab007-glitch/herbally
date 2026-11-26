@@ -9,6 +9,7 @@ interface HerbResult {
   name: string;
   slug: string;
   scientific_name: string;
+  isDangerous?: boolean;
 }
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
@@ -186,6 +187,11 @@ export function EmbedChecker() {
                 <span className="text-xs italic text-muted-foreground">
                   {herb.scientific_name}
                 </span>
+                {herb.isDangerous && (
+                  <span className="ml-auto rounded-full bg-destructive/15 px-1.5 py-0.5 text-[10px] font-semibold text-destructive">
+                    {locale === "fr" ? "Toxique" : "Toxic"}
+                  </span>
+                )}
               </button>
             ))}
           </div>

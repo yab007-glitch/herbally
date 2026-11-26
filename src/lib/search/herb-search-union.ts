@@ -12,12 +12,14 @@ export interface KeywordHerbMatch {
   id: string;
   name: string;
   evidence_level: string | null;
+  name_fr?: string | null;
   translations?: unknown;
 }
 
 export interface NameHerbMatch {
   id: string;
   name: string;
+  name_fr?: string | null;
   translations?: unknown;
 }
 
@@ -49,7 +51,8 @@ export function rankHerbSearchResults({
       byId.set(herb.id, {
         id: herb.id,
         name: herb.name,
-        frName: extractFrenchHerbName(herb.translations),
+        frName:
+          herb.name_fr?.trim() || extractFrenchHerbName(herb.translations),
         evidence: herb.evidence_level,
       });
     }
@@ -59,7 +62,8 @@ export function rankHerbSearchResults({
       byId.set(herb.id, {
         id: herb.id,
         name: herb.name,
-        frName: extractFrenchHerbName(herb.translations),
+        frName:
+          herb.name_fr?.trim() || extractFrenchHerbName(herb.translations),
         evidence: null,
       });
     }

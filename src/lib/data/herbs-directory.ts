@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getAnonClient } from "@/lib/supabase/anonymous";
+import { loadPublishedHerbCount } from "@/lib/data/herb-count";
 import { localizeHerb, localizeCategoryName } from "@/lib/utils/localize-herb";
 import { parseProvenance } from "@/lib/types/provenance";
 import { logger } from "@/lib/utils/logger";
@@ -104,12 +105,17 @@ async function fetchDefaultDirectoryPage(
     throw new Error("Supabase anonymous client unavailable");
   }
 
-  const { data, count, error } = await supabase
-    .from("herbs_public" as never)
-    .select(DIRECTORY_CARD_SELECT, { count: "estimated" })
-    .eq("is_published", true)
-    .order(sort === "evidence" ? "evidence_level" : "name", { ascending: true })
-    .range(0, DIRECTORY_PAGE_SIZE - 1);
+  const [{ data, count, error }, exactCount] = await Promise.all([
+    supabase
+      .from("herbs_public" as never)
+      .select(DIRECTORY_CARD_SELECT, { count: "estimated" })
+      .eq("is_published", true)
+      .order(sort === "evidence" ? "evidence_level" : "name", {
+        ascending: true,
+      })
+      .range(0, DIRECTORY_PAGE_SIZE - 1),
+    loadPublishedHerbCount(),
+  ]);
 
   if (error) {
     logger.error("herbs_directory_cached_page_failed", {
@@ -122,7 +128,7 @@ async function fetchDefaultDirectoryPage(
   const herbs = ((data as unknown as HerbWithCategory[]) ?? []).map((h) =>
     compactHerbForDirectory(localizeHerb(h, locale))
   );
-  return { herbs, total: count ?? herbs.length };
+  return { herbs, total: exactCount ?? count ?? herbs.length };
 }
 
 async function fetchCategoriesList(
@@ -157,7 +163,7 @@ async function fetchCategoriesList(
 export const getCachedDefaultHerbsPage = unstable_cache(
   async (locale: string, sort: "name" | "evidence") =>
     fetchDefaultDirectoryPage(locale, sort),
-  ["herbs-directory-p1-v2"],
+  ["herbs-directory-p1-v3"],
   { revalidate: DIRECTORY_TTL_SECONDS, tags: ["herbs-directory"] }
 );
 

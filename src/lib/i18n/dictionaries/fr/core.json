@@ -44,7 +44,7 @@
     "restoreFailed": "Impossible de charger votre conversation enregistrée.",
     "copy": "Copier",
     "verifyCitation": "vérifier",
-    "citationsDisclaimer": "Les citations peuvent être générées par IA — vérifiez indépendamment.",
+    "citationsDisclaimer": "Les réponses combinent la base HerbAlly et une synthèse IA — vérifiez toute citation externe auprès de la source primaire.",
     "toggleLanguage": "Changer de langue",
     "navPrimary": "Navigation principale",
     "navMobile": "Menu mobile",
@@ -71,7 +71,7 @@
   "nav": {
     "symptoms": "Par Symptôme",
     "herbs": "Herbes",
-    "calculator": "Calculateur",
+    "calculator": "Posologie adulte",
     "herbalist": "Herboriste",
     "about": "À propos",
     "support": "Soutenir",

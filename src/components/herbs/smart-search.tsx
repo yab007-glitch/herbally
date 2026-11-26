@@ -19,12 +19,14 @@ interface SmartSearchProps {
   defaultValue?: string;
   category?: string;
   sort?: string;
+  evidence?: string;
 }
 
 export function SmartSearch({
   defaultValue = "",
   category,
   sort,
+  evidence,
 }: SmartSearchProps) {
   const t = useTranslations();
   const router = useRouter();
@@ -78,10 +80,11 @@ export function SmartSearch({
         q: trimmed || undefined,
         category,
         sort,
+        evidence,
         anchor: null,
       });
     },
-    [category, sort]
+    [category, sort, evidence]
   );
 
   // Live search: when the debounced value differs from the URL, replace

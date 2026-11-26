@@ -111,7 +111,9 @@ test.describe("Migrated-DB Post-00104 E2E", () => {
     });
     expect(res?.status()).toBe(200);
 
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     await page.getByLabel(/Adult Dose/i).fill("500");

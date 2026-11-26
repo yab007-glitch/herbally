@@ -191,4 +191,33 @@ describe("SymptomSearchClient AI keyword union", () => {
       q: "i need sleep help insomnia",
     });
   });
+
+  it("shows toxic warning badge instead of evidence grade for dangerous plants", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ keywords: ["sleep"] }))
+      .mockResolvedValueOnce(
+        jsonResponse([
+          {
+            id: "d1",
+            name: "Deadly Nightshade",
+            slug: "atropa-belladonna",
+            scientific_name: "Atropa belladonna",
+            evidence_level: "D",
+            isDangerous: true,
+            matchedBy: "name",
+            matchedKeywords: [],
+            matchedInputs: [],
+          },
+        ])
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await submitQuery("atropa belladonna sleep");
+
+    await waitFor(() =>
+      expect(screen.getByText("Deadly Nightshade")).toBeInTheDocument()
+    );
+    expect(screen.getByText("Toxic plant — do not use")).toBeInTheDocument();
+  });
 });

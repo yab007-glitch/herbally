@@ -17,6 +17,7 @@ interface SearchResult {
   slug: string;
   scientific_name: string;
   evidence_level: string;
+  isDangerous?: boolean;
   category?: string;
   traditional_uses: string[];
 }
@@ -207,12 +208,19 @@ export function InstantSearch({ placeholder, className }: InstantSearchProps) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium truncate">{herb.name}</span>
-                      <EvidenceGrade
-                        level={
-                          herb.evidence_level as "A" | "B" | "C" | "D" | "trad"
-                        }
-                        showLabel={false}
-                      />
+                      {herb.isDangerous ? (
+                        <Badge variant="destructive" className="text-[11px]">
+                          {t("safetyGlance.toxicPlantBadge")}
+                        </Badge>
+                      ) : (
+                        <EvidenceGrade
+                          level={
+                            herb.evidence_level as
+                              "A" | "B" | "C" | "D" | "trad"
+                          }
+                          showLabel={false}
+                        />
+                      )}
                     </div>
                     <p className="text-sm text-muted-foreground truncate">
                       {herb.scientific_name}

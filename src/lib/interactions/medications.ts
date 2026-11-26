@@ -16,6 +16,8 @@ export interface MedicationSummary {
   drugName: string;
   enDrugName: string;
   totalInteractions: number;
+  publishedCount: number;
+  legacyCount: number;
   highestSeverity: InteractionSeverity;
   countsBySeverity: Record<InteractionSeverity, number>;
   sampleHerbs: MedicationSampleHerb[];
@@ -66,6 +68,8 @@ export function aggregateMedications(
     });
 
     const counts = emptySeverityCounts();
+    let publishedCount = 0;
+    let legacyCount = 0;
     let highestSeverity: InteractionSeverity = "mild";
     let highestWeight = 0;
     let hasFr = false;
@@ -80,6 +84,11 @@ export function aggregateMedications(
 
     for (const pair of sorted) {
       counts[pair.severity] = (counts[pair.severity] ?? 0) + 1;
+      if (pair.publicationStatus === "published") {
+        publishedCount += 1;
+      } else {
+        legacyCount += 1;
+      }
       const weight = SEVERITY_WEIGHT[pair.severity] ?? 0;
       if (weight > highestWeight) {
         highestWeight = weight;
@@ -140,6 +149,8 @@ export function aggregateMedications(
       drugName,
       enDrugName,
       totalInteractions: sorted.length,
+      publishedCount,
+      legacyCount,
       highestSeverity,
       countsBySeverity: counts,
       sampleHerbs,

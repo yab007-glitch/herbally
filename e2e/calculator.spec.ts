@@ -15,26 +15,33 @@ import { test, expect } from "@playwright/test";
 test.describe("Dosage Calculator", () => {
   test("should load calculator page", async ({ page }) => {
     await page.goto("/calculator");
-    await expect(page).toHaveTitle(/Dosage|Calculator|HerbAlly/i);
+    await expect(page).toHaveTitle(
+      /Dose Reference|Dosage|Calculator|HerbAlly/i
+    );
     await expect(
-      page.getByRole("heading", { name: /Dosage Calculator/i })
+      page.getByRole("heading", { name: /Adult Herbal Dose Reference/i })
     ).toBeVisible();
   });
 
   test("should display calculator form", async ({ page }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     await expect(page.getByLabel(/Herb Name/i)).toBeVisible();
     await expect(page.getByLabel(/Adult Dose/i)).toBeVisible();
     await expect(page.getByLabel(/Adult weight/i)).toBeVisible();
     await expect(page.getByLabel(/Adult age/i)).toBeVisible();
+    await expect(page.getByLabel(/Height/i)).toHaveCount(0);
   });
 
   test("should calculate a reference dose for an adult", async ({ page }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     // Adult reference confirmation is the default and needs adult dose and confirmed 18+ age.
@@ -54,7 +61,9 @@ test.describe("Dosage Calculator", () => {
 
   test("refuses to calculate a dose for a minor", async ({ page }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     // Regression: 500 mg adult dose, 60 kg, age 8 previously produced
@@ -81,7 +90,9 @@ test.describe("Dosage Calculator", () => {
     page,
   }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
     // Enter verified adult age first so dose validation runs rather than age gate.
     await page.getByLabel(/Adult age/i).fill("30");
@@ -106,7 +117,9 @@ test.describe("Dosage Calculator", () => {
     page,
   }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     await page.getByLabel(/Herb Name/i).fill("Aconite");
@@ -127,7 +140,9 @@ test.describe("Dosage Calculator", () => {
     page,
   }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     await page.getByLabel(/Herb Name/i).fill("Comfrey");
@@ -146,7 +161,9 @@ test.describe("Dosage Calculator", () => {
     request,
   }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     for (const blockedAge of ["0", "15"]) {
@@ -232,7 +249,9 @@ test.describe("Dosage Calculator", () => {
     page,
   }) => {
     await page.goto("/fr/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculer$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirmer la dose de référence$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     await page.getByLabel(/Nom de la plante/i).fill("Gingembre");
@@ -250,7 +269,9 @@ test.describe("Dosage Calculator", () => {
     page,
   }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
 
     await page.getByLabel(/Herb Name/i).fill("Ginger");
@@ -272,7 +293,9 @@ test.describe("Dosage Calculator", () => {
     page,
   }) => {
     await page.goto("/calculator", { waitUntil: "networkidle" });
-    const calculateBtn = page.getByRole("button", { name: /^Calculate$/ });
+    const calculateBtn = page.getByRole("button", {
+      name: /^Confirm Reference Dose$/i,
+    });
     await expect(calculateBtn).toBeVisible();
     const results = await new AxeBuilder({ page }).analyze();
     const blocking = results.violations.filter(

@@ -183,6 +183,114 @@ export default async function MethodologyPage() {
           ))}
         </div>
 
+        {/* Source Licensing & Attribution Register */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>
+              <h2 className="flex items-center gap-3">
+                <BookOpen className="size-6 text-primary" aria-hidden="true" />
+                {locale === "fr"
+                  ? "Registre des licences et attributions des sources"
+                  : "Source Licensing & Attribution Register"}
+              </h2>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm text-muted-foreground">
+            <p>
+              {locale === "fr"
+                ? "HerbAlly importe et cite uniquement des sources ouvertes ou publiques autorisant la réutilisation commerciale avec attribution. Les bases non commerciales ou propriétaires (DDInter CC BY-NC-SA, ClarisHerba, DrugBank, Natural Medicines, Wikipédia CC BY-SA et monographies OMS sous droits réservés) sont exclues de nos flux automatisés."
+                : "HerbAlly imports and reproduces structured excerpts only from public-domain or permissively licensed sources allowing commercial redistribution with attribution. Non-commercial or proprietary datasets (DDInter CC BY-NC-SA, ClarisHerba, DrugBank, Natural Medicines Database, Wikipedia CC BY-SA, and all-rights-reserved WHO monograph volumes) are excluded."}
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-left text-xs">
+                <thead>
+                  <tr className="border-b border-border text-foreground">
+                    <th className="py-2 pr-4 font-semibold">
+                      {locale === "fr" ? "Source" : "Source"}
+                    </th>
+                    <th className="py-2 pr-4 font-semibold">
+                      {locale === "fr" ? "Éditeur" : "Publisher"}
+                    </th>
+                    <th className="py-2 pr-4 font-semibold">
+                      {locale === "fr" ? "Licence / statut" : "Licence / Terms"}
+                    </th>
+                    <th className="py-2 font-semibold">
+                      {locale === "fr" ? "Portée" : "Scope"}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  {[
+                    {
+                      name: "Health Canada LNHPD",
+                      url: "https://health-products.canada.ca/lnhpd-bdpsnh/",
+                      publisher: "Government of Canada",
+                      licence: "Open Government Licence – Canada (OGL-Canada)",
+                      scopeEn: "Indications, adult doses, risk statements",
+                      scopeFr:
+                        "Indications, posologies adultes, mises en garde",
+                    },
+                    {
+                      name: "EMA HMPC Monographs",
+                      url: "https://www.ema.europa.eu/en/human-regulatory-overview/herbal-medicinal-products",
+                      publisher: "European Medicines Agency",
+                      licence: "EMA Legal Notice (attribution required)",
+                      scopeEn:
+                        "Well-established & traditional herbal monographs",
+                      scopeFr: "Monographies bien établies et traditionnelles",
+                    },
+                    {
+                      name: "NIH NCCIH / ODS / LiverTox",
+                      url: "https://nccih.nih.gov/",
+                      publisher: "U.S. NIH / NIDDK / NLM",
+                      licence: "US Federal Public Domain (17 U.S.C. §105)",
+                      scopeEn:
+                        "Clinical overviews, liver safety, interaction notes",
+                      scopeFr:
+                        "Synthèses cliniques, hépatotoxicité, interactions",
+                    },
+                    {
+                      name: "PubMed & PubChem (NCBI)",
+                      url: "https://pubmed.ncbi.nlm.nih.gov/",
+                      publisher: "U.S. National Library of Medicine",
+                      licence: "NLM Data Terms / Fair Use (metadata & CIDs)",
+                      scopeEn:
+                        "Citation metadata (PMIDs) & chemical identifiers",
+                      scopeFr: "Métadonnées bibliographiques (PMID) & chimie",
+                    },
+                    {
+                      name: "GBIF Backbone & Wikidata",
+                      url: "https://www.gbif.org/",
+                      publisher: "GBIF Secretariat / Wikimedia",
+                      licence: "CC BY 4.0 (GBIF) / CC0 1.0 (Wikidata data)",
+                      scopeEn: "Botanical taxonomy cross-checking",
+                      scopeFr: "Recoupement taxonomique botanique",
+                    },
+                  ].map((row) => (
+                    <tr key={row.name}>
+                      <td className="py-2 pr-4 font-medium text-foreground">
+                        <a
+                          href={row.url}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="text-primary underline underline-offset-4 hover:text-primary/80"
+                        >
+                          {row.name}
+                        </a>
+                      </td>
+                      <td className="py-2 pr-4">{row.publisher}</td>
+                      <td className="py-2 pr-4">{row.licence}</td>
+                      <td className="py-2">
+                        {locale === "fr" ? row.scopeFr : row.scopeEn}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* CTA */}
         <div className="mt-12 rounded-lg border bg-muted/50 p-8 text-center">
           <h2 className="text-xl font-bold text-foreground">

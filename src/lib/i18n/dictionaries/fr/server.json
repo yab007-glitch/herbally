@@ -388,7 +388,7 @@
           "description": "Le nom herbally.app et les services essentiels qui s’y rattachent."
         }
       },
-      "terms": "Nous n’affichons aucun prix ni modalité de paiement sur cette page. Toute discussion est exploratoire : rien ici ne constitue une offre, un devis ou une promesse qu’un parrainage sera accepté."
+      "terms": "Les formules mensuelles et annuelles ci-dessous sont des montants indicatifs de soutien à l'infrastructure. Cette page ne constitue ni une offre ferme, ni un devis, ni un passage en caisse, et aucun parrainage n'entre en vigueur sans confirmation écrite."
     },
     "independence": {
       "title": "L’indépendance n’est pas négociable",
@@ -471,7 +471,7 @@
           "label": "où se trouvent les lecteurs"
         }
       },
-      "note": "Chiffres bruts de notre propre analytique pour les 30 jours précédant le 29 octobre 2026. Environ la moitié des sessions récentes semblent automatisées : le public humain est donc plus petit que le chiffre affiché. Nous vous le disons ici plutôt que de vous le laisser découvrir plus tard.",
+      "note": "Instantané de notre propre analytique pour les 30 jours se terminant le 29 octobre 2026 (prochaine mise à jour périodique à venir). Environ la moitié des sessions récentes semblent automatisées : le public humain est donc plus petit que le chiffre affiché. Nous vous le disons ici plutôt que de vous le laisser découvrir plus tard.",
       "fit": "HerbAlly convient à un commanditaire dont les clients se demandent ce que fait une plante, si elle est compatible avec leurs médicaments, ou quelle quantité prendre — et qui veut associer son nom à cette réponse sans acheter d'influence sur elle."
     },
     "packages": {
@@ -500,10 +500,11 @@
           ]
         },
         "launch": {
-          "name": "Partenaire de lancement",
+          "name": "Partenaire de lancement (tarif fondateur)",
           "price": "150 $ CA",
           "cadence": "par an",
           "features": [
+            "Tarif annuel fondateur (75 % de réduction par rapport au tarif mensuel Commanditaire pour les premiers partenaires)",
             "Tout ce que comprend Commanditaire",
             "Votre logo sur la page d'accueil",
             "Une entrée nommée dans notre registre public de commanditaires"
@@ -556,8 +557,8 @@
     "npnCheckerDesc": "Vérifiez tout numéro NPN ou DIN-HM à 8 chiffres de Santé Canada : ingrédients médicinaux, mises en garde officielles et interactions avec vos médicaments.",
     "medications": "Médicaments et interactions avec les plantes A–Z",
     "medicationsDesc": "Parcourez vos médicaments et classes thérapeutiques pour voir toutes les plantes documentées pouvant interagir, classées par gravité et sources.",
-    "surgeryPlanner": "Planificateur d'arrêt des plantes avant chirurgie",
-    "surgeryPlannerDesc": "Calculez les dates de révision préopératoire pour les plantes affectant le saignement, l'anesthésie ou le métabolisme CYP450.",
+    "surgeryPlanner": "Liste de vérification préopératoire des suppléments",
+    "surgeryPlannerDesc": "Préparez une liste imprimable pour votre équipe chirurgicale concernant les plantes affectant le saignement, l'anesthésie ou le CYP450, alignée sur les conseils aux patients de l'ASA et des cliniques canadiennes.",
     "widgets": "Widget gratuit d'interactions plante-médicament",
     "widgetsDesc": "Intégrez gratuitement le vérificateur bilingue d'interactions plante-médicament HerbAlly sur votre site clinique, étudiant ou santé."
   },
@@ -747,7 +748,7 @@
     "checkerEvidence": "Preuves",
     "checkerMechanism": "Fonctionnement",
     "explainerTitle": "Votre guide de référence des plantes médicinales",
-    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant des centaines de fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et consulter une dose adulte de référence lorsqu'une monographie établie existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
+    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant plus de 3 000 fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et consulter une dose adulte de référence lorsqu'une monographie établie existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
     "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
     "popularTitle": "Plantes populaires",
     "herbLabel": "Plante",
@@ -789,7 +790,7 @@
       "supabase": "Infrastructure PostgreSQL / Supabase auto-hébergée à Montréal (Québec, Canada) — conserve de façon sécurisée les comptes facultatifs, profils de santé, jardins sauvegardés, historiques de posologie et journaux de dons.",
       "vercel": "Cloudflare — DNS, chiffrement TLS, tunnel chiffré et mesure d'audience Cloudflare Web Analytics sans témoins vers notre serveur d'origine à Montréal.",
       "stripe": "Stripe — traitement des paiements pour les dons. HerbAlly ne voit ni ne stocke jamais vos coordonnées bancaires. Stripe nous transmet le nom, l'e-mail et le statut de paiement du donateur afin d'enregistrer le don.",
-      "ollamaCloud": "Ollama Cloud — traitement IA. Les messages de discussion et les descriptions de symptômes soumises à la recherche assistée par IA peuvent être transmis à Ollama pour générer des réponses ou des mots-clés. Les termes de recherche de symptômes, y compris la description initiale si l'extraction de mots-clés échoue, peuvent figurer dans les URL de recherche et les journaux d'hébergement. Les pratiques de conservation d'Ollama sont régies par sa propre politique de confidentialité.",
+      "ollamaCloud": "Ollama Cloud — traitement IA. Les messages de discussion et les descriptions de symptômes soumis à la recherche assistée par IA sont transmis via des corps de requête POST (hors URL) à Ollama pour générer des réponses ou extraire des mots-clés. Évitez d'inscrire des renseignements de santé personnels dans les barres de recherche utilisant l'URL (/herbs?q=). Les pratiques de conservation d'Ollama sont régies par sa propre politique de confidentialité.",
       "adsense": "Google AdSense n'est pas actif. Si la publicité est activée ultérieurement, Google et ses partenaires peuvent recevoir des renseignements sur la page publique consultée et utiliser des cookies ou des identifiants d'appareil pour diffuser et mesurer les annonces. Les annonces sont prévues sur les pages publiques de plantes, et non dans les outils de saisie de données de santé.",
       "upstash": "Upstash Redis — compteurs temporaires de limitation de requêtes (clés IP hachées ; États-Unis/infonuagique) pour protéger le site et l'assistant IA.",
       "sentry": "Sentry — surveillance des erreurs techniques avec suppression des en-têtes sensibles et témoins (États-Unis/infonuagique).",
@@ -807,7 +808,7 @@
     },
     "dataRetention": {
       "title": "6. Conservation des Données",
-      "text": "Les données de compte et les données enregistrées peuvent être conservées jusqu'à leur suppression. Les discussions invitées peuvent subsister indépendamment du cookie invité ; l'expiration du cookie ne supprime pas nécessairement les données du serveur. Les réponses de l'Herboriste Virtuel peuvent également être mises en cache jusqu'à 7 jours dans une table serveur partagée (ai_response_cache) indexée uniquement par empreinte de requête, sans identifiant de compte, d'invité ni de session : la suppression d'une discussion supprime immédiatement la session et ses messages, tandis que les entrées de cache non liées expirent automatiquement après 7 jours. Les dons peuvent être conservés pour la comptabilité. Les pratiques de conservation d'Ollama sont régies par sa propre politique."
+      "text": "Les données de compte et les données enregistrées peuvent être conservées jusqu'à leur suppression. Les sessions de discussion invitées comportent une échéance explicite de conservation serveur de 30 jours (retention_expires_at) à compter de leur création, et l'expiration du cookie invité met fin au lien navigateur plus tôt. Pour la performance et la cohérence de sécurité, seules les réponses éducatives publiques sans état (question unique sans contexte ni médicaments) peuvent être mises en cache jusqu'à 7 jours dans ai_response_cache sans identifiant d'utilisateur, d'invité ni de session ; les requêtes personnalisées ou à tours multiples contournent totalement ce cache partagé. La suppression d'une discussion supprime immédiatement la session et ses messages, tandis que les entrées publiques non liées expirent automatiquement après 7 jours. Les dons peuvent être conservés pour la comptabilité. Les pratiques de conservation d'Ollama sont régies par sa propre politique."
     },
     "yourRights": {
       "title": "7. Vos Droits",

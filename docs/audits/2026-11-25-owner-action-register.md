@@ -15,17 +15,16 @@
 4. **Reviewer attribution & Advisory Board seating (`src/lib/data/reviewers.ts`, `docs/governance/ADVISORY_BOARD_CHARTER_TEMPLATE.md`)**
    - `dawn-wong` and unconsented clinical profiles fail closed publicly until written consent, active licence verification, and reviewed herb scope are recorded.
 
-## 2. Production Database Migrations (Authored, NOT Applied)
+## 2. Production Database Migrations (Applied & Verified `2026-11-25`)
 
-Apply ALL seven pending sequential migrations (`00097`–`00103`) via `scripts/apply-pending-migrations.sh` (which requires a pre-migration database backup via `$BACKUP_SCRIPT`, validates balanced `BEGIN;`/`COMMIT;` blocks, runs `psql -v ON_ERROR_STOP=1`, verifies SQL postconditions, and aborts deploy before app cutover on failure). Until `00100` is applied, adult reference calculation saves return a controlled unavailability error rather than failing silently on enum value `'adult_reference'`.
+Sequential migrations `00097`–`00104` have now been applied to production (`herbally-db`) and verified via `scripts/apply-pending-migrations.sh` and `Deploy` on `herbally-wsl`:
 
-1. `supabase/migrations/00097_...` through `00099_...` (pre-existing unapplied security/perf migrations on this branch).
-2. `supabase/migrations/00100_pediatric_containment_dosage_calculations.sql` (adult-only 18..120 constraint, anon insert revocation, legacy & non-`adult_reference` quarantine, `herbs.dosage_child` column-privilege isolation & `herbs_public` view, bundle/search RPC redaction, `patient_profiles.adult_dosing_eligible`).
-3. `supabase/migrations/00101_interaction_publication_contract.sql` (`drug_entities`, `drug_aliases`, `drug_interaction_citations`, `drug_interaction_revisions`, `evidence_note` reconciliation, SECURITY DEFINER publication/reset triggers, class-vs-RxCUI constraint).
-4. `supabase/migrations/00102_scientific_governance_and_incidents.sql` (`reviewer_registry`, `claim_citations`, `public_claim_citations`, `herb_clinical_revisions` + `last_reviewed` edit-reset trigger, `safety_incidents`, atomic `create_safety_incident_with_audit` RPC, audit log, `public_corrections_log`).
-5. `supabase/migrations/00103_privacy_minimization_controls.sql` (`user_privacy_consents` with `'dosage_history'` scope, `retention_expires_at` metadata).
-6. CI disposable-Postgres execution (`scripts/test-migrations-postgres.sh` + `supabase/tests/clinical-safety-integration.sql` in `.github/workflows/ci.yml`) must pass before deploy; local host lacks `psql`/Docker daemon.
-7. Run read-only quality baseline once production snapshots are exported: `npx tsx scripts/content-quality-baseline.ts --fixture <snapshot.json>`.
+1. `supabase/migrations/00097`–`00099b`: Admin AAL2 RLS, newsletter confirmation lease/timestamps, `adult_reference` enum.
+2. `supabase/migrations/00100_pediatric_containment_dosage_calculations.sql`: Adult-only 18..120 constraint, anon insert revocation, legacy quarantine, `herbs_public` view, bundle/search RPC redaction, `patient_profiles.adult_dosing_eligible`.
+3. `supabase/migrations/00101_interaction_publication_contract.sql`: `drug_entities`, `drug_aliases`, `drug_interaction_citations`, `drug_interaction_revisions`, publication/reset triggers, class-vs-RxCUI constraint.
+4. `supabase/migrations/00102_scientific_governance_and_incidents.sql`: `reviewer_registry`, `claim_citations`, `public_claim_citations`, `herb_clinical_revisions`, `safety_incidents`, atomic `create_safety_incident_with_audit` RPC, audit log, `public_corrections_log`.
+5. `supabase/migrations/00103_privacy_minimization_controls.sql`: `user_privacy_consents`, `retention_expires_at` metadata on `chat_sessions` and `dosage_calculations`.
+6. `supabase/migrations/00104_pediatric_boundary_contract.sql`: Post-switch adult-only write lockdown and base-table column-privilege isolation (with verified `rollback-00104-contract.sql` rollback guard).
 
 ## 3. Legal, Privacy & External Vendor Governance (Requires Counsel / Owner Account)
 

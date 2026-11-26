@@ -187,10 +187,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? title.absolute
         : med.drugName;
 
+  const hasPublished = med.interactions.some(
+    (p) => p.publicationStatus === "published"
+  );
+
   return {
     title,
     description,
-    ...(fr && !med.hasFr ? { robots: { index: false, follow: true } } : {}),
+    ...(!hasPublished || (fr && !med.hasFr)
+      ? { robots: { index: false, follow: true } }
+      : {}),
     alternates: med.hasFr
       ? {
           canonical: canonicalUrl,

@@ -76,6 +76,7 @@ export type Database = {
           guest_id: string | null;
           herb_context: string | null;
           id: string;
+          retention_expires_at: string | null;
           title: string | null;
           updated_at: string;
           user_id: string | null;
@@ -85,6 +86,7 @@ export type Database = {
           guest_id?: string | null;
           herb_context?: string | null;
           id?: string;
+          retention_expires_at?: string | null;
           title?: string | null;
           updated_at?: string;
           user_id?: string | null;
@@ -94,6 +96,7 @@ export type Database = {
           guest_id?: string | null;
           herb_context?: string | null;
           id?: string;
+          retention_expires_at?: string | null;
           title?: string | null;
           updated_at?: string;
           user_id?: string | null;

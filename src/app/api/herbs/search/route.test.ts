@@ -198,16 +198,53 @@ describe("POST /api/herbs/search", () => {
     expect(results[0]).toEqual(expect.objectContaining({ name: "Camomille" }));
   });
 
-  it("sanitizes PostgREST filter metacharacters before building the text query", async () => {
+  it("sanitizes PostgREST filter metacharacters before building the text query without slow description scanning", async () => {
     const { orConditions } = installSupabase([], []);
 
     await POST(postRequest(JSON.stringify({ q: "pain,danger" })));
 
     // The precise, anchor and broad queries each carry their own condition;
-    // the broad one is always last.
+    // the broad one is always last and excludes description.ilike so PostgREST
+    // never scans the PL/pgSQL sanitizer across 3,122 rows.
     expect(orConditions).toHaveLength(3);
     expect(orConditions.at(-1)).toBe(
-      "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,description.ilike.%paindanger%,name_fr.ilike.%paindanger%"
+      "name.ilike.%paindanger%,scientific_name.ilike.%paindanger%,name_fr.ilike.%paindanger%"
+    );
+  });
+
+  it("flags dangerous plants with isDangerous=true and localizes French names via name_fr", async () => {
+    const abrus: HerbRow = {
+      id: "99",
+      name: "Rosary Pea",
+      slug: "abrus-precatorius",
+      scientific_name: "Abrus precatorius",
+      evidence_level: "D",
+      translations: null,
+    };
+    const safeFrench = {
+      ...symptomRow,
+      translations: undefined,
+      name_fr: "Camomille romaine",
+    } as unknown as HerbRow;
+    installSupabase([safeFrench], [abrus]);
+
+    const res = await POST(
+      postRequest(JSON.stringify({ q: "chamomile" }), { "x-locale": "fr" })
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toContainEqual(
+      expect.objectContaining({
+        slug: "abrus-precatorius",
+        isDangerous: true,
+      })
+    );
+    expect(json).toContainEqual(
+      expect.objectContaining({
+        slug: "chamomile",
+        name: "Camomille romaine",
+        isDangerous: false,
+      })
     );
   });
 
