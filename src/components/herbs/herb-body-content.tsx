@@ -158,9 +158,18 @@ export function HerbBodyContent({
               slug: herb.slug,
               pregnancy_safe: herb.pregnancy_safe,
               nursing_safe: herb.nursing_safe,
+              pregnancy_safe_oral: herb.pregnancy_safe_oral,
+              pregnancy_safe_topical: herb.pregnancy_safe_topical,
+              nursing_safe_oral: herb.nursing_safe_oral,
+              nursing_safe_topical: herb.nursing_safe_topical,
               contraindications: herb.contraindications ?? null,
               side_effects: herb.side_effects ?? null,
             }}
+            provenance={
+              compactProvenance ??
+              (herb.provenance as Record<string, unknown> | null) ??
+              null
+            }
             interactionCount={interactions.length}
             severityCounts={severityCounts}
             showInteractions={false}

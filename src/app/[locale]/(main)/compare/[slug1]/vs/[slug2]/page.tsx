@@ -392,8 +392,14 @@ export default async function ComparePage({ params }: Props) {
 
         {/* Safety Warnings — driven by the same canonical tri-state helper as /herbs/[slug] */}
         {(() => {
-          const statusA = resolvePregnancyNursingStatus(herbA);
-          const statusB = resolvePregnancyNursingStatus(herbB);
+          const statusA = resolvePregnancyNursingStatus(
+            herbA,
+            herbA.provenance
+          );
+          const statusB = resolvePregnancyNursingStatus(
+            herbB,
+            herbB.provenance
+          );
           const fr = locale === "fr";
           const renderVerdict = (
             verdict: "safe" | "not_recommended" | "unknown",

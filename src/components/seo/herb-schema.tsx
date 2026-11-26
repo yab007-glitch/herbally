@@ -4,6 +4,7 @@ import { normalizeDosage } from "@/lib/herbs/normalize-dosage";
 import { stripPediatricDosageSentences } from "@/lib/herbs/regulatory-evidence";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 import { isBucketCategory } from "@/lib/herbs/category";
+import { resolvePregnancyNursingStatus } from "@/lib/herbs/canonical-safety";
 
 interface Herb {
   name: string;
@@ -17,6 +18,11 @@ interface Herb {
   dosage_child?: string | null;
   pregnancy_safe?: boolean | null;
   nursing_safe?: boolean | null;
+  pregnancy_safe_oral?: boolean | null;
+  pregnancy_safe_topical?: boolean | null;
+  nursing_safe_oral?: boolean | null;
+  nursing_safe_topical?: boolean | null;
+  provenance?: unknown;
   contraindications?: string[] | null;
   side_effects?: string[] | null;
   herb_categories?: { name: string } | null;
@@ -85,20 +91,27 @@ export function HerbSchema({
   const traditionalUses = asArray(herb.traditional_uses);
   const contraindications = asArray(herb.contraindications);
   const sideEffects = asArray(herb.side_effects);
-  const pregnancySafety = isDangerous
-    ? "Not recommended during pregnancy"
-    : herb.pregnancy_safe !== null && herb.pregnancy_safe !== undefined
-      ? herb.pregnancy_safe
-        ? "Generally safe during pregnancy"
-        : "Not recommended during pregnancy"
-      : undefined;
-  const breastfeedingSafety = isDangerous
-    ? "Not recommended while nursing"
-    : herb.nursing_safe !== null && herb.nursing_safe !== undefined
-      ? herb.nursing_safe
-        ? "Generally safe while nursing"
-        : "Not recommended while nursing"
-      : undefined;
+  const safetyStatus = resolvePregnancyNursingStatus(herb, herb.provenance);
+  const pregnancyVerdict =
+    isDangerous || safetyStatus.pregnancy === "not_recommended"
+      ? "not_recommended"
+      : safetyStatus.pregnancy;
+  const nursingVerdict =
+    isDangerous || safetyStatus.nursing === "not_recommended"
+      ? "not_recommended"
+      : safetyStatus.nursing;
+  const pregnancySafety =
+    pregnancyVerdict === "safe"
+      ? "Generally safe during pregnancy"
+      : pregnancyVerdict === "not_recommended"
+        ? "Not recommended during pregnancy"
+        : undefined;
+  const breastfeedingSafety =
+    nursingVerdict === "safe"
+      ? "Generally safe while nursing"
+      : nursingVerdict === "not_recommended"
+        ? "Not recommended while nursing"
+        : undefined;
   const schema = {
     "@context": "https://schema.org",
     "@type": isClinicallyReviewed ? "MedicalWebPage" : "WebPage",

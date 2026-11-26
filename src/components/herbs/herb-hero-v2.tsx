@@ -12,11 +12,11 @@ import {
   SafetyGlance,
   type GlanceInteraction,
 } from "@/components/herbs/herb-safety-glance";
+import { parseProvenance, isVerified } from "@/lib/types/provenance";
 import {
-  parseProvenance,
-  isVerified,
-  getReviewState,
-} from "@/lib/types/provenance";
+  resolvePregnancyNursingStatus,
+  verdictToBoolean,
+} from "@/lib/herbs/canonical-safety";
 import { isBucketCategory } from "@/lib/herbs/category";
 import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 import { cn } from "@/lib/utils";
@@ -116,43 +116,22 @@ export function HerbHeroV2({
   // than letting an unreviewed PubMed draft below veto primary-source warnings
   // (e.g., White Willow and Black Cohosh are primary_source verified unsafe).
   const verified = isVerified(parsedProvenance);
-  const reviewState = getReviewState(parsedProvenance);
   // When the sheet vetoes a "Verified" claim, pass the adjusted method for the
   // provenance pill below.
   const badgeProvenance =
     sheetNotReviewed && verified
       ? { ...parsedProvenance, verification_method: "ai_summarized" as const }
       : parsedProvenance;
-  // Asymmetric safety-first gating: dangerous herbs always show unsafe (`false`);
-  // human-verified entries show their verified verdicts; `needs_re_review` keeps
-  // explicit negative warnings (`false`) while withholding unverified `safe` (`true`).
-  const pregnancySafe = dangerous
-    ? false
-    : verified
-      ? herb.pregnancy_safe
-      : reviewState?.kind === "needs_re_review" && herb.pregnancy_safe === false
-        ? false
-        : null;
-  const nursingSafe = dangerous
-    ? false
-    : verified
-      ? herb.nursing_safe
-      : reviewState?.kind === "needs_re_review" && herb.nursing_safe === false
-        ? false
-        : null;
-  const routeVerified = !dangerous && verified;
-  const pregnancySafeOral = routeVerified
-    ? (herb.pregnancy_safe_oral ?? null)
-    : null;
-  const pregnancySafeTopical = routeVerified
-    ? (herb.pregnancy_safe_topical ?? null)
-    : null;
-  const nursingSafeOral = routeVerified
-    ? (herb.nursing_safe_oral ?? null)
-    : null;
-  const nursingSafeTopical = routeVerified
-    ? (herb.nursing_safe_topical ?? null)
-    : null;
+  // Canonical provenance-gated tri-state resolution shared with SafetyPanel,
+  // HerbSchema, and /compare/[slug1]/vs/[slug2].
+  const safetyStatus = resolvePregnancyNursingStatus(herb, provenance);
+  const pregnancySafe = verdictToBoolean(safetyStatus.pregnancy);
+  const nursingSafe = verdictToBoolean(safetyStatus.nursing);
+  const pregnancySafeOral = safetyStatus.pregnancyRouteSplit?.oral ?? null;
+  const pregnancySafeTopical =
+    safetyStatus.pregnancyRouteSplit?.topical ?? null;
+  const nursingSafeOral = safetyStatus.nursingRouteSplit?.oral ?? null;
+  const nursingSafeTopical = safetyStatus.nursingRouteSplit?.topical ?? null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl border bg-card">

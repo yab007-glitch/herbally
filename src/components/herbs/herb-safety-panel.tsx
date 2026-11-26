@@ -24,15 +24,25 @@ import { useTranslations } from "next-intl";
 import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
+import {
+  resolvePregnancyNursingStatus,
+  verdictToBoolean,
+} from "@/lib/herbs/canonical-safety";
 
 interface HerbSafetyPanelProps {
   herb: {
     slug: string;
     pregnancy_safe: boolean | null;
     nursing_safe: boolean | null;
+    pregnancy_safe_oral?: boolean | null;
+    pregnancy_safe_topical?: boolean | null;
+    nursing_safe_oral?: boolean | null;
+    nursing_safe_topical?: boolean | null;
+    provenance?: Record<string, unknown> | null;
     contraindications?: string[] | null;
     side_effects?: string[] | null;
   };
+  provenance?: Record<string, unknown> | null;
   interactions?: Interaction[];
   interactionCount?: number;
   severityCounts: {
@@ -51,6 +61,7 @@ interface HerbSafetyPanelProps {
 
 export function HerbSafetyPanel({
   herb,
+  provenance,
   interactions = [],
   interactionCount,
   severityCounts,
@@ -58,8 +69,12 @@ export function HerbSafetyPanel({
 }: HerbSafetyPanelProps) {
   const t = useTranslations();
   const dangerous = isDangerousHerb(herb.slug);
-  const effectivePregnancySafe = dangerous ? false : herb.pregnancy_safe;
-  const effectiveNursingSafe = dangerous ? false : herb.nursing_safe;
+  const safetyStatus = resolvePregnancyNursingStatus(
+    herb,
+    provenance !== undefined ? provenance : herb.provenance
+  );
+  const effectivePregnancySafe = verdictToBoolean(safetyStatus.pregnancy);
+  const effectiveNursingSafe = verdictToBoolean(safetyStatus.nursing);
   const totalInteractions = interactionCount ?? interactions.length;
 
   return (
