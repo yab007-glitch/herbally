@@ -80,6 +80,7 @@ EXPAND_MIGRATIONS=(
   "supabase/migrations/00103_privacy_minimization_controls.sql"
   "supabase/migrations/00105_clinical_edit_requests.sql"
   "supabase/migrations/00106_interaction_evidence_note_reconciliation.sql"
+  "supabase/migrations/00107_open_herb_edit_suggestions.sql"
 )
 
 CONTRACT_MIGRATIONS=(
@@ -368,6 +369,23 @@ BEGIN
       AND evidence_note ~* 'grade\s+lowered\s+from'
   ) THEN
     RAISE EXCEPTION 'Contradictory "Grade lowered from" evidence_note still present on non-mild interaction';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'clinical_edit_requests'
+      AND column_name = 'credentials'
+      AND is_nullable = 'YES'
+  ) THEN
+    RAISE EXCEPTION 'clinical_edit_requests.credentials must be nullable post-00107';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conrelid = 'public.clinical_edit_requests'::regclass
+      AND conname = 'clinical_edit_requests_professional_role_check'
+  ) THEN
+    RAISE EXCEPTION 'Missing constraint clinical_edit_requests_professional_role_check post-00107';
   END IF;
 END
 $$;

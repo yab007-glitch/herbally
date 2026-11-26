@@ -107,5 +107,60 @@ describe("admin-clinical-edits server action", () => {
         verified_by: "Yasser Bheekun (editorial)",
       })
     );
+    expect(revalidatePathMock).toHaveBeenCalledWith("/herbs/ginger");
+    expect(revalidatePathMock).toHaveBeenCalledWith("/fr/herbs/ginger");
+  });
+
+  it("formats community attribution without null credentials", async () => {
+    getAdminAccessMock.mockResolvedValueOnce({
+      status: "authorized",
+      user: { id: "admin-user-1" },
+    });
+    const correctionInsertMock = vi.fn().mockResolvedValue({ error: null });
+    adminFromMock.mockImplementation((table: string) => {
+      if (table === "clinical_edit_requests") {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: async () => ({
+                data: {
+                  id: "11111111-1111-4111-8111-111111111111",
+                  status: "pending",
+                  target_type: "herb",
+                  herb_slug: "ginger",
+                  drug_name: null,
+                  surface_url: "/herbs/ginger",
+                  linkedin_name: "Alex Taylor",
+                  credentials: null,
+                  attribution_consent: true,
+                },
+                error: null,
+              }),
+            }),
+          }),
+          update: () => ({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+        };
+      }
+      if (table === "clinical_edit_request_events") {
+        return { insert: vi.fn().mockResolvedValue({ error: null }) };
+      }
+      if (table === "public_corrections_log") {
+        return { insert: correctionInsertMock };
+      }
+      return {};
+    });
+
+    const fd = new FormData();
+    fd.set("requestId", "11111111-1111-4111-8111-111111111111");
+    fd.set("status", "applied");
+    fd.set("publishCorrection", "on");
+    fd.set("correctionSummary", "Fixed ginger preparation typo.");
+    const res = await updateClinicalEditRequestStatus(fd);
+    expect(res.success).toBe(true);
+    expect(correctionInsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        verified_by: "Alex Taylor",
+      })
+    );
   });
 });

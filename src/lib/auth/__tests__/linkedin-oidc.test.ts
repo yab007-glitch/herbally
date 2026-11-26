@@ -1,9 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildLinkedInAuthorizeUrl,
+  buildLinkedInErrorRedirect,
   createOAuthState,
   createReviewerSessionToken,
   exchangeLinkedInCodeForUser,
+  extractNextFromStateCookie,
   getLinkedInOidcConfig,
   sanitizeClinicalReviewNext,
   verifyOAuthState,
@@ -50,11 +52,20 @@ describe("linkedin-oidc", () => {
     expect(verifyOAuthState(tampered, issued!.state)).toBeNull();
   });
 
-  it("prevents open redirects and only permits /clinical-review routes", () => {
+  it("prevents open redirects and permits /clinical-review and /herbs/<slug> return paths", () => {
     expect(sanitizeClinicalReviewNext("//evil.com")).toBe("/clinical-review");
-    expect(sanitizeClinicalReviewNext("/herbs/ginger")).toBe(
+    expect(sanitizeClinicalReviewNext("/admin/edit-requests")).toBe(
       "/clinical-review"
     );
+    expect(sanitizeClinicalReviewNext("/herbs/bad_slug/extra")).toBe(
+      "/clinical-review"
+    );
+    expect(sanitizeClinicalReviewNext("/herbs/Ginger")).toBe(
+      "/herbs/ginger?suggestEdit=1"
+    );
+    expect(
+      sanitizeClinicalReviewNext("/fr/herbs/turmeric?field=dosage_safety&bad=1")
+    ).toBe("/fr/herbs/turmeric?suggestEdit=1&field=dosage_safety");
     expect(
       sanitizeClinicalReviewNext(
         "/fr/clinical-review?targetType=interaction&slug=ginger&drug=Warfarin&injected=bad"
@@ -62,6 +73,29 @@ describe("linkedin-oidc", () => {
     ).toBe(
       "/fr/clinical-review?targetType=interaction&slug=ginger&drug=Warfarin"
     );
+
+    expect(
+      buildLinkedInErrorRedirect(
+        "https://herbally.app",
+        "/herbs/ginger?suggestEdit=1",
+        "cancelled"
+      )
+    ).toBe(
+      "https://herbally.app/herbs/ginger?suggestEdit=1&authError=cancelled"
+    );
+    expect(
+      buildLinkedInErrorRedirect(
+        "https://herbally.app",
+        "/fr/clinical-review",
+        "not_configured"
+      )
+    ).toBe("https://herbally.app/fr/clinical-review?authError=not_configured");
+
+    const issued = createOAuthState("/herbs/ginger?suggestEdit=1")!;
+    expect(extractNextFromStateCookie(issued.cookieToken)).toBe(
+      "/herbs/ginger?suggestEdit=1"
+    );
+    expect(extractNextFromStateCookie("tampered")).toBe("/clinical-review");
   });
 
   it("signs and verifies reviewer session tokens", () => {

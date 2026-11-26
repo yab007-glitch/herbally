@@ -21,10 +21,12 @@ vi.mock("@/lib/utils/logger", () => ({
 import { GET as startGet } from "../start/route";
 import { GET as callbackGet } from "../callback/route";
 import { POST as logoutPost } from "../logout/route";
+import { GET as sessionGet } from "../session/route";
 import {
   LINKEDIN_SESSION_COOKIE,
   LINKEDIN_STATE_COOKIE,
   createOAuthState,
+  createReviewerSessionToken,
   verifyReviewerSessionToken,
 } from "@/lib/auth/linkedin-oidc";
 
@@ -55,6 +57,19 @@ describe("LinkedIn OAuth route handlers", () => {
     expect(res.status).toBe(302);
     expect(res.headers.get("location")).toBe(
       "https://herbally.app/clinical-review?authError=not_configured"
+    );
+  });
+
+  it("/start preserves /herbs/<slug>?suggestEdit=1 on not_configured redirect", async () => {
+    delete process.env.LINKEDIN_CLIENT_ID;
+    const res = await startGet(
+      new NextRequest(
+        "https://herbally.app/api/auth/linkedin/start?next=%2Fherbs%2Fginger%3FsuggestEdit%3D1"
+      )
+    );
+    expect(res.status).toBe(302);
+    expect(res.headers.get("location")).toBe(
+      "https://herbally.app/herbs/ginger?suggestEdit=1&authError=not_configured"
     );
   });
 
@@ -142,5 +157,38 @@ describe("LinkedIn OAuth route handlers", () => {
     expect(res.status).toBe(200);
     expect(res.cookies.get(LINKEDIN_SESSION_COOKIE)?.value).toBe("");
     expect(res.headers.get("cache-control")).toBe("no-store");
+  });
+
+  it("/session returns 200 JSON without leaking 401 for signed-out callers", async () => {
+    const res = await sessionGet(
+      new NextRequest("https://herbally.app/api/auth/linkedin/session")
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("cache-control")).toBe("private, no-store");
+    const json = await res.json();
+    expect(json).toEqual({
+      configured: true,
+      authenticated: false,
+      reviewer: null,
+    });
+    expect(createReviewerSessionToken).toBeTypeOf("function");
+  });
+
+  it("/callback redirects cancelled herb flows straight back to /herbs/<slug>?suggestEdit=1&authError=cancelled", async () => {
+    const issued = createOAuthState("/herbs/ginger?suggestEdit=1")!;
+    const res = await callbackGet(
+      new NextRequest(
+        "https://herbally.app/api/auth/linkedin/callback?error=user_cancelled_login",
+        {
+          headers: {
+            cookie: `${LINKEDIN_STATE_COOKIE}=${issued.cookieToken}`,
+          },
+        }
+      )
+    );
+    expect(res.status).toBe(302);
+    expect(res.headers.get("location")).toBe(
+      "https://herbally.app/herbs/ginger?suggestEdit=1&authError=cancelled"
+    );
   });
 });

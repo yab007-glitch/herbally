@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   clinicalEditSubmissionSchema,
+  isClinicianSubmission,
   normalizeLinkedInProfileUrl,
   parseCitationList,
 } from "../clinical-edits";
@@ -89,5 +90,46 @@ describe("clinical-edits validation", () => {
         drugName: "",
       }).success
     ).toBe(false);
+  });
+
+  it("allows open LinkedIn community herb suggestions without credentials, COI, rationale, or citations", () => {
+    const res = clinicalEditSubmissionSchema.safeParse({
+      targetType: "herb",
+      herbSlug: "turmeric",
+      summary: "Clarify black pepper piperine pairing note",
+      proposedChange:
+        "Mention that standard dietary turmeric has lower systemic curcumin absorption without piperine or lipids.",
+      noPhiAttested: true,
+    });
+    expect(res.success).toBe(true);
+    if (res.success) {
+      expect(res.data.professionalRole).toBe("community_user");
+      expect(res.data.citations).toEqual([]);
+      expect(res.data.credentials).toBe("");
+    }
+
+    expect(
+      clinicalEditSubmissionSchema.safeParse({
+        herbSlug: "turmeric",
+        summary: "Clarify absorption note",
+        proposedChange: "Add standardized extract preparation note.",
+        citations: "not a valid url or pmid",
+        noPhiAttested: true,
+      }).success
+    ).toBe(false);
+
+    expect(
+      isClinicianSubmission({
+        professional_role: "community_user",
+        credentials: null,
+        licence_number: null,
+      })
+    ).toBe(false);
+    expect(
+      isClinicianSubmission({
+        professional_role: "pharmacist",
+        credentials: null,
+      })
+    ).toBe(true);
   });
 });

@@ -108,8 +108,11 @@ export async function updateClinicalEditRequestStatus(
   ) {
     // Honor attribution consent fail-closed: never expose reviewer identity
     // publicly unless they explicitly checked attributionConsent.
+    const creds = existing.credentials?.trim();
     const verifiedBy = existing.attribution_consent
-      ? `${existing.linkedin_name} (${existing.credentials})`
+      ? creds
+        ? `${existing.linkedin_name} (${creds})`
+        : existing.linkedin_name
       : "Yasser Bheekun (editorial)";
     const { error: logErr } = await admin
       .from("public_corrections_log" as never)
@@ -130,6 +133,10 @@ export async function updateClinicalEditRequestStatus(
   revalidatePath("/admin/edit-requests");
   revalidatePath("/clinical-review");
   revalidatePath("/fr/clinical-review");
+  if (existing.herb_slug) {
+    revalidatePath(`/herbs/${existing.herb_slug}`);
+    revalidatePath(`/fr/herbs/${existing.herb_slug}`);
+  }
   return { success: true, data: { id: input.requestId, status: input.status } };
 }
 

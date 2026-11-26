@@ -60,6 +60,14 @@ interface HerbOption {
 }
 
 const ROLE_LABELS: Record<ProfessionalRole, { en: string; fr: string }> = {
+  community_user: {
+    en: "General user / contributor",
+    fr: "Utilisateur / contributeur",
+  },
+  researcher_educator: {
+    en: "Herbal researcher / educator",
+    fr: "Chercheur / éducateur en phytothérapie",
+  },
   pharmacist: {
     en: "Pharmacist (PharmD / BPharm / RPh)",
     fr: "Pharmacien(ne) (PharmD / BPharm)",
@@ -233,12 +241,12 @@ export function ClinicalEditRequestClient({
     useState<SubmittedEditSummary[]>(initialRequests);
   const [linkedinProfileUrl, setLinkedinProfileUrl] = useState("");
   const [professionalRole, setProfessionalRole] =
-    useState<ProfessionalRole>("pharmacist");
+    useState<ProfessionalRole>("community_user");
   const [credentials, setCredentials] = useState("");
   const [affiliation, setAffiliation] = useState("");
   const [licenceNumber, setLicenceNumber] = useState("");
   const [licenceJurisdiction, setLicenceJurisdiction] = useState("");
-  const [conflictOfInterest, setConflictOfInterest] = useState("None");
+  const [conflictOfInterest, setConflictOfInterest] = useState("");
   const [attributionConsent, setAttributionConsent] = useState(false);
   const [noPhiAttested, setNoPhiAttested] = useState(false);
 
@@ -415,13 +423,13 @@ export function ClinicalEditRequestClient({
               className="text-xl font-semibold text-foreground"
             >
               {fr
-                ? "Validez votre identité de réviseur clinique"
-                : "Validate your clinical reviewer identity"}
+                ? "Connectez-vous avec LinkedIn SSO"
+                : "Sign in with LinkedIn SSO"}
             </h2>
             <p className="max-w-2xl text-sm text-muted-foreground">
               {fr
-                ? "HerbAlly utilise LinkedIn OpenID Connect (openid, profile, email) pour vérifier l'identité du réviseur avant d'enregistrer une proposition de modification. Cela reste distinct de tout compte lecteur HerbAlly et ne modifie jamais automatiquement une fiche publiée."
-                : "HerbAlly uses LinkedIn OpenID Connect (openid, profile, email) to verify reviewer identity before accepting proposed clinical edits. This session is separate from standard reader accounts and never auto-edits published pages."}
+                ? "HerbAlly utilise LinkedIn OpenID Connect (openid, profile, email) pour vérifier l'identité des contributeurs avant d'enregistrer une proposition de modification. Cela reste distinct de tout compte lecteur HerbAlly et ne modifie jamais automatiquement une fiche publiée."
+                : "HerbAlly uses LinkedIn OpenID Connect (openid, profile, email) to verify contributor identity before accepting edit suggestions. This session is separate from standard reader accounts and never auto-edits published pages."}
             </p>
           </div>
 
@@ -530,21 +538,21 @@ export function ClinicalEditRequestClient({
         <div className="space-y-1.5">
           <p className="text-xs font-semibold uppercase tracking-wide text-primary">
             {fr
-              ? "Étape 2 · Demande de modification sourcée"
-              : "Step 2 · Source-Backed Edit Request"}
+              ? "Étape 2 · Proposition de modification"
+              : "Step 2 · Edit Suggestion Form"}
           </p>
           <h2
             id="edit-request-form-heading"
             className="text-xl font-semibold text-foreground"
           >
             {fr
-              ? "Proposer une correction clinique ou bibliographique"
-              : "Submit a clinical or evidence edit request"}
+              ? "Proposer une modification sur une plante ou une interaction"
+              : "Suggest an edit to a herb or interaction page"}
           </h2>
           <p className="text-sm text-muted-foreground">
             {fr
-              ? "Chaque soumission entre dans la file de vérification éditoriale et clinique (/admin/edit-requests) avec votre identité LinkedIn, vos titres professionnels et vos citations primaires."
-              : "Every submission enters our editorial & clinical triage queue with your verified LinkedIn identity, credentials, and primary citations for review before publication."}
+              ? "Chaque suggestion est associée à votre profil LinkedIn et relue par notre équipe éditoriale (/admin/edit-requests) avant toute mise en ligne."
+              : "Every suggestion enters our verification queue with your LinkedIn identity for editorial and clinical review before publication."}
           </p>
         </div>
 
@@ -586,134 +594,139 @@ export function ClinicalEditRequestClient({
               </div>
             )}
 
-            {/* Reviewer qualifications */}
-            <div className="space-y-4 rounded-xl border border-border/80 bg-muted/20 p-4">
-              <h3 className="text-sm font-semibold text-foreground">
+            {/* Optional background & clinical credentials */}
+            <details className="rounded-xl border border-border/80 bg-muted/20 p-4">
+              <summary className="cursor-pointer text-sm font-semibold text-foreground">
                 {fr
-                  ? "Profil et titres professionnels"
-                  : "Reviewer credentials & disclosure"}
-              </h3>
+                  ? "Optionnel : profil, titres cliniques et déclaration d'intérêts"
+                  : "Optional: background, clinical credentials & COI disclosure"}
+              </summary>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="mt-4 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="linkedin-profile-url">
+                      {fr
+                        ? "URL du profil LinkedIn (optionnel)"
+                        : "Public LinkedIn profile URL (optional)"}
+                    </Label>
+                    <Input
+                      id="linkedin-profile-url"
+                      type="url"
+                      value={linkedinProfileUrl}
+                      onChange={(e) => setLinkedinProfileUrl(e.target.value)}
+                      placeholder="https://www.linkedin.com/in/your-handle"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="professional-role">
+                      {fr
+                        ? "Rôle ou contexte (optionnel)"
+                        : "Role or background (optional)"}
+                    </Label>
+                    <select
+                      id="professional-role"
+                      value={professionalRole}
+                      onChange={(e) =>
+                        setProfessionalRole(e.target.value as ProfessionalRole)
+                      }
+                      className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    >
+                      {PROFESSIONAL_ROLES.map((role) => (
+                        <option key={role} value={role}>
+                          {ROLE_LABELS[role][locale]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reviewer-credentials">
+                      {fr
+                        ? "Titres et diplômes (optionnel)"
+                        : "Credentials / designation (optional)"}
+                    </Label>
+                    <Input
+                      id="reviewer-credentials"
+                      value={credentials}
+                      onChange={(e) => setCredentials(e.target.value)}
+                      placeholder={
+                        fr ? "ex. PharmD, BCPS" : "e.g. PharmD, RPh, BCPS"
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="reviewer-affiliation">
+                      {fr
+                        ? "Établissement / pratique (optionnel)"
+                        : "Affiliation / practice setting (optional)"}
+                    </Label>
+                    <Input
+                      id="reviewer-affiliation"
+                      value={affiliation}
+                      onChange={(e) => setAffiliation(e.target.value)}
+                      placeholder={
+                        fr
+                          ? "ex. Pharmacie hospitalière, CUSM"
+                          : "e.g. Community Pharmacy / Hospital Outpatient"
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="licence-number">
+                      {fr
+                        ? "Numéro de permis professionnel (privé, optionnel)"
+                        : "Regulatory licence / registration number (private, optional)"}
+                    </Label>
+                    <Input
+                      id="licence-number"
+                      value={licenceNumber}
+                      onChange={(e) => setLicenceNumber(e.target.value)}
+                      placeholder={
+                        fr
+                          ? "Jamais publié publiquement"
+                          : "Never shown publicly"
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="licence-jurisdiction">
+                      {fr
+                        ? "Ordre professionnel / juridiction (optionnel)"
+                        : "Licensing body / jurisdiction (optional)"}
+                    </Label>
+                    <Input
+                      id="licence-jurisdiction"
+                      value={licenceJurisdiction}
+                      onChange={(e) => setLicenceJurisdiction(e.target.value)}
+                      placeholder="e.g. OCP Ontario / OPQ Quebec"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-1.5">
-                  <Label htmlFor="linkedin-profile-url">
+                  <Label htmlFor="conflict-of-interest">
                     {fr
-                      ? "URL du profil LinkedIn *"
-                      : "Public LinkedIn profile URL *"}
+                      ? "Déclaration de conflits d'intérêts (optionnel)"
+                      : "Conflict of interest disclosure (optional)"}
                   </Label>
                   <Input
-                    id="linkedin-profile-url"
-                    type="url"
-                    required
-                    value={linkedinProfileUrl}
-                    onChange={(e) => setLinkedinProfileUrl(e.target.value)}
-                    placeholder="https://www.linkedin.com/in/your-handle"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="professional-role">
-                    {fr ? "Rôle clinique *" : "Clinical discipline *"}
-                  </Label>
-                  <select
-                    id="professional-role"
-                    value={professionalRole}
-                    onChange={(e) =>
-                      setProfessionalRole(e.target.value as ProfessionalRole)
-                    }
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  >
-                    {PROFESSIONAL_ROLES.map((role) => (
-                      <option key={role} value={role}>
-                        {ROLE_LABELS[role][locale]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="reviewer-credentials">
-                    {fr ? "Titres et diplômes *" : "Post-nominal credentials *"}
-                  </Label>
-                  <Input
-                    id="reviewer-credentials"
-                    required
-                    value={credentials}
-                    onChange={(e) => setCredentials(e.target.value)}
-                    placeholder={
-                      fr ? "ex. PharmD, BCPS" : "e.g. PharmD, RPh, BCPS"
-                    }
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="reviewer-affiliation">
-                    {fr
-                      ? "Établissement / pratique (optionnel)"
-                      : "Affiliation / practice setting (optional)"}
-                  </Label>
-                  <Input
-                    id="reviewer-affiliation"
-                    value={affiliation}
-                    onChange={(e) => setAffiliation(e.target.value)}
+                    id="conflict-of-interest"
+                    value={conflictOfInterest}
+                    onChange={(e) => setConflictOfInterest(e.target.value)}
                     placeholder={
                       fr
-                        ? "ex. Pharmacie hospitalière, CUSM"
-                        : "e.g. Community Pharmacy / Hospital Outpatient"
+                        ? "Aucun, ou précisez tout lien avec un fabricant"
+                        : "None, or disclose any supplement/pharma financial ties"
                     }
                   />
                 </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="licence-number">
-                    {fr
-                      ? "Numéro de permis professionnel (privé, optionnel)"
-                      : "Regulatory licence / registration number (private, optional)"}
-                  </Label>
-                  <Input
-                    id="licence-number"
-                    value={licenceNumber}
-                    onChange={(e) => setLicenceNumber(e.target.value)}
-                    placeholder={
-                      fr ? "Jamais publié publiquement" : "Never shown publicly"
-                    }
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="licence-jurisdiction">
-                    {fr
-                      ? "Ordre professionnel / juridiction (optionnel)"
-                      : "Licensing body / jurisdiction (optional)"}
-                  </Label>
-                  <Input
-                    id="licence-jurisdiction"
-                    value={licenceJurisdiction}
-                    onChange={(e) => setLicenceJurisdiction(e.target.value)}
-                    placeholder="e.g. OCP Ontario / OPQ Quebec"
-                  />
-                </div>
               </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="conflict-of-interest">
-                  {fr
-                    ? "Déclaration de conflits d'intérêts *"
-                    : "Conflict of interest disclosure *"}
-                </Label>
-                <Input
-                  id="conflict-of-interest"
-                  required
-                  value={conflictOfInterest}
-                  onChange={(e) => setConflictOfInterest(e.target.value)}
-                  placeholder={
-                    fr
-                      ? "Aucun, ou précisez tout lien avec un fabricant"
-                      : "None, or disclose any supplement/pharma financial ties"
-                  }
-                />
-              </div>
-            </div>
+            </details>
 
             {/* Target and proposed change */}
             <div className="space-y-4">
@@ -930,20 +943,19 @@ export function ClinicalEditRequestClient({
               <div className="space-y-1.5">
                 <Label htmlFor="clinical-rationale">
                   {fr
-                    ? "Justification clinique et limites *"
-                    : "Clinical rationale & certainty limits *"}
+                    ? "Justification ou contexte supplémentaire (optionnel)"
+                    : "Rationale or extra context (optional)"}
                 </Label>
                 <textarea
                   id="clinical-rationale"
-                  required
-                  rows={4}
+                  rows={3}
                   value={clinicalRationale}
                   onChange={(e) => setClinicalRationale(e.target.value)}
                   className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                   placeholder={
                     fr
-                      ? "Expliquez les données humaines vs précliniques et pourquoi cette modification améliore la sécurité..."
-                      : "Summarize human vs preclinical data, study sample/dose limitations, and clinical safety reasoning..."
+                      ? "Ajoutez tout contexte ou limite utile (données humaines vs précliniques, dosage, forme)..."
+                      : "Add any helpful context or study limits (human vs preclinical data, dose, preparation)..."
                   }
                 />
               </div>
@@ -951,12 +963,11 @@ export function ClinicalEditRequestClient({
               <div className="space-y-1.5">
                 <Label htmlFor="citations-text">
                   {fr
-                    ? "Citations primaires (1 par ligne : URL https://, PMID:... ou DOI:...) *"
-                    : "Primary citations (one per line: https:// URL, PMID:..., or DOI:...) *"}
+                    ? "Sources à l'appui (optionnel — 1 par ligne : URL https://, PMID:... ou DOI:...)"
+                    : "Supporting sources (optional — one per line: https:// URL, PMID:..., or DOI:...)"}
                 </Label>
                 <textarea
                   id="citations-text"
-                  required
                   rows={3}
                   value={citationsText}
                   onChange={(e) => setCitationsText(e.target.value)}

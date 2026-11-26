@@ -103,6 +103,9 @@ describe("HerbHeroV2 safety and review gating", () => {
     expect(
       screen.getByText("safetyGlance.interactionDangerousNone")
     ).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: /Suggest an edit/i })
+    ).toBeDefined();
   });
 
   it("preserves explicit pregnancy_safe=false as unsafe while hiding pregnancy_safe=true as unknown on needs_re_review herbs", () => {

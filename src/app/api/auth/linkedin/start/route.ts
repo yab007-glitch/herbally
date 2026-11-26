@@ -5,7 +5,7 @@ import {
   LINKEDIN_STATE_COOKIE,
   LINKEDIN_STATE_TTL_SECONDS,
   buildLinkedInAuthorizeUrl,
-  clinicalReviewPathOnly,
+  buildLinkedInErrorRedirect,
   createOAuthState,
   getLinkedInOidcConfig,
   resolveAppOrigin,
@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const origin = resolveAppOrigin(request.url);
   const safeNext = sanitizeClinicalReviewNext(url.searchParams.get("next"));
-  const reviewPath = clinicalReviewPathOnly(safeNext);
 
   const ip = getClientIP(request);
   const rl = await rateLimit(
@@ -29,7 +28,7 @@ export async function GET(request: NextRequest) {
   );
   if (!rl.success) {
     return NextResponse.redirect(
-      `${origin}${reviewPath}?authError=rate_limited`,
+      buildLinkedInErrorRedirect(origin, safeNext, "rate_limited"),
       { status: 302, headers: NO_STORE }
     );
   }
@@ -37,7 +36,7 @@ export async function GET(request: NextRequest) {
   const config = getLinkedInOidcConfig(request.url);
   if (!config) {
     return NextResponse.redirect(
-      `${origin}${reviewPath}?authError=not_configured`,
+      buildLinkedInErrorRedirect(origin, safeNext, "not_configured"),
       { status: 302, headers: NO_STORE }
     );
   }
@@ -45,7 +44,7 @@ export async function GET(request: NextRequest) {
   const issued = createOAuthState(safeNext);
   if (!issued) {
     return NextResponse.redirect(
-      `${origin}${reviewPath}?authError=not_configured`,
+      buildLinkedInErrorRedirect(origin, safeNext, "not_configured"),
       { status: 302, headers: NO_STORE }
     );
   }
