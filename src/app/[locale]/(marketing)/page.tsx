@@ -97,13 +97,17 @@ export default async function HomePage() {
 
       {/* Clear Safety & Evidence Orientation upfront */}
       <section
-        aria-label={
-          locale === "fr"
-            ? "Comment interpréter HerbAlly en toute sécurité"
-            : "How to Read HerbAlly Safely"
-        }
+        aria-labelledby="how-to-read-heading"
         className="mx-auto w-full max-w-5xl px-4 pb-2 sm:px-6"
       >
+        <h2
+          id="how-to-read-heading"
+          className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+        >
+          {locale === "fr"
+            ? "Comment interpréter HerbAlly en toute sécurité"
+            : "How to Read HerbAlly Safely"}
+        </h2>
         <div className="grid gap-3 rounded-2xl border border-border/70 bg-muted/20 p-4 text-xs sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="font-semibold text-foreground">
