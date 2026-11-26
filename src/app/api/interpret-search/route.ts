@@ -9,6 +9,7 @@ import { getClientIP } from "@/lib/utils/client-ip";
 import { logger } from "@/lib/utils/logger";
 import { z } from "zod";
 import { readJsonBodyWithLimit } from "@/lib/http/read-json-body";
+import { detectRedFlagSymptom } from "@/lib/safety/red-flag-symptoms";
 
 const MAX_BODY_SIZE = 10 * 1024; // 10KB max for search interpretation
 const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
@@ -69,6 +70,20 @@ export async function POST(request: NextRequest) {
       return jsonNoStore({ keywords: [] });
     }
     originalQuery = parsed.data.query;
+
+    const redFlag = detectRedFlagSymptom(originalQuery);
+    if (redFlag.isRedFlag) {
+      logger.warn("api_interpret_search_red_flag_blocked", {
+        category: redFlag.category ?? "emergency",
+      });
+      return jsonNoStore({
+        keywords: [],
+        redFlag: true,
+        category: redFlag.category,
+        severity: redFlag.severity,
+        guidance: redFlag.guidance,
+      });
+    }
 
     // Max 200 chars to prevent token abuse
     const trimmed = originalQuery.trim().slice(0, 200);

@@ -101,7 +101,7 @@ export function HerbSchema({
       : undefined;
   const schema = {
     "@context": "https://schema.org",
-    "@type": "MedicalWebPage",
+    "@type": isClinicallyReviewed ? "MedicalWebPage" : "WebPage",
     name: herb.name,
     alternateName: herb.scientific_name,
     description: herb.description ?? undefined,

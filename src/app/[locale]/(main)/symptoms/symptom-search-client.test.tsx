@@ -220,4 +220,15 @@ describe("SymptomSearchClient AI keyword union", () => {
     );
     expect(screen.getByText("Toxic plant — do not use")).toBeInTheDocument();
   });
+
+  it("shows an immediate emergency triage alert and skips herb lookup for red-flag symptoms", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    await submitQuery("chest pain and shortness of breath");
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(/911/);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });

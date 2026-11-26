@@ -472,7 +472,7 @@
         }
       },
       "note": "Instantané de notre propre analytique pour les 30 jours se terminant le 29 octobre 2026 (prochaine mise à jour périodique à venir). Environ la moitié des sessions récentes semblent automatisées : le public humain est donc plus petit que le chiffre affiché. Nous vous le disons ici plutôt que de vous le laisser découvrir plus tard.",
-      "fit": "HerbAlly convient à un commanditaire dont les clients se demandent ce que fait une plante, si elle est compatible avec leurs médicaments, ou quelle quantité prendre — et qui veut associer son nom à cette réponse sans acheter d'influence sur elle."
+      "fit": "HerbAlly convient à un commanditaire dont les clients se demandent ce que fait une plante, si elle présente des interactions avec leurs médicaments, ou quelle quantité prendre — et qui veut associer son nom à cette réponse sans acheter d'influence sur elle."
     },
     "packages": {
       "title": "Formules de commandite",
@@ -748,7 +748,7 @@
     "checkerEvidence": "Preuves",
     "checkerMechanism": "Fonctionnement",
     "explainerTitle": "Votre guide de référence des plantes médicinales",
-    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant plus de 3 000 fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et consulter une dose adulte de référence lorsqu'une monographie établie existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
+    "explainerBody": "HerbAlly est une référence gratuite sur les plantes médicinales regroupant 3 122 fiches publiées. Chaque fiche couvre les usages, les informations de sécurité et les niveaux de preuve, et vous pouvez vérifier les interactions plante-médicament, rechercher par symptôme et consulter une dose adulte de référence lorsqu'une monographie établie existe — sans compte. L'Herboriste Virtuel sert à expliquer, jamais à remplacer la base de données ni votre pharmacien.",
     "explainerNote": "À des fins éducatives uniquement. Pas un avis médical. Confirmez toujours auprès de votre médecin ou pharmacien avant d'associer une plante à un médicament.",
     "popularTitle": "Plantes populaires",
     "herbLabel": "Plante",

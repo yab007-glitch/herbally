@@ -100,7 +100,7 @@
     "months": "Mois",
     "calculationFormula": "Formule de Calcul",
     "calculatedDose": "Référence adulte",
-    "childAge": "Âge adulte",
+    "childAge": "Âge adulte — contrôle 18+ uniquement",
     "childWeight": "Poids adulte",
     "childDoseResult": "Dose de référence",
     "selectHerb": "Sélectionnez une plante...",
@@ -357,7 +357,7 @@
   },
   "symptomsPage": {
     "title": "Trouver des plantes par symptôme",
-    "subtitle": "Décrivez comment vous vous sentez et découvrez quelles plantes peuvent vous aider.",
+    "subtitle": "Exploration éducative des plantes par thème de bien-être — ce n'est ni un triage médical ni un diagnostic. Pour tout symptôme aigu, grave ou d'alerte, consultez immédiatement un médecin ou les urgences.",
     "searchPlaceholder": "Décrivez vos symptômes... ex., \"Je n'arrive pas à dormir et je me sens anxieux\"",
     "search": "Rechercher",
     "examples": "Essayez de décrire ce que vous ressentez :",
@@ -413,10 +413,10 @@
       "intro": "Bonjour — je suis l'assistant HerbAlly. Je vérifie les plantes contre les médicaments que vous prenez, et je vous montre les preuves derrière chaque réponse.",
       "question": "Que voulez-vous vérifier — une plante, ou quelque chose que vous prenez ?",
       "quickCheckHerb": "Une plante que je prends",
-      "quickInteractions": "Compatible avec mes médicaments ?",
+      "quickInteractions": "Interactions avec mes médicaments ?",
       "quickCapabilities": "Que pouvez-vous faire ?",
       "quickCheckHerbPrompt": "Je veux vérifier une plante que je prends. Pouvez-vous m'aider à savoir quoi regarder ?",
-      "quickInteractionsPrompt": "Cette plante est-elle compatible avec mes médicaments ? Je vais vous dire ce que je prends.",
+      "quickInteractionsPrompt": "Cette plante interagit-elle avec mes médicaments ? Je vais vous indiquer ce que je prends.",
       "quickCapabilitiesPrompt": "Avec quoi pouvez-vous m'aider ?"
     }
   },

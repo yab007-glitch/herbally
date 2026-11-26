@@ -149,7 +149,7 @@
     "promptLink": "soutenez-nous →"
   },
   "fda": {
-    "disclaimer": "À titre éducatif uniquement — les renseignements sur les plantes et suppléments n'ont pas été évalués par la FDA et ne visent pas à diagnostiquer, traiter, guérir ou prévenir une maladie."
+    "disclaimer": "À titre éducatif uniquement (Canada et É.-U.) — ces renseignements sur les plantes et suppléments ne remplacent ni l'évaluation de Santé Canada ou de la FDA ni un avis médical."
   },
   "mobileTabs": {
     "chat": "Chat",
@@ -277,7 +277,7 @@
   },
   "herbalistPage": {
     "title": "Herboriste Virtuel",
-    "widgetQ1": "Cette plante est-elle compatible avec mon médicament ?",
+    "widgetQ1": "Cette plante interagit-elle avec mon médicament ?",
     "widgetQ2": "Quelle posologie dois-je prendre ?",
     "widgetQ3": "Quels effets secondaires dois-je connaître ?",
     "widgetOpen": "Ouvrir le chat",

@@ -679,10 +679,11 @@ export default async function HerbDetailPage({ params }: Props) {
 
         <AuthorByline
           locale={copyLocale}
-          lastReviewed={
-            isClinicallyReviewed ? latestModified : (herb.updated_at ?? null)
-          }
+          lastReviewed={isClinicallyReviewed ? latestModified : null}
+          lastUpdated={herb.updated_at ?? null}
           isReviewed={isClinicallyReviewed}
+          isManualMonograph={isManualMonograph}
+          sourceCount={verifiedSources.length}
           reviewerName={reviewedBy}
           reviewerCredentials={reviewerCredentials}
           herbSlug={slug}

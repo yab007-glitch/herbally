@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ShieldCheck, FileCheck2, Users } from "lucide-react";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { getLocale } from "@/lib/i18n/page-locale";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import { siteUrl } from "@/lib/seo/site-url";
@@ -256,6 +257,16 @@ export default async function ClinicalReviewPage({
             </p>
           </div>
         </div>
+        <p className="text-xs text-muted-foreground">
+          <Link
+            href="/methodology#governance-coverage"
+            className="font-medium text-primary underline underline-offset-4"
+          >
+            {fr
+              ? "Voir les compteurs de couverture de révision et le journal public des corrections →"
+              : "View live review coverage metrics and public corrections log →"}
+          </Link>
+        </p>
       </header>
 
       <div className="mt-8">

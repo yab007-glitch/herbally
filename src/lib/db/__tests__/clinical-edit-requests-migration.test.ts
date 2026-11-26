@@ -59,4 +59,22 @@ describe("00105 & 00106 governance/reconciliation migrations", () => {
     expect(sql).toMatch(/clinical_edit_requests_professional_role_check/i);
     expect(sql).not.toMatch(/\(\?<[=!]/);
   });
+
+  it("00108 reconciles blanket perioperative stop orders and abrus-precatorius toxicity cleanly", () => {
+    const sql = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        "supabase/migrations/00108_perioperative_and_toxic_safety_reconciliation.sql"
+      ),
+      "utf8"
+    );
+    expect(sql).toMatch(/^\s*BEGIN\s*;/im);
+    expect(sql).toMatch(/^\s*COMMIT\s*;/im);
+    expect(sql).toMatch(/abrus-precatorius/i);
+    expect(sql).toMatch(/Poisonous botanical \(contains lethal abrin\)/i);
+    expect(sql).toMatch(/Perioperative note:/i);
+    expect(sql).toMatch(/COALESCE\(/i);
+    expect(sql).toMatch(/'null'::jsonb/i);
+    expect(sql).not.toMatch(/\(\?<[=!]/);
+  });
 });

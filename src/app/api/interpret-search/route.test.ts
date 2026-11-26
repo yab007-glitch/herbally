@@ -65,4 +65,28 @@ describe("symptom search privacy", () => {
       vi.unstubAllGlobals();
     }
   });
+
+  it("blocks red-flag emergency symptom queries before calling upstream AI", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const response = await POST(
+        new NextRequest("https://example.test/api/interpret-search", {
+          method: "POST",
+          body: JSON.stringify({
+            query: "severe chest pain and trouble breathing",
+          }),
+          headers: { "Content-Type": "application/json" },
+        })
+      );
+      expect(response.status).toBe(200);
+      const json = await response.json();
+      expect(json.redFlag).toBe(true);
+      expect(json.category).toBe("cardiac_respiratory");
+      expect(json.keywords).toEqual([]);
+      expect(fetchMock).not.toHaveBeenCalled();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
 });

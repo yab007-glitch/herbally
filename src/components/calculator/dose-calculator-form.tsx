@@ -424,6 +424,11 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   invalidateCalculation();
                 }}
               />
+              <p className="text-[11px] text-muted-foreground">
+                {locale === "fr"
+                  ? "Sert uniquement à confirmer que vous avez 18 ans ou plus — l'âge ne modifie pas la dose adulte affichée."
+                  : "Used solely to confirm adult age (18+) — does not scale or personalize the reference dose."}
+              </p>
             </div>
 
             {/* Adult Reference Scope (replaces legacy weight/age scaling radios) */}
@@ -574,6 +579,23 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                       snapshot.result.explanationParams
                     )}
                   </p>
+                </div>
+                <div className="border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">
+                    {locale === "fr"
+                      ? "Forme & standardisation : "
+                      : "Form & extract caveat: "}
+                  </span>
+                  {prefill?.dosageForms && prefill.dosageForms.length > 0 && (
+                    <span>
+                      {locale === "fr"
+                        ? `Formes monographiques (${prefill.dosageForms.join(", ")}). `
+                        : `Monograph forms (${prefill.dosageForms.join(", ")}). `}
+                    </span>
+                  )}
+                  {locale === "fr"
+                    ? "Les extraits concentrés, teintures et poudres brutes ne sont pas interchangeables 1 pour 1 ; comparez toujours l'étiquette exacte avec votre pharmacien."
+                    : "Raw dried herb, standardized extracts, teas, and tinctures are not 1:1 interchangeable — confirm your exact product concentration with a pharmacist."}
                 </div>
               </div>
 

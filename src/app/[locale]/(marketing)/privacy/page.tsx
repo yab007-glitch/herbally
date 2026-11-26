@@ -136,6 +136,185 @@ export default async function PrivacyPage() {
             <p>{t("privacy.dataRetention.text")}</p>
           </section>
 
+          <section aria-labelledby="subprocessors-heading">
+            <h2
+              id="subprocessors-heading"
+              className="mb-3 text-lg font-semibold text-foreground"
+            >
+              {locale === "fr"
+                ? "Sous-traitants, données traitées, conservation et suppression"
+                : "Sub-processors, data flows, retention, and deletion controls"}
+            </h2>
+            <p className="mb-3">
+              {locale === "fr"
+                ? "Tableau récapitulatif des prestataires techniques utilisés par HerbAlly, de leur rôle exact et des durées de conservation applicables (Loi 25 du Québec et LPRPDE)."
+                : "Transparent register of the infrastructure and third-party processors HerbAlly relies on, the limited data each receives, and retention/deletion rules under Quebec Law 25 and PIPEDA."}
+            </p>
+            <div className="overflow-x-auto rounded-lg border border-border">
+              <table className="w-full border-collapse text-left text-xs">
+                <thead className="border-b border-border bg-muted/40 text-foreground">
+                  <tr>
+                    <th className="px-3 py-2 font-semibold">
+                      {locale === "fr" ? "Prestataire" : "Processor"}
+                    </th>
+                    <th className="px-3 py-2 font-semibold">
+                      {locale === "fr"
+                        ? "Finalité et données"
+                        : "Purpose & Data Sent"}
+                    </th>
+                    <th className="px-3 py-2 font-semibold">
+                      {locale === "fr"
+                        ? "Conservation / Suppression"
+                        : "Retention & Deletion"}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/70">
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Supabase (PostgreSQL)
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Base de données des plantes/interactions, comptes utilisateurs optionnels, requêtes LinkedIn SSO et incidents (aucun dossier médical nominatif permis)."
+                        : "Reference botanical/interaction DB, optional signed-in accounts, LinkedIn SSO edit requests, and safety incident triage logs (no patient PHI permitted)."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Compte conservé jusqu'à suppression sur demande à privacy@herbally.app ; journaux de limitation de débit à court terme."
+                        : "Account data retained until deletion request to privacy@herbally.app; transient rate-limit records expire automatically."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Cloudflare
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "DNS, pare-feu applicatif (WAF), protection DDoS et mise en cache CDN des pages publiques."
+                        : "DNS, WAF, DDoS mitigation, and CDN caching of public pages (request IP & TLS metadata)."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Journaux sécurité transitoires selon la fenêtre Cloudflare ; aucune conservation d'historique clinique."
+                        : "Transient edge security logs per Cloudflare window; zero storage of herbal or health queries."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Serveur d'hébergement Next.js (KVM)"
+                        : "Application Runtime Server (KVM)"}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Exécution des routes applicatives ; les textes de recherche symptomatique et de chat ne sont pas consignés dans les journaux applicatifs."
+                        : "Executes SSR & API routes; symptom search terms and chat messages are scrubbed from server error logs."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Journaux opérationnels sans données personnelles conservés en rotation limitée."
+                        : "Rotating operational logs without personal query strings."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Ollama Cloud
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Inférence IA pour l'Herboriste Virtuel et l'extraction de mots-clés symptomatiques (requêtes soumises sans identifiant nominatif)."
+                        : "LLM inference for Virtual Herbalist & symptom keyword extraction (sent without user name, email, or account ID)."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Cache anonyme court de réponses éducatives générales ; aucun historique de conversation associé à votre identité."
+                        : "Anonymous cached general Q&A only; personal conversations remain in your browser until you clear local data."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Santé Canada LNHPD API"
+                        : "Health Canada LNHPD API"}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Numéro NPN à 8 chiffres transmis côté serveur pour consulter la licence publique officielle."
+                        : "8-digit NPN sent server-side to query the official public Natural Health Products database."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Réponse mise en cache 1 heure côté serveur ; aucun identifiant personnel transmis."
+                        : "Public licence metadata cached up to 1 hour; no personal identifier transmitted."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      LinkedIn OpenID Connect
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Nom, identifiant OpenID et courriel vérifié uniquement lorsque vous choisissez de vous connecter pour suggérer une correction."
+                        : "Name, OpenID subject, and verified email only when you explicitly sign in to submit a monograph or interaction edit suggestion."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Jeton de session chiffré HttpOnly (courte durée) ; retrait sur demande à privacy@herbally.app."
+                        : "HttpOnly encrypted session cookie only; attribution/request records deleted on verified request to privacy@herbally.app."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Google AdSense
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Chargé uniquement après consentement explicite via la bannière de cookies ; désactivé sur les pages outils cliniques sensibles."
+                        : "Loaded only after explicit cookie consent on eligible content pages; suppressed on sensitive clinical tool flows."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Révocable à tout moment via la réinitialisation du consentement."
+                        : "Controlled via browser consent settings and Clear Local Data control below."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Resend (Email)
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Courriels transactionnels de contact ou notifications administratives lorsque vous nous écrivez."
+                        : "Transactional contact/notification email delivery when contacting support."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Conservé selon la durée de traitement du dossier puis supprimé sur demande."
+                        : "Retained only for support resolution and deleted upon request."}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section aria-labelledby="law25-governance-heading">
+            <h2
+              id="law25-governance-heading"
+              className="mb-3 text-lg font-semibold text-foreground"
+            >
+              {locale === "fr"
+                ? "Responsable de la protection des renseignements personnels (Loi 25)"
+                : "Privacy Officer & Incident Response (Quebec Law 25 / PIPEDA)"}
+            </h2>
+            <p>
+              {locale === "fr"
+                ? "Responsable désigné : Yasser Bheekun — contact direct à privacy@herbally.app pour toute demande d'accès, de rectification ou de suppression (réponse visée sous 30 jours). En cas d'incident de confidentialité présentant un risque de préjudice sérieux, HerbAlly documente l'incident, applique les mesures d'atténuation immédiates et avise sans délai la Commission d'accès à l'information (CAI) ainsi que les personnes concernées."
+                : "Designated Privacy Officer: Yasser Bheekun (privacy@herbally.app). Access, correction, or deletion requests are handled within 30 days. If a confidentiality incident creates a risk of serious injury, HerbAlly logs the incident, mitigates exposure immediately, and notifies affected individuals and the Commission d'accès à l'information du Québec (CAI) / relevant regulator without undue delay."}
+            </p>
+          </section>
+
           <section>
             <h2 className="mb-3 text-lg font-semibold text-foreground">
               {t("privacy.yourRights.title")}

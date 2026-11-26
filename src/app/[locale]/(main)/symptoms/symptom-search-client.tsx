@@ -16,6 +16,10 @@ import {
   dedupeSymptomResults,
   sortSymptomResultsByRelevance,
 } from "@/lib/search/symptom-results";
+import {
+  detectRedFlagSymptom,
+  type RedFlagDetection,
+} from "@/lib/safety/red-flag-symptoms";
 
 interface HerbResult {
   id: string;
@@ -35,6 +39,7 @@ export function SymptomSearchClient() {
   const locale = useLocale();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<HerbResult[]>([]);
+  const [redFlag, setRedFlag] = useState<RedFlagDetection | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,6 +58,15 @@ export function SymptomSearchClient() {
 
     setIsLoading(true);
     setHasSearched(true);
+
+    const localRedFlag = detectRedFlagSymptom(q);
+    if (localRedFlag.isRedFlag) {
+      setRedFlag(localRedFlag);
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+    setRedFlag(null);
 
     try {
       // First try AI-powered keyword extraction. The AI keywords are
@@ -73,6 +87,16 @@ export function SymptomSearchClient() {
         if (controller.signal.aborted) return;
         if (aiRes.ok) {
           const data = await aiRes.json();
+          if (data?.redFlag && data?.guidance) {
+            setRedFlag({
+              isRedFlag: true,
+              category: data.category,
+              severity: data.severity ?? "emergency",
+              guidance: data.guidance,
+            });
+            setResults([]);
+            return;
+          }
           if (data.keywords?.length > 0) {
             const aiKeywords = (data.keywords as string[]).map((k) =>
               k.toLowerCase()
@@ -193,6 +217,47 @@ export function SymptomSearchClient() {
               <span className="ml-3 text-sm text-muted-foreground">
                 {t("symptomsPage.searching")}
               </span>
+            </div>
+          ) : redFlag?.isRedFlag ? (
+            <div
+              role="alert"
+              aria-live="assertive"
+              className="rounded-xl border-2 border-destructive/60 bg-destructive/10 p-6 text-foreground"
+            >
+              <div className="flex items-start gap-3">
+                <AlertTriangle
+                  className="mt-0.5 size-6 shrink-0 text-destructive"
+                  aria-hidden="true"
+                />
+                <div className="space-y-3">
+                  <h2 className="text-base font-bold text-destructive">
+                    {redFlag.guidance?.[locale === "fr" ? "fr" : "en"]
+                      ?.headline ??
+                      (locale === "fr"
+                        ? "Signe d'alerte détecté — consultez d'urgence"
+                        : "Urgent warning symptom detected — seek emergency care")}
+                  </h2>
+                  <p className="text-sm leading-relaxed text-foreground/90">
+                    {redFlag.guidance?.[locale === "fr" ? "fr" : "en"]?.body}
+                  </p>
+                  {redFlag.guidance?.[locale === "fr" ? "fr" : "en"]
+                    ?.actions && (
+                    <ul className="list-disc space-y-1 pl-5 text-sm text-foreground/90">
+                      {redFlag.guidance[
+                        locale === "fr" ? "fr" : "en"
+                      ].actions.map((step) => (
+                        <li key={step}>{step}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {redFlag.guidance?.[locale === "fr" ? "fr" : "en"]
+                    ?.helpline && (
+                    <p className="rounded-lg border border-destructive/30 bg-background/80 px-3 py-2 text-xs font-semibold text-destructive">
+                      {redFlag.guidance[locale === "fr" ? "fr" : "en"].helpline}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           ) : results.length > 0 ? (
             <div>

@@ -100,7 +100,7 @@
     "months": "Months",
     "calculationFormula": "Calculation Formula",
     "calculatedDose": "Adult Reference Amount",
-    "childAge": "Adult age",
+    "childAge": "Adult age — 18+ safety check only",
     "childWeight": "Adult weight",
     "childDoseResult": "Reference Dose",
     "selectHerb": "Select an herb...",
@@ -357,7 +357,7 @@
   },
   "symptomsPage": {
     "title": "Find Herbs by Symptom",
-    "subtitle": "Describe how you feel in plain English and discover which herbs may help.",
+    "subtitle": "Educational herbal discovery by wellness theme — not medical triage or diagnosis. For acute, severe, or red-flag symptoms, seek immediate medical care.",
     "searchPlaceholder": "Describe your symptoms... e.g., \"I can't sleep and feel anxious\"",
     "search": "Search",
     "examples": "Try describing how you feel:",

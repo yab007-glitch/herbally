@@ -81,6 +81,7 @@ EXPAND_MIGRATIONS=(
   "supabase/migrations/00105_clinical_edit_requests.sql"
   "supabase/migrations/00106_interaction_evidence_note_reconciliation.sql"
   "supabase/migrations/00107_open_herb_edit_suggestions.sql"
+  "supabase/migrations/00108_perioperative_and_toxic_safety_reconciliation.sql"
 )
 
 CONTRACT_MIGRATIONS=(
@@ -386,6 +387,14 @@ BEGIN
       AND conname = 'clinical_edit_requests_professional_role_check'
   ) THEN
     RAISE EXCEPTION 'Missing constraint clinical_edit_requests_professional_role_check post-00107';
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM public.herbs WHERE slug = 'abrus-precatorius') AND NOT EXISTS (
+    SELECT 1 FROM public.herbs
+    WHERE slug = 'abrus-precatorius'
+      AND contraindications[1] = 'Poisonous botanical (contains lethal abrin) — do not ingest or use in any population'
+  ) THEN
+    RAISE EXCEPTION 'abrus-precatorius missing lethal abrin leading contraindication post-00108';
   END IF;
 END
 $$;

@@ -12,6 +12,10 @@ import {
   evaluateAssistantContent,
   getSafetyRefusal,
 } from "@/lib/chat/safety-guard";
+import {
+  detectRedFlagSymptom,
+  formatRedFlagChatRefusal,
+} from "@/lib/safety/red-flag-symptoms";
 import { rateLimit } from "@/lib/rate-limit";
 import { getClientIP } from "@/lib/utils/client-ip";
 import { withTimeout } from "@/lib/utils/with-timeout";
@@ -466,6 +470,22 @@ export async function POST(request: NextRequest) {
         "X-HerbAlly-Answer-Reason": preLlmRefusal.kind,
       },
     });
+  }
+
+  const redFlagDetection = detectRedFlagSymptom(lastUserMessage);
+  if (redFlagDetection.isRedFlag) {
+    return new NextResponse(
+      formatRedFlagChatRefusal(redFlagDetection, answerLocale),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "no-store",
+          "X-HerbAlly-Answer-Status": "blocked",
+          "X-HerbAlly-Answer-Reason": `red_flag_${redFlagDetection.category ?? "emergency"}`,
+        },
+      }
+    );
   }
 
   if (!isOllamaCloudConfigured()) {

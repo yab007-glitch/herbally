@@ -15,15 +15,21 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 export function AuthorByline({
   locale,
   lastReviewed,
+  lastUpdated,
   isReviewed = true,
+  isManualMonograph = false,
+  sourceCount = 0,
   reviewerName,
   reviewerCredentials,
   herbSlug,
 }: {
   locale: "en" | "fr";
   lastReviewed?: string | null;
+  lastUpdated?: string | null;
   /** False for entries without a manual/clinical review so bylines do not overclaim. */
   isReviewed?: boolean;
+  isManualMonograph?: boolean;
+  sourceCount?: number;
   reviewerName?: string | null;
   reviewerCredentials?: string | null;
   herbSlug?: string | null;
@@ -32,54 +38,74 @@ export function AuthorByline({
     isReviewed && reviewerName
       ? `${reviewerName}${reviewerCredentials ? ` (${reviewerCredentials})` : ""}`
       : null;
+
+  const formatSafeDate = (raw?: string | null) => {
+    const parsed = raw ? new Date(raw) : null;
+    if (
+      !parsed ||
+      Number.isNaN(parsed.getTime()) ||
+      // eslint-disable-next-line react-hooks/purity
+      parsed.getTime() > Date.now()
+    ) {
+      return null;
+    }
+    return parsed.toLocaleDateString(locale === "fr" ? "fr-CA" : "en-CA", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      timeZone: "America/Toronto",
+    });
+  };
+
+  const reviewedDate = isReviewed ? formatSafeDate(lastReviewed) : null;
+  const updatedDate = formatSafeDate(
+    lastUpdated ?? (!isReviewed ? lastReviewed : null)
+  );
+
   const copy =
     locale === "fr"
       ? {
-          label: isReviewed
+          sourceCheck:
+            sourceCount > 0
+              ? `Sources vérifiées : ${sourceCount}`
+              : "Sources vérifiées : en attente",
+          editorialStatus: isManualMonograph
+            ? "Monographie éditoriale structurée"
+            : "Compilation éditoriale",
+          clinicalStatus: isReviewed
             ? reviewerSuffix
               ? `Révision clinique · ${reviewerSuffix}`
               : "Révision clinique au dossier"
-            : "Compilation éditoriale · Non révisé par un clinicien",
+            : "Non révisé par un clinicien",
           policy: "Politique éditoriale",
           updated: "Dernière mise à jour",
+          reviewedOn: "Révision clinique le",
         }
       : {
-          label: isReviewed
+          sourceCheck:
+            sourceCount > 0
+              ? `Source check: ${sourceCount} ${sourceCount === 1 ? "source" : "sources"}`
+              : "Source check: Pending",
+          editorialStatus: isManualMonograph
+            ? "Curated monograph (Editorial compilation)"
+            : "Editorial compilation",
+          clinicalStatus: isReviewed
             ? reviewerSuffix
               ? `Clinically reviewed by ${reviewerSuffix}`
               : "Clinically reviewed"
-            : "Editorial compilation · Not clinically reviewed",
+            : "Not clinically reviewed",
           policy: "Editorial policy",
           updated: "Last updated",
+          reviewedOn: "Clinically reviewed",
         };
-
-  // Format in the site's home timezone, not the server's. The server runs in
-  // UTC, so an update saved at 21:00 in Montreal (01:00 UTC the next day)
-  // rendered "Last updated: November 16" on November 15 — a future date on
-  // hundreds of pages, which reads as fabricated.
-  //
-  // A date in the future is never shown. Some rows carry an updated_at ahead
-  // of today (data import), and "Last updated: 2027" reads as fabricated.
-  const parsedDate = lastReviewed ? new Date(lastReviewed) : null;
-  const date =
-    parsedDate &&
-    !Number.isNaN(parsedDate.getTime()) &&
-    // This is a server component: the render timestamp is the right value, and
-    // there is no re-render or hydration to make it unstable. The purity rule
-    // exists for client components.
-    // eslint-disable-next-line react-hooks/purity
-    parsedDate.getTime() <= Date.now()
-      ? parsedDate.toLocaleDateString(locale === "fr" ? "fr-CA" : "en-CA", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          timeZone: "America/Toronto",
-        })
-      : null;
 
   return (
     <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 border-y border-border py-4 text-[13px] text-muted-foreground">
-      <span className="font-medium text-foreground">{copy.label}</span>
+      <span>{copy.sourceCheck}</span>
+      <span aria-hidden="true">·</span>
+      <span>{copy.editorialStatus}</span>
+      <span aria-hidden="true">·</span>
+      <span className="font-medium text-foreground">{copy.clinicalStatus}</span>
       <span aria-hidden="true">·</span>
       <Link
         href="/editorial-policy"
@@ -87,11 +113,19 @@ export function AuthorByline({
       >
         {copy.policy}
       </Link>
-      {date && (
+      {updatedDate && (
         <>
           <span aria-hidden="true">·</span>
           <span>
-            {copy.updated}: {date}
+            {copy.updated}: {updatedDate}
+          </span>
+        </>
+      )}
+      {reviewedDate && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>
+            {copy.reviewedOn}: {reviewedDate}
           </span>
         </>
       )}

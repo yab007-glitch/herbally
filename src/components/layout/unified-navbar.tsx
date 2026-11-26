@@ -18,6 +18,9 @@ import {
   ShieldCheck,
   CalendarClock,
   Stethoscope,
+  Scale,
+  BookOpen,
+  FileEdit,
   ChevronDown,
   Globe,
   Moon,
@@ -61,7 +64,13 @@ const primaryNavLinks = [
   { href: "/garden", labelKey: "nav.garden", icon: Sprout },
 ];
 
-const toolLinks = [
+const toolLinks: Array<{
+  href: string;
+  labelKey?: string;
+  labelEn?: string;
+  labelFr?: string;
+  icon: typeof Calculator;
+}> = [
   { href: "/calculator", labelKey: "nav.calculator", icon: Calculator },
   { href: "/medications", labelKey: "nav.medications", icon: Pill },
   { href: "/npn-checker", labelKey: "nav.npnChecker", icon: ShieldCheck },
@@ -71,6 +80,24 @@ const toolLinks = [
     icon: CalendarClock,
   },
   { href: "/symptoms", labelKey: "nav.symptoms", icon: Stethoscope },
+  {
+    href: "/compare",
+    labelEn: "Compare Herbs",
+    labelFr: "Comparer deux plantes",
+    icon: Scale,
+  },
+  {
+    href: "/methodology",
+    labelEn: "Methodology & Coverage",
+    labelFr: "Méthodologie & Couverture",
+    icon: BookOpen,
+  },
+  {
+    href: "/clinical-review",
+    labelEn: "Suggest an Edit",
+    labelFr: "Suggérer une modification",
+    icon: FileEdit,
+  },
 ];
 
 function isPrimaryActive(pathname: string, href: string): boolean {
@@ -180,7 +207,13 @@ export function UnifiedNavbar() {
                       )}
                     >
                       <Icon className="size-4 shrink-0" aria-hidden="true" />
-                      <span>{t(tool.labelKey)}</span>
+                      <span>
+                        {tool.labelKey
+                          ? t(tool.labelKey)
+                          : locale === "fr"
+                            ? tool.labelFr
+                            : tool.labelEn}
+                      </span>
                     </DropdownMenuItem>
                   );
                 })}
@@ -255,7 +288,11 @@ export function UnifiedNavbar() {
                         )}
                       >
                         <Icon className="size-4" aria-hidden="true" />
-                        {t(tool.labelKey)}
+                        {tool.labelKey
+                          ? t(tool.labelKey)
+                          : locale === "fr"
+                            ? tool.labelFr
+                            : tool.labelEn}
                       </Link>
                     );
                   })}

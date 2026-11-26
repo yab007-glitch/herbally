@@ -289,4 +289,23 @@ describe("HerbSchema reviewer attribution", () => {
     expect(doseValue).toContain("15-30 mg daily");
     expect(doseValue).not.toContain("7.5 mg");
   });
+
+  it("downgrades JSON-LD @type to WebPage and omits clinical review metadata when unreviewed", () => {
+    const json = extractJson(
+      renderToStaticMarkup(
+        <HerbSchema
+          herb={{
+            ...baseHerb,
+            reviewed_by: null,
+            last_reviewed: null,
+          }}
+          isClinicallyReviewed={false}
+          url="https://herbally.app/herbs/turmeric"
+        />
+      )
+    );
+    expect(json["@type"]).toBe("WebPage");
+    expect(json.reviewedBy).toBeUndefined();
+    expect(json.dateModified).toBeUndefined();
+  });
 });
