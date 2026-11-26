@@ -583,6 +583,26 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 <div className="border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
                   <span className="font-semibold text-foreground">
                     {locale === "fr"
+                      ? "Origine de la dose : "
+                      : "Dose origin: "}
+                  </span>
+                  {autoFilled && prefill ? (
+                    <span>
+                      {locale === "fr"
+                        ? `Monographie / registre (${prefill.herbName}${prefill.dosageAdultRaw ? ` · "${prefill.dosageAdultRaw}"` : ""})`
+                        : `Monograph / reference entry (${prefill.herbName}${prefill.dosageAdultRaw ? ` · "${prefill.dosageAdultRaw}"` : ""})`}
+                    </span>
+                  ) : (
+                    <span>
+                      {locale === "fr"
+                        ? "Valeur saisie manuellement (non issue d'une monographie vérifiée — comparez avec votre flacon)"
+                        : "User-entered amount (manual input, not pulled from a verified monograph — verify against product label)"}
+                    </span>
+                  )}
+                </div>
+                <div className="border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">
+                    {locale === "fr"
                       ? "Forme & standardisation : "
                       : "Form & extract caveat: "}
                   </span>
@@ -594,8 +614,8 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                     </span>
                   )}
                   {locale === "fr"
-                    ? "Les extraits concentrés, teintures et poudres brutes ne sont pas interchangeables 1 pour 1 ; comparez toujours l'étiquette exacte avec votre pharmacien."
-                    : "Raw dried herb, standardized extracts, teas, and tinctures are not 1:1 interchangeable — confirm your exact product concentration with a pharmacist."}
+                    ? "Poids de plante brute et extrait standardisé ne sont jamais interchangeables 1:1 — confirmez la concentration exacte avec votre pharmacien."
+                    : "Raw dried herb weight and standardized extracts are NOT 1:1 interchangeable — confirm your exact extract ratio with a pharmacist."}
                 </div>
               </div>
 

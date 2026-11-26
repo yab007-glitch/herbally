@@ -5,6 +5,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Search, ArrowRight, ShieldAlert } from "lucide-react";
 import type { InteractionSeverity } from "@/lib/interactions/pairs";
 import type { MedicationSummary } from "@/lib/interactions/medications";
+import { classifyMedicationScope } from "@/lib/interactions/medication-scope";
 import { cn } from "@/lib/utils";
 
 const SEVERITY_ORDER: InteractionSeverity[] = [
@@ -95,12 +96,21 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
   const [severityFilter, setSeverityFilter] = useState<
     InteractionSeverity | "all"
   >("all");
+  const [scopeFilter, setScopeFilter] = useState<"all" | "molecule" | "class">(
+    "all"
+  );
   const [sortBy, setSortBy] = useState<"count" | "az">("count");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = medications.filter((med) => {
       if (severityFilter !== "all" && med.highestSeverity !== severityFilter) {
+        return false;
+      }
+      if (
+        scopeFilter !== "all" &&
+        classifyMedicationScope(med.enDrugName) !== scopeFilter
+      ) {
         return false;
       }
       if (!q) return true;
@@ -112,7 +122,7 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
       return [...list].sort((a, b) => a.drugName.localeCompare(b.drugName));
     }
     return list;
-  }, [medications, query, severityFilter, sortBy]);
+  }, [medications, query, severityFilter, scopeFilter, sortBy]);
 
   return (
     <div className="space-y-6">
@@ -191,6 +201,34 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
             </button>
           );
         })}
+        <span className="mx-1 text-border" aria-hidden="true">
+          |
+        </span>
+        {(["all", "molecule", "class"] as const).map((sc) => (
+          <button
+            key={sc}
+            type="button"
+            onClick={() => setScopeFilter(sc)}
+            className={cn(
+              "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+              scopeFilter === sc
+                ? "border-foreground bg-foreground text-background"
+                : "border-border bg-background text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {sc === "all"
+              ? fr
+                ? "Molécules + classes"
+                : "Molecules + classes"
+              : sc === "molecule"
+                ? fr
+                  ? "Molécule précise"
+                  : "Single molecule"
+                : fr
+                  ? "Classe thérapeutique"
+                  : "Drug class"}
+          </button>
+        ))}
       </div>
 
       {filtered.length === 0 ? (
@@ -251,6 +289,15 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
                             : "Awaiting clinical review"}
                         </span>
                       )}
+                      <span className="ml-1 inline-block rounded-md border border-border bg-muted/60 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                        {classifyMedicationScope(med.enDrugName) === "class"
+                          ? fr
+                            ? "Classe thérapeutique"
+                            : "Drug class"
+                          : fr
+                            ? "Molécule précise"
+                            : "Single molecule"}
+                      </span>
                     </div>
 
                     <div className="flex flex-wrap gap-1.5 pt-1">

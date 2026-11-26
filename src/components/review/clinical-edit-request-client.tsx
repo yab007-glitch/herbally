@@ -511,13 +511,13 @@ export function ClinicalEditRequestClient({
           <div className="mt-5 rounded-xl border border-amber-300 bg-amber-50/70 p-4 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
             <p className="font-medium">
               {fr
-                ? "Activation LinkedIn SSO en attente de configuration serveur"
-                : "LinkedIn SSO setup pending server credentials"}
+                ? "File de triage active — soumissions par courriel ouvertes (SSO LinkedIn en attente d'identifiants OAuth)"
+                : "Active Review Intake Queue — Direct Submissions Open (LinkedIn SSO Pending OAuth Keys)"}
             </p>
             <p className="mt-1 text-xs leading-relaxed">
               {fr
-                ? "L'authentification unique LinkedIn attend les identifiants OAuth du portail développeur sur le serveur. En attendant, vous pouvez envoyer toute correction clinique sourcée à "
-                : "LinkedIn OAuth client credentials have not been added to this deployment yet. In the meantime, credentialed reviewers can send source-backed corrections directly to "}
+                ? "Notre file de vérification éditoriale et clinique est ouverte dès maintenant. En attendant la finalisation des clés OAuth LinkedIn en production, les cliniciens et lecteurs peuvent soumettre toute correction sourcée (URL, PMID ou justificatif) directement à "
+                : "Our editorial and clinical triage queue is actively accepting source-backed corrections. While self-serve LinkedIn OAuth app keys are provisioned for this deployment, credentialed reviewers and readers can send citation-backed edit requests directly to "}
               <a
                 href="mailto:info@herbally.app"
                 className="font-semibold underline underline-offset-2"

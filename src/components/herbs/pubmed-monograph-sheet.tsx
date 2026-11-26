@@ -34,6 +34,7 @@ interface Props {
   citations: Citation[];
   articleCount: number;
   status: string | null;
+  isDangerous?: boolean;
 }
 
 export function PubmedMonographSheet({
@@ -41,6 +42,7 @@ export function PubmedMonographSheet({
   citations,
   articleCount,
   status,
+  isDangerous = false,
 }: Props) {
   return (
     <PubmedMonographSheetView
@@ -48,6 +50,7 @@ export function PubmedMonographSheet({
       citations={citations}
       articleCount={articleCount}
       status={status}
+      isDangerous={isDangerous}
     />
   );
 }

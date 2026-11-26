@@ -29,7 +29,7 @@ const COPY = {
   en: {
     heading: "What licensed products claim",
     intro:
-      "Quoted from product licences issued by Health Canada. These are the words on licensed products, not medical advice. Some Health Canada licences cover multi-ingredient formulas, so listed claims or doses may reflect a full product rather than this herb alone.",
+      "Quoted from product licences issued by Health Canada. These indications and adult doses apply only to the specific licensed extract/formulation on file — not universal recommendations for raw herbs or other brands.",
     dangerousNote:
       "Health Canada's LNHPD lists ultra-diluted homeopathic preparations under this botanical name. Extreme homeopathic dilutions are fundamentally distinct from the raw toxic plant, so licensed homeopathic doses and indications are intentionally withheld here.",
     homeopathicNote:
@@ -47,7 +47,7 @@ const COPY = {
   fr: {
     heading: "Ce que déclarent les produits homologués",
     intro:
-      "Citations tirées de licences de produits délivrées par Santé Canada. Ce sont les mentions des produits homologués, et non un avis médical. Certaines licences couvrent des formules multi-ingrédients ; les mentions peuvent donc refléter le produit complet plutôt que cette plante seule.",
+      "Citations tirées de licences de produits délivrées par Santé Canada. Ces indications et doses adultes s'appliquent uniquement au produit et à l'extrait homologués au dossier — jamais à la plante brute en général ni à toute autre marque.",
     dangerousNote:
       "La base de Santé Canada répertorie des préparations homéopathiques hautement diluées sous ce nom botanique. Ces dilutions ne correspondent pas à la plante brute toxique ; leurs posologies et allégations sont donc masquées par sécurité.",
     homeopathicNote:

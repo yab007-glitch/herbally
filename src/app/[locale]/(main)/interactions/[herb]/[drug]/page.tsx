@@ -43,6 +43,7 @@ import {
   getInteractionPreparationContext,
   sanitizeContradictoryEvidenceNote,
 } from "@/lib/interactions/preparation-context";
+import { classifyMedicationScope } from "@/lib/interactions/medication-scope";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
@@ -627,17 +628,27 @@ export default async function InteractionPairPage({ params }: Props) {
         </p>
       </div>
 
-      {/* Verdict hero */}
+      {/* Verdict hero — qualify unreviewed legacy classifications visually so a
+          conservative hazard signal never masquerades as clinician-confirmed severity */}
       <div
-        className={cn("rounded-2xl border p-5", SEVERITY_STYLE[pair.severity])}
+        className={cn(
+          "rounded-2xl border p-5",
+          isClinicianApproved
+            ? SEVERITY_STYLE[pair.severity]
+            : "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+        )}
         role="note"
         aria-label={severityLabel(pair.severity, fr)}
       >
         <div className="flex items-start gap-3">
           <SeverityIcon severity={pair.severity} />
           <div>
-            <p className="font-semibold capitalize">
-              {severityLabel(pair.severity, fr)}
+            <p className="font-semibold">
+              {isClinicianApproved
+                ? severityLabel(pair.severity, fr)
+                : fr
+                  ? `Signal ${severityLabel(pair.severity, true).toLowerCase()} potentiel — signification clinique non confirmée`
+                  : `Potential ${severityLabel(pair.severity, false).toLowerCase()} signal — clinical significance not established`}
               {pair.evidenceLevel && (
                 <span className="ml-2 text-xs font-normal opacity-80">
                   · {evidenceLabel(pair.evidenceLevel, fr)}
@@ -655,16 +666,17 @@ export default async function InteractionPairPage({ params }: Props) {
         </div>
       </div>
 
-      {/* 4-dimension structured interaction summary (severity, evidence, review, preparation) */}
+      {/* 7-dimension structured interaction card */}
       {(() => {
         const prepCtx = getInteractionPreparationContext(pair.herbSlug, fr);
+        const medScope = classifyMedicationScope(pair.drugName);
         const sanitizedNote = sanitizeContradictoryEvidenceNote(
           pair.evidenceNote,
           pair.severity
         );
         return (
           <>
-            <dl className="grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 text-xs sm:grid-cols-3 lg:grid-cols-5">
+            <dl className="grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 text-xs sm:grid-cols-3 lg:grid-cols-4">
               <div>
                 <dt className="font-medium text-muted-foreground">
                   {fr ? "Gravité potentielle" : "Potential severity"}
@@ -687,7 +699,51 @@ export default async function InteractionPairPage({ params }: Props) {
               </div>
               <div>
                 <dt className="font-medium text-muted-foreground">
-                  {fr ? "Révision clinique" : "Clinical review"}
+                  {fr ? "Type de preuve" : "Evidence type"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {fr ? evidenceClass.badgeFr : evidenceClass.badgeEn}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Confirmation clinique" : "Clinical confirmation"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {isClinicianApproved
+                    ? fr
+                      ? "Confirmée par clinicien"
+                      : "Clinician-confirmed"
+                    : fr
+                      ? "Non confirmée (dossier hérité)"
+                      : "Unestablished (legacy record)"}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Portée du médicament" : "Medication scope"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {medScope === "class"
+                    ? fr
+                      ? "Classe thérapeutique (vérifier la molécule)"
+                      : "Drug class (verify exact drug)"
+                    : fr
+                      ? "Molécule précise"
+                      : "Single molecule"}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Préparation" : "Preparation"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {prepCtx.shortLabel}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Statut de révision" : "Review status"}
                 </dt>
                 <dd className="mt-0.5 font-semibold text-foreground">
                   {pair.verifiedAt
@@ -701,15 +757,7 @@ export default async function InteractionPairPage({ params }: Props) {
               </div>
               <div>
                 <dt className="font-medium text-muted-foreground">
-                  {fr ? "Préparation" : "Preparation"}
-                </dt>
-                <dd className="mt-0.5 font-semibold text-foreground">
-                  {prepCtx.shortLabel}
-                </dd>
-              </div>
-              <div className="col-span-2 sm:col-span-1">
-                <dt className="font-medium text-muted-foreground">
-                  {fr ? "Référence" : "Citation"}
+                  {fr ? "Source primaire" : "Primary citation"}
                 </dt>
                 <dd className="mt-0.5 font-semibold text-foreground">
                   {pair.source || (fr ? "Pharmacologie" : "Pharmacology")}

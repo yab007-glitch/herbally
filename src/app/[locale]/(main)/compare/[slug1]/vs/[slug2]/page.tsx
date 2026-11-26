@@ -28,6 +28,7 @@ import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import { isBucketCategory } from "@/lib/herbs/category";
+import { resolvePregnancyNursingStatus } from "@/lib/herbs/canonical-safety";
 
 // ISR. The locale is a root param now, so on-demand generation is safe and
 // comparisons outside the prerendered set still render (not 500). Three days
@@ -389,45 +390,85 @@ export default async function ComparePage({ params }: Props) {
           </div>
         </div>
 
-        {/* Safety Warnings */}
-        {(!herbA.pregnancy_safe ||
-          !herbB.pregnancy_safe ||
-          !herbA.nursing_safe ||
-          !herbB.nursing_safe) && (
-          <SafetyAlert
-            severity="critical"
-            title={`⚠️ ${t("compare.pregnancyWarnings")}`}
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="font-medium">{herbA.name}</p>
-                <p>
-                  {herbA.pregnancy_safe
-                    ? `✅ ${t("compare.safeInPregnancy")}`
-                    : `❌ ${t("compare.notRecommendedPregnancy")}`}
-                </p>
-                <p>
-                  {herbA.nursing_safe
-                    ? `✅ ${t("compare.safeNursing")}`
-                    : `❌ ${t("compare.notRecommendedNursing")}`}
-                </p>
+        {/* Safety Warnings — driven by the same canonical tri-state helper as /herbs/[slug] */}
+        {(() => {
+          const statusA = resolvePregnancyNursingStatus(herbA);
+          const statusB = resolvePregnancyNursingStatus(herbB);
+          const fr = locale === "fr";
+          const renderVerdict = (
+            verdict: "safe" | "not_recommended" | "unknown",
+            kind: "pregnancy" | "nursing"
+          ) => {
+            if (verdict === "safe") {
+              return `✅ ${
+                kind === "pregnancy"
+                  ? t("compare.safeInPregnancy")
+                  : t("compare.safeNursing")
+              }`;
+            }
+            if (verdict === "not_recommended") {
+              return `❌ ${
+                kind === "pregnancy"
+                  ? t("compare.notRecommendedPregnancy")
+                  : t("compare.notRecommendedNursing")
+              }`;
+            }
+            return fr
+              ? kind === "pregnancy"
+                ? "⚠️ Grossesse : inconnu — données insuffisantes"
+                : "⚠️ Allaitement : inconnu — données insuffisantes"
+              : kind === "pregnancy"
+                ? "⚠️ Pregnancy: Unknown — insufficient data"
+                : "⚠️ Nursing: Unknown — insufficient data";
+          };
+          const renderRouteSplit = (
+            split: { oral: boolean; topical: boolean } | null
+          ) => {
+            if (!split) return null;
+            return (
+              <p className="text-xs opacity-85">
+                {fr
+                  ? `Voie orale : ${split.oral ? "généralement sûr" : "non recommandé"} · Voie topique : ${split.topical ? "généralement sûr" : "non recommandé"}`
+                  : `Oral: ${split.oral ? "generally safe" : "not recommended"} · Topical: ${split.topical ? "generally safe" : "not recommended"}`}
+              </p>
+            );
+          };
+          const hasAnyNotSafe =
+            statusA.pregnancy !== "safe" ||
+            statusB.pregnancy !== "safe" ||
+            statusA.nursing !== "safe" ||
+            statusB.nursing !== "safe";
+          if (!hasAnyNotSafe) return null;
+          const hasExplicitUnsafe =
+            statusA.pregnancy === "not_recommended" ||
+            statusB.pregnancy === "not_recommended" ||
+            statusA.nursing === "not_recommended" ||
+            statusB.nursing === "not_recommended";
+
+          return (
+            <SafetyAlert
+              severity={hasExplicitUnsafe ? "critical" : "warning"}
+              title={`⚠️ ${t("compare.pregnancyWarnings")}`}
+            >
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <p className="font-medium">{herbA.name}</p>
+                  <p>{renderVerdict(statusA.pregnancy, "pregnancy")}</p>
+                  {renderRouteSplit(statusA.pregnancyRouteSplit)}
+                  <p>{renderVerdict(statusA.nursing, "nursing")}</p>
+                  {renderRouteSplit(statusA.nursingRouteSplit)}
+                </div>
+                <div>
+                  <p className="font-medium">{herbB.name}</p>
+                  <p>{renderVerdict(statusB.pregnancy, "pregnancy")}</p>
+                  {renderRouteSplit(statusB.pregnancyRouteSplit)}
+                  <p>{renderVerdict(statusB.nursing, "nursing")}</p>
+                  {renderRouteSplit(statusB.nursingRouteSplit)}
+                </div>
               </div>
-              <div>
-                <p className="font-medium">{herbB.name}</p>
-                <p>
-                  {herbB.pregnancy_safe
-                    ? `✅ ${t("compare.safeInPregnancy")}`
-                    : `❌ ${t("compare.notRecommendedPregnancy")}`}
-                </p>
-                <p>
-                  {herbB.nursing_safe
-                    ? `✅ ${t("compare.safeNursing")}`
-                    : `❌ ${t("compare.notRecommendedNursing")}`}
-                </p>
-              </div>
-            </div>
-          </SafetyAlert>
-        )}
+            </SafetyAlert>
+          );
+        })()}
 
         {/* Comparison Table */}
         <Card>

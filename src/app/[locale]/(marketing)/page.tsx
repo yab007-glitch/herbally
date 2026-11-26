@@ -95,6 +95,67 @@ export default async function HomePage() {
         <InteractionChecker className="w-full" showBrowseLink={false} />
       </div>
 
+      {/* Clear Safety & Evidence Orientation upfront */}
+      <section
+        aria-label={
+          locale === "fr"
+            ? "Comment interpréter HerbAlly en toute sécurité"
+            : "How to Read HerbAlly Safely"
+        }
+        className="mx-auto w-full max-w-5xl px-4 pb-2 sm:px-6"
+      >
+        <div className="grid gap-3 rounded-2xl border border-border/70 bg-muted/20 p-4 text-xs sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="font-semibold text-foreground">
+              {locale === "fr"
+                ? "1. Absence ≠ sécurité"
+                : "1. Missing record ≠ safe"}
+            </p>
+            <p className="mt-0.5 text-muted-foreground">
+              {locale === "fr"
+                ? "Un couple absent de la base ne prouve jamais qu'il est sûr — vérifiez avec un pharmacien."
+                : "If an herb–drug pair is absent from our table, that never proves it is safe to combine."}
+            </p>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground">
+              {locale === "fr"
+                ? "2. Base vs explication IA"
+                : "2. Curated DB vs AI help"}
+            </p>
+            <p className="mt-0.5 text-muted-foreground">
+              {locale === "fr"
+                ? "Les fiches sourcées viennent des monographies ; l'Herboriste Virtuel est un assistant IA éducatif."
+                : "Structured records cite regulatory & PubMed sources; the Virtual Herbalist is an educational AI assistant."}
+            </p>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground">
+              {locale === "fr"
+                ? "3. Statut de révision affiché"
+                : "3. Review status upfront"}
+            </p>
+            <p className="mt-0.5 text-muted-foreground">
+              {locale === "fr"
+                ? "Chaque fiche indique si elle a été vérifiée par sources ou approuvée par un clinicien agréé."
+                : "Legacy interactions clearly flag when they await independent licensed clinician sign-off."}
+            </p>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground">
+              {locale === "fr"
+                ? "4. Alimentaire vs extrait"
+                : "4. Culinary vs extracts"}
+            </p>
+            <p className="mt-0.5 text-muted-foreground">
+              {locale === "fr"
+                ? "Épices culinaires et extraits concentrés diffèrent — destiné au public préparant une visite médicale."
+                : "Food-level amounts differ from concentrated extracts; built to prepare pharmacist/doctor questions."}
+            </p>
+          </div>
+        </div>
+      </section>
+
       <HeroVisual />
 
       {/* Phase 2 explainer — previously the page ended at the checker,

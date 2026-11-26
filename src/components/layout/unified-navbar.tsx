@@ -31,6 +31,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -64,41 +66,90 @@ const primaryNavLinks = [
   { href: "/garden", labelKey: "nav.garden", icon: Sprout },
 ];
 
-const toolLinks: Array<{
-  href: string;
-  labelKey?: string;
-  labelEn?: string;
-  labelFr?: string;
-  icon: typeof Calculator;
-}> = [
-  { href: "/calculator", labelKey: "nav.calculator", icon: Calculator },
-  { href: "/medications", labelKey: "nav.medications", icon: Pill },
-  { href: "/npn-checker", labelKey: "nav.npnChecker", icon: ShieldCheck },
+type ToolNavGroup = {
+  id: "explore" | "safety" | "reference" | "governance";
+  titleEn: string;
+  titleFr: string;
+  items: Array<{
+    href: string;
+    labelKey?: string;
+    labelEn?: string;
+    labelFr?: string;
+    icon: typeof Calculator;
+  }>;
+};
+
+const toolGroups: ToolNavGroup[] = [
   {
-    href: "/surgery-planner",
-    labelKey: "nav.surgeryPlanner",
-    icon: CalendarClock,
+    id: "explore",
+    titleEn: "Explore",
+    titleFr: "Explorer",
+    items: [
+      { href: "/herbs", labelKey: "nav.explore", icon: Compass },
+      { href: "/symptoms", labelKey: "nav.symptoms", icon: Stethoscope },
+      {
+        href: "/compare",
+        labelEn: "Compare Herbs",
+        labelFr: "Comparer deux plantes",
+        icon: Scale,
+      },
+    ],
   },
-  { href: "/symptoms", labelKey: "nav.symptoms", icon: Stethoscope },
   {
-    href: "/compare",
-    labelEn: "Compare Herbs",
-    labelFr: "Comparer deux plantes",
-    icon: Scale,
+    id: "safety",
+    titleEn: "Medication Safety",
+    titleFr: "Sécurité médicamenteuse",
+    items: [
+      {
+        href: "/herb-drug-interactions",
+        labelKey: "nav.interactions",
+        icon: ShieldAlert,
+      },
+      { href: "/medications", labelKey: "nav.medications", icon: Pill },
+      { href: "/npn-checker", labelKey: "nav.npnChecker", icon: ShieldCheck },
+    ],
   },
   {
-    href: "/methodology",
-    labelEn: "Methodology & Coverage",
-    labelFr: "Méthodologie & Couverture",
-    icon: BookOpen,
+    id: "reference",
+    titleEn: "Reference Tools",
+    titleFr: "Outils de référence",
+    items: [
+      { href: "/calculator", labelKey: "nav.calculator", icon: Calculator },
+      {
+        href: "/surgery-planner",
+        labelKey: "nav.surgeryPlanner",
+        icon: CalendarClock,
+      },
+    ],
   },
   {
-    href: "/clinical-review",
-    labelEn: "Suggest an Edit",
-    labelFr: "Suggérer une modification",
-    icon: FileEdit,
+    id: "governance",
+    titleEn: "Governance & Review",
+    titleFr: "Gouvernance & Révision",
+    items: [
+      {
+        href: "/methodology",
+        labelEn: "Methodology & Coverage",
+        labelFr: "Méthodologie & Couverture",
+        icon: BookOpen,
+      },
+      {
+        href: "/editorial-policy",
+        labelEn: "Editorial Policy",
+        labelFr: "Politique éditoriale",
+        icon: ShieldCheck,
+      },
+      {
+        href: "/clinical-review",
+        labelEn: "Suggest an Edit",
+        labelFr: "Suggérer une modification",
+        icon: FileEdit,
+      },
+    ],
   },
 ];
+
+const toolLinks = toolGroups.flatMap((g) => g.items);
 
 function isPrimaryActive(pathname: string, href: string): boolean {
   const clean = stripLocalePrefix(pathname);
@@ -193,30 +244,42 @@ export function UnifiedNavbar() {
                 {t("nav.tools")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
-                {toolLinks.map((tool) => {
-                  const Icon = tool.icon;
-                  const active = isActivePath(pathname, tool.href, false);
-                  return (
-                    <DropdownMenuItem
-                      key={tool.href}
-                      render={<Link href={tool.href} />}
-                      className={cn(
-                        "min-h-10 cursor-pointer gap-2.5 px-2.5 py-2",
-                        active && "bg-accent font-medium text-accent-foreground"
-                      )}
-                    >
-                      <Icon className="size-4 shrink-0" aria-hidden="true" />
-                      <span>
-                        {tool.labelKey
-                          ? t(tool.labelKey)
-                          : locale === "fr"
-                            ? tool.labelFr
-                            : tool.labelEn}
-                      </span>
-                    </DropdownMenuItem>
-                  );
-                })}
+              <DropdownMenuContent align="start" className="w-64">
+                {toolGroups.map((group, idx) => (
+                  <div key={group.id}>
+                    {idx > 0 && <DropdownMenuSeparator />}
+                    <DropdownMenuLabel className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                      {locale === "fr" ? group.titleFr : group.titleEn}
+                    </DropdownMenuLabel>
+                    {group.items.map((tool) => {
+                      const Icon = tool.icon;
+                      const active = isActivePath(pathname, tool.href, false);
+                      return (
+                        <DropdownMenuItem
+                          key={tool.href}
+                          render={<Link href={tool.href} />}
+                          className={cn(
+                            "min-h-9 cursor-pointer gap-2.5 px-2.5 py-1.5",
+                            active &&
+                              "bg-accent font-medium text-accent-foreground"
+                          )}
+                        >
+                          <Icon
+                            className="size-4 shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span>
+                            {tool.labelKey
+                              ? t(tool.labelKey)
+                              : locale === "fr"
+                                ? tool.labelFr
+                                : tool.labelEn}
+                          </span>
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </div>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </nav>

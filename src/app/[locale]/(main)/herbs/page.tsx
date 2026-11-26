@@ -4,7 +4,10 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { Badge } from "@/components/ui/badge";
 import { HerbCard } from "@/components/herbs/herb-card";
 import { HerbPagination } from "@/components/herbs/herb-pagination";
-import { buildHerbListUrl } from "@/lib/search/herb-list-url";
+import {
+  buildHerbListUrl,
+  type HerbReviewFilter,
+} from "@/lib/search/herb-list-url";
 import { SmartSearch } from "@/components/herbs/smart-search";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DailyHerbBanner } from "@/components/herbs/daily-herb-banner";
@@ -35,6 +38,7 @@ export const generateMetadata = async ({
     page?: string;
     sort?: string;
     evidence?: string;
+    review?: string;
   }>;
 }): Promise<Metadata> => {
   const base = await buildPageMetadata({
@@ -48,7 +52,12 @@ export const generateMetadata = async ({
   // crawlable, but they are not pages of their own.
   const params = (await searchParams) ?? {};
   const filtered = Boolean(
-    params.q || params.category || params.sort || params.evidence || params.page
+    params.q ||
+    params.category ||
+    params.sort ||
+    params.evidence ||
+    params.review ||
+    params.page
   );
   if (!filtered) return base;
   return {
@@ -71,12 +80,24 @@ export default async function HerbsPage({
     page?: string;
     sort?: string;
     evidence?: string;
+    review?: string;
   }>;
 }) {
   const params = await searchParams;
   const query = params.q || "";
   const category = params.category || "";
   const evidence = params.evidence === "clinical" ? "clinical" : undefined;
+  const VALID_REVIEWS: ReadonlyArray<HerbReviewFilter> = [
+    "source_checked",
+    "clinically_reviewed",
+    "needs_review",
+    "ai_generated",
+  ];
+  const review: HerbReviewFilter | undefined = VALID_REVIEWS.includes(
+    params.review as HerbReviewFilter
+  )
+    ? (params.review as HerbReviewFilter)
+    : undefined;
   // Sort: only "evidence" is a non-default value. Anything else (including
   // an explicit ?sort=name, which the canonical URL drops) redirects below.
   const sort = params.sort === "evidence" ? "evidence" : "name";
@@ -89,8 +110,9 @@ export default async function HerbsPage({
   const locale = await getLocale();
   const prefix = locale === "fr" ? "/fr" : "";
   const t = await getTranslations({ locale });
-  const isDefaultPage1 = !query && !category && !evidence && page === 1;
-  const isUnfiltered = !query && !category && !evidence;
+  const isDefaultPage1 =
+    !query && !category && !evidence && !review && page === 1;
+  const isUnfiltered = !query && !category && !evidence && !review;
   const [herbsResult, categoriesResult, exactCount] = await Promise.all([
     isDefaultPage1
       ? getCachedDefaultHerbsPage(locale, sort)
@@ -99,7 +121,7 @@ export default async function HerbsPage({
             success: false as const,
             error: err instanceof Error ? err.message : "Failed to fetch herbs",
           }))
-      : getHerbs({ query, category, evidence, page, sort }, locale),
+      : getHerbs({ query, category, evidence, review, page, sort }, locale),
     getCachedHerbCategories(locale)
       .then((data) => ({ success: true as const, data }))
       .catch((err) => ({
@@ -118,12 +140,14 @@ export default async function HerbsPage({
     dropCategory?: boolean;
     dropSort?: boolean;
     dropEvidence?: boolean;
+    dropReview?: boolean;
   }) => {
     return buildHerbListUrl({
       q: query || undefined,
       category: category && !opts.dropCategory ? category : undefined,
       sort: sort === "evidence" && !opts.dropSort ? sort : undefined,
       evidence: evidence && !opts.dropEvidence ? evidence : undefined,
+      review: review && !opts.dropReview ? review : undefined,
       page: !opts.dropPage ? page : undefined,
       anchor: null,
     });
@@ -172,10 +196,15 @@ export default async function HerbsPage({
   const evidenceParam = params.evidence;
   const evidenceIsCanonical =
     evidenceParam === undefined || evidenceParam === "clinical";
+  const reviewParam = params.review;
+  const reviewIsCanonical =
+    reviewParam === undefined ||
+    VALID_REVIEWS.includes(reviewParam as HerbReviewFilter);
   if (
     !pageIsCanonical ||
     !sortIsCanonical ||
     !evidenceIsCanonical ||
+    !reviewIsCanonical ||
     (totalPages > 0 && page > totalPages)
   ) {
     redirect(
@@ -183,6 +212,7 @@ export default async function HerbsPage({
         dropPage: totalPages > 0 && page > totalPages ? true : page === 1,
         dropSort: !sortIsCanonical,
         dropEvidence: !evidenceIsCanonical,
+        dropReview: !reviewIsCanonical,
       })
     );
   }
@@ -241,6 +271,7 @@ export default async function HerbsPage({
               category={category}
               sort={sort}
               evidence={evidence}
+              review={review}
             />
           </Suspense>
         </div>
@@ -348,11 +379,57 @@ export default async function HerbsPage({
                 : "Clinical evidence (A–C)"}
             </Badge>
           </Link>
+          <span className="mx-1 text-border" aria-hidden="true">
+            |
+          </span>
+          {(
+            [
+              {
+                key: "source_checked",
+                en: "Source-checked",
+                fr: "Sources vérifiées",
+              },
+              {
+                key: "clinically_reviewed",
+                en: "Clinician-signed",
+                fr: "Révisé par clinicien",
+              },
+              {
+                key: "needs_review",
+                en: "Needs re-review",
+                fr: "À réviser",
+              },
+              {
+                key: "ai_generated",
+                en: "AI-generated draft",
+                fr: "Ébauche IA",
+              },
+            ] as const
+          ).map((item) => (
+            <Link
+              key={item.key}
+              href={buildHerbListUrl({
+                q: query || undefined,
+                category: category || undefined,
+                sort: sort === "evidence" ? sort : undefined,
+                evidence,
+                review: review === item.key ? undefined : item.key,
+                anchor: null,
+              })}
+            >
+              <Badge
+                variant={review === item.key ? "default" : "outline"}
+                className="cursor-pointer"
+              >
+                {locale === "fr" ? item.fr : item.en}
+              </Badge>
+            </Link>
+          ))}
         </div>
 
         {/* Results info — the total is the count for the current
           search+category+sort combination, not the whole database. */}
-        {(query || category || evidence || sort === "evidence") && (
+        {(query || category || evidence || review || sort === "evidence") && (
           <div className="mb-4 flex flex-wrap items-center gap-3">
             {herbs.length > 0 && (
               <p className="text-sm text-muted-foreground">

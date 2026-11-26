@@ -118,6 +118,26 @@ export function InteractionAlert({
 
   const severity = hasSevere ? "critical" : hasModerate ? "warning" : "info";
 
+  if (isDangerous && interactionCount > 0) {
+    return (
+      <SafetyAlert
+        severity="critical"
+        title={t("safety.dangerousNoInteractionsTitle")}
+        className={className}
+      >
+        <div className="space-y-2">
+          <p>{t("safety.dangerousNoInteractionsMsg")}</p>
+          <p className="text-xs font-medium">
+            {t("safety.interactionCountTitlePlural", {
+              count: interactionCount,
+            })}{" "}
+            — Poison Control (US): 1-800-222-1222 · Canada: 1-844-764-7669 · 911
+          </p>
+        </div>
+      </SafetyAlert>
+    );
+  }
+
   return (
     <SafetyAlert
       severity={severity}

@@ -579,7 +579,7 @@ export default async function HerbDetailPage({ params }: Props) {
     severity: i.severity,
   }));
   const resolvedFaqs =
-    preGeneratedFaqs.length > 0
+    !isDangerous && preGeneratedFaqs.length > 0
       ? preGeneratedFaqs.map((f) => ({
           question: f.question,
           answer: f.answer,
