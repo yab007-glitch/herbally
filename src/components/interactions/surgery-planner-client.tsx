@@ -247,6 +247,17 @@ export function SurgeryPlannerClient() {
             </Button>
           </div>
 
+          <div className="rounded-lg border border-amber-300 bg-amber-50/70 px-3.5 py-2.5 text-xs leading-relaxed text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+            <strong>
+              {fr
+                ? "Aide à la discussion uniquement : "
+                : "Discussion aid only: "}
+            </strong>
+            {fr
+              ? "ne constitue pas une consigne d'arrêter vos suppléments de vous-même. Les préparations, les doses et votre situation chirurgicale peuvent modifier les recommandations de votre équipe soignante."
+              : "this checklist is not an instruction to independently stop supplements. Different preparations, doses, and surgical circumstances can change what your surgical or anesthesia team recommends."}
+          </div>
+
           {plan.matched.length > 0 ? (
             <ul className="space-y-3">
               {plan.matched.map(({ rule, stopDateIso, alreadyPastWindow }) => (

@@ -18,6 +18,7 @@ export function AuthorByline({
   isReviewed = true,
   reviewerName,
   reviewerCredentials,
+  herbSlug,
 }: {
   locale: "en" | "fr";
   lastReviewed?: string | null;
@@ -25,6 +26,7 @@ export function AuthorByline({
   isReviewed?: boolean;
   reviewerName?: string | null;
   reviewerCredentials?: string | null;
+  herbSlug?: string | null;
 }) {
   const reviewerSuffix =
     isReviewed && reviewerName
@@ -91,6 +93,20 @@ export function AuthorByline({
           <span>
             {copy.updated}: {date}
           </span>
+        </>
+      )}
+      {herbSlug && (
+        <>
+          <span aria-hidden="true">·</span>
+          <Link
+            href={`/clinical-review?targetType=herb&slug=${herbSlug}`}
+            rel="nofollow"
+            className="underline underline-offset-2 hover:text-foreground"
+          >
+            {locale === "fr"
+              ? "Proposer une modification clinique"
+              : "Suggest a clinical edit"}
+          </Link>
         </>
       )}
     </div>

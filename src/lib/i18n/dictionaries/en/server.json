@@ -156,14 +156,14 @@
   },
   "aboutContent": {
     "header": "About HerbAlly",
-    "subtitle": "Your trusted, evidence-based resource for medicinal herbs and natural remedies.",
+    "subtitle": "Your evidence-referenced resource for medicinal herbs and natural remedies.",
     "whatIsTitle": "What is HerbAlly?",
-    "whatIsText1": "HerbAlly is a comprehensive digital platform designed to provide reliable, evidence-based information about medicinal herbs and natural remedies. We combine a vast herb database, scientifically grounded dosage calculators, and AI-powered guidance to help individuals make informed decisions about herbal supplements and their potential interactions with medications.",
+    "whatIsText1": "HerbAlly is a digital reference platform designed to provide evidence-referenced information about medicinal herbs and natural remedies. We combine a multi-source herb database, adult monograph dose references, and an AI guide grounded in our database records to help individuals explore herbal supplements and check recorded interaction signals with medications.",
     "whatIsText2": "Whether you are a healthcare professional looking for quick reference material, a herbalist seeking interaction data, or an individual exploring natural wellness options, HerbAlly provides the tools and information you need in one accessible platform.",
     "mission": {
       "title": "Our Mission",
       "educate": "Educate",
-      "educateDesc": "Provide accessible, evidence-based information about medicinal herbs and their uses.",
+      "educateDesc": "Provide accessible, evidence-referenced information about medicinal herbs and their uses.",
       "protect": "Protect",
       "protectDesc": "Help users identify potential drug-herb interactions and make safer supplement choices.",
       "empower": "Empower",
@@ -456,11 +456,11 @@
       "stats": {
         "visitors": {
           "value": "1,800",
-          "label": "visitors in the last 30 days"
+          "label": "visitors (Oct 2026 30-day snapshot)"
         },
         "pageviews": {
           "value": "2,300",
-          "label": "page views in the last 30 days"
+          "label": "page views (Oct 2026 30-day snapshot)"
         },
         "languages": {
           "value": "EN + FR",
@@ -517,7 +517,7 @@
   },
   "meta": {
     "herbsDatabase": "Medicinal Herbs Database",
-    "herbsDatabaseDesc": "Browse our evidence-based medicinal herb database with referenced profiles, active compounds, safety warnings, and drug interactions.",
+    "herbsDatabaseDesc": "Browse our evidence-referenced medicinal herb database with source-checked profiles, active compounds, safety warnings, and drug interactions.",
     "virtualHerbalist": "Virtual Herbalist",
     "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
     "doseCalculator": "Adult Herbal Reference Dose Checker (18+)",
@@ -795,7 +795,8 @@
       "upstash": "Upstash Redis — ephemeral rate-limiting counters (hashed request IP keys; US/cloud) to protect the site and AI endpoint against abuse.",
       "sentry": "Sentry — error monitoring and crash diagnostics with scrubbed request headers and cookies (US/cloud).",
       "zoho": "Zoho Mail (Canada) — transactional email delivery for safety-digest opt-in confirmation and privacy/editorial inquiries.",
-      "crossBorder": "Cross-border transfers: While our core PostgreSQL database runs in Montreal, Quebec, Canada, services such as Cloudflare, Ollama Cloud, Upstash, Sentry, and Stripe may process limited request metadata or submitted text outside Quebec and Canada under their respective data-protection frameworks."
+      "linkedinSso": "LinkedIn OpenID Connect (optional, clinical reviewers only) — when a credentialed reviewer chooses to sign in on /clinical-review, LinkedIn supplies name and email address to validate identity and route edit submissions.",
+      "crossBorder": "Cross-border transfers: While our core PostgreSQL database runs in Montreal, Quebec, Canada, services such as Cloudflare, Ollama Cloud, LinkedIn SSO (when used by reviewers), Upstash, Sentry, and Stripe may process limited request metadata or submitted text outside Quebec and Canada under their respective data-protection frameworks."
     },
     "cookiesSection": {
       "title": "5. Cookies",
@@ -803,6 +804,7 @@
       "localeCookie": "herbally-locale — set only when you switch languages, to remember en or fr for up to 1 year.",
       "guestCookie": "herbally-guest-id — an HttpOnly cookie that links your browser to an anonymous guest chat session so you can return to it.",
       "authCookies": "Supabase authentication cookies — set only if you choose to sign in, so your session stays active.",
+      "linkedinCookie": "herbally-linkedin-reviewer — an HttpOnly signed session cookie (8-hour expiry) set only if a clinical reviewer signs in with LinkedIn SSO on /clinical-review.",
       "adCookies": "Advertising cookies — if ads are enabled, Google and its partners may set cookies or use identifiers to serve and measure ads. You can control these through your browser and Google's ad settings.",
       "noTracking": "We do not use Facebook Pixel or invasive third-party trackers. Cookieless Cloudflare Web Analytics provides aggregate page counts, and advertising cookies apply only if ads are enabled."
     },

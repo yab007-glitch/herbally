@@ -574,6 +574,8 @@ async function checkMigrationFiles() {
     "00102_scientific_governance_and_incidents.sql",
     "00103_privacy_minimization_controls.sql",
     "00104_pediatric_boundary_contract.sql",
+    "00105_clinical_edit_requests.sql",
+    "00106_interaction_evidence_note_reconciliation.sql",
   ];
   for (const req of requiredPending) {
     if (!files.includes(req)) {
@@ -590,7 +592,7 @@ async function checkMigrationFiles() {
     if (content.includes("DELETE FROM") && !content.includes("WHERE")) {
       console.log(`  ⚠️  ${file}: Contains DELETE FROM without WHERE clause`);
     }
-    if (/^00(097|098|099|099b|100|101|102|103|104)/.test(file)) {
+    if (/^00(097|098|099|099b|100|101|102|103|104|105|106)/.test(file)) {
       const noComments = content
         .replace(/--[^\n]*/g, "")
         .replace(/\/\*[\s\S]*?\*\//g, "");

@@ -151,13 +151,13 @@
     "safety": "Sécurité"
   },
   "provenance": {
-    "verified": "Vérifié",
+    "verified": "Sources recoupées",
     "aiSummarized": "Résumée par IA",
     "primarySource": "Source primaire",
     "unverified": "Généré par IA",
     "reviewedBy": "Revu par",
     "on": "le",
-    "verifiedTooltip": "Cette fiche a été revue par un humain à partir d'une source primaire.",
+    "verifiedTooltip": "Recoupé auprès d'une source primaire.",
     "aiSummarizedTooltip": "Résumée par IA. Consultez les sources pour les références originales.",
     "primarySourceTooltip": "Cite une source primaire. Pas encore de revue manuelle.",
     "notHumanReviewed": "Non révisé par un humain",
@@ -181,8 +181,8 @@
     "nonPlantTooltip": "Cette fiche décrit un minéral, un produit animal, une vitamine ou un isolat, et non une plante. Il n'y a pas de nom botanique à recouper; la fiche est présentée comme entrée de matière médicale."
   },
   "pubmedSheet": {
-    "compiledTitle": "Fiche d'information compilée à partir de PubMed",
-    "compiledBody": "Cette fiche synthétise des résumés PubMed (NIH) à l'aide d'une IA. Elle n'a pas encore été révisée par un humain — vérifiez les affirmations auprès des articles PubMed listés et consultez un professionnel de santé avant utilisation.",
+    "compiledTitle": "Synthèse de recherche PubMed générée par IA (indépendante du contrôle en en-tête)",
+    "compiledBody": "Distincte des vérifications d'identité ou de source réglementaire affichées en haut de la page, cette section supplémentaire résume des articles PubMed (NIH) par IA et n'a PAS été relue par un humain. Vérifiez toujours les études originales et consultez un professionnel de santé.",
     "reviewedTitle": "Fiche d'information révisée",
     "reviewedBody": "Cette fiche a été compilée à partir de résumés PubMed (NIH) et a été révisée par un humain. Chaque affirmation est citée par un article PubMed réel (voir la liste des sources).",
     "languageNote": "Cette fiche compilée est en anglais parce que les études PubMed qu'elle cite sont en anglais ; l'interface autour reste en français.",
@@ -247,7 +247,7 @@
   },
   "herbs": {
     "title": "Base de Données d'Herbes Médicinales",
-    "subtitle": "Explorez des plantes médicinales avec des informations sourcées et fondées sur les preuves",
+    "subtitle": "Explorez des plantes médicinales avec des fiches sourcées et référencées",
     "herbOfTheDay": "Plante du Jour",
     "searchPlaceholder": "Rechercher des herbes par nom, symptôme ou utilisation...",
     "recentSearches": "Recherches récentes",

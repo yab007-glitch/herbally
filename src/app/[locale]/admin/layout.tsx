@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Leaf, Home, Users, AlertTriangle, ShieldCheck } from "lucide-react";
+import {
+  Leaf,
+  Home,
+  Users,
+  AlertTriangle,
+  ShieldCheck,
+  FileEdit,
+} from "lucide-react";
 import { ClipboardCheck } from "lucide-react";
 import { getAdminAccess } from "@/lib/auth/admin-guard";
 import { AdminMfaGate } from "@/components/admin/admin-mfa-gate";
@@ -25,6 +32,11 @@ const adminNavItems = [
     href: "/admin/pubmed-review",
     label: "PubMed Review",
     icon: ClipboardCheck,
+  },
+  {
+    href: "/admin/edit-requests",
+    label: "Edit Requests",
+    icon: FileEdit,
   },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/security", label: "Security (2FA)", icon: ShieldCheck },

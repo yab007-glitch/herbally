@@ -79,6 +79,12 @@ export function MarketingFooter() {
               {t("footer.editorialPolicy")}
             </Link>
             <Link
+              href="/clinical-review"
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.clinicalReview")}
+            </Link>
+            <Link
               href="/sponsors"
               className="hover:text-foreground transition-colors"
             >

@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   Activity,
   MessageSquare,
+  FileEdit,
 } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/utils/logger";
@@ -26,7 +27,7 @@ export default async function AdminOverviewPage() {
   try {
     const supabase = createAdminClient();
 
-    const [herbs, interactions, users, checks, chatSessions] =
+    const [herbs, interactions, users, checks, chatSessions, pendingEdits] =
       await Promise.all([
         supabase.from("herbs").select("id", { count: "exact", head: true }),
         supabase
@@ -39,6 +40,10 @@ export default async function AdminOverviewPage() {
         supabase
           .from("chat_sessions")
           .select("id", { count: "exact", head: true }),
+        supabase
+          .from("clinical_edit_requests")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pending"),
       ]);
 
     // Get herb with evidence breakdown
@@ -89,6 +94,13 @@ export default async function AdminOverviewPage() {
         icon: MessageSquare,
         gradient: "from-pink-500 to-rose-500",
         description: "Persisted conversations",
+      },
+      {
+        label: "Pending Edit Requests",
+        value: pendingEdits.count ?? 0,
+        icon: FileEdit,
+        gradient: "from-cyan-500 to-sky-500",
+        description: "LinkedIn reviewer queue",
       },
     ];
   } catch (error) {

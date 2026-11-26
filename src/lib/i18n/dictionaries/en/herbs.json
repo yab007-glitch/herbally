@@ -151,13 +151,13 @@
     "safety": "Safety"
   },
   "provenance": {
-    "verified": "Verified",
+    "verified": "Source-checked",
     "aiSummarized": "AI-summarized",
     "primarySource": "Source-backed",
     "unverified": "AI-Generated",
     "reviewedBy": "Reviewed by",
     "on": "on",
-    "verifiedTooltip": "This entry was reviewed by a human against a primary source.",
+    "verifiedTooltip": "Cross-checked against a primary source.",
     "aiSummarizedTooltip": "Summarized by AI. See the citations block for the underlying sources.",
     "primarySourceTooltip": "Cites a primary source. Not yet manually reviewed.",
     "notHumanReviewed": "Not human-reviewed",
@@ -181,8 +181,8 @@
     "nonPlantTooltip": "This entry is a mineral, animal product, vitamin or isolate, not a plant. There is no botanical name to cross-check, and its record is presented as a materia medica entry."
   },
   "pubmedSheet": {
-    "compiledTitle": "PubMed-compiled information sheet",
-    "compiledBody": "This draft summarizes selected PubMed (NIH) abstracts using AI assistance. It has not yet been human-reviewed — verify claims against the listed PubMed articles and consult a healthcare provider before use.",
+    "compiledTitle": "Supplemental AI-compiled PubMed research summary (independent of top profile checks)",
+    "compiledBody": "Separate from any top-of-page identity or regulatory source check, this supplemental section summarizes selected PubMed (NIH) abstracts using AI assistance and has NOT been human-reviewed. Verify claims directly in PubMed and consult a healthcare provider before use.",
     "reviewedTitle": "Reviewed information sheet",
     "reviewedBody": "This sheet was compiled from PubMed (NIH) abstracts and has been human-reviewed. Every claim is cited to a real PubMed article (see the source list).",
     "languageNote": "This compiled sheet is in English because the PubMed studies it cites are in English.",
@@ -247,7 +247,7 @@
   },
   "herbs": {
     "title": "Medicinal Herbs Database",
-    "subtitle": "Explore medicinal herbs with cited, evidence-based profiles",
+    "subtitle": "Explore medicinal herbs with source-checked and citation-linked profiles",
     "herbOfTheDay": "Herb of the Day",
     "searchPlaceholder": "Search herbs by name, symptom, or use...",
     "recentSearches": "Recent searches",

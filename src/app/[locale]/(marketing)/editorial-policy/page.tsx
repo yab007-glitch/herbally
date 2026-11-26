@@ -245,6 +245,21 @@ export default async function EditorialPolicyPage() {
         >
           info@herbally.app
         </a>
+        <div className="mt-4 border-t border-border/70 pt-3 text-sm text-muted-foreground">
+          <p>
+            {locale === "fr"
+              ? "Vous êtes pharmacien(ne), médecin ou clinicien(ne) diplômé(e) ? Validez votre identité via LinkedIn SSO pour soumettre une demande de modification clinique sourcée :"
+              : "Are you a licensed pharmacist, physician, or clinician? Validate your identity via LinkedIn SSO to submit a structured, citation-backed edit request:"}
+          </p>
+          <Link
+            href="/clinical-review"
+            className="mt-1.5 inline-block font-medium text-primary underline underline-offset-4"
+          >
+            {locale === "fr"
+              ? "Ouvrir le portail des réviseurs cliniques →"
+              : "Open Clinical Reviewer Portal →"}
+          </Link>
+        </div>
       </section>
 
       <p className="mt-8 flex flex-wrap gap-5 text-sm">

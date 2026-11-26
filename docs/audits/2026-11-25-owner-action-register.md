@@ -32,3 +32,11 @@ Sequential migrations `00097`–`00104` have now been applied to production (`he
 2. **Third-party Data Processing Agreements (DPAs) & zero-retention verification** with Supabase hosting, Vercel, and Ollama Cloud AI inference providers (confirm no log/prompt retention outside documented scope).
 3. **SOP / Charter formal approval** (`docs/governance/CLINICAL_REVIEW_SOP.md`, `ADVISORY_BOARD_CHARTER_TEMPLATE.md`, `SAFETY_INCIDENT_AND_CORRECTIONS_SOP.md`).
 4. **Indexation / Risk-Tier policy sign-off**: Default settings fail conservatively (`tier_2_clinical_review_required` -> `noindex_until_reviewed`); owner must formally confirm rollout timing alongside clinical review staffing before advertising unreviewed pages.
+
+## 4. LinkedIn OIDC SSO & Sponsors Analytics Operations (Added `2026-11-25`)
+
+1. **Enable LinkedIn OIDC SSO in `/srv/herbally/deploy/app.env`**:
+   - In the LinkedIn Developer Portal, create or open your app, add the **"Sign In with LinkedIn using OpenID Connect"** product (`openid`, `profile`, `email`), and register redirect URL `https://herbally.app/api/auth/linkedin/callback`.
+   - Set `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` (and optionally `LINKEDIN_SESSION_SECRET` and `CLINICAL_REVIEW_NOTIFY_EMAIL`) in `/srv/herbally/deploy/app.env`, then run `docker compose up -d --force-recreate --no-deps app`.
+2. **Sponsors analytics snapshot refresh (`/sponsors`)**:
+   - Before sending outbound sponsor pitches, refresh the Oct 2026 30-day visitor/page-view metrics in `src/lib/i18n/dictionaries/{en,fr}/server.json` (`sponsorship.audience.stats` & `.note`) with current verified Cloudflare Web Analytics figures.

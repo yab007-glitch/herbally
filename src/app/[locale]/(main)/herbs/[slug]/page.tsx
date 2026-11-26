@@ -685,6 +685,7 @@ export default async function HerbDetailPage({ params }: Props) {
           isReviewed={isClinicallyReviewed}
           reviewerName={reviewedBy}
           reviewerCredentials={reviewerCredentials}
+          herbSlug={slug}
         />
 
         <HerbJumpNav

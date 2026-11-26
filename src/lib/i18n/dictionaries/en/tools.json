@@ -38,7 +38,7 @@
       "calculationError": "An error occurred during calculation. Please check your inputs."
     },
     "results": {
-      "calculatedDose": "Calculated Dose",
+      "calculatedDose": "Adult Monograph Reference",
       "doseComparison": "Dose Comparison",
       "adultDose": "Adult Dose",
       "formulaUsed": "Formula Used",
@@ -190,7 +190,7 @@
     "checkButton": "Check interaction",
     "emptyError": "Enter an herb or a medication.",
     "sameError": "Enter two different products.",
-    "poweredBy": "Powered by HerbAlly — free evidence-based herb guide"
+    "poweredBy": "Powered by HerbAlly — free evidence-referenced herb guide"
   },
   "herbDrugInteractionsPage": {
     "heading": "Herb–Drug Interactions",
@@ -466,7 +466,7 @@
     "quarantinedHistoryNotice": "Dose hidden: this legacy entry lacked confirmed adult age (18+) or used a retired scaling rule.",
     "noCalculations": "No saved calculations yet. Use the calculator to save results.",
     "herbName": "Herb",
-    "calculatedDose": "Calculated Dose",
+    "calculatedDose": "Adult Reference",
     "formula": "Formula",
     "date": "Date",
     "gardenNotes": "Garden Notes",

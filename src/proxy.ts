@@ -223,7 +223,11 @@ export default async function proxy(request: NextRequest) {
   // links arrive at the wrong URL with ?code=... This catches the code on ANY
   // page and redirects to /auth/callback which exchanges it for a session.
   const authCode = request.nextUrl.searchParams.get("code");
-  if (authCode && !pathname.startsWith("/auth/callback")) {
+  if (
+    authCode &&
+    !pathname.startsWith("/auth/callback") &&
+    !pathname.startsWith("/api/auth/linkedin/callback")
+  ) {
     const callbackUrl = request.nextUrl.clone();
     callbackUrl.pathname = "/auth/callback";
     callbackUrl.searchParams.set("next", "/reset-password");
