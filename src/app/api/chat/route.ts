@@ -21,6 +21,11 @@ import {
   getOllamaCloudModel,
   streamChatCompletion,
 } from "@/lib/ai/ollama-cloud-client";
+import {
+  buildVerifiedSourcesFooter,
+  collectAllowedPmids,
+  sanitizeUnverifiedPmids,
+} from "@/lib/ai/ground-citations";
 
 const MAX_BODY_SIZE = 50 * 1024;
 
@@ -517,7 +522,7 @@ export async function POST(request: NextRequest) {
   // contradicts. They must never be served again; old rows simply expire.
   // v5: pediatric containment + privacy minimization (skip shared cache when
   // personalized or multi-turn).
-  const CACHE_KEY_VERSION = "herbally-chat-cache-v6-emergency-guard";
+  const CACHE_KEY_VERSION = "herbally-chat-cache-v7-grounded-citations";
   const shouldBypassCache =
     msgArray.length > 1 ||
     Boolean(medications && medications.length > 0) ||
@@ -708,7 +713,13 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const guarded = applyGuard(collected.text, answerLocale);
+  const allowedPmids = collectAllowedPmids(verifiedContext);
+  const sanitizedText = sanitizeUnverifiedPmids(
+    collected.text,
+    allowedPmids,
+    answerLocale
+  );
+  const guarded = applyGuard(sanitizedText, answerLocale);
   const answerStatus: AnswerStatus =
     guarded.verdict === "block"
       ? "blocked"
@@ -716,12 +727,23 @@ export async function POST(request: NextRequest) {
         ? "complete"
         : "incomplete";
 
+  const sourcesFooter =
+    answerStatus !== "blocked" && verifiedContext?.source === "database"
+      ? buildVerifiedSourcesFooter(verifiedContext, answerLocale)
+      : "";
   // A truncated answer carries its own label in-band: the client renders plain
   // text, and a fragment that stops mid-sentence otherwise reads as finished.
-  const delivered =
+  const deliveredBase =
     answerStatus === "incomplete"
       ? guarded.text + INCOMPLETE_NOTICE[answerLocale]
       : guarded.text;
+  const delivered = sourcesFooter
+    ? `${deliveredBase}${sourcesFooter}`
+    : deliveredBase;
+  const rawForCache =
+    guarded.verdict !== "block" && sourcesFooter
+      ? `${sanitizedText}${sourcesFooter}`
+      : sanitizedText;
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
@@ -747,7 +769,7 @@ export async function POST(request: NextRequest) {
           !guarded.failed
         ) {
           await withTimeout(
-            persistToCache(promptHash, collected.text, answerLocale),
+            persistToCache(promptHash, rawForCache, answerLocale),
             "chat_cache_persist"
           ).catch((err) => {
             logger.error("api_chat_cache_persist_timeout", {

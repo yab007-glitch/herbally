@@ -198,6 +198,7 @@ const SENSITIVE_PREFIXES = [
   "/npn-checker",
   "/symptoms",
   "/compare",
+  "/clinical-review",
   "/garden",
   "/profile",
   "/admin",

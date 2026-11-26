@@ -97,6 +97,29 @@ export default async function ContactPage() {
         ))}
       </div>
 
+      <div className="mt-6 rounded-lg border bg-card p-6 shadow-sm">
+        <h2 className="text-xl font-semibold text-foreground">
+          {locale === "fr"
+            ? "Portail des réviseurs cliniques (SSO LinkedIn)"
+            : "Clinical Reviewer Edit Portal (LinkedIn SSO)"}
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {locale === "fr"
+            ? "Les professionnels de santé qualifiés peuvent valider leur profil via LinkedIn et soumettre des demandes de modification sourcées sur toute fiche."
+            : "Credentialed healthcare professionals can validate their identity with LinkedIn SSO and submit citation-backed edit requests for any monograph or interaction pair."}
+        </p>
+        <p className="mt-3">
+          <Link
+            href="/clinical-review"
+            className="font-medium text-primary underline hover:no-underline"
+          >
+            {locale === "fr"
+              ? "Accéder au portail de révision clinique →"
+              : "Open Clinical Reviewer Portal →"}
+          </Link>
+        </p>
+      </div>
+
       <div className="mt-12">
         <h2 className="mb-4 text-2xl font-bold text-foreground">
           {t("contact.linksTitle")}

@@ -111,6 +111,155 @@ export type Database = {
           },
         ];
       };
+      clinical_edit_request_events: {
+        Row: {
+          action: string;
+          actor_id: string;
+          actor_type: string;
+          created_at: string;
+          event_id: string;
+          from_status: string | null;
+          note: string | null;
+          request_id: string;
+          to_status: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_id: string;
+          actor_type: string;
+          created_at?: string;
+          event_id?: string;
+          from_status?: string | null;
+          note?: string | null;
+          request_id: string;
+          to_status?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string;
+          actor_type?: string;
+          created_at?: string;
+          event_id?: string;
+          from_status?: string | null;
+          note?: string | null;
+          request_id?: string;
+          to_status?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "clinical_edit_request_events_request_id_fkey";
+            columns: ["request_id"];
+            isOneToOne: false;
+            referencedRelation: "clinical_edit_requests";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      clinical_edit_requests: {
+        Row: {
+          admin_notes: string | null;
+          affiliation: string | null;
+          attribution_consent: boolean;
+          citations: Json;
+          clinical_rationale: string;
+          conflict_of_interest: string;
+          created_at: string;
+          credentials: string;
+          current_text: string | null;
+          drug_name: string | null;
+          field_scope: string;
+          herb_slug: string | null;
+          id: string;
+          licence_jurisdiction: string | null;
+          licence_number: string | null;
+          linkedin_email: string;
+          linkedin_email_verified: boolean;
+          linkedin_name: string;
+          linkedin_picture: string | null;
+          linkedin_profile_url: string;
+          linkedin_sub: string;
+          locale: string;
+          no_phi_attested: boolean;
+          professional_role: string;
+          proposed_change: string;
+          reviewed_at: string | null;
+          reviewed_by_admin_id: string | null;
+          status: string;
+          summary: string;
+          surface_url: string | null;
+          target_type: string;
+          updated_at: string;
+        };
+        Insert: {
+          admin_notes?: string | null;
+          affiliation?: string | null;
+          attribution_consent?: boolean;
+          citations?: Json;
+          clinical_rationale: string;
+          conflict_of_interest: string;
+          created_at?: string;
+          credentials: string;
+          current_text?: string | null;
+          drug_name?: string | null;
+          field_scope: string;
+          herb_slug?: string | null;
+          id?: string;
+          licence_jurisdiction?: string | null;
+          licence_number?: string | null;
+          linkedin_email: string;
+          linkedin_email_verified?: boolean;
+          linkedin_name: string;
+          linkedin_picture?: string | null;
+          linkedin_profile_url: string;
+          linkedin_sub: string;
+          locale?: string;
+          no_phi_attested?: boolean;
+          professional_role: string;
+          proposed_change: string;
+          reviewed_at?: string | null;
+          reviewed_by_admin_id?: string | null;
+          status?: string;
+          summary: string;
+          surface_url?: string | null;
+          target_type: string;
+          updated_at?: string;
+        };
+        Update: {
+          admin_notes?: string | null;
+          affiliation?: string | null;
+          attribution_consent?: boolean;
+          citations?: Json;
+          clinical_rationale?: string;
+          conflict_of_interest?: string;
+          created_at?: string;
+          credentials?: string;
+          current_text?: string | null;
+          drug_name?: string | null;
+          field_scope?: string;
+          herb_slug?: string | null;
+          id?: string;
+          licence_jurisdiction?: string | null;
+          licence_number?: string | null;
+          linkedin_email?: string;
+          linkedin_email_verified?: boolean;
+          linkedin_name?: string;
+          linkedin_picture?: string | null;
+          linkedin_profile_url?: string;
+          linkedin_sub?: string;
+          locale?: string;
+          no_phi_attested?: boolean;
+          professional_role?: string;
+          proposed_change?: string;
+          reviewed_at?: string | null;
+          reviewed_by_admin_id?: string | null;
+          status?: string;
+          summary?: string;
+          surface_url?: string | null;
+          target_type?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       donations: {
         Row: {
           amount_cents: number;

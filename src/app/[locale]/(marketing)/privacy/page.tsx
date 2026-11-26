@@ -108,6 +108,7 @@ export default async function PrivacyPage() {
               <li>{t("privacy.thirdParty.sentry")}</li>
               <li>{t("privacy.thirdParty.stripe")}</li>
               <li>{t("privacy.thirdParty.zoho")}</li>
+              <li>{t("privacy.thirdParty.linkedinSso")}</li>
               <li>{t("privacy.thirdParty.adsense")}</li>
             </ul>
             <p className="mt-3">{t("privacy.thirdParty.crossBorder")}</p>
@@ -122,6 +123,7 @@ export default async function PrivacyPage() {
               <li>{t("privacy.cookiesSection.localeCookie")}</li>
               <li>{t("privacy.cookiesSection.guestCookie")}</li>
               <li>{t("privacy.cookiesSection.authCookies")}</li>
+              <li>{t("privacy.cookiesSection.linkedinCookie")}</li>
               <li>{t("privacy.cookiesSection.adCookies")}</li>
             </ul>
             <p className="mt-3">{t("privacy.cookiesSection.noTracking")}</p>

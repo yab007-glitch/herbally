@@ -84,7 +84,7 @@ export function ChatMarkdown({ children }: { children: string }) {
           {isPmid && (
             <span
               className="ml-1 inline-flex items-center gap-0.5 rounded bg-amber-100 dark:bg-amber-950/30 px-1 py-px text-[10px] text-amber-700 dark:text-amber-400"
-              title="AI-generated citation — verify on PubMed"
+              title="Verify against primary PubMed record"
             >
               <AlertCircle className="size-2.5" aria-hidden="true" />
               {t("common.verifyCitation")}

@@ -7,10 +7,10 @@ import { test, expect } from "@playwright/test";
  * interacting to ensure it has hydrated.
  *
  * The calculator is adult-only: it refuses to produce a number for anyone
- * under 18 and its inputs are labelled "Adult age (years)" / "Adult weight
- * (kg)". Do not reintroduce the old pediatric "Patient weight" / "Patient
- * age" selectors — those labels no longer exist and the resulting failures
- * were locator timeouts that looked like flakiness.
+ * under 18 and its age confirmation input is labelled "Adult age (years)" (weight
+ * and height fields are removed). Do not reintroduce the old pediatric "Patient
+ * weight" / "Patient age" selectors — those labels no longer exist and the resulting
+ * failures were locator timeouts that looked like flakiness.
  */
 test.describe("Dosage Calculator", () => {
   test("should load calculator page", async ({ page }) => {
@@ -32,7 +32,7 @@ test.describe("Dosage Calculator", () => {
 
     await expect(page.getByLabel(/Herb Name/i)).toBeVisible();
     await expect(page.getByLabel(/Adult Dose/i)).toBeVisible();
-    await expect(page.getByLabel(/Adult weight/i)).toBeVisible();
+    await expect(page.getByLabel(/Adult weight/i)).toHaveCount(0);
     await expect(page.getByLabel(/Adult age/i)).toBeVisible();
     await expect(page.getByLabel(/Height/i)).toHaveCount(0);
   });
@@ -47,7 +47,6 @@ test.describe("Dosage Calculator", () => {
     // Adult reference confirmation is the default and needs adult dose and confirmed 18+ age.
     await page.getByLabel(/Herb Name/i).fill("Ginger");
     await page.getByLabel(/Adult Dose/i).fill("500");
-    await page.getByLabel(/Adult weight/i).fill("70");
     await page.getByLabel(/Adult age/i).fill("30");
     await calculateBtn.click();
 
@@ -71,7 +70,6 @@ test.describe("Dosage Calculator", () => {
     // patient under 18 rather than emit a number or Save control.
     await page.getByLabel(/Herb Name/i).fill("Turmeric");
     await page.getByLabel(/Adult Dose/i).fill("500");
-    await page.getByLabel(/Adult weight/i).fill("60");
     await page.getByLabel(/Adult age/i).fill("8");
     await calculateBtn.click();
 
@@ -276,7 +274,6 @@ test.describe("Dosage Calculator", () => {
 
     await page.getByLabel(/Herb Name/i).fill("Ginger");
     await page.getByLabel(/Adult Dose/i).fill("500");
-    await page.getByLabel(/Adult weight/i).fill("70");
     await page.getByLabel(/Adult age/i).fill("30");
     await calculateBtn.click();
 

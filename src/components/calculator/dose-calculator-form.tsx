@@ -14,7 +14,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import {
   DOSAGE_FORMULAS,
@@ -22,13 +21,10 @@ import {
 } from "@/lib/constants/dosage-formulas";
 import {
   buildAdultReferenceDose,
-  lbsToKg,
   type DoseResult,
 } from "@/lib/utils/dosage-calculations";
 import {
   assessDoseEligibility,
-  MAX_ADULT_WEIGHT_KG,
-  MIN_ADULT_WEIGHT_KG,
   MINIMUM_DOSE_AGE_YEARS,
 } from "@/lib/utils/dosage-safety";
 import {
@@ -89,8 +85,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     prefill?.doseUnit ?? "mg"
   );
   const [ageYears, setAgeYears] = useState("");
-  const [weightValue, setWeightValue] = useState("");
-  const [useLbs, setUseLbs] = useState(false);
   const selectedFormula: FormulaKey = "adult_reference";
   const [snapshot, setSnapshot] = useState<CalculationSnapshot | null>(null);
   const snapshotSeqRef = useRef(0);
@@ -99,7 +93,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
   const [safetyBlock, setSafetyBlock] = useState<SafetyBlockState>(null);
   const [autoFilled, setAutoFilled] = useState(false);
   const { profile, loaded: profileLoaded } = useDefaultPatientProfile();
-  const dirtyFieldsRef = useRef({ weight: false, age: false });
+  const dirtyFieldsRef = useRef({ age: false });
   const appliedProfileRef = useRef(false);
 
   const liveBlockedHerb = matchCalculatorBlockedInput(herbName);
@@ -115,10 +109,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
     appliedProfileRef.current = true;
 
     let changed = false;
-    if (profile.weight_kg && !dirtyFieldsRef.current.weight) {
-      setWeightValue(String(profile.weight_kg));
-      changed = true;
-    }
     if (profile.age_years && !dirtyFieldsRef.current.age) {
       setAgeYears(String(profile.age_years));
       changed = true;
@@ -177,29 +167,12 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
       return;
     }
 
-    // 4) Optional adult weight plausibility check (20..350 kg)
-    const trimmedWeight = weightValue.trim();
-    let weight: number | null = null;
-    if (trimmedWeight !== "") {
-      const rawWeight = Number(trimmedWeight);
-      const converted = useLbs ? lbsToKg(rawWeight) : rawWeight;
-      if (
-        !Number.isFinite(converted) ||
-        converted < MIN_ADULT_WEIGHT_KG ||
-        converted > MAX_ADULT_WEIGHT_KG
-      ) {
-        setError(t("calculator.errors.invalidAdultWeight"));
-        return;
-      }
-      weight = converted;
-    }
-
     try {
       const calcResult = buildAdultReferenceDose({
         adultDose: dose,
         unit: doseUnit,
         ageYears: eligibility.ageYears,
-        weightKg: weight,
+        weightKg: null,
         heightCm: null,
       });
 
@@ -210,7 +183,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
         herbName,
         adultDose,
         doseUnit,
-        weightKg: weight,
+        weightKg: null,
         ageYears: eligibility.ageYears,
         heightCm: null,
         formula: selectedFormula,
@@ -219,9 +192,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
       setError(t("calculator.errors.calculationError"));
     }
   }
-
-  const showPlausibilityNote =
-    !!snapshot && snapshot.weightKg !== null && snapshot.weightKg > 250;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
@@ -434,7 +404,7 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
 
             <AutoFillBadge show={autoFilled} />
 
-            {/* Age (years only — pediatric/months unit removed) */}
+            {/* Age (years only — weight & height inputs removed; unscaled adult reference only) */}
             <div className="space-y-2">
               <Label htmlFor="patient-age">
                 {t("calculatorForm.childAge")} (
@@ -451,42 +421,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                 onChange={(e) => {
                   dirtyFieldsRef.current.age = true;
                   setAgeYears(e.target.value);
-                  invalidateCalculation();
-                }}
-              />
-            </div>
-
-            {/* Weight */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="patient-weight">
-                  {t("calculatorForm.childWeight")} ({useLbs ? "lbs" : "kg"})
-                </Label>
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="text-muted-foreground">kg</span>
-                  <Switch
-                    checked={useLbs}
-                    onCheckedChange={(checked) => {
-                      dirtyFieldsRef.current.weight = true;
-                      setUseLbs(checked);
-                      invalidateCalculation();
-                    }}
-                    aria-label={t("calculatorForm.toggleWeightUnit")}
-                  />
-                  <span className="text-muted-foreground">lbs</span>
-                </div>
-              </div>
-              <Input
-                className="h-11"
-                id="patient-weight"
-                type="number"
-                min="0"
-                step="any"
-                placeholder={useLbs ? "e.g. 155" : "e.g. 70"}
-                value={weightValue}
-                onChange={(e) => {
-                  dirtyFieldsRef.current.weight = true;
-                  setWeightValue(e.target.value);
                   invalidateCalculation();
                 }}
               />
@@ -620,16 +554,6 @@ export function DoseCalculatorForm({ prefill }: { prefill?: PrefillData }) {
                   </p>
                 )}
               </div>
-
-              {showPlausibilityNote && (
-                <div
-                  role="status"
-                  className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-900/20 dark:text-amber-300"
-                >
-                  <Info className="mb-0.5 mr-1 inline-block size-3" />
-                  {t("calculatorForm.plausibilityWarning")}
-                </div>
-              )}
 
               <div className="space-y-3 rounded-lg bg-background/80 p-4">
                 <div>

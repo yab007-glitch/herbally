@@ -245,6 +245,14 @@ async function insertAccountMessage(
 
 // ── Guest helpers ─────────────────────────────────────────────────────
 
+function isRetentionExpired(row: unknown): boolean {
+  const exp = (row as { retention_expires_at?: string | null } | null)
+    ?.retention_expires_at;
+  if (!exp) return false;
+  const ts = Date.parse(exp);
+  return Number.isFinite(ts) && ts <= Date.now();
+}
+
 async function readGuestSession(
   guestId: string,
   sessionId: string
@@ -264,7 +272,9 @@ async function readGuestSession(
     return { ok: false, code: "unavailable" };
   }
   const session = (sessions ?? []).find((s) => s.id === sessionId);
-  if (!session) return { ok: false, code: "not_found" };
+  if (!session || isRetentionExpired(session)) {
+    return { ok: false, code: "not_found" };
+  }
 
   const { data: messages, error: messagesError } = await supabase.rpc(
     "get_guest_chat_messages",
@@ -500,7 +510,9 @@ export async function getChatSessions(): Promise<
     }
     return {
       ok: true,
-      data: (data ?? []).map((row) => toSession(row)),
+      data: (data ?? [])
+        .filter((row) => !isRetentionExpired(row))
+        .map((row) => toSession(row)),
     };
   } catch (error) {
     logFailure("chat_persist_get_sessions", error);

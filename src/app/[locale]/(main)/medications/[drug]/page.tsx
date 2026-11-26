@@ -29,6 +29,10 @@ import {
   getInteractionStatusBadge,
   summarizeInteractionPublicationStatus,
 } from "@/lib/interactions/evidence";
+import {
+  countEvidenceBuckets,
+  getInteractionPreparationContext,
+} from "@/lib/interactions/preparation-context";
 import type {
   InteractionPair,
   InteractionSeverity,
@@ -281,12 +285,14 @@ export default async function MedicationDetailPage({ params }: Props) {
     },
   ];
 
+  const visiblePairs = Array.from(grouped.values()).flat();
+  const evidenceBuckets = countEvidenceBuckets(visiblePairs);
   const pageTitle = fr
     ? `${med.drugName} : interactions avec les plantes médicinales`
     : `${med.drugName} Herb & Supplement Interactions`;
   const pageDescription = fr
-    ? `${med.totalInteractions} plantes documentées interagissant avec ${med.drugName}, classées par niveau de risque et mécanisme.`
-    : `${med.totalInteractions} herbs and supplements documented to interact with ${med.drugName}, organized by severity and mechanism.`;
+    ? `${med.totalInteractions} signaux d'interaction enregistrés entre des plantes médicinales et ${med.drugName}, classés par gravité potentielle, niveau de preuve et statut de révision.`
+    : `${med.totalInteractions} recorded herb–${med.drugName} interaction signals, organized by potential severity, evidence certainty, and clinical review status.`;
 
   return (
     <div className="space-y-8">
@@ -352,8 +358,8 @@ export default async function MedicationDetailPage({ params }: Props) {
         </h1>
         <p className="max-w-2xl text-base text-muted-foreground">
           {fr
-            ? `${med.totalInteractions} plante${med.totalInteractions > 1 ? "s ont" : " a"} une interaction documentée avec ${med.drugName}. Sélectionnez une fiche ci-dessous pour consulter les précautions détaillées.`
-            : `${med.totalInteractions} medicinal herb${med.totalInteractions === 1 ? " has a" : "s have"} documented interaction${med.totalInteractions === 1 ? "" : "s"} with ${med.drugName}. Select any pair for full clinical notes and references.`}
+            ? `${med.totalInteractions} signaux d'interaction plante–${med.drugName} enregistrés (incluant des données cliniques, des rapports de cas et des signaux mécanistiques). Sélectionnez une fiche ci-dessous pour consulter les détails.`
+            : `${med.totalInteractions} recorded ${med.drugName}–herb interaction signals (spanning human studies, case reports, and pharmacological/theoretical mechanisms). Select any record for full evidence details and review status.`}
         </p>
         <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
           <Info className="size-3.5 text-amber-600" aria-hidden="true" />
@@ -396,6 +402,22 @@ export default async function MedicationDetailPage({ params }: Props) {
           </div>
         ))}
       </dl>
+
+      <div className="rounded-xl border border-border/80 bg-card px-4 py-3 text-xs text-muted-foreground">
+        <span className="font-semibold text-foreground">
+          {fr
+            ? "Répartition par certitude des preuves : "
+            : "Evidence certainty breakdown: "}
+        </span>
+        {fr
+          ? `${evidenceBuckets.human_clinical} bien documentées · ${evidenceBuckets.limited_or_case} limitées / cas · ${evidenceBuckets.preclinical_or_theoretical} mécanistiques / théoriques`
+          : `${evidenceBuckets.human_clinical} human clinical / well-documented · ${evidenceBuckets.limited_or_case} limited clinical or case reports · ${evidenceBuckets.preclinical_or_theoretical} pharmacological / theoretical`}
+        {evidenceBuckets.unclassified > 0
+          ? fr
+            ? ` · ${evidenceBuckets.unclassified} non classées`
+            : ` · ${evidenceBuckets.unclassified} unclassified`
+          : ""}
+      </div>
 
       <div className="space-y-8">
         {Array.from(grouped.entries()).map(([sev, items]) => (
@@ -482,6 +504,16 @@ export default async function MedicationDetailPage({ params }: Props) {
                         {pair.mechanism}
                       </p>
                     )}
+
+                    <p className="mt-1.5 text-xs text-muted-foreground">
+                      <span className="font-semibold text-foreground">
+                        {fr ? "Préparation : " : "Preparation context: "}
+                      </span>
+                      {
+                        getInteractionPreparationContext(pair.herbSlug, fr)
+                          .shortLabel
+                      }
+                    </p>
 
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-3 text-xs">
                       <div className="text-muted-foreground">
@@ -582,11 +614,22 @@ export default async function MedicationDetailPage({ params }: Props) {
         </div>
       </section>
 
-      <p className="text-xs text-muted-foreground">
-        {fr
-          ? "Informations éducatives uniquement — pas un avis médical. Confirmez toujours toute prise ou interruption avec votre médecin ou votre pharmacien."
-          : "Educational information only — not medical advice. Always verify with a healthcare professional or pharmacist before combining or stopping any medication."}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
+        <p>
+          {fr
+            ? "Informations éducatives uniquement — pas un avis médical. Confirmez toujours toute prise ou interruption avec votre médecin ou votre pharmacien."
+            : "Educational information only — not medical advice. Always verify with a healthcare professional or pharmacist before combining or stopping any medication."}
+        </p>
+        <Link
+          href={`/clinical-review?targetType=medication&drug=${encodeURIComponent(med.drugName)}`}
+          rel="nofollow"
+          className="font-medium text-primary underline underline-offset-4 hover:text-primary/80"
+        >
+          {fr
+            ? "Clinicien ou pharmacien ? Proposer une modification"
+            : "Clinician or pharmacist? Suggest a clinical edit"}
+        </Link>
+      </div>
     </div>
   );
 }

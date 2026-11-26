@@ -94,6 +94,15 @@ export function PubmedMonographSheetView({
             aria-hidden="true"
           />
           <div className="space-y-1">
+            <span className="inline-block rounded-full border border-blue-300 bg-white/80 px-2 py-0.5 text-[11px] font-semibold text-blue-900 dark:border-blue-700 dark:bg-blue-950/60 dark:text-blue-200">
+              {reviewed
+                ? locale === "fr"
+                  ? "Section PubMed supplémentaire · Relue par un humain"
+                  : "Supplemental PubMed summary · Human-reviewed"
+                : locale === "fr"
+                  ? "Section PubMed supplémentaire par IA · Non relue par un humain"
+                  : "Supplemental AI research summary · Not human-reviewed"}
+            </span>
             <p className="font-medium text-blue-900 dark:text-blue-100">
               {reviewed ? t("reviewedTitle") : t("compiledTitle")}
             </p>

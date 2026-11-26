@@ -234,10 +234,10 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
                     </div>
 
                     <div className="space-y-1 text-xs text-muted-foreground">
-                      <p>
+                      <p className="font-medium text-foreground/90">
                         {fr
-                          ? `${med.totalInteractions} plante${med.totalInteractions > 1 ? "s" : ""} avec interaction documentée`
-                          : `${med.totalInteractions} interacting herb${med.totalInteractions === 1 ? "" : "s"}`}
+                          ? `Gravité max. enregistrée : ${severityLabel(med.highestSeverity, fr)} · ${med.totalInteractions} fiche${med.totalInteractions > 1 ? "s" : ""}`
+                          : `Highest recorded severity: ${severityLabel(med.highestSeverity, fr)} · ${med.totalInteractions} total record${med.totalInteractions === 1 ? "" : "s"}`}
                       </p>
                       {breakdown && (
                         <p className="text-[11px] text-muted-foreground">

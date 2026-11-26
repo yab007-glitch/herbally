@@ -156,14 +156,14 @@
   },
   "aboutContent": {
     "header": "À propos d'HerbAlly",
-    "subtitle": "Votre ressource de confiance, fondée sur les preuves, pour les herbes médicinales et les remèdes naturels.",
+    "subtitle": "Votre ressource appuyée sur des références pour les herbes médicinales et les remèdes naturels.",
     "whatIsTitle": "Qu'est-ce qu'HerbAlly ?",
-    "whatIsText1": "HerbAlly est une plateforme numérique complète conçue pour fournir des informations fiables et fondées sur des preuves concernant les herbes médicinales et les remèdes naturels. Nous combinons une vaste base de données de plantes, des calculateurs de posologie scientifiquement fondés et des conseils alimentés par l'IA pour aider les individus à prendre des décisions éclairées sur les suppléments à base de plantes et leurs interactions potentielles avec les médicaments.",
+    "whatIsText1": "HerbAlly est une plateforme numérique conçue pour fournir des informations sourcées et appuyées sur des références concernant les herbes médicinales et les remèdes naturels. Nous combinons une base de données de plantes multi-sources, des repères posologiques pour adultes et un assistant IA ancré dans nos fiches pour aider chacun à s'informer sur les suppléments et les signaux d'interaction médicamenteuse recensés.",
     "whatIsText2": "Que vous soyez un professionnel de santé cherchant du matériel de référence rapide, un herboriste recherchant des données d'interaction, ou un individu explorant les options de bien-être naturel, HerbAlly fournit les outils et les informations dont vous avez besoin sur une plateforme accessible.",
     "mission": {
       "title": "Notre Mission",
       "educate": "Éduquer",
-      "educateDesc": "Fournir des informations accessibles et fondées sur des preuves sur les herbes médicinales et leurs utilisations.",
+      "educateDesc": "Fournir des informations accessibles et appuyées sur des références sur les herbes médicinales et leurs utilisations.",
       "protect": "Protéger",
       "protectDesc": "Aider les utilisateurs à identifier les interactions plante-médicament potentielles et à faire des choix de suppléments plus sûrs.",
       "empower": "Responsabiliser",
@@ -456,11 +456,11 @@
       "stats": {
         "visitors": {
           "value": "1 800",
-          "label": "visiteurs sur les 30 derniers jours"
+          "label": "visiteurs (instantané sur 30 jours, oct. 2026)"
         },
         "pageviews": {
           "value": "2 300",
-          "label": "pages vues sur les 30 derniers jours"
+          "label": "pages vues (instantané sur 30 jours, oct. 2026)"
         },
         "languages": {
           "value": "EN + FR",
@@ -517,7 +517,7 @@
   },
   "meta": {
     "herbsDatabase": "Base de Données de Plantes Médicinales",
-    "herbsDatabaseDesc": "Parcourez notre base de données de plantes médicinales avec fiches sourcées, composés actifs, avertissements de sécurité et interactions médicamenteuses.",
+    "herbsDatabaseDesc": "Parcourez notre base de données de plantes médicinales avec statut de révision, composés actifs, avertissements de sécurité et signaux d'interactions médicamenteuses.",
     "virtualHerbalist": "Herboriste Virtuel",
     "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions et la posologie. Réponses sourcées OMS, NCCIH et PubMed, gratuites.",
     "doseCalculator": "Vérificateur de Posologie Adulte de Référence (18+)",
@@ -795,7 +795,8 @@
       "upstash": "Upstash Redis — compteurs temporaires de limitation de requêtes (clés IP hachées ; États-Unis/infonuagique) pour protéger le site et l'assistant IA.",
       "sentry": "Sentry — surveillance des erreurs techniques avec suppression des en-têtes sensibles et témoins (États-Unis/infonuagique).",
       "zoho": "Zoho Mail (Canada) — envoi des courriels de confirmation du bulletin de sécurité et traitement des messages adressés au soutien ou à la vie privée.",
-      "crossBorder": "Transferts hors Québec : Bien que notre base de données PostgreSQL soit hébergée à Montréal (Québec, Canada), des fournisseurs comme Cloudflare, Ollama Cloud, Upstash, Sentry et Stripe peuvent traiter certaines métadonnées ou requêtes hors du Québec et du Canada."
+      "linkedinSso": "LinkedIn OpenID Connect (facultatif, réviseurs cliniques uniquement) — lorsqu'un clinicien choisit de se connecter sur /fr/clinical-review, LinkedIn fournit son nom et son adresse courriel pour valider son identité et acheminer sa demande de modification.",
+      "crossBorder": "Transferts hors Québec : Bien que notre base de données PostgreSQL soit hébergée à Montréal (Québec, Canada), des fournisseurs comme Cloudflare, Ollama Cloud, LinkedIn SSO (lorsque utilisé par un réviseur), Upstash, Sentry et Stripe peuvent traiter certaines métadonnées ou requêtes hors du Québec et du Canada."
     },
     "cookiesSection": {
       "title": "5. Cookies",
@@ -803,6 +804,7 @@
       "localeCookie": "herbally-locale — enregistré uniquement lorsque vous changez de langue manuellement, pour mémoriser en ou fr pendant un an au maximum.",
       "guestCookie": "herbally-guest-id — un cookie HttpOnly qui relie votre navigateur à une session de discussion invitée anonyme afin que vous puissiez y revenir.",
       "authCookies": "Cookies d'authentification Supabase — déposés uniquement si vous choisissez de vous connecter, pour maintenir votre session active.",
+      "linkedinCookie": "herbally-linkedin-reviewer — témoin de session signé HttpOnly (durée de 8 heures) déposé uniquement lorsqu'un réviseur clinique s'authentifie via LinkedIn SSO sur /fr/clinical-review.",
       "adCookies": "Cookies publicitaires — si la publicité est activée, Google et ses partenaires peuvent déposer des cookies ou utiliser des identifiants pour diffuser et mesurer les annonces. Vous pouvez les contrôler via votre navigateur et les paramètres publicitaires de Google.",
       "noTracking": "Nous n'utilisons ni Facebook Pixel ni traceurs publicitaires intrusifs. Les statistiques utilisent Cloudflare Web Analytics sans témoins ; les témoins publicitaires ne s'appliqueront que si les annonces sont activées."
     },

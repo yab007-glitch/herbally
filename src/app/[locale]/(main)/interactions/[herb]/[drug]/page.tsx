@@ -39,6 +39,10 @@ import {
   classifyInteractionEvidence,
   getClinicalActionDisplay,
 } from "@/lib/interactions/evidence";
+import {
+  getInteractionPreparationContext,
+  sanitizeContradictoryEvidenceNote,
+} from "@/lib/interactions/preparation-context";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
@@ -594,41 +598,84 @@ export default async function InteractionPairPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Clinical quick-facts summary */}
-      <dl className="grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 text-xs sm:grid-cols-4">
-        <div>
-          <dt className="font-medium text-muted-foreground">
-            {fr ? "Plante" : "Herb"}
-          </dt>
-          <dd className="mt-0.5 font-semibold text-foreground">
-            {pair.herbName}
-          </dd>
-        </div>
-        <div>
-          <dt className="font-medium text-muted-foreground">
-            {fr ? "Médicament" : "Medication"}
-          </dt>
-          <dd className="mt-0.5 font-semibold text-foreground">
-            {displayDrug}
-          </dd>
-        </div>
-        <div>
-          <dt className="font-medium text-muted-foreground">
-            {fr ? "Gravité" : "Severity"}
-          </dt>
-          <dd className="mt-0.5 font-semibold text-foreground">
-            {severityLabel(pair.severity, fr)}
-          </dd>
-        </div>
-        <div>
-          <dt className="font-medium text-muted-foreground">
-            {fr ? "Référence" : "Citation"}
-          </dt>
-          <dd className="mt-0.5 font-semibold text-foreground">
-            {pair.source || (fr ? "Pharmacologie" : "Pharmacology")}
-          </dd>
-        </div>
-      </dl>
+      {/* 4-dimension structured interaction summary (severity, evidence, review, preparation) */}
+      {(() => {
+        const prepCtx = getInteractionPreparationContext(pair.herbSlug, fr);
+        const sanitizedNote = sanitizeContradictoryEvidenceNote(
+          pair.evidenceNote,
+          pair.severity
+        );
+        return (
+          <>
+            <dl className="grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 text-xs sm:grid-cols-3 lg:grid-cols-5">
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Gravité potentielle" : "Potential severity"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {severityLabel(pair.severity, fr)}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Certitude des preuves" : "Evidence certainty"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {pair.evidenceLevel
+                    ? evidenceLabel(pair.evidenceLevel, fr)
+                    : fr
+                      ? "Limitée / préclinique"
+                      : "Limited / mechanistic"}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Révision clinique" : "Clinical review"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {pair.verifiedAt
+                    ? fr
+                      ? `Révisé (${pair.verifiedAt})`
+                      : `Reviewed (${pair.verifiedAt})`
+                    : fr
+                      ? "Non révisé cliniquement"
+                      : "Not clinically reviewed"}
+                </dd>
+              </div>
+              <div>
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Préparation" : "Preparation"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {prepCtx.shortLabel}
+                </dd>
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <dt className="font-medium text-muted-foreground">
+                  {fr ? "Référence" : "Citation"}
+                </dt>
+                <dd className="mt-0.5 font-semibold text-foreground">
+                  {pair.source || (fr ? "Pharmacologie" : "Pharmacology")}
+                </dd>
+              </div>
+            </dl>
+
+            <p className="-mt-4 rounded-xl border border-border/70 bg-muted/20 px-4 py-2.5 text-xs text-muted-foreground">
+              <strong className="text-foreground">
+                {fr ? "Forme et dose : " : "Preparation & dose note: "}
+              </strong>
+              {prepCtx.detail}
+            </p>
+
+            {/* Keep clean sanitized note available */}
+            {sanitizedNote && (
+              <p className="sr-only" data-sanitized-note="true">
+                {sanitizedNote}
+              </p>
+            )}
+          </>
+        );
+      })()}
 
       {/* What the data says */}
       <section className="space-y-4">
@@ -692,18 +739,30 @@ export default async function InteractionPairPage({ params }: Props) {
           above. Ten pairs cite a study whose abstract reports no change — the page
           has to say that rather than let the reader assume the paper supports the
           warning. */}
-      {pair.evidenceNote && (
-        <section className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
-          <h3 className="text-sm font-semibold text-foreground">
-            {fr
-              ? "Ce que dit précisément l'étude citée"
-              : "What the cited study actually found"}
-          </h3>
-          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-            {pair.evidenceNote}
-          </p>
-        </section>
-      )}
+      {(() => {
+        const cleanEvidenceNote = sanitizeContradictoryEvidenceNote(
+          pair.evidenceNote,
+          pair.severity
+        );
+        if (!cleanEvidenceNote) return null;
+        return (
+          <section className="space-y-2 rounded-xl border border-amber-200 bg-amber-50/60 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
+            <h3 className="text-sm font-semibold text-foreground">
+              {fr
+                ? "Ce que montrent les études humaines vs ce qui reste incertain"
+                : "What human studies found vs. what remains uncertain"}
+            </h3>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {cleanEvidenceNote}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {fr
+                ? "Les résultats négatifs dans de petits essais à court terme chez des volontaires sains ne permettent pas d'écarter un risque hémorragique ou métabolique avec des extraits concentrés ni chez les patients sous traitement au long cours."
+                : "Small short-term healthy-volunteer trials do not rule out clinical risk across patients, longer durations, or concentrated extracts; signal distinctions (human trials vs. case reports vs. preclinical mechanisms) are kept separate above."}
+            </p>
+          </section>
+        );
+      })()}
 
       {/* Clinical guidance status (no severity-templated instructions until clinician sign-off) */}
       <section className="space-y-3">
@@ -782,6 +841,15 @@ export default async function InteractionPairPage({ params }: Props) {
         >
           <ArrowLeft className="mr-1 size-4" />
           {pair.herbName}
+        </Link>
+        <Link
+          href={`/clinical-review?targetType=interaction&slug=${pair.herbSlug}&drug=${encodeURIComponent(pair.drugName)}`}
+          rel="nofollow"
+          className={buttonVariants({ variant: "outline" })}
+        >
+          {fr
+            ? "Proposer une modification clinique"
+            : "Suggest a clinical edit"}
         </Link>
       </div>
 

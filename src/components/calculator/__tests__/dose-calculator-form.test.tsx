@@ -68,13 +68,16 @@ beforeEach(() => {
 });
 
 describe("DoseCalculatorForm pediatric & formula containment", () => {
-  it("removes months toggle, unused height field, and all pediatric/adult-derived scaling formula radios", () => {
+  it("removes months toggle, unused height & weight fields, and all pediatric/adult-derived scaling formula radios", () => {
     render(<DoseCalculatorForm />);
     expect(
       screen.queryByRole("switch", { name: /toggleAgeUnit/i })
     ).not.toBeInTheDocument();
     expect(
       screen.queryByLabelText(/calculatorForm.heightCm/i)
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/calculatorForm.childWeight/i)
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole("radio", {
@@ -161,19 +164,10 @@ describe("DoseCalculatorForm pediatric & formula containment", () => {
     ).toBeInTheDocument();
   });
 
-  it("confirms unscaled adult reference (no Clark's scaling) for verified 18+ adults and rejects implausible adult weights", () => {
+  it("confirms unscaled adult reference (no weight or Clark's scaling) for verified 18+ adults", () => {
     const { container } = render(<DoseCalculatorForm />);
     setValue(/calculatorForm.adultDose/, "500");
-    setValue(/calculatorForm.childWeight/, "5");
     setValue(/calculatorForm.childAge/, "30");
-    calculate();
-
-    expect(renderedDose(container)).toBeNull();
-    expect(
-      screen.getByText("calculator.errors.invalidAdultWeight")
-    ).toBeInTheDocument();
-
-    setValue(/calculatorForm.childWeight/, "60");
     calculate();
 
     expect(renderedDose(container)).toContain("500");
@@ -269,7 +263,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
   it("invalidates calculated result and SaveCalcButton after any input edit", () => {
     const { container } = render(<DoseCalculatorForm />);
     setValue(/calculatorForm.adultDose/, "500");
-    setValue(/calculatorForm.childWeight/, "60");
     setValue(/calculatorForm.childAge/, "30");
     calculate();
 
@@ -287,21 +280,8 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
 
     calculate();
     expect(renderedDose(container)).not.toBeNull();
-    setValue(/calculatorForm.childWeight/, "70");
+    setValue(/calculatorForm.childAge/, "35");
     expect(renderedDose(container)).toBeNull();
-
-    calculate();
-    expect(renderedDose(container)).not.toBeNull();
-    fireEvent.click(screen.getByRole("switch", { name: /toggleWeightUnit/i }));
-    expect(renderedDose(container)).toBeNull();
-
-    setValue(/calculatorForm.childWeight/, "154");
-    calculate();
-    const snapshotEl = screen.getByTestId("save-calc-snapshot");
-    expect(Number(snapshotEl.getAttribute("data-weight-kg"))).toBeCloseTo(
-      69.9,
-      1
-    );
   });
 
   it("does not overwrite user-edited fields when a profile loads late and invalidates stale results when autofill updates any field", () => {
@@ -310,7 +290,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
 
     const { container, rerender } = render(<DoseCalculatorForm />);
     setValue(/calculatorForm.adultDose/, "500");
-    setValue(/calculatorForm.childWeight/, "60");
     setValue(/calculatorForm.childAge/, "30");
     calculate();
 
@@ -326,9 +305,8 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
     rerender(<DoseCalculatorForm />);
 
     expect(
-      (screen.getByLabelText(/calculatorForm.childWeight/) as HTMLInputElement)
-        .value
-    ).toBe("60");
+      screen.queryByLabelText(/calculatorForm.childWeight/)
+    ).not.toBeInTheDocument();
     expect(
       (screen.getByLabelText(/calculatorForm.childAge/) as HTMLInputElement)
         .value
@@ -346,7 +324,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
 
     const { container, rerender } = render(<DoseCalculatorForm />);
     setValue(/calculatorForm.adultDose/, "500");
-    setValue(/calculatorForm.childWeight/, "60");
     setValue(/calculatorForm.childAge/, "30");
     calculate();
 
@@ -361,10 +338,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
     rerender(<DoseCalculatorForm />);
 
     expect(
-      (screen.getByLabelText(/calculatorForm.childWeight/) as HTMLInputElement)
-        .value
-    ).toBe("60");
-    expect(
       (screen.getByLabelText(/calculatorForm.childAge/) as HTMLInputElement)
         .value
     ).toBe("30");
@@ -377,7 +350,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
 
     const { rerender } = render(<DoseCalculatorForm />);
     setValue(/calculatorForm.adultDose/, "500");
-    setValue(/calculatorForm.childWeight/, "60");
     calculate();
 
     expect(
@@ -392,10 +364,6 @@ describe("DoseCalculatorForm stale result & save invalidation", () => {
     profileHookState.loaded = true;
     rerender(<DoseCalculatorForm />);
 
-    expect(
-      (screen.getByLabelText(/calculatorForm.childWeight/) as HTMLInputElement)
-        .value
-    ).toBe("60");
     expect(
       (screen.getByLabelText(/calculatorForm.childAge/) as HTMLInputElement)
         .value

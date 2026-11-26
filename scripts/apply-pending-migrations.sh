@@ -4,8 +4,8 @@
 # and mandatory postcondition checks.
 #
 # Phases / Modes:
-#   --phase expand      Apply 00097, 00098, 00099, 00099b, 00100, 00101, 00102, 00103
-#                       (safe for reads & writes while the previous app image is serving)
+#   --phase expand      Apply 00097–00103, 00105, and 00106 (additive tables/reconciliations
+#                       safe for reads & writes while the previous app image is serving)
 #   --phase contract    Apply 00104_pediatric_boundary_contract.sql (ONLY after new
 #                       app image is healthy & verified using *_public views)
 #   --phase all         Apply expand + contract sequentially (default / CI fixture)
@@ -78,6 +78,8 @@ EXPAND_MIGRATIONS=(
   "supabase/migrations/00101_interaction_publication_contract.sql"
   "supabase/migrations/00102_scientific_governance_and_incidents.sql"
   "supabase/migrations/00103_privacy_minimization_controls.sql"
+  "supabase/migrations/00105_clinical_edit_requests.sql"
+  "supabase/migrations/00106_interaction_evidence_note_reconciliation.sql"
 )
 
 CONTRACT_MIGRATIONS=(
@@ -318,6 +320,54 @@ BEGIN
     WHERE table_schema = 'public' AND table_name = 'chat_sessions' AND column_name = 'retention_expires_at'
   ) THEN
     RAISE EXCEPTION 'Missing column public.chat_sessions.retention_expires_at';
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'clinical_edit_requests'
+  ) THEN
+    RAISE EXCEPTION 'Missing table public.clinical_edit_requests';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'clinical_edit_requests' AND column_name = 'linkedin_sub'
+  ) THEN
+    RAISE EXCEPTION 'Missing column public.clinical_edit_requests.linkedin_sub';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'public' AND table_name = 'clinical_edit_request_events'
+  ) THEN
+    RAISE EXCEPTION 'Missing table public.clinical_edit_request_events';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relname = 'clinical_edit_requests' AND c.relrowsecurity = true
+  ) OR NOT EXISTS (
+    SELECT 1 FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relname = 'clinical_edit_request_events' AND c.relrowsecurity = true
+  ) THEN
+    RAISE EXCEPTION 'RLS must be enabled on clinical_edit_requests and clinical_edit_request_events';
+  END IF;
+  IF has_table_privilege('anon', 'public.clinical_edit_requests', 'SELECT')
+     OR has_table_privilege('anon', 'public.clinical_edit_requests', 'INSERT')
+     OR has_table_privilege('authenticated', 'public.clinical_edit_requests', 'SELECT')
+     OR has_table_privilege('authenticated', 'public.clinical_edit_requests', 'INSERT')
+     OR has_table_privilege('anon', 'public.clinical_edit_request_events', 'SELECT')
+     OR has_table_privilege('anon', 'public.clinical_edit_request_events', 'INSERT')
+     OR has_table_privilege('authenticated', 'public.clinical_edit_request_events', 'SELECT')
+     OR has_table_privilege('authenticated', 'public.clinical_edit_request_events', 'INSERT') THEN
+    RAISE EXCEPTION 'anon/authenticated must NOT have direct privileges on clinical_edit_requests or clinical_edit_request_events';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM public.drug_interactions
+    WHERE severity IN ('contraindicated', 'severe', 'moderate')
+      AND evidence_note ~* 'grade\s+lowered\s+from'
+  ) THEN
+    RAISE EXCEPTION 'Contradictory "Grade lowered from" evidence_note still present on non-mild interaction';
   END IF;
 END
 $$;
