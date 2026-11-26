@@ -6,9 +6,10 @@ import {
   LINKEDIN_SESSION_COOKIE,
   LINKEDIN_SESSION_TTL_SECONDS,
   LINKEDIN_STATE_COOKIE,
-  clinicalReviewPathOnly,
+  buildLinkedInErrorRedirect,
   createReviewerSessionToken,
   exchangeLinkedInCodeForUser,
+  extractNextFromStateCookie,
   getLinkedInOidcConfig,
   resolveAppOrigin,
   reviewerCookieOptions,
@@ -30,6 +31,7 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const origin = resolveAppOrigin(request.url);
   const stateCookie = request.cookies.get(LINKEDIN_STATE_COOKIE)?.value;
+  const fallbackNext = extractNextFromStateCookie(stateCookie);
 
   const ip = getClientIP(request);
   const rl = await rateLimit(
@@ -39,7 +41,7 @@ export async function GET(request: NextRequest) {
   );
   if (!rl.success) {
     return redirectWithClearedState(
-      `${origin}/clinical-review?authError=rate_limited`
+      buildLinkedInErrorRedirect(origin, fallbackNext, "rate_limited")
     );
   }
 
@@ -53,7 +55,7 @@ export async function GET(request: NextRequest) {
         : "provider_error";
     logger.warn("linkedin_oauth_provider_error", { error: providerError });
     return redirectWithClearedState(
-      `${origin}/clinical-review?authError=${code}`
+      buildLinkedInErrorRedirect(origin, fallbackNext, code)
     );
   }
 
@@ -62,16 +64,15 @@ export async function GET(request: NextRequest) {
   const verifiedState = verifyOAuthState(stateCookie, returnedState);
   if (!code || !verifiedState) {
     return redirectWithClearedState(
-      `${origin}/clinical-review?authError=invalid_state`
+      buildLinkedInErrorRedirect(origin, fallbackNext, "invalid_state")
     );
   }
 
   const targetNext = verifiedState.next;
-  const reviewPath = clinicalReviewPathOnly(targetNext);
   const config = getLinkedInOidcConfig(request.url);
   if (!config) {
     return redirectWithClearedState(
-      `${origin}${reviewPath}?authError=not_configured`
+      buildLinkedInErrorRedirect(origin, targetNext, "not_configured")
     );
   }
 
@@ -80,7 +81,7 @@ export async function GET(request: NextRequest) {
     const sessionToken = createReviewerSessionToken(user);
     if (!sessionToken) {
       return redirectWithClearedState(
-        `${origin}${reviewPath}?authError=not_configured`
+        buildLinkedInErrorRedirect(origin, targetNext, "not_configured")
       );
     }
 
@@ -100,7 +101,7 @@ export async function GET(request: NextRequest) {
       error: err instanceof Error ? err.message : String(err),
     });
     return redirectWithClearedState(
-      `${origin}${reviewPath}?authError=exchange_failed`
+      buildLinkedInErrorRedirect(origin, targetNext, "exchange_failed")
     );
   }
 }

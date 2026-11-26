@@ -97,23 +97,26 @@ describe("/api/clinical-edits", () => {
       emailVerified: true,
       picture: null,
     });
-    const eqMock = vi.fn().mockReturnValue({
-      order: () => ({
-        limit: async () => ({
-          data: [{ id: "req-1", summary: "Fix", status: "pending" }],
-          error: null,
-        }),
-      }),
+    const limitMock = vi.fn().mockResolvedValue({
+      data: [{ id: "req-1", summary: "Fix", status: "pending" }],
+      error: null,
+    });
+    const orderMock = vi.fn().mockReturnValue({ limit: limitMock });
+    const innerEqMock = vi.fn().mockReturnValue({ order: orderMock });
+    const outerEqMock = vi.fn().mockReturnValue({
+      eq: innerEqMock,
+      order: orderMock,
     });
     adminFromMock.mockReturnValueOnce({
-      select: () => ({ eq: eqMock }),
+      select: () => ({ eq: outerEqMock }),
     });
 
     const res = await GET(
-      new NextRequest("https://herbally.test/api/clinical-edits")
+      new NextRequest("https://herbally.app/api/clinical-edits?herbSlug=Ginger")
     );
     expect(res.status).toBe(200);
-    expect(eqMock).toHaveBeenCalledWith("linkedin_sub", "li-sub-real");
+    expect(outerEqMock).toHaveBeenCalledWith("linkedin_sub", "li-sub-real");
+    expect(innerEqMock).toHaveBeenCalledWith("herb_slug", "ginger");
   });
 
   it("POST returns 401 when unauthenticated", async () => {
@@ -197,5 +200,57 @@ describe("/api/clinical-edits", () => {
     expect(insertEventMock).toHaveBeenCalledTimes(1);
     expect(sendMailMock).toHaveBeenCalledTimes(1);
     expect(sendMailMock.mock.calls[0][0].text).not.toContain("SECRET-LIC-999");
+  });
+
+  it("POST accepts minimal community user herb edit suggestions without optional clinician fields", async () => {
+    getSessionMock.mockResolvedValueOnce({
+      sub: "li-sub-user",
+      name: "Alex Taylor",
+      email: "alex@example.org",
+      emailVerified: true,
+      picture: null,
+    });
+    const insertReqMock = vi.fn().mockReturnValue({
+      select: () => ({
+        single: async () => ({
+          data: {
+            id: "req-uuid-2",
+            status: "pending",
+            created_at: "2026-11-26T00:00:00Z",
+          },
+          error: null,
+        }),
+      }),
+    });
+    adminFromMock.mockImplementation((table: string) => {
+      if (table === "clinical_edit_requests") {
+        return { insert: insertReqMock };
+      }
+      if (table === "clinical_edit_request_events") {
+        return { insert: vi.fn().mockResolvedValue({ error: null }) };
+      }
+      return {};
+    });
+
+    const res = await POST(
+      new NextRequest("https://herbally.test/api/clinical-edits", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetType: "herb",
+          herbSlug: "ginger",
+          summary: "Typo in preparation notes",
+          proposedChange:
+            "Replace 'rhizom' spelling with 'rhizome' in adult use.",
+          noPhiAttested: true,
+        }),
+      })
+    );
+    expect(res.status).toBe(201);
+    const insertedRow = insertReqMock.mock.calls[0][0];
+    expect(insertedRow.professional_role).toBe("community_user");
+    expect(insertedRow.credentials).toBeNull();
+    expect(insertedRow.linkedin_profile_url).toBeNull();
+    expect(insertedRow.citations).toEqual([]);
   });
 });

@@ -2,6 +2,8 @@ import { z } from "zod";
 import type { Database } from "@/lib/types/database";
 
 export const PROFESSIONAL_ROLES = [
+  "community_user",
+  "researcher_educator",
   "pharmacist",
   "physician",
   "nurse_practitioner_rn",
@@ -160,87 +162,84 @@ function normalizeOptionalSurfaceUrl(raw: unknown): string | null {
   return null;
 }
 
+export function isClinicianSubmission(row: {
+  professional_role?: string | null;
+  credentials?: string | null;
+  licence_number?: string | null;
+}): boolean {
+  return (
+    (Boolean(row.professional_role) &&
+      row.professional_role !== "community_user") ||
+    Boolean(row.credentials?.trim()) ||
+    Boolean(row.licence_number?.trim())
+  );
+}
+
 export const clinicalEditSubmissionSchema = z
   .object({
     linkedinProfileUrl: z
       .string()
       .trim()
-      .min(1, "LinkedIn profile URL is required")
       .max(300)
+      .optional()
+      .default("")
       .transform((val, ctx) => {
+        if (!val) return "";
         const normalized = normalizeLinkedInProfileUrl(val);
         if (!normalized) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message:
-              "Enter a valid https://www.linkedin.com/in/your-handle profile URL.",
+              "Enter a valid https://www.linkedin.com/in/your-handle profile URL (or leave blank).",
           });
           return z.NEVER;
         }
         return normalized;
       }),
-    professionalRole: z.enum(PROFESSIONAL_ROLES),
-    credentials: z
-      .string()
-      .trim()
-      .min(2, "Professional credentials or designation are required.")
-      .max(120),
+    professionalRole: z
+      .enum(PROFESSIONAL_ROLES)
+      .optional()
+      .default("community_user"),
+    credentials: z.string().trim().max(120).optional().default(""),
     affiliation: z.string().trim().max(180).optional().default(""),
     licenceNumber: z.string().trim().max(80).optional().default(""),
     licenceJurisdiction: z.string().trim().max(120).optional().default(""),
-    conflictOfInterest: z
-      .string()
-      .trim()
-      .min(
-        4,
-        "Disclose any financial or professional conflict of interest (or write None)."
-      )
-      .max(500),
+    conflictOfInterest: z.string().trim().max(500).optional().default(""),
     attributionConsent: z.boolean().optional().default(false),
     noPhiAttested: z.boolean().refine((v) => v === true, {
       message:
         "Confirm your submission contains no patient health information.",
     }),
-    targetType: z.enum(EDIT_TARGET_TYPES),
+    targetType: z.enum(EDIT_TARGET_TYPES).optional().default("herb"),
     herbSlug: z.string().trim().max(120).optional().default(""),
     drugName: z.string().trim().max(120).optional().default(""),
     surfaceUrl: z.string().trim().max(300).optional().default(""),
-    fieldScope: z.enum(EDIT_FIELD_SCOPES),
+    fieldScope: z
+      .enum(EDIT_FIELD_SCOPES)
+      .optional()
+      .default("monograph_narrative"),
     summary: z
       .string()
       .trim()
-      .min(10, "Provide a concise summary (at least 10 characters).")
+      .min(6, "Provide a concise summary (at least 6 characters).")
       .max(200),
     currentText: z.string().trim().max(3000).optional().default(""),
     proposedChange: z
       .string()
       .trim()
-      .min(
-        20,
-        "Describe the proposed wording or change (at least 20 characters)."
-      )
+      .min(10, "Describe the proposed edit (at least 10 characters).")
       .max(6000),
-    clinicalRationale: z
-      .string()
-      .trim()
-      .min(20, "Explain the clinical rationale (at least 20 characters).")
-      .max(6000),
+    clinicalRationale: z.string().trim().max(6000).optional().default(""),
     citations: z
       .union([z.string(), z.array(z.string())])
+      .optional()
+      .default("")
       .transform((val, ctx) => {
         const parsed = parseCitationList(val);
         if (parsed.invalid.length > 0) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: `Unsupported citation format: ${parsed.invalid[0]}. Use https:// URLs, PMID:12345678, or DOI:10....`,
-          });
-          return z.NEVER;
-        }
-        if (parsed.valid.length < 1) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message:
-              "Provide at least one primary citation (https:// URL, PMID:..., or DOI:...).",
           });
           return z.NEVER;
         }

@@ -43,4 +43,20 @@ describe("00105 & 00106 governance/reconciliation migrations", () => {
     expect(sql).toMatch(/'null'::jsonb/i);
     expect(sql).not.toMatch(/\(\?<[=!]/);
   });
+
+  it("00107 relaxes optional clinician/rationale columns and adds community_user role safely", () => {
+    const sql = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        "supabase/migrations/00107_open_herb_edit_suggestions.sql"
+      ),
+      "utf8"
+    );
+    expect(sql).toMatch(/^\s*BEGIN\s*;/im);
+    expect(sql).toMatch(/^\s*COMMIT\s*;/im);
+    expect(sql).toMatch(/ALTER COLUMN credentials DROP NOT NULL/i);
+    expect(sql).toMatch(/community_user/i);
+    expect(sql).toMatch(/clinical_edit_requests_professional_role_check/i);
+    expect(sql).not.toMatch(/\(\?<[=!]/);
+  });
 });

@@ -103,9 +103,7 @@ export function AuthorByline({
             rel="nofollow"
             className="underline underline-offset-2 hover:text-foreground"
           >
-            {locale === "fr"
-              ? "Proposer une modification clinique"
-              : "Suggest a clinical edit"}
+            {locale === "fr" ? "Suggérer une modification" : "Suggest an edit"}
           </Link>
         </>
       )}

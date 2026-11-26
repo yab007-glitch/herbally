@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { updateClinicalEditRequestStatusAction } from "@/lib/actions/admin-clinical-edits";
 import {
   EDIT_REQUEST_STATUSES,
+  isClinicianSubmission,
   type ClinicalEditRequestRow,
 } from "@/lib/governance/clinical-edits";
 import { Badge } from "@/components/ui/badge";
@@ -131,6 +132,7 @@ export default async function AdminEditRequestsPage({
             const citations = Array.isArray(req.citations)
               ? req.citations.map(String)
               : [];
+            const clinicianSubmitted = isClinicianSubmission(req);
             return (
               <Card key={req.id}>
                 <CardHeader className="pb-3">
@@ -139,6 +141,13 @@ export default async function AdminEditRequestsPage({
                       <CardTitle className="text-base">{req.summary}</CardTitle>
                       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <Badge variant="secondary">{req.status}</Badge>
+                        <Badge
+                          variant={clinicianSubmitted ? "default" : "outline"}
+                        >
+                          {clinicianSubmitted
+                            ? "Clinical Reviewer"
+                            : "Community Contributor"}
+                        </Badge>
                         <span>
                           {req.target_type}
                           {req.herb_slug ? ` · ${req.herb_slug}` : ""}
@@ -161,19 +170,25 @@ export default async function AdminEditRequestsPage({
                       {req.linkedin_email_verified
                         ? "verified email"
                         : "unverified email"}
-                      ) ·{" "}
-                      <a
-                        href={req.linkedin_profile_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary underline"
-                      >
-                        {req.linkedin_profile_url}
-                      </a>
+                      )
+                      {req.linkedin_profile_url && (
+                        <>
+                          {" · "}
+                          <a
+                            href={req.linkedin_profile_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary underline"
+                          >
+                            {req.linkedin_profile_url}
+                          </a>
+                        </>
+                      )}
                     </p>
                     <p>
                       <strong>Role & Credentials:</strong>{" "}
-                      {req.professional_role} · {req.credentials}
+                      {req.professional_role}
+                      {req.credentials ? ` · ${req.credentials}` : ""}
                       {req.affiliation ? ` · ${req.affiliation}` : ""}
                     </p>
                     {(req.licence_number || req.licence_jurisdiction) && (
@@ -186,7 +201,7 @@ export default async function AdminEditRequestsPage({
                     )}
                     <p>
                       <strong>COI Disclosure:</strong>{" "}
-                      {req.conflict_of_interest} ·{" "}
+                      {req.conflict_of_interest || "None stated"} ·{" "}
                       <strong>Attribution consent:</strong>{" "}
                       {req.attribution_consent ? "Yes" : "No"}
                     </p>
@@ -212,16 +227,18 @@ export default async function AdminEditRequestsPage({
                     </p>
                   </div>
 
-                  <div>
-                    <p className="text-xs font-semibold uppercase text-muted-foreground">
-                      Clinical rationale
-                    </p>
-                    <p className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">
-                      {req.clinical_rationale}
-                    </p>
-                  </div>
+                  {req.clinical_rationale && (
+                    <div>
+                      <p className="text-xs font-semibold uppercase text-muted-foreground">
+                        Clinical rationale / context
+                      </p>
+                      <p className="mt-1 whitespace-pre-wrap text-xs text-muted-foreground">
+                        {req.clinical_rationale}
+                      </p>
+                    </div>
+                  )}
 
-                  {citations.length > 0 && (
+                  {citations.length > 0 ? (
                     <div>
                       <p className="text-xs font-semibold uppercase text-muted-foreground">
                         Citations
@@ -232,6 +249,11 @@ export default async function AdminEditRequestsPage({
                         ))}
                       </ul>
                     </div>
+                  ) : (
+                    <p className="text-xs italic text-muted-foreground">
+                      No citations attached — verify primary sources before
+                      applying.
+                    </p>
                   )}
 
                   <form

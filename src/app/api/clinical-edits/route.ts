@@ -65,12 +65,26 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { data, error } = await admin
+  const herbSlugParam = new URL(request.url).searchParams
+    .get("herbSlug")
+    ?.trim();
+  const herbSlugFilter =
+    herbSlugParam && /^[a-z0-9-]+$/i.test(herbSlugParam)
+      ? herbSlugParam.toLowerCase()
+      : null;
+
+  let query = admin
     .from("clinical_edit_requests")
     .select(
       "id, target_type, herb_slug, drug_name, field_scope, summary, status, admin_notes, created_at, updated_at"
     )
-    .eq("linkedin_sub", session.sub)
+    .eq("linkedin_sub", session.sub);
+
+  if (herbSlugFilter) {
+    query = query.eq("herb_slug", herbSlugFilter);
+  }
+
+  const { data, error } = await query
     .order("created_at", { ascending: false })
     .limit(50);
 
@@ -192,13 +206,13 @@ export async function POST(request: NextRequest) {
         linkedin_email: session.email,
         linkedin_email_verified: session.emailVerified,
         linkedin_picture: session.picture,
-        linkedin_profile_url: payload.linkedinProfileUrl,
+        linkedin_profile_url: payload.linkedinProfileUrl || null,
         professional_role: payload.professionalRole,
-        credentials: payload.credentials,
+        credentials: payload.credentials || null,
         affiliation: payload.affiliation || null,
         licence_number: payload.licenceNumber || null,
         licence_jurisdiction: payload.licenceJurisdiction || null,
-        conflict_of_interest: payload.conflictOfInterest,
+        conflict_of_interest: payload.conflictOfInterest || null,
         attribution_consent: payload.attributionConsent,
         no_phi_attested: true,
         target_type: payload.targetType,
@@ -209,7 +223,7 @@ export async function POST(request: NextRequest) {
         summary: payload.summary,
         current_text: payload.currentText || null,
         proposed_change: payload.proposedChange,
-        clinical_rationale: payload.clinicalRationale,
+        clinical_rationale: payload.clinicalRationale || null,
         citations: payload.citations,
         locale: payload.locale,
         status: "pending",
@@ -259,23 +273,31 @@ export async function POST(request: NextRequest) {
       ]
         .filter(Boolean)
         .join(" · ");
+      const contributorLabel = payload.credentials
+        ? `${session.name} (${payload.credentials})`
+        : session.name;
+      const profileLine = payload.linkedinProfileUrl || "Not provided";
       void sendMail({
         to: notifyTo,
-        subject: `[HerbAlly Clinical Edit] ${payload.summary.slice(0, 80)}`,
+        subject: `[HerbAlly Edit Suggestion] ${payload.summary.slice(0, 80)}`,
         text: [
-          `New LinkedIn-validated clinical edit request (${data.id})`,
-          `Reviewer: ${session.name} (${payload.credentials})`,
-          `LinkedIn Profile: ${payload.linkedinProfileUrl}`,
+          `New LinkedIn-validated edit suggestion (${data.id})`,
+          `Contributor: ${contributorLabel}`,
+          `LinkedIn Profile: ${profileLine}`,
           `Role: ${payload.professionalRole}`,
           `Target: ${targetDesc}`,
           `Scope: ${payload.fieldScope}`,
           `Summary: ${payload.summary}`,
           `Triage in Admin: https://herbally.app/admin/edit-requests`,
         ].join("\n"),
-        html: `<p>New LinkedIn-validated clinical edit request (<code>${escapeHtml(data.id)}</code>)</p>
+        html: `<p>New LinkedIn-validated edit suggestion (<code>${escapeHtml(data.id)}</code>)</p>
 <ul>
-  <li><strong>Reviewer:</strong> ${escapeHtml(session.name)} (${escapeHtml(payload.credentials)})</li>
-  <li><strong>LinkedIn:</strong> <a href="${escapeHtml(payload.linkedinProfileUrl)}">${escapeHtml(payload.linkedinProfileUrl)}</a></li>
+  <li><strong>Contributor:</strong> ${escapeHtml(contributorLabel)}</li>
+  <li><strong>LinkedIn:</strong> ${
+    payload.linkedinProfileUrl
+      ? `<a href="${escapeHtml(payload.linkedinProfileUrl)}">${escapeHtml(payload.linkedinProfileUrl)}</a>`
+      : "Not provided"
+  }</li>
   <li><strong>Role:</strong> ${escapeHtml(payload.professionalRole)}</li>
   <li><strong>Target:</strong> ${escapeHtml(targetDesc)} (${escapeHtml(payload.fieldScope)})</li>
   <li><strong>Summary:</strong> ${escapeHtml(payload.summary)}</li>

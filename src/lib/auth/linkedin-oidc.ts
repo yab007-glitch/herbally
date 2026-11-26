@@ -95,13 +95,15 @@ export function getLinkedInOidcConfig(
   };
 }
 
-export function isLinkedInOidcConfigured(): boolean {
-  return getLinkedInOidcConfig() !== null;
+export function isLinkedInOidcConfigured(requestUrl?: string): boolean {
+  return getLinkedInOidcConfig(requestUrl) !== null;
 }
 
+const HERB_RETURN_PATH_RE = /^(\/fr)?\/herbs\/([a-z0-9-]+)$/i;
+
 /**
- * Only permit in-app redirects back to `/clinical-review` or `/fr/clinical-review`
- * while preserving safe query parameters (targetType, slug, drug, field).
+ * Only permit in-app redirects back to `/clinical-review`, `/fr/clinical-review`,
+ * `/herbs/<slug>`, or `/fr/herbs/<slug>` while preserving safe query parameters.
  */
 export function sanitizeClinicalReviewNext(
   raw: string | null | undefined
@@ -109,6 +111,23 @@ export function sanitizeClinicalReviewNext(
   const safe = safeNextPath(raw);
   try {
     const parsed = new URL(safe, "https://herbally.local");
+    const herbMatch = HERB_RETURN_PATH_RE.exec(parsed.pathname);
+    if (herbMatch) {
+      const prefix = herbMatch[1] ? "/fr" : "";
+      const cleanHerbPath = `${prefix}/herbs/${herbMatch[2].toLowerCase()}`;
+      const cleanParams = new URLSearchParams();
+      cleanParams.set("suggestEdit", "1");
+      const fieldVal = parsed.searchParams.get("field");
+      if (
+        fieldVal &&
+        fieldVal.trim().length > 0 &&
+        fieldVal.trim().length <= 80
+      ) {
+        cleanParams.set("field", fieldVal.trim());
+      }
+      return `${cleanHerbPath}?${cleanParams.toString()}`;
+    }
+
     if (
       parsed.pathname !== "/clinical-review" &&
       parsed.pathname !== "/fr/clinical-review"
@@ -131,9 +150,35 @@ export function sanitizeClinicalReviewNext(
 
 export function clinicalReviewPathOnly(nextPath: string): string {
   const sanitized = sanitizeClinicalReviewNext(nextPath);
-  return sanitized.startsWith("/fr/clinical-review")
-    ? "/fr/clinical-review"
-    : "/clinical-review";
+  try {
+    return new URL(sanitized, "https://herbally.local").pathname;
+  } catch {
+    return "/clinical-review";
+  }
+}
+
+export function buildLinkedInErrorRedirect(
+  origin: string,
+  nextPath: string,
+  errorCode: string
+): string {
+  const basePath = clinicalReviewPathOnly(nextPath);
+  const params = new URLSearchParams();
+  if (HERB_RETURN_PATH_RE.test(basePath)) {
+    params.set("suggestEdit", "1");
+  }
+  params.set("authError", errorCode);
+  return `${origin}${basePath}?${params.toString()}`;
+}
+
+export function extractNextFromStateCookie(
+  cookieToken: string | null | undefined
+): string {
+  const payload = verifySignedToken<LinkedInOAuthStatePayload>(cookieToken);
+  if (!payload || typeof payload.next !== "string") {
+    return "/clinical-review";
+  }
+  return sanitizeClinicalReviewNext(payload.next);
 }
 
 function getSigningKey(): Buffer | null {

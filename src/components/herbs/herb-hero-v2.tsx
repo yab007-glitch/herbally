@@ -7,6 +7,7 @@ import { buttonVariants } from "@/components/ui/button-variants";
 import { HerbImage } from "@/components/herbs/HerbImage";
 import { EvidenceGrade } from "@/components/herbs/evidence-grade";
 import { ProvenanceBadge } from "@/components/herbs/provenance-badge";
+import { SuggestHerbEditSheet } from "@/components/herbs/suggest-herb-edit-sheet";
 import {
   SafetyGlance,
   type GlanceInteraction,
@@ -283,6 +284,7 @@ export function HerbHeroV2({
               {t("herbDetail.calculateDose")}
             </Link>
           )}
+          <SuggestHerbEditSheet herbSlug={herb.slug} herbName={herb.name} />
         </div>
       </div>
     </div>

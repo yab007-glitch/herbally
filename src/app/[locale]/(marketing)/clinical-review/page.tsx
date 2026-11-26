@@ -49,11 +49,11 @@ export async function generateMetadata({
   );
 
   const title = fr
-    ? "Portail des réviseurs cliniques (SSO LinkedIn)"
-    : "Clinical Reviewer Edit Portal (LinkedIn SSO)";
+    ? "Suggérer une modification via LinkedIn SSO"
+    : "Suggest a Herb or Interaction Edit (LinkedIn SSO)";
   const description = fr
-    ? "Les pharmaciens, médecins et chercheurs qualifiés peuvent valider leur identité via LinkedIn SSO et soumettre des demandes de modification sourcées."
-    : "Credentialed clinicians, pharmacists, and researchers can validate via LinkedIn SSO and submit evidence-backed edit requests for HerbAlly.";
+    ? "Tout utilisateur ou clinicien peut se connecter avec LinkedIn SSO pour proposer des améliorations ou références sur nos fiches de plantes et d'interactions."
+    : "Sign in with LinkedIn SSO to suggest edits, clarity improvements, or source citations for any HerbAlly herb monograph or interaction page.";
 
   return {
     title: fitTitle([title]),
@@ -97,7 +97,7 @@ export default async function ClinicalReviewPage({
         ? "herb"
         : sp.drug
           ? "medication"
-          : "general";
+          : "herb";
 
   const herbSlug =
     typeof sp.slug === "string" && /^[a-z0-9-]+$/i.test(sp.slug.trim())
@@ -204,17 +204,19 @@ export default async function ClinicalReviewPage({
 
       <header className="space-y-4">
         <p className="eyebrow">
-          {fr ? "Gouvernance clinique ouverte" : "Open Clinical Governance"}
+          {fr
+            ? "Contributions ouvertes et gouvernance"
+            : "Open Herb Edit Portal"}
         </p>
         <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           {fr
-            ? "Portail de révision clinique (SSO LinkedIn)"
-            : "Clinical Reviewer Edit Requests"}
+            ? "Suggérer une modification (SSO LinkedIn)"
+            : "Suggest a Herb or Content Edit"}
         </h1>
         <p className="max-w-3xl text-base leading-relaxed text-muted-foreground">
           {fr
-            ? "Tout pharmacien, médecin, infirmier(ère), chercheur ou clinicien diplômé peut s'authentifier avec LinkedIn OpenID Connect pour signaler une incohérence, proposer une nuance clinique ou soumettre des références primaires sur une fiche de plante ou d'interaction."
-            : "Any qualified pharmacist, physician, nurse, dietitian, or herbal medicine researcher can sign in with LinkedIn SSO to flag discrepancies, refine clinical nuance, or submit primary citations for any HerbAlly herb or interaction record."}
+            ? "Tout utilisateur HerbAlly ainsi que les pharmaciens, médecins et chercheurs peuvent se connecter avec LinkedIn OpenID Connect pour suggérer des améliorations ou signaler une erreur sur une plante ou une interaction médicamenteuse."
+            : "Anyone can sign in with LinkedIn OpenID Connect to suggest edits, flag inaccuracies, or add primary sources to any HerbAlly herb profile or interaction page. Clinicians and researchers can optionally include credentials to prioritize clinical triage."}
         </p>
 
         <div className="grid gap-3 pt-2 sm:grid-cols-3">
@@ -225,19 +227,21 @@ export default async function ClinicalReviewPage({
             </p>
             <p className="mt-1 text-muted-foreground">
               {fr
-                ? "Relie chaque demande à un profil LinkedIn réel et limite le spam."
-                : "Anchors each submission to an authenticated LinkedIn account."}
+                ? "Relie chaque suggestion à un profil LinkedIn réel et limite le spam."
+                : "Anchors each suggestion to an authenticated LinkedIn account."}
             </p>
           </div>
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 text-xs">
             <p className="flex items-center gap-1.5 font-semibold text-foreground">
               <FileCheck2 className="size-4 text-primary" aria-hidden="true" />
-              {fr ? "Citations obligatoires" : "Citations required"}
+              {fr
+                ? "Sources et titres optionnels"
+                : "Sources & credentials optional"}
             </p>
             <p className="mt-1 text-muted-foreground">
               {fr
-                ? "PMID, DOI ou monographie réglementaire exigée à chaque envoi."
-                : "PMID, DOI, or primary monograph source required per edit."}
+                ? "Ajoutez une URL, un PMID ou DOI si disponible — nos éditeurs vérifient chaque source."
+                : "Include a PMID, DOI, URL, or clinical credentials if applicable."}
             </p>
           </div>
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 text-xs">
@@ -247,8 +251,8 @@ export default async function ClinicalReviewPage({
             </p>
             <p className="mt-1 text-muted-foreground">
               {fr
-                ? "Toute modification est vérifiée avant mise en ligne dans la base."
-                : "Edits are queued for editorial/clinical verification before going live."}
+                ? "Toute suggestion est relue et vérifiée avant mise en ligne dans la base."
+                : "Edits are queued for editorial & clinical verification before going live."}
             </p>
           </div>
         </div>
