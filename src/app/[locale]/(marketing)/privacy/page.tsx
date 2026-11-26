@@ -172,32 +172,32 @@ export default async function PrivacyPage() {
                 <tbody className="divide-y divide-border/70">
                   <tr>
                     <td className="px-3 py-2 font-medium text-foreground">
-                      Supabase (PostgreSQL)
+                      Supabase (PostgreSQL — Montreal, QC)
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Base de données des plantes/interactions, comptes utilisateurs optionnels, requêtes LinkedIn SSO et incidents (aucun dossier médical nominatif permis)."
-                        : "Reference botanical/interaction DB, optional signed-in accounts, LinkedIn SSO edit requests, and safety incident triage logs (no patient PHI permitted)."}
+                        ? "Base de référence (plantes/interactions), comptes optionnels, sessions invitées pseudonymes de chat, requêtes LinkedIn SSO et journal d'incidents (aucun dossier médical nominatif permis)."
+                        : "Reference DB, optional signed-in accounts, pseudonymous guest chat sessions, LinkedIn SSO edit requests, and incident logs (no patient PHI permitted)."}
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Compte conservé jusqu'à suppression sur demande à privacy@herbally.app ; journaux de limitation de débit à court terme."
-                        : "Account data retained until deletion request to privacy@herbally.app; transient rate-limit records expire automatically."}
+                        ? "Comptes conservés jusqu'à suppression (privacy@herbally.app) ; sessions invitées sur échéance explicite de 30 jours (retention_expires_at) ; cache public sans identifiant (ai_response_cache) expirant sous 7 jours."
+                        : "Account data retained until deletion request (privacy@herbally.app); guest chat sessions carry an explicit 30-day retention_expires_at schedule; unlinked single-turn public ai_response_cache expires in 7 days."}
                     </td>
                   </tr>
                   <tr>
                     <td className="px-3 py-2 font-medium text-foreground">
-                      Cloudflare
+                      Cloudflare (Edge CDN / WAF · Cross-border)
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "DNS, pare-feu applicatif (WAF), protection DDoS et mise en cache CDN des pages publiques."
-                        : "DNS, WAF, DDoS mitigation, and CDN caching of public pages (request IP & TLS metadata)."}
+                        ? "DNS, pare-feu applicatif (WAF), protection DDoS et mise en cache CDN des pages publiques (adresse IP et métadonnées TLS)."
+                        : "DNS, WAF, DDoS mitigation, and CDN caching of public pages (request IP & TLS metadata; processed across edge nodes outside Quebec)."}
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Journaux sécurité transitoires selon la fenêtre Cloudflare ; aucune conservation d'historique clinique."
-                        : "Transient edge security logs per Cloudflare window; zero storage of herbal or health queries."}
+                        ? "Journaux sécurité transitoires selon la fenêtre Cloudflare ; aucune conservation d'historique de chat ou de symptôme."
+                        : "Transient edge security logs per Cloudflare window; zero retention of herbal or symptom query bodies."}
                     </td>
                   </tr>
                   <tr>
@@ -208,7 +208,7 @@ export default async function PrivacyPage() {
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Exécution des routes applicatives ; les textes de recherche symptomatique et de chat ne sont pas consignés dans les journaux applicatifs."
+                        ? "Exécution des routes SSR et API ; les textes symptomatiques et questions de chat sont purgés des journaux applicatifs."
                         : "Executes SSR & API routes; symptom search terms and chat messages are scrubbed from server error logs."}
                     </td>
                     <td className="px-3 py-2">
@@ -219,24 +219,39 @@ export default async function PrivacyPage() {
                   </tr>
                   <tr>
                     <td className="px-3 py-2 font-medium text-foreground">
-                      Ollama Cloud
+                      Ollama Cloud (AI Processor · Cross-border)
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Inférence IA pour l'Herboriste Virtuel et l'extraction de mots-clés symptomatiques (requêtes soumises sans identifiant nominatif)."
-                        : "LLM inference for Virtual Herbalist & symptom keyword extraction (sent without user name, email, or account ID)."}
+                        ? "Inférence IA pour l'Herboriste Virtuel et l'extraction de mots-clés symptomatiques (requêtes soumises sans nom, courriel ni identifiant de compte)."
+                        : "LLM inference for Virtual Herbalist & symptom keyword extraction (relayed outside Quebec without user name, email, or account ID)."}
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Cache anonyme court de réponses éducatives générales ; aucun historique de conversation associé à votre identité."
-                        : "Anonymous cached general Q&A only; personal conversations remain in your browser until you clear local data."}
+                        ? "Sous-traitant d'inférence sans conservation par HerbAlly au-delà de l'appel API (session invitée stockée 30 jours dans Supabase ci-dessus ou supprimée immédiatement par l'utilisateur ; réglages locaux effaçables dans le navigateur)."
+                        : "Infers ephemerally per request (provider policy governs transit); saved guest sessions follow Supabase's 30-day schedule above and immediate Delete Chat removes them sooner."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Upstash Redis (Rate Limiting · Cross-border)
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Compteurs de limitation de débit (empreinte IP/route hachée à court terme) pour protéger les API."
+                        : "Short-lived hashed rate-limit counters preventing abuse on chat, search, and NPN endpoints."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Expiration automatique par fenêtre glissante (60 secondes à quelques heures)."
+                        : "Expires automatically on sliding TTL windows (seconds to hours)."}
                     </td>
                   </tr>
                   <tr>
                     <td className="px-3 py-2 font-medium text-foreground">
                       {locale === "fr"
-                        ? "Santé Canada LNHPD API"
-                        : "Health Canada LNHPD API"}
+                        ? "Santé Canada LNHPD API (Canada — Tiers indépendant)"
+                        : "Health Canada LNHPD API (Canada — Independent Registry)"}
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
@@ -245,53 +260,83 @@ export default async function PrivacyPage() {
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Réponse mise en cache 1 heure côté serveur ; aucun identifiant personnel transmis."
+                        ? "Réponse publique mise en cache 1 heure côté serveur ; aucun identifiant personnel transmis."
                         : "Public licence metadata cached up to 1 hour; no personal identifier transmitted."}
                     </td>
                   </tr>
                   <tr>
                     <td className="px-3 py-2 font-medium text-foreground">
-                      LinkedIn OpenID Connect
+                      Sentry (Telemetry · Cross-border)
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Nom, identifiant OpenID et courriel vérifié uniquement lorsque vous choisissez de vous connecter pour suggérer une correction."
-                        : "Name, OpenID subject, and verified email only when you explicitly sign in to submit a monograph or interaction edit suggestion."}
+                        ? "Rapports d'erreurs techniques nettoyés de toute donnée personnelle, paramètre URL sensible ou corps de requête santé."
+                        : "Runtime error diagnostics pre-scrubbed to strip cookies, query strings, health terms, and personal fields."}
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Jeton de session chiffré HttpOnly (courte durée) ; retrait sur demande à privacy@herbally.app."
-                        : "HttpOnly encrypted session cookie only; attribution/request records deleted on verified request to privacy@herbally.app."}
+                        ? "Fenêtre de rétention standard des erreurs techniques (sans historique utilisateur)."
+                        : "Standard technical error window; zero user profile or chat storage."}
                     </td>
                   </tr>
                   <tr>
                     <td className="px-3 py-2 font-medium text-foreground">
-                      Google AdSense
+                      Stripe (Payments · Cross-border)
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Chargé uniquement après consentement explicite via la bannière de cookies ; désactivé sur les pages outils cliniques sensibles."
-                        : "Loaded only after explicit cookie consent on eligible content pages; suppressed on sensitive clinical tool flows."}
+                        ? "Traitement sécurisé des dons volontaires sur /donate ; HerbAlly ne stocke aucun numéro de carte."
+                        : "Processes voluntary donations on /donate only; HerbAlly never receives or stores payment card numbers."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Pièces comptables conservées selon les obligations fiscales applicables."
+                        : "Donation ledger metadata retained only as required for tax/accounting compliance."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Zoho Mail (Support Email)
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Boîte de réception et réponses lorsque vous écrivez à info@herbally.app ou privacy@herbally.app."
+                        : "Handles inbound support and privacy correspondence sent to info@herbally.app or privacy@herbally.app."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Conservé le temps du suivi du dossier puis supprimé sur demande."
+                        : "Retained only for issue resolution and deleted upon verified request."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      LinkedIn OpenID Connect (SSO · Cross-border)
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Nom, identifiant OpenID et courriel vérifié uniquement lorsque vous choisissez de vous connecter sur /clinical-review."
+                        : "Name, OpenID subject, and verified email only when you opt in to authenticate on /clinical-review."}
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Jeton de session chiffré HttpOnly de courte durée ; suppression sur demande à privacy@herbally.app."
+                        : "Short-lived HttpOnly encrypted session cookie only; edit records deleted on request to privacy@herbally.app."}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2 font-medium text-foreground">
+                      Google AdSense (Independent Third Party · Consent-Gated)
+                    </td>
+                    <td className="px-3 py-2">
+                      {locale === "fr"
+                        ? "Chargé uniquement après consentement explicite ; strictement désactivé sur les outils cliniques (interactions, calculateur, symptômes, herboriste)."
+                        : "Loaded strictly after explicit cookie consent on eligible content pages; suppressed on all clinical tool workflows."}
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
                         ? "Révocable à tout moment via la réinitialisation du consentement."
-                        : "Controlled via browser consent settings and Clear Local Data control below."}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="px-3 py-2 font-medium text-foreground">
-                      Resend (Email)
-                    </td>
-                    <td className="px-3 py-2">
-                      {locale === "fr"
-                        ? "Courriels transactionnels de contact ou notifications administratives lorsque vous nous écrivez."
-                        : "Transactional contact/notification email delivery when contacting support."}
-                    </td>
-                    <td className="px-3 py-2">
-                      {locale === "fr"
-                        ? "Conservé selon la durée de traitement du dossier puis supprimé sur demande."
-                        : "Retained only for support resolution and deleted upon request."}
+                        : "Revocable anytime via cookie consent controls and Clear Local Data below."}
                     </td>
                   </tr>
                 </tbody>

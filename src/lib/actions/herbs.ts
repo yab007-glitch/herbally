@@ -54,6 +54,11 @@ export async function getHerbs(
     pregnancySafe?: boolean;
     nursingSafe?: boolean;
     evidence?: "clinical";
+    review?:
+      | "source_checked"
+      | "clinically_reviewed"
+      | "needs_review"
+      | "ai_generated";
     page?: number;
     sort?: "name" | "evidence";
   },
@@ -109,6 +114,20 @@ export async function getHerbs(
         if (params.nursingSafe) qb = qb.eq("nursing_safe", true);
         if (params.evidence === "clinical") {
           qb = qb.in("evidence_level", ["A", "B", "C"]);
+        }
+        if (params.review === "source_checked") {
+          qb = qb.in("provenance->>verification_status", [
+            "verified",
+            "single_source",
+          ]);
+        } else if (params.review === "clinically_reviewed") {
+          qb = qb
+            .eq("provenance->>review_status", "human_reviewed")
+            .eq("provenance->>review_role", "clinical");
+        } else if (params.review === "needs_review") {
+          qb = qb.eq("provenance->>review_status", "needs_re_review");
+        } else if (params.review === "ai_generated") {
+          qb = qb.eq("provenance->>review_status", "ai_generated");
         }
         return qb;
       };
@@ -247,6 +266,21 @@ export async function getHerbs(
 
     if (params.evidence === "clinical") {
       query = query.in("evidence_level", ["A", "B", "C"]);
+    }
+
+    if (params.review === "source_checked") {
+      query = query.in("provenance->>verification_status", [
+        "verified",
+        "single_source",
+      ]);
+    } else if (params.review === "clinically_reviewed") {
+      query = query
+        .eq("provenance->>review_status", "human_reviewed")
+        .eq("provenance->>review_role", "clinical");
+    } else if (params.review === "needs_review") {
+      query = query.eq("provenance->>review_status", "needs_re_review");
+    } else if (params.review === "ai_generated") {
+      query = query.eq("provenance->>review_status", "ai_generated");
     }
 
     // Explicit sort (Phase 3) overrides the implicit keyword behaviour:

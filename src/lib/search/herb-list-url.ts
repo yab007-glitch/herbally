@@ -11,14 +11,25 @@
  * - `anchor` (default "herb-results") is appended so a paged navigation
  *   lands at the top of the results, not at the bottom of the page.
  */
+export type HerbReviewFilter =
+  "source_checked" | "clinically_reviewed" | "needs_review" | "ai_generated";
+
 export interface HerbListParams {
   q?: string;
   category?: string;
   sort?: string;
   evidence?: string;
+  review?: HerbReviewFilter;
   page?: number;
   anchor?: string | null;
 }
+
+const VALID_REVIEW_FILTERS: ReadonlySet<string> = new Set([
+  "source_checked",
+  "clinically_reviewed",
+  "needs_review",
+  "ai_generated",
+]);
 
 export function buildHerbListUrl(params: HerbListParams = {}): string {
   const sp = new URLSearchParams();
@@ -30,6 +41,8 @@ export function buildHerbListUrl(params: HerbListParams = {}): string {
   if (sort && sort !== "name") sp.set("sort", sort);
   const evidence = params.evidence?.trim();
   if (evidence === "clinical") sp.set("evidence", evidence);
+  const review = params.review?.trim();
+  if (review && VALID_REVIEW_FILTERS.has(review)) sp.set("review", review);
   const page = params.page;
   if (page !== undefined && Number.isFinite(page) && page > 1) {
     sp.set("page", String(Math.floor(page)));

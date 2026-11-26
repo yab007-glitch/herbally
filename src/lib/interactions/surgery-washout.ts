@@ -244,8 +244,64 @@ export const SURGERY_HERB_RULES: SurgeryHerbRule[] = [
 
 export interface PlannedWashoutItem {
   rule: SurgeryHerbRule;
-  stopDateIso: string; // YYYY-MM-DD
+  stopDateIso: string | null; // YYYY-MM-DD or null when surgery date is unknown/urgent
   alreadyPastWindow: boolean;
+}
+
+export interface SurgeryRuleSource {
+  labelEn: string;
+  labelFr: string;
+  url: string;
+}
+
+const DEFAULT_PERIOP_SOURCE: SurgeryRuleSource = {
+  labelEn:
+    "American Society of Anesthesiologists (ASA) Patient Advisory & NIH NCCIH",
+  labelFr: "Recommandations ASA pour patients & NIH NCCIH",
+  url: "https://www.asahq.org/madeforthismoment/preparing-for-surgery/risks/herbal-supplements/",
+};
+
+const RULE_SOURCES: Record<string, SurgeryRuleSource> = {
+  "st-johns-wort": {
+    labelEn: "NIH NCCIH — St. John's Wort Drug Interactions & CYP3A4 Induction",
+    labelFr: "NIH NCCIH — Interactions du millepertuis (CYP3A4)",
+    url: "https://www.nccih.nih.gov/health/st-johns-wort",
+  },
+  "ginkgo-biloba": {
+    labelEn: "NIH NCCIH — Ginkgo & Pre-Surgical Bleeding Precautions",
+    labelFr: "NIH NCCIH — Ginkgo et précautions hémorragiques préopératoires",
+    url: "https://www.nccih.nih.gov/health/ginkgo",
+  },
+  garlic: {
+    labelEn: "NIH NCCIH — Garlic Supplements & Anticoagulant/Surgical Caution",
+    labelFr: "NIH NCCIH — Ail et précautions préopératoires",
+    url: "https://www.nccih.nih.gov/health/garlic",
+  },
+  ginger: {
+    labelEn: "NIH NCCIH — Ginger Extracts & Coagulation Monitoring",
+    labelFr: "NIH NCCIH — Gingembre et suivi de la coagulation",
+    url: "https://www.nccih.nih.gov/health/ginger",
+  },
+  turmeric: {
+    labelEn:
+      "NIH NCCIH — Turmeric / Curcumin Clinical & Perioperative Cautions",
+    labelFr: "NIH NCCIH — Curcuma / curcumine et précautions périopératoires",
+    url: "https://www.nccih.nih.gov/health/turmeric",
+  },
+  kava: {
+    labelEn: "NIH NCCIH / LiverTox — Kava CNS Sedation & Hepatotoxicity Risk",
+    labelFr: "NIH NCCIH / LiverTox — Kava (sédation et risque hépatique)",
+    url: "https://www.nccih.nih.gov/health/kava",
+  },
+  valerian: {
+    labelEn: "NIH NCCIH — Valerian Anesthetic Sedation & Tapering Caution",
+    labelFr: "NIH NCCIH — Valériane (sédation anesthésique)",
+    url: "https://www.nccih.nih.gov/health/valerian",
+  },
+};
+
+export function getSurgeryRuleSource(slug: string): SurgeryRuleSource {
+  return RULE_SOURCES[slug] ?? DEFAULT_PERIOP_SOURCE;
 }
 
 /** Match user free-text herb list against perioperative anesthesia/surgical review rules. */
@@ -272,18 +328,26 @@ export function buildSurgeryWashoutPlan(
 ): {
   matched: PlannedWashoutItem[];
   unmatched: string[];
-  daysUntilSurgery: number;
+  daysUntilSurgery: number | null;
+  isUnknownOrUrgent: boolean;
 } | null {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(surgeryDateIso)) return null;
-  const surgeryMs = Date.parse(`${surgeryDateIso}T12:00:00Z`);
-  if (!Number.isFinite(surgeryMs)) return null;
+  const isUnknownOrUrgent = surgeryDateIso === "UNKNOWN";
+  if (!isUnknownOrUrgent && !/^\d{4}-\d{2}-\d{2}$/.test(surgeryDateIso)) {
+    return null;
+  }
+  const surgeryMs = isUnknownOrUrgent
+    ? NaN
+    : Date.parse(`${surgeryDateIso}T12:00:00Z`);
+  if (!isUnknownOrUrgent && !Number.isFinite(surgeryMs)) return null;
 
   const todayStr =
     referenceTodayIso && /^\d{4}-\d{2}-\d{2}$/.test(referenceTodayIso)
       ? referenceTodayIso
       : new Date().toISOString().slice(0, 10);
   const todayMs = Date.parse(`${todayStr}T12:00:00Z`);
-  const daysUntilSurgery = Math.round((surgeryMs - todayMs) / 86_400_000);
+  const daysUntilSurgery = isUnknownOrUrgent
+    ? null
+    : Math.round((surgeryMs - todayMs) / 86_400_000);
 
   const matched: PlannedWashoutItem[] = [];
   const unmatched: string[] = [];
@@ -300,12 +364,20 @@ export function buildSurgeryWashoutPlan(
     if (seenSlugs.has(rule.slug)) continue;
     seenSlugs.add(rule.slug);
 
-    const stopMs = surgeryMs - rule.daysBefore * 86_400_000;
-    const stopDateIso = new Date(stopMs).toISOString().slice(0, 10);
-    const alreadyPastWindow = stopMs <= todayMs;
-    matched.push({ rule, stopDateIso, alreadyPastWindow });
+    if (isUnknownOrUrgent) {
+      matched.push({
+        rule,
+        stopDateIso: null,
+        alreadyPastWindow: false,
+      });
+    } else {
+      const stopMs = surgeryMs - rule.daysBefore * 86_400_000;
+      const stopDateIso = new Date(stopMs).toISOString().slice(0, 10);
+      const alreadyPastWindow = stopMs <= todayMs;
+      matched.push({ rule, stopDateIso, alreadyPastWindow });
+    }
   }
 
   matched.sort((a, b) => b.rule.daysBefore - a.rule.daysBefore);
-  return { matched, unmatched, daysUntilSurgery };
+  return { matched, unmatched, daysUntilSurgery, isUnknownOrUrgent };
 }

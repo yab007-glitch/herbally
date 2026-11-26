@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { stripPediatricDosageSentences } from "@/lib/herbs/regulatory-evidence";
+import { classifyStudyEvidenceType } from "@/lib/herbs/evidence-type";
 import type {
   Citation,
   SheetContent,
@@ -54,11 +55,13 @@ export function PubmedMonographSheetView({
   citations,
   articleCount,
   status,
+  isDangerous = false,
 }: {
   content: SheetContent;
   citations: Citation[];
   articleCount: number;
   status: string | null;
+  isDangerous?: boolean;
 }) {
   const t = useTranslations("pubmedSheet");
   const locale = useLocale();
@@ -161,8 +164,22 @@ export function PubmedMonographSheetView({
         <section className="space-y-3">
           <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
             <FlaskConical className="size-4 text-primary" />
-            {t("clinicalEvidence")}
+            {isDangerous
+              ? locale === "fr"
+                ? "Résultats de recherche — aucune preuve d'usage médicinal sûr"
+                : "Research findings — not evidence of safe medicinal use"
+              : t("clinicalEvidence")}
           </h3>
+          {isDangerous && (
+            <p
+              role="note"
+              className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs font-medium text-destructive"
+            >
+              {locale === "fr"
+                ? "Contexte toxicologique / expérimental uniquement : ces travaux précliniques ou de laboratoire n'autorisent aucun usage humain."
+                : "Toxicological / experimental literature only — laboratory or preclinical findings do not represent safe or usable human treatment."}
+            </p>
+          )}
           {!reviewed && (
             <p className="rounded-lg border border-amber-300/70 bg-amber-50/70 px-3 py-2 text-xs text-amber-900 dark:border-amber-700/70 dark:bg-amber-950/30 dark:text-amber-200">
               {locale === "fr"
@@ -175,10 +192,22 @@ export function PubmedMonographSheetView({
               const condText = safeText(e.condition);
               const findingText = safeText(e.finding);
               if (!condText && !findingText) return null;
+              const studyType = classifyStudyEvidenceType(
+                condText,
+                findingText,
+                e.evidenceLevel
+              );
+              const hideMisleadingAnecdotalD =
+                e.evidenceLevel === "D" &&
+                studyType.type !== "anecdotal" &&
+                studyType.type !== "traditional_historical";
               return (
                 <div key={i} className="rounded-lg border bg-muted/30 p-3">
-                  <div className="mb-1 flex items-center gap-2">
-                    {e.evidenceLevel && (
+                  <div className="mb-1 flex flex-wrap items-center gap-2">
+                    <span className="inline-flex rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-foreground">
+                      {locale === "fr" ? studyType.labelFr : studyType.labelEn}
+                    </span>
+                    {e.evidenceLevel && !hideMisleadingAnecdotalD && (
                       <span
                         className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${levelColor[e.evidenceLevel] ?? levelColor.D}`}
                       >
@@ -225,7 +254,7 @@ export function PubmedMonographSheetView({
           {interactionsText}
         </Section>
       )}
-      {safeAdultDosageText.length > 0 && (
+      {!isDangerous && safeAdultDosageText.length > 0 && (
         <Section
           icon={<Pill className="size-4 text-primary" />}
           title={t("dosage")}

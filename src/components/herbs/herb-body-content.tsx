@@ -9,6 +9,7 @@ import type { SheetContent } from "@/components/herbs/pubmed-monograph-sheet";
 import type { CopyLocale } from "@/lib/i18n/herb-page-copy";
 import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
 import { isUsablePubmedSheet } from "@/lib/pubmed/usable";
+import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 
 type PubmedSheetRow = {
   content: string | null;
@@ -60,7 +61,9 @@ export function HerbBodyContent({
   pubmedSheet: PubmedSheetRow;
   sheet: { content: SheetContent | null; translated: boolean };
 }) {
+  const dangerous = isDangerousHerb(herb.slug);
   const showNonManualSafetyPanel =
+    dangerous ||
     interactions.length > 0 ||
     (herb.contraindications?.length ?? 0) > 0 ||
     (herb.side_effects?.length ?? 0) > 0 ||
@@ -129,6 +132,7 @@ export function HerbBodyContent({
                   }
                   articleCount={pubmedSheet.article_count ?? 0}
                   status={pubmedSheet.status}
+                  isDangerous={dangerous}
                 />
               </div>
             </details>
@@ -141,6 +145,7 @@ export function HerbBodyContent({
             }
             articleCount={pubmedSheet.article_count ?? 0}
             status={pubmedSheet.status}
+            isDangerous={dangerous}
           />
         )
       ) : (

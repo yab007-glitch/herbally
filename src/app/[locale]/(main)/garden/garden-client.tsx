@@ -249,7 +249,7 @@ export function GardenClient() {
             </p>
             <p className="text-sm text-muted-foreground">
               {t("garden.talkToHerbalistDesc") ||
-                "Ask questions and get personalized guidance"}
+                "Ask educational questions grounded in our database"}
             </p>
           </div>
         </Link>

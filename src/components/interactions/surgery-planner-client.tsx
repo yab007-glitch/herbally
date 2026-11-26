@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import {
   SURGERY_HERB_RULES,
   buildSurgeryWashoutPlan,
+  getSurgeryRuleSource,
   type WashoutCategory,
 } from "@/lib/interactions/surgery-washout";
 
@@ -64,6 +65,7 @@ interface SurgerySupplementItem {
 export function SurgeryPlannerClient() {
   const fr = useLocale() === "fr";
   const [surgeryDate, setSurgeryDate] = useState("");
+  const [unknownOrUrgent, setUnknownOrUrgent] = useState(false);
   const [items, setItems] = useState<SurgerySupplementItem[]>([]);
   const [isSampleMode, setIsSampleMode] = useState(false);
   const [draft, setDraft] = useState("");
@@ -93,6 +95,7 @@ export function SurgeryPlannerClient() {
   };
 
   const loadSampleChecklist = () => {
+    setUnknownOrUrgent(false);
     setSurgeryDate(defaultSurgeryDateIso());
     setItems([
       {
@@ -121,9 +124,14 @@ export function SurgeryPlannerClient() {
 
   const herbNames = useMemo(() => items.map((i) => i.name), [items]);
   const plan = useMemo(
-    () => buildSurgeryWashoutPlan(surgeryDate, herbNames),
-    [surgeryDate, herbNames]
+    () =>
+      buildSurgeryWashoutPlan(
+        unknownOrUrgent ? "UNKNOWN" : surgeryDate,
+        herbNames
+      ),
+    [unknownOrUrgent, surgeryDate, herbNames]
   );
+  const generatedIso = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="space-y-6">
@@ -139,13 +147,30 @@ export function SurgeryPlannerClient() {
             <Input
               id="surgery-date-input"
               type="date"
-              value={surgeryDate}
+              disabled={unknownOrUrgent}
+              value={unknownOrUrgent ? "" : surgeryDate}
               onChange={(e) => {
                 setIsSampleMode(false);
                 setSurgeryDate(e.target.value);
               }}
               className="mt-1.5"
             />
+            <label className="no-print mt-2 flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={unknownOrUrgent}
+                onChange={(e) => {
+                  setIsSampleMode(false);
+                  setUnknownOrUrgent(e.target.checked);
+                }}
+                className="rounded border-border"
+              />
+              <span>
+                {fr
+                  ? "Date inconnue ou chirurgie urgente (générer la liste pour l'anesthésiste)"
+                  : "Unknown date / urgent surgery (generate disclosure checklist without target dates)"}
+              </span>
+            </label>
           </div>
 
           <div>
@@ -329,9 +354,13 @@ export function SurgeryPlannerClient() {
                   : "Pre-Surgery Supplement Review Checklist for Your Surgical Team"}
               </h2>
               <p className="text-xs text-muted-foreground">
-                {fr
-                  ? `Intervention le ${surgeryDate} (${plan.daysUntilSurgery} jours restants)`
-                  : `Surgery date: ${surgeryDate} (${plan.daysUntilSurgery} day${plan.daysUntilSurgery === 1 ? "" : "s"} from today)`}
+                {plan.isUnknownOrUrgent
+                  ? fr
+                    ? `Chirurgie urgente / date non fixée · Généré le ${generatedIso} — montrez cette liste immédiatement à l'équipe chirurgicale`
+                    : `Unknown / urgent procedure date · Generated ${generatedIso} — disclose directly to your surgical/anesthesia team`
+                  : fr
+                    ? `Intervention le ${surgeryDate} (${plan.daysUntilSurgery} jours restants) · Généré le ${generatedIso}`
+                    : `Surgery date: ${surgeryDate} (${plan.daysUntilSurgery} day${plan.daysUntilSurgery === 1 ? "" : "s"} from today) · Generated ${generatedIso}`}
               </p>
             </div>
             <Button
@@ -383,9 +412,13 @@ export function SurgeryPlannerClient() {
 
                     <div className="flex items-center gap-2">
                       <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
-                        {fr
-                          ? `À discuter avant le ${stopDateIso} (repère : J-${rule.daysBefore})`
-                          : `Discuss with surgical team by ${stopDateIso} (${rule.daysBefore}d reference window)`}
+                        {stopDateIso
+                          ? fr
+                            ? `À discuter avant le ${stopDateIso} (repère : J-${rule.daysBefore})`
+                            : `Discuss with surgical team by ${stopDateIso} (${rule.daysBefore}d reference window)`
+                          : fr
+                            ? `Repère courant : ${rule.daysBefore} jours (à confirmer d'urgence)`
+                            : `Reference review window: ${rule.daysBefore} days (confirm urgently)`}
                       </span>
                       {alreadyPastWindow && (
                         <span className="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-900 dark:border-red-800 dark:bg-red-950/60 dark:text-red-200">
@@ -398,6 +431,22 @@ export function SurgeryPlannerClient() {
                   <p className="mt-2 text-sm text-muted-foreground">
                     {fr ? rule.frRationale : rule.enRationale}
                   </p>
+                  {(() => {
+                    const src = getSurgeryRuleSource(rule.slug);
+                    return (
+                      <p className="mt-1.5 text-[11px] text-muted-foreground">
+                        {fr ? "Source : " : "Source: "}
+                        <a
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:text-foreground"
+                        >
+                          {fr ? src.labelFr : src.labelEn}
+                        </a>
+                      </p>
+                    );
+                  })()}
                 </li>
               ))}
             </ul>
@@ -427,8 +476,8 @@ export function SurgeryPlannerClient() {
             <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-primary" />
             <span>
               {fr
-                ? "Aide éducative à la discussion préopératoire alignée sur les conseils aux patients de l'ASA et des cliniques préopératoires canadiennes (repère courant de 7 à 14 jours selon la plante). Votre anesthésiste ou chirurgien fixe les consignes exactes ; n'arrêtez jamais un médicament prescrit sans avis médical."
-                : "Educational checklist aligned with American Society of Anesthesiologists (ASA) patient advisories and Canadian pre-op surgical guides (which commonly advise reviewing herbal supplements 7–14 days before surgery). Your surgical and anesthesia team decides what to stop; never stop prescribed medications independently."}
+                ? `Document généré le ${generatedIso} à des fins de discussion préopératoire (aligné sur l'ASA et les cliniques canadiennes, repères courants de 7 à 14 jours selon la plante). Votre chirurgien ou anesthésiste détient l'autorité exclusive sur toute décision d'arrêt ou de maintien ; n'arrêtez jamais un médicament prescrit de vous-même.`
+                : `Printable checklist generated ${generatedIso} as an educational aid aligned with ASA patient advisories and Canadian surgical guides (typical 7–14 day review window). Your surgical and anesthesia team retains sole authority on whether and when any supplement is paused — never stop prescribed medications independently.`}
             </span>
           </p>
         </div>

@@ -59,6 +59,14 @@ export default async function PharmacistPage({
           <p className="mt-1 text-sm text-muted-foreground">
             {t("herbalistPage.subtitle")}
           </p>
+          <p
+            role="note"
+            className="mt-3 rounded-xl border border-border/80 bg-muted/30 px-4 py-2.5 text-xs leading-relaxed text-muted-foreground"
+          >
+            {locale === "fr"
+              ? "Assistant IA éducatif (non un clinicien) : interroge d'abord la base structurée HerbAlly, refuse les urgences médicales ou posologies pédiatriques et relaie votre question à Ollama Cloud sans identifiant nominatif (n'inscrivez aucun nom ni dossier médical)."
+              : "Educational AI assistant (not a licensed clinician): retrieves HerbAlly database records first, blocks medical emergencies and pediatric dosing, and relays prompts to Ollama Cloud without personal identifiers — do not enter names or health-record IDs."}
+          </p>
         </div>
 
         <ChatInterface

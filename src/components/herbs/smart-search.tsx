@@ -11,7 +11,10 @@ import {
   useSaveSearch,
 } from "@/components/herbs/recent-searches";
 import { useDebounce } from "@/lib/hooks/use-debounce";
-import { buildHerbListUrl } from "@/lib/search/herb-list-url";
+import {
+  buildHerbListUrl,
+  type HerbReviewFilter,
+} from "@/lib/search/herb-list-url";
 import { useTranslations } from "next-intl";
 import { logger } from "@/lib/utils/logger";
 
@@ -20,6 +23,7 @@ interface SmartSearchProps {
   category?: string;
   sort?: string;
   evidence?: string;
+  review?: HerbReviewFilter;
 }
 
 export function SmartSearch({
@@ -27,6 +31,7 @@ export function SmartSearch({
   category,
   sort,
   evidence,
+  review,
 }: SmartSearchProps) {
   const t = useTranslations();
   const router = useRouter();
@@ -81,10 +86,11 @@ export function SmartSearch({
         category,
         sort,
         evidence,
+        review,
         anchor: null,
       });
     },
-    [category, sort, evidence]
+    [category, sort, evidence, review]
   );
 
   // Live search: when the debounced value differs from the URL, replace

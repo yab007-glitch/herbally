@@ -47,7 +47,9 @@ export function ChatComposer({
       <div className="shrink-0 border-t border-border/50 px-4 py-1.5 text-center">
         <p className="text-[10px] text-muted-foreground">
           <AlertCircle className="inline size-2.5 -mt-0.5 mr-1" />
-          {t("pharmacist.disclaimer")} {t("common.citationsDisclaimer")}
+          {t("pharmacist.disclaimer")} {t("common.citationsDisclaimer")} · Do
+          not enter personal identifiers (relayed without name/email to Ollama
+          Cloud).
         </p>
       </div>
 

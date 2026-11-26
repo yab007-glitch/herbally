@@ -63,9 +63,7 @@ describe("ClinicalEditRequestClient", () => {
         initialRequests={[]}
       />
     );
-    expect(
-      screen.getByText(/LinkedIn SSO setup pending server credentials/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Active Review Intake Queue/i)).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "info@herbally.app" })
     ).toBeInTheDocument();

@@ -182,20 +182,30 @@ export function HerbSafetyPanel({
         </a>
       ) : null}
 
-      {/* CTA */}
-      <div className="flex justify-center">
-        <Link
-          href={`/herbalist?herb=${herb.slug}`}
-          rel="nofollow"
-          className={cn(
-            buttonVariants({ variant: "outline", size: "lg" }),
-            "rounded-full"
-          )}
+      {/* CTA — replace generic chat/pharmacist prompt with emergency poison-control priority on toxic botanicals */}
+      {dangerous ? (
+        <div
+          role="alert"
+          className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-center text-xs font-medium text-destructive"
         >
-          <AlertTriangle className="mr-2 size-4" />
-          {t("herbDetail.checkInteractions")}
-        </Link>
-      </div>
+          Poison Control (US): 1-800-222-1222 · Poison Control (Canada):
+          1-844-764-7669 · Emergency: 911
+        </div>
+      ) : (
+        <div className="flex justify-center">
+          <Link
+            href={`/herbalist?herb=${herb.slug}`}
+            rel="nofollow"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "lg" }),
+              "rounded-full"
+            )}
+          >
+            <AlertTriangle className="mr-2 size-4" />
+            {t("herbDetail.checkInteractions")}
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

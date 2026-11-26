@@ -187,6 +187,154 @@ export default async function MethodologyPage() {
           ))}
         </div>
 
+        {/* Evidence Type vs. Evidence Certainty Matrix */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>
+              <h2 className="flex items-center gap-3">
+                <Scale className="size-6 text-primary" aria-hidden="true" />
+                {locale === "fr"
+                  ? "Type d'étude vs certitude des preuves (notes par indication)"
+                  : "Evidence Type vs. Evidence Certainty (Indication-Specific Grades)"}
+              </h2>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm text-muted-foreground">
+            <p>
+              {locale === "fr"
+                ? "Un niveau global unique ne résume pas toutes les allégations d'une plante. Chaque étude est classée par type expérimental afin de ne jamais confondre travaux in vitro ou computationnels et données cliniques humaines."
+                : "A single herb-wide grade cannot summarize every indication or preparation. Indication-level study grades supersede summary badges and classify study design separately from clinical certainty so in-vitro or computational findings are never mislabelled as anecdotal folklore."}
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-left text-xs">
+                <thead>
+                  <tr className="border-b border-border text-foreground">
+                    <th className="py-2 pr-4 font-semibold">
+                      {locale === "fr"
+                        ? "Type de preuve"
+                        : "Study / Evidence Type"}
+                    </th>
+                    <th className="py-2 pr-4 font-semibold">
+                      {locale === "fr" ? "Classification" : "Certainty Tier"}
+                    </th>
+                    <th className="py-2 font-semibold">
+                      {locale === "fr"
+                        ? "Portée clinique"
+                        : "Interpretation Scope"}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Plusieurs ECR humains concordants"
+                        : "Multiple consistent human RCTs"}
+                    </td>
+                    <td className="py-2 pr-4">High (Grade A)</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Applicable à l'indication et la dose étudiées"
+                        : "Bound to the specific studied extract, dose, and indication"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Études cliniques humaines limitées"
+                        : "Limited human clinical studies"}
+                    </td>
+                    <td className="py-2 pr-4">Moderate (Grade B)</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Signaux prometteurs mais réplication requise"
+                        : "Promising clinical signal; replication needed"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Données observationnelles / séries de cas"
+                        : "Human observational or case reports"}
+                    </td>
+                    <td className="py-2 pr-4">Low / Preliminary (Grade C)</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Hypothèse clinique, pas de lien causal établi"
+                        : "Clinical hypothesis or safety signal; non-randomized"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Modèles animaux (in vivo)"
+                        : "Animal studies (in vivo)"}
+                    </td>
+                    <td className="py-2 pr-4">Preclinical</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Mécanisme ou toxicologie non extrapolables directement"
+                        : "Mechanistic or toxicological; not clinical efficacy in humans"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Essais cellulaires / enzymatiques (in vitro)"
+                        : "Cell / enzyme assays (in vitro)"}
+                    </td>
+                    <td className="py-2 pr-4">Laboratory</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Criblage de laboratoire sans preuve d'absorption humaine"
+                        : "Bench-level bioactivity; bioavailability unestablished"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Modélisation informatique (in silico)"
+                        : "Computational / docking (in silico)"}
+                    </td>
+                    <td className="py-2 pr-4">In silico</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Génération d'hypothèses uniquement"
+                        : "Theoretical prediction only"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Usage traditionnel / pharmacopée historique"
+                        : "Historical traditional use"}
+                    </td>
+                    <td className="py-2 pr-4">Traditional (Trad)</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Documenté en phytothérapie traditionnelle, distinct des essais"
+                        : "Historical/traditional monograph record, distinct from RCT proof"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-2 pr-4 font-medium text-foreground">
+                      {locale === "fr"
+                        ? "Témoignages ou usages anecdotiques"
+                        : "Anecdotal / unsystematic reports"}
+                    </td>
+                    <td className="py-2 pr-4">Anecdotal (Grade D)</td>
+                    <td className="py-2">
+                      {locale === "fr"
+                        ? "Validation scientifique insuffisante"
+                        : "Insufficient scientific validation"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Source Licensing & Attribution Register */}
         <Card className="mt-8">
           <CardHeader>
