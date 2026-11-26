@@ -49,7 +49,7 @@ export default async function MedicationsIndexPage() {
   return (
     <div className="space-y-8">
       <WebPageSchema
-        type="MedicalWebPage"
+        type="CollectionPage"
         title={title}
         description={description}
         url={pageUrl}
@@ -142,9 +142,16 @@ export default async function MedicationsIndexPage() {
             role="note"
             className="rounded-xl border border-amber-300 bg-amber-50/70 px-4 py-3 text-xs leading-relaxed text-amber-950 dark:border-amber-700 dark:bg-amber-950/30 dark:text-amber-200"
           >
-            {fr
-              ? "Statut éditorial : ces fiches héritées proviennent de sources primaires et attendent une validation indépendante par un clinicien agréé. Utilisez-les pour préparer une vérification avec votre pharmacien ou médecin."
-              : "Review status: These legacy interaction records come from cited source compilations and await independent licensed clinician sign-off. Use them as a screening prompt with your pharmacist or prescriber."}
+            <p>
+              {fr
+                ? "Statut de révision : ces fiches héritées proviennent de compilations sourcées et attendent une validation indépendante par un clinicien agréé. Le badge ci-dessous indique la gravité maximale enregistrée pour chaque classe ou molécule, jamais que l'ensemble des fiches ont cette gravité."
+                : "Review status: These legacy interaction records come from cited source compilations and await independent licensed clinician sign-off. The severity badge per row reflects the highest recorded risk in that drug entry, not that every paired herb has that severity."}
+            </p>
+            <p className="mt-1.5">
+              {fr
+                ? "Portée par classe thérapeutique : certaines entrées regroupent une classe (ex. anticoagulants ou ISRS) plutôt qu'une molécule isolée — chaque fiche individuelle précise la portée exacte et les données disponibles."
+                : "Class-level entries: Some entries group a drug class (for example, anticoagulants or SSRIs) rather than a single molecule — check the specific pair page and confirm with your pharmacist before acting."}
+            </p>
           </div>
         )}
 

@@ -209,7 +209,7 @@ export default async function HerbsPage({
               "@type": "ListItem",
               position: index + 1,
               item: {
-                "@type": "MedicalWebPage",
+                "@type": "WebPage",
                 name: herb.name,
                 alternateName: herb.scientific_name,
                 description: herb.description,

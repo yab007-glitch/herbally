@@ -230,7 +230,7 @@ export default async function SymptomDetailPage({ params }: Props) {
           id={`symptom-${symptom}-structured-data`}
           data={{
             "@context": "https://schema.org",
-            "@type": "MedicalWebPage",
+            "@type": "CollectionPage",
             name: pageTitle,
             description: pageDescription,
             url: `${siteUrl()}${symptomPath}`,

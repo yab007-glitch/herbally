@@ -141,7 +141,7 @@
     "unsafeOrally": "Unsafe orally",
     "safeTopically": "Safe topically",
     "unknown": "Unknown",
-    "evidenceScopeNote": "Overall grade reflects the strongest cited indication — evidence varies by use and preparation; review each source section below."
+    "evidenceScopeNote": "Overall grade reflects the strongest cited indication — evidence varies by use, dose, and preparation, and only applies when the botanical is safe for use."
   },
   "herbTabs": {
     "overview": "Overview",
@@ -220,7 +220,7 @@
     "interactions": "Drug interactions",
     "interactionCount": "{count, plural, one {# known interaction} other {# known interactions}}",
     "interactionCountNone": "No interactions recorded in our database",
-    "interactionDangerousNone": "No interaction rows listed — high-risk plant (seek clinical advice)",
+    "interactionDangerousNone": "Not applicable — poisonous botanical (do not use)",
     "toxicPlantBadge": "Toxic / High-Risk Plant",
     "toxicBadgeShort": "High risk / toxic",
     "mostSerious": "Most serious: {drug} — {severity}",

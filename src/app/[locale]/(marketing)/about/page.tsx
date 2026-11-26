@@ -229,6 +229,53 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* What HerbAlly Is — and Is Not */}
+      <section className="mb-10 rounded-2xl border border-border bg-muted/20 p-6">
+        <h2 className="mb-3 text-xl font-bold text-foreground">
+          {locale === "fr"
+            ? "Ce qu'est HerbAlly — et ce qu'il n'est pas"
+            : "What HerbAlly Is — and Is Not"}
+        </h2>
+        <div className="grid gap-4 text-sm sm:grid-cols-2">
+          <div>
+            <p className="font-semibold text-foreground">
+              {locale === "fr" ? "Ce qu'est HerbAlly :" : "What HerbAlly IS:"}
+            </p>
+            <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+              <li>
+                {locale === "fr"
+                  ? "Une référence éducative bilingue fondée sur des sources primaires (Santé Canada, EMA, NIH, PubMed)."
+                  : "A bilingual educational herbal & interaction reference anchored to primary regulatory and literature sources."}
+              </li>
+              <li>
+                {locale === "fr"
+                  ? "Un outil de préparation aux discussions avec votre pharmacien, médecin ou équipe chirurgicale."
+                  : "A structured conversation-prep aid to bring better questions to your pharmacist, physician, or surgical team."}
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground">
+              {locale === "fr"
+                ? "Ce qu'HerbAlly n'est PAS :"
+                : "What HerbAlly IS NOT:"}
+            </p>
+            <ul className="mt-2 list-inside list-disc space-y-1 text-muted-foreground">
+              <li>
+                {locale === "fr"
+                  ? "Pas un avis médical personnalisé, pas un diagnostic ni un service de triage d'urgence."
+                  : "Not individualized medical advice, clinical diagnosis, prescribing guidance, or emergency triage."}
+              </li>
+              <li>
+                {locale === "fr"
+                  ? "Pas une validation clinique définitive tant qu'un clinicien agréé n'a pas signé la fiche."
+                  : "Not licensed clinical clearance where a monograph or legacy interaction explicitly awaits clinician sign-off."}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* Team / Reviewer of Record Section */}
       <section className="rounded-2xl border border-border bg-card p-6">
         <h2 className="mb-3 text-2xl font-bold text-foreground">

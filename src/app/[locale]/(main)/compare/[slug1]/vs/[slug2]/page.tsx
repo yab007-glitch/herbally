@@ -331,6 +331,17 @@ export default async function ComparePage({ params }: Props) {
           locale={locale === "fr" ? "fr" : "en"}
         />
 
+        <div className="rounded-xl border border-amber-300/70 bg-amber-50/70 px-4 py-3 text-xs leading-relaxed text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
+          <strong>
+            {locale === "fr"
+              ? "Non cliniquement interchangeables : "
+              : "Not clinically interchangeable: "}
+          </strong>
+          {locale === "fr"
+            ? "même pour un objectif similaire, ces plantes diffèrent par la partie utilisée, la standardisation de l'extrait, les composés actifs et les interactions médicamenteuses. Ne substituez pas une plante à une autre 1 pour 1 sans avis médical ou pharmaceutique."
+            : "even where traditional goals overlap, species differ in plant part, extract standardization, active constituents, and drug-interaction profile. Do not substitute one herb for another 1-for-1 without pharmacist or clinician advice."}
+        </div>
+
         {/* Names */}
         <div className="grid grid-cols-[1fr_2fr_2fr] gap-4 rounded-lg border bg-muted/50 p-4">
           <div className="font-medium text-foreground">{t("compare.herb")}</div>

@@ -54,30 +54,75 @@ function categoryLabel(cat: WashoutCategory, fr: boolean): string {
   }
 }
 
+interface SurgerySupplementItem {
+  name: string;
+  preparation: string;
+  dose: string;
+  lastUsed: string;
+}
+
 export function SurgeryPlannerClient() {
   const fr = useLocale() === "fr";
   const [surgeryDate, setSurgeryDate] = useState("");
-  const [herbs, setHerbs] = useState<string[]>([]);
+  const [items, setItems] = useState<SurgerySupplementItem[]>([]);
   const [isSampleMode, setIsSampleMode] = useState(false);
   const [draft, setDraft] = useState("");
 
   const addHerb = (name: string) => {
     const clean = name.trim();
-    if (!clean || herbs.length >= 12) return;
-    if (herbs.some((h) => h.toLowerCase() === clean.toLowerCase())) return;
+    if (!clean || items.length >= 12) return;
+    if (items.some((h) => h.name.toLowerCase() === clean.toLowerCase())) return;
     setIsSampleMode(false);
-    setHerbs([...herbs, clean]);
+    setItems([
+      ...items,
+      { name: clean, preparation: "", dose: "", lastUsed: "" },
+    ]);
+  };
+
+  const updateItemField = (
+    name: string,
+    field: "preparation" | "dose" | "lastUsed",
+    value: string
+  ) => {
+    setIsSampleMode(false);
+    setItems((prev) =>
+      prev.map((item) =>
+        item.name === name ? { ...item, [field]: value } : item
+      )
+    );
   };
 
   const loadSampleChecklist = () => {
     setSurgeryDate(defaultSurgeryDateIso());
-    setHerbs(["Ginkgo Biloba", "Garlic", "Valerian"]);
+    setItems([
+      {
+        name: "Ginkgo Biloba",
+        preparation: fr
+          ? "Extrait standardisé 50:1"
+          : "Standardized extract 50:1",
+        dose: "120 mg / day",
+        lastUsed: "",
+      },
+      {
+        name: "Garlic",
+        preparation: fr ? "Gélule ail vieilli" : "Aged garlic capsule",
+        dose: "600 mg / day",
+        lastUsed: "",
+      },
+      {
+        name: "Valerian",
+        preparation: fr ? "Infusion" : "Tea infusion",
+        dose: "1 cup evening",
+        lastUsed: "",
+      },
+    ]);
     setIsSampleMode(true);
   };
 
+  const herbNames = useMemo(() => items.map((i) => i.name), [items]);
   const plan = useMemo(
-    () => buildSurgeryWashoutPlan(surgeryDate, herbs),
-    [surgeryDate, herbs]
+    () => buildSurgeryWashoutPlan(surgeryDate, herbNames),
+    [surgeryDate, herbNames]
   );
 
   return (
@@ -166,27 +211,81 @@ export function SurgeryPlannerClient() {
           </div>
         </div>
 
-        {/* Active chips */}
-        {herbs.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2 border-t border-border/60 pt-4">
-            {herbs.map((h) => (
-              <span
-                key={h}
-                className="inline-flex items-center gap-1 rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-foreground"
+        {/* Active items with optional preparation, dose & last-used inputs */}
+        {items.length > 0 && (
+          <div className="mt-4 space-y-2.5 border-t border-border/60 pt-4">
+            {items.map((item) => (
+              <div
+                key={item.name}
+                className="rounded-xl border bg-muted/30 p-3 text-xs"
               >
-                {h}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSampleMode(false);
-                    setHerbs(herbs.filter((x) => x !== h));
-                  }}
-                  className="no-print ml-1 rounded-full p-0.5 text-muted-foreground hover:text-foreground"
-                  aria-label={`${fr ? "Retirer" : "Remove"} ${h}`}
-                >
-                  <X className="size-3" />
-                </button>
-              </span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-semibold text-foreground">
+                    {item.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSampleMode(false);
+                      setItems(items.filter((x) => x.name !== item.name));
+                    }}
+                    className="no-print rounded-full p-0.5 text-muted-foreground hover:text-foreground"
+                    aria-label={`${fr ? "Retirer" : "Remove"} ${item.name}`}
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+                <div className="no-print mt-2 grid gap-2 sm:grid-cols-3">
+                  <Input
+                    value={item.preparation}
+                    onChange={(e) =>
+                      updateItemField(item.name, "preparation", e.target.value)
+                    }
+                    placeholder={
+                      fr
+                        ? "Forme / préparation (ex. gélule, tisane)"
+                        : "Form / preparation (e.g. extract, tea)"
+                    }
+                    aria-label={`${item.name} ${fr ? "préparation" : "preparation"}`}
+                    className="h-8 text-xs"
+                  />
+                  <Input
+                    value={item.dose}
+                    onChange={(e) =>
+                      updateItemField(item.name, "dose", e.target.value)
+                    }
+                    placeholder={
+                      fr
+                        ? "Dose / fréquence (optionnel)"
+                        : "Dose / frequency (optional)"
+                    }
+                    aria-label={`${item.name} ${fr ? "dose" : "dose"}`}
+                    className="h-8 text-xs"
+                  />
+                  <Input
+                    type="date"
+                    value={item.lastUsed}
+                    onChange={(e) =>
+                      updateItemField(item.name, "lastUsed", e.target.value)
+                    }
+                    aria-label={`${item.name} ${fr ? "dernière prise" : "last used date"}`}
+                    className="h-8 text-xs"
+                  />
+                </div>
+                {(item.preparation || item.dose || item.lastUsed) && (
+                  <p className="mt-1.5 text-[11px] text-muted-foreground">
+                    {[
+                      item.preparation &&
+                        `${fr ? "Forme" : "Form"}: ${item.preparation}`,
+                      item.dose && `${fr ? "Dose" : "Dose"}: ${item.dose}`,
+                      item.lastUsed &&
+                        `${fr ? "Dernière prise" : "Last used"}: ${item.lastUsed}`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                )}
+              </div>
             ))}
           </div>
         )}
@@ -203,7 +302,7 @@ export function SurgeryPlannerClient() {
         </div>
       )}
 
-      {!plan || herbs.length === 0 ? (
+      {!plan || items.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
           <p>
             {fr
@@ -250,12 +349,12 @@ export function SurgeryPlannerClient() {
           <div className="rounded-lg border border-amber-300 bg-amber-50/70 px-3.5 py-2.5 text-xs leading-relaxed text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
             <strong>
               {fr
-                ? "Aide à la discussion uniquement : "
-                : "Discussion aid only: "}
+                ? "Déclarez TOUTES vos plantes, vitamines, tisanes et compléments : "
+                : "Disclose ALL herbs, vitamins, teas, and supplements: "}
             </strong>
             {fr
-              ? "ne constitue pas une consigne d'arrêter vos suppléments de vous-même. Les préparations, les doses et votre situation chirurgicale peuvent modifier les recommandations de votre équipe soignante."
-              : "this checklist is not an instruction to independently stop supplements. Different preparations, doses, and surgical circumstances can change what your surgical or anesthesia team recommends."}
+              ? "remettez cette liste complète à votre chirurgien et à votre anesthésiste. Cet outil ne constitue pas une consigne d'arrêt autonome et vous ne devez jamais interrompre un médicament prescrit sans avis médical."
+              : "share every bottle and tea with your surgical and anesthesia team. This checklist is not an instruction to stop supplements or prescribed medications independently."}
           </div>
 
           {plan.matched.length > 0 ? (

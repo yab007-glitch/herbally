@@ -131,8 +131,57 @@ function verdictCopy(
   severity: InteractionPair["severity"],
   herb: string,
   drug: string,
-  fr: boolean
+  fr: boolean,
+  isClinicianApproved: boolean
 ): { headline: string; action: string } {
+  if (!isClinicianApproved) {
+    if (fr) {
+      switch (severity) {
+        case "contraindicated":
+          return {
+            headline: `${herb} + ${drug} : signal de contre-indication potentielle (dossier hérité non révisé)`,
+            action: `Signal hérité classé contre-indiqué sans approbation d'un clinicien. Évitez cette association par prudence et vérifiez avec un médecin ou pharmacien.`,
+          };
+        case "severe":
+          return {
+            headline: `${herb} + ${drug} : signal de risque élevé potentiel (dossier hérité non révisé)`,
+            action: `Signal hérité classé élevé sans approbation d'un clinicien. Parlez-en à votre médecin ou pharmacien avant toute association.`,
+          };
+        case "moderate":
+          return {
+            headline: `${herb} + ${drug} : interaction modérée potentielle (dossier hérité non révisé)`,
+            action: `Signal hérité de prudence : demandez conseil à votre médecin ou pharmacien avant de combiner.`,
+          };
+        default:
+          return {
+            headline: `${herb} + ${drug} : interaction faible potentielle (dossier hérité non révisé)`,
+            action: `Signal hérité de risque faible, mais signalez tout symptôme inhabituel à un professionnel de santé.`,
+          };
+      }
+    }
+    switch (severity) {
+      case "contraindicated":
+        return {
+          headline: `${herb} + ${drug}: potential contraindication signal (unreviewed legacy record)`,
+          action: `Legacy classification flagged as potentially contraindicated without licensed clinical sign-off. Avoid combining and confirm with a prescriber or pharmacist.`,
+        };
+      case "severe":
+        return {
+          headline: `${herb} + ${drug}: potential high-risk signal (unreviewed legacy record)`,
+          action: `Legacy classification flagged as high risk without licensed clinical sign-off. Consult your prescriber or pharmacist before combining.`,
+        };
+      case "moderate":
+        return {
+          headline: `${herb} + ${drug}: potential moderate interaction (unreviewed legacy record)`,
+          action: `Legacy record suggests caution — confirm with your prescriber or pharmacist before combining.`,
+        };
+      default:
+        return {
+          headline: `${herb} + ${drug}: potential mild interaction (unreviewed legacy record)`,
+          action: `Legacy record notes low risk at usual doses, though clinical validation is still pending.`,
+        };
+    }
+  }
   if (fr) {
     switch (severity) {
       case "contraindicated":
@@ -452,7 +501,15 @@ export default async function InteractionPairPage({ params }: Props) {
   const displayDrug = fr
     ? pair.localizedDrugName || pair.drugName
     : pair.drugName;
-  const verdict = verdictCopy(pair.severity, pair.herbName, displayDrug, fr);
+  const isClinicianApproved =
+    pair.clinicalActionStatus === "clinician_approved";
+  const verdict = verdictCopy(
+    pair.severity,
+    pair.herbName,
+    displayDrug,
+    fr,
+    isClinicianApproved
+  );
   const evidenceClass = classifyInteractionEvidence({
     evidenceLevel: pair.evidenceLevel,
     evidenceTier: pair.evidenceTier ?? "unknown",
@@ -510,7 +567,7 @@ export default async function InteractionPairPage({ params }: Props) {
   return (
     <div className="space-y-8">
       <WebPageSchema
-        type="MedicalWebPage"
+        type={isClinicianApproved ? "MedicalWebPage" : "WebPage"}
         title={
           fr
             ? `${pair.herbName} et ${displayDrug} : interaction, gravité et sécurité`

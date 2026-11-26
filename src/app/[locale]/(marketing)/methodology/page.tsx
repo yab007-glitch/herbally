@@ -16,6 +16,7 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getReviewer } from "@/lib/data/reviewers";
+import { getGovernanceCoverageStats } from "@/lib/governance/coverage-stats";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -35,7 +36,10 @@ const sectionKeys = [
 
 export default async function MethodologyPage() {
   const locale = await getLocale();
-  const t = await getTranslations({ locale });
+  const [t, governanceStats] = await Promise.all([
+    getTranslations({ locale }),
+    getGovernanceCoverageStats(),
+  ]);
 
   const methodologySections = sectionKeys.map(({ key, icon }) => ({
     icon,
@@ -290,6 +294,148 @@ export default async function MethodologyPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Live Governance Coverage Dashboard & Public Corrections Log */}
+        <section
+          id="governance-coverage"
+          aria-labelledby="governance-coverage-heading"
+          className="mt-12 space-y-6 scroll-mt-24"
+        >
+          <div>
+            <h2
+              id="governance-coverage-heading"
+              className="text-xl font-bold text-foreground"
+            >
+              {locale === "fr"
+                ? "Couverture de gouvernance en direct et journal des corrections"
+                : "Live Governance Coverage & Public Corrections Log"}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {locale === "fr"
+                ? "Compteurs calculés directement depuis notre base publique afin de distinguer la vérification documentaire de la révision clinique agréée."
+                : "Live counts queried from our public database distinguishing editorial source checks from licensed clinical sign-off."}
+            </p>
+          </div>
+
+          {governanceStats.available ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {locale === "fr"
+                    ? "Fiches plantes publiées"
+                    : "Published Herb Profiles"}
+                </p>
+                <p className="mt-1 text-2xl font-bold text-foreground">
+                  {governanceStats.totalHerbs.toLocaleString(
+                    locale === "fr" ? "fr-CA" : "en-CA"
+                  )}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {locale === "fr"
+                    ? "Fiches avec source primaire vérifiée"
+                    : "Source-Checked Profiles"}
+                </p>
+                <p className="mt-1 text-2xl font-bold text-foreground">
+                  {governanceStats.sourceCheckedHerbs.toLocaleString(
+                    locale === "fr" ? "fr-CA" : "en-CA"
+                  )}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {locale === "fr"
+                    ? "Monographies révisées par clinicien"
+                    : "Clinician-Signed Herbs"}
+                </p>
+                <p className="mt-1 text-2xl font-bold text-foreground">
+                  {governanceStats.clinicallyReviewedHerbs.toLocaleString(
+                    locale === "fr" ? "fr-CA" : "en-CA"
+                  )}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {locale === "fr"
+                    ? "Interactions (approuvées / total)"
+                    : "Interactions (Signed / Total)"}
+                </p>
+                <p className="mt-1 text-2xl font-bold text-foreground">
+                  {governanceStats.clinicianApprovedInteractions.toLocaleString(
+                    locale === "fr" ? "fr-CA" : "en-CA"
+                  )}{" "}
+                  /{" "}
+                  {governanceStats.totalInteractions.toLocaleString(
+                    locale === "fr" ? "fr-CA" : "en-CA"
+                  )}
+                </p>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  {locale === "fr"
+                    ? `${governanceStats.legacyUnreviewedInteractions.toLocaleString("fr-CA")} dossiers hérités en attente de révision clinique`
+                    : `${governanceStats.legacyUnreviewedInteractions.toLocaleString("en-CA")} legacy records awaiting clinical sign-off`}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-border bg-muted/30 p-4 text-xs text-muted-foreground">
+              {locale === "fr"
+                ? "Les compteurs en direct ne sont pas disponibles dans cet environnement de construction."
+                : "Live governance metrics are temporarily unavailable in this environment."}
+            </div>
+          )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                {locale === "fr"
+                  ? "Journal public des corrections récentes"
+                  : "Recent Public Corrections Log"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-sm text-muted-foreground">
+              {governanceStats.corrections.length > 0 ? (
+                <ul className="divide-y divide-border/70">
+                  {governanceStats.corrections.map((entry) => (
+                    <li
+                      key={entry.id}
+                      className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div>
+                        <span className="font-mono text-xs font-semibold text-foreground">
+                          {entry.affected_surface}
+                        </span>
+                        <p className="text-xs text-muted-foreground">
+                          {entry.correction_summary}
+                        </p>
+                      </div>
+                      <span className="shrink-0 text-[11px] text-muted-foreground">
+                        {entry.corrected_at.slice(0, 10)}
+                        {entry.verified_by ? ` · ${entry.verified_by}` : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  {locale === "fr"
+                    ? "Les nouvelles corrections validées publiées via le portail LinkedIn SSO ou la file d'incidents apparaîtront ici avec leur date et référence."
+                    : "Verified post-release corrections published through our safety-incident or LinkedIn SSO edit queue are logged publicly here as they land."}
+                </p>
+              )}
+              <div className="mt-4">
+                <Link
+                  href="/clinical-review"
+                  className="text-xs font-medium text-primary underline underline-offset-4"
+                >
+                  {locale === "fr"
+                    ? "Signaler une erreur ou suggérer une correction via LinkedIn SSO →"
+                    : "Flag an inaccuracy or suggest a correction via LinkedIn SSO →"}
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
 
         {/* CTA */}
         <div className="mt-12 rounded-lg border bg-muted/50 p-8 text-center">

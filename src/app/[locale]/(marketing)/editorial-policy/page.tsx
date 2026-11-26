@@ -270,6 +270,14 @@ export default async function EditorialPolicyPage() {
           {c.back}
         </Link>
         <Link
+          href="/methodology#governance-coverage"
+          className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
+        >
+          {locale === "fr"
+            ? "Couverture de gouvernance en direct"
+            : "Live Governance & Corrections Log"}
+        </Link>
+        <Link
           href="/methodology"
           className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
         >

@@ -387,6 +387,24 @@ export default async function SponsorsPage() {
         </div>
       </section>
 
+      <section className="mt-14" aria-labelledby="firewall-heading">
+        <div className="rounded-3xl border border-border/70 bg-muted/30 p-5 sm:p-7">
+          <h2
+            id="firewall-heading"
+            className="text-xl font-bold tracking-tight text-foreground"
+          >
+            {locale === "fr"
+              ? "Cloisonnement éditorial et commercial strict"
+              : "Editorial & Commercial Firewall"}
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            {locale === "fr"
+              ? "Aucune commandite, annonce ou subvention ne peut influencer les niveaux de preuve (A–D / Traditionnel), le classement de gravité d'une interaction médicamenteuse, l'ordre des résultats ou les avertissements de sécurité. Les emplacements commandités sont explicitement libellés et séparés des outils cliniques sensibles."
+              : "No sponsor, advertiser, or grant can ever buy influence over herb evidence grades (A–D / Traditional), interaction severity ratings, search rankings, safety warnings, or Virtual Herbalist answers. Sponsored placements carry explicit disclosure labels and are kept strictly separate from editorial triage."}
+          </p>
+        </div>
+      </section>
+
       <section
         id="contact"
         className="mt-14 scroll-mt-24"

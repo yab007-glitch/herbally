@@ -44,7 +44,7 @@ async function loadHerb(slug: string): Promise<HerbOg | null> {
 const EVIDENCE_LABEL: Record<string, string> = {
   A: "Evidence A · Multiple RCTs",
   B: "Evidence B · Some clinical data",
-  C: "Evidence C · Traditional/preclinical",
+  C: "Evidence C · Preliminary / preclinical",
   trad: "Traditional use",
 };
 

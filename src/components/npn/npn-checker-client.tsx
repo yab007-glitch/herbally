@@ -57,6 +57,7 @@ interface NpnLookupResult {
   };
   herbMatchingUnavailable?: boolean;
   ingredients: NpnIngredient[];
+  nonMedicinalIngredients?: string[];
   purposes: string[];
   risks: Array<{ type: string; subType: string; text: string }>;
   doses: Array<{
@@ -66,6 +67,7 @@ interface NpnLookupResult {
     frequency: number | null;
     frequencyUnit: string;
   }>;
+  checkedAt?: string;
   sourceUrl: string;
 }
 
@@ -352,6 +354,21 @@ export function NpnCheckerClient() {
                   .filter(Boolean)
                   .join(" · ")}
               </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {[
+                  data.licenceDate
+                    ? `${locale === "fr" ? "Homologation" : "Licensed"}: ${data.licenceDate}`
+                    : null,
+                  data.revisedDate
+                    ? `${locale === "fr" ? "Révisé" : "Revised"}: ${data.revisedDate}`
+                    : null,
+                  data.checkedAt
+                    ? `${locale === "fr" ? "Vérifié via LNHPD" : "Checked"}: ${data.checkedAt.slice(0, 10)}`
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </p>
             </div>
             <a
               href={data.sourceUrl}
@@ -363,6 +380,30 @@ export function NpnCheckerClient() {
               <ExternalLink className="size-3.5" />
             </a>
           </div>
+
+          {!data.status.active && (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-300 bg-red-50/80 p-4 text-xs leading-relaxed text-red-950 dark:border-red-800 dark:bg-red-950/30 dark:text-red-100"
+            >
+              <p className="font-semibold">
+                {locale === "fr"
+                  ? "Attention : cette licence NPN n'est pas active dans le registre de Santé Canada"
+                  : "Warning: This NPN licence is NOT currently Active in Health Canada's register"}
+              </p>
+              <p className="mt-1">
+                {locale === "fr"
+                  ? "Une licence suspendue, discontinuée ou annulée signifie que le produit n'est peut-être plus autorisé à la vente au Canada. Demandez conseil à un pharmacien avant utilisation."
+                  : "A suspended, discontinued, or cancelled status means this product may no longer be authorized for sale in Canada. Check the product bottle and ask a pharmacist before use."}
+              </p>
+            </div>
+          )}
+
+          <p className="rounded-lg border border-border/70 bg-muted/30 px-3.5 py-2.5 text-xs text-muted-foreground">
+            {locale === "fr"
+              ? "Portée réglementaire : un numéro de produit naturel (NPN) atteste d'une homologation de Santé Canada — cela ne prouve pas l'efficacité clinique ni l'innocuité avec vos médicaments."
+              : "Regulatory scope: a Health Canada NPN confirms product licensing and label review — it does NOT establish clinical efficacy or personal safety alongside your medications."}
+          </p>
 
           {/* Partial upstream failure banner */}
           {data.partial && (
@@ -580,6 +621,20 @@ export function NpnCheckerClient() {
           )}
 
           {/* Official Health Canada Risks / Cautions */}
+          {data.nonMedicinalIngredients &&
+            data.nonMedicinalIngredients.length > 0 && (
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">
+                  {locale === "fr"
+                    ? "Ingrédients non médicinaux (excipients / allergènes possibles)"
+                    : "Non-medicinal ingredients (excipients / potential allergens)"}
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                  {data.nonMedicinalIngredients.join(", ")}
+                </p>
+              </div>
+            )}
+
           {(data.risks.length > 0 ||
             data.sectionStatus?.risks === "unavailable") && (
             <div>

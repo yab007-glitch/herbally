@@ -44,7 +44,7 @@ export const monographsPart1: Record<string, Monograph> = {
       "GI upset common at doses >1,000mg/day",
       "Rare liver injury has been reported with some enhanced-bioavailability curcumin/turmeric supplements. Stop use and seek medical advice for jaundice, dark urine, nausea, unusual fatigue or abdominal pain. This risk has not been associated with typical dietary amounts of turmeric.",
       "Piperine-enhanced formulations may increase drug levels of many medications",
-      "May increase bleeding risk; discontinue 2 weeks before surgery",
+      "May increase bleeding risk; disclose use to your surgeon or anesthesiologist before scheduled surgery",
       "Gallbladder contraction — avoid with gallstones",
     ],
     drugInteractions: [
@@ -123,7 +123,7 @@ export const monographsPart1: Record<string, Monograph> = {
       "Nightshade family — avoid with nightshade sensitivity",
       "Can overstimulate thyroid in hyperthyroid patients",
       "Rare idiosyncratic hepatotoxicity (LiverTox Category B), including cirrhosis/liver failure cases — stop immediately and seek medical care for jaundice, dark urine, or upper abdominal pain",
-      "Avoid in hormone-sensitive prostate cancer and discontinue at least 2 weeks before surgery",
+      "Avoid in hormone-sensitive prostate cancer; disclose use to your surgeon or anesthesiologist before scheduled surgery",
     ],
     drugInteractions: [
       {

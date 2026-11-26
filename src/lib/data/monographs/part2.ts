@@ -28,7 +28,7 @@ export const monographsPart2: Record<string, Monograph> = {
       "Does not replace medical evaluation of urinary symptoms or prostate enlargement",
       "May increase bleeding risk; rare cases of acute pancreatitis and cholestatic liver injury reported",
       "Typical trial dose: 160mg BID liposterolic extract",
-      "Discontinue at least 2 weeks before surgery if bleeding risk is a concern",
+      "May increase bleeding risk; disclose use to your surgeon or anesthesiologist before scheduled surgery",
     ],
     drugInteractions: [
       {

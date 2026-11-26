@@ -210,78 +210,83 @@ export const SAFETY_GUIDES: Guide[] = [
   {
     slug: "how-the-dosage-calculator-works",
     status: "published",
-    updated: "2026-11-18",
+    updated: "2026-11-26",
     reviewedBy: "yasser-bheekun",
-    reviewedOn: "2026-11-18",
+    reviewedOn: "2026-11-26",
     en: {
-      title: "How the herbal dosage calculator works — and its limits",
-      metaTitle: "How the Herbal Dosage Calculator Works",
+      title:
+        "How the adult herbal reference dose lookup works — and its limits",
+      metaTitle: "How the Adult Herbal Reference Dose Lookup Works",
       metaDescription:
-        "What the calculator computes, which formulas it uses, what it cannot know about you, and why a reference dose is not a prescription.",
+        "How HerbAlly displays unscaled adult monograph reference amounts (18+ only), why it never scales by weight or age, and why product standardization changes interpretation.",
       intro:
-        "The calculator turns a published adult dose range and your weight into a number. That is arithmetic, not judgement — and the difference matters more here than anywhere else on the site.",
+        "HerbAlly's dosage tool looks up published adult monograph reference amounts and confirms adult eligibility (18+). It does not calculate personalized doses, scale by body weight or surface area, or support pediatric use.",
       sections: [
         {
-          heading: "What it actually computes",
+          heading: "What it actually checks and displays",
           paragraphs: [
-            "It takes a reference adult dose recorded for that herb and, where a weight-based formula applies, scales it. The formulas are named on the page rather than hidden, so you can see which one produced the number.",
-            "It does not decide whether the herb is appropriate for you, and it cannot adjust for kidney or liver function, pregnancy, breastfeeding, age beyond the adult range, or the other medicines you take.",
+            "First, the tool verifies that the user is an adult (age 18–120). Age is used solely as a mandatory 18+ safety gate — changing 25 to 65 does not change the displayed amount.",
+            "It then displays the unscaled adult reference dose recorded in HerbAlly's monograph or regulatory record alongside the named dosage forms (e.g., dried root, standardized extract, capsule, or tea). It does not adjust for kidney or liver function, pregnancy, breastfeeding, body composition, or prescription drugs.",
           ],
         },
         {
-          heading: "Reference dose is not a recommendation",
+          heading:
+            "Reference dose is not a recommendation — and extracts differ",
           paragraphs: [
-            "A dose range in a monograph is a description of what has been used and studied — not a target. Products differ in strength, and a dose that is reasonable in a clinical trial may be inappropriate for a product whose extract ratio is unknown.",
-            "If you cannot tell what strength the product is, the calculator cannot help you: the number it produces cannot be applied to an unknown concentration.",
+            "A monograph range describes what has been studied or traditionally used in adults — not a personal target. Commercial extracts vary widely in concentration, solvent (aqueous tea vs hydroalcoholic tincture), and standardized marker compounds (for example, % curcuminoids or % hypericin).",
+            "A milligram amount for raw herb powder is not 1:1 interchangeable with a concentrated 10:1 extract. Always compare your product label against the monograph's preparation form.",
           ],
         },
         {
           heading: "Children, pregnancy and breastfeeding",
           paragraphs: [
-            "The calculator is an adult tool. Paediatric dosing of herbal products is not a matter of scaling an adult dose by weight — it needs a clinician who knows the child, and often it is simply not established. The same caution applies in pregnancy and breastfeeding, where the honest answer for many herbs is that the data are not there.",
+            "HerbAlly blocks pediatric dosing entirely. Weight-based formulas (Clark's, Young's, BSA) are disabled because scaling an adult botanical dose for an infant, child, or adolescent is clinically unsafe without pediatric supervision.",
+            "Pregnancy and breastfeeding also require individual clinician guidance; when safety data are absent, the honest answer is that data are lacking.",
           ],
         },
         {
-          heading: "What to do with the number",
+          heading: "What to do with the reference range",
           paragraphs: [
-            "Use it to understand the order of magnitude and to ask a better question. “The monograph range is this; the capsule I bought is that — how do they compare?” is a pharmacist question with a real answer. The calculator gets you to the question; it does not answer it for you.",
+            "Bring the monograph range and your exact bottle label (including NPN, extract ratio, and non-medicinal ingredients) to a pharmacist or physician so they can verify suitability alongside your health conditions and medications.",
           ],
         },
       ],
       sources: [NCCIH_WISE, EMA_HERBAL],
     },
     fr: {
-      title: "Comment fonctionne le calculateur de posologie — et ses limites",
-      metaTitle: "Comment fonctionne le calculateur de posologie",
+      title:
+        "Comment fonctionne l'outil de dose adulte de référence — et ses limites",
+      metaTitle: "Comment fonctionne l'outil de dose adulte de référence",
       metaDescription:
-        "Ce que le calculateur calcule, quelles formules il utilise, ce qu’il ne peut pas savoir de vous, et pourquoi une dose de référence n’est pas une ordonnance.",
+        "Comment HerbAlly affiche les repères adultes non ajustés (18+ uniquement), pourquoi aucun calcul selon le poids ou l'âge n'est effectué et pourquoi les extraits diffèrent.",
       intro:
-        "Le calculateur transforme une fourchette de dose adulte publiée et votre poids en un chiffre. C’est de l’arithmétique, pas du jugement — et la différence compte ici plus qu’ailleurs sur le site.",
+        "L'outil de posologie HerbAlly affiche les repères posologiques adultes publiés dans les monographies et vérifie l'âge adulte (18+). Il ne calcule pas de dose personnalisée, n'ajuste ni selon le poids ni selon l'âge, et exclut toute posologie pédiatrique.",
       sections: [
         {
-          heading: "Ce qu’il calcule réellement",
+          heading: "Ce qu'il vérifie et affiche réellement",
           paragraphs: [
-            "Il prend une dose adulte de référence enregistrée pour cette plante et, lorsqu’une formule basée sur le poids s’applique, la met à l’échelle. Les formules sont nommées sur la page plutôt que cachées, pour que vous puissiez voir laquelle a produit le chiffre.",
-            "Il ne décide pas si la plante vous convient, et il ne peut pas tenir compte de la fonction rénale ou hépatique, de la grossesse, de l’allaitement, d’un âge hors adulte, ni des autres médicaments que vous prenez.",
+            "L'outil confirme d'abord que l'utilisateur est adulte (18 à 120 ans). L'âge sert uniquement de contrôle de sécurité 18+ — saisir 25 ou 65 ans ne modifie pas la valeur affichée.",
+            "Il affiche ensuite la dose adulte de référence non ajustée issue des monographies HerbAlly ou des registres réglementaires, avec les formes galéniques connues (poudre, extrait standardisé, tisane, capsule). Il ne tient compte ni des fonctions rénale ou hépatique, ni de la grossesse, de l'allaitement ou des médicaments.",
           ],
         },
         {
-          heading: "Une dose de référence n’est pas une recommandation",
+          heading: "Une dose de référence n'est pas une recommandation",
           paragraphs: [
-            "Une fourchette de dose dans une monographie décrit ce qui a été utilisé et étudié — ce n’est pas une cible. Les produits diffèrent en concentration, et une dose raisonnable dans un essai peut être inadaptée pour un produit dont le ratio d’extrait est inconnu.",
-            "Si vous ne pouvez pas savoir quelle est la concentration du produit, le calculateur ne peut pas vous aider : le chiffre obtenu ne s’applique pas à une concentration inconnue.",
+            "Une fourchette monographique décrit un repère étudié ou traditionnel chez l'adulte — jamais une cible individuelle. Les préparations commerciales diffèrent fortement selon le solvant (infusion aqueuse vs teinture), le ratio d'extrait (p. ex. 10:1) et la teneur en composés actifs standardisés.",
+            "Une quantité en milligrammes de plante brute n'est jamais équivalente à un extrait concentré. Vérifiez toujours la forme et la standardisation inscrites sur votre flacon.",
           ],
         },
         {
           heading: "Enfants, grossesse et allaitement",
           paragraphs: [
-            "Le calculateur est un outil pour adultes. La posologie pédiatrique des produits de plantes ne s’obtient pas en réduisant une dose adulte au prorata du poids — elle demande un clinicien qui connaît l’enfant, et souvent elle n’est simplement pas établie. La même prudence vaut en grossesse et en allaitement, où la réponse honnête pour beaucoup de plantes est que les données n’existent pas.",
+            "HerbAlly bloque totalement la posologie pédiatrique. Les formules basées sur le poids ou la surface corporelle (Clark, Young) sont désactivées : extrapoler une dose adulte à un enfant est cliniquement dangereux sans avis pédiatrique spécialisé.",
+            "De même, la grossesse et l'allaitement exigent un avis médical personnalisé ; lorsque les données manquent, la réponse honnête est de l'indiquer clairement.",
           ],
         },
         {
-          heading: "Que faire du chiffre",
+          heading: "Comment utiliser ce repère en pratique",
           paragraphs: [
-            "Servez-vous-en pour comprendre l’ordre de grandeur et poser une meilleure question. « La monographie indique cette fourchette ; ma gélule contient ceci — comment ça se compare ? » est une question de pharmacien qui a une vraie réponse. Le calculateur vous amène à la question ; il n’y répond pas à votre place.",
+            "Apportez la fourchette monographique et l'étiquette exacte de votre produit (NPN, ratio d'extrait et ingrédients non médicinaux) à votre pharmacien ou médecin afin qu'il évalue l'adéquation avec vos traitements.",
           ],
         },
       ],

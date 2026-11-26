@@ -22,8 +22,8 @@
     },
     "C": {
       "label": "Preuves limitées",
-      "shortDesc": "Traditionnel/préclinique",
-      "fullDesc": "Preuves limitées issues de l'utilisation traditionnelle, d'études précliniques ou d'opinions d'experts. Recherches supplémentaires nécessaires."
+      "shortDesc": "Préliminaire / préclinique",
+      "fullDesc": "Preuves préliminaires ou limitées issues d'études précliniques, de petits essais pilotes ou de recherches émergentes. Non confirmé par de grands ECR."
     },
     "D": {
       "label": "Uniquement anecdotique",
@@ -72,8 +72,8 @@
   },
   "safety": {
     "noInteractionsTitle": "Aucune interaction répertoriée",
-    "noInteractionsMsg": "Notre base de données ne répertorie aucune interaction médicamenteuse cliniquement significative pour cette plante. L'absence de données ne prouve pas l'innocuité — consultez toujours votre professionnel de santé avant de combiner des plantes avec des médicaments.",
-    "dangerousNoInteractionsTitle": "Plante à haut risque — ne pas associer aux médicaments",
+    "noInteractionsMsg": "Notre base de données ne répertorie aucune interaction médicamenteuse documentée pour cette plante. L'absence de données ne prouve pas l'innocuité — consultez toujours votre professionnel de santé avant de combiner des plantes avec des médicaments.",
+    "dangerousNoInteractionsTitle": "Plante toxique — ne pas ingérer ni associer aux médicaments",
     "dangerousNoInteractionsMsg": "Aucune interaction médicamenteuse structurée n'est répertoriée dans notre tableau pour cette plante toxique ou à haut risque, mais une toxicité systémique grave ou des interactions restent possibles. Ne pas utiliser ni associer à un médicament sans suivi médical direct.",
     "interactionCountTitle": "{count} interaction médicamenteuse connue — Certaines peuvent être graves",
     "interactionCountTitlePlural": "{count} interactions médicamenteuses connues — Certaines peuvent être graves",

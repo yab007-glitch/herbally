@@ -110,12 +110,13 @@ export async function GET(request: NextRequest) {
     const licence = licences[0];
     const lnhpdId = licence.lnhpd_id;
 
-    const [ingredientsRes, purposesRes, risksRes, dosesRes] =
+    const [ingredientsRes, purposesRes, risksRes, dosesRes, nonMedicinalRes] =
       await Promise.allSettled([
         fetchLnhpdJson("medicinalingredient", lnhpdId, locale),
         fetchLnhpdJson("productpurpose", lnhpdId, locale),
         fetchLnhpdJson("productrisk", lnhpdId, locale),
         fetchLnhpdJson("productdose", lnhpdId, locale),
+        fetchLnhpdJson("nonmedicinalingredient", lnhpdId, locale),
       ]);
 
     function resolveSection<T>(res: PromiseSettledResult<unknown>): {
@@ -171,6 +172,16 @@ export async function GET(request: NextRequest) {
     const rawPurposes = purposesSection.rows;
     const rawRisks = risksSection.rows;
     const rawDoses = dosesSection.rows;
+    const nonMedicinalSection = resolveSection<{ ingredient_name?: string }>(
+      nonMedicinalRes
+    );
+    const nonMedicinalIngredients = Array.from(
+      new Set(
+        nonMedicinalSection.rows
+          .map((row) => (row.ingredient_name ?? "").trim())
+          .filter(Boolean)
+      )
+    );
 
     // Resolve distinct botanical names against HerbAlly herbs (cap 12 lookups)
     const uniqueCleaned = new Map<string, string>();
@@ -298,9 +309,11 @@ export async function GET(request: NextRequest) {
         sectionStatus,
         herbMatchingUnavailable,
         ingredients,
+        nonMedicinalIngredients,
         purposes,
         risks,
         doses,
+        checkedAt: new Date().toISOString(),
         sourceUrl:
           locale === "fr"
             ? `https://produits-sante.canada.ca/lnhpd-bdpsnh/info?licence=${licence.licence_number ?? npn}`

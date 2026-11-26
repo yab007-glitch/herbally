@@ -141,7 +141,7 @@
     "unsafeOrally": "Déconseillé par voie orale",
     "safeTopically": "Sûr en application topique",
     "unknown": "Données insuffisantes",
-    "evidenceScopeNote": "Ce niveau reflète l'indication la mieux documentée — les preuves varient selon l'usage et la préparation ; consultez chaque source ci-dessous."
+    "evidenceScopeNote": "Ce niveau reflète l'indication la mieux documentée — les preuves varient selon l'usage, la dose et la préparation, et ne s'appliquent que si la plante est sans risque."
   },
   "herbTabs": {
     "overview": "Aperçu",
@@ -220,7 +220,7 @@
     "interactions": "Interactions médicamenteuses",
     "interactionCount": "{count, plural, one {# interaction connue} other {# interactions connues}}",
     "interactionCountNone": "Aucune interaction répertoriée dans notre base",
-    "interactionDangerousNone": "Tableau d'interactions incomplet — plante à haut risque (avis médical requis)",
+    "interactionDangerousNone": "Sans objet — plante toxique (ne pas utiliser)",
     "toxicPlantBadge": "Plante toxique / à haut risque",
     "toxicBadgeShort": "Haut risque / toxique",
     "mostSerious": "La plus grave : {drug} — {severity}",
