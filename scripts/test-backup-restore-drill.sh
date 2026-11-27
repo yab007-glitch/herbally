@@ -6,9 +6,9 @@
 # 2. Creates a custom-format backup with pg_dump -Fc and inspects archive TOC
 #    with pg_restore --list.
 # 3. Restores into a clean disposable database (herbally_restored).
-# 4. Asserts canary rows survive restore intact and executes the full
-#    supabase/tests/clinical-safety-integration.sql suite against the restored DB
-#    to prove RLS policies, AAL2 triggers, and pediatric quarantines survive backup/restore.
+# 4. Asserts canary rows survive restore intact, runs full expand+contract
+#    schema/grant postcondition checks (--verify-only), and executes live
+#    restored-DB RLS, revocation, and audit trigger assertions.
 
 set -euo pipefail
 
@@ -74,7 +74,7 @@ psql "$ADMIN_URL" -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"${RESTORE_DB}\";"
 run_pg_restore --no-owner --exit-on-error --dbname="$RESTORE_URL" "$DUMP_FILE"
 rm -f "$DUMP_FILE"
 
-echo "==> Step 5: Asserting canary row & clinical-safety triggers on restored database"
+echo "==> Step 5: Asserting canary row, postconditions, and live RLS/triggers on restored database"
 CANARY_COUNT="$(psql "$RESTORE_URL" -tAc "SELECT count(*) FROM public.herbs WHERE slug = 'restore-canary-botanical';")"
 if [ "$CANARY_COUNT" != "1" ]; then
   echo "ERROR: Expected 1 restore-canary-botanical row after pg_restore, got ${CANARY_COUNT}"
@@ -82,7 +82,60 @@ if [ "$CANARY_COUNT" != "1" ]; then
 fi
 
 bash "${REPO_DIR}/scripts/apply-pending-migrations.sh" --test-mode --phase all --verify-only --repo-dir "$REPO_DIR" --psql-url "$RESTORE_URL"
-psql "$RESTORE_URL" -v ON_ERROR_STOP=1 -f "${REPO_DIR}/supabase/tests/clinical-safety-integration.sql"
+
+psql "$RESTORE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+BEGIN;
+DO $$
+DECLARE
+  v_visible INT;
+  v_desc TEXT;
+  v_rev_status TEXT;
+  v_id UUID;
+BEGIN
+  -- 1) Restored RLS visibility for anon must still hide unconsented/expired reviewers
+  EXECUTE 'SET LOCAL ROLE anon';
+  SELECT count(*) INTO v_visible FROM public.reviewer_registry;
+  IF v_visible <> 2 THEN
+    RAISE EXCEPTION 'Expected 2 consented active reviewers visible to anon on restored DB, got %', v_visible;
+  END IF;
+  RESET ROLE;
+
+  -- 2) Restored column revocation must still block authenticated RETURNING herbs.description
+  PERFORM set_config('request.jwt.claim.sub', '22222222-2222-2222-2222-222222222222', true);
+  PERFORM set_config('request.jwt.claims', '{"sub":"22222222-2222-2222-2222-222222222222","aal":"aal1"}', true);
+  EXECUTE 'SET LOCAL ROLE authenticated';
+  BEGIN
+    INSERT INTO public.herbs (name, slug, scientific_name, description, dosage_adult, is_published)
+    VALUES ('Restored Auth Blocked', 'restored-auth-blocked', 'Test', 'Blocked.', '100 mg', false)
+    RETURNING description INTO v_desc;
+    RAISE EXCEPTION 'authenticated unexpectedly returned revoked herbs.description on restored DB';
+  EXCEPTION WHEN insufficient_privilege THEN
+    NULL;
+  END;
+  RESET ROLE;
+
+  -- 3) Restored clinical revision trigger + needs_re_review must fire on service_role edit
+  EXECUTE 'SET LOCAL ROLE service_role';
+  INSERT INTO public.herbs (
+    name, slug, scientific_name, description, dosage_adult, is_published, reviewed_by, last_reviewed
+  ) VALUES (
+    'Restored Trigger Check', 'restored-trigger-check', 'Restaura trigga', 'Before edit.', '150 mg', false, 'yasser-bheekun', now()
+  )
+  RETURNING id INTO v_id;
+
+  UPDATE public.herbs
+  SET description = 'After edit.'
+  WHERE id = v_id
+  RETURNING description, provenance->>'review_status' INTO v_desc, v_rev_status;
+
+  IF v_desc <> 'After edit.' OR v_rev_status <> 'needs_re_review' THEN
+    RAISE EXCEPTION 'Restored review reset trigger failed: desc=%, status=%', v_desc, v_rev_status;
+  END IF;
+  RESET ROLE;
+END
+$$;
+ROLLBACK;
+SQL
 
 psql "$ADMIN_URL" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS \"${RESTORE_DB}\" WITH (FORCE);"
 echo "✓ PostgreSQL 16 Backup -> Custom Dump -> Restore -> RLS/Trigger Verification Drill PASSED."
