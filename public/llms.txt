@@ -31,10 +31,12 @@
 - Référence posologique adulte (18 ans et plus, sans ajustement poids/âge) : https://herbally.app/fr/calculator
 - Méthodologie, niveaux de preuve et transparence éditoriale : https://herbally.app/fr/methodology
 - Portail d'évaluation clinique et suggestions (LinkedIn SSO) : https://herbally.app/fr/clinical-review
+- Centre de sécurité, vérification automatisée et architecture : https://herbally.app/fr/trust
 - Politique de confidentialité (Loi 25 Québec et LPRPDE) : https://herbally.app/fr/privacy
 
 ## Governance, Editorial Policy & Privacy
 
+- Security, Engineering & Automated Verification Center: https://herbally.app/trust
 - Methodology, Evidence Matrix & Live Governance Coverage Counters: https://herbally.app/methodology
 - Editorial Policy, Clinical Governance Charter & Triage SLAs: https://herbally.app/editorial-policy#clinical-governance-protocol
 - Clinical Review Portal (LinkedIn SSO contributor intake): https://herbally.app/clinical-review
@@ -43,7 +45,9 @@
 - About HerbAlly ("What HerbAlly Is — and Is Not"): https://herbally.app/about
 - Open Data JSON Catalog (live coverage counts & sources): https://herbally.app/open-data/catalog.json
 - Open Data Medications & Interactions Registry JSON: https://herbally.app/open-data/medications.json
-- Open Data Quarantined Toxic Botanicals Registry JSON: https://herbally.app/open-data/quarantine.json
+- Open Data Active Herb–Drug Interactions JSON (509 pairs): https://herbally.app/open-data/interactions.json
+- Open Data Quarantined Toxic Botanicals Registry JSON (115 plants): https://herbally.app/open-data/quarantine.json
+- OpenAPI 3.1 Machine-Readable API Specification JSON: https://herbally.app/open-data/schema.json
 - Embeddable Interaction Checker & Librarian Citation Kit: https://herbally.app/widgets
 - RSS Updates Feed: https://herbally.app/rss.xml
 - Sitemap (all indexable EN + FR URLs): https://herbally.app/sitemap.xml

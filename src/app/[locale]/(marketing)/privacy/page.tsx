@@ -402,6 +402,11 @@ export default async function PrivacyPage() {
               >
                 {t("footer.editorialPolicy")}
               </Link>
+              <Link href="/trust" className="text-primary hover:underline">
+                {locale === "fr"
+                  ? "Sécurité et vérification"
+                  : "Security & Verification"}
+              </Link>
               <Link href="/terms" className="text-primary hover:underline">
                 {t("footer.terms")}
               </Link>

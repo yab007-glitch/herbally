@@ -645,6 +645,14 @@ export default async function MethodologyPage() {
               {locale === "fr" ? "Révision clinique" : "Clinical Review Portal"}
             </Link>
             <Link
+              href="/trust"
+              className="inline-flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              {locale === "fr"
+                ? "Sécurité et vérification"
+                : "Security & Verification"}
+            </Link>
+            <Link
               href="/faq"
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >

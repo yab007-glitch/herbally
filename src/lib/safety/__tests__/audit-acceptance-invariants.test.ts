@@ -627,4 +627,39 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
       expect(src).toContain("<WebApplicationSchema");
     }
   });
+
+  it("enforces Release 3.12 /trust center, OpenAPI schema, interactions JSON feed, and health-tool ad exclusion", () => {
+    const trustSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(marketing)/trust/page.tsx"),
+      "utf8"
+    );
+    expect(trustSrc).toContain("https://github.com/yab007-glitch/herbally");
+    expect(trustSrc).toContain("/open-data/schema.json");
+    expect(trustSrc).toContain("/open-data/interactions.json");
+    expect(trustSrc).toContain("00097_admin_aal2_rls.sql");
+    expect(trustSrc).toContain("docs/database-backup-strategy.md");
+
+    const sitemapSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/sitemap.ts"),
+      "utf8"
+    );
+    expect(sitemapSrc).toContain("/trust");
+
+    const adsPolicySrc = fs.readFileSync(
+      path.join(ROOT, "src/lib/ads/policy.ts"),
+      "utf8"
+    );
+    expect(adsPolicySrc).toContain(
+      "export const ADS_LAUNCH_GATE: boolean = false"
+    );
+    for (const sensitiveRoute of [
+      "/embed",
+      "/calculator",
+      "/symptoms",
+      "/surgery-planner",
+      "/npn-checker",
+    ]) {
+      expect(adsPolicySrc).toContain(`"${sensitiveRoute}"`);
+    }
+  });
 });

@@ -85,6 +85,12 @@ export function MarketingFooter() {
               {t("footer.clinicalReview")}
             </Link>
             <Link
+              href="/trust"
+              className="hover:text-foreground transition-colors"
+            >
+              {t("footer.trust")}
+            </Link>
+            <Link
               href="/sponsors"
               className="hover:text-foreground transition-colors"
             >
