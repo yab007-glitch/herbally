@@ -402,7 +402,7 @@
     "aboutSources": "Information sourced from WHO monographs, NCCIH, PubMed, and Commission E",
     "aboutUpdated": "Regularly updated as new research becomes available",
     "aboutNotFDA": "Not reviewed or approved by FDA",
-    "description": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
+    "description": "Ask our AI herbalist about herb safety, drug interactions, and adult monograph references. Educational explanations citing Health Canada, EMA, NCCIH, and PubMed sources. Free, no account required.",
     "aboutProvider": "Powered by Ollama Cloud AI",
     "medsAutoQuery": "I'm taking: {meds}. Check for any known interactions between these medications and common herbal supplements. Flag any dangerous combinations.",
     "herbAutoQuery": "What are the key drug interactions and safety concerns for {name} ({scientific})? List the most important interactions, severity, and who should avoid it.",

@@ -158,7 +158,7 @@ describe("HerbSchema reviewer attribution", () => {
     expect(author?.name).toBeDefined();
   });
 
-  it("omits dosage, pediatricDose, and medicalUse and forces pregnancy/nursing warnings when isDangerous is true", () => {
+  it("omits dosage, pediatricDose, medicalUse, MedicalSubstance, and pregnancy/nursing fields when isDangerous is true", () => {
     const json = extractJson(
       renderToStaticMarkup(
         <HerbSchema
@@ -181,9 +181,11 @@ describe("HerbSchema reviewer attribution", () => {
     expect(json.dosage).toBeUndefined();
     expect(json.pediatricDose).toBeUndefined();
     expect(json.medicalUse).toBeUndefined();
+    expect((json.mainEntity as { "@type"?: string })?.["@type"]).toBe("Thing");
     const safetyJson = JSON.stringify(json.safetyConsideration);
-    expect(safetyJson).toContain("Not recommended during pregnancy");
-    expect(safetyJson).toContain("Not recommended while nursing");
+    expect(safetyJson).not.toContain("pregnancySafety");
+    expect(safetyJson).not.toContain("breastfeedingSafety");
+    expect(safetyJson).toContain("GI upset");
   });
 
   it("omits pediatricDose even when dosage_child is present on a non-dangerous herb", () => {

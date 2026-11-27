@@ -402,7 +402,7 @@
     "aboutSources": "Informations provenant des monographies de l'OMS, du NCCIH, de PubMed et de la Commission E",
     "aboutUpdated": "Mises à jour régulières au fur et à mesure des nouvelles recherches",
     "aboutNotFDA": "Non révisé ni approuvé par la FDA",
-    "description": "Posez des questions à notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et la posologie. Réponses fondées sur des preuves de l'OMS, du NCCIH et de PubMed. Gratuit, aucun compte requis.",
+    "description": "Posez des questions à notre herboriste IA sur la sécurité des plantes, les interactions médicamenteuses et les références posologiques adultes. Explications éducatives citant Santé Canada, l'EMA, le NCCIH et PubMed. Gratuit, aucun compte requis.",
     "aboutProvider": "Propulsé par Ollama Cloud IA",
     "medsAutoQuery": "Je prends : {meds}. Vérifiez les interactions connues entre ces médicaments et les compléments phytothérapiques courants. Signalez les associations dangereuses.",
     "herbAutoQuery": "Quelles sont les principales interactions médicamenteuses et précautions de sécurité pour {name} ({scientific}) ? Listez les interactions les plus importantes, leur gravité et les personnes qui doivent l'éviter.",

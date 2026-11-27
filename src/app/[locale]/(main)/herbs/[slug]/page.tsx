@@ -153,16 +153,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     typeof frRecord === "object" &&
     Object.keys(frRecord).length > 0;
   const isDangerous = isDangerousHerb(slug);
-  const keywords = [
-    herb.name,
-    herb.scientific_name,
-    ...(herb.common_names || []),
-    ...(isDangerous ? [] : (herb.traditional_uses || []).slice(0, 5)),
-    ...(herb.active_compounds || []).slice(0, 5),
-    "medicinal herb",
-    "herbal remedy",
-    "natural medicine",
-  ].filter(Boolean);
+  const keywords = isDangerous
+    ? [
+        herb.name,
+        herb.scientific_name,
+        ...(herb.common_names || []),
+        "poisonous plant",
+        "botanical toxicology",
+        "toxicology quarantine",
+      ].filter(Boolean)
+    : [
+        herb.name,
+        herb.scientific_name,
+        ...(herb.common_names || []),
+        ...(herb.traditional_uses || []).slice(0, 5),
+        ...(herb.active_compounds || []).slice(0, 5),
+        "medicinal herb",
+        "herbal remedy",
+        "natural medicine",
+      ].filter(Boolean);
 
   const herbT = await getTranslations({
     locale: metaLocale,
@@ -170,35 +179,58 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   const commonNames = (herb.common_names || []).slice(0, 3).join(", ");
   const scientific = herb.scientific_name;
-  const title = hasDistinctCommonName(herb)
-    ? herbT("title", { name: herb.name, scientific })
-    : herbT("titleBinomial", { scientific });
+  const distinctCommon = hasDistinctCommonName(herb);
+  const title = isDangerous
+    ? metaLocale === "fr"
+      ? distinctCommon
+        ? `${herb.name} (${scientific}) — Plante toxique en quarantaine`
+        : `${scientific} : plante toxique en quarantaine`
+      : distinctCommon
+        ? `${herb.name} (${scientific}) — Toxic Plant Quarantine`
+        : `${scientific}: Poisonous Plant Quarantine & Toxicity`
+    : distinctCommon
+      ? herbT("title", { name: herb.name, scientific })
+      : herbT("titleBinomial", { scientific });
   const titleMeta = fitTitle(
-    hasDistinctCommonName(herb)
-      ? [
-          title,
-          herbT("titleShort", { name: herb.name, scientific }),
-          `${herb.name} (${scientific})`,
-          herb.name,
-        ]
-      : [title, herbT("titleBinomialShort", { scientific }), scientific]
+    isDangerous
+      ? metaLocale === "fr"
+        ? distinctCommon
+          ? [title, `${herb.name} — Plante toxique`, herb.name]
+          : [title, `${scientific} — Plante toxique`, scientific]
+        : distinctCommon
+          ? [title, `${herb.name} — Poisonous Botanical`, herb.name]
+          : [title, `${scientific} — Poisonous Botanical`, scientific]
+      : distinctCommon
+        ? [
+            title,
+            herbT("titleShort", { name: herb.name, scientific }),
+            `${herb.name} (${scientific})`,
+            herb.name,
+          ]
+        : [title, herbT("titleBinomialShort", { scientific }), scientific]
   );
 
-  const description = commonNames
+  const description = isDangerous
     ? truncateDescription(
-        herbT("descWithNames", {
-          name: herb.name,
-          common: commonNames,
-        })
+        metaLocale === "fr"
+          ? `${herb.name}${distinctCommon ? ` (${scientific})` : ""} est une plante toxique en quarantaine permanente — usage humain interdit. En cas d'exposition : Centre antipoison (Canada) 1-844-764-7669, (É.-U.) 1-800-222-1222, Urgence 911.`
+          : `${herb.name}${distinctCommon ? ` (${scientific})` : ""} is a permanently quarantined poisonous botanical — not for human use. If exposed: Poison Control (US) 1-800-222-1222, (Canada) 1-844-764-7669, Emergency 911.`
       )
-    : herb.description
-      ? truncateDescription(herb.description)
-      : truncateDescription(
-          herbT("descFallback", {
+    : commonNames
+      ? truncateDescription(
+          herbT("descWithNames", {
             name: herb.name,
-            scientific: herb.scientific_name,
+            common: commonNames,
           })
-        );
+        )
+      : herb.description
+        ? truncateDescription(herb.description)
+        : truncateDescription(
+            herbT("descFallback", {
+              name: herb.name,
+              scientific: herb.scientific_name,
+            })
+          );
 
   // Owner policy 2026-11-23: every published herb page is indexable. The
   // sourced/thin gate was removed here and in the sitemap so the robots
@@ -684,7 +716,7 @@ export default async function HerbDetailPage({ params }: Props) {
         <DangerousHerbBanner slug={slug} locale={copyLocale} />
         <HerbHeroV2
           herb={heroHerb}
-          provenance={compactProvenance}
+          provenance={isDangerous ? null : compactProvenance}
           pubmedSheetStatus={
             !isDangerous && pubmedSheet && isUsablePubmedSheet(pubmedSheet)
               ? pubmedSheet.status

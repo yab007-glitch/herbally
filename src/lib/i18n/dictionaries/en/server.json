@@ -519,7 +519,7 @@
     "herbsDatabase": "Medicinal Herbs Database",
     "herbsDatabaseDesc": "Browse our evidence-referenced medicinal herb database with source-checked profiles, active compounds, safety warnings, and drug interactions.",
     "virtualHerbalist": "Virtual Herbalist",
-    "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and dosage. Evidence-based answers from WHO, NCCIH, and PubMed sources. Free, no account required.",
+    "virtualHerbalistDesc": "Ask our AI herbalist about herb safety, drug interactions, and adult monograph references. Educational explanations citing Health Canada, EMA, NCCIH, and PubMed sources. Free, no account required.",
     "doseCalculator": "Adult Herbal Reference Dose Checker (18+)",
     "doseCalculatorDesc": "Free adult herbal monograph reference checker (18+): review unscaled adult reference doses for established monographs without weight, age, or pediatric scaling formulas. No account required.",
     "herbsBySymptom": "Herbs by Symptom",
@@ -546,7 +546,7 @@
     "contactDesc": "How to contact HerbAlly: general, privacy, and terms email addresses.",
     "herbDrugInteractions": "Herb–Drug Interactions",
     "herbDrugInteractionsDesc": "Understand herb–drug interactions and check your supplement against medications in seconds. Covers St. John's Wort, ginkgo, garlic, turmeric, and warfarin.",
-    "appDescription": "Check any herb against your medication in seconds. Evidence-based herb profiles with cited sources, evidence grades, and an adult dosage calculator. Always free.",
+    "appDescription": "Check any herb against your medication in seconds. Source-checked herb profiles with cited monographs, evidence grades, and an 18+ adult monograph reference. Always free.",
     "herbsFor": "Herbs for {symptom}",
     "homeTitle": "Herb-Drug Interaction Checker & Guide",
     "gardenPageTitle": "My Garden",
@@ -682,14 +682,14 @@
     "titleBinomial": "{scientific}: Benefits, Dosage, Safety, Evidence",
     "titleShort": "{name} ({scientific}): Benefits and Safety",
     "titleBinomialShort": "{scientific}: Benefits and Safety",
-    "descWithNames": "{name}, also called {common}: uses, dosage, pregnancy safety and drug interactions, with PubMed-cited evidence, safety ratings and a free dosage calculator.",
-    "descFallback": "{name} ({scientific}): uses, dosage, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and a free dosage calculator.",
+    "descWithNames": "{name}, also called {common}: uses, adult reference ranges, pregnancy safety and drug interactions, with PubMed-cited evidence and monograph sources.",
+    "descFallback": "{name} ({scientific}): uses, adult reference ranges, pregnancy safety, side effects and drug interactions, with PubMed-cited evidence and monograph sources.",
     "usesFallback": "traditional wellness"
   },
   "compareMeta": {
     "title": "{a} vs {b}: Difference, Benefits & Which Is Better?",
     "shortTitle": "{a} vs {b}: Which Is Better?",
-    "desc": "Compare {a} vs {b}: uses, dosage, pregnancy safety, side effects & drug interactions. Evidence-based verdict + free dose calculator."
+    "desc": "Compare {a} vs {b}: uses, adult monograph reference, pregnancy safety, side effects & drug interactions with primary citations."
   },
   "seo": {
     "safePregnancy": "Generally safe during pregnancy",
@@ -699,7 +699,7 @@
     "nccihSource": "Herbs at a Glance",
     "breadcrumbHome": "Home",
     "orgName": "HerbAlly",
-    "orgDesc": "A reference library of medicinal herbs with cited sources, evidence grades, an adult dosage calculator, and an herb-drug interaction checker."
+    "orgDesc": "A bilingual reference library of medicinal herbs with cited regulatory sources, evidence grades, an 18+ adult monograph reference, and an herb-drug interaction checker."
   },
   "brand": {
     "full": "HerbAlly"
@@ -707,7 +707,7 @@
   "homeAI": {
     "badge": "AI-Powered Herbal Assistant",
     "title": "Ask anything about herbs and natural health",
-    "subtitle": "Type your question below or tap a suggestion. Get evidence-based answers from WHO, NCCIH, and PubMed — instantly and for free."
+    "subtitle": "Type your question below or tap a suggestion. Get evidence-based educational explanations citing Health Canada, EMA, NCCIH, and PubMed — instantly and for free."
   },
   "home": {
     "heroTitle": "Check herb‑drug interactions",
@@ -795,8 +795,8 @@
       "upstash": "Upstash Redis — ephemeral rate-limiting counters (hashed request IP keys; US/cloud) to protect the site and AI endpoint against abuse.",
       "sentry": "Sentry — error monitoring and crash diagnostics with scrubbed request headers and cookies (US/cloud).",
       "zoho": "Zoho Mail (Canada) — transactional email delivery for safety-digest opt-in confirmation and privacy/editorial inquiries.",
-      "linkedinSso": "LinkedIn OpenID Connect (optional, clinical reviewers only) — when a credentialed reviewer chooses to sign in on /clinical-review, LinkedIn supplies name and email address to validate identity and route edit submissions.",
-      "crossBorder": "Cross-border transfers: While our core PostgreSQL database runs in Montreal, Quebec, Canada, services such as Cloudflare, Ollama Cloud, LinkedIn SSO (when used by reviewers), Upstash, Sentry, and Stripe may process limited request metadata or submitted text outside Quebec and Canada under their respective data-protection frameworks."
+      "linkedinSso": "LinkedIn OpenID Connect (optional, open edit contributors and clinical reviewers) — when any user, researcher, or clinician chooses to sign in on /clinical-review or via Suggest an edit on a herb page, LinkedIn supplies name and email address to validate identity and route edit suggestions.",
+      "crossBorder": "Cross-border transfers: While our core PostgreSQL database runs in Montreal, Quebec, Canada, services such as Cloudflare, Ollama Cloud, LinkedIn SSO (when used by contributors or reviewers), Upstash, Sentry, and Stripe may process limited request metadata or submitted text outside Quebec and Canada under their respective data-protection frameworks."
     },
     "cookiesSection": {
       "title": "5. Cookies",
@@ -804,7 +804,7 @@
       "localeCookie": "herbally-locale — set only when you switch languages, to remember en or fr for up to 1 year.",
       "guestCookie": "herbally-guest-id — an HttpOnly cookie that links your browser to an anonymous guest chat session so you can return to it.",
       "authCookies": "Supabase authentication cookies — set only if you choose to sign in, so your session stays active.",
-      "linkedinCookie": "herbally-linkedin-reviewer — an HttpOnly signed session cookie (8-hour expiry) set only if a clinical reviewer signs in with LinkedIn SSO on /clinical-review.",
+      "linkedinCookie": "herbally-linkedin-reviewer — an HttpOnly signed session cookie (8-hour expiry) set only if a contributor or clinician signs in with LinkedIn SSO on /clinical-review or via Suggest an edit.",
       "adCookies": "Advertising cookies — if ads are enabled, Google and its partners may set cookies or use identifiers to serve and measure ads. You can control these through your browser and Google's ad settings.",
       "noTracking": "We do not use Facebook Pixel or invasive third-party trackers. Cookieless Cloudflare Web Analytics provides aggregate page counts, and advertising cookies apply only if ads are enabled."
     },
