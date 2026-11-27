@@ -449,4 +449,50 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     );
     expect(widgetsPageSrc).toContain("/open-data/catalog.json");
   });
+
+  it("enforces Release 3.8 toxic metadata/JSON-LD isolation and open LinkedIn SSO privacy copy", () => {
+    const toxicSchemaHtml = renderToStaticMarkup(
+      createElement(HerbSchema, {
+        herb: {
+          name: "Abrus precatorius",
+          scientific_name: "Abrus precatorius",
+          slug: "abrus-precatorius",
+          description: "Toxic botanical.",
+          contraindications: [
+            "Contains lethal abrin",
+            "Strictly contraindicated in pregnancy, breastfeeding, children, and older adults",
+          ],
+        },
+        isDangerous: true,
+        isClinicallyReviewed: false,
+      })
+    );
+    expect(toxicSchemaHtml).not.toContain("pregnancySafety");
+    expect(toxicSchemaHtml).not.toContain("breastfeedingSafety");
+    expect(toxicSchemaHtml).not.toContain("MedicalSubstance");
+    expect(toxicSchemaHtml).not.toMatch(/pregnancy|breastfeeding/i);
+    expect(toxicSchemaHtml).toContain("Contains lethal abrin");
+
+    const enServer = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/en/server.json"),
+      "utf8"
+    );
+    const frServer = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/fr/server.json"),
+      "utf8"
+    );
+    expect(enServer).not.toContain("clinical reviewers only");
+    expect(frServer).not.toContain("réviseurs cliniques uniquement");
+    expect(enServer).not.toContain("free dosage calculator");
+    expect(frServer).not.toContain("calculateur de doses gratuit");
+    expect(enServer).not.toContain("WHO, NCCIH, and PubMed");
+
+    const herbPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      "utf8"
+    );
+    expect(herbPageSrc).toContain(
+      "provenance={isDangerous ? null : compactProvenance}"
+    );
+  });
 });

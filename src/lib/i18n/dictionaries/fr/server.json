@@ -519,7 +519,7 @@
     "herbsDatabase": "Base de Données de Plantes Médicinales",
     "herbsDatabaseDesc": "Parcourez notre base de données de plantes médicinales avec statut de révision, composés actifs, avertissements de sécurité et signaux d'interactions médicamenteuses.",
     "virtualHerbalist": "Herboriste Virtuel",
-    "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions et la posologie. Réponses sourcées OMS, NCCIH et PubMed, gratuites.",
+    "virtualHerbalistDesc": "Interrogez notre herboriste IA sur la sécurité des plantes, les interactions et la référence adulte. Explications éducatives Santé Canada, EMA, NCCIH et PubMed, gratuites.",
     "doseCalculator": "Vérificateur de Posologie Adulte de Référence (18+)",
     "doseCalculatorDesc": "Vérificateur gratuit de posologie adulte issue de monographies (18 ans et plus) : consultez la dose adulte de référence non ajustée sans formules pondérales, selon l'âge ou pédiatriques. Aucun compte requis.",
     "herbsBySymptom": "Plantes par Symptôme",
@@ -546,7 +546,7 @@
     "contactDesc": "Comment contacter HerbAlly : adresses courriel générales, de confidentialité et des conditions.",
     "herbDrugInteractions": "Interactions Plante-Médicament",
     "herbDrugInteractionsDesc": "Comprendre les interactions plante-médicament et vérifier vos plantes en quelques secondes : millepertuis, ail, ginkgo, curcuma, kava et warfarine.",
-    "appDescription": "Vérifiez une plante contre vos médicaments en quelques secondes : fiches sourcées, niveaux de preuve et calculateur de posologie adulte. Gratuit.",
+    "appDescription": "Vérifiez une plante contre vos médicaments en quelques secondes : fiches sourcées, niveaux de preuve et référence posologique adulte (18+). Gratuit.",
     "herbsFor": "Plantes pour {symptom}",
     "homeTitle": "Interactions plante-médicament et guide",
     "gardenPageTitle": "Mon Jardin",
@@ -682,14 +682,14 @@
     "titleBinomial": "{scientific} : bienfaits, posologie et précautions",
     "titleShort": "{name} ({scientific}) : bienfaits et précautions",
     "titleBinomialShort": "{scientific} : bienfaits et précautions",
-    "descWithNames": "Bienfaits, posologie, grossesse et interactions médicamenteuses pour {name} ({common}). Sources PubMed et calculateur de doses gratuit.",
-    "descFallback": "Bienfaits, posologie, grossesse, effets secondaires et interactions médicamenteuses pour {name} ({scientific}). Fiche sourcée et calculateur de doses gratuit.",
+    "descWithNames": "Usages, référence posologique adulte, grossesse et interactions médicamenteuses pour {name} ({common}). Sources PubMed et monographies publiques.",
+    "descFallback": "Usages, référence posologique adulte, grossesse, effets secondaires et interactions médicamenteuses pour {name} ({scientific}). Fiche sourcée gratuite.",
     "usesFallback": "le bien-être traditionnel"
   },
   "compareMeta": {
     "title": "{a} ou {b} : différences, bienfaits et laquelle choisir",
     "shortTitle": "{a} ou {b} : laquelle choisir",
-    "desc": "Comparer {a} et {b} : usages, posologie, grossesse, effets secondaires et interactions médicamenteuses. Verdict fondé sur les preuves et calculateur de doses gratuit."
+    "desc": "Comparer {a} et {b} : usages, référence posologique adulte, grossesse, effets secondaires et interactions médicamenteuses avec sources primaires."
   },
   "seo": {
     "safePregnancy": "Généralement sûr pendant la grossesse",
@@ -699,7 +699,7 @@
     "nccihSource": "Plantes Médicinales en Bref",
     "breadcrumbHome": "Accueil",
     "orgName": "HerbAlly",
-    "orgDesc": "Une bibliothèque de référence de plantes médicinales avec sources citées, niveaux de preuve, calculateur de posologie adulte et vérificateur d’interactions plante-médicament."
+    "orgDesc": "Une bibliothèque bilingue de plantes médicinales avec sources réglementaires citées, niveaux de preuve, référence posologique adulte (18+) et vérificateur d’interactions plante-médicament."
   },
   "brand": {
     "full": "HerbAlly"
@@ -707,7 +707,7 @@
   "homeAI": {
     "badge": "Assistant Herbaliste IA",
     "title": "Posez vos questions sur les plantes et la santé naturelle",
-    "subtitle": "Tapez votre question ou appuyez sur une suggestion. Obtenez des réponses basées sur des preuves de l'OMS, du NCCIH et de PubMed — instantanément et gratuitement."
+    "subtitle": "Tapez votre question ou appuyez sur une suggestion. Obtenez des explications éducatives fondées sur Santé Canada, l'EMA, le NCCIH et PubMed — gratuitement."
   },
   "home": {
     "heroTitle": "Vérifiez les interactions plante‑médicament",
@@ -795,8 +795,8 @@
       "upstash": "Upstash Redis — compteurs temporaires de limitation de requêtes (clés IP hachées ; États-Unis/infonuagique) pour protéger le site et l'assistant IA.",
       "sentry": "Sentry — surveillance des erreurs techniques avec suppression des en-têtes sensibles et témoins (États-Unis/infonuagique).",
       "zoho": "Zoho Mail (Canada) — envoi des courriels de confirmation du bulletin de sécurité et traitement des messages adressés au soutien ou à la vie privée.",
-      "linkedinSso": "LinkedIn OpenID Connect (facultatif, réviseurs cliniques uniquement) — lorsqu'un clinicien choisit de se connecter sur /fr/clinical-review, LinkedIn fournit son nom et son adresse courriel pour valider son identité et acheminer sa demande de modification.",
-      "crossBorder": "Transferts hors Québec : Bien que notre base de données PostgreSQL soit hébergée à Montréal (Québec, Canada), des fournisseurs comme Cloudflare, Ollama Cloud, LinkedIn SSO (lorsque utilisé par un réviseur), Upstash, Sentry et Stripe peuvent traiter certaines métadonnées ou requêtes hors du Québec et du Canada."
+      "linkedinSso": "LinkedIn OpenID Connect (facultatif, contributeurs et réviseurs cliniques) — lorsqu'un utilisateur, chercheur ou clinicien choisit de se connecter sur /fr/clinical-review ou via Suggérer une modification, LinkedIn fournit son nom et son adresse courriel pour valider son identité et acheminer sa suggestion.",
+      "crossBorder": "Transferts hors Québec : Bien que notre base de données PostgreSQL soit hébergée à Montréal (Québec, Canada), des fournisseurs comme Cloudflare, Ollama Cloud, LinkedIn SSO (lorsque utilisé par un contributeur ou un réviseur), Upstash, Sentry et Stripe peuvent traiter certaines métadonnées ou requêtes hors du Québec et du Canada."
     },
     "cookiesSection": {
       "title": "5. Cookies",
@@ -804,7 +804,7 @@
       "localeCookie": "herbally-locale — enregistré uniquement lorsque vous changez de langue manuellement, pour mémoriser en ou fr pendant un an au maximum.",
       "guestCookie": "herbally-guest-id — un cookie HttpOnly qui relie votre navigateur à une session de discussion invitée anonyme afin que vous puissiez y revenir.",
       "authCookies": "Cookies d'authentification Supabase — déposés uniquement si vous choisissez de vous connecter, pour maintenir votre session active.",
-      "linkedinCookie": "herbally-linkedin-reviewer — témoin de session signé HttpOnly (durée de 8 heures) déposé uniquement lorsqu'un réviseur clinique s'authentifie via LinkedIn SSO sur /fr/clinical-review.",
+      "linkedinCookie": "herbally-linkedin-reviewer — témoin de session signé HttpOnly (durée de 8 heures) déposé uniquement lorsqu'un contributeur ou clinicien s'authentifie via LinkedIn SSO sur /fr/clinical-review ou Suggérer une modification.",
       "adCookies": "Cookies publicitaires — si la publicité est activée, Google et ses partenaires peuvent déposer des cookies ou utiliser des identifiants pour diffuser et mesurer les annonces. Vous pouvez les contrôler via votre navigateur et les paramètres publicitaires de Google.",
       "noTracking": "Nous n'utilisons ni Facebook Pixel ni traceurs publicitaires intrusifs. Les statistiques utilisent Cloudflare Web Analytics sans témoins ; les témoins publicitaires ne s'appliqueront que si les annonces sont activées."
     },

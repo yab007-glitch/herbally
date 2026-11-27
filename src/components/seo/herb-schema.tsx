@@ -93,6 +93,14 @@ export function HerbSchema({
   const activeCompounds = asArray(herb.active_compounds);
   const traditionalUses = asArray(herb.traditional_uses);
   const contraindications = asArray(herb.contraindications);
+  const filteredContraindications = isDangerous
+    ? contraindications.filter(
+        (item) =>
+          !/\b(pregnancy|pregnant|breastfeeding|nursing|grossesse|allaitement)\b/i.test(
+            item
+          )
+      )
+    : contraindications;
   const sideEffects = asArray(herb.side_effects);
   const safetyStatus = resolvePregnancyNursingStatus(herb, herb.provenance);
   const pregnancyVerdict =
@@ -103,18 +111,20 @@ export function HerbSchema({
     isDangerous || safetyStatus.nursing === "not_recommended"
       ? "not_recommended"
       : safetyStatus.nursing;
-  const pregnancySafety =
-    pregnancyVerdict === "safe"
+  const pregnancySafety = !isDangerous
+    ? pregnancyVerdict === "safe"
       ? "Generally safe during pregnancy"
       : pregnancyVerdict === "not_recommended"
         ? "Not recommended during pregnancy"
-        : undefined;
-  const breastfeedingSafety =
-    nursingVerdict === "safe"
+        : undefined
+    : undefined;
+  const breastfeedingSafety = !isDangerous
+    ? nursingVerdict === "safe"
       ? "Generally safe while nursing"
       : nursingVerdict === "not_recommended"
         ? "Not recommended while nursing"
-        : undefined;
+        : undefined
+    : undefined;
   const schema = {
     "@context": "https://schema.org",
     "@type": isClinicallyReviewed ? "MedicalWebPage" : "WebPage",
@@ -129,7 +139,7 @@ export function HerbSchema({
       citationUrls &&
       citationUrls.length > 0 && { citation: citationUrls }),
     mainEntity: {
-      "@type": "MedicalSubstance",
+      "@type": isDangerous ? "Thing" : "MedicalSubstance",
       name: herb.name,
       alternateName: herb.scientific_name,
       ...(activeCompounds.length > 0 && {
@@ -153,8 +163,10 @@ export function HerbSchema({
       "@type": "MedicalWarning",
       ...(pregnancySafety && { pregnancySafety }),
       ...(breastfeedingSafety && { breastfeedingSafety }),
-      ...(contraindications.length > 0 && {
-        contraindication: contraindications.map(stripFieldLabels).join("; "),
+      ...(filteredContraindications.length > 0 && {
+        contraindication: filteredContraindications
+          .map(stripFieldLabels)
+          .join("; "),
       }),
       ...(sideEffects.length > 0 && {
         adverseEffect: sideEffects.map(stripFieldLabels).join("; "),

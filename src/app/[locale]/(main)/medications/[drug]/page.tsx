@@ -179,7 +179,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = (
     fr
       ? `${med.totalInteractions} plante${med.totalInteractions > 1 ? "s" : ""} interagissant avec ${med.drugName} (${herbPreview}). Gravité, mécanisme et sources citées.`
-      : `${med.totalInteractions} herb${med.totalInteractions === 1 ? "" : "s"} and supplement${med.totalInteractions === 1 ? "" : "s"} documented to interact with ${med.drugName} (including ${herbPreview}). Severity, mechanisms & citations.`
+      : `${med.totalInteractions} herb${med.totalInteractions === 1 ? "" : "s"} and supplement${med.totalInteractions === 1 ? "" : "s"} with recorded interaction signals for ${med.drugName} (including ${herbPreview}). Severity, mechanisms & citations.`
   ).slice(0, 158);
 
   const canonicalUrl =
