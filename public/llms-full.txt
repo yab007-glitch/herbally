@@ -1,0 +1,45 @@
+# HerbAlly — Full Technical, Editorial & Safety Architecture for AI Systems
+
+> Official public educational reference: https://herbally.app (English) · https://herbally.app/fr (Français)
+> Maintained by Yasser Bheekun, MLT (OPTMQ · CSMLS). Educational reference only — not clinical decision support or medical advice.
+
+## 1. Platform Scope & Live Scale (November 2026)
+
+- **Published Botanical Profiles**: 3,122 entries (indexed EN + FR routes)
+- **Source-Checked Profiles**: 3,089 profiles cross-referenced against primary regulatory or peer-reviewed bibliographic sources (Health Canada LNHPD & NHP Monographs, EMA HMPC, NIH NCCIH, NIH LiverTox, NCBI PubMed/PubChem, GBIF/Wikidata for taxonomy)
+- **Licensed Clinician-Signed Profiles / Interactions**: 0 to date (transparently reported live on `/methodology#governance-coverage`; open contributor review portal at `/clinical-review`)
+- **Herb–Drug Interaction Records**: 513 curated pair records across 142 medications and therapeutic classes (`Single molecule` vs `Drug class` explicitly tagged)
+- **Regulatory Licensing Register Lookups**: Live integration with Health Canada's Licensed Natural Health Products Database (LNHPD) at `/npn-checker`
+
+## 2. Five Review States (Editorial vs Clinical Distinction)
+
+HerbAlly strictly separates editorial primary-source checking from independent licensed clinical sign-off:
+
+1. **Clinician-signed (`clinically_reviewed`)**: Signed off by an authenticated, licensed physician or pharmacist reviewer with verified licence credentials. Currently `0` records.
+2. **Source-checked (`source_checked`)**: Primary bibliographic citations and regulatory source alignment verified against public reference texts (not a substitute for licensed prescriber judgment).
+3. **AI-summarized (`ai_generated`)**: Draft literature summaries generated from PubMed abstracts awaiting human verification; quarantined from medical Schema.org clinical sign-off assertions (`WebPage` rather than `MedicalWebPage`).
+4. **Needs re-review (`needs_re_review`)**: Flagged for reassessment when underlying safety policies, toxicity rules, or source texts change.
+5. **Not human-reviewed**: Legacy or supplemental AI research sheets lacking completed editorial verification.
+
+## 3. Evidence Type vs. Certainty & Pregnancy Standards
+
+- Efficacy grades (`A`, `B`, `C`, `Trad`, `D`) are **indication-, extract-, and dose-specific** — a Grade A rating for ginger in pregnancy-related nausea applies only to that studied condition and dose, never as blanket confirmation of pregnancy safety.
+- Preclinical study types (`Animal in vivo`, `Laboratory in vitro`, `Computational in silico`) are labeled explicitly by experimental design so bench research is never misrepresented as anecdotal folklore or human clinical efficacy.
+- **Pregnancy & Nursing**: Assessed using the FDA Pregnancy and Lactation Labeling Rule (PLLR) narrative framework, EMA HMPC Section 4.6, NIH LactMed, and Health Canada NHP monographs (never obsolete FDA A/B/C/D/X letter categories).
+- **Tri-State Verdicts**: Shared canonically across herb hero cards, detailed safety panels, side-by-side comparison pages (`/compare/[slug1]/vs/[slug2]`), FAQs, and JSON-LD:
+  - `Generally considered safe` (requires verified human review)
+  - `Not recommended (precautionary)`
+  - `Unknown — insufficient human data`
+
+## 4. Toxic Botanical Quarantine
+
+Potentially fatal botanicals (`Abrus precatorius`, `Atropa belladonna`, etc.) trigger hard programmatic safety rules:
+- Therapeutic category tags, adult dosage ranges, dose calculator CTAs, and traditional-use recommendation FAQs are suppressed.
+- Prominent Poison Control (`1-800-222-1222` US / `1-844-764-7669` Canada / `911` Emergency) banners are surfaced.
+- Any experimental/PubMed literature is strictly labeled as toxicological/experimental context and collapsed by default.
+
+## 5. Structured Data, Bilingual Parity & Crawling
+
+- **Locale Architecture**: English unprefixed (`/`), French under `/fr` with `hreflang` alternates (`en`, `fr`, `x-default`), generated from shared database records and typed message dictionaries.
+- **Structured Data**: Schema.org `WebPage` / `MedicalWebPage`, `MedicalSubstance`, `DietarySupplement` / `MedicalWarning`, `FAQPage`, `BreadcrumbList`, `Dataset` (`/medications`, `/herb-drug-interactions`), and `AboutPage` (`/methodology`). `reviewedBy` is emitted only when a licensed clinical reviewer is formally recorded.
+- **Privacy & Ephemeral AI Disclosure**: Virtual Herbalist (`/herbalist`) runs educational inference via Ollama Cloud without account requirement; guest sessions retain 30 days in Supabase (Montreal, Canada) with explicit delete controls. See `/privacy` and `/fr/privacy`.

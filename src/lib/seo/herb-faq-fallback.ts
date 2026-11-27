@@ -56,6 +56,33 @@ export function buildHerbFallbackFaqs(
     }
   })();
 
+  if (isDangerous) {
+    return [
+      {
+        question: t("dangerousOverviewQuestion", {
+          name: herbName,
+          scientific: scientificName,
+        }),
+        answer: t("dangerousOverviewAnswer", {
+          name: herbName,
+          scientific: scientificName,
+        }),
+      },
+      {
+        question: t("pregQuestion", { name: herbName }),
+        answer: pregnancyText,
+      },
+      {
+        question: t("interactQuestion", { name: herbName }),
+        answer: t("interactDangerous", { name: herbName }),
+      },
+      {
+        question: t("sideEffects", { name: herbName }),
+        answer: t("sideEffectsDangerous", { name: herbName }),
+      },
+    ];
+  }
+
   return [
     ...(commonNames.length > 0
       ? [
@@ -99,11 +126,9 @@ export function buildHerbFallbackFaqs(
     },
     {
       question: t("sideEffects", { name: herbName }),
-      answer: isDangerous
-        ? t("sideEffectsDangerous", { name: herbName })
-        : safetyNotes || t("sideEffectsFallback", { name: herbName }),
+      answer: safetyNotes || t("sideEffectsFallback", { name: herbName }),
     },
-    ...(!isDangerous && showCalculator
+    ...(showCalculator
       ? [
           {
             question: t("doseQuestion", { name: herbName }),

@@ -231,7 +231,9 @@ export default async function MethodologyPage() {
                         ? "Plusieurs ECR humains concordants"
                         : "Multiple consistent human RCTs"}
                     </td>
-                    <td className="py-2 pr-4">High (Grade A)</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr" ? "Élevé (Niveau A)" : "High (Grade A)"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Applicable à l'indication et la dose étudiées"
@@ -244,7 +246,11 @@ export default async function MethodologyPage() {
                         ? "Études cliniques humaines limitées"
                         : "Limited human clinical studies"}
                     </td>
-                    <td className="py-2 pr-4">Moderate (Grade B)</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr"
+                        ? "Modéré (Niveau B)"
+                        : "Moderate (Grade B)"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Signaux prometteurs mais réplication requise"
@@ -257,7 +263,11 @@ export default async function MethodologyPage() {
                         ? "Données observationnelles / séries de cas"
                         : "Human observational or case reports"}
                     </td>
-                    <td className="py-2 pr-4">Low / Preliminary (Grade C)</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr"
+                        ? "Faible / Préliminaire (Niveau C)"
+                        : "Low / Preliminary (Grade C)"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Hypothèse clinique, pas de lien causal établi"
@@ -270,7 +280,9 @@ export default async function MethodologyPage() {
                         ? "Modèles animaux (in vivo)"
                         : "Animal studies (in vivo)"}
                     </td>
-                    <td className="py-2 pr-4">Preclinical</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr" ? "Préclinique" : "Preclinical"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Mécanisme ou toxicologie non extrapolables directement"
@@ -283,7 +295,9 @@ export default async function MethodologyPage() {
                         ? "Essais cellulaires / enzymatiques (in vitro)"
                         : "Cell / enzyme assays (in vitro)"}
                     </td>
-                    <td className="py-2 pr-4">Laboratory</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr" ? "Laboratoire" : "Laboratory"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Criblage de laboratoire sans preuve d'absorption humaine"
@@ -296,7 +310,11 @@ export default async function MethodologyPage() {
                         ? "Modélisation informatique (in silico)"
                         : "Computational / docking (in silico)"}
                     </td>
-                    <td className="py-2 pr-4">In silico</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr"
+                        ? "In silico (modélisation)"
+                        : "In silico"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Génération d'hypothèses uniquement"
@@ -309,7 +327,11 @@ export default async function MethodologyPage() {
                         ? "Usage traditionnel / pharmacopée historique"
                         : "Historical traditional use"}
                     </td>
-                    <td className="py-2 pr-4">Traditional (Trad)</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr"
+                        ? "Traditionnel (Trad)"
+                        : "Traditional (Trad)"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Documenté en phytothérapie traditionnelle, distinct des essais"
@@ -322,7 +344,11 @@ export default async function MethodologyPage() {
                         ? "Témoignages ou usages anecdotiques"
                         : "Anecdotal / unsystematic reports"}
                     </td>
-                    <td className="py-2 pr-4">Anecdotal (Grade D)</td>
+                    <td className="py-2 pr-4">
+                      {locale === "fr"
+                        ? "Anecdotique (Niveau D)"
+                        : "Anecdotal (Grade D)"}
+                    </td>
                     <td className="py-2">
                       {locale === "fr"
                         ? "Validation scientifique insuffisante"

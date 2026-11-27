@@ -577,6 +577,8 @@ export default async function HerbDetailPage({ params }: Props) {
     drug_name: i.drug_name,
     display_drug_name: (i as { display_drug_name?: string }).display_drug_name,
     severity: i.severity,
+    publication_status:
+      (i as { publication_status?: string | null }).publication_status ?? null,
   }));
   const resolvedFaqs =
     !isDangerous && preGeneratedFaqs.length > 0

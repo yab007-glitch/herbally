@@ -166,7 +166,8 @@ export function HerbHeroV2({
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-              {herb.herb_categories?.name &&
+              {!dangerous &&
+                herb.herb_categories?.name &&
                 !isBucketCategory(herb.herb_categories.name) && (
                   <Badge variant="secondary" className="text-xs">
                     {herb.herb_categories.name}

@@ -256,7 +256,12 @@ function evidenceLabel(level: string, fr: boolean): string {
   return table[level] ?? level.replace(/-/g, " ");
 }
 
-function severityExplainer(fr: boolean): string {
+function severityExplainer(fr: boolean, unreviewed: boolean): string {
+  if (unreviewed) {
+    return fr
+      ? "Ces niveaux indiquent des signaux potentiels issus de fiches héritées non encore validées par un clinicien agréé : contre-indiqué ou grave signalent une prudence maximale et motivent une vérification prioritaire avec votre pharmacien ; modéré ou léger appellent un suivi adapté."
+      : "On unreviewed legacy records, these tiers represent potential pharmacological signals awaiting licensed clinical review: contraindicated or severe flags serve as conservative prompts to consult your pharmacist before combining, while moderate and mild flags note lower-acuity monitoring cues.";
+  }
   return fr
     ? "Contre-indiqué et grave signifient que l'association est à éviter ; modéré, qu'elle reste possible sous surveillance ; léger, que le risque est faible aux doses habituelles. Ce niveau décrit la gravité du risque si les deux sont pris ensemble, pas la probabilité de le ressentir."
     : "Contraindicated and severe mean the pair should be avoided; moderate means it can be used with monitoring; mild means low risk at usual doses. The grade describes how bad the outcome could be, not how likely you are to experience it.";
@@ -908,7 +913,7 @@ export default async function InteractionPairPage({ params }: Props) {
               {fr ? "Niveau de risque" : "Risk level"}
             </dt>
             <dd className="mt-1 text-sm text-muted-foreground">
-              {severityExplainer(fr)}
+              {severityExplainer(fr, !isClinicianApproved)}
             </dd>
           </div>
           <div className="rounded-xl border bg-muted/40 p-4">

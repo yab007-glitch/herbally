@@ -52,6 +52,31 @@ export default async function HerbDrugInteractionsPage() {
           description={t("intro")}
           url={url}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Dataset",
+              name: t("heading"),
+              description: t("intro"),
+              url,
+              inLanguage: ["en", "fr"],
+              isAccessibleForFree: true,
+              creator: {
+                "@type": "Organization",
+                name: "HerbAlly",
+                url: siteUrl(),
+              },
+              variableMeasured: [
+                "Herb Name",
+                "Medication or Drug Class",
+                "Potential Interaction Severity",
+                "Evidence Level & Clinician Review Status",
+              ],
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
         <BreadcrumbListSchema
           items={[
             { name: "Home", url: "/" },

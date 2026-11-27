@@ -399,11 +399,13 @@ export function NpnCheckerClient() {
             </div>
           )}
 
-          <p className="rounded-lg border border-border/70 bg-muted/30 px-3.5 py-2.5 text-xs text-muted-foreground">
-            {locale === "fr"
-              ? "Portée réglementaire : un numéro de produit naturel (NPN) atteste d'une homologation de Santé Canada — cela ne prouve pas l'efficacité clinique ni l'innocuité avec vos médicaments."
-              : "Regulatory scope: a Health Canada NPN confirms product licensing and label review — it does NOT establish clinical efficacy or personal safety alongside your medications."}
-          </p>
+          <div className="rounded-lg border border-border/70 bg-muted/30 px-3.5 py-2.5 text-xs text-muted-foreground space-y-1">
+            <p>
+              {locale === "fr"
+                ? "Portée réglementaire (statut de licence vs statut de commercialisation) : un numéro de produit naturel (NPN) atteste de l'homologation d'une formule auprès de Santé Canada — il ne garantit pas que le produit est actuellement vendu sur le marché, que chaque lot correspond exactement à la licence ni qu'il convient sans danger à vos médicaments."
+                : "Regulatory scope (licence status vs market status): a Health Canada NPN confirms regulatory authorization of a formulation — it does NOT establish that the product is actively marketed today, that every retail bottle matches the licensed specification, or personal suitability alongside your medications."}
+            </p>
+          </div>
 
           {/* Partial upstream failure banner */}
           {data.partial && (

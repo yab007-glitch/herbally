@@ -2,54 +2,58 @@ import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://herbally.app";
+  const sharedDisallows = [
+    "/admin/",
+    "/admin",
+    "/fr/admin/",
+    "/fr/admin",
+    "/api/",
+    "/profile",
+    "/fr/profile",
+    // Query-string URLs that select a client-side state rather than a page:
+    // /calculator?herb=, /herbalist?q=, /?herb=. Canonicalised URLs stay
+    // excluded from crawl budget.
+    "/*?herb=",
+    "/*?q=",
+    "/*?medications=",
+  ];
+
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/admin/",
-          "/admin",
-          "/fr/admin/",
-          "/fr/admin",
-          "/api/",
-          "/profile",
-          "/fr/profile",
-          // Query-string URLs that select a client-side state rather than a
-          // page: /calculator?herb=, /herbalist?q=, /?herb=. Every one of them
-          // canonicalises back to its base page, so Google crawls it, reads
-          // the canonical and drops it — but only after spending crawl budget
-          // that the real pages need. 1,787 of these sat in "Alternative page
-          // with proper canonical tag", against 374 real pages waiting in
-          // "Discovered - currently not indexed".
-          //
-          // Blocking here rather than nofollowing each link also stops the
-          // next component that adds one, which is how the count grew to
-          // 2,198 the first time.
-          "/*?herb=",
-          "/*?q=",
-          "/*?medications=",
-        ],
+        disallow: sharedDisallows,
       },
       {
-        // The site runs on the Hobby plan, where function CPU is a hard
-        // constraint. Scrapers and training crawlers sweep all ~2,700 herb
-        // pages repeatedly without sending search traffic. Googlebot/Bingbot
-        // as well as search-engine bots (OAI-SearchBot, PerplexityBot) are allowed.
+        // Explicitly allow major search engines and AI browsing / retrieval /
+        // answer-engine crawlers so HerbAlly is discoverable, readable, and
+        // accurately cited across AI evaluations and health-reference search.
         userAgent: [
-          "GPTBot",
-          // NOT ChatGPT-User: that is the browsing agent behind a ChatGPT
-          // answer, not a trainer. Blocking it stops the site being read — and
-          // cited — in the place a growing share of health questions end.
-          "CCBot",
-          "ClaudeBot",
-          "anthropic-ai",
-          // NOT Claude-Web: like ChatGPT-User, it is the browsing agent that
-          // reads a page to answer a question, not a trainer. Blocking it stops
-          // the site being read and cited where health questions increasingly
-          // get answered.
+          "Googlebot",
           "Google-Extended",
+          "Bingbot",
+          "OAI-SearchBot",
+          "ChatGPT-User",
+          "GPTBot",
+          "PerplexityBot",
+          "Perplexity-User",
+          "ClaudeBot",
+          "Claude-Web",
+          "Claude-SearchBot",
+          "Claude-User",
+          "Applebot",
           "Applebot-Extended",
+          "DuckAssistBot",
+        ],
+        allow: "/",
+        disallow: sharedDisallows,
+      },
+      {
+        // Block low-value bulk scrapers and SEO backlink harvesters that consume
+        // origin capacity without delivering search or reader referrals.
+        userAgent: [
+          "CCBot",
           "Bytespider",
           "Amazonbot",
           "meta-externalagent",
@@ -60,8 +64,6 @@ export default function robots(): MetadataRoute.Robots {
           "YouBot",
           "AI2Bot",
           "Timpibot",
-          "AhrefsBot",
-          "SemrushBot",
           "MJ12bot",
           "DotBot",
           "PetalBot",

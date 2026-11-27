@@ -73,7 +73,9 @@ export function PubmedMonographSheetView({
     hasData(val) ? stripPediatricDosageSentences(val) : "";
   const summaryText = safeText(content.summary);
   const backgroundText = safeText(content.background);
-  const traditionalUsesText = safeText(content.traditionalUses);
+  const traditionalUsesText = isDangerous
+    ? ""
+    : safeText(content.traditionalUses);
   const activeCompoundsText = safeText(content.activeCompounds);
   const mechanismText = safeText(content.mechanismOfAction);
   const safetyText = safeText(content.safetyAndAdverseEffects);
@@ -83,13 +85,8 @@ export function PubmedMonographSheetView({
   const effectiveArticleCount =
     citations.length > 0 ? citations.length : articleCount;
 
-  return (
-    <article className="space-y-6">
-      {locale === "fr" && (
-        <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
-          {t("languageNote")}
-        </p>
-      )}
+  const researchBody = (
+    <div className="space-y-6">
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm dark:border-blue-800 dark:bg-blue-950/30">
         <div className="flex items-start gap-2">
           <FileText
@@ -312,6 +309,45 @@ export function PubmedMonographSheetView({
             ))}
           </ol>
         </section>
+      )}
+    </div>
+  );
+
+  return (
+    <article className="space-y-6">
+      {locale === "fr" && (
+        <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+          {t("languageNote")}
+        </p>
+      )}
+      {isDangerous ? (
+        <div className="space-y-4">
+          <div
+            role="alert"
+            className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive"
+          >
+            <p className="font-semibold">
+              {locale === "fr"
+                ? "Quarantaine toxicologique : aucune utilisation thérapeutique ni posologie autorisée"
+                : "Toxicology quarantine: no therapeutic or dosing guidance displayed"}
+            </p>
+            <p className="mt-1 text-xs">
+              {locale === "fr"
+                ? "En cas d'exposition : Centre antipoison (Canada) 1-844-764-7669 · États-Unis 1-800-222-1222 · Urgences 911."
+                : "If exposed: Poison Control (US) 1-800-222-1222 · Poison Control (Canada) 1-844-764-7669 · Emergency 911."}
+            </p>
+          </div>
+          <details className="rounded-xl border border-border bg-muted/20">
+            <summary className="flex min-h-11 cursor-pointer items-center px-4 py-3 text-sm font-medium text-foreground">
+              {locale === "fr"
+                ? "Littérature toxicologique et de laboratoire archivée (repliée — aucune preuve d'usage médicinal sûr)"
+                : "Archived Toxicology & Laboratory Literature (Collapsed — Not Evidence of Safe Medicinal Use)"}
+            </summary>
+            <div className="px-4 pb-4">{researchBody}</div>
+          </details>
+        </div>
+      ) : (
+        researchBody
       )}
     </article>
   );
