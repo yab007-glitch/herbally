@@ -170,6 +170,13 @@ const MIGRATIONS = [
     summaryFr:
       "Remplace les directives d'arrêt préopératoire non nuancées par une divulgation coordonnée et renforce les avertissements toxicologiques mortels.",
   },
+  {
+    file: "00109_interaction_source_url_reconciliation.sql",
+    summaryEn:
+      "Replaces 7 legacy 404 citation links with live NIH NCCIH, EMA HMPC, MSKCC, and NCBI PubMed PMID references verified by the automated source monitor.",
+    summaryFr:
+      "Remplace 7 liens de citation obsolètes (404) par des références NIH NCCIH, EMA HMPC, MSKCC et PubMed PMID vérifiées par le moniteur.",
+  },
 ] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
