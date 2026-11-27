@@ -107,8 +107,8 @@ export default async function WidgetsPage() {
           </h2>
           <p className="text-sm text-muted-foreground">
             {fr
-              ? "Points de terminaison JSON CORS ouverts exposant les compteurs vérifiés en direct (3 122 plantes, 509 paires d'interactions, 142 médicaments et classes), le répertoire complet des médicaments, la liste de quarantaine toxicologique et le registre des licences sources sous CC BY 4.0."
-              : "Public CORS-enabled JSON endpoints exposing live verified counts (3,122 herbs, 509 interaction pairs, 142 medications/classes), the full reverse medication registry, the toxic botanical quarantine registry, and primary source licensing under CC BY 4.0 for compilation metadata."}
+              ? "Points de terminaison JSON CORS ouverts exposant les compteurs vérifiés en direct (3 122 plantes, 515 paires d'interactions, 145 médicaments et classes), le répertoire complet des médicaments, la liste de quarantaine toxicologique, le registre de confidentialité et le registre des licences sources sous CC BY 4.0. Chargeur externe compatible CSP stricte : /embed.js (<herbally-checker>)."
+              : "Public CORS-enabled JSON endpoints exposing live verified counts (3,122 herbs, 515 interaction pairs, 145 medications/classes), the full reverse medication registry, the toxic botanical quarantine registry, the Law 25 / PIPEDA privacy manifest, and primary source licensing under CC BY 4.0 for compilation metadata. Strict-CSP external Web Component loader: /embed.js (<herbally-checker>)."}
           </p>
           <pre
             tabIndex={0}
@@ -118,6 +118,8 @@ export default async function WidgetsPage() {
 curl -s https://herbally.app/open-data/medications.json
 curl -s https://herbally.app/open-data/interactions.json
 curl -s https://herbally.app/open-data/quarantine.json
+curl -s https://herbally.app/open-data/privacy-manifest.json
+curl -s https://herbally.app/open-data/review-queue.json
 curl -s https://herbally.app/open-data/manifest.json
 curl -s https://herbally.app/open-data/schema.json
 curl -s https://herbally.app/open-data/source-monitor-latest.json`}</code>
@@ -148,10 +150,28 @@ curl -s https://herbally.app/open-data/source-monitor-latest.json`}</code>
               /open-data/quarantine.json
             </a>
             <a
+              href="/open-data/privacy-manifest.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/privacy-manifest.json
+            </a>
+            <a
+              href="/open-data/review-queue.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/review-queue.json
+            </a>
+            <a
               href="/open-data/manifest.json"
               className="text-primary underline underline-offset-4"
             >
               /open-data/manifest.json (SHA-256)
+            </a>
+            <a
+              href="/embed.js"
+              className="text-primary underline underline-offset-4"
+            >
+              /embed.js (&lt;herbally-checker&gt;)
             </a>
             <a
               href="/open-data/schema.json"

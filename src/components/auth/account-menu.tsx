@@ -5,7 +5,7 @@ import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { LogIn, LogOut, User, Shield } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { currentUser, logout } from "@/lib/actions/auth";
+import { logout } from "@/lib/actions/auth";
 import { clearBrowserCaches } from "@/lib/privacy/storage-inventory";
 import { cn } from "@/lib/utils";
 
@@ -21,9 +21,13 @@ export function AccountMenu({ compact = false }: { compact?: boolean }) {
 
   useEffect(() => {
     let active = true;
-    currentUser()
-      .then((u) => {
-        if (active) setUser(u);
+    fetch("/api/auth/me", {
+      credentials: "same-origin",
+      cache: "no-store",
+    })
+      .then((res) => (res.ok ? res.json() : { user: null }))
+      .then((data: { user?: SessionUser }) => {
+        if (active) setUser(data?.user ?? null);
       })
       .catch(() => active && setUser(null));
     return () => {

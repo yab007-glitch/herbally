@@ -6,20 +6,23 @@ import { drugSlug } from "@/lib/interactions/pair-url";
 import type { InteractionPair } from "@/lib/interactions/pairs";
 import { SEVERITY_WEIGHT } from "@/lib/interactions/stack";
 
-describe("A4: Exhaustive 142-medication integration matrix & reverse lookup verification", () => {
+describe("A4: Exhaustive 145-medication integration matrix & reverse lookup verification", () => {
   const pairs = canonicalPairs as unknown as InteractionPair[];
   const aggregated = aggregateMedications(pairs);
   const medications = Array.from(aggregated.values());
 
-  it("aggregates all 509 curated pairs cleanly into all 142 medications and drug classes", () => {
-    expect(pairs.length).toBe(509);
-    expect(medications.length).toBe(142);
+  it("aggregates all 515 curated pairs cleanly into all 145 medications and drug classes", () => {
+    expect(pairs.length).toBe(515);
+    expect(medications.length).toBe(145);
 
     const totalSum = medications.reduce(
       (sum, m) => sum + m.totalInteractions,
       0
     );
-    expect(totalSum).toBe(509);
+    expect(totalSum).toBe(515);
+    expect(aggregated.get("rivaroxaban")?.totalInteractions).toBe(2);
+    expect(aggregated.get("dabigatran")?.totalInteractions).toBe(1);
+    expect(aggregated.get("edoxaban")?.totalInteractions).toBe(1);
   });
 
   it("verifies slug determinism, bilingual URLs, severity aggregation, and drug matcher resolution across all 142 medications", () => {

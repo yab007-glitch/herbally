@@ -5,7 +5,7 @@ function makeMockClient({
   totalHerbs = 3122,
   sourceChecked = 1840,
   clinicallyReviewed = 0,
-  totalInteractions = 509,
+  totalInteractions = 515,
   approvedInteractions = 0,
   corrections = [
     {
@@ -105,7 +105,7 @@ describe("fetchGovernanceCoverageStats", () => {
       totalHerbs: 3122,
       sourceChecked: 1840,
       clinicallyReviewed: 12,
-      totalInteractions: 509,
+      totalInteractions: 515,
       approvedInteractions: 4,
     });
     const res = await fetchGovernanceCoverageStats(
@@ -115,10 +115,10 @@ describe("fetchGovernanceCoverageStats", () => {
     expect(res.totalHerbs).toBe(3122);
     expect(res.sourceCheckedHerbs).toBe(1840);
     expect(res.clinicallyReviewedHerbs).toBe(12);
-    expect(res.totalInteractions).toBe(509);
+    expect(res.totalInteractions).toBe(515);
     expect(res.totalMedications).toBe(2);
     expect(res.clinicianApprovedInteractions).toBe(4);
-    expect(res.legacyUnreviewedInteractions).toBe(505);
+    expect(res.legacyUnreviewedInteractions).toBe(511);
     expect(res.corrections).toHaveLength(1);
     expect(res.corrections[0].affected_surface).toBe(
       "/interactions/ginger/warfarin"

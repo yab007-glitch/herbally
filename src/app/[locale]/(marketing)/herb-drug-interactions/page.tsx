@@ -90,6 +90,16 @@ export default async function HerbDrugInteractionsPage() {
                 {
                   "@type": "DataDownload",
                   encodingFormat: "application/json",
+                  contentUrl: `${baseUrl}/open-data/privacy-manifest.json`,
+                },
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "application/json",
+                  contentUrl: `${baseUrl}/open-data/review-queue.json`,
+                },
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "application/json",
                   contentUrl: `${baseUrl}/open-data/manifest.json`,
                 },
                 {
@@ -177,6 +187,115 @@ export default async function HerbDrugInteractionsPage() {
         <div className="mt-8">
           <StackChecker />
         </div>
+
+        <section
+          id="stack-capabilities"
+          aria-labelledby="stack-capabilities-heading"
+          className="mt-6 rounded-2xl border border-border bg-card p-5 sm:p-6"
+        >
+          <h2
+            id="stack-capabilities-heading"
+            className="text-lg font-semibold text-foreground"
+          >
+            {fr
+              ? "Moteur multi-plantes à 7 classes pharmacologiques & export local (.txt / .json)"
+              : "7-Class Cumulative Pharmacology Overlap Engine & Browser-Local Brief Export (.txt / .json)"}
+          </h2>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {fr
+              ? "En plus des vérifications par paire (y compris anticoagulants AOD : rivaroxaban, dabigatran, apixaban, édoxaban et clopidogrel), le vérificateur multi-plantes détecte automatiquement 7 classes de risque cumulatif lorsque deux plantes ou plus convergent sur une même voie :"
+              : "Beyond pair-by-pair lookups (including DOAC anticoagulants rivaroxaban, dabigatran, apixaban, edoxaban, and clopidogrel), the multi-herb checker automatically flags 7 cumulative pharmacological overlap classes when two or more herbs converge on the same pathway:"}
+          </p>
+          <ul className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-2">
+            {[
+              {
+                code: "bleeding_overlap",
+                sev: fr ? "Grave" : "Severe",
+                en: "Cumulative bleeding risk (anticoagulants, DOACs, antiplatelets, NSAIDs)",
+                fr: "Risque hémorragique cumulatif (anticoagulants, AOD, antiplaquettaires, AINS)",
+              },
+              {
+                code: "serotonin_overlap",
+                sev: fr ? "Grave" : "Severe",
+                en: "Cumulative serotonergic overload signal (SSRIs, SNRIs, MAOIs, triptans)",
+                fr: "Surcharge sérotoninergique cumulative (ISRS, IRSN, IMAO, triptans)",
+              },
+              {
+                code: "qt_cardiac_overlap",
+                sev: fr ? "Grave" : "Severe",
+                en: "Cardiac rhythm, digoxin & electrolyte-depletion overlap",
+                fr: "Chevauchement cardiaque, digoxine et déplétion potassique",
+              },
+              {
+                code: "hepatotoxicity_overlap",
+                sev: fr ? "Modéré" : "Moderate",
+                en: "Additive hepatic metabolism & liver-stress signal",
+                fr: "Signal cumulatif de charge ou toxicité hépatique",
+              },
+              {
+                code: "hypoglycemia_overlap",
+                sev: fr ? "Modéré" : "Moderate",
+                en: "Cumulative blood-glucose lowering overlap",
+                fr: "Effet cumulatif d'hypoglycémie (insuline, metformine, sulfonylurées)",
+              },
+              {
+                code: "sedation_overlap",
+                sev: fr ? "Modéré" : "Moderate",
+                en: "Cumulative CNS sedation & fall-risk overlap",
+                fr: "Sédation et somnolence cumulatives du SNC",
+              },
+              {
+                code: "cyp_enzyme_overlap",
+                sev: fr ? "Modéré" : "Moderate",
+                en: "Overlapping CYP3A4 / CYP2C9 / CYP2C19 / CYP2D6 / P-gp / UGT modulation",
+                fr: "Interactions multiples sur les enzymes et transporteurs (CYP / P-gp / UGT)",
+              },
+            ].map((rule) => (
+              <li
+                key={rule.code}
+                className="rounded-lg border border-border/80 bg-background p-2.5"
+              >
+                <span className="font-mono font-semibold text-foreground">
+                  {rule.code}
+                </span>{" "}
+                <span className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-800 dark:text-amber-300">
+                  {rule.sev}
+                </span>
+                <p className="mt-1">{fr ? rule.fr : rule.en}</p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 text-xs text-muted-foreground">
+            <strong className="text-foreground">
+              {fr
+                ? "Export local confidentiel (.txt / .json) :"
+                : "Browser-Local Consultation Brief (.txt / .json):"}
+            </strong>{" "}
+            {fr
+              ? "Chaque bilan multi-plantes peut être téléchargé en texte brut (.txt) ou JSON structuré (.json) directement dans votre navigateur, sans aucun envoi ni conservation de données de santé sur nos serveurs."
+              : "Every multi-herb screening run exports formatted .txt and structured .json consultation briefs generated 100% locally in your browser with zero server upload or PHI storage."}
+          </p>
+          <p className="mt-2.5 flex flex-wrap gap-3 text-xs font-medium">
+            <a
+              href="/open-data/review-queue.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/review-queue.json
+            </a>
+            <a
+              href="/open-data/privacy-manifest.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/privacy-manifest.json
+            </a>
+            <a
+              href="/open-data/schema.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/schema.json (OpenAPI 3.1)
+            </a>
+          </p>
+        </section>
 
         <section className="mt-8 flex flex-col justify-between gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-5 sm:flex-row sm:items-center">
           <div>

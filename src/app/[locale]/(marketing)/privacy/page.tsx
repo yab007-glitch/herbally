@@ -147,8 +147,14 @@ export default async function PrivacyPage() {
             </h2>
             <p className="mb-3">
               {locale === "fr"
-                ? "Tableau récapitulatif des prestataires techniques utilisés par HerbAlly, de leur rôle exact et des durées de conservation applicables (Loi 25 du Québec et LPRPDE)."
-                : "Transparent register of the infrastructure and third-party processors HerbAlly relies on, the limited data each receives, and retention/deletion rules under Quebec Law 25 and PIPEDA."}
+                ? "Tableau récapitulatif des prestataires techniques utilisés par HerbAlly, de leur rôle exact et des durées de conservation applicables (Loi 25 du Québec et LPRPDE). Également publié en JSON lisible par machine :"
+                : "Transparent register of the infrastructure and third-party processors HerbAlly relies on, the limited data each receives, and retention/deletion rules under Quebec Law 25 and PIPEDA. Also published as a machine-readable JSON manifest:"}{" "}
+              <a
+                href="/open-data/privacy-manifest.json"
+                className="font-mono text-xs font-medium text-primary underline underline-offset-4"
+              >
+                /open-data/privacy-manifest.json
+              </a>
             </p>
             <div className="overflow-x-auto rounded-lg border border-border">
               <table className="w-full border-collapse text-left text-xs">

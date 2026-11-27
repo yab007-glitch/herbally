@@ -1,11 +1,14 @@
 import { createHash } from "node:crypto";
 import {
+  OPEN_DATA_HTTP_CACHE_POLICY,
   OPEN_DATA_RESPONSE_HEADERS,
   buildCatalogPayload,
   buildInteractionsPayload,
   buildMedicationsPayload,
   buildOpenApiSchemaPayload,
+  buildPrivacyManifestPayload,
   buildQuarantinePayload,
+  buildReviewQueuePayload,
   serializeOpenDataJson,
 } from "@/lib/open-data/builders";
 import {
@@ -38,6 +41,8 @@ export async function GET() {
   const medications = buildMedicationsPayload(snapshot, baseUrl);
   const interactions = buildInteractionsPayload(snapshot, baseUrl);
   const quarantine = buildQuarantinePayload(snapshot, baseUrl);
+  const privacyManifest = buildPrivacyManifestPayload(snapshot, baseUrl);
+  const reviewQueue = buildReviewQueuePayload(snapshot, baseUrl);
   const schema = buildOpenApiSchemaPayload(baseUrl);
 
   const payload = {
@@ -47,6 +52,7 @@ export async function GET() {
     datasetVersion: OPEN_DATA_DATASET_VERSION,
     snapshotId: snapshot.snapshotId,
     generatedAt: snapshot.generatedAt,
+    httpCachePolicy: OPEN_DATA_HTTP_CACHE_POLICY,
     algorithm: "sha256",
     files: {
       "/open-data/catalog.json": digestEntry(
@@ -68,6 +74,16 @@ export async function GET() {
         "/open-data/quarantine.json",
         quarantine,
         quarantine.totalQuarantinedBotanicals
+      ),
+      "/open-data/privacy-manifest.json": digestEntry(
+        "/open-data/privacy-manifest.json",
+        privacyManifest,
+        privacyManifest.subprocessors.length
+      ),
+      "/open-data/review-queue.json": digestEntry(
+        "/open-data/review-queue.json",
+        reviewQueue,
+        reviewQueue.summary.priorityQueueCount
       ),
       "/open-data/schema.json": digestEntry(
         "/open-data/schema.json",

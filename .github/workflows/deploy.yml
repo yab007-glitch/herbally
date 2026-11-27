@@ -93,14 +93,14 @@ jobs:
             --exclude .last-deployed-sha \
             "$GITHUB_WORKSPACE/" /srv/herbally/
 
-      - name: Apply & verify expand-phase SQL migrations (00097–00103) fail-closed before app switch
+      - name: Apply & verify expand-phase SQL migrations (00097–00111, excluding 00104) fail-closed before app switch
         if: steps.changes.outputs.deploy_needed == 'true'
         run: |
           set -euo pipefail
           if bash /srv/herbally/scripts/apply-pending-migrations.sh --phase expand --verify-only; then
-            echo "Expand migrations 00097–00103 already verified in herbally-db."
+            echo "Expand migrations (00097–00111, excluding 00104) already verified in herbally-db."
           else
-            echo "Pending expand migrations (00097–00103) not yet verified; running backup + expand runner..."
+            echo "Pending expand migrations (00097–00111) not yet verified; running backup + expand runner..."
             BACKUP_SCRIPT="$GITHUB_WORKSPACE/deploy/backup-local.sh"
             if [ -f /srv/herbally/deploy/backup-local.sh ]; then
               BACKUP_SCRIPT="/srv/herbally/deploy/backup-local.sh"
@@ -227,13 +227,24 @@ jobs:
           SQL
 
           # Re-run full public smoke post-00104
-          for path in "/" "/herbs" "/herbs/aloe-vera" "/calculator?herb=ginger"; do
+          for path in "/" "/herbs" "/herbs/aloe-vera" "/calculator?herb=ginger" "/trust" "/embed.js" "/open-data/manifest.json" "/open-data/privacy-manifest.json" "/open-data/review-queue.json"; do
             code=$(curl -fsS -o /dev/null -w '%{http_code}' "https://herbally.app${path}")
             echo "post-contract ${path} -> ${code}"
             [ "$code" = "200" ]
           done
           curl -fsS 'https://herbally.app/api/interactions/check?herb=ginger&drug=warfarin' | grep -q '"found":true'
           curl -fsS 'https://herbally.app/api/herbs/search?q=ginger' | grep -qi 'ginger'
+
+          # Publish audit-verifiable migration & smoke summary
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            {
+              echo "### Production Deploy & Migration Verification"
+              echo "- **Deployed SHA**: \`$(git -C "$GITHUB_WORKSPACE" rev-parse HEAD)\`"
+              echo "- **Expand migrations verified (`--phase expand`)**: \`00097–00111\` (excluding \`00104\`)"
+              echo "- **Contract migration verified (`--phase contract`)**: \`00104_pediatric_boundary_contract.sql\`"
+              echo "- **Post-switch smoke & Open Data checks**: PASS"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
           # Record deployed SHA only after post-contract smoke passes
           git -C "$GITHUB_WORKSPACE" rev-parse HEAD > /srv/herbally/.last-deployed-sha
@@ -243,7 +254,7 @@ jobs:
           if [ -n "$idx_key" ]; then
             curl -fsS -X POST "https://api.indexnow.org/indexnow" \
               -H "Content-Type: application/json; charset=utf-8" \
-              -d "{\"host\":\"herbally.app\",\"key\":\"${idx_key}\",\"keyLocation\":\"https://herbally.app/${idx_key}.txt\",\"urlList\":[\"https://herbally.app/\",\"https://herbally.app/llms.txt\",\"https://herbally.app/llms-full.txt\",\"https://herbally.app/herbs\",\"https://herbally.app/herbs/turmeric\",\"https://herbally.app/herbs/ginger\",\"https://herbally.app/herbs/abrus-precatorius\",\"https://herbally.app/compare/turmeric/vs/ginger\",\"https://herbally.app/medications\",\"https://herbally.app/herb-drug-interactions\",\"https://herbally.app/interactions/ginger/warfarin\",\"https://herbally.app/surgery-planner\",\"https://herbally.app/npn-checker\",\"https://herbally.app/calculator\",\"https://herbally.app/guides\",\"https://herbally.app/guides/how-the-dosage-calculator-works\",\"https://herbally.app/compare\",\"https://herbally.app/methodology\",\"https://herbally.app/privacy\",\"https://herbally.app/clinical-review\",\"https://herbally.app/about\",\"https://herbally.app/sponsors\",\"https://herbally.app/fr\",\"https://herbally.app/fr/herbs/turmeric\",\"https://herbally.app/fr/medications\",\"https://herbally.app/fr/surgery-planner\",\"https://herbally.app/fr/guides\",\"https://herbally.app/fr/methodology\",\"https://herbally.app/fr/privacy\",\"https://herbally.app/rss.xml\"]}" >/dev/null || true
+              -d "{\"host\":\"herbally.app\",\"key\":\"${idx_key}\",\"keyLocation\":\"https://herbally.app/${idx_key}.txt\",\"urlList\":[\"https://herbally.app/\",\"https://herbally.app/llms.txt\",\"https://herbally.app/llms-full.txt\",\"https://herbally.app/herbs\",\"https://herbally.app/herbs/turmeric\",\"https://herbally.app/herbs/ginger\",\"https://herbally.app/herbs/abrus-precatorius\",\"https://herbally.app/compare/turmeric/vs/ginger\",\"https://herbally.app/medications\",\"https://herbally.app/medications/rivaroxaban\",\"https://herbally.app/medications/dabigatran\",\"https://herbally.app/medications/edoxaban\",\"https://herbally.app/herb-drug-interactions\",\"https://herbally.app/interactions/ginger/warfarin\",\"https://herbally.app/surgery-planner\",\"https://herbally.app/npn-checker\",\"https://herbally.app/calculator\",\"https://herbally.app/guides\",\"https://herbally.app/guides/how-the-dosage-calculator-works\",\"https://herbally.app/compare\",\"https://herbally.app/methodology\",\"https://herbally.app/privacy\",\"https://herbally.app/trust\",\"https://herbally.app/widgets\",\"https://herbally.app/clinical-review\",\"https://herbally.app/about\",\"https://herbally.app/sponsors\",\"https://herbally.app/fr\",\"https://herbally.app/fr/herbs/turmeric\",\"https://herbally.app/fr/medications\",\"https://herbally.app/fr/surgery-planner\",\"https://herbally.app/fr/guides\",\"https://herbally.app/fr/methodology\",\"https://herbally.app/fr/privacy\",\"https://herbally.app/fr/trust\",\"https://herbally.app/rss.xml\"]}" >/dev/null || true
             echo "IndexNow pinged"
           fi
 

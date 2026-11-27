@@ -53,6 +53,29 @@ describe("stack helpers and 7-class overlap engine", () => {
       "en"
     );
     expect(alerts.some((a) => a.code === "bleeding_overlap")).toBe(true);
+
+    const doacAlerts = computeStackAlerts(
+      [
+        match({
+          herbName: "Garlic",
+          herbSlug: "garlic",
+          drugName: "Rivaroxaban (Xarelto)",
+          drugSlug: "rivaroxaban",
+          description: "Potential additive bleeding signal.",
+          mechanism: "Antiplatelet effect.",
+        }),
+        match({
+          herbName: "Ginkgo Biloba",
+          herbSlug: "ginkgo-biloba",
+          drugName: "Dabigatran (Pradaxa)",
+          drugSlug: "dabigatran",
+          description: "Potential additive bruising.",
+          mechanism: "Mild antiplatelet signal.",
+        }),
+      ],
+      "en"
+    );
+    expect(doacAlerts.some((a) => a.code === "bleeding_overlap")).toBe(true);
   });
 
   it("detects serotonin, qt_cardiac, hepatotoxicity, hypoglycemia, sedation, and cyp_enzyme overlaps", () => {

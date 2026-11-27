@@ -84,6 +84,7 @@ EXPAND_MIGRATIONS=(
   "supabase/migrations/00108_perioperative_and_toxic_safety_reconciliation.sql"
   "supabase/migrations/00109_interaction_source_url_reconciliation.sql"
   "supabase/migrations/00110_ema_sennae_fructus_url_fix.sql"
+  "supabase/migrations/00111_doac_and_antiplatelet_interactions.sql"
 )
 
 CONTRACT_MIGRATIONS=(
@@ -413,6 +414,23 @@ BEGIN
     )
   ) THEN
     RAISE EXCEPTION 'Dead 404 citation URL still present in public.drug_interactions post-00110';
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM public.herbs WHERE slug = 'st-johns-wort' AND is_published = true)
+     AND (
+       SELECT count(DISTINCT lower(di.drug_name))
+       FROM public.drug_interactions di
+       JOIN public.herbs h ON h.id = di.herb_id
+       WHERE h.slug = 'st-johns-wort'
+         AND lower(di.drug_name) IN (
+           'rivaroxaban (xarelto)',
+           'dabigatran (pradaxa)',
+           'apixaban (eliquis)',
+           'edoxaban (savaysa)',
+           'clopidogrel (plavix)'
+         )
+     ) < 5 THEN
+    RAISE EXCEPTION 'Missing DOAC/antiplatelet interaction rows for st-johns-wort post-00111';
   END IF;
 END
 $$;

@@ -116,8 +116,8 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
       expect(doc).not.toMatch(/Washout Planner/i);
       expect(doc).not.toMatch(/3,124/);
       expect(doc).toContain("3,122");
-      expect(doc).toContain("509");
-      expect(doc).toContain("142");
+      expect(doc).toContain("515");
+      expect(doc).toContain("145");
     }
   });
 
