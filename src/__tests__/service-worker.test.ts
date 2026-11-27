@@ -236,4 +236,27 @@ describe("public/sw.js security and offline honesty", () => {
     expect(second.response?.status).toBe(200);
     expect(await second.response?.text()).toBe("<html>cached-ginger</html>");
   });
+
+  it("serves fresh network HTML on online reload of herb pages so deployments do not serve stale chunks", async () => {
+    let version = 1;
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(`<html>ginger-v${version}</html>`, {
+          status: 200,
+          headers: { "Content-Type": "text/html" },
+        })
+    );
+    const sw = loadServiceWorker(fetchMock);
+
+    const first = await sw.dispatchFetch("https://herbally.app/herbs/ginger", {
+      mode: "navigate",
+    });
+    expect(await first.response?.text()).toBe("<html>ginger-v1</html>");
+
+    version = 2;
+    const second = await sw.dispatchFetch("https://herbally.app/herbs/ginger", {
+      mode: "navigate",
+    });
+    expect(await second.response?.text()).toBe("<html>ginger-v2</html>");
+  });
 });

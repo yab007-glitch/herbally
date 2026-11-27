@@ -37,8 +37,9 @@ export function HerbFAQSchema({
    */
   fallbackFaqs?: Array<{ question: string; answer: string }>;
 }) {
-  // If we have pre-generated FAQs from the database, use those
-  if (preGeneratedFaqs && preGeneratedFaqs.length > 0) {
+  // If we have pre-generated FAQs from the database, use those ONLY when
+  // the herb is not subject to toxic botanical quarantine.
+  if (!isDangerous && preGeneratedFaqs && preGeneratedFaqs.length > 0) {
     const schema = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
