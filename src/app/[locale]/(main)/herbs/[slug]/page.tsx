@@ -613,6 +613,22 @@ export default async function HerbDetailPage({ params }: Props) {
           isDangerous={isDangerous}
           isClinicallyReviewed={isClinicallyReviewed}
           resolvedReviewer={resolvedReviewer}
+          citationUrls={Array.from(
+            new Set([
+              ...sources
+                .map((s) => s.url)
+                .filter((u): u is string => Boolean(u)),
+              ...citations
+                .map(
+                  (c) =>
+                    c.url ||
+                    (c.pmid
+                      ? `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`
+                      : null)
+                )
+                .filter((u): u is string => Boolean(u)),
+            ])
+          )}
         />
         <HerbFAQSchema
           herbName={herb.name}
@@ -718,7 +734,7 @@ export default async function HerbDetailPage({ params }: Props) {
         />
 
         <div id="overview" className="scroll-mt-28 space-y-8">
-          {!isManualMonograph && herb.description?.trim() ? (
+          {!isDangerous && !isManualMonograph && herb.description?.trim() ? (
             <p className="measure prose-body leading-relaxed text-foreground">
               {herb.description}
             </p>

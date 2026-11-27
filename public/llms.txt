@@ -1,6 +1,6 @@
 # HerbAlly
 
-> HerbAlly is a free, bilingual (English / French) educational botanical & herb–drug interaction reference platform — built to help adults prepare informed questions for a pharmacist or clinician, not to provide clinical decision support or medical advice. Publishes 3,122 herb profiles, 513 documented herb–drug interaction records across 142 medications and drug classes, a Health Canada NPN / DIN-HM Supplement Decoder, a Multi-Herb Stack Checker, a Pre-Surgery Supplement Review Checklist, an 18+ Adult Monograph Reference Dose Tool, a bilingual Virtual Herbalist educational assistant, and structured governance/corrections tracking. Editorially checked by Yasser Bheekun, MLT (OPTMQ · CSMLS). Clinician-signed records: 0 to date (open clinical review intake via LinkedIn SSO at `/clinical-review`). Free and open — no paywalls; advertising launch gate is currently off.
+> HerbAlly is a free, bilingual (English / French) educational botanical & herb–drug interaction reference platform — built to help adults prepare informed questions for a pharmacist or clinician, not to provide clinical decision support or medical advice. Publishes 3,122 herb profiles, 509 documented herb–drug interaction pairs across 142 medications and drug classes, a Health Canada NPN / DIN-HM Supplement Decoder, a Multi-Herb Stack Checker, a Pre-Surgery Supplement Review Checklist, an 18+ Adult Monograph Reference Dose Tool, a bilingual Virtual Herbalist educational assistant, and structured governance/corrections tracking. Editorially checked by Yasser Bheekun, MLT (OPTMQ · CSMLS). Clinician-signed records: 0 to date (open clinical review intake via LinkedIn SSO at `/clinical-review`). Free and open — no paywalls; advertising launch gate is currently off.
 
 ## Core Reference & Interactive Tools
 
@@ -19,6 +19,19 @@
 - Evidence-Based Safety Guides Hub: https://herbally.app/guides
 - Dosage Tool Guide: https://herbally.app/guides/how-the-dosage-calculator-works
 - French Version: https://herbally.app/fr
+
+## Version Française (Français / Canada)
+
+- Accueil & Vérificateur d'interactions rapide : https://herbally.app/fr
+- Base de données des plantes médicinales (3 122 fiches) : https://herbally.app/fr/herbs
+- Répertoire des médicaments A–Z (142 médicaments et classes, 509 paires documentées) : https://herbally.app/fr/medications
+- Vérificateur multi-plantes et interactions : https://herbally.app/fr/herb-drug-interactions
+- Liste de vérification préopératoire des suppléments : https://herbally.app/fr/surgery-planner
+- Décodeur NPN / DIN-HM Santé Canada (statut de licence vs statut de commercialisation) : https://herbally.app/fr/npn-checker
+- Référence posologique adulte (18 ans et plus, sans ajustement poids/âge) : https://herbally.app/fr/calculator
+- Méthodologie, niveaux de preuve et transparence éditoriale : https://herbally.app/fr/methodology
+- Portail d'évaluation clinique et suggestions (LinkedIn SSO) : https://herbally.app/fr/clinical-review
+- Politique de confidentialité (Loi 25 Québec et LPRPDE) : https://herbally.app/fr/privacy
 
 ## Governance, Editorial Policy & Privacy
 
