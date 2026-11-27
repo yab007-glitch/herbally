@@ -373,7 +373,44 @@ export default async function TrustCenterPage() {
             >
               /open-data/schema.json (OpenAPI 3.1)
             </a>
+            <a
+              href="/open-data/source-monitor-latest.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/source-monitor-latest.json (A8 Monitor Report)
+            </a>
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            {fr
+              ? "Journaux JSON GitHub API vérifiables :"
+              : "Verifiable GitHub Actions JSON API run records:"}{" "}
+            <a
+              href="https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46049354499"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-primary underline underline-offset-4"
+            >
+              Source Monitor (46049354499)
+            </a>{" "}
+            ·{" "}
+            <a
+              href="https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46048672798"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-primary underline underline-offset-4"
+            >
+              Deploy (46048672798)
+            </a>{" "}
+            ·{" "}
+            <a
+              href="https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46047373873"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-primary underline underline-offset-4"
+            >
+              CI (46047373873)
+            </a>
+          </p>
         </section>
 
         {/* 2. Open Source & Live Continuous Verification */}

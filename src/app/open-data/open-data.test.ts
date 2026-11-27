@@ -40,6 +40,7 @@ import { GET as getInteractionsJson } from "@/app/open-data/interactions.json/ro
 import { GET as getMedicationsJson } from "@/app/open-data/medications.json/route";
 import { GET as getQuarantineJson } from "@/app/open-data/quarantine.json/route";
 import { GET as getSchemaJson } from "@/app/open-data/schema.json/route";
+import { GET as getSourceMonitorLatestJson } from "@/app/open-data/source-monitor-latest.json/route";
 import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
 import { WebApplicationSchema } from "@/components/seo/web-app-schema";
 
@@ -63,6 +64,7 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, Full Reconciliation & 
     for (const res of [catalogRes, medsRes, ixRes, qRes]) {
       expect(res.status).toBe(200);
       expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
+      expect(res.headers.get("Cache-Control")).toContain("s-maxage=60");
     }
 
     const catalog = (await catalogRes.json()) as {
@@ -113,7 +115,7 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, Full Reconciliation & 
     };
 
     // Atomic consistency across all 4 exports
-    expect(catalog.snapshotId).toMatch(/^herbally-open-data-3\.13\.0-/);
+    expect(catalog.snapshotId).toMatch(/^herbally-open-data-3\.13\.2-/);
     expect(meds.snapshotId).toBe(catalog.snapshotId);
     expect(ix.snapshotId).toBe(catalog.snapshotId);
     expect(quarantine.snapshotId).toBe(catalog.snapshotId);
@@ -181,13 +183,14 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, Full Reconciliation & 
       components: { schemas: Record<string, unknown> };
     };
     expect(body.openapi).toBe("3.1.0");
-    expect(body.info.version).toBe("3.13.0");
+    expect(body.info.version).toBe("3.13.2");
     for (const p of [
       "/open-data/catalog.json",
       "/open-data/medications.json",
       "/open-data/interactions.json",
       "/open-data/quarantine.json",
       "/open-data/schema.json",
+      "/open-data/source-monitor-latest.json",
       "/api/interactions/check",
       "/api/interactions/check-stack",
       "/api/npn/lookup",
@@ -195,6 +198,29 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, Full Reconciliation & 
       expect(body.paths[p]).toBeDefined();
     }
     expect(body.components.schemas.InteractionsDataset).toBeDefined();
+  });
+
+  it("serves verified GitHub Actions source-monitor JSON artifact at /open-data/source-monitor-latest.json", async () => {
+    const res = await getSourceMonitorLatestJson();
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
+    expect(res.headers.get("Cache-Control")).toContain("s-maxage=60");
+    const body = (await res.json()) as {
+      verificationProvenance: { sourceMonitorRunId: string };
+      report: {
+        citations: {
+          totalUniqueUrls: number;
+          uniquePmids: number;
+          retractedPmids: string[];
+          brokenUrls: unknown[];
+        };
+      };
+    };
+    expect(body.verificationProvenance.sourceMonitorRunId).toBe("46049354499");
+    expect(body.report.citations.totalUniqueUrls).toBeGreaterThanOrEqual(240);
+    expect(body.report.citations.uniquePmids).toBeGreaterThanOrEqual(70);
+    expect(body.report.citations.retractedPmids).toEqual([]);
+    expect(body.report.citations.brokenUrls).toEqual([]);
   });
 
   it("renders valid free HealthApplication Schema.org JSON-LD via WebApplicationSchema", () => {

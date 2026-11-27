@@ -114,6 +114,23 @@ export async function GET() {
           },
         },
       },
+      "/open-data/source-monitor-latest.json": {
+        get: {
+          operationId: "getSourceMonitorLatestReport",
+          summary:
+            "Latest verified GitHub Actions Source & OpenAPI Monitor JSON artifact (PMID retraction & dead-link audit)",
+          responses: {
+            "200": {
+              description: "Verified source monitor JSON artifact report",
+              content: {
+                "application/json": {
+                  schema: { type: "object" },
+                },
+              },
+            },
+          },
+        },
+      },
       "/api/interactions/check": {
         get: {
           operationId: "checkSingleInteraction",
@@ -479,7 +496,7 @@ export async function GET() {
   return new Response(JSON.stringify(spec, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=0, s-maxage=60, must-revalidate",
       "Access-Control-Allow-Origin": "*",
     },
   });
