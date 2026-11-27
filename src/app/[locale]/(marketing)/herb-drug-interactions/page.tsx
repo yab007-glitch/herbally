@@ -80,7 +80,17 @@ export default async function HerbDrugInteractionsPage() {
                 {
                   "@type": "DataDownload",
                   encodingFormat: "application/json",
+                  contentUrl: `${baseUrl}/open-data/interactions.json`,
+                },
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "application/json",
                   contentUrl: `${baseUrl}/open-data/quarantine.json`,
+                },
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "application/json",
+                  contentUrl: `${baseUrl}/open-data/schema.json`,
                 },
                 {
                   "@type": "DataDownload",

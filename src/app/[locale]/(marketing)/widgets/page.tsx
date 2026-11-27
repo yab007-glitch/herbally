@@ -116,7 +116,9 @@ export default async function WidgetsPage() {
           >
             <code>{`curl -s https://herbally.app/open-data/catalog.json
 curl -s https://herbally.app/open-data/medications.json
-curl -s https://herbally.app/open-data/quarantine.json`}</code>
+curl -s https://herbally.app/open-data/interactions.json
+curl -s https://herbally.app/open-data/quarantine.json
+curl -s https://herbally.app/open-data/schema.json`}</code>
           </pre>
           <div className="flex flex-wrap gap-4 text-xs font-medium">
             <a
@@ -132,10 +134,28 @@ curl -s https://herbally.app/open-data/quarantine.json`}</code>
               /open-data/medications.json
             </a>
             <a
+              href="/open-data/interactions.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/interactions.json
+            </a>
+            <a
               href="/open-data/quarantine.json"
               className="text-primary underline underline-offset-4"
             >
               /open-data/quarantine.json
+            </a>
+            <a
+              href="/open-data/schema.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/schema.json
+            </a>
+            <a
+              href="/trust"
+              className="text-primary underline underline-offset-4"
+            >
+              /trust
             </a>
             <a
               href="/llms-full.txt"
