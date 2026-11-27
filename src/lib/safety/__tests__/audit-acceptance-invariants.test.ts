@@ -556,5 +556,15 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(privacySrc).toContain("/embed/*");
     expect(enServer).toContain("/embed/*");
     expect(frServer).toContain("/embed/*");
+    const enJson = JSON.parse(enServer);
+    const frJson = JSON.parse(frServer);
+    expect(enJson.privacy.contact.text).toContain("info@herbally.app");
+    expect(frJson.privacy.contact.text).toContain("info@herbally.app");
+
+    const embedSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/embed/checker/page.tsx"),
+      "utf8"
+    );
+    expect(embedSrc).not.toMatch(/AdSlot|AdCmp|adsbygoogle/);
   });
 });
