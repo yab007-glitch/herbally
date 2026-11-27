@@ -114,43 +114,45 @@ export function HerbBodyContent({
 
   return (
     <>
-      {pubmedSheet && isUsablePubmedSheet(pubmedSheet) ? (
-        locale === "fr" && !sheet.translated ? (
-          <div className="space-y-3">
-            <p className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-              {copy.verbatimQuoteNote}
-            </p>
-            <details className="rounded-xl border border-border">
-              <summary className="flex min-h-11 cursor-pointer items-center px-4 py-3 text-sm font-medium text-foreground">
-                {copy.verbatimExpandLabel}
-              </summary>
-              <div className="px-4 pb-4">
-                <PubmedMonographSheet
-                  content={sheet.content as SheetContent}
-                  citations={
-                    (pubmedSheet.citations as unknown as SheetCitation[]) ?? []
-                  }
-                  articleCount={pubmedSheet.article_count ?? 0}
-                  status={pubmedSheet.status}
-                  isDangerous={dangerous}
-                />
-              </div>
-            </details>
-          </div>
+      {!dangerous &&
+        (pubmedSheet && isUsablePubmedSheet(pubmedSheet) ? (
+          locale === "fr" && !sheet.translated ? (
+            <div className="space-y-3">
+              <p className="rounded-lg border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+                {copy.verbatimQuoteNote}
+              </p>
+              <details className="rounded-xl border border-border">
+                <summary className="flex min-h-11 cursor-pointer items-center px-4 py-3 text-sm font-medium text-foreground">
+                  {copy.verbatimExpandLabel}
+                </summary>
+                <div className="px-4 pb-4">
+                  <PubmedMonographSheet
+                    content={sheet.content as SheetContent}
+                    citations={
+                      (pubmedSheet.citations as unknown as SheetCitation[]) ??
+                      []
+                    }
+                    articleCount={pubmedSheet.article_count ?? 0}
+                    status={pubmedSheet.status}
+                    isDangerous={dangerous}
+                  />
+                </div>
+              </details>
+            </div>
+          ) : (
+            <PubmedMonographSheet
+              content={sheet.content as SheetContent}
+              citations={
+                (pubmedSheet.citations as unknown as SheetCitation[]) ?? []
+              }
+              articleCount={pubmedSheet.article_count ?? 0}
+              status={pubmedSheet.status}
+              isDangerous={dangerous}
+            />
+          )
         ) : (
-          <PubmedMonographSheet
-            content={sheet.content as SheetContent}
-            citations={
-              (pubmedSheet.citations as unknown as SheetCitation[]) ?? []
-            }
-            articleCount={pubmedSheet.article_count ?? 0}
-            status={pubmedSheet.status}
-            isDangerous={dangerous}
-          />
-        )
-      ) : (
-        <GovSourcedBanner />
-      )}
+          <GovSourcedBanner />
+        ))}
       {showNonManualSafetyPanel && (
         <div id="safety" className="scroll-mt-24">
           <HerbSafetyPanel

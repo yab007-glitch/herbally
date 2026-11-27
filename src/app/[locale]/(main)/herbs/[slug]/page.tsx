@@ -630,30 +630,29 @@ export default async function HerbDetailPage({ params }: Props) {
             ])
           )}
         />
-        <HerbFAQSchema
-          herbName={herb.name}
-          scientificName={herb.scientific_name}
-          uses={
-            isDangerous
-              ? []
-              : [...(herb.traditional_uses || []), ...(herb.modern_uses || [])]
-          }
-          safetyNotes={
-            monograph?.safetyNotes?.join(". ") ||
-            herb.side_effects?.join(". ") ||
-            ""
-          }
-          pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
-          drugInteractions={interactions.length}
-          isDangerous={isDangerous}
-          showCalculator={showCalculator}
-          preGeneratedFaqs={
-            !isDangerous && preGeneratedFaqs.length > 0
-              ? preGeneratedFaqs
-              : undefined
-          }
-          fallbackFaqs={fallbackFaqs}
-        />
+        {!isDangerous && (
+          <HerbFAQSchema
+            herbName={herb.name}
+            scientificName={herb.scientific_name}
+            uses={[
+              ...(herb.traditional_uses || []),
+              ...(herb.modern_uses || []),
+            ]}
+            safetyNotes={
+              monograph?.safetyNotes?.join(". ") ||
+              herb.side_effects?.join(". ") ||
+              ""
+            }
+            pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
+            drugInteractions={interactions.length}
+            isDangerous={isDangerous}
+            showCalculator={showCalculator}
+            preGeneratedFaqs={
+              preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
+            }
+            fallbackFaqs={fallbackFaqs}
+          />
+        )}
 
         <Breadcrumbs
           items={[
@@ -684,7 +683,7 @@ export default async function HerbDetailPage({ params }: Props) {
           herb={heroHerb}
           provenance={compactProvenance}
           pubmedSheetStatus={
-            pubmedSheet && isUsablePubmedSheet(pubmedSheet)
+            !isDangerous && pubmedSheet && isUsablePubmedSheet(pubmedSheet)
               ? pubmedSheet.status
               : null
           }
@@ -694,14 +693,16 @@ export default async function HerbDetailPage({ params }: Props) {
           safetyHref="#interactions"
         />
 
-        <p className="-mt-4 text-sm text-muted-foreground">
-          <Link
-            href="/methodology"
-            className="inline-flex min-h-9 items-center underline-offset-4 hover:text-foreground hover:underline"
-          >
-            {copy.evidenceLabelsLink}
-          </Link>
-        </p>
+        {!isDangerous && (
+          <p className="-mt-4 text-sm text-muted-foreground">
+            <Link
+              href="/methodology"
+              className="inline-flex min-h-9 items-center underline-offset-4 hover:text-foreground hover:underline"
+            >
+              {copy.evidenceLabelsLink}
+            </Link>
+          </p>
+        )}
 
         <AuthorByline
           locale={copyLocale}
@@ -719,6 +720,7 @@ export default async function HerbDetailPage({ params }: Props) {
         <HerbJumpNav
           locale={copyLocale}
           hasInteractions={interactions.length > 0}
+          isDangerous={isDangerous}
         />
 
         <HerbPhoto
@@ -740,7 +742,7 @@ export default async function HerbDetailPage({ params }: Props) {
             </p>
           ) : null}
 
-          <UserInteractionAlert herbSlug={slug} />
+          {!isDangerous && <UserInteractionAlert herbSlug={slug} />}
         </div>
 
         {tableInteractions.length > 0 && (
@@ -767,6 +769,7 @@ export default async function HerbDetailPage({ params }: Props) {
           sources={sources}
           copy={copy}
           filter="modern"
+          isDangerous={isDangerous}
           locale={copyLocale}
         />
 
@@ -799,11 +802,13 @@ export default async function HerbDetailPage({ params }: Props) {
 
         <CmpBootstrap />
         <AdCmp />
-        <AdSlot
-          slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
-          format="auto"
-          className="my-8 min-h-[100px] no-print"
-        />
+        {!isDangerous && (
+          <AdSlot
+            slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
+            format="auto"
+            className="my-8 min-h-[100px] no-print"
+          />
+        )}
 
         <section id="sources" className="scroll-mt-28 pt-4">
           <h2 className="mb-3 flex items-center gap-2 text-xl font-semibold text-foreground">
@@ -834,7 +839,7 @@ export default async function HerbDetailPage({ params }: Props) {
           monographSources={sources}
         />
 
-        <HerbFaqSection faqs={resolvedFaqs} />
+        {!isDangerous && <HerbFaqSection faqs={resolvedFaqs} />}
 
         <HerbRegulatorExcerpts
           herbName={herb.name}
@@ -878,19 +883,23 @@ export default async function HerbDetailPage({ params }: Props) {
           className="pt-4 no-print"
         />
 
-        <HerbRelatedSection
-          locale={copyLocale}
-          herbSlug={slug}
-          interactions={glanceInteractions.slice(0, 6)}
-          prev={prev}
-          next={next}
-          symptomPeers={isDangerous ? [] : symptomPeers}
-          relatedHerbs={isDangerous ? [] : relatedHerbs}
-          relatedHeading={t("herbDetail.relatedHerbs")}
-          relatedGuides={compactRelatedGuides}
-        />
+        {!isDangerous && (
+          <>
+            <HerbRelatedSection
+              locale={copyLocale}
+              herbSlug={slug}
+              interactions={glanceInteractions.slice(0, 6)}
+              prev={prev}
+              next={next}
+              symptomPeers={symptomPeers}
+              relatedHerbs={relatedHerbs}
+              relatedHeading={t("herbDetail.relatedHerbs")}
+              relatedGuides={compactRelatedGuides}
+            />
 
-        <NewsletterSignup locale={copyLocale} />
+            <NewsletterSignup locale={copyLocale} />
+          </>
+        )}
       </div>
     </HerbsMessagesProvider>
   );

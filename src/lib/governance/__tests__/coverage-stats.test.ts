@@ -48,11 +48,24 @@ function makeMockClient({
     }
     if (table === "drug_interactions") {
       return {
-        select: vi.fn(() => ({
-          eq: async () => ({ count: approvedInteractions, error: null }),
-          then: (resolve: (v: unknown) => void) =>
-            resolve({ count: totalInteractions, error: null }),
-        })),
+        select: vi.fn((cols: string) => {
+          expect(cols).toBe("id, herbs!inner(is_published)");
+          return {
+            eq: vi.fn((col: string, val: unknown) => {
+              expect(col).toBe("herbs.is_published");
+              expect(val).toBe(true);
+              return {
+                eq: async (statusCol: string, statusVal: unknown) => {
+                  expect(statusCol).toBe("clinical_action_status");
+                  expect(statusVal).toBe("clinician_approved");
+                  return { count: approvedInteractions, error: null };
+                },
+                then: (resolve: (v: unknown) => void) =>
+                  resolve({ count: totalInteractions, error: null }),
+              };
+            }),
+          };
+        }),
       };
     }
     if (table === "public_corrections_log") {

@@ -65,10 +65,12 @@ export async function fetchGovernanceCoverageStats(
         .eq("provenance->>review_role", "clinical"),
       client
         .from("drug_interactions" as never)
-        .select("id", { count: "exact", head: true }),
+        .select("id, herbs!inner(is_published)", { count: "exact", head: true })
+        .eq("herbs.is_published", true),
       client
         .from("drug_interactions" as never)
-        .select("id", { count: "exact", head: true })
+        .select("id, herbs!inner(is_published)", { count: "exact", head: true })
+        .eq("herbs.is_published", true)
         .eq("clinical_action_status", "clinician_approved"),
       client
         .from("public_corrections_log" as never)
@@ -125,7 +127,7 @@ export const getGovernanceCoverageStats = unstable_cache(
     const client = getAnonClient();
     return fetchGovernanceCoverageStats(client);
   },
-  ["governance-coverage-stats-v1"],
+  ["governance-coverage-stats-v2"],
   {
     revalidate: 3600,
     tags: ["governance-stats"],

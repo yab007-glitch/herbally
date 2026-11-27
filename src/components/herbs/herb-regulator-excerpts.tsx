@@ -73,61 +73,65 @@ export function HerbRegulatorExcerpts({
       ? "Afficher le texte d'archive historique (1894–1919 — ne constitue pas un avis médical)"
       : "Show historical 1894–1919 archive text (not modern medical advice)";
 
-  const items: RegulatorExcerptItem[] = filtered.map((source) => {
-    const historical = copy.historicalSources[source.source];
-    const labels =
-      source.source === "LiverTox"
-        ? {
-            heading: copy.liverTox.heading(herbName),
-            sourceLabel: copy.liverTox.sourceLabel,
-            licenceText: copy.liverTox.licenceText,
-            claimsHeading: copy.liverTox.claimsHeading,
-            safetyHeading: copy.liverTox.safetyHeading,
-          }
-        : source.source === "Health Canada"
+  const items: RegulatorExcerptItem[] = filtered
+    .map((source) => {
+      const historical = copy.historicalSources[source.source];
+      const labels =
+        source.source === "LiverTox"
           ? {
-              heading: copy.healthCanada.heading(herbName),
-              sourceLabel: copy.healthCanada.sourceLabel,
-              licenceText: copy.healthCanada.licenceText,
-              claimsHeading: copy.healthCanada.claimsHeading,
-              safetyHeading: copy.healthCanada.safetyHeading,
+              heading: copy.liverTox.heading(herbName),
+              sourceLabel: copy.liverTox.sourceLabel,
+              licenceText: copy.liverTox.licenceText,
+              claimsHeading: copy.liverTox.claimsHeading,
+              safetyHeading: copy.liverTox.safetyHeading,
             }
-          : source.source === "European Medicines Agency (HMPC)"
+          : source.source === "Health Canada"
             ? {
-                heading: copy.ema.heading(herbName),
-                sourceLabel: copy.ema.sourceLabel,
-                licenceText: copy.ema.licenceText,
-                claimsHeading: copy.ema.claimsHeading,
-                safetyHeading: copy.ema.safetyHeading,
+                heading: copy.healthCanada.heading(herbName),
+                sourceLabel: copy.healthCanada.sourceLabel,
+                licenceText: copy.healthCanada.licenceText,
+                claimsHeading: copy.healthCanada.claimsHeading,
+                safetyHeading: copy.healthCanada.safetyHeading,
               }
-            : historical
+            : source.source === "European Medicines Agency (HMPC)"
               ? {
-                  heading: historical.heading(herbName),
-                  sourceLabel: historical.sourceLabel,
-                  licenceText: historical.licenceText,
-                  claimsHeading: historical.claimsHeading,
-                  safetyHeading: historical.safetyHeading,
+                  heading: copy.ema.heading(herbName),
+                  sourceLabel: copy.ema.sourceLabel,
+                  licenceText: copy.ema.licenceText,
+                  claimsHeading: copy.ema.claimsHeading,
+                  safetyHeading: copy.ema.safetyHeading,
                 }
-              : {
-                  heading: copy.nccih.heading(herbName),
-                  sourceLabel: copy.nccih.sourceLabel,
-                  licenceText: copy.nccih.licenceText,
-                  claimsHeading: copy.nccih.claimsHeading,
-                  safetyHeading: copy.nccih.safetyHeading,
-                };
+              : historical
+                ? {
+                    heading: historical.heading(herbName),
+                    sourceLabel: historical.sourceLabel,
+                    licenceText: historical.licenceText,
+                    claimsHeading: historical.claimsHeading,
+                    safetyHeading: historical.safetyHeading,
+                  }
+                : {
+                    heading: copy.nccih.heading(herbName),
+                    sourceLabel: copy.nccih.sourceLabel,
+                    licenceText: copy.nccih.licenceText,
+                    claimsHeading: copy.nccih.claimsHeading,
+                    safetyHeading: copy.nccih.safetyHeading,
+                  };
 
-    return {
-      key: source.source,
-      id: `source-${source.source.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-      claims: normalizeClaims(source.claims),
-      safety: normalizeSafety(source.safety),
-      url: source.url,
-      notice: historical?.notice ?? null,
-      renderAs: historical ? "prose" : "list",
-      collapsible: Boolean(historical),
-      ...labels,
-    };
-  });
+      return {
+        key: source.source,
+        id: `source-${source.source.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+        claims: isDangerous ? [] : normalizeClaims(source.claims),
+        safety: normalizeSafety(source.safety),
+        url: source.url,
+        notice: historical?.notice ?? null,
+        renderAs: historical ? "prose" : "list",
+        collapsible: Boolean(historical),
+        ...labels,
+      } satisfies RegulatorExcerptItem;
+    })
+    .filter((item) => item.claims.length > 0 || item.safety.length > 0);
+
+  if (items.length === 0) return null;
 
   return (
     <HerbRegulatorExcerptsView

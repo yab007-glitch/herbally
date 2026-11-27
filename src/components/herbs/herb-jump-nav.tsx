@@ -5,6 +5,7 @@ import type { CopyLocale } from "@/lib/i18n/herb-page-copy";
 export interface HerbJumpNavProps {
   locale: CopyLocale;
   hasInteractions: boolean;
+  isDangerous?: boolean;
 }
 
 const LABELS = {
@@ -13,6 +14,7 @@ const LABELS = {
     overview: "Overview",
     interactions: "Interactions",
     dosageSafety: "Dosage & Safety",
+    toxicologySafety: "Toxicology & Emergency",
     sources: "Sources",
     faq: "FAQ",
   },
@@ -21,22 +23,36 @@ const LABELS = {
     overview: "Aperçu",
     interactions: "Interactions",
     dosageSafety: "Posologie et sécurité",
+    toxicologySafety: "Toxicologie et urgence",
     sources: "Sources",
     faq: "FAQ",
   },
 } as const;
 
-export function HerbJumpNav({ locale, hasInteractions }: HerbJumpNavProps) {
+export function HerbJumpNav({
+  locale,
+  hasInteractions,
+  isDangerous = false,
+}: HerbJumpNavProps) {
   const copy = LABELS[locale];
-  const links = [
-    { href: "#overview", label: copy.overview },
-    ...(hasInteractions
-      ? [{ href: "#interactions", label: copy.interactions }]
-      : []),
-    { href: "#dosage-safety", label: copy.dosageSafety },
-    { href: "#sources", label: copy.sources },
-    { href: "#faq", label: copy.faq },
-  ];
+  const links = isDangerous
+    ? [
+        { href: "#overview", label: copy.overview },
+        ...(hasInteractions
+          ? [{ href: "#interactions", label: copy.interactions }]
+          : []),
+        { href: "#dosage-safety", label: copy.toxicologySafety },
+        { href: "#sources", label: copy.sources },
+      ]
+    : [
+        { href: "#overview", label: copy.overview },
+        ...(hasInteractions
+          ? [{ href: "#interactions", label: copy.interactions }]
+          : []),
+        { href: "#dosage-safety", label: copy.dosageSafety },
+        { href: "#sources", label: copy.sources },
+        { href: "#faq", label: copy.faq },
+      ];
 
   return (
     <nav
