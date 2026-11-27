@@ -9,7 +9,7 @@ import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { WidgetBuilder } from "@/components/embed/widget-builder";
 import { LibrarianCitationKit } from "@/components/embed/librarian-citation-kit";
 import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
-import { Code2 } from "lucide-react";
+import { Code2, Database } from "lucide-react";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -20,6 +20,7 @@ export const generateMetadata = () =>
 
 export default async function WidgetsPage() {
   const locale = await getLocale();
+  const fr = locale === "fr";
   const t = await getTranslations({ locale, namespace: "widgetsPage" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const url = `${siteUrl()}${locale === "fr" ? "/fr" : ""}/widgets`;
@@ -66,6 +67,59 @@ export default async function WidgetsPage() {
         </div>
 
         <LibrarianCitationKit />
+
+        <section
+          aria-labelledby="open-data-heading"
+          className="mt-10 space-y-4 rounded-2xl border border-border bg-card p-5 sm:p-6"
+        >
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+            <Database className="size-4" aria-hidden="true" />
+            <span>
+              {fr
+                ? "Données ouvertes et flux machine"
+                : "Open Data JSON Catalog & Feeds"}
+            </span>
+          </div>
+          <h2
+            id="open-data-heading"
+            className="text-xl font-semibold text-foreground"
+          >
+            {fr
+              ? "Catalogue JSON ouvert, flux RSS et spécifications IA"
+              : "Open Data JSON Catalog, RSS Feed & AI Specifications"}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {fr
+              ? "Point de terminaison JSON CORS ouvert exposant les compteurs vérifiés en direct (3 122 plantes, 509 paires d'interactions, 142 médicaments et classes) ainsi que le registre complet des licences sources sous CC BY 4.0 pour les métadonnées compilées."
+              : "Public CORS-enabled JSON catalog exposing live verified counts (3,122 herbs, 509 interaction pairs, 142 medications/classes) and primary source licensing under CC BY 4.0 for compilation metadata."}
+          </p>
+          <pre
+            tabIndex={0}
+            className="overflow-x-auto rounded-xl border border-border bg-background p-3 text-xs text-muted-foreground"
+          >
+            <code>{`curl -s https://herbally.app/open-data/catalog.json`}</code>
+          </pre>
+          <div className="flex flex-wrap gap-4 text-xs font-medium">
+            <a
+              href="/open-data/catalog.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/catalog.json
+            </a>
+            <a
+              href="/llms-full.txt"
+              className="text-primary underline underline-offset-4"
+            >
+              /llms-full.txt
+            </a>
+            <a
+              href="/rss.xml"
+              className="text-primary underline underline-offset-4"
+            >
+              /rss.xml
+            </a>
+          </div>
+        </section>
 
         <ClinicalSupportCallout locale={locale} />
       </div>

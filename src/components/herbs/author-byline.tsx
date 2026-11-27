@@ -118,13 +118,17 @@ export function AuthorByline({
       <span>{copy.editorialStatus}</span>
       <span aria-hidden="true">·</span>
       <span className="font-medium text-foreground">{copy.clinicalStatus}</span>
-      <span aria-hidden="true">·</span>
-      <Link
-        href="/editorial-policy"
-        className="underline underline-offset-2 hover:text-foreground"
-      >
-        {copy.policy}
-      </Link>
+      {!isDangerous && (
+        <>
+          <span aria-hidden="true">·</span>
+          <Link
+            href="/editorial-policy"
+            className="underline underline-offset-2 hover:text-foreground"
+          >
+            {copy.policy}
+          </Link>
+        </>
+      )}
       {updatedDate && (
         <>
           <span aria-hidden="true">·</span>
@@ -141,7 +145,7 @@ export function AuthorByline({
           </span>
         </>
       )}
-      {herbSlug && (
+      {herbSlug && !isDangerous && (
         <>
           <span aria-hidden="true">·</span>
           <Link
