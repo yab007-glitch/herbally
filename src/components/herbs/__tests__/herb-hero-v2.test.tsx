@@ -110,8 +110,8 @@ describe("HerbHeroV2 safety and review gating", () => {
     expect(container.querySelector('a[href*="/calculator"]')).toBeNull();
     expect(container.querySelector('a[href*="/herbalist"]')).toBeNull();
     expect(
-      screen.getByRole("button", { name: /Suggest an edit/i })
-    ).toBeDefined();
+      screen.queryByRole("button", { name: /Suggest an edit/i })
+    ).toBeNull();
   });
 
   it("preserves explicit pregnancy_safe=false as unsafe while hiding pregnancy_safe=true as unknown on needs_re_review herbs", () => {

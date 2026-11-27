@@ -26,7 +26,13 @@ export function ToxicBotanicalQuarantineCard({
 }: ToxicBotanicalQuarantineCardProps) {
   const fr = locale === "fr";
   const info = getDangerousHerb(slug);
-  const hazards = contraindications?.filter(Boolean) ?? [];
+  const hazards = (contraindications ?? []).filter(
+    (item): item is string =>
+      Boolean(item) &&
+      !/\b(pregnancy|pregnant|breastfeeding|nursing|grossesse|allaitement)\b/i.test(
+        item
+      )
+  );
   const manifestations = sideEffects?.filter(Boolean) ?? [];
 
   const pubmedToxicologyUrl = `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(
@@ -55,8 +61,8 @@ export function ToxicBotanicalQuarantineCard({
         </div>
         <p className="text-sm leading-relaxed text-foreground">
           {fr
-            ? "Aucun usage thérapeutique, aucune référence posologique, aucune recommandation pendant la grossesse ou l'allaitement et aucune voie d'automédication ne sont présentés pour les plantes toxiques en quarantaine permanente."
-            : "No therapeutic use, dosing reference, pregnancy/lactation recommendation, or self-administration pathway is provided for permanently quarantined toxic plants."}
+            ? "Aucun usage thérapeutique, aucune référence posologique, aucune indication clinique et aucune voie d'automédication ne sont présentés pour les plantes toxiques en quarantaine permanente."
+            : "No therapeutic use, dosing reference, clinical indication, or self-administration pathway is provided for permanently quarantined toxic plants."}
         </p>
       </div>
 

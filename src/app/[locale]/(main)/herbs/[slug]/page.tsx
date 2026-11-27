@@ -757,15 +757,17 @@ export default async function HerbDetailPage({ params }: Props) {
           </section>
         )}
 
-        <HerbSources
-          sources={verifiedSources}
-          lastChecked={sourcesLastChecked}
-          label={copy.sources.label}
-          checkedLabel={copy.sources.checkedLabel}
-          countLabel={copy.sources.count}
-          taxonomyLabel={copy.sources.taxonomyLabel}
-          note={copy.sources.note}
-        />
+        {!isDangerous && (
+          <HerbSources
+            sources={verifiedSources}
+            lastChecked={sourcesLastChecked}
+            label={copy.sources.label}
+            checkedLabel={copy.sources.checkedLabel}
+            countLabel={copy.sources.count}
+            taxonomyLabel={copy.sources.taxonomyLabel}
+            note={copy.sources.note}
+          />
+        )}
 
         <HerbRegulatorExcerpts
           herbName={herb.name}

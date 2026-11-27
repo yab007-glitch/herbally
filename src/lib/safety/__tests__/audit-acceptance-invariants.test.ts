@@ -408,4 +408,45 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(openDataSrc).toContain("Access-Control-Allow-Origin");
     expect(openDataSrc).toContain("medicationsAndClasses");
   });
+
+  it("enforces Release 3.7 100% exclusive toxic quarantine and Open Data showcase on /widgets", () => {
+    const toxicCardHtml = renderToStaticMarkup(
+      createElement(ToxicBotanicalQuarantineCard, {
+        slug: "abrus-precatorius",
+        scientificName: "Abrus precatorius",
+        contraindications: [
+          "Contains lethal abrin",
+          "Strictly contraindicated in pregnancy, breastfeeding, children, and older adults",
+        ],
+        sideEffects: ["Severe toxicity from seeds"],
+        locale: "en",
+      })
+    );
+    expect(toxicCardHtml).toContain("Contains lethal abrin");
+    expect(toxicCardHtml).not.toMatch(/pregnancy|breastfeeding/i);
+
+    const toxicBylineHtml = renderToStaticMarkup(
+      createElement(AuthorByline, {
+        locale: "en",
+        isReviewed: false,
+        sourceCount: 2,
+        herbSlug: "abrus-precatorius",
+        isDangerous: true,
+      })
+    );
+    expect(toxicBylineHtml).not.toContain("Suggest an edit");
+    expect(toxicBylineHtml).not.toContain("Editorial policy");
+
+    const herbPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      "utf8"
+    );
+    expect(herbPageSrc).toContain("{!isDangerous && (\n          <HerbSources");
+
+    const widgetsPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(marketing)/widgets/page.tsx"),
+      "utf8"
+    );
+    expect(widgetsPageSrc).toContain("/open-data/catalog.json");
+  });
 });

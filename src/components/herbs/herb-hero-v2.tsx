@@ -296,7 +296,9 @@ export function HerbHeroV2({
               {t("herbDetail.calculateDose")}
             </Link>
           )}
-          <SuggestHerbEditSheet herbSlug={herb.slug} herbName={herb.name} />
+          {!dangerous && (
+            <SuggestHerbEditSheet herbSlug={herb.slug} herbName={herb.name} />
+          )}
         </div>
       </div>
     </div>
