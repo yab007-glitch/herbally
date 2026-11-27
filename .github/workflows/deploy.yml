@@ -108,52 +108,6 @@ jobs:
             BACKUP_SCRIPT="$BACKUP_SCRIPT" bash /srv/herbally/scripts/apply-pending-migrations.sh --phase expand
           fi
 
-      - name: Sync optional LinkedIn OAuth secrets into deploy/app.env
-        if: steps.changes.outputs.deploy_needed == 'true'
-        env:
-          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
-          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
-          LINKEDIN_SESSION_SECRET: ${{ secrets.LINKEDIN_SESSION_SECRET }}
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import os
-          from pathlib import Path
-
-          env_path = Path("/srv/herbally/deploy/app.env")
-          if not env_path.exists():
-            raise SystemExit("Missing /srv/herbally/deploy/app.env")
-
-          updates = {
-            k: os.environ.get(k, "").strip()
-            for k in ("LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET", "LINKEDIN_SESSION_SECRET")
-            if os.environ.get(k, "").strip()
-          }
-          if not updates:
-            print("No optional LinkedIn OAuth secrets set; leaving app.env unchanged.")
-            raise SystemExit(0)
-
-          lines = env_path.read_text(encoding="utf-8").splitlines()
-          seen = set()
-          out = []
-          for line in lines:
-            replaced = False
-            for k, v in updates.items():
-              if line.startswith(f"{k}="):
-                out.append(f"{k}={v}")
-                seen.add(k)
-                replaced = True
-                break
-            if not replaced:
-              out.append(line)
-          for k, v in updates.items():
-            if k not in seen:
-              out.append(f"{k}={v}")
-          env_path.write_text("\n".join(out) + "\n", encoding="utf-8")
-          os.chmod(env_path, 0o600)
-          print("Synced LinkedIn OAuth keys into deploy/app.env:", ", ".join(sorted(updates)))
-          PY
-
       - name: Build image
         if: steps.changes.outputs.deploy_needed == 'true'
         working-directory: /srv/herbally/deploy
@@ -165,10 +119,43 @@ jobs:
       - name: Deploy
         if: steps.changes.outputs.deploy_needed == 'true'
         working-directory: /srv/herbally/deploy
+        env:
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+          LINKEDIN_SESSION_SECRET: ${{ secrets.LINKEDIN_SESSION_SECRET }}
         run: |
           set -euo pipefail
           docker exec -u 0 herbally-app sh -c 'rm -rf /app/.next/cache/fetch-cache/*' 2>/dev/null || true
-          docker compose up -d --force-recreate --no-deps app
+          OVERRIDE_FILE=""
+          cleanup_override() {
+            if [ -n "$OVERRIDE_FILE" ]; then
+              rm -f "$OVERRIDE_FILE"
+            fi
+          }
+          trap cleanup_override EXIT
+
+          KEYS=()
+          for k in LINKEDIN_CLIENT_ID LINKEDIN_CLIENT_SECRET LINKEDIN_SESSION_SECRET; do
+            if [ -n "${!k:-}" ]; then
+              KEYS+=("$k")
+            fi
+          done
+
+          if [ "${#KEYS[@]}" -gt 0 ]; then
+            OVERRIDE_FILE="${RUNNER_TEMP}/linkedin-oauth.override.yml"
+            {
+              echo "services:"
+              echo "  app:"
+              echo "    environment:"
+              for k in "${KEYS[@]}"; do
+                echo "      - ${k}"
+              done
+            } > "$OVERRIDE_FILE"
+            echo "Injecting optional LinkedIn OAuth env keys via compose override: ${KEYS[*]}"
+            docker compose --project-directory /srv/herbally/deploy -f docker-compose.yml -f "$OVERRIDE_FILE" up -d --force-recreate --no-deps app
+          else
+            docker compose up -d --force-recreate --no-deps app
+          fi
 
       - name: Wait for health
         if: steps.changes.outputs.deploy_needed == 'true'
