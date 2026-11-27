@@ -1,4 +1,4 @@
-const CACHE_NAME = "herbally-public-v8";
+const CACHE_NAME = "herbally-public-v9";
 const API_CACHE = "herbally-public-api-v4";
 
 // Core public reference pages to pre-cache on install (EN and FR).
@@ -179,46 +179,8 @@ self.addEventListener("fetch", (event) => {
   const isPublicPage = isAllowlistedPublicPage(url.pathname);
   if (!isAsset && !isPublicPage) return;
 
-  // Public herb detail pages: cache-first with background refresh.
-  const stripped = stripLocalePrefix(url.pathname);
-  const parts = stripped.split("/").filter(Boolean);
-  const isHerbDetail = parts[0] === "herbs" && parts.length === 2;
-
-  if (isHerbDetail) {
-    event.respondWith(
-      caches.open(CACHE_NAME).then(async (cache) => {
-        const cached = await cache.match(event.request);
-        if (cached) {
-          fetch(event.request)
-            .then((response) => {
-              if (isCacheablePublicResponse(response)) {
-                return cache.put(event.request, response.clone());
-              }
-            })
-            .catch(() => {});
-          return cached;
-        }
-        try {
-          const response = await fetch(event.request);
-          if (isCacheablePublicResponse(response)) {
-            cache.put(event.request, response.clone());
-          }
-          return response;
-        } catch {
-          return new Response("Offline", {
-            status: 503,
-            headers: {
-              "Content-Type": "text/plain; charset=utf-8",
-              "Cache-Control": "no-store",
-            },
-          });
-        }
-      })
-    );
-    return;
-  }
-
-  // Public pages & static assets: network-first with cache fallback.
+  // Public pages (including /herbs/[slug]) & static assets: network-first with cache fallback
+  // so deployments never serve stale HTML or mismatched React hydration chunks.
   event.respondWith(
     fetch(event.request)
       .then((response) => {

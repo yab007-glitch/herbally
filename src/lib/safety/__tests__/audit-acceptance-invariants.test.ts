@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import robots from "@/app/robots";
+import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { resolvePregnancyNursingStatus } from "@/lib/herbs/canonical-safety";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
 
@@ -115,5 +118,34 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     ]) {
       expect(allowedAgents).toContain(bot);
     }
+  });
+
+  it("ignores DB preGeneratedFaqs in HerbFAQSchema for toxic botanicals", () => {
+    const html = renderToStaticMarkup(
+      createElement(HerbFAQSchema, {
+        herbName: "Abrus precatorius",
+        scientificName: "Abrus precatorius",
+        uses: ["Skin conditions (root)"],
+        safetyNotes: "Fatal toxicity",
+        pregnancyCategory: "avoid",
+        drugInteractions: 0,
+        isDangerous: true,
+        showCalculator: false,
+        preGeneratedFaqs: [
+          {
+            question: "What is Abrus precatorius used for?",
+            answer: "Skin conditions (root).",
+          },
+          {
+            question: "What dose of Abrus precatorius should I take?",
+            answer: "None.",
+          },
+        ],
+      })
+    );
+
+    expect(html).not.toContain("Skin conditions (root)");
+    expect(html).not.toContain("What is Abrus precatorius used for?");
+    expect(html).not.toContain("What dose of Abrus precatorius");
   });
 });

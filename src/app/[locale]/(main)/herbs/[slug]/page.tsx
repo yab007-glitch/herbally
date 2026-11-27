@@ -151,11 +151,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     !!frRecord &&
     typeof frRecord === "object" &&
     Object.keys(frRecord).length > 0;
+  const isDangerous = isDangerousHerb(slug);
   const keywords = [
     herb.name,
     herb.scientific_name,
     ...(herb.common_names || []),
-    ...(herb.traditional_uses || []).slice(0, 5),
+    ...(isDangerous ? [] : (herb.traditional_uses || []).slice(0, 5)),
     ...(herb.active_compounds || []).slice(0, 5),
     "medicinal herb",
     "herbal remedy",
@@ -545,9 +546,10 @@ export default async function HerbDetailPage({ params }: Props) {
     pregnancy_safe_topical: herb.pregnancy_safe_topical,
     nursing_safe_oral: herb.nursing_safe_oral,
     nursing_safe_topical: herb.nursing_safe_topical,
-    herb_categories: herb.herb_categories?.name
-      ? { name: herb.herb_categories.name }
-      : null,
+    herb_categories:
+      !isDangerous && herb.herb_categories?.name
+        ? { name: herb.herb_categories.name }
+        : null,
     evidence_level: evidenceLevel,
     contraindications: herb.contraindications ?? null,
   };
@@ -615,7 +617,11 @@ export default async function HerbDetailPage({ params }: Props) {
         <HerbFAQSchema
           herbName={herb.name}
           scientificName={herb.scientific_name}
-          uses={[...(herb.traditional_uses || []), ...(herb.modern_uses || [])]}
+          uses={
+            isDangerous
+              ? []
+              : [...(herb.traditional_uses || []), ...(herb.modern_uses || [])]
+          }
           safetyNotes={
             monograph?.safetyNotes?.join(". ") ||
             herb.side_effects?.join(". ") ||
@@ -626,7 +632,9 @@ export default async function HerbDetailPage({ params }: Props) {
           isDangerous={isDangerous}
           showCalculator={showCalculator}
           preGeneratedFaqs={
-            preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
+            !isDangerous && preGeneratedFaqs.length > 0
+              ? preGeneratedFaqs
+              : undefined
           }
           fallbackFaqs={fallbackFaqs}
         />
