@@ -47,7 +47,10 @@
 - Open Data Medications & Interactions Registry JSON: https://herbally.app/open-data/medications.json
 - Open Data Active Herb–Drug Interactions JSON (509 pairs): https://herbally.app/open-data/interactions.json
 - Open Data Quarantined Toxic Botanicals Registry JSON (115 plants): https://herbally.app/open-data/quarantine.json
+- Open Data SHA-256 Integrity Manifest JSON: https://herbally.app/open-data/manifest.json
 - OpenAPI 3.1 Machine-Readable API Specification JSON: https://herbally.app/open-data/schema.json
+- Automated Scientific Source & OpenAPI Monitor JSON: https://herbally.app/open-data/source-monitor-latest.json
+- RFC 9116 Security & Vulnerability Contact: https://herbally.app/.well-known/security.txt
 - Embeddable Interaction Checker & Librarian Citation Kit: https://herbally.app/widgets
 - RSS Updates Feed: https://herbally.app/rss.xml
 - Sitemap (all indexable EN + FR URLs): https://herbally.app/sitemap.xml

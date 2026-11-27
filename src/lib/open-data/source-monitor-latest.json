@@ -1,22 +1,21 @@
 {
   "verificationProvenance": {
-    "note": "Authentic unedited JSON output artifact captured from GitHub Actions Run 46049354499 against main commit dd1cd8e5ad87ac0ae55665f28c7d784c43e0ba55.",
-    "commitSha": "dd1cd8e5ad87ac0ae55665f28c7d784c43e0ba55",
-    "ciRunId": "46047373873",
-    "ciRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46047373873",
-    "ciApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46047373873",
-    "deployRunId": "46048672798",
-    "deployRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46048672798",
-    "deployApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46048672798",
-    "sourceMonitorRunId": "46049354499",
-    "sourceMonitorRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46049354499",
-    "sourceMonitorApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46049354499"
+    "note": "Baseline JSON output artifact captured from GitHub Actions Run 46054115945 against Release 3.13.2 commit e030b6f26a5b499c398c7322b0772d48b30286d3; liveGitHubWorkflowRuns on /open-data/source-monitor-latest.json appends the latest main workflow runs.",
+    "commitSha": "e030b6f26a5b499c398c7322b0772d48b30286d3",
+    "ciRunId": "46051610000",
+    "deployRunId": "46052991478",
+    "deployRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46052991478",
+    "deployApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46052991478",
+    "sourceMonitorRunId": "46054115945",
+    "sourceMonitorArtifactId": "15225443099",
+    "sourceMonitorRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46054115945",
+    "sourceMonitorApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46054115945"
   },
   "report": {
-    "checkedAt": "2026-11-27T18:26:00.084Z",
+    "checkedAt": "2026-11-27T19:05:40.884Z",
     "baseUrl": "https://herbally.app",
-    "snapshotId": "herbally-open-data-3.13.0-20261127T180000Z",
-    "datasetVersion": "3.13.0",
+    "snapshotId": "herbally-open-data-3.13.2-20261127T180000Z",
+    "datasetVersion": "3.13.2",
     "counts": {
       "medications": 142,
       "interactions": 509,
@@ -34,7 +33,7 @@
       "uniquePmids": 75,
       "retractedPmids": [],
       "nonPubmedUrlsChecked": 169,
-      "nonPubmedOk": 153,
+      "nonPubmedOk": 156,
       "nonPubmedBotBlockedOrRateLimited": [
         {
           "url": "https://ods.od.nih.gov/factsheets/ImmuneFunction-HealthProfessional/",
@@ -43,18 +42,6 @@
         {
           "url": "https://ods.od.nih.gov/factsheets/VitaminK-HealthProfessional/",
           "status": 403
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-community-herbal-monograph-cola-nitida-vent-schott-et-endl-and-its-varieties-and-cola-acuminata-p-beauv-schott-et-endl-semen_en.pdf",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-crataegus-spp-folium-cum-flore_en.pdf",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-cynara-cardunculus-l-syn-cynara-scolymus-l-folium_en.pdf",
-          "status": 429
         },
         {
           "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-glycyrrhiza-glabra-l-glycyrrhiza-inflata-bat-glycyrrhiza-uralensis-fisch-radix-revision-1_en.pdf",

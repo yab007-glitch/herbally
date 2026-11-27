@@ -368,6 +368,12 @@ export default async function TrustCenterPage() {
               /open-data/quarantine.json
             </a>
             <a
+              href="/open-data/manifest.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/manifest.json (SHA-256)
+            </a>
+            <a
               href="/open-data/schema.json"
               className="text-primary underline underline-offset-4"
             >
@@ -379,36 +385,42 @@ export default async function TrustCenterPage() {
             >
               /open-data/source-monitor-latest.json (A8 Monitor Report)
             </a>
+            <a
+              href="/.well-known/security.txt"
+              className="text-primary underline underline-offset-4"
+            >
+              /.well-known/security.txt (RFC 9116)
+            </a>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
             {fr
-              ? "Journaux JSON GitHub API vérifiables :"
-              : "Verifiable GitHub Actions JSON API run records:"}{" "}
+              ? "Journaux JSON GitHub API vérifiables en direct :"
+              : "Live verifiable GitHub Actions JSON API workflow feeds:"}{" "}
             <a
-              href="https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46049354499"
+              href="https://api.github.com/repos/yab007-glitch/herbally/actions/workflows/source-monitor.yml/runs?branch=main&per_page=1"
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono text-primary underline underline-offset-4"
             >
-              Source Monitor (46049354499)
+              Source Monitor (API)
             </a>{" "}
             ·{" "}
             <a
-              href="https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46048672798"
+              href="https://api.github.com/repos/yab007-glitch/herbally/actions/workflows/deploy.yml/runs?branch=main&per_page=1"
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono text-primary underline underline-offset-4"
             >
-              Deploy (46048672798)
+              Deploy (API)
             </a>{" "}
             ·{" "}
             <a
-              href="https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46047373873"
+              href="https://api.github.com/repos/yab007-glitch/herbally/actions/workflows/ci.yml/runs?branch=main&per_page=1"
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono text-primary underline underline-offset-4"
             >
-              CI (46047373873)
+              CI Pipeline (API)
             </a>
           </p>
         </section>
@@ -581,6 +593,16 @@ export default async function TrustCenterPage() {
                 ? "Jetons de session signés et chiffrés AES-GCM dans des témoins HttpOnly / Secure / SameSite=Lax uniquement pour la soumission de révisions sur /clinical-review."
                 : "AES-GCM encrypted session cookies with HttpOnly, Secure, and SameSite=Lax flags scoped to reviewer intake on /clinical-review."}
             </li>
+            <li>
+              <strong className="text-foreground">
+                {fr
+                  ? "Divulgation RFC 9116 et audit de la chaîne d'approvisionnement :"
+                  : "RFC 9116 Disclosure & Dependency Supply-Chain Audit:"}
+              </strong>{" "}
+              {fr
+                ? "HerbAlly publie /.well-known/security.txt (RFC 9116) et exécute npm audit --omit=dev --audit-level=high dans le pipeline CI (supply-chain-audit) ainsi que src/lib/security/__tests__/security-controls.test.ts."
+                : "HerbAlly publishes /.well-known/security.txt (RFC 9116) and enforces npm audit --omit=dev --audit-level=high in CI (supply-chain-audit) alongside automated assertions in src/lib/security/__tests__/security-controls.test.ts."}
+            </li>
           </ul>
         </section>
 
@@ -628,10 +650,10 @@ export default async function TrustCenterPage() {
           </h2>
           <p className="mt-2">
             {fr
-              ? "La base de données PostgreSQL 17 auto-hébergée (herbally-db) est sauvegardée quotidiennement en format personnalisé pg_dump -Fc vérifié par pg_restore --list, chiffrée en AES-256 GPG, conservée 14 jours sur trois emplacements (hôte local, miroir hôte et copie hors site) et accompagnée d'un script de restauration non destructif dans herbally_restore_test (les journaux d'exercices sur l'hôte privé ne sont pas publiés dans ce dépôt)."
-              : "Production PostgreSQL 17 (herbally-db) runs daily pg_dump -Fc backups verified with pg_restore --list, encrypted with AES-256 symmetric GPG, retained for 14 days across three storage layers (local host, secondary host mirror, and off-site Mac pull), with an atomic non-destructive restore drill script documented in Git (private host drill logs are not published in this repo)."}
+              ? "La base de données PostgreSQL 17 auto-hébergée (herbally-db) est sauvegardée quotidiennement en format personnalisé pg_dump -Fc vérifié par pg_restore --list, chiffrée en AES-256 GPG, conservée 14 jours sur trois emplacements (hôte local, miroir hôte et copie hors site). En complément, le job CI public backup-restore-drill exécute scripts/test-backup-restore-drill.sh à chaque pull request (pg_dump -Fc -> pg_restore sur base vierge -> vérification des déclencheurs RLS/AAL2/pédiatrie), distinct de l'attestation privée de l'hôte de production (A10)."
+              : "Production PostgreSQL 17 (herbally-db) runs daily pg_dump -Fc backups verified with pg_restore --list, encrypted with AES-256 symmetric GPG, and retained for 14 days across three storage layers (local host, secondary host mirror, and off-site pull). Additionally, every CI run executes backup-restore-drill (scripts/test-backup-restore-drill.sh): full pg_dump -Fc -> clean-database pg_restore -> clinical-safety-integration.sql RLS/trigger verification (distinct from private production host attestation under Group B / A10)."}
           </p>
-          <p className="mt-2">
+          <p className="mt-2 flex flex-wrap gap-4">
             <a
               href={`${GITHUB_REPO}/blob/main/docs/database-backup-strategy.md`}
               target="_blank"
@@ -639,6 +661,14 @@ export default async function TrustCenterPage() {
               className="font-mono text-xs font-medium text-primary underline underline-offset-4"
             >
               docs/database-backup-strategy.md
+            </a>
+            <a
+              href={`${GITHUB_REPO}/blob/main/scripts/test-backup-restore-drill.sh`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs font-medium text-primary underline underline-offset-4"
+            >
+              scripts/test-backup-restore-drill.sh
             </a>
           </p>
         </section>
@@ -678,7 +708,7 @@ export default async function TrustCenterPage() {
                 ? "HerbAlly publie ses contrôles techniques en code ouvert sans prétendre à un test d'intrusion humain indépendant, ni à une certification SOC 2 ou ISO 27001 externe."
                 : "HerbAlly publishes verifiable engineering controls in open source and does not claim an external human penetration test, SOC 2, or ISO 27001 certification."}
             </li>
-            <li>
+            <li id="security-disclosure">
               <strong className="text-foreground">
                 {fr
                   ? "Signalement de vulnérabilité ou d'erreur :"

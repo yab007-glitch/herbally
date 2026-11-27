@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildConsultationBriefJson,
+  formatConsultationBriefText,
+} from "../consultation-brief";
+import {
   computeStackAlerts,
   highestSeverityOf,
   sortStackMatches,
@@ -25,7 +29,7 @@ function match(overrides: Partial<StackMatchItem>): StackMatchItem {
   };
 }
 
-describe("stack helpers", () => {
+describe("stack helpers and 7-class overlap engine", () => {
   it("sorts matches worst severity first", () => {
     const sorted = sortStackMatches([
       match({ herbName: "Valerian", severity: "mild" }),
@@ -51,26 +55,176 @@ describe("stack helpers", () => {
     expect(alerts.some((a) => a.code === "bleeding_overlap")).toBe(true);
   });
 
-  it("localizes alerts into French when locale is fr", () => {
+  it("detects serotonin, qt_cardiac, hepatotoxicity, hypoglycemia, sedation, and cyp_enzyme overlaps", () => {
+    const cases: Array<{
+      code: string;
+      severity: "severe" | "moderate";
+      items: [StackMatchItem, StackMatchItem];
+    }> = [
+      {
+        code: "serotonin_overlap",
+        severity: "severe",
+        items: [
+          match({
+            herbName: "St. John's Wort",
+            drugName: "Sertraline (SSRI)",
+            description: "Serotonergic potentiation.",
+            mechanism: "Serotonin reuptake inhibition.",
+          }),
+          match({
+            herbName: "5-HTP / Griffonia",
+            drugName: "Fluoxetine (SSRI)",
+            description: "Raises CNS serotonin risk.",
+            mechanism: "Direct serotonin precursor.",
+          }),
+        ],
+      },
+      {
+        code: "qt_cardiac_overlap",
+        severity: "severe",
+        items: [
+          match({
+            herbName: "Licorice",
+            drugName: "Digoxin",
+            description: "Hypokalemia increases digoxin arrhythmia risk.",
+            mechanism: "Renal potassium wasting.",
+          }),
+          match({
+            herbName: "Senna",
+            drugName: "Amiodarone",
+            description: "Electrolyte loss may promote QT prolongation.",
+            mechanism: "Hypokalemia.",
+          }),
+        ],
+      },
+      {
+        code: "hepatotoxicity_overlap",
+        severity: "moderate",
+        items: [
+          match({
+            herbName: "Kava",
+            drugName: "Acetaminophen",
+            description: "Additive hepatic injury risk.",
+            mechanism: "Depletes liver glutathione.",
+          }),
+          match({
+            herbName: "Green Tea Extract",
+            drugName: "Atorvastatin",
+            description: "May elevate liver transaminases.",
+            mechanism: "Hepatotoxicity.",
+          }),
+        ],
+      },
+      {
+        code: "hypoglycemia_overlap",
+        severity: "moderate",
+        items: [
+          match({
+            herbName: "Fenugreek",
+            drugName: "Metformin",
+            description: "May lower blood sugar further.",
+            mechanism: "Additive glucose lowering.",
+          }),
+          match({
+            herbName: "Bitter Melon",
+            drugName: "Insulin",
+            description: "Additive hypoglycemia risk.",
+            mechanism: "Insulin sensitization.",
+          }),
+        ],
+      },
+      {
+        code: "sedation_overlap",
+        severity: "moderate",
+        items: [
+          match({
+            herbName: "Valerian",
+            drugName: "Lorazepam",
+            description: "Increases drowsiness and CNS depression.",
+            mechanism: "GABA modulation.",
+          }),
+          match({
+            herbName: "Passionflower",
+            drugName: "Zolpidem",
+            description: "Additive sedation.",
+            mechanism: "CNS depressant overlap.",
+          }),
+        ],
+      },
+      {
+        code: "cyp_enzyme_overlap",
+        severity: "moderate",
+        items: [
+          match({
+            herbName: "Goldenseal",
+            drugName: "Cyclosporine",
+            description: "Alters drug metabolism.",
+            mechanism: "Potent CYP3A4 and CYP2D6 inhibition.",
+          }),
+          match({
+            herbName: "Schisandra",
+            drugName: "Tacrolimus",
+            description: "Raises exposure.",
+            mechanism: "OATP1B1 and UGT modulation.",
+          }),
+        ],
+      },
+    ];
+
+    for (const c of cases) {
+      for (const loc of ["en", "fr"] as const) {
+        const alerts = computeStackAlerts(c.items, loc);
+        const hit = alerts.find((a) => a.code === c.code);
+        expect(hit).toBeDefined();
+        expect(hit?.severity).toBe(c.severity);
+        expect(hit?.herbs).toHaveLength(2);
+      }
+    }
+  });
+
+  it("formats local consultation brief in text and JSON with clear non-validated boundary", () => {
+    const matches = [match({ herbName: "Ginger" })];
     const alerts = computeStackAlerts(
-      [
-        match({
-          herbName: "Valériane",
-          description: "Risque de sédation additive.",
-          mechanism: "Potentiation GABAergique du système nerveux central.",
-          drugName: "Lorazépam",
-        }),
-        match({
-          herbName: "Kava",
-          description: "Augmente la somnolence et la dépression du SNC.",
-          mechanism: "Effets dépresseurs cumulatifs sur le SNC.",
-          drugName: "Alprazolam",
-        }),
-      ],
-      "fr"
+      [...matches, match({ herbName: "Garlic", herbSlug: "garlic" })],
+      "en"
     );
-    expect(alerts).toHaveLength(1);
-    expect(alerts[0].code).toBe("sedation_overlap");
-    expect(alerts[0].title).toContain("Sédation");
+    const input = {
+      checkedAt: "2026-11-27T20:00:00.000Z",
+      locale: "en" as const,
+      herbs: [
+        {
+          input: "Ginger",
+          found: true,
+          slug: "ginger",
+          name: "Ginger",
+          scientificName: "Zingiber officinale",
+          pairCount: 4,
+        },
+      ],
+      drugs: ["Warfarin"],
+      summary: {
+        totalCombinations: 1,
+        matchedCount: 1,
+        unrecordedCount: 0,
+        highestSeverity: "moderate" as const,
+      },
+      matches,
+      unrecorded: [],
+      stackAlerts: alerts,
+    };
+
+    const txt = formatConsultationBriefText(input, "en");
+    expect(txt).toContain("NOT CLINICIAN-VALIDATED");
+    expect(txt).toContain("never uploaded to HerbAlly servers");
+    expect(txt).toContain(
+      "Absence of a recorded interaction does NOT mean safe"
+    );
+
+    const json = buildConsultationBriefJson(input, "fr");
+    expect(json.generatedClientSide).toBe(true);
+    expect(json.validationStatus).toBe(
+      "EDUCATIONAL_SCREENING_SUMMARY_NOT_CLINICIAN_VALIDATED"
+    );
+    expect(json.importantSafetyNotice).toContain("non validé par un clinicien");
   });
 });

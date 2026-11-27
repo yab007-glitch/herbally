@@ -1,17 +1,19 @@
 #!/usr/bin/env tsx
 /**
- * A8 Automated Scientific Source & OpenAPI Contract Monitor.
+ * A8 Automated Scientific Source, Integrity Manifest & OpenAPI Contract Monitor.
  *
- * Verifies live /open-data/*.json exports against atomic snapshotId &
- * OpenAPI 3.1.0 contract invariants, exercises public interaction API error
- * & unknown-herb behavior, queries NCBI E-utilities esummary across all cited
- * PubMed PMIDs to detect retracted publications, and probes unique non-PubMed
- * regulatory citation URLs.
+ * Verifies live /open-data/*.json exports against atomic snapshotId, SHA-256
+ * digests in /open-data/manifest.json, HTTP Cache-Control headers, and OpenAPI
+ * 3.1.0 invariants; exercises public interaction API error & unknown-herb
+ * behavior; queries NCBI E-utilities esummary across all cited PubMed PMIDs
+ * to detect retracted publications; and probes unique non-PubMed regulatory
+ * citation URLs using per-host pacing to minimize rate-limit false positives.
  *
  * Usage:
  *   npx tsx scripts/verify-open-data-and-sources.ts [--base-url https://herbally.app] [--json-out report.json]
  */
 
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 
 interface MonitorReport {
@@ -25,6 +27,7 @@ interface MonitorReport {
     quarantinedBotanicals: number;
     clinicianSignedInteractions: number;
   };
+  manifestVerified: boolean;
   apiContractChecks: {
     badInputStatus: number;
     unknownHerbStatus: number;
@@ -48,13 +51,18 @@ function parseArg(flag: string): string | undefined {
   return process.argv[idx + 1];
 }
 
-async function fetchJson<T>(url: string): Promise<{ res: Response; data: T }> {
+async function fetchJsonRaw<T>(url: string): Promise<{
+  res: Response;
+  rawText: string;
+  data: T;
+}> {
   const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} fetching ${url}`);
   }
-  const data = (await res.json()) as T;
-  return { res, data };
+  const rawText = await res.text();
+  const data = JSON.parse(rawText) as T;
+  return { res, rawText, data };
 }
 
 function extractPmid(url: string): string | null {
@@ -62,6 +70,10 @@ function extractPmid(url: string): string | null {
     url.trim()
   );
   return match ? match[1] : null;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function checkRetractedPmids(pmids: string[]): Promise<string[]> {
@@ -90,6 +102,13 @@ async function checkRetractedPmids(pmids: string[]): Promise<string[]> {
   return retracted;
 }
 
+const BROWSER_PROBE_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (compatible; HerbAlly-SourceMonitor/1.1; +https://herbally.app/trust)",
+  Accept: "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+};
+
 async function probeUrl(
   url: string
 ): Promise<
@@ -98,41 +117,95 @@ async function probeUrl(
   | { kind: "broken"; reason: string }
 > {
   for (const method of ["HEAD", "GET"] as const) {
-    try {
-      const res = await fetch(url, {
-        method,
-        redirect: "follow",
-        headers: {
-          "User-Agent":
-            "HerbAlly-SourceMonitor/1.0 (+https://herbally.app/trust)",
-        },
-        signal: AbortSignal.timeout(12_000),
-      });
-      if (res.status >= 200 && res.status < 400) {
-        return { kind: "ok", status: res.status };
-      }
-      if (method === "HEAD" && res.status === 405) {
-        continue;
-      }
-      if (res.status === 403 || res.status === 429) {
-        return { kind: "blocked", status: res.status };
-      }
-      if (res.status === 404 || res.status === 410) {
-        return { kind: "broken", reason: `HTTP ${res.status}` };
-      }
-      if (method === "GET") {
-        return { kind: "blocked", status: res.status };
-      }
-    } catch (err) {
-      if (method === "GET") {
-        return {
-          kind: "broken",
-          reason: err instanceof Error ? err.message : String(err),
-        };
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch(url, {
+          method,
+          redirect: "follow",
+          headers: BROWSER_PROBE_HEADERS,
+          signal: AbortSignal.timeout(15_000),
+        });
+        if (res.status >= 200 && res.status < 400) {
+          return { kind: "ok", status: res.status };
+        }
+        if (method === "HEAD" && res.status === 405) {
+          break;
+        }
+        if (res.status === 429 && attempt === 0) {
+          const retryAfterSec = Number(res.headers.get("retry-after") || "2");
+          await sleep(Math.min(5_000, Math.max(1_500, retryAfterSec * 1_000)));
+          continue;
+        }
+        if (res.status === 403 || res.status === 429) {
+          return { kind: "blocked", status: res.status };
+        }
+        if (res.status === 404 || res.status === 410) {
+          return { kind: "broken", reason: `HTTP ${res.status}` };
+        }
+        if (method === "GET") {
+          return { kind: "blocked", status: res.status };
+        }
+        break;
+      } catch (err) {
+        if (method === "GET" && attempt === 1) {
+          return {
+            kind: "broken",
+            reason: err instanceof Error ? err.message : String(err),
+          };
+        }
+        await sleep(500);
       }
     }
   }
   return { kind: "broken", reason: "unreachable" };
+}
+
+/** Probe non-PubMed URLs grouped by host so each upstream origin sees >= 1.5s spacing. */
+async function probeUrlsWithHostPacing(urls: string[]): Promise<{
+  nonPubmedOk: number;
+  botBlocked: Array<{ url: string; status: number }>;
+  brokenUrls: Array<{ url: string; reason: string }>;
+}> {
+  const byHost = new Map<string, string[]>();
+  for (const url of urls) {
+    const host = new URL(url).hostname;
+    const queue = byHost.get(host) ?? [];
+    queue.push(url);
+    byHost.set(host, queue);
+  }
+
+  let nonPubmedOk = 0;
+  const botBlocked: Array<{ url: string; status: number }> = [];
+  const brokenUrls: Array<{ url: string; reason: string }> = [];
+
+  const hostQueues = Array.from(byHost.values());
+  let queueIdx = 0;
+
+  async function runHostWorker(): Promise<void> {
+    while (queueIdx < hostQueues.length) {
+      const queue = hostQueues[queueIdx++];
+      if (!queue) break;
+      for (let i = 0; i < queue.length; i++) {
+        const url = queue[i];
+        const result = await probeUrl(url);
+        if (result.kind === "ok") {
+          nonPubmedOk += 1;
+        } else if (result.kind === "blocked") {
+          botBlocked.push({ url, status: result.status });
+        } else {
+          brokenUrls.push({ url, reason: result.reason });
+        }
+        if (i + 1 < queue.length) {
+          await sleep(1_500);
+        }
+      }
+    }
+  }
+
+  const concurrency = Math.min(3, Math.max(1, hostQueues.length));
+  await Promise.all(Array.from({ length: concurrency }, () => runHostWorker()));
+
+  return { nonPubmedOk, botBlocked, brokenUrls };
 }
 
 async function main() {
@@ -142,21 +215,21 @@ async function main() {
   );
   const jsonOut = parseArg("--json-out");
 
-  const [catalogR, medsR, ixR, qR, schemaR] = await Promise.all([
-    fetchJson<{
+  const [catalogR, medsR, ixR, qR, schemaR, manifestR] = await Promise.all([
+    fetchJsonRaw<{
       datasetVersion: string;
       snapshotId: string;
       generatedAt: string;
       counts: Record<string, number>;
     }>(`${baseUrl}/open-data/catalog.json`),
-    fetchJson<{
+    fetchJsonRaw<{
       datasetVersion: string;
       snapshotId: string;
       generatedAt: string;
       totalMedications: number;
       totalInteractionPairs: number;
     }>(`${baseUrl}/open-data/medications.json`),
-    fetchJson<{
+    fetchJsonRaw<{
       datasetVersion: string;
       snapshotId: string;
       generatedAt: string;
@@ -164,22 +237,35 @@ async function main() {
       clinicianSignedPairs: number;
       interactions: Array<{ sourceUrl: string | null }>;
     }>(`${baseUrl}/open-data/interactions.json`),
-    fetchJson<{
+    fetchJsonRaw<{
       datasetVersion: string;
       snapshotId: string;
       generatedAt: string;
       totalQuarantinedBotanicals: number;
     }>(`${baseUrl}/open-data/quarantine.json`),
-    fetchJson<{
+    fetchJsonRaw<{
       openapi: string;
       info: { version: string };
       paths: Record<string, unknown>;
     }>(`${baseUrl}/open-data/schema.json`),
+    fetchJsonRaw<{
+      datasetVersion: string;
+      snapshotId: string;
+      generatedAt: string;
+      algorithm: string;
+      files: Record<string, { sha256: string; bytes: number }>;
+    }>(`${baseUrl}/open-data/manifest.json`),
   ]);
 
-  for (const r of [catalogR, medsR, ixR, qR, schemaR]) {
+  for (const r of [catalogR, medsR, ixR, qR, schemaR, manifestR]) {
     if (r.res.headers.get("access-control-allow-origin") !== "*") {
       throw new Error(`Missing CORS * header on ${r.res.url}`);
+    }
+    const cc = r.res.headers.get("cache-control") ?? "";
+    if (!cc.includes("s-maxage=60") || !cc.includes("must-revalidate")) {
+      throw new Error(
+        `Unexpected Cache-Control "${cc}" on ${r.res.url} (expected s-maxage=60, must-revalidate)`
+      );
     }
   }
 
@@ -187,11 +273,34 @@ async function main() {
   if (
     medsR.data.snapshotId !== snapshotId ||
     ixR.data.snapshotId !== snapshotId ||
-    qR.data.snapshotId !== snapshotId
+    qR.data.snapshotId !== snapshotId ||
+    manifestR.data.snapshotId !== snapshotId
   ) {
     throw new Error(
-      `Snapshot mismatch: catalog=${snapshotId}, meds=${medsR.data.snapshotId}, ix=${ixR.data.snapshotId}, q=${qR.data.snapshotId}`
+      `Snapshot mismatch: catalog=${snapshotId}, meds=${medsR.data.snapshotId}, ix=${ixR.data.snapshotId}, q=${qR.data.snapshotId}, manifest=${manifestR.data.snapshotId}`
     );
+  }
+
+  const rawByPath: Record<string, string> = {
+    "/open-data/catalog.json": catalogR.rawText,
+    "/open-data/medications.json": medsR.rawText,
+    "/open-data/interactions.json": ixR.rawText,
+    "/open-data/quarantine.json": qR.rawText,
+    "/open-data/schema.json": schemaR.rawText,
+  };
+  for (const [filePath, rawText] of Object.entries(rawByPath)) {
+    const entry = manifestR.data.files[filePath];
+    if (!entry) {
+      throw new Error(`Missing ${filePath} in /open-data/manifest.json`);
+    }
+    const actualHash = createHash("sha256")
+      .update(rawText, "utf8")
+      .digest("hex");
+    if (actualHash !== entry.sha256) {
+      throw new Error(
+        `SHA-256 mismatch for ${filePath}: manifest=${entry.sha256}, live=${actualHash}`
+      );
+    }
   }
 
   if (
@@ -233,11 +342,11 @@ async function main() {
 
   const pmids: string[] = [];
   const nonPubmedUrls: string[] = [];
-  const brokenUrls: Array<{ url: string; reason: string }> = [];
+  const schemeBroken: Array<{ url: string; reason: string }> = [];
 
   for (const url of uniqueUrls) {
     if (!url.startsWith("https://")) {
-      brokenUrls.push({ url, reason: "Non-HTTPS source URL" });
+      schemeBroken.push({ url, reason: "Non-HTTPS source URL" });
       continue;
     }
     const pmid = extractPmid(url);
@@ -246,23 +355,9 @@ async function main() {
   }
 
   const retractedPmids = await checkRetractedPmids(pmids);
-  const botBlocked: Array<{ url: string; status: number }> = [];
-  let nonPubmedOk = 0;
-
-  for (let i = 0; i < nonPubmedUrls.length; i += 4) {
-    const batch = nonPubmedUrls.slice(i, i + 4);
-    const outcomes = await Promise.all(
-      batch.map(async (u) => ({ url: u, result: await probeUrl(u) }))
-    );
-    for (const { url, result } of outcomes) {
-      if (result.kind === "ok") nonPubmedOk += 1;
-      else if (result.kind === "blocked") {
-        botBlocked.push({ url, status: result.status });
-      } else {
-        brokenUrls.push({ url, reason: result.reason });
-      }
-    }
-  }
+  const { nonPubmedOk, botBlocked, brokenUrls } =
+    await probeUrlsWithHostPacing(nonPubmedUrls);
+  const allBroken = [...schemeBroken, ...brokenUrls];
 
   const report: MonitorReport = {
     checkedAt: new Date().toISOString(),
@@ -275,6 +370,7 @@ async function main() {
       quarantinedBotanicals: qR.data.totalQuarantinedBotanicals,
       clinicianSignedInteractions: ixR.data.clinicianSignedPairs,
     },
+    manifestVerified: true,
     apiContractChecks: {
       badInputStatus: badApi.status,
       unknownHerbStatus: unknownApi.status,
@@ -288,7 +384,7 @@ async function main() {
       nonPubmedUrlsChecked: nonPubmedUrls.length,
       nonPubmedOk,
       nonPubmedBotBlockedOrRateLimited: botBlocked,
-      brokenUrls,
+      brokenUrls: allBroken,
     },
   };
 
@@ -297,7 +393,7 @@ async function main() {
   }
   console.log(JSON.stringify(report, null, 2));
 
-  if (retractedPmids.length > 0 || brokenUrls.length > 0) {
+  if (retractedPmids.length > 0 || allBroken.length > 0) {
     process.exit(1);
   }
 }
