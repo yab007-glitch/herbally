@@ -71,9 +71,14 @@ export function buildOpenDataSnapshot(
 ): OpenDataAtomicSnapshot {
   const activePairs = sortActivePairs(allPairs);
   const medications = sortMedicationsFromPairs(activePairs);
-  const generatedAt = stats.available
-    ? stats.generatedAt
-    : new Date(Math.floor(Date.now() / 3_600_000) * 3_600_000).toISOString();
+  const baseMs = stats.available
+    ? Date.parse(stats.generatedAt) || Date.now()
+    : Date.now();
+  // Align snapshot boundary to the 3600s ISR revalidate window so parallel
+  // static/ISR route renders never drift by a few seconds between endpoints.
+  const generatedAt = new Date(
+    Math.floor(baseMs / 3_600_000) * 3_600_000
+  ).toISOString();
 
   return {
     datasetVersion: OPEN_DATA_DATASET_VERSION,

@@ -82,6 +82,7 @@ EXPAND_MIGRATIONS=(
   "supabase/migrations/00106_interaction_evidence_note_reconciliation.sql"
   "supabase/migrations/00107_open_herb_edit_suggestions.sql"
   "supabase/migrations/00108_perioperative_and_toxic_safety_reconciliation.sql"
+  "supabase/migrations/00109_interaction_source_url_reconciliation.sql"
 )
 
 CONTRACT_MIGRATIONS=(
@@ -395,6 +396,21 @@ BEGIN
       AND contraindications[1] = 'Poisonous botanical (contains lethal abrin) — do not ingest or use in any population'
   ) THEN
     RAISE EXCEPTION 'abrus-precatorius missing lethal abrin leading contraindication post-00108';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM public.drug_interactions
+    WHERE source_url IN (
+      'https://medlineplus.gov/druginfo/natural/607.html',
+      'https://medlineplus.gov/druginfo/natural/1101.html',
+      'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/bacopa',
+      'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/barley-grass',
+      'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/cats-claw',
+      'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/devils-claw',
+      'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/holy-basil'
+    )
+  ) THEN
+    RAISE EXCEPTION 'Dead 404 citation URL still present in public.drug_interactions post-00109';
   END IF;
 END
 $$;
