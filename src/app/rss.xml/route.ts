@@ -22,10 +22,24 @@ const TOOL_ITEMS = [
   },
   {
     path: "/surgery-planner",
-    title: "Pre-Surgery Herb & Supplement Washout Planner",
+    title: "Pre-Surgery Supplement Review Checklist",
     description:
-      "Calculate review and stop timelines ahead of surgery for bleeding-risk, sedation, and CYP450-active herbs based on ASA and Health Canada guidance.",
-    updated: "2026-11-20",
+      "Build a printable perioperative supplement review checklist for your surgical and anesthesia care team grounded in ASA and Health Canada guidance.",
+    updated: "2026-11-26",
+  },
+  {
+    path: "/widgets",
+    title: "Embeddable Herb–Drug Interaction Checker & Librarian Citation Kit",
+    description:
+      "Free iframe embed code and LibGuide citation kit (EN/FR) with primary attribution to Health Canada LNHPD, EMA HMPC, NIH NCCIH, and LiverTox.",
+    updated: "2026-11-26",
+  },
+  {
+    path: "/clinical-review",
+    title: "Open Clinical Review & Edit Suggestion Portal (LinkedIn SSO)",
+    description:
+      "Submit source-backed herb monograph updates and interaction edits verified via LinkedIn OpenID Connect, or apply as a licensed clinician reviewer.",
+    updated: "2026-11-26",
   },
   {
     path: "/npn-checker",
@@ -57,7 +71,7 @@ export async function GET() {
       <link>${escapeXml(link)}</link>
       <guid isPermaLink="true">${escapeXml(link)}</guid>
       <pubDate>${pubDate}</pubDate>
-      <author>contact@herbally.app (Yasser Bheekun, MLT)</author>
+      <author>info@herbally.app (Yasser Bheekun, MLT)</author>
       <description>${escapeXml(g.en.metaDescription)}</description>
     </item>`;
     }),
@@ -69,7 +83,7 @@ export async function GET() {
       <link>${escapeXml(link)}</link>
       <guid isPermaLink="true">${escapeXml(link)}</guid>
       <pubDate>${pubDate}</pubDate>
-      <author>contact@herbally.app (Yasser Bheekun, MLT)</author>
+      <author>info@herbally.app (Yasser Bheekun, MLT)</author>
       <description>${escapeXml(item.description)}</description>
     </item>`;
     }),
@@ -81,7 +95,7 @@ export async function GET() {
     <title>HerbAlly — Evidence-Graded Herbal &amp; Drug Interaction Guides</title>
     <link>${escapeXml(base)}</link>
     <atom:link href="${escapeXml(`${base}/rss.xml`)}" rel="self" type="application/rss+xml" />
-    <description>Clinical reference guides, medication interaction lookups, and safety tools editorially reviewed by Yasser Bheekun, MLT (OPTMQ · CSMLS).</description>
+    <description>Clinical reference guides, medication interaction lookups, and safety tools editorially compiled and source-checked by Yasser Bheekun, MLT (OPTMQ · CSMLS).</description>
     <language>en-us</language>
     <lastBuildDate>${nowRfc}</lastBuildDate>
 ${itemsXml}

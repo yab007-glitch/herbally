@@ -22,6 +22,7 @@ vi.mock("next/link", () => ({
 import { AuthorByline } from "@/components/herbs/author-byline";
 import { HerbBodyContent } from "@/components/herbs/herb-body-content";
 import { HerbJumpNav } from "@/components/herbs/herb-jump-nav";
+import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { HerbSchema } from "@/components/seo/herb-schema";
 import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
@@ -348,5 +349,63 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
       "utf8"
     );
     expect(clinicalReviewSrc).toContain("info@herbally.app");
+  });
+
+  it("enforces Release 3.6 dedicated ToxicBotanicalQuarantineCard, Open Data catalog CORS, and zero legacy washout/contact strings", () => {
+    const toxicCardHtml = renderToStaticMarkup(
+      createElement(ToxicBotanicalQuarantineCard, {
+        slug: "abrus-precatorius",
+        scientificName: "Abrus precatorius",
+        contraindications: ["Contains lethal abrin"],
+        sideEffects: ["Severe toxicity from seeds"],
+        locale: "en",
+      })
+    );
+    expect(toxicCardHtml).toContain("1-800-222-1222");
+    expect(toxicCardHtml).toContain("1-844-764-7669");
+    expect(toxicCardHtml).toContain("911");
+    expect(toxicCardHtml).toContain("No therapeutic use");
+    expect(toxicCardHtml).not.toContain("effects on infants");
+    expect(toxicCardHtml).not.toContain(
+      "Consult your healthcare provider before use"
+    );
+    expect(toxicCardHtml).not.toContain("What licensed products claim");
+
+    const herbPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      "utf8"
+    );
+    expect(herbPageSrc).toContain(
+      "{!isDangerous && (\n          <>\n            <RegulatoryEvidenceSection"
+    );
+    expect(herbPageSrc).toContain("<ToxicBotanicalQuarantineCard");
+    expect(herbPageSrc).toContain("medicalDisclaimerText");
+
+    const herbHeroSrc = fs.readFileSync(
+      path.join(ROOT, "src/components/herbs/herb-hero-v2.tsx"),
+      "utf8"
+    );
+    expect(herbHeroSrc).toContain("Toxicology Quarantine Summary");
+    expect(herbHeroSrc).toContain("{dangerous ? (");
+
+    const rssSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/rss.xml/route.ts"),
+      "utf8"
+    );
+    const kitSrc = fs.readFileSync(
+      path.join(ROOT, "src/components/embed/librarian-citation-kit.tsx"),
+      "utf8"
+    );
+    expect(rssSrc.toLowerCase()).not.toContain("washout planner");
+    expect(rssSrc).not.toContain("contact@herbally.app");
+    expect(kitSrc.toLowerCase()).not.toContain("washout planner");
+    expect(kitSrc).not.toContain("contact@herbally.app");
+
+    const openDataSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/open-data/catalog.json/route.ts"),
+      "utf8"
+    );
+    expect(openDataSrc).toContain("Access-Control-Allow-Origin");
+    expect(openDataSrc).toContain("medicationsAndClasses");
   });
 });

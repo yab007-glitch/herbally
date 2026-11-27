@@ -65,6 +65,7 @@ import {
 } from "@/lib/herbs/herb-page-data";
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
+import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
 import { HerbNarrative } from "@/components/herbs/herb-narrative";
 import { InteractionsTable } from "@/components/herbs/interactions-table";
 import { AdSlot } from "@/components/ads/ad-slot";
@@ -674,9 +675,11 @@ export default async function HerbDetailPage({ params }: Props) {
           {t("herbDetail.backToHerbs")}
         </Link>
 
-        <p className="text-xs text-muted-foreground italic">
-          {t("herbDetail.medicalDisclaimerText")}
-        </p>
+        {!isDangerous && (
+          <p className="text-xs text-muted-foreground italic">
+            {t("herbDetail.medicalDisclaimerText")}
+          </p>
+        )}
 
         <DangerousHerbBanner slug={slug} locale={copyLocale} />
         <HerbHeroV2
@@ -774,30 +777,42 @@ export default async function HerbDetailPage({ params }: Props) {
         />
 
         <div id="dosage-safety" className="scroll-mt-28 space-y-8">
-          <HerbNarrative
-            herb={herb}
-            interactionCount={interactions.length}
-            locale={copyLocale}
-            isDangerous={isDangerous}
-          />
+          {isDangerous ? (
+            <ToxicBotanicalQuarantineCard
+              slug={slug}
+              scientificName={herb.scientific_name}
+              contraindications={herb.contraindications}
+              sideEffects={herb.side_effects}
+              locale={copyLocale}
+            />
+          ) : (
+            <>
+              <HerbNarrative
+                herb={herb}
+                interactionCount={interactions.length}
+                locale={copyLocale}
+                isDangerous={isDangerous}
+              />
 
-          <HerbBodyContent
-            herb={herb}
-            compactProvenance={compactProvenance}
-            monograph={monograph}
-            isManualMonograph={isManualMonograph}
-            isClinicallyReviewed={isClinicallyReviewed}
-            showCalculator={showCalculator}
-            lastReviewed={lastReviewed}
-            reviewedBy={reviewedBy}
-            regulatorName={regulatorName}
-            interactions={interactions}
-            severityCounts={severityCounts}
-            locale={copyLocale}
-            copy={copy}
-            pubmedSheet={pubmedSheet}
-            sheet={sheet}
-          />
+              <HerbBodyContent
+                herb={herb}
+                compactProvenance={compactProvenance}
+                monograph={monograph}
+                isManualMonograph={isManualMonograph}
+                isClinicallyReviewed={isClinicallyReviewed}
+                showCalculator={showCalculator}
+                lastReviewed={lastReviewed}
+                reviewedBy={reviewedBy}
+                regulatorName={regulatorName}
+                interactions={interactions}
+                severityCounts={severityCounts}
+                locale={copyLocale}
+                copy={copy}
+                pubmedSheet={pubmedSheet}
+                sheet={sheet}
+              />
+            </>
+          )}
         </div>
 
         <CmpBootstrap />
@@ -825,19 +840,23 @@ export default async function HerbDetailPage({ params }: Props) {
           />
         )}
 
-        <RegulatoryEvidenceSection
-          evidence={compactRegulatory?.evidence ?? null}
-          isHomeopathic={compactRegulatory?.isHomeopathic}
-          locale={copyLocale}
-          isDangerous={isDangerous}
-          className="mt-4"
-        />
+        {!isDangerous && (
+          <>
+            <RegulatoryEvidenceSection
+              evidence={compactRegulatory?.evidence ?? null}
+              isHomeopathic={compactRegulatory?.isHomeopathic}
+              locale={copyLocale}
+              isDangerous={isDangerous}
+              className="mt-4"
+            />
 
-        <GovSources
-          slug={slug}
-          displayName={herb.name}
-          monographSources={sources}
-        />
+            <GovSources
+              slug={slug}
+              displayName={herb.name}
+              monographSources={sources}
+            />
+          </>
+        )}
 
         {!isDangerous && <HerbFaqSection faqs={resolvedFaqs} />}
 
