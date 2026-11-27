@@ -39,7 +39,10 @@ export async function OrganizationSchema({ locale }: { locale: Locale }) {
       },
       "query-input": "required name=search_term_string",
     },
-    sameAs: ["https://www.facebook.com/herballyapp"],
+    sameAs: [
+      "https://www.facebook.com/herballyapp",
+      "https://www.linkedin.com/company/herbally-app",
+    ],
   };
 
   return (

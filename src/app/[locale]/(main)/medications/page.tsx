@@ -54,6 +54,31 @@ export default async function MedicationsIndexPage() {
         description={description}
         url={pageUrl}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Dataset",
+            name: title,
+            description,
+            url: pageUrl,
+            inLanguage: ["en", "fr"],
+            isAccessibleForFree: true,
+            creator: {
+              "@type": "Organization",
+              name: "HerbAlly",
+              url: baseUrl,
+            },
+            variableMeasured: [
+              "Medication or Drug Class Scope",
+              "Herb–Drug Potential Interaction Severity",
+              "Clinical Review Status",
+              "Primary Bibliographic Citation",
+            ],
+          }).replace(/</g, "\\u003c"),
+        }}
+      />
       <BreadcrumbListSchema
         items={[
           { name: "Home", url: "/" },

@@ -108,6 +108,52 @@ jobs:
             BACKUP_SCRIPT="$BACKUP_SCRIPT" bash /srv/herbally/scripts/apply-pending-migrations.sh --phase expand
           fi
 
+      - name: Sync optional LinkedIn OAuth secrets into deploy/app.env
+        if: steps.changes.outputs.deploy_needed == 'true'
+        env:
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+          LINKEDIN_SESSION_SECRET: ${{ secrets.LINKEDIN_SESSION_SECRET }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          env_path = Path("/srv/herbally/deploy/app.env")
+          if not env_path.exists():
+            raise SystemExit("Missing /srv/herbally/deploy/app.env")
+
+          updates = {
+            k: os.environ.get(k, "").strip()
+            for k in ("LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET", "LINKEDIN_SESSION_SECRET")
+            if os.environ.get(k, "").strip()
+          }
+          if not updates:
+            print("No optional LinkedIn OAuth secrets set; leaving app.env unchanged.")
+            raise SystemExit(0)
+
+          lines = env_path.read_text(encoding="utf-8").splitlines()
+          seen = set()
+          out = []
+          for line in lines:
+            replaced = False
+            for k, v in updates.items():
+              if line.startswith(f"{k}="):
+                out.append(f"{k}={v}")
+                seen.add(k)
+                replaced = True
+                break
+            if not replaced:
+              out.append(line)
+          for k, v in updates.items():
+            if k not in seen:
+              out.append(f"{k}={v}")
+          env_path.write_text("\n".join(out) + "\n", encoding="utf-8")
+          os.chmod(env_path, 0o600)
+          print("Synced LinkedIn OAuth keys into deploy/app.env:", ", ".join(sorted(updates)))
+          PY
+
       - name: Build image
         if: steps.changes.outputs.deploy_needed == 'true'
         working-directory: /srv/herbally/deploy
@@ -210,7 +256,7 @@ jobs:
           if [ -n "$idx_key" ]; then
             curl -fsS -X POST "https://api.indexnow.org/indexnow" \
               -H "Content-Type: application/json; charset=utf-8" \
-              -d "{\"host\":\"herbally.app\",\"key\":\"${idx_key}\",\"keyLocation\":\"https://herbally.app/${idx_key}.txt\",\"urlList\":[\"https://herbally.app/\",\"https://herbally.app/herbs\",\"https://herbally.app/medications\",\"https://herbally.app/herb-drug-interactions\",\"https://herbally.app/surgery-planner\",\"https://herbally.app/npn-checker\",\"https://herbally.app/guides\",\"https://herbally.app/compare\",\"https://herbally.app/fr\",\"https://herbally.app/fr/medications\",\"https://herbally.app/fr/surgery-planner\",\"https://herbally.app/fr/guides\",\"https://herbally.app/rss.xml\"]}" >/dev/null || true
+              -d "{\"host\":\"herbally.app\",\"key\":\"${idx_key}\",\"keyLocation\":\"https://herbally.app/${idx_key}.txt\",\"urlList\":[\"https://herbally.app/\",\"https://herbally.app/llms.txt\",\"https://herbally.app/llms-full.txt\",\"https://herbally.app/herbs\",\"https://herbally.app/herbs/turmeric\",\"https://herbally.app/herbs/ginger\",\"https://herbally.app/herbs/abrus-precatorius\",\"https://herbally.app/compare/turmeric/vs/ginger\",\"https://herbally.app/medications\",\"https://herbally.app/herb-drug-interactions\",\"https://herbally.app/interactions/ginger/warfarin\",\"https://herbally.app/surgery-planner\",\"https://herbally.app/npn-checker\",\"https://herbally.app/calculator\",\"https://herbally.app/guides\",\"https://herbally.app/guides/how-the-dosage-calculator-works\",\"https://herbally.app/compare\",\"https://herbally.app/methodology\",\"https://herbally.app/privacy\",\"https://herbally.app/clinical-review\",\"https://herbally.app/about\",\"https://herbally.app/sponsors\",\"https://herbally.app/fr\",\"https://herbally.app/fr/herbs/turmeric\",\"https://herbally.app/fr/medications\",\"https://herbally.app/fr/surgery-planner\",\"https://herbally.app/fr/guides\",\"https://herbally.app/fr/methodology\",\"https://herbally.app/fr/privacy\",\"https://herbally.app/rss.xml\"]}" >/dev/null || true
             echo "IndexNow pinged"
           fi
 

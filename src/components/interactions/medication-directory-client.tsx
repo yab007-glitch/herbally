@@ -265,8 +265,8 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
                         <ShieldAlert className="size-3" aria-hidden="true" />
                         {isMixed
                           ? fr
-                            ? `Jusqu'à ${severityLabel(med.highestSeverity, fr)}`
-                            : `Up to ${severityLabel(med.highestSeverity, fr)}`
+                            ? `Jusqu'à ${severityLabel(med.highestSeverity, fr)} (plus élevé — pas tous les cas)`
+                            : `Up to ${severityLabel(med.highestSeverity, fr)} (highest recorded — not all records)`
                           : severityLabel(med.highestSeverity, fr)}
                       </span>
                     </div>

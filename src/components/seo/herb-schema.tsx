@@ -135,7 +135,8 @@ export function HerbSchema({
     about: {
       "@type": "HealthTopic",
       name: herb.name,
-      ...(herb.herb_categories?.name &&
+      ...(!isDangerous &&
+        herb.herb_categories?.name &&
         !isBucketCategory(herb.herb_categories.name) && {
           category: herb.herb_categories.name,
         }),

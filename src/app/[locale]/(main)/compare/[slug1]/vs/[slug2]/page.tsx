@@ -352,7 +352,8 @@ export default async function ComparePage({ params }: Props) {
               {herbA.scientific_name}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {herbA.herb_categories?.name &&
+              {!herbADangerous &&
+                herbA.herb_categories?.name &&
                 !isBucketCategory(herbA.herb_categories.name) && (
                   <Badge variant="secondary">
                     {herbA.herb_categories.name}
@@ -373,7 +374,8 @@ export default async function ComparePage({ params }: Props) {
               {herbB.scientific_name}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {herbB.herb_categories?.name &&
+              {!herbBDangerous &&
+                herbB.herb_categories?.name &&
                 !isBucketCategory(herbB.herb_categories.name) && (
                   <Badge variant="secondary">
                     {herbB.herb_categories.name}

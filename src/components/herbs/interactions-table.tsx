@@ -185,7 +185,7 @@ export function InteractionsTable({
       )}
 
       {/* Severity Summary */}
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2">
         {severityCounts.contraindicated > 0 && (
           <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-300">
             {severityCounts.contraindicated}{" "}
@@ -205,6 +205,13 @@ export function InteractionsTable({
         {severityCounts.mild > 0 && (
           <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
             {severityCounts.mild} {t("interactions.severity.mild")}
+          </span>
+        )}
+        {interactions.some((i) => i.publication_status !== "published") && (
+          <span className="inline-flex items-center rounded-full border border-amber-400/70 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-950 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
+            {locale === "fr"
+              ? "Signaux potentiels (fiches héritées non révisées)"
+              : "Potential signals (unreviewed legacy records)"}
           </span>
         )}
       </div>
@@ -259,11 +266,19 @@ export function InteractionsTable({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col items-start gap-1">
-                        <span
-                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize ${severityColors[interaction.severity] || ""}`}
-                        >
-                          {t(`interactions.severity.${interaction.severity}`)}
-                        </span>
+                        {interaction.publication_status === "published" ? (
+                          <span
+                            className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize ${severityColors[interaction.severity] || ""}`}
+                          >
+                            {t(`interactions.severity.${interaction.severity}`)}
+                          </span>
+                        ) : (
+                          <span className="inline-flex rounded-full border border-amber-400/70 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-950 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200">
+                            {locale === "fr"
+                              ? `Signal ${t(`interactions.severity.${interaction.severity}`)} potentiel (non révisé)`
+                              : `Potential ${t(`interactions.severity.${interaction.severity}`)} (Unreviewed)`}
+                          </span>
+                        )}
                         <span
                           className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${statusBadge.toneClass}`}
                         >

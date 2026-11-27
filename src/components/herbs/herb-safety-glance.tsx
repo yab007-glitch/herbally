@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, CircleHelp, ShieldCheck, ShieldX } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
@@ -27,6 +27,7 @@ export interface GlanceInteraction {
   /** Localized display name while keeping `drug_name` canonical for links. */
   display_drug_name?: string;
   severity: string;
+  publication_status?: string | null;
 }
 
 interface SafetyGlanceProps {
@@ -125,6 +126,11 @@ export function SafetyGlance({
 }: SafetyGlanceProps) {
   const t = useTranslations("safetyGlance");
   const tSeverity = useTranslations("interactions.severity");
+  const locale = useLocale();
+  const fr = locale === "fr";
+  const hasUnreviewedInteractions = interactions.some(
+    (i) => i.publication_status !== "published"
+  );
 
   const counts = SEVERITY_ORDER.map((severity) => ({
     severity,
@@ -257,6 +263,13 @@ export function SafetyGlance({
                       drug: worstDrug,
                       severity: tSeverity(worst.severity),
                     })}
+                  </p>
+                )}
+                {hasUnreviewedInteractions && (
+                  <p className="text-[11px] font-medium text-amber-800 dark:text-amber-300">
+                    {fr
+                      ? "Signaux potentiels — en attente de validation clinique"
+                      : "Potential signals — awaiting licensed clinician sign-off"}
                   </p>
                 )}
               </>
