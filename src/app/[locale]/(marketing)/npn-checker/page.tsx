@@ -5,6 +5,7 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { WebApplicationSchema } from "@/components/seo/web-app-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { NpnCheckerClient } from "@/components/npn/npn-checker-client";
 import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
@@ -33,6 +34,22 @@ export default async function NpnCheckerPage() {
           title={t("heading")}
           description={t("intro")}
           url={url}
+        />
+        <WebApplicationSchema
+          name={t("heading")}
+          description={t("intro")}
+          url={url}
+          featureList={[
+            fr
+              ? "Consultation en direct de la BDPSNH (LNHPD) de Santé Canada par NPN à 8 chiffres"
+              : "Live Health Canada LNHPD lookup by 8-digit NPN / DIN-HM",
+            fr
+              ? "Distinction explicite entre statut de licence et statut de commercialisation"
+              : "Explicit distinction between regulatory licence status and market status",
+            fr
+              ? "Dépistage automatique des ingrédients botaniques et interactions médicament-plante"
+              : "Automatic medicinal ingredient matching and herb-drug interaction screening",
+          ]}
         />
         <BreadcrumbListSchema
           items={[

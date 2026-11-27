@@ -257,7 +257,7 @@ export default async function ClinicalReviewPage({
             </p>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
           <Link
             href="/methodology#governance-coverage"
             className="font-medium text-primary underline underline-offset-4"
@@ -265,6 +265,14 @@ export default async function ClinicalReviewPage({
             {fr
               ? "Voir les compteurs de couverture de révision et le journal public des corrections →"
               : "View live review coverage metrics and public corrections log →"}
+          </Link>
+          <Link
+            href="/editorial-policy#clinical-governance-protocol"
+            className="font-medium text-primary underline underline-offset-4"
+          >
+            {fr
+              ? "Consulter le protocole d'intégration et de gouvernance clinique →"
+              : "Read the Clinical Reviewer Onboarding & Governance Protocol →"}
           </Link>
         </p>
         <p className="text-xs text-muted-foreground">

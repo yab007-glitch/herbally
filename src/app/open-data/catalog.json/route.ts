@@ -1,4 +1,5 @@
 import { getGovernanceCoverageStats } from "@/lib/governance/coverage-stats";
+import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 3600;
@@ -6,6 +7,7 @@ export const revalidate = 3600;
 export async function GET() {
   const baseUrl = siteUrl();
   const stats = await getGovernanceCoverageStats();
+  const quarantinedToxicBotanicals = getAllDangerousHerbs().length;
 
   const payload = {
     service: "HerbAlly",
@@ -23,6 +25,7 @@ export async function GET() {
       medicationsAndClasses: stats.totalMedications,
       clinicianSignedInteractions: stats.clinicianApprovedInteractions,
       legacyUnreviewedInteractions: stats.legacyUnreviewedInteractions,
+      quarantinedToxicBotanicals,
     },
     sources: [
       {
@@ -57,10 +60,13 @@ export async function GET() {
       sitemap: `${baseUrl}/sitemap.xml`,
       rss: `${baseUrl}/rss.xml`,
       medications: `${baseUrl}/medications`,
+      medicationsJson: `${baseUrl}/open-data/medications.json`,
+      quarantineJson: `${baseUrl}/open-data/quarantine.json`,
       interactionChecker: `${baseUrl}/herb-drug-interactions`,
       npnDecoder: `${baseUrl}/npn-checker`,
       widgets: `${baseUrl}/widgets`,
       clinicalReview: `${baseUrl}/clinical-review`,
+      editorialPolicy: `${baseUrl}/editorial-policy`,
       methodology: `${baseUrl}/methodology`,
     },
   };

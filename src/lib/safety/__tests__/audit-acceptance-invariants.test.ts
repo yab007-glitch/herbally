@@ -567,4 +567,64 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     );
     expect(embedSrc).not.toMatch(/AdSlot|AdCmp|adsbygoogle/);
   });
+
+  it("enforces Release 3.11 Open Data suite, public Clinical Governance Protocol, and tool WebApplication schemas", () => {
+    const editorialSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(marketing)/editorial-policy/page.tsx"),
+      "utf8"
+    );
+    expect(editorialSrc).toContain('id="clinical-governance-protocol"');
+    expect(editorialSrc).toContain("24 hours");
+    expect(editorialSrc).toContain("72 hours");
+    expect(editorialSrc).toContain("Vacant");
+    expect(editorialSrc).toContain("0 Currently Seated");
+    expect(editorialSrc).toContain("/embed/*");
+
+    const catalogSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/open-data/catalog.json/route.ts"),
+      "utf8"
+    );
+    const medsPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(main)/medications/page.tsx"),
+      "utf8"
+    );
+    const interactionsPageSrc = fs.readFileSync(
+      path.join(
+        ROOT,
+        "src/app/[locale]/(marketing)/herb-drug-interactions/page.tsx"
+      ),
+      "utf8"
+    );
+    const widgetsSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(marketing)/widgets/page.tsx"),
+      "utf8"
+    );
+    const llmsTxt = fs.readFileSync(path.join(ROOT, "public/llms.txt"), "utf8");
+    const llmsFullTxt = fs.readFileSync(
+      path.join(ROOT, "public/llms-full.txt"),
+      "utf8"
+    );
+
+    for (const content of [
+      catalogSrc,
+      medsPageSrc,
+      interactionsPageSrc,
+      widgetsSrc,
+      llmsTxt,
+      llmsFullTxt,
+    ]) {
+      expect(content).toContain("/open-data/medications.json");
+      expect(content).toContain("/open-data/quarantine.json");
+    }
+
+    for (const toolPath of [
+      "src/app/[locale]/(marketing)/npn-checker/page.tsx",
+      "src/app/[locale]/(marketing)/surgery-planner/page.tsx",
+      "src/app/[locale]/(marketing)/widgets/page.tsx",
+      "src/app/[locale]/(main)/calculator/page.tsx",
+    ]) {
+      const src = fs.readFileSync(path.join(ROOT, toolPath), "utf8");
+      expect(src).toContain("<WebApplicationSchema");
+    }
+  });
 });

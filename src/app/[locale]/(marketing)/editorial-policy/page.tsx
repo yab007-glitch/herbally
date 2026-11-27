@@ -59,7 +59,7 @@ const COPY = {
       {
         heading: "Funding and independence",
         body: [
-          "HerbAlly is free to use. It is funded by donations, and may carry clearly labelled advertising on public reference pages in future. Sponsors and advertisers have no influence over editorial content, interaction ratings or which herbs are covered.",
+          "HerbAlly is free to use and is funded by voluntary donations. Google AdSense is currently inactive; if advertising is enabled on standard public herb reference pages in future after explicit cookie consent, health-input tools, embedded widgets (/embed/*), and permanently quarantined toxic botanical pages remain strictly ad-free and cookie-free. Sponsors and advertisers have no influence over editorial content, interaction ratings, or which herbs are covered.",
         ],
       },
     ],
@@ -118,7 +118,7 @@ const COPY = {
       {
         heading: "Financement et indépendance",
         body: [
-          "HerbAlly est gratuit. Le site est financé par les dons et pourrait afficher, à l'avenir, de la publicité clairement identifiée sur les pages de référence publiques. Les commanditaires et annonceurs n'ont aucune influence sur le contenu éditorial, sur les cotes d'interaction ni sur le choix des plantes couvertes.",
+          "HerbAlly est gratuit et soutenu par des dons volontaires. Google AdSense est actuellement inactif ; si de la publicité clairement identifiée est activée ultérieurement sur les pages publiques standard de plantes après consentement explicite, les outils de santé, les widgets intégrables (/embed/*) et les plantes toxiques en quarantaine demeurent strictement sans publicité ni témoin publicitaire. Les commanditaires et annonceurs n'ont aucune influence sur le contenu éditorial, les cotes d'interaction ni le choix des plantes couvertes.",
         ],
       },
     ],
@@ -232,6 +232,161 @@ export default async function EditorialPolicyPage() {
 
       <div className="rule my-8" />
 
+      <section
+        id="clinical-governance-protocol"
+        aria-labelledby="governance-protocol-heading"
+        className="space-y-6 rounded-2xl border border-border bg-muted/20 p-5 sm:p-6"
+      >
+        <div>
+          <p className="eyebrow">
+            {locale === "fr"
+              ? "Gouvernance clinique et charte"
+              : "Clinical Governance & SOP"}
+          </p>
+          <h2
+            id="governance-protocol-heading"
+            className="mt-1 text-xl font-semibold text-foreground"
+          >
+            {locale === "fr"
+              ? "Protocole d'intégration des réviseurs cliniques, comité consultatif et délais SLA"
+              : "Clinical Reviewer Onboarding Protocol, Advisory Charter & Correction SLAs"}
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            {locale === "fr"
+              ? "HerbAlly sépare strictement la vérification éditoriale des sources (MLT) de la validation clinique par des professionnels titulaires d'un permis d'exercice, avec des déclencheurs automatiques en base de données qui réinitialisent la signature clinique dès qu'une fiche est modifiée."
+              : "HerbAlly strictly separates editorial source verification (MLT) from licensed clinical sign-off, backed by database triggers that reset prior clinical approval whenever an herb or interaction record is revised."}
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-border bg-background p-4 text-sm">
+            <h3 className="font-semibold text-foreground">
+              {locale === "fr"
+                ? "Séparation des rôles (éditorial vs clinique)"
+                : "Role Separation (Editorial vs. Clinical)"}
+            </h3>
+            <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-muted-foreground">
+              <li>
+                <strong className="text-foreground">
+                  {locale === "fr"
+                    ? "Réviseur éditorial :"
+                    : "Editorial reviewer:"}
+                </strong>{" "}
+                {locale === "fr"
+                  ? "vérifie la clarté, les sources primaires (Santé Canada, EMA, NCCIH, LiverTox, PubMed) et la parité EN/FR ; ne peut pas lever le blocage d'action clinique."
+                  : "verifies source citations, framing, and EN/FR parity; cannot unlock clinician_approved clinical action status."}
+              </li>
+              <li>
+                <strong className="text-foreground">
+                  {locale === "fr"
+                    ? "Réviseur clinique agréé :"
+                    : "Licensed clinical reviewer:"}
+                </strong>{" "}
+                {locale === "fr"
+                  ? "pharmacien(ne), médecin ou toxicologue titulaire d'un permis vérifié avec divulgation des conflits d'intérêts et consentement écrit d'attribution publique."
+                  : "licensed pharmacist (PharmD/RPh), physician (MD/DO), or toxicologist with verified active licence, written COI disclosure, and explicit attribution consent."}
+              </li>
+            </ul>
+          </div>
+
+          <div className="rounded-xl border border-border bg-background p-4 text-sm">
+            <h3 className="font-semibold text-foreground">
+              {locale === "fr"
+                ? "Comité consultatif clinique (0 membre siégeant actuellement)"
+                : "Clinical Advisory Board Seats (0 Currently Seated)"}
+            </h3>
+            <ul className="mt-2 space-y-1.5 text-xs leading-relaxed text-muted-foreground">
+              <li>
+                <strong className="text-foreground">Seat A</strong> —{" "}
+                {locale === "fr"
+                  ? "Pharmacien(ne) / Interactions plante-médicament : Vacant"
+                  : "Pharmacist / Herb–Drug Interactions: Vacant"}
+              </li>
+              <li>
+                <strong className="text-foreground">Seat B</strong> —{" "}
+                {locale === "fr"
+                  ? "Médecin / Toxicologie générale : Vacant"
+                  : "Physician / General & Toxicology: Vacant"}
+              </li>
+              <li>
+                <strong className="text-foreground">Seat C</strong> —{" "}
+                {locale === "fr"
+                  ? "Pédiatrie / Tératologie : Vacant (posologie pédiatrique désactivée sur tout le site)"
+                  : "Pediatric / Teratology Consultant: Vacant (pediatric dosing remains disabled site-wide)"}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto rounded-xl border border-border bg-background">
+          <table className="w-full border-collapse text-left text-xs">
+            <thead className="border-b border-border bg-muted/40 text-foreground">
+              <tr>
+                <th className="px-3 py-2 font-semibold">
+                  {locale === "fr" ? "Gravité d'incident" : "Incident Severity"}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {locale === "fr" ? "Délai cible (SLA)" : "Target Triage SLA"}
+                </th>
+                <th className="px-3 py-2 font-semibold">
+                  {locale === "fr"
+                    ? "Mesure de confinement immédiate"
+                    : "Engineering & Clinical Containment"}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/70 text-muted-foreground">
+              <tr>
+                <td className="px-3 py-2 font-medium text-foreground">
+                  Critical
+                </td>
+                <td className="px-3 py-2 font-semibold text-destructive">
+                  24 hours
+                </td>
+                <td className="px-3 py-2">
+                  {locale === "fr"
+                    ? "Mise en quarantaine immédiate de la fiche et désactivation de toute plage posologique jusqu'à validation."
+                    : "Immediate surface/row quarantine and suppression of automated dosage outputs pending review."}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-3 py-2 font-medium text-foreground">High</td>
+                <td className="px-3 py-2 font-semibold text-foreground">
+                  72 hours
+                </td>
+                <td className="px-3 py-2">
+                  {locale === "fr"
+                    ? "Ajout d'un bandeau d'alerte ou blocage clinique avec réévaluation prioritaire et journal public."
+                    : "Safety banner / clinical-action block with prioritized review and public correction entry."}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-3 py-2 font-medium text-foreground">
+                  Medium
+                </td>
+                <td className="px-3 py-2">7 days</td>
+                <td className="px-3 py-2">
+                  {locale === "fr"
+                    ? "Consignation dans l'audit interne, vérification des sources primaires et file éditoriale."
+                    : "Logged for source verification, editorial triage, and regression test update."}
+                </td>
+              </tr>
+              <tr>
+                <td className="px-3 py-2 font-medium text-foreground">Low</td>
+                <td className="px-3 py-2">30 days</td>
+                <td className="px-3 py-2">
+                  {locale === "fr"
+                    ? "Regroupement avec le cycle planifié de révision documentaire (sans jamais collecter de données patients PHI)."
+                    : "Batched into scheduled content audit (zero patient PHI permitted in intake logs)."}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div className="rule my-8" />
+
       <section className="rounded-sm border border-border bg-accent/40 p-5">
         <h2 className="text-base font-medium text-foreground">
           {c.contactHeading}
@@ -248,8 +403,8 @@ export default async function EditorialPolicyPage() {
         <div className="mt-4 border-t border-border/70 pt-3 text-sm text-muted-foreground">
           <p>
             {locale === "fr"
-              ? "Vous êtes pharmacien(ne), médecin ou clinicien(ne) diplômé(e) ? Validez votre identité via LinkedIn SSO pour soumettre une demande de modification clinique sourcée :"
-              : "Are you a licensed pharmacist, physician, or clinician? Validate your identity via LinkedIn SSO to submit a structured, citation-backed edit request:"}
+              ? "Vous êtes contributeur, chercheur(se), pharmacien(ne) ou médecin ? Connectez-vous via LinkedIn OpenID Connect pour suggérer une amélioration ou vous porter volontaire pour la révision clinique :"
+              : "Are you a contributor, researcher, pharmacist, or physician? Sign in with LinkedIn OpenID Connect to suggest source-backed edits or volunteer for clinical review triage:"}
           </p>
           <Link
             href="/clinical-review"

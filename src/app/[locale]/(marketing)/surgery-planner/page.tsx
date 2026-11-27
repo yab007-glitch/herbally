@@ -7,6 +7,7 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { WebApplicationSchema } from "@/components/seo/web-app-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { SurgeryPlannerClient } from "@/components/interactions/surgery-planner-client";
 import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
@@ -41,6 +42,22 @@ export default async function SurgeryPlannerPage() {
         title={heading}
         description={intro}
         url={url}
+      />
+      <WebApplicationSchema
+        name={heading}
+        description={intro}
+        url={url}
+        featureList={[
+          fr
+            ? "Liste de vérification imprimable avant chirurgie et anesthésie"
+            : "Printable pre-operative supplement checklist for surgical & anesthesia teams",
+          fr
+            ? "Références primaires ASA et NIH NCCIH (aucun ordre générique d'arrêt automatique)"
+            : "ASA and NIH NCCIH citations without blanket self-discontinuation directives",
+          fr
+            ? "Traitement 100 % côté client sans publicité ni témoin publicitaire"
+            : "100% client-side checklist with zero advertising or ad tracking cookies",
+        ]}
       />
       <BreadcrumbListSchema
         items={[

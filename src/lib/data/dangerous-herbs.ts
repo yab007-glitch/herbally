@@ -21,6 +21,10 @@ export interface DangerousHerb {
   parts: string;
 }
 
+export interface DangerousHerbRecord extends DangerousHerb {
+  slug: string;
+}
+
 const DANGEROUS_HERBS: Record<string, DangerousHerb> = {
   "abrus-precatorius": {
     reason:
@@ -899,6 +903,12 @@ const NON_DOSABLE_PATTERN =
 
 export function getDangerousHerb(slug: string): DangerousHerb | undefined {
   return DANGEROUS_HERBS[slug];
+}
+
+export function getAllDangerousHerbs(): DangerousHerbRecord[] {
+  return Object.entries(DANGEROUS_HERBS)
+    .map(([slug, info]) => ({ slug, ...info }))
+    .sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
 export function isDangerousHerb(slug: string): boolean {

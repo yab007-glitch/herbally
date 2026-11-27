@@ -36,12 +36,14 @@
 ## Governance, Editorial Policy & Privacy
 
 - Methodology, Evidence Matrix & Live Governance Coverage Counters: https://herbally.app/methodology
-- Editorial Policy & Source Hierarchy: https://herbally.app/editorial-policy
+- Editorial Policy, Clinical Governance Charter & Triage SLAs: https://herbally.app/editorial-policy#clinical-governance-protocol
 - Clinical Review Portal (LinkedIn SSO contributor intake): https://herbally.app/clinical-review
 - Privacy Policy (Quebec Law 25 & PIPEDA sub-processors, 30-day guest retention, 7-day public cache): https://herbally.app/privacy
 - Sponsorship & Editorial Firewall Policy: https://herbally.app/sponsors
 - About HerbAlly ("What HerbAlly Is — and Is Not"): https://herbally.app/about
 - Open Data JSON Catalog (live coverage counts & sources): https://herbally.app/open-data/catalog.json
+- Open Data Medications & Interactions Registry JSON: https://herbally.app/open-data/medications.json
+- Open Data Quarantined Toxic Botanicals Registry JSON: https://herbally.app/open-data/quarantine.json
 - Embeddable Interaction Checker & Librarian Citation Kit: https://herbally.app/widgets
 - RSS Updates Feed: https://herbally.app/rss.xml
 - Sitemap (all indexable EN + FR URLs): https://herbally.app/sitemap.xml

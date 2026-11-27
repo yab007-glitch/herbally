@@ -1,6 +1,7 @@
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { FAQSchema } from "@/components/seo/faq-schema";
+import { WebApplicationSchema } from "@/components/seo/web-app-schema";
 import { siteUrl } from "@/lib/seo/site-url";
 import { DoseCalculatorForm } from "@/components/calculator/dose-calculator-form";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
@@ -127,6 +128,22 @@ export default async function CalculatorPage({
           items={[
             { name: t("common.home"), url: siteUrl() },
             { name: t("calculator.title"), url: "/calculator" },
+          ]}
+        />
+        <WebApplicationSchema
+          name={t("calculator.title")}
+          description={t("calculator.subtitle")}
+          url={`${siteUrl()}${locale === "fr" ? "/fr" : ""}/calculator`}
+          featureList={[
+            locale === "fr"
+              ? "Référence posologique adulte uniquement (18 ans et plus)"
+              : "Adults-only (18+) monograph reference dose checker",
+            locale === "fr"
+              ? "Aucun calcul pédiatrique ni ajustement selon l'âge ou le poids"
+              : "Zero pediatric calculation and zero weight/age scaling formulas (Clark/Young/Fried disabled)",
+            locale === "fr"
+              ? "Blocage strict des plantes toxiques ou non dosables"
+              : "Hard safety block for quarantined toxic or non-dosable botanicals",
           ]}
         />
         <FAQSchema
