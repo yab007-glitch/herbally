@@ -23,6 +23,23 @@ ADMIN_URL="postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/postgres"
 SOURCE_URL="${DATABASE_URL:-postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${SOURCE_DB}}"
 RESTORE_URL="postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${RESTORE_DB}"
 DUMP_FILE="/tmp/herbally-backup-drill.dump"
+PG_BIN_IMAGE="${PG_BIN_IMAGE:-}"
+
+run_pg_dump() {
+  if [ -n "$PG_BIN_IMAGE" ]; then
+    docker run --rm --network host -v /tmp:/tmp "$PG_BIN_IMAGE" pg_dump "$@"
+  else
+    pg_dump "$@"
+  fi
+}
+
+run_pg_restore() {
+  if [ -n "$PG_BIN_IMAGE" ]; then
+    docker run --rm --network host -v /tmp:/tmp "$PG_BIN_IMAGE" pg_restore "$@"
+  else
+    pg_restore "$@"
+  fi
+}
 
 export PGHOST PGPORT PGUSER PGPASSWORD PGDATABASE="$SOURCE_DB"
 
@@ -46,13 +63,13 @@ SQL
 
 echo "==> Step 3: Running pg_dump -Fc and verifying archive table of contents"
 rm -f "$DUMP_FILE"
-pg_dump --format=custom --no-owner --file="$DUMP_FILE" "$SOURCE_URL"
-pg_restore --list "$DUMP_FILE" >/dev/null
+run_pg_dump --format=custom --no-owner --file="$DUMP_FILE" "$SOURCE_URL"
+run_pg_restore --list "$DUMP_FILE" >/dev/null
 
 echo "==> Step 4: Creating clean target database ${RESTORE_DB} and restoring archive"
 psql "$ADMIN_URL" -v ON_ERROR_STOP=1 -c "DROP DATABASE IF EXISTS \"${RESTORE_DB}\" WITH (FORCE);"
 psql "$ADMIN_URL" -v ON_ERROR_STOP=1 -c "CREATE DATABASE \"${RESTORE_DB}\";"
-pg_restore --no-owner --exit-on-error --dbname="$RESTORE_URL" "$DUMP_FILE"
+run_pg_restore --no-owner --exit-on-error --dbname="$RESTORE_URL" "$DUMP_FILE"
 rm -f "$DUMP_FILE"
 
 echo "==> Step 5: Asserting canary row & clinical-safety triggers on restored database"
