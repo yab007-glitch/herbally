@@ -16,6 +16,19 @@ jobs:
       - name: Scan for secrets
         run: ./scripts/detect-secrets.sh --all
 
+  supply-chain-audit:
+    name: Production Dependency Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --omit=dev
+      - name: Check production dependencies for high/critical advisories
+        run: npm audit --omit=dev --audit-level=high
+
   verify-migrations:
     runs-on: ubuntu-latest
     steps:
@@ -87,6 +100,38 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Replay full migration chain from 00001
         run: bash scripts/test-full-migration-replay.sh
+
+  backup-restore-drill:
+    name: PG16 Backup & Restore Drill
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: herbally_test
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d herbally_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: "5434"
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: herbally_test
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Run non-destructive pg_dump -Fc -> pg_restore -> RLS integration drill
+        env:
+          PG_BIN_IMAGE: postgres:16
+        run: bash scripts/test-backup-restore-drill.sh
 
   verify-db:
     runs-on: ubuntu-latest
@@ -306,9 +351,11 @@ jobs:
         verify-migrations,
         targeted-migration-fixture,
         full-migration-replay,
+        backup-restore-drill,
         postgrest-and-migrated-e2e,
         verify-db,
         secrets,
+        supply-chain-audit,
       ]
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co

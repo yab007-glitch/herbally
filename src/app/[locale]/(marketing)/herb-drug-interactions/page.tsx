@@ -90,7 +90,17 @@ export default async function HerbDrugInteractionsPage() {
                 {
                   "@type": "DataDownload",
                   encodingFormat: "application/json",
+                  contentUrl: `${baseUrl}/open-data/manifest.json`,
+                },
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "application/json",
                   contentUrl: `${baseUrl}/open-data/schema.json`,
+                },
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "application/json",
+                  contentUrl: `${baseUrl}/open-data/source-monitor-latest.json`,
                 },
                 {
                   "@type": "DataDownload",

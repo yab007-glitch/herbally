@@ -1,7 +1,9 @@
 import {
-  OPEN_DATA_DATASET_VERSION,
-  getOpenDataSnapshot,
-} from "@/lib/open-data/snapshot";
+  OPEN_DATA_RESPONSE_HEADERS,
+  buildQuarantinePayload,
+  serializeOpenDataJson,
+} from "@/lib/open-data/builders";
+import { getOpenDataSnapshot } from "@/lib/open-data/snapshot";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 3600;
@@ -9,39 +11,9 @@ export const revalidate = 3600;
 export async function GET() {
   const baseUrl = siteUrl();
   const snapshot = await getOpenDataSnapshot();
-  const records = snapshot.quarantinedBotanicals;
+  const payload = buildQuarantinePayload(snapshot, baseUrl);
 
-  const payload = {
-    service: "HerbAlly",
-    dataset: "toxic_botanical_quarantine",
-    url: `${baseUrl}/open-data/quarantine.json`,
-    datasetVersion: OPEN_DATA_DATASET_VERSION,
-    snapshotId: snapshot.snapshotId,
-    generatedAt: snapshot.generatedAt,
-    policy:
-      "Permanent toxic botanical quarantine: no therapeutic use, dosing, FAQ, supplement claims, or ads.",
-    emergencyContacts: {
-      usPoisonControl: "1-800-222-1222",
-      canadaPoisonControl: "1-844-764-7669",
-      emergency: "911",
-    },
-    totalQuarantinedBotanicals: records.length,
-    botanicals: records.map((r) => ({
-      slug: r.slug,
-      url: `${baseUrl}/herbs/${r.slug}`,
-      urlFr: `${baseUrl}/fr/herbs/${r.slug}`,
-      quarantineStatus: "permanent_toxic_quarantine",
-      affectedParts: r.parts,
-      hazardEn: r.reason,
-      hazardFr: r.reasonFr,
-    })),
-  };
-
-  return new Response(JSON.stringify(payload, null, 2), {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "public, max-age=0, s-maxage=60, must-revalidate",
-      "Access-Control-Allow-Origin": "*",
-    },
+  return new Response(serializeOpenDataJson(payload), {
+    headers: OPEN_DATA_RESPONSE_HEADERS,
   });
 }

@@ -6,6 +6,8 @@ import { useTranslations, useLocale } from "next-intl";
 import {
   AlertOctagon,
   AlertTriangle,
+  Download,
+  FileJson,
   Info,
   Layers,
   Plus,
@@ -17,6 +19,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PrintSafetyFooter } from "@/components/shared/print-safety-footer";
+import {
+  buildConsultationBriefJson,
+  formatConsultationBriefText,
+} from "@/lib/interactions/consultation-brief";
 import {
   getInteractionStatusBadge,
   summarizeInteractionPublicationStatus,
@@ -486,31 +492,78 @@ export function StackChecker() {
         </Button>
 
         {result && (
-          <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setShowWalletCard((prev) => !prev);
-              }}
-            >
-              <Printer className="mr-1.5 size-4" />
+          <div className="flex flex-col items-end gap-1.5">
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  const text = formatConsultationBriefText(result, locale);
+                  const blob = new Blob([text], {
+                    type: "text/plain;charset=utf-8",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = `herbally-consultation-brief-${result.checkedAt.slice(0, 10)}.txt`;
+                  link.click();
+                  setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }}
+              >
+                <Download className="mr-1.5 size-4" />
+                {locale === "fr"
+                  ? "Télécharger résumé (.txt)"
+                  : "Download Clinician Brief (.txt)"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  const payload = buildConsultationBriefJson(result, locale);
+                  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+                    type: "application/json;charset=utf-8",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = `herbally-consultation-brief-${result.checkedAt.slice(0, 10)}.json`;
+                  link.click();
+                  setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }}
+              >
+                <FileJson className="mr-1.5 size-4" />
+                {locale === "fr" ? "Exporter JSON" : "Export JSON"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowWalletCard((prev) => !prev);
+                }}
+              >
+                <Printer className="mr-1.5 size-4" />
+                {locale === "fr"
+                  ? showWalletCard
+                    ? "Masquer carte portefeuille"
+                    : "Carte portefeuille (pharmacien)"
+                  : showWalletCard
+                    ? "Hide wallet card"
+                    : "Foldable Wallet Card"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => window.print()}
+              >
+                <Printer className="mr-1.5 size-4" />
+                {t("printButton")}
+              </Button>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
               {locale === "fr"
-                ? showWalletCard
-                  ? "Masquer carte portefeuille"
-                  : "Carte portefeuille (pharmacien)"
-                : showWalletCard
-                  ? "Hide wallet card"
-                  : "Foldable Wallet Card"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => window.print()}
-            >
-              <Printer className="mr-1.5 size-4" />
-              {t("printButton")}
-            </Button>
+                ? "Généré localement dans votre navigateur — jamais envoyé aux serveurs HerbAlly"
+                : "Generated locally in your browser — never sent to HerbAlly servers"}
+            </p>
           </div>
         )}
       </div>

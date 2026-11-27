@@ -400,10 +400,12 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(kitSrc.toLowerCase()).not.toContain("washout planner");
     expect(kitSrc).not.toContain("contact@herbally.app");
 
-    const openDataSrc = fs.readFileSync(
-      path.join(ROOT, "src/app/open-data/catalog.json/route.ts"),
-      "utf8"
-    );
+    const openDataSrc =
+      fs.readFileSync(
+        path.join(ROOT, "src/app/open-data/catalog.json/route.ts"),
+        "utf8"
+      ) +
+      fs.readFileSync(path.join(ROOT, "src/lib/open-data/builders.ts"), "utf8");
     expect(openDataSrc).toContain("Access-Control-Allow-Origin");
     expect(openDataSrc).toContain("medicationsAndClasses");
   });
@@ -580,10 +582,12 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(editorialSrc).toContain("0 Currently Seated");
     expect(editorialSrc).toContain("/embed/*");
 
-    const catalogSrc = fs.readFileSync(
-      path.join(ROOT, "src/app/open-data/catalog.json/route.ts"),
-      "utf8"
-    );
+    const catalogSrc =
+      fs.readFileSync(
+        path.join(ROOT, "src/app/open-data/catalog.json/route.ts"),
+        "utf8"
+      ) +
+      fs.readFileSync(path.join(ROOT, "src/lib/open-data/builders.ts"), "utf8");
     const medsPageSrc = fs.readFileSync(
       path.join(ROOT, "src/app/[locale]/(main)/medications/page.tsx"),
       "utf8"
@@ -634,16 +638,23 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
       "utf8"
     );
     expect(trustSrc).toContain("https://github.com/yab007-glitch/herbally");
+    expect(trustSrc).toContain("/open-data/manifest.json");
     expect(trustSrc).toContain("/open-data/schema.json");
     expect(trustSrc).toContain("/open-data/interactions.json");
+    expect(trustSrc).toContain("/.well-known/security.txt");
     expect(trustSrc).toContain("00097_admin_aal2_rls.sql");
     expect(trustSrc).toContain("docs/database-backup-strategy.md");
+    expect(trustSrc).toContain("scripts/test-backup-restore-drill.sh");
     expect(trustSrc).toContain("all-142-medications.test.ts");
     expect(trustSrc).toContain("clinical-safety-integration.sql");
     expect(trustSrc).toContain("verify-open-data-and-sources.ts");
     expect(trustSrc).toContain("source-monitor.yml");
     expect(trustSrc).toContain("e2e/ads.spec.ts");
     expect(trustSrc).toContain("snapshot.snapshotId");
+
+    expect(
+      fs.existsSync(path.join(ROOT, "public/.well-known/security.txt"))
+    ).toBe(true);
 
     const sitemapSrc = fs.readFileSync(
       path.join(ROOT, "src/app/sitemap.ts"),
