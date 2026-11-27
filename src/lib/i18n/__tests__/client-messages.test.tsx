@@ -87,7 +87,7 @@ function resolveImport(fromFile: string, spec: string): string | null {
 }
 
 const ROUTE_GROUP_MAP: Record<string, ClientMessageGroup> = {
-  "src/app/[locale]/(main)/herbs/[slug]/page.tsx": "herbs",
+  "src/app/[locale]/(herb-detail)/herbs/[slug]/page.tsx": "herbs",
   "src/app/[locale]/(main)/herbs/page.tsx": "herbs",
   "src/app/[locale]/(main)/symptoms/[symptom]/page.tsx": "herbs",
   "src/app/[locale]/(main)/garden/page.tsx": "herbs",

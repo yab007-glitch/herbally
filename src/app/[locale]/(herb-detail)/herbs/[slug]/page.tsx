@@ -66,6 +66,9 @@ import {
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
 import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
+import { ToxicQuarantineShell } from "@/components/herbs/toxic-quarantine-shell";
+import { MainPageShell } from "@/components/layout/main-page-shell";
+import { Badge } from "@/components/ui/badge";
 import { HerbNarrative } from "@/components/herbs/herb-narrative";
 import { InteractionsTable } from "@/components/herbs/interactions-table";
 import { AdSlot } from "@/components/ads/ad-slot";
@@ -438,6 +441,99 @@ export default async function HerbDetailPage({ params }: Props) {
   ];
 
   const isDangerous = isDangerousHerb(slug);
+  const latestModified = computeLatestModified(
+    herb.updated_at,
+    herb.last_reviewed
+  );
+
+  if (isDangerous) {
+    const toxicCitationUrls = [
+      `https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(
+        `${herb.scientific_name} toxicity`
+      )}`,
+      `https://pubchem.ncbi.nlm.nih.gov/#query=${encodeURIComponent(
+        herb.scientific_name
+      )}`,
+    ];
+
+    return (
+      <ToxicQuarantineShell slug={slug} locale={copyLocale}>
+        <BreadcrumbListSchema items={herbCrumbs} />
+        <HerbSchema
+          herb={herb}
+          url={herbPageUrl}
+          dateModified={latestModified ?? undefined}
+          isDangerous={true}
+          isClinicallyReviewed={false}
+          resolvedReviewer={null}
+          citationUrls={toxicCitationUrls}
+        />
+        <DangerousHerbBanner slug={slug} locale={copyLocale} />
+        <section
+          aria-labelledby="toxic-quarantine-title"
+          className="space-y-4 rounded-2xl border border-destructive/40 bg-card p-5 sm:p-6"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="destructive" className="text-xs">
+              {copyLocale === "fr"
+                ? "Plante toxique / à haut risque"
+                : "Toxic / High-Risk Plant"}
+            </Badge>
+            <Badge variant="destructive" className="text-xs">
+              {copyLocale === "fr"
+                ? "Quarantaine botanique toxique permanente · Impropre à l'usage humain"
+                : "Permanent Toxic Botanical Quarantine · Not for Human Use"}
+            </Badge>
+          </div>
+          <div>
+            <h1
+              id="toxic-quarantine-title"
+              className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+            >
+              {herb.name}
+            </h1>
+            {herb.scientific_name?.trim().toLowerCase() !==
+              herb.name.trim().toLowerCase() && (
+              <p className="mt-1 text-sm italic text-muted-foreground">
+                {herb.scientific_name}
+              </p>
+            )}
+          </div>
+          <div
+            aria-labelledby="toxic-quarantine-summary-heading"
+            className="space-y-2 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-left"
+          >
+            <h2
+              id="toxic-quarantine-summary-heading"
+              className="eyebrow text-destructive"
+            >
+              {copyLocale === "fr"
+                ? "Résumé de quarantaine toxicologique"
+                : "Toxicology Quarantine Summary"}
+            </h2>
+            <p className="text-sm font-medium text-foreground">
+              {copyLocale === "fr"
+                ? "Usage humain : strictement interdit — plante toxique ou potentiellement mortelle."
+                : "Human use: strictly prohibited — poisonous or potentially lethal botanical."}
+            </p>
+            <p className="text-xs font-medium text-destructive">
+              {copyLocale === "fr"
+                ? "En cas d'exposition : Centre antipoison (Canada) 1-844-764-7669 · Poison Control (É.-U.) 1-800-222-1222 · Urgence 911."
+                : "If exposed: Poison Control (US) 1-800-222-1222 · Poison Control (Canada) 1-844-764-7669 · Emergency 911."}
+            </p>
+          </div>
+        </section>
+        <ToxicBotanicalQuarantineCard
+          slug={slug}
+          scientificName={herb.scientific_name}
+          contraindications={herb.contraindications}
+          sideEffects={herb.side_effects}
+          locale={copyLocale}
+        />
+      </ToxicQuarantineShell>
+    );
+  }
+
   const showCalculator = canShowDoseCalculator(slug, herb.dosage_adult);
   const reviewState = getReviewState(provenance);
   const reviewInvalidated =
@@ -494,10 +590,6 @@ export default async function HerbDetailPage({ params }: Props) {
     )?.name ?? null;
   const reviewedBy = registeredReviewer?.name;
   const reviewerCredentials = registeredReviewer?.credentials;
-  const latestModified = computeLatestModified(
-    herb.updated_at,
-    herb.last_reviewed
-  );
   const rawLastVerified =
     typeof (herb.provenance as { last_verified_at?: unknown } | null)
       ?.last_verified_at === "string"
@@ -635,325 +727,329 @@ export default async function HerbDetailPage({ params }: Props) {
   });
 
   return (
-    <HerbsMessagesProvider locale={copyLocale}>
-      <div className="space-y-8">
-        <ViewTracker slug={slug} />
-        <BreadcrumbListSchema items={herbCrumbs} />
-        <HerbSchema
-          herb={herb}
-          url={herbPageUrl}
-          dateModified={latestModified ?? undefined}
-          isDangerous={isDangerous}
-          isClinicallyReviewed={isClinicallyReviewed}
-          resolvedReviewer={resolvedReviewer}
-          citationUrls={Array.from(
-            new Set([
-              ...sources
-                .map((s) => s.url)
-                .filter((u): u is string => Boolean(u)),
-              ...citations
-                .map(
-                  (c) =>
-                    c.url ||
-                    (c.pmid
-                      ? `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`
-                      : null)
-                )
-                .filter((u): u is string => Boolean(u)),
-            ])
-          )}
-        />
-        {!isDangerous && (
-          <HerbFAQSchema
-            herbName={herb.name}
-            scientificName={herb.scientific_name}
-            uses={[
-              ...(herb.traditional_uses || []),
-              ...(herb.modern_uses || []),
-            ]}
-            safetyNotes={
-              monograph?.safetyNotes?.join(". ") ||
-              herb.side_effects?.join(". ") ||
-              ""
-            }
-            pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
-            drugInteractions={interactions.length}
+    <MainPageShell>
+      <HerbsMessagesProvider locale={copyLocale}>
+        <div className="space-y-8">
+          <ViewTracker slug={slug} />
+          <BreadcrumbListSchema items={herbCrumbs} />
+          <HerbSchema
+            herb={herb}
+            url={herbPageUrl}
+            dateModified={latestModified ?? undefined}
             isDangerous={isDangerous}
-            showCalculator={showCalculator}
-            preGeneratedFaqs={
-              preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
-            }
-            fallbackFaqs={fallbackFaqs}
+            isClinicallyReviewed={isClinicallyReviewed}
+            resolvedReviewer={resolvedReviewer}
+            citationUrls={Array.from(
+              new Set([
+                ...sources
+                  .map((s) => s.url)
+                  .filter((u): u is string => Boolean(u)),
+                ...citations
+                  .map(
+                    (c) =>
+                      c.url ||
+                      (c.pmid
+                        ? `https://pubmed.ncbi.nlm.nih.gov/${c.pmid}/`
+                        : null)
+                  )
+                  .filter((u): u is string => Boolean(u)),
+              ])
+            )}
           />
-        )}
-
-        <Breadcrumbs
-          items={[
-            { name: t("common.breadcrumbHome"), href: "/" },
-            { name: t("nav.herbs"), href: "/herbs" },
-            { name: herb.name },
-          ]}
-        />
-
-        <Link
-          href="/herbs"
-          className={buttonVariants({
-            variant: "ghost",
-            size: "sm",
-            className: "min-h-10",
-          })}
-        >
-          <ArrowLeft className="size-4" />
-          {t("herbDetail.backToHerbs")}
-        </Link>
-
-        {!isDangerous && (
-          <p className="text-xs text-muted-foreground italic">
-            {t("herbDetail.medicalDisclaimerText")}
-          </p>
-        )}
-
-        <DangerousHerbBanner slug={slug} locale={copyLocale} />
-        <HerbHeroV2
-          herb={heroHerb}
-          provenance={isDangerous ? null : compactProvenance}
-          pubmedSheetStatus={
-            !isDangerous && pubmedSheet && isUsablePubmedSheet(pubmedSheet)
-              ? pubmedSheet.status
-              : null
-          }
-          isManualMonograph={isManualMonograph}
-          showCalculator={showCalculator}
-          interactions={glanceInteractions}
-          safetyHref="#interactions"
-        />
-
-        {!isDangerous && (
-          <p className="-mt-4 text-sm text-muted-foreground">
-            <Link
-              href="/methodology"
-              className="inline-flex min-h-9 items-center underline-offset-4 hover:text-foreground hover:underline"
-            >
-              {copy.evidenceLabelsLink}
-            </Link>
-          </p>
-        )}
-
-        <AuthorByline
-          locale={copyLocale}
-          lastReviewed={isClinicallyReviewed ? latestModified : null}
-          lastUpdated={herb.updated_at ?? null}
-          isReviewed={isClinicallyReviewed}
-          isManualMonograph={isManualMonograph}
-          sourceCount={verifiedSources.length}
-          reviewerName={reviewedBy}
-          reviewerCredentials={reviewerCredentials}
-          herbSlug={slug}
-          isDangerous={isDangerous}
-        />
-
-        <HerbJumpNav
-          locale={copyLocale}
-          hasInteractions={interactions.length > 0}
-          isDangerous={isDangerous}
-        />
-
-        <HerbPhoto
-          slug={slug}
-          name={herb.name}
-          className="mt-2"
-          imageUrl={herb.image_url}
-          credit={imageMeta?.credit}
-          creditUrl={imageMeta?.source}
-          publisher={imageMeta?.publisher}
-          licence={imageMeta?.licence}
-          licenceUrl={imageMeta?.licence_url ?? imageMeta?.licenceUrl}
-        />
-
-        <div id="overview" className="scroll-mt-28 space-y-8">
-          {!isDangerous && !isManualMonograph && herb.description?.trim() ? (
-            <p className="measure prose-body leading-relaxed text-foreground">
-              {herb.description}
-            </p>
-          ) : null}
-
-          {!isDangerous && <UserInteractionAlert herbSlug={slug} />}
-        </div>
-
-        {tableInteractions.length > 0 && (
-          <section id="interactions" className="scroll-mt-28">
-            <InteractionsTable
-              interactions={tableInteractions}
-              herbSlug={slug}
-            />
-          </section>
-        )}
-
-        {!isDangerous && (
-          <HerbSources
-            sources={verifiedSources}
-            lastChecked={sourcesLastChecked}
-            label={copy.sources.label}
-            checkedLabel={copy.sources.checkedLabel}
-            countLabel={copy.sources.count}
-            taxonomyLabel={copy.sources.taxonomyLabel}
-            note={copy.sources.note}
-          />
-        )}
-
-        <HerbRegulatorExcerpts
-          herbName={herb.name}
-          sources={sources}
-          copy={copy}
-          filter="modern"
-          isDangerous={isDangerous}
-          locale={copyLocale}
-        />
-
-        <div id="dosage-safety" className="scroll-mt-28 space-y-8">
-          {isDangerous ? (
-            <ToxicBotanicalQuarantineCard
-              slug={slug}
+          {!isDangerous && (
+            <HerbFAQSchema
+              herbName={herb.name}
               scientificName={herb.scientific_name}
-              contraindications={herb.contraindications}
-              sideEffects={herb.side_effects}
-              locale={copyLocale}
+              uses={[
+                ...(herb.traditional_uses || []),
+                ...(herb.modern_uses || []),
+              ]}
+              safetyNotes={
+                monograph?.safetyNotes?.join(". ") ||
+                herb.side_effects?.join(". ") ||
+                ""
+              }
+              pregnancyCategory={monograph?.pregnancyCategory || "insufficient"}
+              drugInteractions={interactions.length}
+              isDangerous={isDangerous}
+              showCalculator={showCalculator}
+              preGeneratedFaqs={
+                preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
+              }
+              fallbackFaqs={fallbackFaqs}
             />
-          ) : (
+          )}
+
+          <Breadcrumbs
+            items={[
+              { name: t("common.breadcrumbHome"), href: "/" },
+              { name: t("nav.herbs"), href: "/herbs" },
+              { name: herb.name },
+            ]}
+          />
+
+          <Link
+            href="/herbs"
+            className={buttonVariants({
+              variant: "ghost",
+              size: "sm",
+              className: "min-h-10",
+            })}
+          >
+            <ArrowLeft className="size-4" />
+            {t("herbDetail.backToHerbs")}
+          </Link>
+
+          {!isDangerous && (
+            <p className="text-xs text-muted-foreground italic">
+              {t("herbDetail.medicalDisclaimerText")}
+            </p>
+          )}
+
+          <DangerousHerbBanner slug={slug} locale={copyLocale} />
+          <HerbHeroV2
+            herb={heroHerb}
+            provenance={isDangerous ? null : compactProvenance}
+            pubmedSheetStatus={
+              !isDangerous && pubmedSheet && isUsablePubmedSheet(pubmedSheet)
+                ? pubmedSheet.status
+                : null
+            }
+            isManualMonograph={isManualMonograph}
+            showCalculator={showCalculator}
+            interactions={glanceInteractions}
+            safetyHref="#interactions"
+          />
+
+          {!isDangerous && (
+            <p className="-mt-4 text-sm text-muted-foreground">
+              <Link
+                href="/methodology"
+                className="inline-flex min-h-9 items-center underline-offset-4 hover:text-foreground hover:underline"
+              >
+                {copy.evidenceLabelsLink}
+              </Link>
+            </p>
+          )}
+
+          <AuthorByline
+            locale={copyLocale}
+            lastReviewed={isClinicallyReviewed ? latestModified : null}
+            lastUpdated={herb.updated_at ?? null}
+            isReviewed={isClinicallyReviewed}
+            isManualMonograph={isManualMonograph}
+            sourceCount={verifiedSources.length}
+            reviewerName={reviewedBy}
+            reviewerCredentials={reviewerCredentials}
+            herbSlug={slug}
+            isDangerous={isDangerous}
+          />
+
+          <HerbJumpNav
+            locale={copyLocale}
+            hasInteractions={interactions.length > 0}
+            isDangerous={isDangerous}
+          />
+
+          <HerbPhoto
+            slug={slug}
+            name={herb.name}
+            className="mt-2"
+            imageUrl={herb.image_url}
+            credit={imageMeta?.credit}
+            creditUrl={imageMeta?.source}
+            publisher={imageMeta?.publisher}
+            licence={imageMeta?.licence}
+            licenceUrl={imageMeta?.licence_url ?? imageMeta?.licenceUrl}
+          />
+
+          <div id="overview" className="scroll-mt-28 space-y-8">
+            {!isDangerous && !isManualMonograph && herb.description?.trim() ? (
+              <p className="measure prose-body leading-relaxed text-foreground">
+                {herb.description}
+              </p>
+            ) : null}
+
+            {!isDangerous && <UserInteractionAlert herbSlug={slug} />}
+          </div>
+
+          {tableInteractions.length > 0 && (
+            <section id="interactions" className="scroll-mt-28">
+              <InteractionsTable
+                interactions={tableInteractions}
+                herbSlug={slug}
+              />
+            </section>
+          )}
+
+          {!isDangerous && (
+            <HerbSources
+              sources={verifiedSources}
+              lastChecked={sourcesLastChecked}
+              label={copy.sources.label}
+              checkedLabel={copy.sources.checkedLabel}
+              countLabel={copy.sources.count}
+              taxonomyLabel={copy.sources.taxonomyLabel}
+              note={copy.sources.note}
+            />
+          )}
+
+          <HerbRegulatorExcerpts
+            herbName={herb.name}
+            sources={sources}
+            copy={copy}
+            filter="modern"
+            isDangerous={isDangerous}
+            locale={copyLocale}
+          />
+
+          <div id="dosage-safety" className="scroll-mt-28 space-y-8">
+            {isDangerous ? (
+              <ToxicBotanicalQuarantineCard
+                slug={slug}
+                scientificName={herb.scientific_name}
+                contraindications={herb.contraindications}
+                sideEffects={herb.side_effects}
+                locale={copyLocale}
+              />
+            ) : (
+              <>
+                <HerbNarrative
+                  herb={herb}
+                  interactionCount={interactions.length}
+                  locale={copyLocale}
+                  isDangerous={isDangerous}
+                />
+
+                <HerbBodyContent
+                  herb={herb}
+                  compactProvenance={compactProvenance}
+                  monograph={monograph}
+                  isManualMonograph={isManualMonograph}
+                  isClinicallyReviewed={isClinicallyReviewed}
+                  showCalculator={showCalculator}
+                  lastReviewed={lastReviewed}
+                  reviewedBy={reviewedBy}
+                  regulatorName={regulatorName}
+                  interactions={interactions}
+                  severityCounts={severityCounts}
+                  locale={copyLocale}
+                  copy={copy}
+                  pubmedSheet={pubmedSheet}
+                  sheet={sheet}
+                />
+              </>
+            )}
+          </div>
+
+          <CmpBootstrap />
+          <AdCmp />
+          {!isDangerous && (
+            <AdSlot
+              slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
+              format="auto"
+              className="my-8 min-h-[100px] no-print"
+            />
+          )}
+
+          <section id="sources" className="scroll-mt-28 pt-4">
+            <h2 className="mb-3 flex items-center gap-2 text-xl font-semibold text-foreground">
+              {t("herbDetail.sourcesAndCitations")}
+            </h2>
+            <CitationsList citations={citations} />
+          </section>
+
+          {isClinicallyReviewed && (
+            <SourceAttribution
+              reviewedBy={reviewedBy}
+              reviewerCredentials={reviewerCredentials}
+              lastReviewed={lastReviewed}
+            />
+          )}
+
+          {!isDangerous && (
             <>
-              <HerbNarrative
-                herb={herb}
-                interactionCount={interactions.length}
+              <RegulatoryEvidenceSection
+                evidence={compactRegulatory?.evidence ?? null}
+                isHomeopathic={compactRegulatory?.isHomeopathic}
                 locale={copyLocale}
                 isDangerous={isDangerous}
+                className="mt-4"
               />
 
-              <HerbBodyContent
-                herb={herb}
-                compactProvenance={compactProvenance}
-                monograph={monograph}
-                isManualMonograph={isManualMonograph}
-                isClinicallyReviewed={isClinicallyReviewed}
-                showCalculator={showCalculator}
-                lastReviewed={lastReviewed}
-                reviewedBy={reviewedBy}
-                regulatorName={regulatorName}
-                interactions={interactions}
-                severityCounts={severityCounts}
-                locale={copyLocale}
-                copy={copy}
-                pubmedSheet={pubmedSheet}
-                sheet={sheet}
+              <GovSources
+                slug={slug}
+                displayName={herb.name}
+                monographSources={sources}
               />
             </>
           )}
-        </div>
 
-        <CmpBootstrap />
-        <AdCmp />
-        {!isDangerous && (
-          <AdSlot
-            slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HERB}
-            format="auto"
-            className="my-8 min-h-[100px] no-print"
+          {!isDangerous && <HerbFaqSection faqs={resolvedFaqs} />}
+
+          <HerbRegulatorExcerpts
+            herbName={herb.name}
+            sources={sources}
+            copy={copy}
+            filter="historical"
+            isDangerous={isDangerous}
+            locale={copyLocale}
           />
-        )}
 
-        <section id="sources" className="scroll-mt-28 pt-4">
-          <h2 className="mb-3 flex items-center gap-2 text-xl font-semibold text-foreground">
-            {t("herbDetail.sourcesAndCitations")}
-          </h2>
-          <CitationsList citations={citations} />
-        </section>
-
-        {isClinicallyReviewed && (
-          <SourceAttribution
-            reviewedBy={reviewedBy}
-            reviewerCredentials={reviewerCredentials}
-            lastReviewed={lastReviewed}
-          />
-        )}
-
-        {!isDangerous && (
-          <>
-            <RegulatoryEvidenceSection
-              evidence={compactRegulatory?.evidence ?? null}
-              isHomeopathic={compactRegulatory?.isHomeopathic}
-              locale={copyLocale}
-              isDangerous={isDangerous}
-              className="mt-4"
-            />
-
-            <GovSources
-              slug={slug}
-              displayName={herb.name}
-              monographSources={sources}
-            />
-          </>
-        )}
-
-        {!isDangerous && <HerbFaqSection faqs={resolvedFaqs} />}
-
-        <HerbRegulatorExcerpts
-          herbName={herb.name}
-          sources={sources}
-          copy={copy}
-          filter="historical"
-          isDangerous={isDangerous}
-          locale={copyLocale}
-        />
-
-        {showCalculator && (
-          <section
-            aria-label={t("herbDetail.calculatorCtaTitle", { name: herb.name })}
-            className="rounded-2xl border bg-muted/50 p-4"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="font-semibold text-foreground">
-                  {t("herbDetail.calculatorCtaTitle", { name: herb.name })}
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  {t("herbDetail.calculatorCtaBody")}
-                </p>
+          {showCalculator && (
+            <section
+              aria-label={t("herbDetail.calculatorCtaTitle", {
+                name: herb.name,
+              })}
+              className="rounded-2xl border bg-muted/50 p-4"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 className="font-semibold text-foreground">
+                    {t("herbDetail.calculatorCtaTitle", { name: herb.name })}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {t("herbDetail.calculatorCtaBody")}
+                  </p>
+                </div>
+                <Link
+                  href={`/calculator?herb=${slug}`}
+                  className={buttonVariants({
+                    variant: "outline",
+                    className: "min-h-10",
+                  })}
+                >
+                  {t("herbDetail.calculateDose")}
+                </Link>
               </div>
-              <Link
-                href={`/calculator?herb=${slug}`}
-                className={buttonVariants({
-                  variant: "outline",
-                  className: "min-h-10",
-                })}
-              >
-                {t("herbDetail.calculateDose")}
-              </Link>
-            </div>
-          </section>
-        )}
+            </section>
+          )}
 
-        <ShareButtons
-          title={`${herbMetaTitle} - HerbAlly`}
-          url={herbPageUrl}
-          className="pt-4 no-print"
-        />
+          <ShareButtons
+            title={`${herbMetaTitle} - HerbAlly`}
+            url={herbPageUrl}
+            className="pt-4 no-print"
+          />
 
-        {!isDangerous && (
-          <>
-            <HerbRelatedSection
-              locale={copyLocale}
-              herbSlug={slug}
-              interactions={glanceInteractions.slice(0, 6)}
-              prev={prev}
-              next={next}
-              symptomPeers={symptomPeers}
-              relatedHerbs={relatedHerbs}
-              relatedHeading={t("herbDetail.relatedHerbs")}
-              relatedGuides={compactRelatedGuides}
-            />
+          {!isDangerous && (
+            <>
+              <HerbRelatedSection
+                locale={copyLocale}
+                herbSlug={slug}
+                interactions={glanceInteractions.slice(0, 6)}
+                prev={prev}
+                next={next}
+                symptomPeers={symptomPeers}
+                relatedHerbs={relatedHerbs}
+                relatedHeading={t("herbDetail.relatedHerbs")}
+                relatedGuides={compactRelatedGuides}
+              />
 
-            <NewsletterSignup locale={copyLocale} />
-          </>
-        )}
-      </div>
-    </HerbsMessagesProvider>
+              <NewsletterSignup locale={copyLocale} />
+            </>
+          )}
+        </div>
+      </HerbsMessagesProvider>
+    </MainPageShell>
   );
 }

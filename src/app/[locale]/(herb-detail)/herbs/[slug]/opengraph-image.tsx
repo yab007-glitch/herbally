@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { getDangerousHerb } from "@/lib/data/dangerous-herbs";
 
 /**
  * Per-herb social card.
@@ -54,9 +55,103 @@ export default async function HerbOpengraphImage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug } = await params;
+  const dangerousInfo = getDangerousHerb(slug);
   const herb = await loadHerb(slug);
   const name = herb?.name ?? slug.replace(/-/g, " ");
   const scientific = herb?.scientific_name ?? "";
+  if (dangerousInfo) {
+    return new ImageResponse(
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          background: "#7f1d1d",
+          padding: "68px 76px",
+          fontFamily: "system-ui, sans-serif",
+          color: "#ffffff",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: 24,
+            fontWeight: 700,
+            letterSpacing: 1.5,
+            color: "#fecaca",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            PERMANENT TOXIC BOTANICAL QUARANTINE
+          </div>
+          <div style={{ display: "flex" }}>herbally.app</div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          <div
+            style={{
+              display: "flex",
+              fontSize: name.length > 26 ? 64 : 84,
+              fontWeight: 700,
+              lineHeight: 1.05,
+              letterSpacing: -1.5,
+            }}
+          >
+            {name}
+          </div>
+          {scientific ? (
+            <div
+              style={{
+                display: "flex",
+                fontSize: 34,
+                fontStyle: "italic",
+                color: "#fecaca",
+              }}
+            >
+              {scientific}
+            </div>
+          ) : null}
+          <div
+            style={{
+              display: "flex",
+              alignSelf: "flex-start",
+              marginTop: 10,
+              padding: "12px 24px",
+              borderRadius: 999,
+              border: "2px solid #fca5a5",
+              background: "#991b1b",
+              fontSize: 24,
+              fontWeight: 700,
+              color: "#ffffff",
+            }}
+          >
+            DO NOT CONSUME · NOT AN HERBAL MEDICINE
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontSize: 21,
+            fontWeight: 600,
+            color: "#fee2e2",
+            borderTop: "1px solid #b91c1c",
+            paddingTop: 24,
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            Poison Control US 1-800-222-1222 · Canada 1-844-764-7669 · 911
+          </div>
+        </div>
+      </div>,
+      { ...size }
+    );
+  }
   const evidence = herb?.evidence_level
     ? (EVIDENCE_LABEL[herb.evidence_level] ?? `Evidence ${herb.evidence_level}`)
     : null;

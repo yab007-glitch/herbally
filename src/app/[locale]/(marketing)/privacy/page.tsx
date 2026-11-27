@@ -330,8 +330,8 @@ export default async function PrivacyPage() {
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
-                        ? "Chargé uniquement après consentement explicite ; strictement désactivé sur les outils cliniques (interactions, calculateur, symptômes, herboriste)."
-                        : "Loaded strictly after explicit cookie consent on eligible content pages; suppressed on all clinical tool workflows."}
+                        ? "Actuellement inactif. Si activé ultérieurement après consentement explicite, limité aux pages publiques standard de plantes ; strictement désactivé sur tous les outils de santé, tous les widgets intégrables (/embed/*) et toutes les pages de plantes toxiques en quarantaine."
+                        : "Not currently active (launch gate off). If enabled in future after explicit cookie consent, restricted to standard public herb reference pages only; permanently suppressed on all clinical/health-input tools, all embedded widgets (/embed/*), and all quarantined toxic botanical pages."}
                     </td>
                     <td className="px-3 py-2">
                       {locale === "fr"
