@@ -1,27 +1,27 @@
 {
   "verificationProvenance": {
-    "note": "Baseline JSON output artifact captured from GitHub Actions Run 46054115945 against Release 3.13.2 commit e030b6f26a5b499c398c7322b0772d48b30286d3; liveGitHubWorkflowRuns on /open-data/source-monitor-latest.json appends the latest main workflow runs.",
-    "commitSha": "e030b6f26a5b499c398c7322b0772d48b30286d3",
-    "ciRunId": "46051610000",
-    "deployRunId": "46052991478",
-    "deployRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46052991478",
-    "deployApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46052991478",
-    "sourceMonitorRunId": "46054115945",
-    "sourceMonitorArtifactId": "15225443099",
-    "sourceMonitorRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46054115945",
-    "sourceMonitorApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46054115945"
+    "note": "Verified JSON output artifact captured from GitHub Actions Run 46078153584 against Release 3.14.1 commit 78fa2e3f3878871ba0ae3f0c86ea92a39ca46301; liveGitHubWorkflowRuns on /open-data/source-monitor-latest.json appends the latest main workflow runs.",
+    "commitSha": "78fa2e3f3878871ba0ae3f0c86ea92a39ca46301",
+    "ciRunId": "46077636564",
+    "deployRunId": "46077640595",
+    "deployRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46077640595",
+    "deployApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46077640595",
+    "sourceMonitorRunId": "46078153584",
+    "sourceMonitorRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46078153584",
+    "sourceMonitorApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46078153584"
   },
   "report": {
-    "checkedAt": "2026-11-27T19:05:40.884Z",
+    "checkedAt": "2026-11-27T22:44:08.761Z",
     "baseUrl": "https://herbally.app",
-    "snapshotId": "herbally-open-data-3.13.2-20261127T180000Z",
-    "datasetVersion": "3.13.2",
+    "snapshotId": "herbally-open-data-3.14.1-20261127T220000Z",
+    "datasetVersion": "3.14.1",
     "counts": {
       "medications": 142,
       "interactions": 509,
       "quarantinedBotanicals": 115,
       "clinicianSignedInteractions": 0
     },
+    "manifestVerified": true,
     "apiContractChecks": {
       "badInputStatus": 400,
       "unknownHerbStatus": 200,
@@ -33,59 +33,11 @@
       "uniquePmids": 75,
       "retractedPmids": [],
       "nonPubmedUrlsChecked": 169,
-      "nonPubmedOk": 156,
+      "nonPubmedOk": 168,
       "nonPubmedBotBlockedOrRateLimited": [
         {
           "url": "https://ods.od.nih.gov/factsheets/ImmuneFunction-HealthProfessional/",
           "status": 403
-        },
-        {
-          "url": "https://ods.od.nih.gov/factsheets/VitaminK-HealthProfessional/",
-          "status": 403
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-glycyrrhiza-glabra-l-glycyrrhiza-inflata-bat-glycyrrhiza-uralensis-fisch-radix-revision-1_en.pdf",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-rhamnus-purshiana-dc-cortex-revision-1_en.pdf",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/documents/herbal-monograph/final-european-union-herbal-monograph-rheum-palmatum-l-and-rheum-officinale-baillon-radix-revision-1_en.pdf",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/equiseti-herba",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/harpagophyti-radix",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/paulliniae-semen",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/rhamni-purshianae-cortex",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/rhei-radix",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/salicis-cortex",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/sennae-folium",
-          "status": 429
-        },
-        {
-          "url": "https://www.ema.europa.eu/en/medicines/herbal/sennae-fructus-acutifoliae",
-          "status": 429
         }
       ],
       "brokenUrls": []

@@ -215,49 +215,70 @@ async function main() {
   );
   const jsonOut = parseArg("--json-out");
 
-  const [catalogR, medsR, ixR, qR, schemaR, manifestR] = await Promise.all([
-    fetchJsonRaw<{
-      datasetVersion: string;
-      snapshotId: string;
-      generatedAt: string;
-      counts: Record<string, number>;
-    }>(`${baseUrl}/open-data/catalog.json`),
-    fetchJsonRaw<{
-      datasetVersion: string;
-      snapshotId: string;
-      generatedAt: string;
-      totalMedications: number;
-      totalInteractionPairs: number;
-    }>(`${baseUrl}/open-data/medications.json`),
-    fetchJsonRaw<{
-      datasetVersion: string;
-      snapshotId: string;
-      generatedAt: string;
-      totalPairs: number;
-      clinicianSignedPairs: number;
-      interactions: Array<{ sourceUrl: string | null }>;
-    }>(`${baseUrl}/open-data/interactions.json`),
-    fetchJsonRaw<{
-      datasetVersion: string;
-      snapshotId: string;
-      generatedAt: string;
-      totalQuarantinedBotanicals: number;
-    }>(`${baseUrl}/open-data/quarantine.json`),
-    fetchJsonRaw<{
-      openapi: string;
-      info: { version: string };
-      paths: Record<string, unknown>;
-    }>(`${baseUrl}/open-data/schema.json`),
-    fetchJsonRaw<{
-      datasetVersion: string;
-      snapshotId: string;
-      generatedAt: string;
-      algorithm: string;
-      files: Record<string, { sha256: string; bytes: number }>;
-    }>(`${baseUrl}/open-data/manifest.json`),
-  ]);
+  const [catalogR, medsR, ixR, qR, privacyR, reviewQueueR, schemaR, manifestR] =
+    await Promise.all([
+      fetchJsonRaw<{
+        datasetVersion: string;
+        snapshotId: string;
+        generatedAt: string;
+        counts: Record<string, number>;
+      }>(`${baseUrl}/open-data/catalog.json`),
+      fetchJsonRaw<{
+        datasetVersion: string;
+        snapshotId: string;
+        generatedAt: string;
+        totalMedications: number;
+        totalInteractionPairs: number;
+      }>(`${baseUrl}/open-data/medications.json`),
+      fetchJsonRaw<{
+        datasetVersion: string;
+        snapshotId: string;
+        generatedAt: string;
+        totalPairs: number;
+        clinicianSignedPairs: number;
+        interactions: Array<{ sourceUrl: string | null }>;
+      }>(`${baseUrl}/open-data/interactions.json`),
+      fetchJsonRaw<{
+        datasetVersion: string;
+        snapshotId: string;
+        generatedAt: string;
+        totalQuarantinedBotanicals: number;
+      }>(`${baseUrl}/open-data/quarantine.json`),
+      fetchJsonRaw<{
+        datasetVersion: string;
+        snapshotId: string;
+        generatedAt: string;
+      }>(`${baseUrl}/open-data/privacy-manifest.json`),
+      fetchJsonRaw<{
+        datasetVersion: string;
+        snapshotId: string;
+        generatedAt: string;
+        summary: { priorityQueueCount: number };
+      }>(`${baseUrl}/open-data/review-queue.json`),
+      fetchJsonRaw<{
+        openapi: string;
+        info: { version: string };
+        paths: Record<string, unknown>;
+      }>(`${baseUrl}/open-data/schema.json`),
+      fetchJsonRaw<{
+        datasetVersion: string;
+        snapshotId: string;
+        generatedAt: string;
+        algorithm: string;
+        files: Record<string, { sha256: string; bytes: number }>;
+      }>(`${baseUrl}/open-data/manifest.json`),
+    ]);
 
-  for (const r of [catalogR, medsR, ixR, qR, schemaR, manifestR]) {
+  for (const r of [
+    catalogR,
+    medsR,
+    ixR,
+    qR,
+    privacyR,
+    reviewQueueR,
+    schemaR,
+    manifestR,
+  ]) {
     if (r.res.headers.get("access-control-allow-origin") !== "*") {
       throw new Error(`Missing CORS * header on ${r.res.url}`);
     }
@@ -274,10 +295,12 @@ async function main() {
     medsR.data.snapshotId !== snapshotId ||
     ixR.data.snapshotId !== snapshotId ||
     qR.data.snapshotId !== snapshotId ||
+    privacyR.data.snapshotId !== snapshotId ||
+    reviewQueueR.data.snapshotId !== snapshotId ||
     manifestR.data.snapshotId !== snapshotId
   ) {
     throw new Error(
-      `Snapshot mismatch: catalog=${snapshotId}, meds=${medsR.data.snapshotId}, ix=${ixR.data.snapshotId}, q=${qR.data.snapshotId}, manifest=${manifestR.data.snapshotId}`
+      `Snapshot mismatch: catalog=${snapshotId}, meds=${medsR.data.snapshotId}, ix=${ixR.data.snapshotId}, q=${qR.data.snapshotId}, privacy=${privacyR.data.snapshotId}, reviewQueue=${reviewQueueR.data.snapshotId}, manifest=${manifestR.data.snapshotId}`
     );
   }
 
@@ -286,6 +309,8 @@ async function main() {
     "/open-data/medications.json": medsR.rawText,
     "/open-data/interactions.json": ixR.rawText,
     "/open-data/quarantine.json": qR.rawText,
+    "/open-data/privacy-manifest.json": privacyR.rawText,
+    "/open-data/review-queue.json": reviewQueueR.rawText,
     "/open-data/schema.json": schemaR.rawText,
   };
   for (const [filePath, rawText] of Object.entries(rawByPath)) {

@@ -1,8 +1,15 @@
 import { pairPath } from "@/lib/interactions/pair-url";
+import { SEVERITY_WEIGHT } from "@/lib/interactions/stack";
 import {
   OPEN_DATA_DATASET_VERSION,
   type OpenDataAtomicSnapshot,
 } from "@/lib/open-data/snapshot";
+
+export const OPEN_DATA_HTTP_CACHE_POLICY = {
+  cacheControl: "public, max-age=0, s-maxage=60, must-revalidate",
+  corsAllowOrigin: "*",
+  isrRevalidateSeconds: 3600,
+} as const;
 
 /** Canonical pretty-printed JSON serializer shared across routes & manifest SHA-256 digests. */
 export function serializeOpenDataJson(payload: unknown): string {
@@ -36,6 +43,7 @@ export function buildCatalogPayload(
     datasetVersion: OPEN_DATA_DATASET_VERSION,
     snapshotId: snapshot.snapshotId,
     generatedAt: snapshot.generatedAt,
+    httpCachePolicy: OPEN_DATA_HTTP_CACHE_POLICY,
     editorialContact: "info@herbally.app",
     license:
       "CC BY 4.0 for HerbAlly compilation metadata; cited regulatory excerpts retain publisher licences (see /methodology)",
@@ -58,6 +66,7 @@ export function buildCatalogPayload(
       adsLaunchGateEnabled: false,
       privacyContact: "info@herbally.app",
       privacyPolicyUrl: `${baseUrl}/privacy`,
+      privacyManifestUrl: `${baseUrl}/open-data/privacy-manifest.json`,
     },
     evidenceHierarchy: {
       tier1:
@@ -105,6 +114,8 @@ export function buildCatalogPayload(
       medicationsJson: `${baseUrl}/open-data/medications.json`,
       interactionsJson: `${baseUrl}/open-data/interactions.json`,
       quarantineJson: `${baseUrl}/open-data/quarantine.json`,
+      privacyManifestJson: `${baseUrl}/open-data/privacy-manifest.json`,
+      reviewQueueJson: `${baseUrl}/open-data/review-queue.json`,
       manifestJson: `${baseUrl}/open-data/manifest.json`,
       openApiSchemaJson: `${baseUrl}/open-data/schema.json`,
       sourceMonitorLatestJson: `${baseUrl}/open-data/source-monitor-latest.json`,
@@ -296,7 +307,7 @@ export function buildOpenApiSchemaPayload(baseUrl: string) {
       "/open-data/medications.json": {
         get: {
           operationId: "getOpenDataMedications",
-          summary: "All documented medications and drug classes (142 entries)",
+          summary: "All documented medications and drug classes (145 entries)",
           responses: {
             "200": {
               description: "CORS-enabled reverse medication lookup dataset",
@@ -313,7 +324,7 @@ export function buildOpenApiSchemaPayload(baseUrl: string) {
         get: {
           operationId: "getOpenDataInteractions",
           summary:
-            "All active curated herb–drug interaction pairs with citations and review flags (509 entries)",
+            "All active curated herb–drug interaction pairs with citations and review flags (515 entries)",
           responses: {
             "200": {
               description: "CORS-enabled curated interaction pair dataset",
@@ -337,6 +348,44 @@ export function buildOpenApiSchemaPayload(baseUrl: string) {
               content: {
                 "application/json": {
                   schema: { $ref: "#/components/schemas/QuarantineDataset" },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/open-data/privacy-manifest.json": {
+        get: {
+          operationId: "getOpenDataPrivacyManifest",
+          summary:
+            "Machine-readable Quebec Law 25 / PIPEDA privacy, cookie, retention, and sub-processor registry",
+          responses: {
+            "200": {
+              description:
+                "CORS-enabled structured privacy and sub-processor manifest",
+              content: {
+                "application/json": {
+                  schema: {
+                    $ref: "#/components/schemas/PrivacyManifestResponse",
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/open-data/review-queue.json": {
+        get: {
+          operationId: "getOpenDataReviewQueue",
+          summary:
+            "Prioritized queue of unreviewed contraindicated and severe interaction pairs for PharmD/RPh/MD intake",
+          responses: {
+            "200": {
+              description:
+                "CORS-enabled clinical review priority queue sharing unified snapshotId",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/ReviewQueueResponse" },
                 },
               },
             },
@@ -790,13 +839,320 @@ export function buildOpenApiSchemaPayload(baseUrl: string) {
             message: { type: "string" },
           },
         },
+        PrivacyManifestResponse: {
+          type: "object",
+          required: [
+            "service",
+            "dataset",
+            "datasetVersion",
+            "snapshotId",
+            "generatedAt",
+            "privacyOfficer",
+            "guarantees",
+            "subprocessors",
+          ],
+          properties: {
+            service: { type: "string" },
+            dataset: { type: "string" },
+            url: { type: "string", format: "uri" },
+            datasetVersion: { type: "string" },
+            snapshotId: { type: "string" },
+            generatedAt: { type: "string", format: "date-time" },
+            jurisdictions: { type: "array", items: { type: "string" } },
+            privacyOfficer: { type: "object" },
+            guarantees: { type: "object" },
+            cookies: { type: "array", items: { type: "object" } },
+            subprocessors: { type: "array", items: { type: "object" } },
+          },
+        },
+        ReviewQueueResponse: {
+          type: "object",
+          required: [
+            "service",
+            "dataset",
+            "datasetVersion",
+            "snapshotId",
+            "generatedAt",
+            "advisoryBoard",
+            "summary",
+            "priorityQueue",
+          ],
+          properties: {
+            service: { type: "string" },
+            dataset: { type: "string" },
+            url: { type: "string", format: "uri" },
+            datasetVersion: { type: "string" },
+            snapshotId: { type: "string" },
+            generatedAt: { type: "string", format: "date-time" },
+            onboardingPortalUrl: { type: "string", format: "uri" },
+            onboardingPortalUrlFr: { type: "string", format: "uri" },
+            governanceProtocolUrl: { type: "string", format: "uri" },
+            advisoryBoard: { type: "object" },
+            summary: { type: "object" },
+            priorityQueue: { type: "array", items: { type: "object" } },
+          },
+        },
       },
     },
   };
 }
 
+export function buildPrivacyManifestPayload(
+  snapshot: OpenDataAtomicSnapshot,
+  baseUrl: string
+) {
+  return {
+    service: "HerbAlly",
+    dataset: "privacy_and_subprocessor_manifest",
+    url: `${baseUrl}/open-data/privacy-manifest.json`,
+    datasetVersion: OPEN_DATA_DATASET_VERSION,
+    snapshotId: snapshot.snapshotId,
+    generatedAt: snapshot.generatedAt,
+    jurisdictions: [
+      "Quebec Law 25 (Act respecting the protection of personal information in the private sector)",
+      "Canada PIPEDA",
+    ],
+    privacyOfficer: {
+      name: "Yasser Bheekun",
+      email: "privacy@herbally.app",
+      editorialEmail: "info@herbally.app",
+      responseSlaDays: 30,
+      breachNotificationAuthority:
+        "Commission d'accès à l'information du Québec (CAI)",
+    },
+    guarantees: {
+      zeroThirdPartyAdTrackers: true,
+      adsLaunchGateEnabled: false,
+      zeroMarketingCookiesOnClinicalRoutes: true,
+      clientSideOnlyConsultationExport: true,
+      guestChatRetentionDays: 30,
+      aiResponseCacheDays: 7,
+      phiPermitted: false,
+    },
+    cookies: [
+      {
+        name: "herbally-locale",
+        purpose: "Stores explicit EN/FR UI language selection.",
+        essential: true,
+        httpOnly: false,
+        maxAge: "1 year",
+      },
+      {
+        name: "herbally-guest-id",
+        purpose:
+          "Pseudonymous UUID anchoring optional guest saved herbs and 30-day chat history.",
+        essential: true,
+        httpOnly: true,
+        maxAge: "30 days",
+      },
+      {
+        name: "sb-*-auth-token",
+        purpose:
+          "Supabase Auth session tokens for optional signed-in accounts.",
+        essential: true,
+        httpOnly: true,
+        maxAge: "Session / refresh lifecycle",
+      },
+      {
+        name: "herbally-linkedin-session",
+        purpose:
+          "AES-GCM encrypted short-lived cookie scoped strictly to /clinical-review LinkedIn OIDC SSO.",
+        essential: true,
+        httpOnly: true,
+        maxAge: "8 hours",
+      },
+    ],
+    subprocessors: [
+      {
+        name: "Supabase (PostgreSQL)",
+        region: "Montreal, Quebec, Canada",
+        crossBorder: false,
+        status: "active",
+        purpose:
+          "Reference catalog, optional user accounts, 30-day guest chat sessions, and LinkedIn SSO edit queue (no PHI permitted).",
+        retention:
+          "30 days (guest chat_sessions.retention_expires_at); 7 days (public ai_response_cache); account deletion via privacy@herbally.app.",
+      },
+      {
+        name: "Cloudflare",
+        region: "Global Edge CDN / WAF",
+        crossBorder: true,
+        status: "active",
+        purpose: "DNS, WAF, DDoS mitigation, and public asset caching.",
+        retention:
+          "Transient edge security metadata; zero herbal/chat body storage.",
+      },
+      {
+        name: "Application Runtime Server (KVM)",
+        region: "Self-managed production host",
+        crossBorder: false,
+        status: "active",
+        purpose:
+          "Executes Next.js SSR and API handlers with scrubbed error logs.",
+        retention: "Rotating operational logs without personal query strings.",
+      },
+      {
+        name: "Ollama Cloud",
+        region: "External AI Inference Endpoint",
+        crossBorder: true,
+        status: "active",
+        purpose:
+          "Stateless LLM inference for Virtual Herbalist educational responses without user name, email, or account ID.",
+        retention:
+          "No HerbAlly-retained user identity; session storage stays in Montreal PostgreSQL.",
+      },
+      {
+        name: "Upstash Redis",
+        region: "Cloud Redis",
+        crossBorder: true,
+        status: "active",
+        purpose: "Hashed sliding-window rate-limit counters on API routes.",
+        retention: "Ephemeral TTL windows (60 seconds to 24 hours).",
+      },
+      {
+        name: "Health Canada LNHPD API",
+        region: "Canada",
+        crossBorder: false,
+        status: "active_public_registry",
+        purpose:
+          "Queries public 8-digit NPN/DIN-HM licences via /api/npn/lookup.",
+        retention: "1-hour public licence cache; zero user identifiers sent.",
+      },
+      {
+        name: "Sentry",
+        region: "Cloud Error Telemetry",
+        crossBorder: true,
+        status: "active",
+        purpose:
+          "Runtime error diagnostics pre-scrubbed to strip cookies, query parameters, and health terms.",
+        retention: "Standard scrubbed technical error retention window.",
+      },
+      {
+        name: "Stripe",
+        region: "United States / Global",
+        crossBorder: true,
+        status: "active_on_donate_only",
+        purpose: "Voluntary donation processing on /donate only.",
+        retention:
+          "Tax/accounting ledger records; zero card storage by HerbAlly.",
+      },
+      {
+        name: "Zoho Mail",
+        region: "Mail Hosting",
+        crossBorder: true,
+        status: "active",
+        purpose:
+          "Handles inbound support and privacy correspondence to info@herbally.app and privacy@herbally.app.",
+        retention: "Deleted upon verified privacy request.",
+      },
+      {
+        name: "LinkedIn OpenID Connect",
+        region: "United States / Global",
+        crossBorder: true,
+        status: "active_opt_in_only",
+        purpose:
+          "Optional reviewer sign-in (name, OpenID sub, verified email) strictly on /clinical-review.",
+        retention:
+          "Edit attribution retained in audit log; deletable on request.",
+      },
+      {
+        name: "Google AdSense",
+        region: "Global",
+        crossBorder: true,
+        status: "disabled_launch_gate_false",
+        purpose:
+          "Currently inactive (ADS_LAUNCH_GATE=false). Permanently forbidden on /embed/*, quarantined toxic plants, and all clinical tools.",
+        retention:
+          "Zero ad requests or cookies emitted while launch gate is false.",
+      },
+    ],
+  };
+}
+
+export function buildReviewQueuePayload(
+  snapshot: OpenDataAtomicSnapshot,
+  baseUrl: string
+) {
+  const { activePairs } = snapshot;
+
+  const bySeverity = {
+    contraindicated: 0,
+    severe: 0,
+    moderate: 0,
+    mild: 0,
+  };
+  let clinicianSignedPairs = 0;
+
+  for (const p of activePairs) {
+    bySeverity[p.severity] = (bySeverity[p.severity] ?? 0) + 1;
+    if (p.clinicalActionStatus === "clinician_approved") {
+      clinicianSignedPairs += 1;
+    }
+  }
+
+  const priorityPairs = activePairs
+    .filter(
+      (p) =>
+        p.clinicalActionStatus !== "clinician_approved" &&
+        (p.severity === "contraindicated" || p.severity === "severe")
+    )
+    .sort((a, b) => {
+      const sevDiff =
+        (SEVERITY_WEIGHT[b.severity] ?? 0) - (SEVERITY_WEIGHT[a.severity] ?? 0);
+      if (sevDiff !== 0) return sevDiff;
+      const herbDiff = a.herbSlug.localeCompare(b.herbSlug);
+      if (herbDiff !== 0) return herbDiff;
+      return a.drugSlug.localeCompare(b.drugSlug);
+    });
+
+  return {
+    service: "HerbAlly",
+    dataset: "clinical_review_priority_queue",
+    url: `${baseUrl}/open-data/review-queue.json`,
+    datasetVersion: OPEN_DATA_DATASET_VERSION,
+    snapshotId: snapshot.snapshotId,
+    generatedAt: snapshot.generatedAt,
+    onboardingPortalUrl: `${baseUrl}/clinical-review`,
+    onboardingPortalUrlFr: `${baseUrl}/fr/clinical-review`,
+    governanceProtocolUrl: `${baseUrl}/editorial-policy#clinical-governance-protocol`,
+    advisoryBoard: {
+      seatsFilled: 0,
+      seatsTotal: 3,
+      targetRoles: [
+        "PharmD / RPh (Clinical Pharmacist)",
+        "MD / DO (Physician)",
+        "Clinical Toxicologist / Pharmacognosy Researcher",
+      ],
+    },
+    summary: {
+      totalActivePairs: activePairs.length,
+      clinicianSignedPairs,
+      awaitingReviewPairs: Math.max(
+        0,
+        activePairs.length - clinicianSignedPairs
+      ),
+      bySeverity,
+      priorityQueueCount: priorityPairs.length,
+    },
+    priorityQueue: priorityPairs.map((p) => ({
+      id: p.id,
+      herbSlug: p.herbSlug,
+      herbName: p.herbName,
+      drugSlug: p.drugSlug,
+      drugName: p.drugName,
+      severity: p.severity,
+      evidenceLevel: p.evidenceLevel,
+      source: p.source,
+      sourceUrl: p.sourceUrl,
+      publicationStatus: p.publicationStatus ?? "legacy_unreviewed",
+      pairUrl: `${baseUrl}${pairPath(p.herbSlug, p.drugName)}`,
+      reviewSubmitUrl: `${baseUrl}/clinical-review?targetType=interaction&slug=${encodeURIComponent(p.herbSlug)}&drug=${encodeURIComponent(p.drugName)}`,
+    })),
+  };
+}
+
 export const OPEN_DATA_RESPONSE_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
-  "Cache-Control": "public, max-age=0, s-maxage=60, must-revalidate",
-  "Access-Control-Allow-Origin": "*",
+  "Cache-Control": OPEN_DATA_HTTP_CACHE_POLICY.cacheControl,
+  "Access-Control-Allow-Origin": OPEN_DATA_HTTP_CACHE_POLICY.corsAllowOrigin,
 } as const;

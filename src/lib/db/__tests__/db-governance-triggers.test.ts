@@ -67,7 +67,7 @@ describe("A7: PostgreSQL fail-closed governance migrations & clinical approval t
     );
   });
 
-  it("enforces fail-closed clinician edit intake, perioperative safety, and citation URL reconciliation in 00105, 00108, 00109, and 00110", () => {
+  it("enforces fail-closed clinician edit intake, perioperative safety, citation URL reconciliation, and DOAC/antiplatelet coverage in 00105, 00108, 00109, 00110, and 00111", () => {
     const sql105 = readMigration("00105_clinical_edit_requests.sql");
     const sql108 = readMigration(
       "00108_perioperative_and_toxic_safety_reconciliation.sql"
@@ -76,6 +76,9 @@ describe("A7: PostgreSQL fail-closed governance migrations & clinical approval t
       "00109_interaction_source_url_reconciliation.sql"
     );
     const sql110 = readMigration("00110_ema_sennae_fructus_url_fix.sql");
+    const sql111 = readMigration(
+      "00111_doac_and_antiplatelet_interactions.sql"
+    );
     expect(sql105).toContain(
       "CREATE TABLE IF NOT EXISTS public.clinical_edit_requests"
     );
@@ -93,5 +96,13 @@ describe("A7: PostgreSQL fail-closed governance migrations & clinical approval t
     expect(sql110).toContain(
       "https://www.ema.europa.eu/en/medicines/herbal/sennae-fructus"
     );
+    expect(sql111).toContain("Rivaroxaban (Xarelto)");
+    expect(sql111).toContain("Dabigatran (Pradaxa)");
+    expect(sql111).toContain("Edoxaban (Savaysa)");
+    expect(sql111).toContain("https://pubmed.ncbi.nlm.nih.gov/32959922/");
+    expect(sql111).toContain("https://pubmed.ncbi.nlm.nih.gov/35517810/");
+    expect(sql111).toContain("https://pubmed.ncbi.nlm.nih.gov/34445237/");
+    expect(sql111).toContain("https://pubmed.ncbi.nlm.nih.gov/25848291/");
+    expect(sql111).not.toContain("clinician_approved");
   });
 });

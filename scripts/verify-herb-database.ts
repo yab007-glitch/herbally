@@ -580,6 +580,7 @@ async function checkMigrationFiles() {
     "00108_perioperative_and_toxic_safety_reconciliation.sql",
     "00109_interaction_source_url_reconciliation.sql",
     "00110_ema_sennae_fructus_url_fix.sql",
+    "00111_doac_and_antiplatelet_interactions.sql",
   ];
   for (const req of requiredPending) {
     if (!files.includes(req)) {
@@ -597,7 +598,7 @@ async function checkMigrationFiles() {
       console.log(`  ⚠️  ${file}: Contains DELETE FROM without WHERE clause`);
     }
     if (
-      /^00(097|098|099|099b|100|101|102|103|104|105|106|107|108|109|110)/.test(
+      /^00(097|098|099|099b|100|101|102|103|104|105|106|107|108|109|110|111)/.test(
         file
       )
     ) {

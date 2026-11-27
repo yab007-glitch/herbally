@@ -20,7 +20,7 @@ for (const [name, headers] of [
   });
 }
 
-test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenAPI 3.1, RFC 9116 security.txt, and bilingual /trust pages", async ({
+test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenAPI 3.1, RFC 9116 security.txt, embed.js, and SSR stack overlap docs", async ({
   request,
 }) => {
   const [
@@ -28,10 +28,14 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     medRes,
     ixRes,
     qRes,
+    privacyRes,
+    reviewQueueRes,
     manifestRes,
     schemaRes,
     monRes,
     secRes,
+    embedRes,
+    interactionsPageRes,
     trustEn,
     trustFr,
   ] = await Promise.all([
@@ -39,10 +43,14 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     request.get("/open-data/medications.json"),
     request.get("/open-data/interactions.json"),
     request.get("/open-data/quarantine.json"),
+    request.get("/open-data/privacy-manifest.json"),
+    request.get("/open-data/review-queue.json"),
     request.get("/open-data/manifest.json"),
     request.get("/open-data/schema.json"),
     request.get("/open-data/source-monitor-latest.json"),
     request.get("/.well-known/security.txt"),
+    request.get("/embed.js"),
+    request.get("/herb-drug-interactions"),
     request.get("/trust"),
     request.get("/fr/trust"),
   ]);
@@ -51,12 +59,21 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
   expect(trustFr.status()).toBe(200);
   expect(secRes.status()).toBe(200);
   expect(await secRes.text()).toContain("Contact: mailto:info@herbally.app");
+  expect(embedRes.status()).toBe(200);
+  expect(await embedRes.text()).toContain("herbally-checker");
+  expect(interactionsPageRes.status()).toBe(200);
+  const ixHtml = await interactionsPageRes.text();
+  expect(ixHtml).toContain("bleeding_overlap");
+  expect(ixHtml).toContain("serotonin_overlap");
+  expect(ixHtml).toContain("Consultation Brief");
 
   for (const res of [
     catRes,
     medRes,
     ixRes,
     qRes,
+    privacyRes,
+    reviewQueueRes,
     manifestRes,
     schemaRes,
     monRes,
@@ -66,29 +83,44 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     expect(res.headers()["cache-control"]).toContain("s-maxage=60");
   }
 
-  const [catRaw, medRaw, ixRaw, qRaw, manifestRaw, schemaRaw, monRaw] =
-    await Promise.all([
-      catRes.text(),
-      medRes.text(),
-      ixRes.text(),
-      qRes.text(),
-      manifestRes.text(),
-      schemaRes.text(),
-      monRes.text(),
-    ]);
+  const [
+    catRaw,
+    medRaw,
+    ixRaw,
+    qRaw,
+    privacyRaw,
+    reviewQueueRaw,
+    manifestRaw,
+    schemaRaw,
+    monRaw,
+  ] = await Promise.all([
+    catRes.text(),
+    medRes.text(),
+    ixRes.text(),
+    qRes.text(),
+    privacyRes.text(),
+    reviewQueueRes.text(),
+    manifestRes.text(),
+    schemaRes.text(),
+    monRes.text(),
+  ]);
 
   const cat = JSON.parse(catRaw);
   const med = JSON.parse(medRaw);
   const ix = JSON.parse(ixRaw);
   const q = JSON.parse(qRaw);
+  const privacy = JSON.parse(privacyRaw);
+  const reviewQueue = JSON.parse(reviewQueueRaw);
   const manifest = JSON.parse(manifestRaw);
   const schema = JSON.parse(schemaRaw);
   const mon = JSON.parse(monRaw);
 
-  expect(cat.datasetVersion).toBe("3.14.1");
+  expect(cat.datasetVersion).toBe("3.15.0");
   expect(med.snapshotId).toBe(cat.snapshotId);
   expect(ix.snapshotId).toBe(cat.snapshotId);
   expect(q.snapshotId).toBe(cat.snapshotId);
+  expect(privacy.snapshotId).toBe(cat.snapshotId);
+  expect(reviewQueue.snapshotId).toBe(cat.snapshotId);
   expect(manifest.snapshotId).toBe(cat.snapshotId);
   expect(schema.openapi).toBe("3.1.0");
   expect(mon.report.citations.brokenUrls).toEqual([]);
@@ -98,6 +130,8 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     ["/open-data/medications.json", medRaw],
     ["/open-data/interactions.json", ixRaw],
     ["/open-data/quarantine.json", qRaw],
+    ["/open-data/privacy-manifest.json", privacyRaw],
+    ["/open-data/review-queue.json", reviewQueueRaw],
     ["/open-data/schema.json", schemaRaw],
   ] as const) {
     const sha256 = createHash("sha256").update(raw, "utf8").digest("hex");

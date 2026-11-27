@@ -11,10 +11,10 @@ const { mockStats, mockGetInteractionPairs } = vi.hoisted(() => ({
     totalHerbs: 3122,
     sourceCheckedHerbs: 3089,
     clinicallyReviewedHerbs: 0,
-    totalInteractions: 509,
-    totalMedications: 142,
+    totalInteractions: 515,
+    totalMedications: 145,
     clinicianApprovedInteractions: 0,
-    legacyUnreviewedInteractions: 509,
+    legacyUnreviewedInteractions: 515,
     corrections: [],
   },
   mockGetInteractionPairs: vi.fn(async (): Promise<InteractionPair[]> => {
@@ -40,7 +40,9 @@ import { GET as getCatalogJson } from "@/app/open-data/catalog.json/route";
 import { GET as getInteractionsJson } from "@/app/open-data/interactions.json/route";
 import { GET as getManifestJson } from "@/app/open-data/manifest.json/route";
 import { GET as getMedicationsJson } from "@/app/open-data/medications.json/route";
+import { GET as getPrivacyManifestJson } from "@/app/open-data/privacy-manifest.json/route";
 import { GET as getQuarantineJson } from "@/app/open-data/quarantine.json/route";
+import { GET as getReviewQueueJson } from "@/app/open-data/review-queue.json/route";
 import { GET as getSchemaJson } from "@/app/open-data/schema.json/route";
 import { GET as getSourceMonitorLatestJson } from "@/app/open-data/source-monitor-latest.json/route";
 import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
@@ -56,21 +58,33 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
   });
 
   it("shares one atomic snapshotId, SHA-256 manifest digests, and reconciled totals across all Open Data exports", async () => {
-    const [catalogRes, medsRes, ixRes, qRes, schemaRes, manifestRes] =
-      await Promise.all([
-        getCatalogJson(),
-        getMedicationsJson(),
-        getInteractionsJson(),
-        getQuarantineJson(),
-        getSchemaJson(),
-        getManifestJson(),
-      ]);
+    const [
+      catalogRes,
+      medsRes,
+      ixRes,
+      qRes,
+      privacyRes,
+      reviewQueueRes,
+      schemaRes,
+      manifestRes,
+    ] = await Promise.all([
+      getCatalogJson(),
+      getMedicationsJson(),
+      getInteractionsJson(),
+      getQuarantineJson(),
+      getPrivacyManifestJson(),
+      getReviewQueueJson(),
+      getSchemaJson(),
+      getManifestJson(),
+    ]);
 
     for (const res of [
       catalogRes,
       medsRes,
       ixRes,
       qRes,
+      privacyRes,
+      reviewQueueRes,
       schemaRes,
       manifestRes,
     ]) {
@@ -79,24 +93,36 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
       expect(res.headers.get("Cache-Control")).toContain("s-maxage=60");
     }
 
-    const [catalogRaw, medsRaw, ixRaw, qRaw, schemaRaw, manifestRaw] =
-      await Promise.all([
-        catalogRes.text(),
-        medsRes.text(),
-        ixRes.text(),
-        qRes.text(),
-        schemaRes.text(),
-        manifestRes.text(),
-      ]);
+    const [
+      catalogRaw,
+      medsRaw,
+      ixRaw,
+      qRaw,
+      privacyRaw,
+      reviewQueueRaw,
+      schemaRaw,
+      manifestRaw,
+    ] = await Promise.all([
+      catalogRes.text(),
+      medsRes.text(),
+      ixRes.text(),
+      qRes.text(),
+      privacyRes.text(),
+      reviewQueueRes.text(),
+      schemaRes.text(),
+      manifestRes.text(),
+    ]);
 
     const catalog = JSON.parse(catalogRaw) as {
       datasetVersion: string;
       snapshotId: string;
       generatedAt: string;
+      httpCachePolicy: { cacheControl: string; corsAllowOrigin: string };
       counts: Record<string, number>;
       privacyGuarantees: {
         zeroThirdPartyAdTrackers: boolean;
         clientSideOnlyConsultationExport: boolean;
+        privacyManifestUrl: string;
       };
       evidenceHierarchy: { conflictResolutionRule: string };
       endpoints: Record<string, string>;
@@ -140,6 +166,21 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
       };
       botanicals: Array<{ slug: string; quarantineStatus: string }>;
     };
+    const privacyManifest = JSON.parse(privacyRaw) as {
+      datasetVersion: string;
+      snapshotId: string;
+      generatedAt: string;
+      subprocessors: Array<{ name: string }>;
+      guarantees: { zeroThirdPartyAdTrackers: boolean };
+    };
+    const reviewQueue = JSON.parse(reviewQueueRaw) as {
+      datasetVersion: string;
+      snapshotId: string;
+      generatedAt: string;
+      advisoryBoard: { seatsFilled: number; seatsTotal: number };
+      summary: { totalActivePairs: number; priorityQueueCount: number };
+      priorityQueue: Array<{ severity: string; reviewSubmitUrl: string }>;
+    };
     const schema = JSON.parse(schemaRaw) as {
       openapi: string;
       info: { version: string };
@@ -150,6 +191,7 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
       datasetVersion: string;
       snapshotId: string;
       generatedAt: string;
+      httpCachePolicy: { cacheControl: string };
       algorithm: string;
       files: Record<
         string,
@@ -158,15 +200,21 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     };
 
     // Atomic consistency across all exports
-    expect(catalog.snapshotId).toMatch(/^herbally-open-data-3\.14\.1-/);
+    expect(catalog.snapshotId).toMatch(/^herbally-open-data-3\.15\.0-/);
     expect(meds.snapshotId).toBe(catalog.snapshotId);
     expect(ix.snapshotId).toBe(catalog.snapshotId);
     expect(quarantine.snapshotId).toBe(catalog.snapshotId);
+    expect(privacyManifest.snapshotId).toBe(catalog.snapshotId);
+    expect(reviewQueue.snapshotId).toBe(catalog.snapshotId);
     expect(manifest.snapshotId).toBe(catalog.snapshotId);
+    expect(catalog.httpCachePolicy.cacheControl).toContain("s-maxage=60");
+    expect(manifest.httpCachePolicy.cacheControl).toContain("s-maxage=60");
 
     expect(meds.generatedAt).toBe(catalog.generatedAt);
     expect(ix.generatedAt).toBe(catalog.generatedAt);
     expect(quarantine.generatedAt).toBe(catalog.generatedAt);
+    expect(privacyManifest.generatedAt).toBe(catalog.generatedAt);
+    expect(reviewQueue.generatedAt).toBe(catalog.generatedAt);
     expect(manifest.generatedAt).toBe(catalog.generatedAt);
 
     // SHA-256 verification against exact response payloads
@@ -176,6 +224,8 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
       "/open-data/medications.json": medsRaw,
       "/open-data/interactions.json": ixRaw,
       "/open-data/quarantine.json": qRaw,
+      "/open-data/privacy-manifest.json": privacyRaw,
+      "/open-data/review-queue.json": reviewQueueRaw,
       "/open-data/schema.json": schemaRaw,
     };
     for (const [p, raw] of Object.entries(rawByPath)) {
@@ -185,16 +235,16 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     }
 
     // Exact cross-endpoint count reconciliation
-    expect(catalog.counts.publishedInteractionPairs).toBe(509);
-    expect(ix.totalPairs).toBe(509);
-    expect(meds.totalInteractionPairs).toBe(509);
+    expect(catalog.counts.publishedInteractionPairs).toBe(515);
+    expect(ix.totalPairs).toBe(515);
+    expect(meds.totalInteractionPairs).toBe(515);
     expect(
       meds.medications.reduce((sum, m) => sum + m.totalInteractions, 0)
-    ).toBe(509);
+    ).toBe(515);
 
-    expect(catalog.counts.medicationsAndClasses).toBe(142);
-    expect(meds.totalMedications).toBe(142);
-    expect(meds.medications).toHaveLength(142);
+    expect(catalog.counts.medicationsAndClasses).toBe(145);
+    expect(meds.totalMedications).toBe(145);
+    expect(meds.medications).toHaveLength(145);
     for (const med of meds.medications) {
       expect(med.reviewStatus).toBe("awaiting_clinical_review");
       expect(med.url).toContain(`/medications/${med.drugSlug}`);
@@ -206,6 +256,16 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     expect(ix.interactions.every((p) => p.clinicianSigned === false)).toBe(
       true
     );
+    expect(privacyManifest.subprocessors.length).toBeGreaterThanOrEqual(10);
+    expect(privacyManifest.guarantees.zeroThirdPartyAdTrackers).toBe(true);
+    expect(reviewQueue.advisoryBoard.seatsFilled).toBe(0);
+    expect(reviewQueue.summary.totalActivePairs).toBe(515);
+    expect(reviewQueue.summary.priorityQueueCount).toBeGreaterThan(50);
+    expect(
+      reviewQueue.priorityQueue.every(
+        (q) => q.severity === "contraindicated" || q.severity === "severe"
+      )
+    ).toBe(true);
 
     expect(catalog.counts.quarantinedToxicBotanicals).toBe(
       getAllDangerousHerbs().length
@@ -227,11 +287,20 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     expect(catalog.privacyGuarantees.clientSideOnlyConsultationExport).toBe(
       true
     );
+    expect(catalog.privacyGuarantees.privacyManifestUrl).toContain(
+      "/open-data/privacy-manifest.json"
+    );
     expect(catalog.evidenceHierarchy.conflictResolutionRule).toContain(
       "quarantined_collision"
     );
     expect(catalog.endpoints.manifestJson).toContain(
       "/open-data/manifest.json"
+    );
+    expect(catalog.endpoints.privacyManifestJson).toContain(
+      "/open-data/privacy-manifest.json"
+    );
+    expect(catalog.endpoints.reviewQueueJson).toContain(
+      "/open-data/review-queue.json"
     );
     expect(catalog.endpoints.securityTxt).toContain(
       "/.well-known/security.txt"
@@ -239,12 +308,14 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     expect(catalog.endpoints.trustCenter).toContain("/trust");
 
     expect(schema.openapi).toBe("3.1.0");
-    expect(schema.info.version).toBe("3.14.1");
+    expect(schema.info.version).toBe("3.15.0");
     for (const p of [
       "/open-data/catalog.json",
       "/open-data/medications.json",
       "/open-data/interactions.json",
       "/open-data/quarantine.json",
+      "/open-data/privacy-manifest.json",
+      "/open-data/review-queue.json",
       "/open-data/manifest.json",
       "/open-data/schema.json",
       "/open-data/source-monitor-latest.json",
@@ -257,6 +328,8 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     }
     expect(schema.components.schemas.ManifestResponse).toBeDefined();
     expect(schema.components.schemas.InteractionsDataset).toBeDefined();
+    expect(schema.components.schemas.PrivacyManifestResponse).toBeDefined();
+    expect(schema.components.schemas.ReviewQueueResponse).toBeDefined();
   });
 
   it("serves verified GitHub Actions source-monitor JSON artifact plus live workflow status fields", async () => {
@@ -281,7 +354,7 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
         };
       };
       expect(body.verificationProvenance.sourceMonitorRunId).toBe(
-        "46054115945"
+        "46078153584"
       );
       expect(body.liveGitHubWorkflowRuns.fetchedAt).toBeTruthy();
       expect(body.report.citations.totalUniqueUrls).toBeGreaterThanOrEqual(240);

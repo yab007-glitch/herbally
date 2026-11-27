@@ -28,10 +28,13 @@ export function WidgetBuilder() {
 
   const iframeSnippet = `<iframe src="${appUrl}${iframePath}" width="100%" height="440" style="border:0;border-radius:16px;max-width:${widthCss}" loading="lazy" title="${titleAttr}"></iframe>\n<p style="font-size:12px;margin-top:6px"><a href="${appUrl}${widgetLocale === "fr" ? "/fr" : ""}/herb-drug-interactions" rel="noopener">${t("attributionLabel")}</a></p>`;
 
-  const jsLoaderSnippet = `<div id="herbally-checker-mount" style="max-width:${widthCss}"></div>\n<script>\n(function(){var el=document.getElementById("herbally-checker-mount");if(!el)return;var f=document.createElement("iframe");f.src="${appUrl}${iframePath}";f.width="100%";f.height="440";f.loading="lazy";f.title="${titleAttr}";f.style.cssText="border:0;border-radius:16px;width:100%";el.appendChild(f);})();\n</script>`;
+  const jsLoaderSnippet = `<herbally-checker locale="${widgetLocale}" max-width="${widthCss}"></herbally-checker>\n<script src="${appUrl}/embed.js" defer></script>\n<p style="font-size:12px;margin-top:6px"><a href="${appUrl}${widgetLocale === "fr" ? "/fr" : ""}/herb-drug-interactions" rel="noopener">${t("attributionLabel")}</a></p>`;
 
   const snippet = embedFormat === "iframe" ? iframeSnippet : jsLoaderSnippet;
-  const cspHeaderSnippet = `Content-Security-Policy: frame-src 'self' ${appUrl};`;
+  const cspHeaderSnippet =
+    embedFormat === "iframe"
+      ? `Content-Security-Policy: frame-src 'self' ${appUrl};`
+      : `Content-Security-Policy: frame-src 'self' ${appUrl}; script-src 'self' ${appUrl};`;
 
   async function copyText(
     text: string,

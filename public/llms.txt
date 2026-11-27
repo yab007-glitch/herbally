@@ -1,6 +1,6 @@
 # HerbAlly
 
-> HerbAlly is a free, bilingual (English / French) educational botanical & herb–drug interaction reference platform — built to help adults prepare informed questions for a pharmacist or clinician, not to provide clinical decision support or medical advice. Publishes 3,122 herb profiles, 509 documented herb–drug interaction pairs across 142 medications and drug classes, a Health Canada NPN / DIN-HM Supplement Decoder, a Multi-Herb Stack Checker, a Pre-Surgery Supplement Review Checklist, an 18+ Adult Monograph Reference Dose Tool, a bilingual Virtual Herbalist educational assistant, and structured governance/corrections tracking. Editorially checked by Yasser Bheekun, MLT (OPTMQ · CSMLS). Clinician-signed records: 0 to date (open clinical review intake via LinkedIn SSO at `/clinical-review`). Free and open — no paywalls; advertising launch gate is currently off.
+> HerbAlly is a free, bilingual (English / French) educational botanical & herb–drug interaction reference platform — built to help adults prepare informed questions for a pharmacist or clinician, not to provide clinical decision support or medical advice. Publishes 3,122 herb profiles, 515 documented herb–drug interaction pairs across 145 medications and drug classes (including DOAC anticoagulants rivaroxaban, dabigatran, apixaban, and edoxaban plus clopidogrel), a Health Canada NPN / DIN-HM Supplement Decoder, a Multi-Herb Stack Checker (7 cumulative pharmacology overlap alerts + browser-local `.txt`/`.json` consultation brief exports), a Pre-Surgery Supplement Review Checklist, an 18+ Adult Monograph Reference Dose Tool, a bilingual Virtual Herbalist educational assistant, and structured governance/corrections tracking. Editorially checked by Yasser Bheekun, MLT (OPTMQ · CSMLS). Clinician-signed records: 0 to date (open clinical review intake via LinkedIn SSO at `/clinical-review`). Free and open — no paywalls; advertising launch gate is currently off.
 
 ## Core Reference & Interactive Tools
 
@@ -8,7 +8,7 @@
 - Complete Bilingual Extended Reference Spec: https://herbally.app/llms-full.txt
 - Herb Database (3,122 profiles, filterable by source-checked / review status): https://herbally.app/herbs
 - Herb–Drug Interaction Checker & Multi-Herb Stack Checker: https://herbally.app/herb-drug-interactions
-- Reverse-Lookup Medication Directory (142 drugs & therapeutic classes, single-molecule vs class labelled): https://herbally.app/medications
+- Reverse-Lookup Medication Directory (145 drugs & therapeutic classes, single-molecule vs class labelled): https://herbally.app/medications
 - Curated Interaction Pair Pages: https://herbally.app/interactions/[herb]/[drug] (e.g. https://herbally.app/interactions/ginger/warfarin)
 - Pre-Surgery Supplement Review Checklist: https://herbally.app/surgery-planner
 - Health Canada NPN / DIN-HM Supplement Decoder (live LNHPD lookup — licence status vs market status): https://herbally.app/npn-checker
@@ -24,7 +24,7 @@
 
 - Accueil & Vérificateur d'interactions rapide : https://herbally.app/fr
 - Base de données des plantes médicinales (3 122 fiches) : https://herbally.app/fr/herbs
-- Répertoire des médicaments A–Z (142 médicaments et classes, 509 paires documentées) : https://herbally.app/fr/medications
+- Répertoire des médicaments A–Z (145 médicaments et classes, 515 paires documentées) : https://herbally.app/fr/medications
 - Vérificateur multi-plantes et interactions : https://herbally.app/fr/herb-drug-interactions
 - Liste de vérification préopératoire des suppléments : https://herbally.app/fr/surgery-planner
 - Décodeur NPN / DIN-HM Santé Canada (statut de licence vs statut de commercialisation) : https://herbally.app/fr/npn-checker
@@ -45,13 +45,15 @@
 - About HerbAlly ("What HerbAlly Is — and Is Not"): https://herbally.app/about
 - Open Data JSON Catalog (live coverage counts & sources): https://herbally.app/open-data/catalog.json
 - Open Data Medications & Interactions Registry JSON: https://herbally.app/open-data/medications.json
-- Open Data Active Herb–Drug Interactions JSON (509 pairs): https://herbally.app/open-data/interactions.json
+- Open Data Active Herb–Drug Interactions JSON (515 pairs): https://herbally.app/open-data/interactions.json
 - Open Data Quarantined Toxic Botanicals Registry JSON (115 plants): https://herbally.app/open-data/quarantine.json
+- Open Data Quebec Law 25 / PIPEDA Privacy & Sub-Processor Manifest JSON: https://herbally.app/open-data/privacy-manifest.json
+- Open Data Prioritized Clinical Review Queue JSON (contraindicated & severe pairs): https://herbally.app/open-data/review-queue.json
 - Open Data SHA-256 Integrity Manifest JSON: https://herbally.app/open-data/manifest.json
 - OpenAPI 3.1 Machine-Readable API Specification JSON: https://herbally.app/open-data/schema.json
 - Automated Scientific Source & OpenAPI Monitor JSON: https://herbally.app/open-data/source-monitor-latest.json
 - RFC 9116 Security & Vulnerability Contact: https://herbally.app/.well-known/security.txt
-- Embeddable Interaction Checker & Librarian Citation Kit: https://herbally.app/widgets
+- Embeddable Interaction Checker, CSP-safe Web Component (`/embed.js`) & Librarian Citation Kit: https://herbally.app/widgets
 - RSS Updates Feed: https://herbally.app/rss.xml
 - Sitemap (all indexable EN + FR URLs): https://herbally.app/sitemap.xml
 

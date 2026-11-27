@@ -274,6 +274,14 @@ export default async function ClinicalReviewPage({
               ? "Consulter le protocole d'intégration et de gouvernance clinique →"
               : "Read the Clinical Reviewer Onboarding & Governance Protocol →"}
           </Link>
+          <a
+            href="/open-data/review-queue.json"
+            className="font-medium text-primary underline underline-offset-4"
+          >
+            {fr
+              ? "File prioritaire JSON (paires contre-indiquées / graves à réviser) →"
+              : "Machine-readable Priority Review Queue JSON (contraindicated & severe) →"}
+          </a>
         </p>
         <p className="text-xs text-muted-foreground">
           {fr

@@ -42,7 +42,7 @@ jobs:
         run: npx tsx scripts/verify-herb-database.ts --migrations-only
 
   targeted-migration-fixture:
-    name: Targeted PG16 Migration Fixture (00097–00104)
+    name: Targeted PG16 Migration Fixture (00097–00111)
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -72,7 +72,7 @@ jobs:
         run: bash scripts/test-migrations-postgres.sh
 
   full-migration-replay:
-    name: Full Migration Replay (00001–00104)
+    name: Full Migration Replay (00001–00111)
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -250,7 +250,7 @@ jobs:
           retention-days: 30
 
   postgrest-and-migrated-e2e:
-    name: PostgREST Smoke & Migrated-DB E2E (post-00104)
+    name: PostgREST Smoke & Migrated-DB E2E (post-00104/00111)
     needs: [targeted-migration-fixture]
     runs-on: ubuntu-latest
     services:
@@ -282,7 +282,7 @@ jobs:
       - run: npm ci
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
-      - name: Migrate & verify PG16 database through 00104
+      - name: Migrate & verify PG16 database through 00111 (incl. 00104 contract)
         run: bash scripts/test-migrations-postgres.sh
       - name: Start PostgREST and run real PostgREST smoke suite
         run: |

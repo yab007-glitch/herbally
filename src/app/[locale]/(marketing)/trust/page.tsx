@@ -68,12 +68,12 @@ const TEST_SUITES = [
   },
   {
     id: "A4",
-    scopeEn: "All 142 medications integration matrix & matcher verification",
-    scopeFr: "Matrice d'intégration complète des 142 médicaments et classes",
+    scopeEn: "All 145 medications integration matrix & matcher verification",
+    scopeFr: "Matrice d'intégration complète des 145 médicaments et classes",
     assertionEn:
-      "Exercises all 142 medications and 509 pairs: slug determinism, EN/FR URLs, severity counts, normalized/duplicate labels, and unknown lookup fail-closed behavior.",
+      "Exercises all 145 medications and 515 pairs: slug determinism, EN/FR URLs, severity counts, normalized/duplicate labels, and unknown lookup fail-closed behavior.",
     assertionFr:
-      "Teste les 142 médicaments et 509 paires : déterminisme des slugs, URL EN/FR, agrégation de gravité, normalisation et absence != innocuité.",
+      "Teste les 145 médicaments et 515 paires : déterminisme des slugs, URL EN/FR, agrégation de gravité, normalisation et absence != innocuité.",
     file: "src/lib/interactions/__tests__/all-142-medications.test.ts",
   },
   {
@@ -183,6 +183,13 @@ const MIGRATIONS = [
       "Updates legacy EMA 404 slug sennae-fructus-acutifoliae caught by host-paced monitoring to canonical live EMA HMPC monograph sennae-fructus (HTTP 200).",
     summaryFr:
       "Met à jour l'URL EMA obsolète sennae-fructus-acutifoliae détectée par la surveillance vers la monographie canonique sennae-fructus (HTTP 200).",
+  },
+  {
+    file: "00111_doac_and_antiplatelet_interactions.sql",
+    summaryEn:
+      "Adds 6 PubMed-cited EN/FR interaction records covering DOAC anticoagulants (Rivaroxaban, Dabigatran, Apixaban, Edoxaban) and Clopidogrel alongside St. John's Wort and Ginkgo Biloba, preserving unreviewed governance blocks.",
+    summaryFr:
+      "Ajoute 6 fiches d'interaction bilingues sourcées PubMed couvrant les anticoagulants AOD (Rivaroxaban, Dabigatran, Apixaban, Édoxaban) et le Clopidogrel avec le millepertuis et le ginkgo.",
   },
 ] as const;
 
@@ -375,10 +382,28 @@ export default async function TrustCenterPage() {
               /open-data/quarantine.json
             </a>
             <a
+              href="/open-data/privacy-manifest.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/privacy-manifest.json
+            </a>
+            <a
+              href="/open-data/review-queue.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/review-queue.json
+            </a>
+            <a
               href="/open-data/manifest.json"
               className="text-primary underline underline-offset-4"
             >
               /open-data/manifest.json (SHA-256)
+            </a>
+            <a
+              href="/embed.js"
+              className="text-primary underline underline-offset-4"
+            >
+              /embed.js
             </a>
             <a
               href="/open-data/schema.json"
@@ -702,8 +727,8 @@ export default async function TrustCenterPage() {
                   : "Independent Licensed Clinical Sign-Off (Group B):"}
               </strong>{" "}
               {fr
-                ? `${stats.clinicianApprovedInteractions} / ${displayedInteractions || 509} paires d'interactions et 0 / 3 sièges du comité consultatif sont actuellement pourvus. HerbAlly ne prétend à aucune validation clinique tant que des signatures licenciées ne sont pas enregistrées.`
-                : `${stats.clinicianApprovedInteractions} / ${displayedInteractions || 509} interaction pairs and 0 / 3 Clinical Advisory Board seats are currently filled. HerbAlly never claims clinical sign-off before verified licensed review.`}
+                ? `${stats.clinicianApprovedInteractions} / ${displayedInteractions || 515} paires d'interactions et 0 / 3 sièges du comité consultatif sont actuellement pourvus. HerbAlly ne prétend à aucune validation clinique tant que des signatures licenciées ne sont pas enregistrées.`
+                : `${stats.clinicianApprovedInteractions} / ${displayedInteractions || 515} interaction pairs and 0 / 3 Clinical Advisory Board seats are currently filled. HerbAlly never claims clinical sign-off before verified licensed review.`}
             </li>
             <li>
               <strong className="text-foreground">

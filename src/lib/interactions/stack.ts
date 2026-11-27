@@ -125,7 +125,7 @@ const OVERLAP_RULES: readonly OverlapRule[] = [
     code: "bleeding_overlap",
     severity: "severe",
     pattern:
-      /warfarin|apixaban|clopidogrel|aspirin|anticoagulant|antiplatelet|bleeding|platelet|inr|saignement|plaquet/,
+      /warfarin|apixaban|rivaroxaban|dabigatran|edoxaban|clopidogrel|aspirin|anticoagulant|antiplatelet|bleeding|platelet|inr|saignement|plaquet/,
     copy: {
       en: {
         title: "Cumulative bleeding-risk overlap",
