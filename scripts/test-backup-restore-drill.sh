@@ -22,12 +22,14 @@ RESTORE_DB="${SOURCE_DB}_restored"
 ADMIN_URL="postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/postgres"
 SOURCE_URL="${DATABASE_URL:-postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${SOURCE_DB}}"
 RESTORE_URL="postgresql://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${RESTORE_DB}"
-DUMP_FILE="/tmp/herbally-backup-drill.dump"
+DUMP_DIR="$(mktemp -d)"
+DUMP_FILE="${DUMP_DIR}/herbally-backup-drill.dump"
+trap 'rm -rf "$DUMP_DIR" >/dev/null 2>&1 || true' EXIT
 PG_BIN_IMAGE="${PG_BIN_IMAGE:-}"
 
 run_pg_dump() {
   if [ -n "$PG_BIN_IMAGE" ]; then
-    docker run --rm --network host -v /tmp:/tmp "$PG_BIN_IMAGE" pg_dump "$@"
+    docker run --rm --network host -u "$(id -u):$(id -g)" -v "${DUMP_DIR}:${DUMP_DIR}" "$PG_BIN_IMAGE" pg_dump "$@"
   else
     pg_dump "$@"
   fi
@@ -35,7 +37,7 @@ run_pg_dump() {
 
 run_pg_restore() {
   if [ -n "$PG_BIN_IMAGE" ]; then
-    docker run --rm --network host -v /tmp:/tmp "$PG_BIN_IMAGE" pg_restore "$@"
+    docker run --rm --network host -u "$(id -u):$(id -g)" -v "${DUMP_DIR}:${DUMP_DIR}" "$PG_BIN_IMAGE" pg_restore "$@"
   else
     pg_restore "$@"
   fi
