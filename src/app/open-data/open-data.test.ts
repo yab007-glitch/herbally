@@ -158,7 +158,7 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     };
 
     // Atomic consistency across all exports
-    expect(catalog.snapshotId).toMatch(/^herbally-open-data-3\.14\.0-/);
+    expect(catalog.snapshotId).toMatch(/^herbally-open-data-3\.14\.1-/);
     expect(meds.snapshotId).toBe(catalog.snapshotId);
     expect(ix.snapshotId).toBe(catalog.snapshotId);
     expect(quarantine.snapshotId).toBe(catalog.snapshotId);
@@ -239,7 +239,7 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
     expect(catalog.endpoints.trustCenter).toContain("/trust");
 
     expect(schema.openapi).toBe("3.1.0");
-    expect(schema.info.version).toBe("3.14.0");
+    expect(schema.info.version).toBe("3.14.1");
     for (const p of [
       "/open-data/catalog.json",
       "/open-data/medications.json",

@@ -83,6 +83,7 @@ EXPAND_MIGRATIONS=(
   "supabase/migrations/00107_open_herb_edit_suggestions.sql"
   "supabase/migrations/00108_perioperative_and_toxic_safety_reconciliation.sql"
   "supabase/migrations/00109_interaction_source_url_reconciliation.sql"
+  "supabase/migrations/00110_ema_sennae_fructus_url_fix.sql"
 )
 
 CONTRACT_MIGRATIONS=(
@@ -407,10 +408,11 @@ BEGIN
       'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/barley-grass',
       'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/cats-claw',
       'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/devils-claw',
-      'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/holy-basil'
+      'https://www.mskcc.org/cancer-care/integrative-medicine/herbs/holy-basil',
+      'https://www.ema.europa.eu/en/medicines/herbal/sennae-fructus-acutifoliae'
     )
   ) THEN
-    RAISE EXCEPTION 'Dead 404 citation URL still present in public.drug_interactions post-00109';
+    RAISE EXCEPTION 'Dead 404 citation URL still present in public.drug_interactions post-00110';
   END IF;
 END
 $$;

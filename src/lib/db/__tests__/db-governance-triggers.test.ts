@@ -67,7 +67,7 @@ describe("A7: PostgreSQL fail-closed governance migrations & clinical approval t
     );
   });
 
-  it("enforces fail-closed clinician edit intake, perioperative safety, and citation URL reconciliation in 00105, 00108, and 00109", () => {
+  it("enforces fail-closed clinician edit intake, perioperative safety, and citation URL reconciliation in 00105, 00108, 00109, and 00110", () => {
     const sql105 = readMigration("00105_clinical_edit_requests.sql");
     const sql108 = readMigration(
       "00108_perioperative_and_toxic_safety_reconciliation.sql"
@@ -75,6 +75,7 @@ describe("A7: PostgreSQL fail-closed governance migrations & clinical approval t
     const sql109 = readMigration(
       "00109_interaction_source_url_reconciliation.sql"
     );
+    const sql110 = readMigration("00110_ema_sennae_fructus_url_fix.sql");
     expect(sql105).toContain(
       "CREATE TABLE IF NOT EXISTS public.clinical_edit_requests"
     );
@@ -85,6 +86,12 @@ describe("A7: PostgreSQL fail-closed governance migrations & clinical approval t
     expect(sql109).toContain("https://pubmed.ncbi.nlm.nih.gov/24566323/");
     expect(sql109).toContain(
       "https://www.mskcc.org/cancer-care/integrative-medicine/herbs/holy-basil-01"
+    );
+    expect(sql110).toContain(
+      "https://www.ema.europa.eu/en/medicines/herbal/sennae-fructus-acutifoliae"
+    );
+    expect(sql110).toContain(
+      "https://www.ema.europa.eu/en/medicines/herbal/sennae-fructus"
     );
   });
 });
