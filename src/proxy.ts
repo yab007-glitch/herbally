@@ -82,6 +82,8 @@ const LOCALE_EXCLUDED_PATHS = [
   "/ads.txt",
   "/llms.txt",
   "/llms-full.txt",
+  "/open-data",
+  "/rss.xml",
   "/sitemap.xml",
   "/manifest",
   "/opengraph-image",

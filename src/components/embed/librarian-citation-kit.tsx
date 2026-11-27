@@ -30,8 +30,8 @@ export function LibrarianCitationKit() {
 
   const plainBlurb =
     kitLocale === "fr"
-      ? `HerbAlly — Vérificateur d'interactions plantes–médicaments et monographies bilingues (${checkerUrl}). Outil éducatif gratuit et sans compte présentant la gravité des interactions enregistrées, les médicaments associés et le planificateur préopératoire avec sources réglementaires (BDPSNH de Santé Canada, monographies HMPC de l'EMA, NIH NCCIH et LiverTox). Ne constitue pas un avis médical. Méthodologie et licences : ${methodologyUrl}.`
-      : `HerbAlly — Herb–Drug Interaction Checker & Monograph Reference (${checkerUrl}). Free, ad-free, bilingual (EN/FR) educational reference tool showing recorded interaction pairs, reverse prescription-drug lookup, Health Canada NPN decoder, and pre-surgery washout planner citing Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, and NIH LiverTox. Not medical advice. Methodology and open-data licences: ${methodologyUrl}.`;
+      ? `HerbAlly — Vérificateur d'interactions plantes–médicaments et monographies bilingues (${checkerUrl}). Outil éducatif gratuit et sans compte regroupant 3 122 fiches plantes, 509 paires d'interactions couvrant 142 médicaments et classes, le décodeur NPN Santé Canada et la liste de révision préopératoire des suppléments avec sources réglementaires (BDPSNH de Santé Canada, monographies HMPC de l'EMA, NIH NCCIH et LiverTox). Ne constitue pas un avis médical. Méthodologie et licences : ${methodologyUrl}. Catalogue JSON ouvert : ${appUrl}/open-data/catalog.json.`
+      : `HerbAlly — Herb–Drug Interaction Checker & Monograph Reference (${checkerUrl}). Free, ad-free, bilingual (EN/FR) educational reference covering 3,122 herb profiles, 509 interaction pairs across 142 medications/classes, Health Canada NPN decoder, and Pre-Surgery Supplement Review Checklist citing Health Canada LNHPD, EU EMA HMPC, NIH NCCIH, and NIH LiverTox. Not medical advice. Methodology and open-data licences: ${methodologyUrl}. Open JSON catalog: ${appUrl}/open-data/catalog.json.`;
 
   const htmlSnippet =
     kitLocale === "fr"

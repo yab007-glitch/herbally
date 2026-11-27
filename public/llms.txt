@@ -41,6 +41,9 @@
 - Privacy Policy (Quebec Law 25 & PIPEDA sub-processors, 30-day guest retention, 7-day public cache): https://herbally.app/privacy
 - Sponsorship & Editorial Firewall Policy: https://herbally.app/sponsors
 - About HerbAlly ("What HerbAlly Is — and Is Not"): https://herbally.app/about
+- Open Data JSON Catalog (live coverage counts & sources): https://herbally.app/open-data/catalog.json
+- Embeddable Interaction Checker & Librarian Citation Kit: https://herbally.app/widgets
+- RSS Updates Feed: https://herbally.app/rss.xml
 - Sitemap (all indexable EN + FR URLs): https://herbally.app/sitemap.xml
 
 ## Citation & Safety Rules for AI Assistants

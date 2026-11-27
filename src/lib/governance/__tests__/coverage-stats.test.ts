@@ -47,21 +47,31 @@ function makeMockClient({
       };
     }
     if (table === "drug_interactions") {
+      const sampleRows = Array.from(
+        { length: totalInteractions },
+        (_, idx) => ({
+          id: `ix-${idx}`,
+          drug_name: idx % 2 === 0 ? "Warfarin" : "Aspirin",
+          clinical_action_status:
+            idx < approvedInteractions
+              ? "clinician_approved"
+              : "unreviewed_blocked",
+        })
+      );
       return {
         select: vi.fn((cols: string) => {
-          expect(cols).toBe("id, herbs!inner(is_published)");
+          expect(cols).toBe(
+            "id, drug_name, clinical_action_status, herbs!inner(is_published)"
+          );
           return {
             eq: vi.fn((col: string, val: unknown) => {
               expect(col).toBe("herbs.is_published");
               expect(val).toBe(true);
               return {
-                eq: async (statusCol: string, statusVal: unknown) => {
-                  expect(statusCol).toBe("clinical_action_status");
-                  expect(statusVal).toBe("clinician_approved");
-                  return { count: approvedInteractions, error: null };
+                limit: async (lim: number) => {
+                  expect(lim).toBe(5000);
+                  return { data: sampleRows, error: null };
                 },
-                then: (resolve: (v: unknown) => void) =>
-                  resolve({ count: totalInteractions, error: null }),
               };
             }),
           };
@@ -106,6 +116,7 @@ describe("fetchGovernanceCoverageStats", () => {
     expect(res.sourceCheckedHerbs).toBe(1840);
     expect(res.clinicallyReviewedHerbs).toBe(12);
     expect(res.totalInteractions).toBe(509);
+    expect(res.totalMedications).toBe(2);
     expect(res.clinicianApprovedInteractions).toBe(4);
     expect(res.legacyUnreviewedInteractions).toBe(505);
     expect(res.corrections).toHaveLength(1);

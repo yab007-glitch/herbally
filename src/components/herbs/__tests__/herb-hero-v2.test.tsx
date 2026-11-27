@@ -76,7 +76,7 @@ describe("HerbHeroV2 safety and review gating", () => {
     localStorage.clear();
   });
 
-  it("forces unsafe pregnancy/nursing, shows toxicPlantBadge, suppresses EvidenceGrade and calculator, and warns when dangerous herb has 0 interactions", () => {
+  it("renders dedicated Toxicology Quarantine Summary, shows toxicPlantBadge, suppresses SafetyGlance/EvidenceGrade/calculator for dangerous herbs", () => {
     const { container } = render(
       <HerbHeroV2
         herb={makeHeroHerb({
@@ -96,7 +96,11 @@ describe("HerbHeroV2 safety and review gating", () => {
       />
     );
 
-    expect(screen.getAllByText("safetyGlance.unsafe")).toHaveLength(2);
+    expect(screen.getByText("Toxicology Quarantine Summary")).toBeDefined();
+    expect(screen.getByText(/strictly prohibited/i)).toBeDefined();
+    expect(screen.getByText(/1-800-222-1222/)).toBeDefined();
+    expect(screen.queryByText("safetyGlance.title")).toBeNull();
+    expect(screen.queryByText("safetyGlance.unsafe")).toBeNull();
     expect(screen.getByText("safetyGlance.toxicPlantBadge")).toBeDefined();
     expect(
       screen.getByText("safetyGlance.toxicQuarantineStatus")
@@ -104,9 +108,7 @@ describe("HerbHeroV2 safety and review gating", () => {
     expect(screen.queryByTestId("provenance-badge")).toBeNull();
     expect(screen.queryByTestId("evidence-grade")).toBeNull();
     expect(container.querySelector('a[href*="/calculator"]')).toBeNull();
-    expect(
-      screen.getByText("safetyGlance.interactionDangerousNone")
-    ).toBeDefined();
+    expect(container.querySelector('a[href*="/herbalist"]')).toBeNull();
     expect(
       screen.getByRole("button", { name: /Suggest an edit/i })
     ).toBeDefined();

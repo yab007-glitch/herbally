@@ -65,6 +65,20 @@ export default async function MedicationsIndexPage() {
             url: pageUrl,
             inLanguage: ["en", "fr"],
             isAccessibleForFree: true,
+            license: `${baseUrl}/methodology`,
+            version: "2026-11",
+            distribution: [
+              {
+                "@type": "DataDownload",
+                encodingFormat: "application/json",
+                contentUrl: `${baseUrl}/open-data/catalog.json`,
+              },
+              {
+                "@type": "DataDownload",
+                encodingFormat: "text/plain",
+                contentUrl: `${baseUrl}/llms-full.txt`,
+              },
+            ],
             creator: {
               "@type": "Organization",
               name: "HerbAlly",

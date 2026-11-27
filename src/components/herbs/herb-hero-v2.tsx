@@ -20,7 +20,7 @@ import {
 import { isBucketCategory } from "@/lib/herbs/category";
 import { isDangerousHerb } from "@/lib/data/dangerous-herbs";
 import { cn } from "@/lib/utils";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useSyncExternalStore, useEffect } from "react";
 import {
   addToGarden,
@@ -73,6 +73,7 @@ export function HerbHeroV2({
 }: HerbHeroV2Props) {
   const dangerous = isDangerousHerb(herb.slug);
   const allowCalculator = showCalculator && !dangerous;
+  const fr = useLocale() === "fr";
   const t = useTranslations();
   // Same external-store read as HerbCard: a lazy useState initializer ran
   // against localStorage during the first client render, which disagrees with
@@ -225,21 +226,44 @@ export function HerbHeroV2({
           </div>
         </div>
 
-        {/* One efficacy signal only: the category badge above already says
-            what this herb is for. The old "Anti-inflammatory remedy" chip
-            repeated it a second time and diluted the evidence chip. */}
-        <SafetyGlance
-          pregnancySafe={pregnancySafe}
-          nursingSafe={nursingSafe}
-          pregnancySafeOral={pregnancySafeOral}
-          pregnancySafeTopical={pregnancySafeTopical}
-          nursingSafeOral={nursingSafeOral}
-          nursingSafeTopical={nursingSafeTopical}
-          contraindications={herb.contraindications}
-          interactions={interactions}
-          href={safetyHref}
-          isDangerous={dangerous}
-        />
+        {dangerous ? (
+          <section
+            aria-labelledby="toxic-quarantine-summary-heading"
+            className="space-y-2 rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-left"
+          >
+            <h2
+              id="toxic-quarantine-summary-heading"
+              className="eyebrow text-destructive"
+            >
+              {fr
+                ? "Résumé de quarantaine toxicologique"
+                : "Toxicology Quarantine Summary"}
+            </h2>
+            <p className="text-sm font-medium text-foreground">
+              {fr
+                ? "Usage humain : strictement interdit — plante toxique ou potentiellement mortelle."
+                : "Human use: strictly prohibited — poisonous or potentially lethal botanical."}
+            </p>
+            <p className="text-xs font-medium text-destructive">
+              {fr
+                ? "En cas d'exposition : Centre antipoison (Canada) 1-844-764-7669 · Poison Control (É.-U.) 1-800-222-1222 · Urgence 911."
+                : "If exposed: Poison Control (US) 1-800-222-1222 · Poison Control (Canada) 1-844-764-7669 · Emergency 911."}
+            </p>
+          </section>
+        ) : (
+          <SafetyGlance
+            pregnancySafe={pregnancySafe}
+            nursingSafe={nursingSafe}
+            pregnancySafeOral={pregnancySafeOral}
+            pregnancySafeTopical={pregnancySafeTopical}
+            nursingSafeOral={nursingSafeOral}
+            nursingSafeTopical={nursingSafeTopical}
+            contraindications={herb.contraindications}
+            interactions={interactions}
+            href={safetyHref}
+            isDangerous={dangerous}
+          />
+        )}
 
         <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
           {!dangerous && (

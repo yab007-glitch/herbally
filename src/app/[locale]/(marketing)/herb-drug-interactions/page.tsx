@@ -41,7 +41,8 @@ export default async function HerbDrugInteractionsPage() {
   });
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const fr = locale === "fr";
-  const url = `${siteUrl()}${fr ? "/fr" : ""}/herb-drug-interactions`;
+  const baseUrl = siteUrl();
+  const url = `${baseUrl}${fr ? "/fr" : ""}/herb-drug-interactions`;
 
   return (
     <ToolsMessagesProvider locale={locale}>
@@ -63,10 +64,24 @@ export default async function HerbDrugInteractionsPage() {
               url,
               inLanguage: ["en", "fr"],
               isAccessibleForFree: true,
+              license: `${baseUrl}/methodology`,
+              version: "2026-11",
+              distribution: [
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "application/json",
+                  contentUrl: `${baseUrl}/open-data/catalog.json`,
+                },
+                {
+                  "@type": "DataDownload",
+                  encodingFormat: "text/plain",
+                  contentUrl: `${baseUrl}/llms-full.txt`,
+                },
+              ],
               creator: {
                 "@type": "Organization",
                 name: "HerbAlly",
-                url: siteUrl(),
+                url: baseUrl,
               },
               variableMeasured: [
                 "Herb Name",

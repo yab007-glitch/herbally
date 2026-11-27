@@ -41,5 +41,6 @@ Potentially fatal botanicals (`Abrus precatorius`, `Atropa belladonna`, etc.) tr
 ## 5. Structured Data, Bilingual Parity & Crawling
 
 - **Locale Architecture**: English unprefixed (`/`), French under `/fr` with `hreflang` alternates (`en`, `fr`, `x-default`), generated from shared database records and typed message dictionaries.
-- **Structured Data**: Schema.org `WebPage` / `MedicalWebPage`, `MedicalSubstance`, `DietarySupplement` / `MedicalWarning`, `FAQPage`, `BreadcrumbList`, `Dataset` (`/medications`, `/herb-drug-interactions`), and `AboutPage` (`/methodology`). `reviewedBy` is emitted only when a licensed clinical reviewer is formally recorded.
+- **Structured Data**: Schema.org `WebPage` / `MedicalWebPage`, `MedicalSubstance`, `DietarySupplement` / `MedicalWarning`, `FAQPage`, `BreadcrumbList`, `Dataset` (`/medications`, `/herb-drug-interactions` with `DataDownload` -> `/open-data/catalog.json`), and `AboutPage` (`/methodology`). `reviewedBy` is emitted only when a licensed clinical reviewer is formally recorded.
+- **Open Machine-Readable Endpoints**: `/open-data/catalog.json` (CORS-enabled JSON counts & licensing registry), `/rss.xml`, `/widgets` (iframe embed & librarian citation kit).
 - **Privacy & Ephemeral AI Disclosure**: Virtual Herbalist (`/herbalist`) runs educational inference via Ollama Cloud without account requirement; guest sessions retain 30 days in Supabase (Montreal, Canada) with explicit delete controls. See `/privacy` and `/fr/privacy`.

@@ -492,7 +492,7 @@ export default async function MethodologyPage() {
           </div>
 
           {governanceStats.available ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               <div className="rounded-xl border border-border bg-card p-4">
                 <p className="text-xs font-medium text-muted-foreground">
                   {locale === "fr"
@@ -513,6 +513,18 @@ export default async function MethodologyPage() {
                 </p>
                 <p className="mt-1 text-2xl font-bold text-foreground">
                   {governanceStats.sourceCheckedHerbs.toLocaleString(
+                    locale === "fr" ? "fr-CA" : "en-CA"
+                  )}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {locale === "fr"
+                    ? "Médicaments et classes"
+                    : "Medications & Drug Classes"}
+                </p>
+                <p className="mt-1 text-2xl font-bold text-foreground">
+                  {governanceStats.totalMedications.toLocaleString(
                     locale === "fr" ? "fr-CA" : "en-CA"
                   )}
                 </p>
