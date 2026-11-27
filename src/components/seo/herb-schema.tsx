@@ -52,6 +52,8 @@ interface HerbSchemaProps {
   isClinicallyReviewed?: boolean;
   /** DB-resolved clinical reviewer (optional; falls back to static `getReviewer`). */
   resolvedReviewer?: Reviewer | null;
+  /** Primary source URLs verified for non-toxic monographs. */
+  citationUrls?: string[];
 }
 
 /**
@@ -73,6 +75,7 @@ export function HerbSchema({
   isDangerous = false,
   isClinicallyReviewed = true,
   resolvedReviewer,
+  citationUrls,
 }: HerbSchemaProps) {
   const candidateReviewer =
     resolvedReviewer !== undefined
@@ -117,9 +120,14 @@ export function HerbSchema({
     "@type": isClinicallyReviewed ? "MedicalWebPage" : "WebPage",
     name: herb.name,
     alternateName: herb.scientific_name,
-    description: herb.description ?? undefined,
+    description: isDangerous
+      ? "Poisonous botanical quarantined from herbal medicine use. Contains lethal toxins; do not ingest or use."
+      : (herb.description ?? undefined),
     url: url ?? `${siteUrl()}/herbs/${herb.slug}`,
     ...(dateModified && { dateModified }),
+    ...(!isDangerous &&
+      citationUrls &&
+      citationUrls.length > 0 && { citation: citationUrls }),
     mainEntity: {
       "@type": "MedicalSubstance",
       name: herb.name,

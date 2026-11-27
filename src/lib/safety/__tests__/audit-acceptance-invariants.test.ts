@@ -12,6 +12,8 @@ vi.mock("next-intl", () => ({
 
 import { AuthorByline } from "@/components/herbs/author-byline";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
+import { HerbSchema } from "@/components/seo/herb-schema";
+import { narrativeSections } from "@/lib/herbs/narrative";
 import { resolvePregnancyNursingStatus } from "@/lib/herbs/canonical-safety";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
 
@@ -100,7 +102,7 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
       expect(doc).not.toMatch(/Washout Planner/i);
       expect(doc).not.toMatch(/3,124/);
       expect(doc).toContain("3,122");
-      expect(doc).toContain("513");
+      expect(doc).toContain("509");
       expect(doc).toContain("142");
     }
   });
@@ -182,5 +184,75 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     );
     expect(npnPageSrc.toLowerCase()).toContain("licence status");
     expect(npnPageSrc.toLowerCase()).toContain("market status");
+  });
+
+  it("removes obsolete FR/EN personalized/weight/age dosing claims, suppresses dangerous narrative uses/regulator sections, and emits HerbSchema citations cleanly", () => {
+    const frServer = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/fr/server.json"),
+      "utf8"
+    );
+    const frTools = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/fr/tools.json"),
+      "utf8"
+    );
+    const enServer = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/en/server.json"),
+      "utf8"
+    );
+    const enTools = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/en/tools.json"),
+      "utf8"
+    );
+    expect(frServer).not.toContain("basées sur l'âge et le poids");
+    expect(frServer).not.toContain("dosage personnalisé");
+    expect(frTools).not.toContain("dosage personnalisé");
+    expect(frTools).not.toContain("recommandations personnalisées");
+    expect(enServer).not.toContain("personalized dosing");
+    expect(enTools).not.toContain("personalized dosing");
+
+    const sections = narrativeSections({
+      name: "Abrus precatorius",
+      traditionalUses: ["skin problems", "ulcers"],
+      contraindications: ["Poisonous botanical (contains lethal abrin)"],
+      regulator: "Health Canada",
+      isDangerous: true,
+    });
+    const combined = JSON.stringify(sections);
+    expect(combined).not.toContain("Traditional and modern use");
+    expect(combined).not.toContain("In the regulator's words");
+    expect(combined).not.toContain("skin problems");
+
+    const abrusSchemaHtml = renderToStaticMarkup(
+      createElement(HerbSchema, {
+        herb: {
+          name: "Abrus precatorius",
+          scientific_name: "Abrus precatorius",
+          slug: "abrus-precatorius",
+          description: "Traditionally used for skin problems and ulcers.",
+        },
+        isDangerous: true,
+        isClinicallyReviewed: false,
+        citationUrls: ["https://pubmed.ncbi.nlm.nih.gov/99999/"],
+      })
+    );
+    expect(abrusSchemaHtml).not.toContain("skin problems");
+    expect(abrusSchemaHtml).toContain("Poisonous botanical quarantined");
+
+    const turmericSchemaHtml = renderToStaticMarkup(
+      createElement(HerbSchema, {
+        herb: {
+          name: "Turmeric",
+          scientific_name: "Curcuma longa",
+          slug: "turmeric",
+          description: "Culinary and medicinal rhizome.",
+        },
+        isDangerous: false,
+        isClinicallyReviewed: false,
+        citationUrls: ["https://pubmed.ncbi.nlm.nih.gov/34062109/"],
+      })
+    );
+    expect(turmericSchemaHtml).toContain(
+      '"citation":["https://pubmed.ncbi.nlm.nih.gov/34062109/"]'
+    );
   });
 });

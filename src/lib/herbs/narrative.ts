@@ -173,6 +173,7 @@ export function summariseUses(
   input: NarrativeInput,
   copy: NarrativeCopy = NARRATIVE_EN
 ): string | null {
+  if (input.isDangerous) return null;
   const traditional = (input.traditionalUses ?? []).filter(Boolean);
   const modern = (input.modernUses ?? []).filter(Boolean);
   if (traditional.length === 0 && modern.length === 0) return null;
@@ -267,6 +268,7 @@ export function quotedContraindications(
   input: NarrativeInput,
   copy: NarrativeCopy = NARRATIVE_EN
 ): string | null {
+  if (input.isDangerous) return null;
   const items = (input.contraindications ?? [])
     .map((item) => item.trim())
     .filter(Boolean);

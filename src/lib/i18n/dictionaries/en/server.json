@@ -552,7 +552,7 @@
     "gardenPageTitle": "My Garden",
     "gardenSubtitle": "Your personal collection of medicinal herbs. Track what you've explored and build your herbal knowledge.",
     "profileTitle": "My Profile",
-    "profileSubtitle": "Manage your health data for personalized dosing and safety warnings",
+    "profileSubtitle": "Manage your saved medications and health context for interaction safety alerts",
     "npnChecker": "Health Canada NPN Supplement Decoder",
     "npnCheckerDesc": "Look up any 8-digit Health Canada Natural Product Number (NPN) or DIN-HM: inspect medicinal ingredients, cautions, and cross-check drug interactions.",
     "medications": "Medications & Herb Interactions A–Z",

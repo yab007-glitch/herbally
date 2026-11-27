@@ -179,8 +179,8 @@ export default async function MedicationsIndexPage() {
             </p>
             <p className="mt-1.5">
               {fr
-                ? "Note de couverture : les 509 fiches reflètent la taille actuelle du catalogue documenté, et non l'exhaustivité clinique. L'absence d'un couple ne prouve pas son innocuité."
-                : "Coverage note: The 509 documented pairs measure current catalogue size, not complete clinical coverage. Absence of an unlisted herb–drug pair never establishes safety."}
+                ? `Note de couverture : les ${totalPairs} fiches reflètent la taille actuelle du catalogue documenté, et non l'exhaustivité clinique. L'absence d'un couple ne prouve pas son innocuité.`
+                : `Coverage note: The ${totalPairs} documented pairs measure current catalogue size, not complete clinical coverage. Absence of an unlisted herb–drug pair never establishes safety.`}
             </p>
           </div>
         )}

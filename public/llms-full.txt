@@ -8,7 +8,7 @@
 - **Published Botanical Profiles**: 3,122 entries (indexed EN + FR routes)
 - **Source-Checked Profiles**: 3,089 profiles cross-referenced against primary regulatory or peer-reviewed bibliographic sources (Health Canada LNHPD & NHP Monographs, EMA HMPC, NIH NCCIH, NIH LiverTox, NCBI PubMed/PubChem, GBIF/Wikidata for taxonomy)
 - **Licensed Clinician-Signed Profiles / Interactions**: 0 to date (transparently reported live on `/methodology#governance-coverage`; open contributor review portal at `/clinical-review`)
-- **Herb–Drug Interaction Records**: 513 curated pair records across 142 medications and therapeutic classes (`Single molecule` vs `Drug class` explicitly tagged)
+- **Herb–Drug Interaction Records**: 509 curated pair records across 142 medications and therapeutic classes (`Single molecule` vs `Drug class` explicitly tagged)
 - **Regulatory Licensing Register Lookups**: Live integration with Health Canada's Licensed Natural Health Products Database (LNHPD) at `/npn-checker`
 
 ## 2. Five Review States (Editorial vs Clinical Distinction)
