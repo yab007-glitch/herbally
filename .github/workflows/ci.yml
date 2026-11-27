@@ -126,8 +126,11 @@ jobs:
       PGDATABASE: herbally_test
     steps:
       - uses: actions/checkout@v7
-      - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Install PostgreSQL 16 client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-16
+          echo "/usr/lib/postgresql/16/bin" >> "$GITHUB_PATH"
       - name: Run non-destructive pg_dump -Fc -> pg_restore -> RLS integration drill
         run: bash scripts/test-backup-restore-drill.sh
 
