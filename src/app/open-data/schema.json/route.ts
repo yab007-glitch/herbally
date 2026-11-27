@@ -1,3 +1,4 @@
+import { OPEN_DATA_DATASET_VERSION } from "@/lib/open-data/snapshot";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 3600;
@@ -9,7 +10,7 @@ export async function GET() {
     openapi: "3.1.0",
     info: {
       title: "HerbAlly Open Botanical Safety Data & Interaction API",
-      version: "3.12.0",
+      version: OPEN_DATA_DATASET_VERSION,
       summary:
         "Machine-readable bilingual botanical reference, herb–drug interaction lookup, toxic quarantine registry, and Health Canada NPN lookup endpoints.",
       description:
@@ -295,10 +296,21 @@ export async function GET() {
       schemas: {
         CatalogResponse: {
           type: "object",
-          required: ["service", "url", "counts", "sources", "endpoints"],
+          required: [
+            "service",
+            "url",
+            "datasetVersion",
+            "snapshotId",
+            "generatedAt",
+            "counts",
+            "sources",
+            "endpoints",
+          ],
           properties: {
             service: { type: "string" },
             url: { type: "string", format: "uri" },
+            datasetVersion: { type: "string" },
+            snapshotId: { type: "string" },
             generatedAt: { type: "string", format: "date-time" },
             editorialContact: { type: "string", format: "email" },
             license: { type: "string" },
@@ -322,11 +334,21 @@ export async function GET() {
         },
         MedicationsDataset: {
           type: "object",
-          required: ["service", "dataset", "totalMedications", "medications"],
+          required: [
+            "service",
+            "dataset",
+            "datasetVersion",
+            "snapshotId",
+            "generatedAt",
+            "totalMedications",
+            "medications",
+          ],
           properties: {
             service: { type: "string" },
             dataset: { type: "string" },
             url: { type: "string", format: "uri" },
+            datasetVersion: { type: "string" },
+            snapshotId: { type: "string" },
             generatedAt: { type: "string", format: "date-time" },
             license: { type: "string" },
             totalMedications: { type: "integer" },
@@ -339,6 +361,9 @@ export async function GET() {
           required: [
             "service",
             "dataset",
+            "datasetVersion",
+            "snapshotId",
+            "generatedAt",
             "totalPairs",
             "clinicianSignedPairs",
             "interactions",
@@ -347,6 +372,8 @@ export async function GET() {
             service: { type: "string" },
             dataset: { type: "string" },
             url: { type: "string", format: "uri" },
+            datasetVersion: { type: "string" },
+            snapshotId: { type: "string" },
             generatedAt: { type: "string", format: "date-time" },
             license: { type: "string" },
             totalPairs: { type: "integer" },
@@ -360,6 +387,9 @@ export async function GET() {
           required: [
             "service",
             "dataset",
+            "datasetVersion",
+            "snapshotId",
+            "generatedAt",
             "emergencyContacts",
             "totalQuarantinedBotanicals",
             "botanicals",
@@ -368,6 +398,9 @@ export async function GET() {
             service: { type: "string" },
             dataset: { type: "string" },
             url: { type: "string", format: "uri" },
+            datasetVersion: { type: "string" },
+            snapshotId: { type: "string" },
+            generatedAt: { type: "string", format: "date-time" },
             policy: { type: "string" },
             emergencyContacts: {
               type: "object",

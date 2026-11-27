@@ -638,6 +638,12 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(trustSrc).toContain("/open-data/interactions.json");
     expect(trustSrc).toContain("00097_admin_aal2_rls.sql");
     expect(trustSrc).toContain("docs/database-backup-strategy.md");
+    expect(trustSrc).toContain("all-142-medications.test.ts");
+    expect(trustSrc).toContain("clinical-safety-integration.sql");
+    expect(trustSrc).toContain("verify-open-data-and-sources.ts");
+    expect(trustSrc).toContain("source-monitor.yml");
+    expect(trustSrc).toContain("e2e/ads.spec.ts");
+    expect(trustSrc).toContain("snapshot.snapshotId");
 
     const sitemapSrc = fs.readFileSync(
       path.join(ROOT, "src/app/sitemap.ts"),

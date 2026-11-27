@@ -144,6 +144,42 @@ test.describe("advertising safety — launch gate off", () => {
     expect(adRequests).toEqual([]);
     await expectNoAdSurface(page);
   });
+
+  for (const adFreeRoute of [
+    "/embed/checker",
+    "/fr/embed/checker",
+    "/herbs/abrus-precatorius",
+    "/calculator",
+    "/symptoms",
+    "/surgery-planner",
+    "/npn-checker",
+  ]) {
+    test(`A6 runtime zero-ad, zero-marketing-cookie & CSP isolation on ${adFreeRoute}`, async ({
+      page,
+      context,
+      request,
+    }) => {
+      const adRequests = watchAdRequests(page);
+      const response = await page.goto(adFreeRoute);
+      await page.waitForTimeout(800);
+
+      expect(response?.status()).toBeLessThan(500);
+      expect(adRequests).toEqual([]);
+      await expectNoAdSurface(page);
+
+      const marketingCookies = (await context.cookies()).filter((c) =>
+        /^(_ga|_gcl|_gid|__gads|__gpi|IDE|NID)$/i.test(c.name)
+      );
+      expect(marketingCookies).toEqual([]);
+
+      const headerResp = await request.get(adFreeRoute);
+      const csp = headerResp.headers()["content-security-policy"] ?? "";
+      expect(csp).not.toMatch(/googlesyndication|doubleclick|adservice/i);
+      if (adFreeRoute.includes("/embed/")) {
+        expect(csp).toContain("frame-ancestors *");
+      }
+    });
+  }
 });
 
 interface DocumentIsolationOptions {

@@ -1,21 +1,28 @@
-import { getMedicationSummaries } from "@/lib/interactions/medications";
+import {
+  OPEN_DATA_DATASET_VERSION,
+  getOpenDataSnapshot,
+} from "@/lib/open-data/snapshot";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 3600;
 
 export async function GET() {
   const baseUrl = siteUrl();
-  const medications = await getMedicationSummaries("en");
-  const totalInteractionPairs = medications.reduce(
-    (sum, m) => sum + m.totalInteractions,
-    0
-  );
+  const snapshot = await getOpenDataSnapshot();
+  const { medications, activePairs } = snapshot;
+
+  const totalInteractionPairs =
+    activePairs.length > 0
+      ? activePairs.length
+      : medications.reduce((sum, m) => sum + m.totalInteractions, 0);
 
   const payload = {
     service: "HerbAlly",
     dataset: "medications",
     url: `${baseUrl}/open-data/medications.json`,
-    generatedAt: new Date().toISOString(),
+    datasetVersion: OPEN_DATA_DATASET_VERSION,
+    snapshotId: snapshot.snapshotId,
+    generatedAt: snapshot.generatedAt,
     license:
       "CC BY 4.0 for HerbAlly compilation metadata; primary sources retain publisher licences (see /methodology)",
     totalMedications: medications.length,
