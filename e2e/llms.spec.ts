@@ -85,7 +85,7 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
   const schema = JSON.parse(schemaRaw);
   const mon = JSON.parse(monRaw);
 
-  expect(cat.datasetVersion).toBe("3.14.0");
+  expect(cat.datasetVersion).toBe("3.14.1");
   expect(med.snapshotId).toBe(cat.snapshotId);
   expect(ix.snapshotId).toBe(cat.snapshotId);
   expect(q.snapshotId).toBe(cat.snapshotId);

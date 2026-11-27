@@ -177,6 +177,13 @@ const MIGRATIONS = [
     summaryFr:
       "Remplace 7 liens de citation obsolètes (404) par des références NIH NCCIH, EMA HMPC, MSKCC et PubMed PMID vérifiées par le moniteur.",
   },
+  {
+    file: "00110_ema_sennae_fructus_url_fix.sql",
+    summaryEn:
+      "Updates legacy EMA 404 slug sennae-fructus-acutifoliae caught by host-paced monitoring to canonical live EMA HMPC monograph sennae-fructus (HTTP 200).",
+    summaryFr:
+      "Met à jour l'URL EMA obsolète sennae-fructus-acutifoliae détectée par la surveillance vers la monographie canonique sennae-fructus (HTTP 200).",
+  },
 ] as const;
 
 export async function generateMetadata(): Promise<Metadata> {

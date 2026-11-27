@@ -17,7 +17,7 @@ import {
 } from "@/lib/interactions/pairs";
 import { SEVERITY_WEIGHT } from "@/lib/interactions/stack";
 
-export const OPEN_DATA_DATASET_VERSION = "3.14.0";
+export const OPEN_DATA_DATASET_VERSION = "3.14.1";
 
 export interface OpenDataAtomicSnapshot {
   datasetVersion: string;
