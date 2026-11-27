@@ -226,6 +226,7 @@
     "interactionDangerousNone": "Sans objet — plante toxique (ne pas utiliser)",
     "toxicPlantBadge": "Plante toxique / à haut risque",
     "toxicBadgeShort": "Haut risque / toxique",
+    "toxicQuarantineStatus": "Quarantaine botanique toxique permanente · Impropre à l'usage humain",
     "mostSerious": "La plus grave : {drug} — {severity}",
     "seeList": "Voir la liste complète",
     "avoidIf": "Déconseillé dans ces cas",

@@ -2,8 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import robots from "@/app/robots";
+
+vi.mock("next-intl", () => ({
+  useLocale: () => "en",
+  useTranslations: () => (k: string) => k,
+}));
+
+import { AuthorByline } from "@/components/herbs/author-byline";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { resolvePregnancyNursingStatus } from "@/lib/herbs/canonical-safety";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
@@ -147,5 +154,33 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(html).not.toContain("Skin conditions (root)");
     expect(html).not.toContain("What is Abrus precatorius used for?");
     expect(html).not.toContain("What dose of Abrus precatorius");
+  });
+
+  it("renders toxicology quarantine byline on toxic botanicals and ensures ChipLegend grade ordering without duplicated labels", () => {
+    const enByline = renderToStaticMarkup(
+      createElement(AuthorByline, {
+        locale: "en",
+        isReviewed: false,
+        sourceCount: 2,
+        isDangerous: true,
+      })
+    );
+    expect(enByline).toContain("Toxicology record: 2 sources checked");
+    expect(enByline).toContain("Permanent toxic quarantine");
+    expect(enByline).not.toContain("Editorial compilation");
+
+    const chipLegendSrc = fs.readFileSync(
+      path.join(ROOT, "src/components/herbs/chip-legend.tsx"),
+      "utf8"
+    );
+    expect(chipLegendSrc).toContain('["A", "B", "C", "trad", "D"]');
+    expect(chipLegendSrc).not.toContain("`${level}.label`");
+
+    const npnPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(marketing)/npn-checker/page.tsx"),
+      "utf8"
+    );
+    expect(npnPageSrc.toLowerCase()).toContain("licence status");
+    expect(npnPageSrc.toLowerCase()).toContain("market status");
   });
 });

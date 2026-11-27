@@ -22,6 +22,7 @@ export function AuthorByline({
   reviewerName,
   reviewerCredentials,
   herbSlug,
+  isDangerous = false,
 }: {
   locale: "en" | "fr";
   lastReviewed?: string | null;
@@ -33,6 +34,7 @@ export function AuthorByline({
   reviewerName?: string | null;
   reviewerCredentials?: string | null;
   herbSlug?: string | null;
+  isDangerous?: boolean;
 }) {
   const reviewerSuffix =
     isReviewed && reviewerName
@@ -65,13 +67,18 @@ export function AuthorByline({
   const copy =
     locale === "fr"
       ? {
-          sourceCheck:
-            sourceCount > 0
+          sourceCheck: isDangerous
+            ? sourceCount > 0
+              ? `Fiche toxicologique : ${sourceCount} ${sourceCount === 1 ? "source vérifiée" : "sources vérifiées"}`
+              : "Fiche toxicologique : en attente"
+            : sourceCount > 0
               ? `Sources vérifiées : ${sourceCount}`
               : "Sources vérifiées : en attente",
-          editorialStatus: isManualMonograph
-            ? "Monographie éditoriale structurée"
-            : "Compilation éditoriale",
+          editorialStatus: isDangerous
+            ? "Quarantaine toxique permanente"
+            : isManualMonograph
+              ? "Monographie éditoriale structurée"
+              : "Compilation éditoriale",
           clinicalStatus: isReviewed
             ? reviewerSuffix
               ? `Révision clinique · ${reviewerSuffix}`
@@ -82,13 +89,18 @@ export function AuthorByline({
           reviewedOn: "Révision clinique le",
         }
       : {
-          sourceCheck:
-            sourceCount > 0
+          sourceCheck: isDangerous
+            ? sourceCount > 0
+              ? `Toxicology record: ${sourceCount} ${sourceCount === 1 ? "source" : "sources"} checked`
+              : "Toxicology record: Pending"
+            : sourceCount > 0
               ? `Source check: ${sourceCount} ${sourceCount === 1 ? "source" : "sources"}`
               : "Source check: Pending",
-          editorialStatus: isManualMonograph
-            ? "Curated monograph (Editorial compilation)"
-            : "Editorial compilation",
+          editorialStatus: isDangerous
+            ? "Permanent toxic quarantine"
+            : isManualMonograph
+              ? "Curated monograph (Editorial compilation)"
+              : "Editorial compilation",
           clinicalStatus: isReviewed
             ? reviewerSuffix
               ? `Clinically reviewed by ${reviewerSuffix}`

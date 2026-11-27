@@ -19,7 +19,7 @@ import { UNVERIFIED, type Provenance } from "@/lib/types/provenance";
  * without JavaScript.
  */
 
-const LEVELS: EvidenceLevel[] = ["A", "B", "C", "D", "trad"];
+const LEVELS: EvidenceLevel[] = ["A", "B", "C", "trad", "D"];
 
 const PROVENANCE_SAMPLES: Array<{
   key: string;
@@ -90,7 +90,6 @@ export function ChipLegend({
               <li key={level} className="flex flex-wrap items-center gap-2">
                 <EvidenceGradeBadge level={level} />
                 <span className="text-sm text-muted-foreground">
-                  {tEvidence(`${level}.label`)} —{" "}
                   {tEvidence(`${level}.shortDesc`)}
                 </span>
               </li>

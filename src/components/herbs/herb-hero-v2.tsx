@@ -209,7 +209,13 @@ export function HerbHeroV2({
                 contradiction. Here one row answers "how good is the
                 evidence", the next answers "who checked it". */}
             <div className="mt-2 flex justify-center sm:justify-start">
-              <ProvenanceBadge provenance={badgeProvenance} />
+              {dangerous ? (
+                <Badge variant="destructive" className="text-xs">
+                  {t("safetyGlance.toxicQuarantineStatus")}
+                </Badge>
+              ) : (
+                <ProvenanceBadge provenance={badgeProvenance} />
+              )}
             </div>
             {!dangerous && (
               <p className="mt-1.5 max-w-xl text-xs text-muted-foreground">

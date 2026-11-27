@@ -74,7 +74,20 @@ export default async function NpnCheckerPage() {
           </p>
         </header>
 
-        <div className="mt-8">
+        <div className="mt-6 rounded-xl border border-amber-300/70 bg-amber-50/70 p-4 text-xs leading-relaxed text-amber-950 dark:border-amber-800/70 dark:bg-amber-950/30 dark:text-amber-100">
+          <p className="font-semibold">
+            {fr
+              ? "Important : statut de licence Santé Canada vs statut de commercialisation"
+              : "Important: Health Canada licence status vs. market status"}
+          </p>
+          <p className="mt-1">
+            {fr
+              ? "Le statut de licence (Active, Discontinuée, Suspension, Arrêt de vente ou Annulée) indique si Santé Canada a autorisé le produit en vertu du Règlement sur les produits de santé naturels. Le statut de commercialisation (Commercialisé vs Non commercialisé) est distinct : une licence active n'établit pas que le titulaire commercialise actuellement le produit en pharmacie. Vérifiez toujours le statut actuel sur la fiche officielle Santé Canada BDPSNH."
+              : "Health Canada licence status (Active, Discontinued, Stop Sale, Suspended, or Cancelled) reflects regulatory product authorization under the Natural Health Products Regulations. Market status (Marketed vs. Not marketed) is separate: an active licence does not establish that the licence holder has reported the product as currently marketed on retail shelves. Always confirm current status on the linked official Health Canada LNHPD record."}
+          </p>
+        </div>
+
+        <div className="mt-6">
           <NpnCheckerClient />
         </div>
 
