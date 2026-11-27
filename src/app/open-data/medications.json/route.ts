@@ -48,7 +48,7 @@ export async function GET() {
   return new Response(JSON.stringify(payload, null, 2), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=0, s-maxage=60, must-revalidate",
       "Access-Control-Allow-Origin": "*",
     },
   });
