@@ -98,6 +98,10 @@ describe("HerbHeroV2 safety and review gating", () => {
 
     expect(screen.getAllByText("safetyGlance.unsafe")).toHaveLength(2);
     expect(screen.getByText("safetyGlance.toxicPlantBadge")).toBeDefined();
+    expect(
+      screen.getByText("safetyGlance.toxicQuarantineStatus")
+    ).toBeDefined();
+    expect(screen.queryByTestId("provenance-badge")).toBeNull();
     expect(screen.queryByTestId("evidence-grade")).toBeNull();
     expect(container.querySelector('a[href*="/calculator"]')).toBeNull();
     expect(

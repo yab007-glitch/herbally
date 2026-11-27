@@ -381,6 +381,31 @@ export function NpnCheckerClient() {
             </a>
           </div>
 
+          <dl className="grid gap-2 rounded-xl border border-border/80 bg-muted/20 p-3 text-xs sm:grid-cols-2">
+            <div>
+              <dt className="font-semibold text-foreground">
+                {locale === "fr"
+                  ? "Statut de la licence Santé Canada :"
+                  : "Health Canada licence status:"}
+              </dt>
+              <dd className="mt-0.5 text-muted-foreground">
+                {data.status.label}
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-foreground">
+                {locale === "fr"
+                  ? "Statut de commercialisation :"
+                  : "Market status:"}
+              </dt>
+              <dd className="mt-0.5 text-muted-foreground">
+                {locale === "fr"
+                  ? "Non transmis par l'API JSON publique BDPSNH — vérifier sur la fiche officielle Santé Canada"
+                  : "Not reported via public LNHPD JSON API — verify on official Health Canada page"}
+              </dd>
+            </div>
+          </dl>
+
           {!data.status.active && (
             <div
               role="alert"

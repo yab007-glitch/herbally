@@ -238,7 +238,7 @@
     "inputPlaceholder": "e.g. 80000001 or NPN 80010538",
     "searchingButton": "Decoding NPN...",
     "searchButton": "Decode bottle",
-    "samplesLabel": "Try a live bottle:",
+    "samplesLabel": "Sample registered NPNs (live Health Canada LNHPD lookup — not product endorsements):",
     "sampleFlax": "Flax Seed Oil",
     "sampleGreens": "greens+ Multi-Herb",
     "sampleAstragalus": "Astragalus Blend",

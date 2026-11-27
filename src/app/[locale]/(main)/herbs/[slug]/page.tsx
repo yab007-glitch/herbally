@@ -697,6 +697,7 @@ export default async function HerbDetailPage({ params }: Props) {
           reviewerName={reviewedBy}
           reviewerCredentials={reviewerCredentials}
           herbSlug={slug}
+          isDangerous={isDangerous}
         />
 
         <HerbJumpNav
@@ -867,8 +868,8 @@ export default async function HerbDetailPage({ params }: Props) {
           interactions={glanceInteractions.slice(0, 6)}
           prev={prev}
           next={next}
-          symptomPeers={symptomPeers}
-          relatedHerbs={relatedHerbs}
+          symptomPeers={isDangerous ? [] : symptomPeers}
+          relatedHerbs={isDangerous ? [] : relatedHerbs}
           relatedHeading={t("herbDetail.relatedHerbs")}
           relatedGuides={compactRelatedGuides}
         />
