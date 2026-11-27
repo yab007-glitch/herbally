@@ -75,6 +75,16 @@ export default async function MedicationsIndexPage() {
               },
               {
                 "@type": "DataDownload",
+                encodingFormat: "application/json",
+                contentUrl: `${baseUrl}/open-data/medications.json`,
+              },
+              {
+                "@type": "DataDownload",
+                encodingFormat: "application/json",
+                contentUrl: `${baseUrl}/open-data/quarantine.json`,
+              },
+              {
+                "@type": "DataDownload",
                 encodingFormat: "text/plain",
                 contentUrl: `${baseUrl}/llms-full.txt`,
               },

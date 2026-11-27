@@ -5,6 +5,7 @@ import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { siteUrl } from "@/lib/seo/site-url";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
+import { WebApplicationSchema } from "@/components/seo/web-app-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { WidgetBuilder } from "@/components/embed/widget-builder";
 import { LibrarianCitationKit } from "@/components/embed/librarian-citation-kit";
@@ -32,6 +33,22 @@ export default async function WidgetsPage() {
           title={t("heading")}
           description={t("intro")}
           url={url}
+        />
+        <WebApplicationSchema
+          name={t("heading")}
+          description={t("intro")}
+          url={url}
+          featureList={[
+            fr
+              ? "Widget iframe bilingue sans publicité (/embed/checker)"
+              : "Ad-free bilingual iframe interaction checker (/embed/checker)",
+            fr
+              ? "Trousse de citation prête à copier pour LibGuides"
+              : "Copy-paste Librarian Citation Kit for university LibGuides",
+            fr
+              ? "Points d'accès Open Data JSON CORS ouvert (/open-data/*)"
+              : "Public CORS-enabled Open Data JSON endpoints (/open-data/*)",
+          ]}
         />
         <BreadcrumbListSchema
           items={[
@@ -90,14 +107,16 @@ export default async function WidgetsPage() {
           </h2>
           <p className="text-sm text-muted-foreground">
             {fr
-              ? "Point de terminaison JSON CORS ouvert exposant les compteurs vérifiés en direct (3 122 plantes, 509 paires d'interactions, 142 médicaments et classes) ainsi que le registre complet des licences sources sous CC BY 4.0 pour les métadonnées compilées."
-              : "Public CORS-enabled JSON catalog exposing live verified counts (3,122 herbs, 509 interaction pairs, 142 medications/classes) and primary source licensing under CC BY 4.0 for compilation metadata."}
+              ? "Points de terminaison JSON CORS ouverts exposant les compteurs vérifiés en direct (3 122 plantes, 509 paires d'interactions, 142 médicaments et classes), le répertoire complet des médicaments, la liste de quarantaine toxicologique et le registre des licences sources sous CC BY 4.0."
+              : "Public CORS-enabled JSON endpoints exposing live verified counts (3,122 herbs, 509 interaction pairs, 142 medications/classes), the full reverse medication registry, the toxic botanical quarantine registry, and primary source licensing under CC BY 4.0 for compilation metadata."}
           </p>
           <pre
             tabIndex={0}
             className="overflow-x-auto rounded-xl border border-border bg-background p-3 text-xs text-muted-foreground"
           >
-            <code>{`curl -s https://herbally.app/open-data/catalog.json`}</code>
+            <code>{`curl -s https://herbally.app/open-data/catalog.json
+curl -s https://herbally.app/open-data/medications.json
+curl -s https://herbally.app/open-data/quarantine.json`}</code>
           </pre>
           <div className="flex flex-wrap gap-4 text-xs font-medium">
             <a
@@ -105,6 +124,18 @@ export default async function WidgetsPage() {
               className="text-primary underline underline-offset-4"
             >
               /open-data/catalog.json
+            </a>
+            <a
+              href="/open-data/medications.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/medications.json
+            </a>
+            <a
+              href="/open-data/quarantine.json"
+              className="text-primary underline underline-offset-4"
+            >
+              /open-data/quarantine.json
             </a>
             <a
               href="/llms-full.txt"
