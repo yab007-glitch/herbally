@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { createElement } from "react";
+import { createElement, type ComponentProps } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import robots from "@/app/robots";
@@ -10,9 +10,21 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (k: string) => k,
 }));
 
+vi.mock("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...props
+  }: ComponentProps<"a"> & { href: string }) =>
+    createElement("a", { href, ...props }, children),
+}));
+
 import { AuthorByline } from "@/components/herbs/author-byline";
+import { HerbBodyContent } from "@/components/herbs/herb-body-content";
+import { HerbJumpNav } from "@/components/herbs/herb-jump-nav";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { HerbSchema } from "@/components/seo/herb-schema";
+import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
 import { narrativeSections } from "@/lib/herbs/narrative";
 import { resolvePregnancyNursingStatus } from "@/lib/herbs/canonical-safety";
 import { buildHerbFallbackFaqs } from "@/lib/seo/herb-faq-fallback";
@@ -254,5 +266,87 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(turmericSchemaHtml).toContain(
       '"citation":["https://pubmed.ncbi.nlm.nih.gov/34062109/"]'
     );
+  });
+
+  it("enforces Release 3.5 total toxic-plant quarantine and plaintext clinical-review contact", () => {
+    const toxicJumpHtml = renderToStaticMarkup(
+      createElement(HerbJumpNav, {
+        locale: "en",
+        hasInteractions: false,
+        isDangerous: true,
+      })
+    );
+    expect(toxicJumpHtml).toContain("Toxicology &amp; Emergency");
+    expect(toxicJumpHtml).not.toContain("Dosage &amp; Safety");
+    expect(toxicJumpHtml).not.toContain("#faq");
+
+    const toxicBodyHtml = renderToStaticMarkup(
+      createElement(HerbBodyContent, {
+        herb: {
+          id: "abrus-id",
+          slug: "abrus-precatorius",
+          name: "Abrus precatorius",
+          scientific_name: "Abrus precatorius",
+          description: "",
+          pregnancy_safe: false,
+          nursing_safe: false,
+          contraindications: ["Contains lethal abrin"],
+          side_effects: ["Severe poisoning"],
+          created_at: "2026-01-01T00:00:00Z",
+          updated_at: "2026-01-01T00:00:00Z",
+        } as unknown as Parameters<typeof HerbBodyContent>[0]["herb"],
+        compactProvenance: null,
+        monograph: null,
+        isManualMonograph: false,
+        isClinicallyReviewed: false,
+        regulatorName: null,
+        interactions: [],
+        severityCounts: {
+          contraindicated: 0,
+          severe: 0,
+          moderate: 0,
+          mild: 0,
+        },
+        locale: "en",
+        copy: herbPageCopy("en"),
+        pubmedSheet: {
+          content: "Should never render",
+          citations: [
+            { pmid: "12345678", title: "Toxicology", journal: "J", year: 2020 },
+          ],
+          pmids: ["12345678"],
+          article_count: 1,
+          model: "test",
+          status: "draft",
+        },
+        sheet: {
+          content: {
+            summary: "Should never render on toxic plants",
+          } as Parameters<typeof HerbBodyContent>[0]["sheet"]["content"],
+          translated: true,
+        },
+      })
+    );
+    expect(toxicBodyHtml).not.toContain("Should never render");
+    expect(toxicBodyHtml).toContain("1-800-222-1222");
+
+    const herbPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      "utf8"
+    );
+    expect(herbPageSrc).toContain(
+      "{!isDangerous && (\n          <HerbFAQSchema"
+    );
+    expect(herbPageSrc).toContain("{!isDangerous && <HerbFaqSection");
+    expect(herbPageSrc).toContain(
+      "{!isDangerous && (\n          <>\n            <HerbRelatedSection"
+    );
+    expect(herbPageSrc).toContain("<NewsletterSignup");
+
+    const clinicalReviewSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(marketing)/clinical-review/page.tsx"),
+      "utf8"
+    );
+    expect(clinicalReviewSrc).toContain("info@herbally.app");
   });
 });

@@ -267,6 +267,20 @@ export default async function ClinicalReviewPage({
               : "View live review coverage metrics and public corrections log →"}
           </Link>
         </p>
+        <p className="text-xs text-muted-foreground">
+          {fr
+            ? "Contact éditorial ou demandes institutionnelles en texte clair : "
+            : "Direct editorial or institutional review inquiries (plaintext): "}
+          <a
+            href="mailto:info@herbally.app"
+            className="font-medium text-primary underline underline-offset-4"
+          >
+            info@herbally.app
+          </a>
+          {fr
+            ? " (ne transmettez jamais de renseignements personnels de santé)."
+            : " (never send patient-identifying health information)."}
+        </p>
       </header>
 
       <div className="mt-8">
