@@ -23,6 +23,7 @@ import { AuthorByline } from "@/components/herbs/author-byline";
 import { HerbBodyContent } from "@/components/herbs/herb-body-content";
 import { HerbJumpNav } from "@/components/herbs/herb-jump-nav";
 import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
+import { ToxicQuarantineShell } from "@/components/herbs/toxic-quarantine-shell";
 import { HerbFAQSchema } from "@/components/seo/herb-faq-schema";
 import { HerbSchema } from "@/components/seo/herb-schema";
 import { herbPageCopy } from "@/lib/i18n/herb-page-copy";
@@ -332,15 +333,13 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(toxicBodyHtml).toContain("1-800-222-1222");
 
     const herbPageSrc = fs.readFileSync(
-      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      path.join(ROOT, "src/app/[locale]/(herb-detail)/herbs/[slug]/page.tsx"),
       "utf8"
     );
-    expect(herbPageSrc).toContain(
-      "{!isDangerous && (\n          <HerbFAQSchema"
-    );
+    expect(herbPageSrc).toMatch(/\{!isDangerous\s*&&\s*\(\s*<HerbFAQSchema/);
     expect(herbPageSrc).toContain("{!isDangerous && <HerbFaqSection");
-    expect(herbPageSrc).toContain(
-      "{!isDangerous && (\n          <>\n            <HerbRelatedSection"
+    expect(herbPageSrc).toMatch(
+      /\{!isDangerous\s*&&\s*\(\s*<>\s*<HerbRelatedSection/
     );
     expect(herbPageSrc).toContain("<NewsletterSignup");
 
@@ -372,11 +371,11 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(toxicCardHtml).not.toContain("What licensed products claim");
 
     const herbPageSrc = fs.readFileSync(
-      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      path.join(ROOT, "src/app/[locale]/(herb-detail)/herbs/[slug]/page.tsx"),
       "utf8"
     );
-    expect(herbPageSrc).toContain(
-      "{!isDangerous && (\n          <>\n            <RegulatoryEvidenceSection"
+    expect(herbPageSrc).toMatch(
+      /\{!isDangerous\s*&&\s*\(\s*<>\s*<RegulatoryEvidenceSection/
     );
     expect(herbPageSrc).toContain("<ToxicBotanicalQuarantineCard");
     expect(herbPageSrc).toContain("medicalDisclaimerText");
@@ -438,10 +437,10 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(toxicBylineHtml).not.toContain("Editorial policy");
 
     const herbPageSrc = fs.readFileSync(
-      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      path.join(ROOT, "src/app/[locale]/(herb-detail)/herbs/[slug]/page.tsx"),
       "utf8"
     );
-    expect(herbPageSrc).toContain("{!isDangerous && (\n          <HerbSources");
+    expect(herbPageSrc).toMatch(/\{!isDangerous\s*&&\s*\(\s*<HerbSources/);
 
     const widgetsPageSrc = fs.readFileSync(
       path.join(ROOT, "src/app/[locale]/(marketing)/widgets/page.tsx"),
@@ -488,11 +487,74 @@ describe("Round 3 / Release 3.1 AI evaluation acceptance invariants", () => {
     expect(enServer).not.toContain("WHO, NCCIH, and PubMed");
 
     const herbPageSrc = fs.readFileSync(
-      path.join(ROOT, "src/app/[locale]/(main)/herbs/[slug]/page.tsx"),
+      path.join(ROOT, "src/app/[locale]/(herb-detail)/herbs/[slug]/page.tsx"),
       "utf8"
     );
     expect(herbPageSrc).toContain(
       "provenance={isDangerous ? null : compactProvenance}"
     );
+  });
+
+  it("enforces Release 3.9 isolated ToxicQuarantineShell route group, quarantined OG card, and ad-free embed/quarantine privacy parity", () => {
+    const shellHtml = renderToStaticMarkup(
+      createElement(
+        ToxicQuarantineShell,
+        { slug: "abrus-precatorius", locale: "en" },
+        createElement(ToxicBotanicalQuarantineCard, {
+          slug: "abrus-precatorius",
+          scientificName: "Abrus precatorius",
+          contraindications: ["Contains lethal abrin"],
+          sideEffects: ["Severe toxicity from seeds"],
+          locale: "en",
+        })
+      )
+    );
+    expect(shellHtml).toContain("1-800-222-1222");
+    expect(shellHtml).toContain("1-844-764-7669");
+    expect(shellHtml).toContain("911");
+    expect(shellHtml).toContain("Permanent Toxic Botanical Quarantine");
+    expect(shellHtml).not.toContain("FAQ");
+    expect(shellHtml).not.toContain("Editorial policy");
+    expect(shellHtml).not.toContain("Herbalist");
+    expect(shellHtml).not.toContain("Dose Reference");
+    expect(shellHtml).not.toContain("Suggest an edit");
+    expect(shellHtml).not.toMatch(/pregnancy|breastfeeding/i);
+
+    const herbPageSrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(herb-detail)/herbs/[slug]/page.tsx"),
+      "utf8"
+    );
+    const earlyIdx = herbPageSrc.indexOf("if (isDangerous) {");
+    const shellIdx = herbPageSrc.indexOf("<ToxicQuarantineShell");
+    const mainShellIdx = herbPageSrc.indexOf("<MainPageShell>");
+    expect(earlyIdx).toBeGreaterThan(-1);
+    expect(shellIdx).toBeGreaterThan(earlyIdx);
+    expect(mainShellIdx).toBeGreaterThan(shellIdx);
+
+    const ogSrc = fs.readFileSync(
+      path.join(
+        ROOT,
+        "src/app/[locale]/(herb-detail)/herbs/[slug]/opengraph-image.tsx"
+      ),
+      "utf8"
+    );
+    expect(ogSrc).toContain("getDangerousHerb");
+    expect(ogSrc).toContain("PERMANENT TOXIC BOTANICAL QUARANTINE");
+
+    const privacySrc = fs.readFileSync(
+      path.join(ROOT, "src/app/[locale]/(marketing)/privacy/page.tsx"),
+      "utf8"
+    );
+    const enServer = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/en/server.json"),
+      "utf8"
+    );
+    const frServer = fs.readFileSync(
+      path.join(ROOT, "src/lib/i18n/dictionaries/fr/server.json"),
+      "utf8"
+    );
+    expect(privacySrc).toContain("/embed/*");
+    expect(enServer).toContain("/embed/*");
+    expect(frServer).toContain("/embed/*");
   });
 });
