@@ -1,19 +1,16 @@
-import { getInteractionPairs } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
+import {
+  OPEN_DATA_DATASET_VERSION,
+  getOpenDataSnapshot,
+} from "@/lib/open-data/snapshot";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 3600;
 
 export async function GET() {
   const baseUrl = siteUrl();
-  const allPairs = await getInteractionPairs("en");
-  const activePairs = allPairs
-    .filter((p) => p.publicationStatus !== "retracted_hold")
-    .sort((a, b) => {
-      const herbCmp = a.herbSlug.localeCompare(b.herbSlug);
-      if (herbCmp !== 0) return herbCmp;
-      return a.drugSlug.localeCompare(b.drugSlug);
-    });
+  const snapshot = await getOpenDataSnapshot();
+  const { activePairs } = snapshot;
 
   const clinicianSignedPairs = activePairs.filter(
     (p) => p.clinicalActionStatus === "clinician_approved"
@@ -23,7 +20,9 @@ export async function GET() {
     service: "HerbAlly",
     dataset: "herb_drug_interactions",
     url: `${baseUrl}/open-data/interactions.json`,
-    generatedAt: new Date().toISOString(),
+    datasetVersion: OPEN_DATA_DATASET_VERSION,
+    snapshotId: snapshot.snapshotId,
+    generatedAt: snapshot.generatedAt,
     license:
       "CC BY 4.0 for HerbAlly compilation metadata; cited primary sources retain publisher licences (see /methodology)",
     totalPairs: activePairs.length,

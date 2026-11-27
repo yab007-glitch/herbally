@@ -5,12 +5,34 @@ import { siteUrl } from "@/lib/seo/site-url";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
-import { getGovernanceCoverageStats } from "@/lib/governance/coverage-stats";
-import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
+import { getOpenDataSnapshot } from "@/lib/open-data/snapshot";
 
 export const revalidate = 3600;
 
 const GITHUB_REPO = "https://github.com/yab007-glitch/herbally";
+
+const WORKFLOW_BADGES = [
+  {
+    name: "CI Pipeline",
+    workflow: "ci.yml",
+    label: "CI (Lint, Typecheck, Vitest, PG16 Replay, Chromium & Firefox E2E)",
+  },
+  {
+    name: "Production Deploy",
+    workflow: "deploy.yml",
+    label: "Deploy (Self-hosted atomic release + rollback)",
+  },
+  {
+    name: "Uptime Watchdog",
+    workflow: "uptime-watch.yml",
+    label: "Uptime Watchdog (Every 30 min cloud probe)",
+  },
+  {
+    name: "Source & OpenAPI Monitor",
+    workflow: "source-monitor.yml",
+    label: "Source & OpenAPI Monitor (PubMed retraction & Open Data audit)",
+  },
+] as const;
 
 const TEST_SUITES = [
   {
@@ -29,65 +51,72 @@ const TEST_SUITES = [
     scopeEn: "Full EN/FR dictionary key-parity across all 6 i18n namespaces",
     scopeFr: "Parité complète des clés EN/FR sur les 6 dictionnaires i18n",
     assertionEn:
-      "Recursive key-equality and non-empty string verification across core, clinical, herbs, marketing, server, and tools dictionaries.",
+      "Recursive key-equality and non-empty string verification across core, clinical, herbs, marketing, server, and tools dictionaries (1,632 keys).",
     assertionFr:
-      "Égalité récursive des clés et validation des chaînes non vides sur les 6 fichiers JSON EN et FR.",
+      "Égalité récursive des clés et validation des chaînes non vides sur les 6 fichiers JSON EN et FR (1 632 clés).",
     file: "src/lib/i18n/__tests__/dictionary-parity.test.ts",
   },
   {
-    id: "A3/A4",
-    scopeEn:
-      "Open Data CORS JSON catalog, medications, interactions, quarantine & OpenAPI 3.1 schema",
-    scopeFr:
-      "API Open Data JSON CORS (catalogue, médicaments, interactions, quarantaine, schéma OpenAPI 3.1)",
+    id: "A3",
+    scopeEn: "Atomic Open Data snapshot consistency & OpenAPI 3.1 schema",
+    scopeFr: "Instantané Open Data atomique et conformité OpenAPI 3.1",
     assertionEn:
-      "Verifies CORS headers, Poison Control metadata, honest clinicianSigned=false flags, and OpenAPI 3.1.0 path definitions.",
+      "Enforces a shared snapshotId and reconciled totals across catalog.json, medications.json, interactions.json, quarantine.json, and schema.json.",
     assertionFr:
-      "Vérifie les en-têtes CORS, les contacts antipoison, le statut clinicianSigned=false honnête et les routes OpenAPI 3.1.0.",
+      "Garantit un snapshotId partagé et des totaux réconciliés sur catalog.json, medications.json, interactions.json, quarantine.json et schema.json.",
     file: "src/app/open-data/open-data.test.ts",
   },
   {
+    id: "A4",
+    scopeEn: "All 142 medications integration matrix & matcher verification",
+    scopeFr: "Matrice d'intégration complète des 142 médicaments et classes",
+    assertionEn:
+      "Exercises all 142 medications and 509 pairs: slug determinism, EN/FR URLs, severity counts, normalized/duplicate labels, and unknown lookup fail-closed behavior.",
+    assertionFr:
+      "Teste les 142 médicaments et 509 paires : déterminisme des slugs, URL EN/FR, agrégation de gravité, normalisation et absence != innocuité.",
+    file: "src/lib/interactions/__tests__/all-142-medications.test.ts",
+  },
+  {
     id: "A5",
-    scopeEn: "Interaction checker & multi-herb stack API edge cases",
+    scopeEn:
+      "Interaction checker single-pair & multi-herb stack API edge cases",
     scopeFr: "Cas limites API du vérificateur simple et multi-plantes",
     assertionEn:
-      "Tests 400 validation, 413 payload caps, 429 Retry-After rate limits, 503 DB fail-closed behavior, withheld retracted citations, and unknown pairs never marked safe.",
+      "Tests 400 validation, 413 payload caps, 429 Retry-After rate limits, 503 DB fail-closed behavior, withheld retracted citations, and multi-herb deduplication.",
     assertionFr:
-      "Teste validations 400, limites 413, limitation de débit 429, indisponibilité 503, rétention de citations retirées et absence != innocuité.",
+      "Teste validations 400, limites 413, limitation de débit 429, indisponibilité 503, rétention de citations retirées et déduplication multi-plantes.",
     file: "src/app/api/interactions/check/route.test.ts",
   },
   {
-    id: "A5-stack",
-    scopeEn: "Multi-herb × multi-medication stack API route",
-    scopeFr: "Route API d'analyse simultanée multi-plantes × médicaments",
+    id: "A6",
+    scopeEn:
+      "Browser network/cookie ad-exclusion across embeds, toxic plants & tools",
+    scopeFr: "Preuve navigateur réseau/témoin d'exclusion publicitaire",
     assertionEn:
-      "Validates duplicate deduplication, collision handling, 10-item array caps, retracted holds, and severity sorting.",
+      "Playwright Chromium & Firefox E2E suite intercepting live network requests, DOM markers, cookies, and CSP headers across embeds, quarantine pages, and clinical tools.",
     assertionFr:
-      "Valide la déduplication, la gestion de collisions, la limite de 10 éléments, les citations retirées et le tri par gravité.",
-    file: "src/app/api/interactions/check-stack/route.test.ts",
+      "Suite E2E Playwright Chromium & Firefox interceptant requêtes réseau, DOM, témoins et en-têtes CSP sur widgets, plantes toxiques et outils.",
+    file: "e2e/ads.spec.ts",
   },
   {
     id: "A7",
-    scopeEn: "PostgreSQL RLS, approval-reset triggers & pediatric lockdown SQL",
-    scopeFr:
-      "Verrous PostgreSQL RLS, réinitialisation d'approbation et blocage pédiatrique",
+    scopeEn: "Live PG16 behavioral trigger, RLS & role integration suite",
+    scopeFr: "Tests comportementaux PostgreSQL 16 (déclencheurs, RLS et rôles)",
     assertionEn:
-      "Verifies AAL2 MFA admin RLS, interaction publication triggers, clinical edit review-reset triggers, and adult-only dosage constraints.",
+      "Disposable PostgreSQL 16 integration suite exercising real anon/authenticated/AAL2 roles, clinical review reset triggers, pediatric lockdown, and fail-closed publication gates.",
     assertionFr:
-      "Vérifie les politiques RLS AAL2, déclencheurs de publication et de révision clinique, et la contrainte adulte 18+.",
-    file: "src/lib/db/__tests__/db-governance-triggers.test.ts",
+      "Suite PostgreSQL 16 testant en conditions réelles les rôles anon/AAL2, réinitialisations de révision, verrous pédiatriques et portes de publication.",
+    file: "supabase/tests/clinical-safety-integration.sql",
   },
   {
-    id: "A6/E2E",
-    scopeEn:
-      "Cross-surface acceptance, ad-exclusion & red-flag emergency escalation",
-    scopeFr:
-      "Invariants transversaux, exclusion publicitaire et signaux d'urgence",
+    id: "A8",
+    scopeEn: "Automated PubMed retraction & regulatory citation monitor",
+    scopeFr: "Moniteur automatisé de rétractations PubMed et liens sources",
     assertionEn:
-      "Verifies zero ad scripts/cookies on embeds, toxic botanicals & health tools, plus WCAG 2.1 AA Axe & Chromium/Firefox Playwright verification.",
+      "Queries NCBI E-utilities esummary for retracted PMIDs, probes regulatory source URLs, and asserts live OpenAPI/snapshot consistency.",
     assertionFr:
-      "Vérifie l'absence de publicité sur /embed/*, fiches toxiques et outils, plus les tests Playwright WCAG 2.1 AA.",
-    file: "src/lib/safety/__tests__/audit-acceptance-invariants.test.ts",
+      "Interroge NCBI E-utilities pour détecter les PMID rétractés, teste les URL sources réglementaires et valide la cohérence OpenAPI.",
+    file: "scripts/verify-open-data-and-sources.ts",
   },
 ] as const;
 
@@ -152,8 +181,8 @@ export async function generateMetadata(): Promise<Metadata> {
       : "Security, Engineering & Automated Verification Center";
   const description =
     locale === "fr"
-      ? "Preuves vérifiables publiquement : code source GitHub, pipelines CI/CD, contrôles de sécurité HTTP, déclencheurs PostgreSQL, tests automatisés et limites d'audit clinique d'HerbAlly."
-      : "Publicly verifiable engineering evidence: open GitHub source and CI pipelines, HTTP security headers, PostgreSQL governance triggers, automated safety tests, backup architecture, and honest clinical review boundaries.";
+      ? "Preuves vérifiables publiquement : code source GitHub, pipelines CI/CD, instantanés Open Data atomiques, tests comportementaux PostgreSQL 16, Playwright E2E et limites cliniques."
+      : "Publicly verifiable engineering evidence: live GitHub Actions CI/Deploy/Monitor runs, atomic Open Data snapshots, Playwright browser tests, PostgreSQL 16 trigger tests, encrypted backups, and honest clinical review boundaries.";
 
   return {
     title,
@@ -188,17 +217,20 @@ export default async function TrustCenterPage() {
   const fr = locale === "fr";
   const baseUrl = siteUrl();
   const pageUrl = `${baseUrl}${fr ? "/fr" : ""}/trust`;
-  const [stats, dangerousCount] = await Promise.all([
-    getGovernanceCoverageStats(),
-    Promise.resolve(getAllDangerousHerbs().length),
-  ]);
+  const snapshot = await getOpenDataSnapshot();
+  const { stats, activePairs, medications, quarantinedBotanicals } = snapshot;
+
+  const displayedInteractions =
+    activePairs.length > 0 ? activePairs.length : stats.totalInteractions;
+  const displayedMedications =
+    medications.length > 0 ? medications.length : stats.totalMedications;
 
   const title = fr
     ? "Centre de sécurité, vérification automatisée et architecture"
     : "Security, Engineering & Automated Verification Center";
   const description = fr
-    ? "Dépôt GitHub public, pipelines CI/CD, suites de tests de sécurité A1–A7, en-têtes HTTP, verrous PostgreSQL, sauvegardes chiffrées et limites transparentes."
-    : "Public GitHub source, CI/CD verification pipelines, automated safety test suites, HTTP security headers, fail-closed PostgreSQL triggers, encrypted backups, and transparent audit boundaries.";
+    ? "Dépôt GitHub public, pipelines CI/CD, matrices de tests A1–A8, instantanés Open Data atomiques, en-têtes HTTP, verrous PostgreSQL 16 et limites transparentes."
+    : "Public GitHub source, CI/CD & Source Monitor runs, A1–A8 automated safety matrices, atomic Open Data snapshots, HTTP security headers, fail-closed PostgreSQL 16 triggers, encrypted backups, and transparent audit boundaries.";
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
@@ -228,7 +260,7 @@ export default async function TrustCenterPage() {
       </header>
 
       <div className="mt-10 space-y-10 text-sm leading-relaxed text-muted-foreground">
-        {/* 1. Live Governance & Dataset Verification Snapshot */}
+        {/* 1. Live Governance & Atomic Open Data Snapshot */}
         <section
           id="live-snapshot"
           aria-labelledby="live-snapshot-heading"
@@ -239,13 +271,17 @@ export default async function TrustCenterPage() {
             className="text-xl font-semibold text-foreground"
           >
             {fr
-              ? "1. Compteurs en direct et jeux de données ouverts"
-              : "1. Live Governance & Open Data Snapshot"}
+              ? "1. Instantané atomique et jeux de données ouverts"
+              : "1. Atomic Open Data & Live Governance Snapshot"}
           </h2>
           <p className="mt-2">
             {fr
-              ? "Tous les compteurs ci-dessous sont lus directement depuis la base de données PostgreSQL et le registre toxicologique en production."
-              : "All counters below are queried live from the production PostgreSQL views and static toxicology quarantine registry."}
+              ? "Tous les points d'accès Open Data partagent un snapshotId et un horodatage unifiés calculés depuis une seule lecture cohérente."
+              : "All Open Data JSON endpoints share a single atomic snapshotId and unified timestamp synchronized from one consistent snapshot."}
+          </p>
+          <p className="mt-1 font-mono text-xs text-muted-foreground">
+            snapshotId:{" "}
+            <strong className="text-foreground">{snapshot.snapshotId}</strong>
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <div className="rounded-lg border border-border/80 bg-background p-3">
@@ -271,16 +307,14 @@ export default async function TrustCenterPage() {
               </p>
               <p className="mt-1 text-2xl font-bold text-foreground">
                 {stats.available
-                  ? stats.totalInteractions.toLocaleString(
-                      fr ? "fr-CA" : "en-US"
-                    )
+                  ? displayedInteractions.toLocaleString(fr ? "fr-CA" : "en-US")
                   : "—"}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {stats.available
                   ? fr
-                    ? `${stats.totalMedications} médicaments et classes`
-                    : `${stats.totalMedications} medications & drug classes`
+                    ? `${displayedMedications} médicaments et classes`
+                    : `${displayedMedications} medications & drug classes`
                   : "DB metrics unavailable"}
               </p>
             </div>
@@ -291,12 +325,13 @@ export default async function TrustCenterPage() {
                   : "Toxic Quarantine & Clinician Sign-Off"}
               </p>
               <p className="mt-1 text-2xl font-bold text-foreground">
-                {dangerousCount} / {stats.clinicianApprovedInteractions}
+                {quarantinedBotanicals.length} /{" "}
+                {stats.clinicianApprovedInteractions}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {fr
-                  ? `${dangerousCount} plantes en quarantaine · ${stats.clinicianApprovedInteractions} validations cliniciennes externes`
-                  : `${dangerousCount} quarantined plants · ${stats.clinicianApprovedInteractions} external clinician sign-offs`}
+                  ? `${quarantinedBotanicals.length} plantes en quarantaine · ${stats.clinicianApprovedInteractions} validations cliniciennes externes`
+                  : `${quarantinedBotanicals.length} quarantined plants · ${stats.clinicianApprovedInteractions} external clinician sign-offs`}
               </p>
             </div>
           </div>
@@ -334,90 +369,70 @@ export default async function TrustCenterPage() {
           </div>
         </section>
 
-        {/* 2. Open Source & Continuous Verification */}
+        {/* 2. Open Source & Live Continuous Verification */}
         <section id="open-source-ci" aria-labelledby="open-source-ci-heading">
           <h2
             id="open-source-ci-heading"
             className="text-xl font-semibold text-foreground"
           >
             {fr
-              ? "2. Code source public et intégration continue (CI/CD)"
-              : "2. Public Source Code & Continuous Verification (CI/CD)"}
+              ? "2. Code source public et journaux CI/CD vérifiables"
+              : "2. Public Source Code & Verifiable CI/CD Workflows"}
           </h2>
           <p className="mt-2">
             {fr
-              ? "L'ensemble du code applicatif, des migrations PostgreSQL et des suites de tests automatisés est publiquement consultable sur GitHub. Aucune mise en production sur main n'est exécutée sans validation préalable des contrôles CI."
-              : "All application source code, PostgreSQL migrations, and automated test suites are publicly inspectable on GitHub. Every production deploy from main is gated on green GitHub Actions CI checks."}
+              ? "Tous les workflows, journaux d'exécution GitHub Actions, tests PostgreSQL 16 et suites Playwright sont publiquement inspectables."
+              : "All workflow definitions and live GitHub Actions execution histories are publicly inspectable. Production deploys from main are strictly gated on green CI."}
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5">
-            <li>
+          <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
+            {WORKFLOW_BADGES.map((wf) => (
               <a
-                href={GITHUB_REPO}
+                key={wf.workflow}
+                href={`${GITHUB_REPO}/actions/workflows/${wf.workflow}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-primary underline underline-offset-4"
+                className="flex flex-col gap-1 rounded-lg border border-border bg-card p-3 hover:border-primary/50"
               >
-                {GITHUB_REPO}
-              </a>{" "}
-              —{" "}
-              {fr
-                ? "Dépôt source public Next.js / TypeScript / PostgreSQL"
-                : "Public Next.js / TypeScript / PostgreSQL source repository"}
-            </li>
-            <li>
-              <a
-                href={`${GITHUB_REPO}/blob/main/.github/workflows/ci.yml`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-primary underline underline-offset-4"
-              >
-                .github/workflows/ci.yml
-              </a>{" "}
-              —{" "}
-              {fr
-                ? "Détection de secrets (Gitleaks), vérification SQL, relecture complète PostgreSQL 16 (00001–00108), lint, typecheck, Prettier, Vitest, build Next.js, E2E Playwright (Chromium et Firefox) et accessibilité Axe WCAG 2.1 AA."
-                : "Secret scan, SQL migration linter, targeted & full PostgreSQL 16 migration replay, ESLint, TypeScript check, Prettier format check, Vitest unit/integration suite, Next.js production build, Playwright Chromium/Firefox E2E, and Axe WCAG checks."}
-            </li>
-            <li>
-              <a
-                href={`${GITHUB_REPO}/blob/main/.github/workflows/deploy.yml`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-primary underline underline-offset-4"
-              >
-                .github/workflows/deploy.yml
-              </a>{" "}
-              —{" "}
-              {fr
-                ? "Déploiement en production déclenché uniquement sur CI vert sur main, sauvegarde d'image herbally-app:rollback et bascule atomique."
-                : "Production deploy triggered only after green main CI, tagging herbally-app:rollback before atomic container replacement and health checks."}
-            </li>
-            <li>
-              <a
-                href={`${GITHUB_REPO}/blob/main/.github/workflows/uptime-watch.yml`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-primary underline underline-offset-4"
-              >
-                .github/workflows/uptime-watch.yml
-              </a>{" "}
-              —{" "}
-              {fr
-                ? "Surveillance périodique de disponibilité des routes publiques."
-                : "Scheduled availability checks across public production endpoints."}
-            </li>
-          </ul>
+                <span className="font-mono text-xs font-semibold text-primary underline underline-offset-4">
+                  actions/workflows/{wf.workflow}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {wf.label}
+                </span>
+              </a>
+            ))}
+          </div>
+          <p className="mt-3 text-xs">
+            {fr ? "Dépôt complet :" : "Full source repository:"}{" "}
+            <a
+              href={GITHUB_REPO}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono font-medium text-primary underline underline-offset-4"
+            >
+              {GITHUB_REPO}
+            </a>{" "}
+            ·{" "}
+            <a
+              href={`${GITHUB_REPO}/blob/main/scripts/test-migrations-postgres.sh`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono font-medium text-primary underline underline-offset-4"
+            >
+              scripts/test-migrations-postgres.sh
+            </a>
+          </p>
         </section>
 
-        {/* 3. Automated Safety & Parity Test Matrix */}
+        {/* 3. Automated Safety & Parity Test Matrix (A1-A8) */}
         <section id="automated-tests" aria-labelledby="automated-tests-heading">
           <h2
             id="automated-tests-heading"
             className="text-xl font-semibold text-foreground"
           >
             {fr
-              ? "3. Matrice des tests automatisés de sécurité et parité"
-              : "3. Automated Safety & Parity Test Matrix"}
+              ? "3. Matrice complète A1–A8 des tests automatisés et de surveillance"
+              : "3. Complete A1–A8 Automated Safety, E2E & Source-Monitor Matrix"}
           </h2>
           <div className="mt-4 overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-left text-xs">
@@ -428,7 +443,7 @@ export default async function TrustCenterPage() {
                     {fr ? "Portée vérifiée" : "Verified Scope"}
                   </th>
                   <th className="px-3 py-2.5 font-semibold">
-                    {fr ? "Fichier de test public" : "Public Test File"}
+                    {fr ? "Fichier public" : "Public Repository File"}
                   </th>
                 </tr>
               </thead>
@@ -461,6 +476,11 @@ export default async function TrustCenterPage() {
               </tbody>
             </table>
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            {fr
+              ? "Note d'ergonomie sur la quarantaine toxique : ToxicQuarantineShell supprime toute navigation consommateur, FAQ, publicité, dosage et texte thérapeutique, tout en conservant volontairement l'accès retour au répertoire, le sélecteur EN/FR et les numéros antipoison en pied de page pour éviter une impasse de navigation."
+              : "Toxic quarantine UX design note: ToxicQuarantineShell intentionally strips all consumer nav, FAQ, ads, dosing, and therapeutic prose while preserving minimal Home/Directory/Language links and Poison Control contacts so visitors never hit a dead end."}
+          </p>
         </section>
 
         {/* 4. Security Controls, HTTP Headers & Privacy Architecture */}
@@ -494,8 +514,8 @@ export default async function TrustCenterPage() {
                   : "Ad Exclusion & Zero Marketing Cookies:"}
               </strong>{" "}
               {fr
-                ? "ADS_LAUNCH_GATE est codé en dur à false dans src/lib/ads/policy.ts. De plus, la liste SENSITIVE_PREFIXES bloque définitivement tout hôte publicitaire dans la CSP des outils de santé (/calculator, /symptoms, /surgery-planner, /npn-checker, /interactions, /medications, /herbalist), des widgets /embed/* et des fiches toxiques en quarantaine."
-                : "ADS_LAUNCH_GATE is hard-coded false in src/lib/ads/policy.ts. Even at the CSP layer, SENSITIVE_PREFIXES excludes ad hosts from health tools (/calculator, /symptoms, /surgery-planner, /npn-checker, /interactions, /medications, /herbalist), /embed/* iframes, and ToxicQuarantineShell toxic pages."}
+                ? "ADS_LAUNCH_GATE est codé en dur à false dans src/lib/ads/policy.ts et vérifié à l'exécution réseau sous Playwright (e2e/ads.spec.ts) sur les widgets, fiches toxiques et outils de santé."
+                : "ADS_LAUNCH_GATE is hard-coded false in src/lib/ads/policy.ts and runtime-verified via network interception in e2e/ads.spec.ts across /embed/* widgets, quarantined botanicals, and clinical tools."}
             </li>
             <li>
               <strong className="text-foreground">
@@ -564,8 +584,8 @@ export default async function TrustCenterPage() {
           </h2>
           <p className="mt-2">
             {fr
-              ? "La base de données PostgreSQL 17 auto-hébergée (herbally-db) est sauvegardée quotidiennement en format personnalisé pg_dump -Fc vérifié par pg_restore --list, chiffrée en AES-256 GPG, conservée 14 jours sur trois emplacements (hôte local, miroir hôte et copie hors site) et testée au moyen d'un script de restauration non destructif dans herbally_restore_test."
-              : "Production PostgreSQL 17 (herbally-db) runs daily pg_dump -Fc backups verified with pg_restore --list, encrypted with AES-256 symmetric GPG, retained for 14 days across three storage layers (local host, secondary host mirror, and off-site Mac pull), and validated via non-destructive restore drills into a temporary herbally_restore_test database."}
+              ? "La base de données PostgreSQL 17 auto-hébergée (herbally-db) est sauvegardée quotidiennement en format personnalisé pg_dump -Fc vérifié par pg_restore --list, chiffrée en AES-256 GPG, conservée 14 jours sur trois emplacements (hôte local, miroir hôte et copie hors site) et accompagnée d'un script de restauration non destructif dans herbally_restore_test (les journaux d'exercices sur l'hôte privé ne sont pas publiés dans ce dépôt)."
+              : "Production PostgreSQL 17 (herbally-db) runs daily pg_dump -Fc backups verified with pg_restore --list, encrypted with AES-256 symmetric GPG, retained for 14 days across three storage layers (local host, secondary host mirror, and off-site Mac pull), with an atomic non-destructive restore drill script documented in Git (private host drill logs are not published in this repo)."}
           </p>
           <p className="mt-2">
             <a
@@ -597,22 +617,22 @@ export default async function TrustCenterPage() {
             <li>
               <strong className="text-foreground">
                 {fr
-                  ? "Validation clinique externe :"
-                  : "Independent Licensed Clinical Sign-Off:"}
+                  ? "Validation clinique externe (Groupe B) :"
+                  : "Independent Licensed Clinical Sign-Off (Group B):"}
               </strong>{" "}
               {fr
-                ? `${stats.clinicianApprovedInteractions} / ${stats.totalInteractions || 509} paires d'interactions et 0 / 3 sièges du comité consultatif sont actuellement pourvus. HerbAlly ne prétend à aucune validation clinique tant que des signatures licenciées ne sont pas enregistrées.`
-                : `${stats.clinicianApprovedInteractions} / ${stats.totalInteractions || 509} interaction pairs and 0 / 3 Clinical Advisory Board seats are currently filled. HerbAlly never claims clinical sign-off before verified licensed review.`}
+                ? `${stats.clinicianApprovedInteractions} / ${displayedInteractions || 509} paires d'interactions et 0 / 3 sièges du comité consultatif sont actuellement pourvus. HerbAlly ne prétend à aucune validation clinique tant que des signatures licenciées ne sont pas enregistrées.`
+                : `${stats.clinicianApprovedInteractions} / ${displayedInteractions || 509} interaction pairs and 0 / 3 Clinical Advisory Board seats are currently filled. HerbAlly never claims clinical sign-off before verified licensed review.`}
             </li>
             <li>
               <strong className="text-foreground">
                 {fr
-                  ? "Tests d'intrusion tiers / SOC 2 :"
-                  : "Third-Party Pentest & Formal Compliance Attestations:"}
+                  ? "Tests d'intrusion tiers / SOC 2 (A9) :"
+                  : "Third-Party Pentest & Formal Compliance Attestations (A9):"}
               </strong>{" "}
               {fr
-                ? "HerbAlly publie ses contrôles techniques en code ouvert sans prétendre à une certification SOC 2 ou ISO 27001 externe."
-                : "HerbAlly publishes verifiable engineering controls in open source and does not claim third-party SOC 2, ISO 27001, or paid penetration-test certification."}
+                ? "HerbAlly publie ses contrôles techniques en code ouvert sans prétendre à un test d'intrusion humain indépendant, ni à une certification SOC 2 ou ISO 27001 externe."
+                : "HerbAlly publishes verifiable engineering controls in open source and does not claim an external human penetration test, SOC 2, or ISO 27001 certification."}
             </li>
             <li>
               <strong className="text-foreground">

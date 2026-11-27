@@ -18,3 +18,40 @@ for (const [name, headers] of [
     );
   });
 }
+
+test("serves atomic CORS-enabled /open-data/* endpoints, OpenAPI 3.1 schema, and bilingual /trust pages", async ({
+  request,
+}) => {
+  const [catRes, medRes, ixRes, qRes, schemaRes, trustEn, trustFr] =
+    await Promise.all([
+      request.get("/open-data/catalog.json"),
+      request.get("/open-data/medications.json"),
+      request.get("/open-data/interactions.json"),
+      request.get("/open-data/quarantine.json"),
+      request.get("/open-data/schema.json"),
+      request.get("/trust"),
+      request.get("/fr/trust"),
+    ]);
+
+  expect(trustEn.status()).toBe(200);
+  expect(trustFr.status()).toBe(200);
+
+  for (const res of [catRes, medRes, ixRes, qRes, schemaRes]) {
+    expect(res.status()).toBe(200);
+    expect(res.headers()["access-control-allow-origin"]).toBe("*");
+  }
+
+  const [cat, med, ix, q, schema] = await Promise.all([
+    catRes.json(),
+    medRes.json(),
+    ixRes.json(),
+    qRes.json(),
+    schemaRes.json(),
+  ]);
+
+  expect(cat.datasetVersion).toBe("3.13.0");
+  expect(med.snapshotId).toBe(cat.snapshotId);
+  expect(ix.snapshotId).toBe(cat.snapshotId);
+  expect(q.snapshotId).toBe(cat.snapshotId);
+  expect(schema.openapi).toBe("3.1.0");
+});

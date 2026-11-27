@@ -1,11 +1,12 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import type { InteractionPair } from "@/lib/interactions/pairs";
 
-const { mockStats, mockMedications, mockInteractions } = vi.hoisted(() => ({
+const { mockStats, mockGetInteractionPairs } = vi.hoisted(() => ({
   mockStats: {
     available: true,
-    generatedAt: "2026-11-27T00:00:00.000Z",
+    generatedAt: "2026-11-27T17:00:00.000Z",
     totalHerbs: 3122,
     sourceCheckedHerbs: 3089,
     clinicallyReviewedHerbs: 0,
@@ -15,84 +16,23 @@ const { mockStats, mockMedications, mockInteractions } = vi.hoisted(() => ({
     legacyUnreviewedInteractions: 509,
     corrections: [],
   },
-  mockMedications: [
-    {
-      drugSlug: "warfarin",
-      drugName: "Warfarin (Coumadin)",
-      enDrugName: "Warfarin (Coumadin)",
-      totalInteractions: 36,
-      publishedCount: 0,
-      legacyCount: 36,
-      highestSeverity: "contraindicated" as const,
-      countsBySeverity: {
-        contraindicated: 8,
-        severe: 12,
-        moderate: 14,
-        mild: 2,
-      },
-      sampleHerbs: [
-        { slug: "turmeric", name: "Turmeric", severity: "severe" as const },
-      ],
-      hasFr: true,
-      updatedAt: "2026-11-20T00:00:00.000Z",
-    },
-  ],
-  mockInteractions: [
-    {
-      id: "ix-1",
-      herbSlug: "turmeric",
-      herbName: "Turmeric",
-      herbScientificName: "Curcuma longa",
-      drugName: "Warfarin (Coumadin)",
-      drugSlug: "warfarin",
-      severity: "severe" as const,
-      description: "Additive antiplatelet effect may increase bleeding risk.",
-      mechanism: "Antiplatelet / CYP2C9 modulation",
-      evidenceLevel: "B",
-      source: "NIH NCCIH / PubMed",
-      sourceUrl: "https://pubmed.ncbi.nlm.nih.gov/34062109/",
-      evidenceNote: null,
-      updatedAt: "2026-11-20T00:00:00.000Z",
-      hasFr: true,
-      publicationStatus: "published",
-      clinicalActionStatus: "blocked_legacy_unreviewed",
-      evidenceTier: "clinical_trial" as const,
-      extrapolationScope: "human_clinical" as const,
-    },
-    {
-      id: "ix-retracted",
-      herbSlug: "kava",
-      herbName: "Kava",
-      herbScientificName: "Piper methysticum",
-      drugName: "Alprazolam",
-      drugSlug: "alprazolam",
-      severity: "severe" as const,
-      description: "Withheld retracted citation",
-      mechanism: null,
-      evidenceLevel: "C",
-      source: "Retracted source",
-      sourceUrl: "https://pubmed.ncbi.nlm.nih.gov/99999/",
-      evidenceNote: null,
-      updatedAt: "2026-11-20T00:00:00.000Z",
-      hasFr: false,
-      publicationStatus: "retracted_hold",
-      clinicalActionStatus: "blocked_legacy_unreviewed",
-      evidenceTier: "case_series_or_case_report" as const,
-      extrapolationScope: "unverified" as const,
-    },
-  ],
+  mockGetInteractionPairs: vi.fn(async (): Promise<InteractionPair[]> => {
+    const mod =
+      await import("@/lib/interactions/__tests__/fixtures/canonical-142-medications.json");
+    return mod.default as unknown as InteractionPair[];
+  }),
+}));
+
+vi.mock("next/cache", () => ({
+  unstable_cache: (fn: () => unknown) => fn,
 }));
 
 vi.mock("@/lib/governance/coverage-stats", () => ({
   getGovernanceCoverageStats: vi.fn().mockResolvedValue(mockStats),
 }));
 
-vi.mock("@/lib/interactions/medications", () => ({
-  getMedicationSummaries: vi.fn().mockResolvedValue(mockMedications),
-}));
-
 vi.mock("@/lib/interactions/pairs", () => ({
-  getInteractionPairs: vi.fn().mockResolvedValue(mockInteractions),
+  getInteractionPairs: mockGetInteractionPairs,
 }));
 
 import { GET as getCatalogJson } from "@/app/open-data/catalog.json/route";
@@ -103,7 +43,7 @@ import { GET as getSchemaJson } from "@/app/open-data/schema.json/route";
 import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
 import { WebApplicationSchema } from "@/components/seo/web-app-schema";
 
-describe("Open Botanical Safety Data Suite, OpenAPI Schema & WebApplicationSchema", () => {
+describe("A3/A4: Atomic Open Botanical Safety Data Suite, Full Reconciliation & OpenAPI 3.1", () => {
   it("exports all dangerous herbs deterministically sorted by slug", () => {
     const records = getAllDangerousHerbs();
     expect(records.length).toBeGreaterThan(20);
@@ -112,33 +52,30 @@ describe("Open Botanical Safety Data Suite, OpenAPI Schema & WebApplicationSchem
     expect([...slugs].sort((a, b) => a.localeCompare(b))).toEqual(slugs);
   });
 
-  it("serves CORS-enabled /open-data/catalog.json with synced counts and all endpoint links", async () => {
-    const res = await getCatalogJson();
-    expect(res.status).toBe(200);
-    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
-    const body = (await res.json()) as {
+  it("shares one atomic snapshotId and reconciled totals across catalog, medications, interactions, and quarantine exports", async () => {
+    const [catalogRes, medsRes, ixRes, qRes] = await Promise.all([
+      getCatalogJson(),
+      getMedicationsJson(),
+      getInteractionsJson(),
+      getQuarantineJson(),
+    ]);
+
+    for (const res of [catalogRes, medsRes, ixRes, qRes]) {
+      expect(res.status).toBe(200);
+      expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
+    }
+
+    const catalog = (await catalogRes.json()) as {
+      datasetVersion: string;
+      snapshotId: string;
+      generatedAt: string;
       counts: Record<string, number>;
       endpoints: Record<string, string>;
     };
-    expect(body.counts.publishedHerbs).toBe(3122);
-    expect(body.counts.clinicianSignedInteractions).toBe(0);
-    expect(body.counts.quarantinedToxicBotanicals).toBe(
-      getAllDangerousHerbs().length
-    );
-    expect(body.endpoints.interactionsJson).toContain(
-      "/open-data/interactions.json"
-    );
-    expect(body.endpoints.openApiSchemaJson).toContain(
-      "/open-data/schema.json"
-    );
-    expect(body.endpoints.trustCenter).toContain("/trust");
-  });
-
-  it("serves CORS-enabled /open-data/medications.json with honest clinician review flags", async () => {
-    const res = await getMedicationsJson();
-    expect(res.status).toBe(200);
-    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
-    const body = (await res.json()) as {
+    const meds = (await medsRes.json()) as {
+      datasetVersion: string;
+      snapshotId: string;
+      generatedAt: string;
       totalMedications: number;
       totalInteractionPairs: number;
       medications: Array<{
@@ -146,21 +83,13 @@ describe("Open Botanical Safety Data Suite, OpenAPI Schema & WebApplicationSchem
         url: string;
         urlFr: string;
         reviewStatus: string;
+        totalInteractions: number;
       }>;
     };
-    expect(body.totalMedications).toBe(1);
-    expect(body.totalInteractionPairs).toBe(36);
-    expect(body.medications[0].url).toContain("/medications/warfarin");
-    expect(body.medications[0].urlFr).toContain("/fr/medications/warfarin");
-    expect(body.medications[0].reviewStatus).toBe("awaiting_clinical_review");
-  });
-
-  it("serves CORS-enabled /open-data/interactions.json excluding retracted records", async () => {
-    const res = await getInteractionsJson();
-    expect(res.status).toBe(200);
-    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
-    const body = (await res.json()) as {
-      dataset: string;
+    const ix = (await ixRes.json()) as {
+      datasetVersion: string;
+      snapshotId: string;
+      generatedAt: string;
       totalPairs: number;
       clinicianSignedPairs: number;
       interactions: Array<{
@@ -170,23 +99,10 @@ describe("Open Botanical Safety Data Suite, OpenAPI Schema & WebApplicationSchem
         url: string;
       }>;
     };
-    expect(body.dataset).toBe("herb_drug_interactions");
-    expect(body.totalPairs).toBe(1);
-    expect(body.clinicianSignedPairs).toBe(0);
-    expect(body.interactions[0].id).toBe("ix-1");
-    expect(body.interactions[0].clinicianSigned).toBe(false);
-    expect(body.interactions[0].url).toContain(
-      "/interactions/turmeric/warfarin"
-    );
-    expect(body.interactions[0].sourceUrl).toContain("pubmed.ncbi.nlm.nih.gov");
-  });
-
-  it("serves CORS-enabled /open-data/quarantine.json with Poison Control emergency numbers", async () => {
-    const res = await getQuarantineJson();
-    expect(res.status).toBe(200);
-    expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
-    const body = (await res.json()) as {
-      dataset: string;
+    const quarantine = (await qRes.json()) as {
+      datasetVersion: string;
+      snapshotId: string;
+      generatedAt: string;
       totalQuarantinedBotanicals: number;
       emergencyContacts: {
         usPoisonControl: string;
@@ -195,15 +111,63 @@ describe("Open Botanical Safety Data Suite, OpenAPI Schema & WebApplicationSchem
       };
       botanicals: Array<{ slug: string; quarantineStatus: string }>;
     };
-    expect(body.dataset).toBe("toxic_botanical_quarantine");
-    expect(body.totalQuarantinedBotanicals).toBe(getAllDangerousHerbs().length);
-    expect(body.emergencyContacts.usPoisonControl).toBe("1-800-222-1222");
-    expect(body.emergencyContacts.canadaPoisonControl).toBe("1-844-764-7669");
-    expect(body.emergencyContacts.emergency).toBe("911");
+
+    // Atomic consistency across all 4 exports
+    expect(catalog.snapshotId).toMatch(/^herbally-open-data-3\.13\.0-/);
+    expect(meds.snapshotId).toBe(catalog.snapshotId);
+    expect(ix.snapshotId).toBe(catalog.snapshotId);
+    expect(quarantine.snapshotId).toBe(catalog.snapshotId);
+
+    expect(meds.generatedAt).toBe(catalog.generatedAt);
+    expect(ix.generatedAt).toBe(catalog.generatedAt);
+    expect(quarantine.generatedAt).toBe(catalog.generatedAt);
+
+    // Exact cross-endpoint count reconciliation
+    expect(catalog.counts.publishedInteractionPairs).toBe(509);
+    expect(ix.totalPairs).toBe(509);
+    expect(meds.totalInteractionPairs).toBe(509);
     expect(
-      body.botanicals.find((b) => b.slug === "abrus-precatorius")
+      meds.medications.reduce((sum, m) => sum + m.totalInteractions, 0)
+    ).toBe(509);
+
+    expect(catalog.counts.medicationsAndClasses).toBe(142);
+    expect(meds.totalMedications).toBe(142);
+    expect(meds.medications).toHaveLength(142);
+    for (const med of meds.medications) {
+      expect(med.reviewStatus).toBe("awaiting_clinical_review");
+      expect(med.url).toContain(`/medications/${med.drugSlug}`);
+      expect(med.urlFr).toContain(`/fr/medications/${med.drugSlug}`);
+    }
+
+    expect(catalog.counts.clinicianSignedInteractions).toBe(0);
+    expect(ix.clinicianSignedPairs).toBe(0);
+    expect(ix.interactions.every((p) => p.clinicianSigned === false)).toBe(
+      true
+    );
+
+    expect(catalog.counts.quarantinedToxicBotanicals).toBe(
+      getAllDangerousHerbs().length
+    );
+    expect(quarantine.totalQuarantinedBotanicals).toBe(
+      getAllDangerousHerbs().length
+    );
+    expect(quarantine.emergencyContacts.usPoisonControl).toBe("1-800-222-1222");
+    expect(quarantine.emergencyContacts.canadaPoisonControl).toBe(
+      "1-844-764-7669"
+    );
+    expect(quarantine.emergencyContacts.emergency).toBe("911");
+    expect(
+      quarantine.botanicals.find((b) => b.slug === "abrus-precatorius")
         ?.quarantineStatus
     ).toBe("permanent_toxic_quarantine");
+
+    expect(catalog.endpoints.interactionsJson).toContain(
+      "/open-data/interactions.json"
+    );
+    expect(catalog.endpoints.openApiSchemaJson).toContain(
+      "/open-data/schema.json"
+    );
+    expect(catalog.endpoints.trustCenter).toContain("/trust");
   });
 
   it("serves a valid OpenAPI 3.1.0 specification at /open-data/schema.json", async () => {
@@ -212,10 +176,12 @@ describe("Open Botanical Safety Data Suite, OpenAPI Schema & WebApplicationSchem
     expect(res.headers.get("Access-Control-Allow-Origin")).toBe("*");
     const body = (await res.json()) as {
       openapi: string;
+      info: { version: string };
       paths: Record<string, unknown>;
       components: { schemas: Record<string, unknown> };
     };
     expect(body.openapi).toBe("3.1.0");
+    expect(body.info.version).toBe("3.13.0");
     for (const p of [
       "/open-data/catalog.json",
       "/open-data/medications.json",

@@ -1,0 +1,39 @@
+name: Source & OpenAPI Monitor
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: source-monitor
+  cancel-in-progress: false
+
+jobs:
+  verify-sources:
+    name: Verify Open Data snapshot consistency, OpenAPI 3.1, and source URLs/PMIDs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run Open Data & scientific source monitor against production
+        id: monitor
+        run: |
+          npx tsx scripts/verify-open-data-and-sources.ts \
+            --base-url https://herbally.app \
+            --json-out source-monitor-report.json
+      - name: Upload monitor report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-monitor-report
+          path: source-monitor-report.json
+          retention-days: 30

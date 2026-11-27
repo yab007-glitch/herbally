@@ -1,16 +1,23 @@
-import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
+import {
+  OPEN_DATA_DATASET_VERSION,
+  getOpenDataSnapshot,
+} from "@/lib/open-data/snapshot";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 3600;
 
 export async function GET() {
   const baseUrl = siteUrl();
-  const records = getAllDangerousHerbs();
+  const snapshot = await getOpenDataSnapshot();
+  const records = snapshot.quarantinedBotanicals;
 
   const payload = {
     service: "HerbAlly",
     dataset: "toxic_botanical_quarantine",
     url: `${baseUrl}/open-data/quarantine.json`,
+    datasetVersion: OPEN_DATA_DATASET_VERSION,
+    snapshotId: snapshot.snapshotId,
+    generatedAt: snapshot.generatedAt,
     policy:
       "Permanent toxic botanical quarantine: no therapeutic use, dosing, FAQ, supplement claims, or ads.",
     emergencyContacts: {

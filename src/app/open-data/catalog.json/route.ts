@@ -1,18 +1,37 @@
-import { getGovernanceCoverageStats } from "@/lib/governance/coverage-stats";
-import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
+import {
+  OPEN_DATA_DATASET_VERSION,
+  getOpenDataSnapshot,
+} from "@/lib/open-data/snapshot";
 import { siteUrl } from "@/lib/seo/site-url";
 
 export const revalidate = 3600;
 
 export async function GET() {
   const baseUrl = siteUrl();
-  const stats = await getGovernanceCoverageStats();
-  const quarantinedToxicBotanicals = getAllDangerousHerbs().length;
+  const snapshot = await getOpenDataSnapshot();
+  const { stats, activePairs, medications, quarantinedBotanicals } = snapshot;
+
+  const publishedInteractionPairs =
+    activePairs.length > 0 ? activePairs.length : stats.totalInteractions;
+  const medicationsAndClasses =
+    medications.length > 0 ? medications.length : stats.totalMedications;
+  const clinicianSignedInteractions =
+    activePairs.length > 0
+      ? activePairs.filter(
+          (p) => p.clinicalActionStatus === "clinician_approved"
+        ).length
+      : stats.clinicianApprovedInteractions;
+  const legacyUnreviewedInteractions = Math.max(
+    0,
+    publishedInteractionPairs - clinicianSignedInteractions
+  );
 
   const payload = {
     service: "HerbAlly",
     url: baseUrl,
-    generatedAt: stats.generatedAt,
+    datasetVersion: OPEN_DATA_DATASET_VERSION,
+    snapshotId: snapshot.snapshotId,
+    generatedAt: snapshot.generatedAt,
     editorialContact: "info@herbally.app",
     license:
       "CC BY 4.0 for HerbAlly compilation metadata; cited regulatory excerpts retain publisher licences (see /methodology)",
@@ -21,11 +40,11 @@ export async function GET() {
       publishedHerbs: stats.totalHerbs,
       sourceCheckedHerbs: stats.sourceCheckedHerbs,
       clinicianSignedHerbs: stats.clinicallyReviewedHerbs,
-      publishedInteractionPairs: stats.totalInteractions,
-      medicationsAndClasses: stats.totalMedications,
-      clinicianSignedInteractions: stats.clinicianApprovedInteractions,
-      legacyUnreviewedInteractions: stats.legacyUnreviewedInteractions,
-      quarantinedToxicBotanicals,
+      publishedInteractionPairs,
+      medicationsAndClasses,
+      clinicianSignedInteractions,
+      legacyUnreviewedInteractions,
+      quarantinedToxicBotanicals: quarantinedBotanicals.length,
     },
     sources: [
       {
