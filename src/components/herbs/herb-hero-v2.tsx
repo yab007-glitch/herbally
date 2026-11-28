@@ -175,7 +175,10 @@ export function HerbHeroV2({
                   </Badge>
                 )}
               {dangerous ? (
-                <Badge variant="destructive" className="text-xs">
+                <Badge
+                  variant="destructive"
+                  className="h-auto whitespace-normal text-center text-xs"
+                >
                   {t("safetyGlance.toxicPlantBadge")}
                 </Badge>
               ) : (
@@ -219,7 +222,10 @@ export function HerbHeroV2({
                 evidence", the next answers "who checked it". */}
             <div className="mt-2 flex justify-center sm:justify-start">
               {dangerous ? (
-                <Badge variant="destructive" className="text-xs">
+                <Badge
+                  variant="destructive"
+                  className="h-auto whitespace-normal text-center text-xs"
+                >
                   {t("safetyGlance.toxicQuarantineStatus")}
                 </Badge>
               ) : (
