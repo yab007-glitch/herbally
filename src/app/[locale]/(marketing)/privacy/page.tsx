@@ -8,6 +8,8 @@ import { getLocale } from "@/lib/i18n/page-locale";
 import { MarketingMessagesProvider } from "@/components/i18n/marketing-messages-provider";
 import { ClearLocalDataButton } from "@/components/privacy/clear-local-data-button";
 
+export const revalidate = 3600;
+
 export const generateMetadata = () =>
   buildPageMetadata({
     titleKey: "privacyPolicy",

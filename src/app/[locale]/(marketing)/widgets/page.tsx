@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
+import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { MarketingMessagesProvider } from "@/components/i18n/marketing-messages-provider";
 import { buildPageMetadata } from "@/lib/i18n/metadata";
 import { siteUrl } from "@/lib/seo/site-url";
@@ -11,6 +12,8 @@ import { WidgetBuilder } from "@/components/embed/widget-builder";
 import { LibrarianCitationKit } from "@/components/embed/librarian-citation-kit";
 import { ClinicalSupportCallout } from "@/components/shared/clinical-support-callout";
 import { Code2, Database } from "lucide-react";
+
+export const revalidate = 3600;
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -179,12 +182,12 @@ curl -s https://herbally.app/open-data/source-monitor-latest.json`}</code>
             >
               /open-data/schema.json
             </a>
-            <a
+            <Link
               href="/trust"
               className="text-primary underline underline-offset-4"
             >
               /trust
-            </a>
+            </Link>
             <a
               href="/llms-full.txt"
               className="text-primary underline underline-offset-4"

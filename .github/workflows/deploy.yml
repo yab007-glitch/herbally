@@ -227,7 +227,7 @@ jobs:
           SQL
 
           # Re-run full public smoke post-00104
-          for path in "/" "/herbs" "/herbs/aloe-vera" "/calculator?herb=ginger" "/trust" "/embed.js" "/open-data/manifest.json" "/open-data/privacy-manifest.json" "/open-data/review-queue.json"; do
+          for path in "/" "/herbs" "/herbs/aloe-vera" "/calculator?herb=ginger" "/trust" "/embed.js" "/open-data/manifest.json" "/open-data/privacy-manifest.json" "/open-data/review-queue.json" "/open-data/v3-15-0.json"; do
             code=$(curl -fsS -o /dev/null -w '%{http_code}' "https://herbally.app${path}")
             echo "post-contract ${path} -> ${code}"
             [ "$code" = "200" ]
@@ -235,19 +235,20 @@ jobs:
           curl -fsS 'https://herbally.app/api/interactions/check?herb=ginger&drug=warfarin' | grep -q '"found":true'
           curl -fsS 'https://herbally.app/api/herbs/search?q=ginger' | grep -qi 'ginger'
 
-          # Publish audit-verifiable migration & smoke summary
+          # Publish audit-verifiable migration & smoke summary without shell backtick expansion
+          DEPLOYED_SHA="$(git -C "$GITHUB_WORKSPACE" rev-parse HEAD)"
           if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
             {
-              echo "### Production Deploy & Migration Verification"
-              echo "- **Deployed SHA**: \`$(git -C "$GITHUB_WORKSPACE" rev-parse HEAD)\`"
-              echo "- **Expand migrations verified (`--phase expand`)**: \`00097–00111\` (excluding \`00104\`)"
-              echo "- **Contract migration verified (`--phase contract`)**: \`00104_pediatric_boundary_contract.sql\`"
-              echo "- **Post-switch smoke & Open Data checks**: PASS"
+              printf '### Production Deploy & Migration Verification\n'
+              printf -- '- **Deployed SHA**: `%s`\n' "$DEPLOYED_SHA"
+              printf -- '- **Expand migrations verified (`--phase expand`)**: `00097–00111` (excluding `00104`)\n'
+              printf -- '- **Contract migration verified (`--phase contract`)**: `00104_pediatric_boundary_contract.sql`\n'
+              printf -- '- **Post-switch smoke & Open Data checks**: PASS\n'
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
           # Record deployed SHA only after post-contract smoke passes
-          git -C "$GITHUB_WORKSPACE" rev-parse HEAD > /srv/herbally/.last-deployed-sha
+          printf '%s\n' "$DEPLOYED_SHA" > /srv/herbally/.last-deployed-sha
 
           # Best-effort IndexNow notification for Bing/DuckDuckGo/ChatGPT Search
           idx_key=$(tr -d '\r\n' < /srv/herbally/public/indexnow-key.txt 2>/dev/null || true)

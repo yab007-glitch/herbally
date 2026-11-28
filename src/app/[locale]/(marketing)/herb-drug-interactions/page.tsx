@@ -15,6 +15,8 @@ import { ClinicalSupportCallout } from "@/components/shared/clinical-support-cal
 import { buttonVariants } from "@/components/ui/button-variants";
 import { InteractionChecker } from "../interaction-checker";
 
+export const revalidate = 3600;
+
 export const generateMetadata = () =>
   buildPageMetadata({
     titleKey: "herbDrugInteractions",

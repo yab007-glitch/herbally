@@ -1,23 +1,23 @@
 {
   "verificationProvenance": {
-    "note": "Verified JSON output artifact captured from GitHub Actions Run 46078153584 against Release 3.14.1 commit 78fa2e3f3878871ba0ae3f0c86ea92a39ca46301; liveGitHubWorkflowRuns on /open-data/source-monitor-latest.json appends the latest main workflow runs.",
-    "commitSha": "78fa2e3f3878871ba0ae3f0c86ea92a39ca46301",
-    "ciRunId": "46077636564",
-    "deployRunId": "46077640595",
-    "deployRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46077640595",
-    "deployApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46077640595",
-    "sourceMonitorRunId": "46078153584",
-    "sourceMonitorRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46078153584",
-    "sourceMonitorApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46078153584"
+    "note": "Verified JSON output artifact captured from GitHub Actions Run 46086587828 against Release 3.15.0 commit 6dd8a4e2270a48049b520ad4d28ee15bc1f30972; liveGitHubWorkflowRuns on /open-data/source-monitor-latest.json appends the latest main workflow runs.",
+    "commitSha": "6dd8a4e2270a48049b520ad4d28ee15bc1f30972",
+    "ciRunId": "46085268094",
+    "deployRunId": "46086155664",
+    "deployRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46086155664",
+    "deployApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46086155664",
+    "sourceMonitorRunId": "46086587828",
+    "sourceMonitorRunUrl": "https://github.com/yab007-glitch/herbally/actions/runs/46086587828",
+    "sourceMonitorApiUrl": "https://api.github.com/repos/yab007-glitch/herbally/actions/runs/46086587828"
   },
   "report": {
-    "checkedAt": "2026-11-27T22:44:08.761Z",
+    "checkedAt": "2026-11-28T00:14:28.835Z",
     "baseUrl": "https://herbally.app",
-    "snapshotId": "herbally-open-data-3.14.1-20261127T220000Z",
-    "datasetVersion": "3.14.1",
+    "snapshotId": "herbally-open-data-3.15.0-20261128T000000Z",
+    "datasetVersion": "3.15.0",
     "counts": {
-      "medications": 142,
-      "interactions": 509,
+      "medications": 145,
+      "interactions": 515,
       "quarantinedBotanicals": 115,
       "clinicianSignedInteractions": 0
     },
@@ -29,8 +29,8 @@
       "openApiVersion": "3.1.0"
     },
     "citations": {
-      "totalUniqueUrls": 244,
-      "uniquePmids": 75,
+      "totalUniqueUrls": 248,
+      "uniquePmids": 79,
       "retractedPmids": [],
       "nonPubmedUrlsChecked": 169,
       "nonPubmedOk": 168,

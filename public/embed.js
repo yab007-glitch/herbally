@@ -1,5 +1,16 @@
 (function () {
   var ORIGIN = "https://herbally.app";
+  try {
+    if (
+      typeof document !== "undefined" &&
+      document.currentScript &&
+      document.currentScript.src
+    ) {
+      ORIGIN = new URL(document.currentScript.src).origin;
+    }
+  } catch (_e) {
+    ORIGIN = "https://herbally.app";
+  }
 
   function buildFrame(locale, maxWidth) {
     var fr = locale === "fr";
