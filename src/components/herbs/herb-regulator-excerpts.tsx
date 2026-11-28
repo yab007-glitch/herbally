@@ -117,15 +117,30 @@ export function HerbRegulatorExcerpts({
                     safetyHeading: copy.nccih.safetyHeading,
                   };
 
+      const claims = isDangerous ? [] : normalizeClaims(source.claims);
+      const safety = normalizeSafety(source.safety);
+      const totalChars =
+        claims.reduce(
+          (sum, c) =>
+            sum + (typeof c === "string" ? c.length : (c.text?.length ?? 0)),
+          0
+        ) + safety.reduce((sum, s) => sum + s.length, 0);
+      const isVerboseModernExcerpt = !historical && totalChars > 1000;
+
       return {
         key: source.source,
         id: `source-${source.source.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-        claims: isDangerous ? [] : normalizeClaims(source.claims),
-        safety: normalizeSafety(source.safety),
+        claims,
+        safety,
         url: source.url,
         notice: historical?.notice ?? null,
         renderAs: historical ? "prose" : "list",
-        collapsible: Boolean(historical),
+        collapsible: Boolean(historical) || isVerboseModernExcerpt,
+        collapseSummary: isVerboseModernExcerpt
+          ? locale === "fr"
+            ? `Source réglementaire primaire (${labels.sourceLabel}) — Afficher l'extrait intégral (${claims.length + safety.length} points)`
+            : `Primary Regulatory Source (${labels.sourceLabel}) — Expand full verbatim excerpt (${claims.length + safety.length} sections)`
+          : undefined,
         ...labels,
       } satisfies RegulatorExcerptItem;
     })

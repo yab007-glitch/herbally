@@ -175,11 +175,58 @@ export default async function HerbDrugInteractionsPage() {
           </p>
         </header>
 
+        {/* Clear Mode Selector so first-time visitors immediately see both checking modes */}
+        <nav
+          aria-label={
+            fr
+              ? "Choisir un mode de vérification"
+              : "Choose interaction check mode"
+          }
+          className="mt-6 grid gap-3 sm:grid-cols-2"
+        >
+          <a
+            href="#single-checker"
+            className="flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/50"
+          >
+            <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+              {fr ? "Mode 1 · Paire unique" : "Mode 1 · Single Pair Lookup"}
+            </span>
+            <span className="mt-1 text-sm font-semibold text-foreground">
+              {fr ? "1 plante + 1 médicament" : "1 herb + 1 medication"}
+            </span>
+            <span className="mt-0.5 text-xs text-muted-foreground">
+              {fr
+                ? "Recherche structurée immédiate dans nos 515 paires sourcées."
+                : "Instant structured lookup across 515 cited pairs."}
+            </span>
+          </a>
+          <a
+            href="#stack-checker"
+            className="flex flex-col justify-between rounded-xl border border-primary/35 bg-primary/5 p-4 transition-colors hover:border-primary"
+          >
+            <span className="text-xs font-semibold uppercase tracking-wide text-primary">
+              {fr
+                ? "Mode 2 · Bilan multi-plantes"
+                : "Mode 2 · Full Supplement Stack"}
+            </span>
+            <span className="mt-1 text-sm font-semibold text-foreground">
+              {fr
+                ? "Plusieurs plantes + plusieurs médicaments"
+                : "Multiple herbs + multiple medications"}
+            </span>
+            <span className="mt-0.5 text-xs text-muted-foreground">
+              {fr
+                ? "Détecte 7 voies de risque cumulatif + résumé imprimable local."
+                : "Flags 7 cumulative overlap pathways + printable local brief."}
+            </span>
+          </a>
+        </nav>
+
         {/* The checker itself, on the page.
           This used to be a card explaining that the checker lives on the
           homepage, with a button that sent the visitor there — on the one page
           whose subject is checking a combination. */}
-        <section className="mt-8">
+        <section id="single-checker" className="mt-8 scroll-mt-24">
           <h2 className="mb-3 text-xl font-semibold text-foreground">
             {t("checkerCtaTitle")}
           </h2>

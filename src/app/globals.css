@@ -158,6 +158,7 @@ h4 {
   font-family: var(--font-display);
   font-weight: 500;
   letter-spacing: -0.018em;
+  overflow-wrap: break-word;
 }
 
 /* Editorial utility: the small label that sits above a heading. */
@@ -253,7 +254,12 @@ h4 {
   }
 }
 
-/* ─── Skip to content ─────────────────────────────────────────────── */
+/* ─── Skip to content & Accessible Keyboard Focus ─────────────────── */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
 .skip-to-content {
   position: absolute;
   top: -2.5rem;

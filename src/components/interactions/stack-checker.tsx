@@ -7,9 +7,12 @@ import {
   AlertOctagon,
   AlertTriangle,
   Download,
+  Eye,
   FileJson,
   Info,
   Layers,
+  Leaf,
+  Pill,
   Plus,
   Printer,
   Sparkles,
@@ -85,6 +88,10 @@ export function StackChecker() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<StackApiResponse | null>(null);
   const [showWalletCard, setShowWalletCard] = useState(false);
+  const [showBriefPreview, setShowBriefPreview] = useState(false);
+  const [preparationContext, setPreparationContext] = useState<
+    "mixed" | "culinary" | "standardized_extract" | "tincture" | "tea"
+  >("mixed");
   const [statusFilter, setStatusFilter] = useState<
     "all" | "published" | "quarantined" | "unreviewed"
   >("all");
@@ -164,6 +171,7 @@ export function StackChecker() {
     setLoading(false);
     setResult(null);
     setShowWalletCard(false);
+    setShowBriefPreview(false);
     setStatusFilter("all");
     setError(null);
   }
@@ -251,6 +259,7 @@ export function StackChecker() {
 
     setResult(null);
     setShowWalletCard(false);
+    setShowBriefPreview(false);
     setStatusFilter("all");
     setError(null);
     setLoading(true);
@@ -285,6 +294,40 @@ export function StackChecker() {
   function severityText(sev: InteractionSeverity): string {
     return t(`severity.${sev}`);
   }
+
+  const prepLabelMap = {
+    mixed: locale === "fr" ? "Mixte / non précisé" : "Mixed / unsure",
+    culinary:
+      locale === "fr"
+        ? "Alimentaire / épice culinaire"
+        : "Culinary / food-level spice",
+    standardized_extract:
+      locale === "fr"
+        ? "Extrait standardisé / gélule"
+        : "Standardized extract / capsule",
+    tincture:
+      locale === "fr"
+        ? "Teinture / extrait concentré"
+        : "Tincture / concentrated liquid",
+    tea: locale === "fr" ? "Tisane / infusion" : "Herbal tea / infusion",
+  } as const;
+
+  const quickHerbs =
+    locale === "fr"
+      ? ["Millepertuis", "Curcuma", "Ginkgo"]
+      : ["St. John's Wort", "Turmeric", "Ginkgo"];
+  const quickDrugs =
+    locale === "fr"
+      ? ["Warfarine", "Rivaroxaban", "Sertraline"]
+      : ["Warfarin", "Rivaroxaban", "Sertraline"];
+
+  const previewBriefText = result
+    ? [
+        `Preparation / formulation context: ${prepLabelMap[preparationContext]}`,
+        "",
+        formatConsultationBriefText(result, locale),
+      ].join("\n")
+    : "";
 
   return (
     <section
@@ -382,23 +425,50 @@ export function StackChecker() {
           </div>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {herbs.length === 0 ? (
-              <span className="text-xs text-muted-foreground">
-                {t("noHerbsYet")}
-              </span>
+              <div className="space-y-1.5">
+                <span className="block text-xs text-muted-foreground">
+                  {t("noHerbsYet")}
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {quickHerbs.map((qh) => (
+                    <button
+                      key={qh}
+                      type="button"
+                      onClick={() =>
+                        addTerm(qh, herbs, setHerbs, () => setHerbDraft(""))
+                      }
+                      className="inline-flex min-h-8 items-center gap-1 rounded-full border border-dashed border-primary/40 bg-primary/5 px-2.5 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:border-primary"
+                    >
+                      <Plus
+                        className="size-3 text-primary"
+                        aria-hidden="true"
+                      />
+                      {qh}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ) : (
               herbs.map((h) => (
                 <span
                   key={h}
-                  className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground"
+                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-primary/35 bg-primary/5 px-2.5 py-1 text-xs font-medium text-foreground"
                 >
-                  {h}
+                  <Leaf
+                    className="size-3 shrink-0 text-primary"
+                    aria-hidden="true"
+                  />
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-primary">
+                    {locale === "fr" ? "Plante" : "Herb"}
+                  </span>
+                  <span>{h}</span>
                   <button
                     type="button"
                     onClick={() => {
                       setHerbs(herbs.filter((x) => x !== h));
                       invalidateResult();
                     }}
-                    className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
+                    className="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground"
                     aria-label={`${t("remove")} ${h}`}
                   >
                     <X className="size-3" />
@@ -449,23 +519,50 @@ export function StackChecker() {
           </div>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {drugs.length === 0 ? (
-              <span className="text-xs text-muted-foreground">
-                {t("noDrugsYet")}
-              </span>
+              <div className="space-y-1.5">
+                <span className="block text-xs text-muted-foreground">
+                  {t("noDrugsYet")}
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {quickDrugs.map((qd) => (
+                    <button
+                      key={qd}
+                      type="button"
+                      onClick={() =>
+                        addTerm(qd, drugs, setDrugs, () => setDrugDraft(""))
+                      }
+                      className="inline-flex min-h-8 items-center gap-1 rounded-full border border-dashed border-sky-600/40 bg-sky-500/5 px-2.5 py-0.5 text-[11px] font-medium text-foreground transition-colors hover:border-sky-600"
+                    >
+                      <Plus
+                        className="size-3 text-sky-700 dark:text-sky-400"
+                        aria-hidden="true"
+                      />
+                      {qd}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ) : (
               drugs.map((d) => (
                 <span
                   key={d}
-                  className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-foreground"
+                  className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-sky-600/35 bg-sky-500/5 px-2.5 py-1 text-xs font-medium text-foreground dark:border-sky-400/35"
                 >
-                  {d}
+                  <Pill
+                    className="size-3 shrink-0 text-sky-700 dark:text-sky-400"
+                    aria-hidden="true"
+                  />
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-sky-800 dark:text-sky-300">
+                    {locale === "fr" ? "Méd." : "Med"}
+                  </span>
+                  <span>{d}</span>
                   <button
                     type="button"
                     onClick={() => {
                       setDrugs(drugs.filter((x) => x !== d));
                       invalidateResult();
                     }}
-                    className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
+                    className="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground"
                     aria-label={`${t("remove")} ${d}`}
                   >
                     <X className="size-3" />
@@ -475,6 +572,47 @@ export function StackChecker() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Preparation & formulation context (included in consultation brief handoff) */}
+      <div className="no-print mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/70 bg-muted/20 px-4 py-2.5 text-xs">
+        <label
+          htmlFor="stack-prep-context"
+          className="font-medium text-foreground"
+        >
+          {locale === "fr"
+            ? "Forme / préparation des suppléments (inclus dans le résumé clinique) :"
+            : "Supplement preparation context (included in consultation brief):"}
+        </label>
+        <select
+          id="stack-prep-context"
+          value={preparationContext}
+          onChange={(e) =>
+            setPreparationContext(
+              e.target.value as
+                | "mixed"
+                | "culinary"
+                | "standardized_extract"
+                | "tincture"
+                | "tea"
+            )
+          }
+          className="min-h-9 rounded-md border border-input bg-background px-2.5 py-1 text-xs text-foreground"
+        >
+          {(
+            [
+              "mixed",
+              "culinary",
+              "standardized_extract",
+              "tincture",
+              "tea",
+            ] as const
+          ).map((key) => (
+            <option key={key} value={key}>
+              {prepLabelMap[key]}
+            </option>
+          ))}
+        </select>
       </div>
 
       {error && (
@@ -492,14 +630,27 @@ export function StackChecker() {
         </Button>
 
         {result && (
-          <div className="flex flex-col items-end gap-1.5">
+          <div className="flex flex-col items-start gap-1.5 sm:items-end">
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
                 variant="outline"
+                onClick={() => setShowBriefPreview((prev) => !prev)}
+              >
+                <Eye className="mr-1.5 size-4" aria-hidden="true" />
+                {locale === "fr"
+                  ? showBriefPreview
+                    ? "Masquer l'aperçu du résumé"
+                    : "Aperçu du résumé clinique"
+                  : showBriefPreview
+                    ? "Hide brief preview"
+                    : "Preview consultation summary"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => {
-                  const text = formatConsultationBriefText(result, locale);
-                  const blob = new Blob([text], {
+                  const blob = new Blob([previewBriefText], {
                     type: "text/plain;charset=utf-8",
                   });
                   const url = URL.createObjectURL(blob);
@@ -512,27 +663,8 @@ export function StackChecker() {
               >
                 <Download className="mr-1.5 size-4" />
                 {locale === "fr"
-                  ? "Télécharger résumé (.txt)"
-                  : "Download Clinician Brief (.txt)"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  const payload = buildConsultationBriefJson(result, locale);
-                  const blob = new Blob([JSON.stringify(payload, null, 2)], {
-                    type: "application/json;charset=utf-8",
-                  });
-                  const url = URL.createObjectURL(blob);
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.download = `herbally-consultation-brief-${result.checkedAt.slice(0, 10)}.json`;
-                  link.click();
-                  setTimeout(() => URL.revokeObjectURL(url), 1000);
-                }}
-              >
-                <FileJson className="mr-1.5 size-4" />
-                {locale === "fr" ? "Exporter JSON" : "Export JSON"}
+                  ? "Télécharger le résumé de consultation"
+                  : "Download consultation summary"}
               </Button>
               <Button
                 type="button"
@@ -558,15 +690,67 @@ export function StackChecker() {
                 <Printer className="mr-1.5 size-4" />
                 {t("printButton")}
               </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const payload = {
+                    preparationContext: prepLabelMap[preparationContext],
+                    ...buildConsultationBriefJson(result, locale),
+                  };
+                  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+                    type: "application/json;charset=utf-8",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = `herbally-consultation-brief-${result.checkedAt.slice(0, 10)}.json`;
+                  link.click();
+                  setTimeout(() => URL.revokeObjectURL(url), 1000);
+                }}
+              >
+                <FileJson className="mr-1.5 size-4" />
+                {locale === "fr"
+                  ? "Données structurées (JSON)"
+                  : "Download structured data (JSON)"}
+              </Button>
             </div>
             <p className="text-[11px] text-muted-foreground">
               {locale === "fr"
-                ? "Généré localement dans votre navigateur — jamais envoyé aux serveurs HerbAlly"
-                : "Generated locally in your browser — never sent to HerbAlly servers"}
+                ? "Généré localement dans votre navigateur — jamais envoyé aux serveurs HerbAlly · Pas une validation clinique"
+                : "Generated locally in your browser — never uploaded to HerbAlly servers · Not a clinical clearance"}
             </p>
           </div>
         )}
       </div>
+
+      {result && showBriefPreview && (
+        <div
+          aria-label={
+            locale === "fr"
+              ? "Aperçu du résumé de consultation"
+              : "Consultation brief preview"
+          }
+          className="no-print mt-5 rounded-xl border border-border bg-muted/20 p-4"
+        >
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-foreground">
+              {locale === "fr"
+                ? "Aperçu avant téléchargement · Résumé de consultation"
+                : "Pre-download preview · Consultation summary"}
+            </p>
+            <span className="text-[11px] text-muted-foreground">
+              {locale === "fr"
+                ? `Préparation : ${prepLabelMap[preparationContext]}`
+                : `Preparation: ${prepLabelMap[preparationContext]}`}
+            </span>
+          </div>
+          <pre className="max-h-72 overflow-auto rounded-lg border border-border bg-background p-3 font-mono text-xs leading-relaxed whitespace-pre-wrap text-foreground">
+            {previewBriefText}
+          </pre>
+        </div>
+      )}
 
       {result && showWalletCard && (
         <div className="print-sheet mt-5 rounded-xl border-2 border-dashed border-primary/50 bg-background p-4">
@@ -638,7 +822,58 @@ export function StackChecker() {
 
       {/* Results */}
       {result && (
-        <div className="mt-6 space-y-5 border-t border-border pt-6">
+        <div
+          aria-live="polite"
+          className="mt-6 space-y-5 border-t border-border pt-6"
+        >
+          {/* Persistent 5-Metric Screening Summary Strip */}
+          <dl className="grid grid-cols-2 gap-2.5 rounded-xl border border-border bg-muted/20 p-3.5 text-xs tabular-nums sm:grid-cols-5">
+            <div>
+              <dt className="text-muted-foreground">
+                {locale === "fr" ? "Plantes" : "Herbs"}
+              </dt>
+              <dd className="mt-0.5 text-lg font-bold text-foreground">
+                {result.herbs.length}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">
+                {locale === "fr" ? "Médicaments" : "Medications"}
+              </dt>
+              <dd className="mt-0.5 text-lg font-bold text-foreground">
+                {result.drugs.length}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">
+                {locale === "fr" ? "Gravité max." : "Highest severity"}
+              </dt>
+              <dd className="mt-0.5 text-sm font-bold text-foreground">
+                {result.summary.highestSeverity
+                  ? severityText(result.summary.highestSeverity)
+                  : locale === "fr"
+                    ? "Aucun signal"
+                    : "None recorded"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">
+                {locale === "fr" ? "Paires trouvées" : "Pairwise signals"}
+              </dt>
+              <dd className="mt-0.5 text-lg font-bold text-foreground">
+                {result.summary.matchedCount + (result.conflicts?.length ?? 0)}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">
+                {locale === "fr" ? "Voies cumulatives" : "Cumulative alerts"}
+              </dt>
+              <dd className="mt-0.5 text-lg font-bold text-foreground">
+                {result.stackAlerts.length}
+              </dd>
+            </div>
+          </dl>
+
           {/* Summary header */}
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 p-4">
             <div className="flex items-start gap-3">
@@ -720,9 +955,27 @@ export function StackChecker() {
             </div>
           </div>
 
-          {/* Cross-herb overlap alerts */}
+          {/* Distinct Section: Cross-herb cumulative pathway warnings with contributing substances */}
           {result.stackAlerts.length > 0 && (
-            <div className="space-y-2">
+            <section
+              aria-labelledby="cumulative-pathway-heading"
+              className="space-y-3"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3
+                  id="cumulative-pathway-heading"
+                  className="text-base font-semibold text-foreground"
+                >
+                  {locale === "fr"
+                    ? `Alertes de voies cumulatives (${result.stackAlerts.length}) — risque additif multi-substances`
+                    : `Cumulative Pathway Warnings (${result.stackAlerts.length}) — multi-substance overlap`}
+                </h3>
+                <span className="text-[11px] font-medium text-muted-foreground">
+                  {locale === "fr"
+                    ? "Distinct des interactions par paire ci-dessous"
+                    : "Separate from individual herb–medication pairs below"}
+                </span>
+              </div>
               {result.stackAlerts.map((alert) => (
                 <div
                   key={alert.code}
@@ -730,21 +983,60 @@ export function StackChecker() {
                 >
                   <div className="flex items-start gap-2.5">
                     <AlertOctagon
-                      className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-300"
+                      className="mt-0.5 size-4 shrink-0 text-amber-800 dark:text-amber-300"
                       aria-hidden="true"
                     />
-                    <div>
-                      <p className="font-semibold text-amber-950 dark:text-amber-100">
-                        {alert.title}
-                      </p>
-                      <p className="mt-0.5 text-xs leading-relaxed text-amber-900 dark:text-amber-200">
-                        {alert.message}
-                      </p>
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="font-semibold text-amber-950 dark:text-amber-100">
+                          {alert.title}
+                        </p>
+                        <span className="rounded-full border border-amber-400/70 bg-background/80 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-amber-950 dark:border-amber-700 dark:text-amber-200">
+                          {alert.severity === "severe"
+                            ? locale === "fr"
+                              ? "Chevauchement grave"
+                              : "Severe overlap"
+                            : locale === "fr"
+                              ? "Chevauchement modéré"
+                              : "Moderate overlap"}
+                        </span>
+                      </div>
+                      {alert.herbs.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                          <span className="font-medium text-amber-950 dark:text-amber-200">
+                            {locale === "fr"
+                              ? "Substances contributrices :"
+                              : "Contributing substances:"}
+                          </span>
+                          {alert.herbs.map((h) => (
+                            <span
+                              key={h}
+                              className="inline-flex items-center gap-1 rounded-full border border-amber-400/60 bg-background/90 px-2 py-0.5 text-[11px] font-medium text-foreground"
+                            >
+                              <Leaf
+                                className="size-3 text-primary"
+                                aria-hidden="true"
+                              />
+                              {h}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <details className="text-xs text-amber-950 dark:text-amber-200">
+                        <summary className="cursor-pointer font-medium underline underline-offset-2">
+                          {locale === "fr"
+                            ? "Voir le mécanisme et la justification"
+                            : "View pathway mechanism & details"}
+                        </summary>
+                        <p className="mt-1.5 leading-relaxed">
+                          {alert.message}
+                        </p>
+                      </details>
                     </div>
                   </div>
                 </div>
               ))}
-            </div>
+            </section>
           )}
 
           {/* Publication status banner & filter */}

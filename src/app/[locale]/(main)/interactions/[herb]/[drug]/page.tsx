@@ -45,6 +45,8 @@ import {
 } from "@/lib/interactions/preparation-context";
 import { classifyMedicationScope } from "@/lib/interactions/medication-scope";
 import { ClinicianSignOffBanner } from "@/components/review/clinician-signoff-banner";
+import { CopyInteractionSummaryButton } from "@/components/interactions/copy-interaction-summary-button";
+import { PrintPageButton } from "@/components/shared/print-page-button";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
@@ -634,8 +636,9 @@ export default async function InteractionPairPage({ params }: Props) {
         </p>
       </div>
 
-      {/* Verdict hero — qualify unreviewed legacy classifications visually so a
-          conservative hazard signal never masquerades as clinician-confirmed severity */}
+      {/* Verdict hero — separate Potential Severity, Evidence Certainty, Evidence Type,
+          and Clinician Review Status into 4 unambiguous badges so safety signals never
+          contradict evidence labels or masquerade as clinician-confirmed directives. */}
       <div
         className={cn(
           "rounded-2xl border p-5",
@@ -643,31 +646,68 @@ export default async function InteractionPairPage({ params }: Props) {
             ? SEVERITY_STYLE[pair.severity]
             : "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
         )}
-        role="note"
-        aria-label={severityLabel(pair.severity, fr)}
+        role="region"
+        aria-label={
+          fr
+            ? "Synthèse de sécurité de l'interaction"
+            : "Interaction safety summary"
+        }
       >
         <div className="flex items-start gap-3">
           <SeverityIcon severity={pair.severity} />
-          <div>
-            <p className="font-semibold">
-              {isClinicianApproved
-                ? severityLabel(pair.severity, fr)
-                : fr
-                  ? `Signal ${severityLabel(pair.severity, true).toLowerCase()} potentiel — signification clinique non confirmée`
-                  : `Potential ${severityLabel(pair.severity, false).toLowerCase()} signal — clinical significance not established`}
+          <div className="min-w-0 flex-1 space-y-3">
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 font-semibold",
+                  SEVERITY_STYLE[pair.severity]
+                )}
+              >
+                {fr ? "Gravité potentielle : " : "Potential severity: "}
+                {severityLabel(pair.severity, fr)}
+              </span>
               {pair.evidenceLevel && (
-                <span className="ml-2 text-xs font-normal opacity-80">
-                  · {evidenceLabel(pair.evidenceLevel, fr)}
+                <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-2.5 py-0.5 font-medium text-foreground">
+                  {fr ? "Preuves : " : "Evidence: "}
+                  {evidenceLabel(pair.evidenceLevel, fr)}
                 </span>
               )}
-              <span className="ml-2 text-xs font-normal opacity-90">
-                · {fr ? evidenceClass.badgeFr : evidenceClass.badgeEn}
+              <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-2.5 py-0.5 font-medium text-foreground">
+                {fr ? evidenceClass.badgeFr : evidenceClass.badgeEn}
               </span>
-            </p>
-            <p className="mt-1 text-sm">{clinicalAction.text}</p>
-            <p className="mt-1.5 text-xs opacity-85">
-              {fr ? evidenceClass.explanationFr : evidenceClass.explanationEn}
-            </p>
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold",
+                  isClinicianApproved
+                    ? "border-emerald-300 bg-emerald-50 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-200"
+                    : "border-amber-400/70 bg-background/90 text-amber-950 dark:border-amber-700 dark:text-amber-200"
+                )}
+              >
+                {isClinicianApproved
+                  ? fr
+                    ? "Validé par un clinicien"
+                    : "Clinician-reviewed"
+                  : fr
+                    ? "Non révisé cliniquement"
+                    : "Not clinician-reviewed"}
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <p className="text-sm font-semibold leading-snug text-foreground">
+                {isClinicianApproved
+                  ? fr
+                    ? `${severityLabel(pair.severity, true)} — conduite validée par un clinicien`
+                    : `${severityLabel(pair.severity, false)} — clinician-verified guidance`
+                  : fr
+                    ? `Signal ${severityLabel(pair.severity, true).toLowerCase()} potentiel — validation clinique indépendante en attente`
+                    : `Potential ${severityLabel(pair.severity, false).toLowerCase()} signal — independent clinician sign-off pending`}
+              </p>
+              <p className="text-sm leading-relaxed">{clinicalAction.text}</p>
+              <p className="text-xs leading-relaxed opacity-85">
+                {fr ? evidenceClass.explanationFr : evidenceClass.explanationEn}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -797,53 +837,69 @@ export default async function InteractionPairPage({ params }: Props) {
           {pair.description}
         </p>
         {pair.mechanism && (
-          <div className="rounded-xl border bg-muted/40 p-4">
-            <h3 className="text-sm font-semibold text-foreground">
-              {fr ? "Mécanisme" : "Mechanism"}
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
+          <details className="rounded-xl border border-border bg-muted/30 p-4">
+            <summary className="cursor-pointer text-sm font-semibold text-foreground">
+              {fr
+                ? "Mécanisme pharmacologique (détails cliniques)"
+                : "Pharmacological mechanism (clinician & detailed view)"}
+            </summary>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               {pair.mechanism}
             </p>
-          </div>
+          </details>
         )}
-        <p className="text-xs text-muted-foreground">
-          {pair.sourceUrl ? (
-            <>
-              {fr ? "Source : " : "Source: "}
-              <a
-                href={pair.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-foreground"
-              >
-                {pair.source || pair.sourceUrl}
-              </a>
-            </>
-          ) : // "HerbAlly database" read like a citation. It is not one: these pairs
-          // came from sources the licence register refuses to cite, so the page
-          // has to say plainly that no primary citation backs the claim.
-          fr ? (
-            "Aucune source primaire n'est enregistrée pour cette association. La gravité reflète la pharmacologie connue, pas une étude précise — à vérifier avec un pharmacien."
-          ) : (
-            "No primary citation is recorded for this pair. The severity reflects known pharmacology rather than a specific study — confirm with a pharmacist."
-          )}
-          {pair.updatedAt && (
-            <>
-              {" · "}
-              {fr ? "Mis à jour le " : "Updated "}
-              {new Date(pair.updatedAt).toLocaleDateString(
-                fr ? "fr-FR" : "en-US",
-                { year: "numeric", month: "long" }
+        <dl className="grid gap-3 rounded-xl border border-border/80 bg-card p-3.5 text-xs sm:grid-cols-3">
+          <div>
+            <dt className="font-medium text-muted-foreground">
+              {fr ? "Source primaire" : "Primary citation"}
+            </dt>
+            <dd className="mt-0.5 font-medium text-foreground">
+              {pair.sourceUrl ? (
+                <a
+                  href={pair.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline underline-offset-4 hover:text-primary/80"
+                >
+                  {pair.source || pair.sourceUrl}
+                </a>
+              ) : fr ? (
+                "Pharmacologie générale (sans étude précise)"
+              ) : (
+                "General pharmacology (no single study linked)"
               )}
-            </>
-          )}
-          {" · "}
-          {pair.verifiedAt
-            ? `${fr ? "Révision clinique le " : "Clinically reviewed "}${pair.verifiedAt}`
-            : fr
-              ? "Statut : fiche héritée non révisée par un clinicien"
-              : "Review status: legacy record — no clinician review recorded"}
-        </p>
+            </dd>
+          </div>
+          <div>
+            <dt className="font-medium text-muted-foreground">
+              {fr ? "Dernière mise à jour source" : "Last source record update"}
+            </dt>
+            <dd className="mt-0.5 font-medium text-foreground">
+              {pair.updatedAt
+                ? new Date(pair.updatedAt).toLocaleDateString(
+                    fr ? "fr-CA" : "en-CA",
+                    { year: "numeric", month: "long", day: "numeric" }
+                  )
+                : fr
+                  ? "Date non enregistrée"
+                  : "Date not recorded"}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-medium text-muted-foreground">
+              {fr
+                ? "Validation clinique indépendante"
+                : "Independent clinician sign-off"}
+            </dt>
+            <dd className="mt-0.5 font-medium text-foreground">
+              {pair.verifiedAt
+                ? `${fr ? "Signé le " : "Signed "}${pair.verifiedAt}`
+                : fr
+                  ? "En attente (fiche héritée)"
+                  : "Pending (legacy unreviewed record)"}
+            </dd>
+          </div>
+        </dl>
       </section>
 
       {/* What the cited paper actually found, when it qualifies the severity
@@ -935,11 +991,29 @@ export default async function InteractionPairPage({ params }: Props) {
           herbSlug={pair.herbSlug}
           drugName={pair.drugName}
           recordTitle={`${pair.herbName} + ${fr ? pair.localizedDrugName || pair.drugName : pair.drugName}`}
+          compact
         />
       )}
 
       {/* CTAs */}
       <div className="flex flex-wrap gap-3">
+        <CopyInteractionSummaryButton
+          locale={fr ? "fr" : "en"}
+          summaryText={[
+            `HerbAlly Consultation Summary (${fr ? "FR" : "EN"})`,
+            `Pair: ${pair.herbName} (${pair.herbScientificName}) + ${fr ? pair.localizedDrugName || pair.drugName : pair.drugName}`,
+            `Potential severity: ${severityLabel(pair.severity, fr)}`,
+            `Evidence certainty: ${pair.evidenceLevel ? evidenceLabel(pair.evidenceLevel, fr) : "Limited / mechanistic"}`,
+            `Evidence classification: ${fr ? evidenceClass.badgeFr : evidenceClass.badgeEn}`,
+            `Clinician review status: ${isClinicianApproved ? `Clinician-reviewed (${pair.verifiedAt ?? ""})` : "Not independently clinician-reviewed"}`,
+            pair.sourceUrl
+              ? `Primary source: ${pair.source || pair.sourceUrl} (${pair.sourceUrl})`
+              : "Primary source: General pharmacology (verify with pharmacist)",
+            `URL: ${siteUrl()}${fr ? "/fr" : ""}${pairPath(pair.herbSlug, pair.drugName)}`,
+            "Note: Educational reference only — not personalized medical advice or clinical clearance.",
+          ].join("\n")}
+        />
+        <PrintPageButton locale={fr ? "fr" : "en"} />
         <Link
           href={`/herbalist?q=${encodeURIComponent(checkerQuery)}`}
           className={buttonVariants()}

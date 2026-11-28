@@ -48,22 +48,129 @@ export function ToxicBotanicalQuarantineCard({
       className="space-y-5 rounded-2xl border-2 border-destructive/40 bg-destructive/5 p-5 sm:p-6"
     >
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-destructive">
-          <AlertTriangle className="size-5 shrink-0" aria-hidden="true" />
-          <h2
-            id="toxic-quarantine-heading"
-            className="text-xl font-bold tracking-tight text-foreground"
-          >
-            {fr
-              ? "Toxicologie et quarantaine d'urgence"
-              : "Toxicology & Emergency Quarantine"}
-          </h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="size-5 shrink-0" aria-hidden="true" />
+            <h2
+              id="toxic-quarantine-heading"
+              className="text-xl font-bold tracking-tight text-foreground"
+            >
+              {fr
+                ? "Toxicologie et quarantaine d'urgence"
+                : "Toxicology & Emergency Quarantine"}
+            </h2>
+          </div>
+          <span className="rounded-full border border-destructive/50 bg-destructive/15 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-destructive">
+            {fr ? "Quarantaine permanente" : "Permanent Quarantine"}
+          </span>
         </div>
         <p className="text-sm leading-relaxed text-foreground">
           {fr
             ? "Aucun usage thérapeutique, aucune référence posologique, aucune indication clinique et aucune voie d'automédication ne sont présentés pour les plantes toxiques en quarantaine permanente."
             : "No therapeutic use, dosing reference, clinical indication, or self-administration pathway is provided for permanently quarantined toxic plants."}
         </p>
+      </div>
+
+      {/* Dedicated Immediate Emergency Action Area (Mobile tap-to-call first) */}
+      <div
+        role="alert"
+        aria-labelledby="toxic-emergency-actions-heading"
+        className="space-y-3 rounded-xl border-2 border-destructive/60 bg-destructive/10 p-4"
+      >
+        <p
+          id="toxic-emergency-actions-heading"
+          className="flex items-center gap-1.5 text-sm font-bold text-destructive"
+        >
+          <Phone className="size-4 shrink-0" aria-hidden="true" />
+          <span>
+            {fr
+              ? "Urgence — En cas d'ingestion ou d'exposition suspectée :"
+              : "Emergency — If ingested or exposure is suspected:"}
+          </span>
+        </p>
+
+        <div className="grid gap-2.5 sm:grid-cols-3">
+          <a
+            href="tel:911"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-destructive px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+          >
+            <Phone className="size-4 shrink-0" aria-hidden="true" />
+            <span>{fr ? "Appeler le 911" : "Call 911 (Emergency)"}</span>
+          </a>
+          <a
+            href="tel:+18002221222"
+            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border-2 border-destructive/60 bg-background px-3 py-2 text-xs font-bold text-destructive transition-colors hover:bg-destructive/10 sm:text-sm"
+          >
+            <Phone className="size-3.5 shrink-0" aria-hidden="true" />
+            <span>US Poison Control: 1-800-222-1222</span>
+          </a>
+          <a
+            href="tel:+18447647669"
+            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border-2 border-destructive/60 bg-background px-3 py-2 text-xs font-bold text-destructive transition-colors hover:bg-destructive/10 sm:text-sm"
+          >
+            <Phone className="size-3.5 shrink-0" aria-hidden="true" />
+            <span>
+              {fr
+                ? "Canada Antipoison : 1-844-764-7669"
+                : "Canada Poison Control: 1-844-764-7669"}
+            </span>
+          </a>
+        </div>
+
+        <p className="text-xs font-medium text-foreground">
+          Poison Control (US): 1-800-222-1222 (
+          <a
+            href="https://www.poison.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2"
+          >
+            poison.org
+          </a>
+          ) · Poison Control (Canada): 1-844-764-7669 (
+          <a
+            href="https://infopoison.ca"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2"
+          >
+            infopoison.ca
+          </a>
+          ) · {fr ? "Urgence : 911" : "Emergency: 911"}
+        </p>
+
+        <dl className="grid gap-2 border-t border-destructive/25 pt-3 text-xs sm:grid-cols-3">
+          <div className="rounded-lg bg-background/80 p-2.5">
+            <dt className="font-semibold text-foreground">
+              {fr ? "Ingestion" : "If swallowed"}
+            </dt>
+            <dd className="mt-0.5 text-muted-foreground">
+              {fr
+                ? "Appelez immédiatement le 911 ou le centre antipoison. Ne provoquez pas de vomissements sans consigne médicale."
+                : "Call Poison Control or 911 immediately. Do not induce vomiting unless directed by poison specialists."}
+            </dd>
+          </div>
+          <div className="rounded-lg bg-background/80 p-2.5">
+            <dt className="font-semibold text-foreground">
+              {fr ? "Contact cutané" : "Skin contact"}
+            </dt>
+            <dd className="mt-0.5 text-muted-foreground">
+              {fr
+                ? "Retirez les vêtements contaminés et rincez abondamment la peau à l'eau pendant 15 minutes."
+                : "Remove contaminated clothing and rinse exposed skin thoroughly with running water for 15 minutes."}
+            </dd>
+          </div>
+          <div className="rounded-lg bg-background/80 p-2.5">
+            <dt className="font-semibold text-foreground">
+              {fr ? "Exposition oculaire" : "Eye exposure"}
+            </dt>
+            <dd className="mt-0.5 text-muted-foreground">
+              {fr
+                ? "Rincez délicatement les yeux à l'eau tiède pendant 15 minutes et consultez immédiatement en urgence."
+                : "Flush eyes gently with lukewarm water for 15 minutes and seek immediate emergency medical evaluation."}
+            </dd>
+          </div>
+        </dl>
       </div>
 
       {info && (
@@ -129,41 +236,6 @@ export function ToxicBotanicalQuarantineCard({
           </ul>
         </div>
       )}
-
-      <div
-        role="alert"
-        className="space-y-2 rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-xs text-destructive"
-      >
-        <p className="flex items-center gap-1.5 font-bold">
-          <Phone className="size-4 shrink-0" aria-hidden="true" />
-          <span>
-            {fr
-              ? "En cas d'ingestion ou d'exposition suspectée :"
-              : "If ingested or exposure is suspected:"}
-          </span>
-        </p>
-        <p className="font-medium">
-          Poison Control (US): 1-800-222-1222 (
-          <a
-            href="https://www.poison.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2"
-          >
-            poison.org
-          </a>
-          ) · Poison Control (Canada): 1-844-764-7669 (
-          <a
-            href="https://infopoison.ca"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2"
-          >
-            infopoison.ca
-          </a>
-          ) · {fr ? "Urgence : 911" : "Emergency: 911"}
-        </p>
-      </div>
 
       <div className="space-y-2 border-t border-destructive/20 pt-3">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

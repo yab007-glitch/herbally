@@ -16,6 +16,7 @@ export interface RegulatorExcerptItem {
   notice: string | null;
   renderAs: "list" | "prose";
   collapsible: boolean;
+  collapseSummary?: string;
 }
 
 export function HerbRegulatorExcerptsView({
@@ -51,7 +52,11 @@ export function HerbRegulatorExcerptsView({
           expandLabel={expandLabel}
           reproducedLabel={reproducedLabel}
           collapsible={item.collapsible}
-          collapseSummary={item.collapsible ? collapseSummary : undefined}
+          collapseSummary={
+            item.collapsible
+              ? (item.collapseSummary ?? collapseSummary)
+              : undefined
+          }
           heading={item.heading}
           sourceLabel={item.sourceLabel}
           licenceText={item.licenceText}

@@ -92,14 +92,16 @@ export function ClinicianSignOffBanner({
       }
       data-clinician-signoff-cta="true"
       className={cn(
-        "no-print rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.06] dark:border-emerald-400/25 dark:bg-emerald-950/20",
-        compact ? "p-4" : "p-5 sm:p-6",
+        "no-print rounded-2xl border border-border bg-card shadow-xs",
+        compact
+          ? "p-4"
+          : "border-emerald-600/30 bg-emerald-500/[0.04] p-5 sm:p-6 dark:border-emerald-400/25 dark:bg-emerald-950/20",
         className
       )}
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-300">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-700/30 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-emerald-900 dark:border-emerald-400/30 dark:text-emerald-200">
             <Stethoscope className="size-3.5" aria-hidden="true" />
             <span>
               {fr
@@ -108,7 +110,7 @@ export function ClinicianSignOffBanner({
             </span>
           </div>
 
-          <h2 className="text-base font-semibold text-foreground sm:text-lg">
+          <h2 className="text-sm font-semibold text-foreground sm:text-base">
             {heading}
           </h2>
 
@@ -116,48 +118,50 @@ export function ClinicianSignOffBanner({
             {body}
           </p>
 
-          <ul className="flex flex-wrap gap-x-4 gap-y-1.5 pt-1 text-xs text-muted-foreground">
-            <li className="inline-flex items-center gap-1">
-              <CheckCircle2
-                className="size-3.5 text-emerald-600 dark:text-emerald-400"
-                aria-hidden="true"
-              />
-              <span>
-                {fr
-                  ? "SSO LinkedIn (~2 min, aucun compte HerbAlly requis)"
-                  : "LinkedIn SSO (~2 min, no HerbAlly account needed)"}
-              </span>
-            </li>
-            <li className="inline-flex items-center gap-1">
-              <CheckCircle2
-                className="size-3.5 text-emerald-600 dark:text-emerald-400"
-                aria-hidden="true"
-              />
-              <span>
-                {fr
-                  ? "Crédit public optionnel (nom + PharmD / MD)"
-                  : "Optional public credit (name + PharmD / MD)"}
-              </span>
-            </li>
-            <li className="inline-flex items-center gap-1">
-              <CheckCircle2
-                className="size-3.5 text-emerald-600 dark:text-emerald-400"
-                aria-hidden="true"
-              />
-              <span>
-                {fr
-                  ? "Vérification humaine avant publication"
-                  : "Manual credential verification before publish"}
-              </span>
-            </li>
-          </ul>
+          {!compact && (
+            <ul className="flex flex-wrap gap-x-4 gap-y-1.5 pt-1 text-xs text-muted-foreground">
+              <li className="inline-flex items-center gap-1">
+                <CheckCircle2
+                  className="size-3.5 text-emerald-700 dark:text-emerald-400"
+                  aria-hidden="true"
+                />
+                <span>
+                  {fr
+                    ? "SSO LinkedIn (~2 min, aucun compte HerbAlly requis)"
+                    : "LinkedIn SSO (~2 min, no HerbAlly account needed)"}
+                </span>
+              </li>
+              <li className="inline-flex items-center gap-1">
+                <CheckCircle2
+                  className="size-3.5 text-emerald-700 dark:text-emerald-400"
+                  aria-hidden="true"
+                />
+                <span>
+                  {fr
+                    ? "Crédit public optionnel (nom + PharmD / MD)"
+                    : "Optional public credit (name + PharmD / MD)"}
+                </span>
+              </li>
+              <li className="inline-flex items-center gap-1">
+                <CheckCircle2
+                  className="size-3.5 text-emerald-700 dark:text-emerald-400"
+                  aria-hidden="true"
+                />
+                <span>
+                  {fr
+                    ? "Vérification humaine avant publication"
+                    : "Manual credential verification before publish"}
+                </span>
+              </li>
+            </ul>
+          )}
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-stretch">
           <Link
             href={signOffHref}
             rel="nofollow"
-            className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-500"
+            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-emerald-800 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-emerald-900 dark:bg-emerald-400 dark:text-slate-950 dark:hover:bg-emerald-300"
           >
             <ShieldCheck className="size-4 shrink-0" aria-hidden="true" />
             <span>
@@ -174,7 +178,7 @@ export function ClinicianSignOffBanner({
           <Link
             href="/clinical-review?intent=signoff#priority-queue"
             rel="nofollow"
-            className="inline-flex min-h-9 items-center justify-center rounded-lg border border-border bg-background px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+            className="inline-flex min-h-10 items-center justify-center rounded-lg border border-border bg-background px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
           >
             {fr ? "Voir la file prioritaire" : "Browse priority review queue"}
           </Link>
