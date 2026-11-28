@@ -45,6 +45,7 @@ import { GET as getQuarantineJson } from "@/app/open-data/quarantine.json/route"
 import { GET as getReviewQueueJson } from "@/app/open-data/review-queue.json/route";
 import { GET as getSchemaJson } from "@/app/open-data/schema.json/route";
 import { GET as getSourceMonitorLatestJson } from "@/app/open-data/source-monitor-latest.json/route";
+import { GET as getReleaseBundleJson } from "@/app/open-data/v3-15-0.json/route";
 import { getAllDangerousHerbs } from "@/lib/data/dangerous-herbs";
 import { WebApplicationSchema } from "@/components/seo/web-app-schema";
 
@@ -354,7 +355,7 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
         };
       };
       expect(body.verificationProvenance.sourceMonitorRunId).toBe(
-        "46078153584"
+        "46086587828"
       );
       expect(body.liveGitHubWorkflowRuns.fetchedAt).toBeTruthy();
       expect(body.report.citations.totalUniqueUrls).toBeGreaterThanOrEqual(240);
@@ -363,6 +364,53 @@ describe("A3/A4: Atomic Open Botanical Safety Data Suite, SHA-256 Manifest & Ope
       expect(body.report.citations.brokenUrls).toEqual([]);
     } finally {
       fetchSpy.mockRestore();
+    }
+  });
+
+  it("serves unified Release 3.15.0 bundle at /open-data/v3-15-0.json matching manifest SHA-256 digests and Source Monitor Run 46086587828", async () => {
+    const [bundleRes, manifestRes] = await Promise.all([
+      getReleaseBundleJson(),
+      getManifestJson(),
+    ]);
+    expect(bundleRes.status).toBe(200);
+    expect(bundleRes.headers.get("Access-Control-Allow-Origin")).toBe("*");
+    expect(bundleRes.headers.get("Cache-Control")).toContain("s-maxage=60");
+
+    const bundle = (await bundleRes.json()) as {
+      datasetVersion: string;
+      snapshotId: string;
+      counts: {
+        publishedInteractionPairs: number;
+        medicationsAndClasses: number;
+      };
+      sha256Manifest: {
+        files: Record<string, { sha256: string; bytes: number }>;
+      };
+      sourceMonitorVerification: {
+        provenance: { sourceMonitorRunId: string };
+        report: { datasetVersion: string; manifestVerified: boolean };
+      };
+    };
+    const manifest = (await manifestRes.json()) as {
+      snapshotId: string;
+      files: Record<string, { sha256: string; bytes: number }>;
+    };
+
+    expect(bundle.datasetVersion).toBe("3.15.0");
+    expect(bundle.snapshotId).toBe(manifest.snapshotId);
+    expect(bundle.counts.publishedInteractionPairs).toBe(515);
+    expect(bundle.counts.medicationsAndClasses).toBe(145);
+    expect(bundle.sourceMonitorVerification.provenance.sourceMonitorRunId).toBe(
+      "46086587828"
+    );
+    expect(bundle.sourceMonitorVerification.report.datasetVersion).toBe(
+      "3.15.0"
+    );
+    expect(bundle.sourceMonitorVerification.report.manifestVerified).toBe(true);
+    for (const key of Object.keys(manifest.files)) {
+      expect(bundle.sha256Manifest.files[key].sha256).toBe(
+        manifest.files[key].sha256
+      );
     }
   });
 

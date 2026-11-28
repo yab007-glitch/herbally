@@ -31,6 +31,7 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     privacyRes,
     reviewQueueRes,
     manifestRes,
+    releaseBundleRes,
     schemaRes,
     monRes,
     secRes,
@@ -46,6 +47,7 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     request.get("/open-data/privacy-manifest.json"),
     request.get("/open-data/review-queue.json"),
     request.get("/open-data/manifest.json"),
+    request.get("/open-data/v3-15-0.json"),
     request.get("/open-data/schema.json"),
     request.get("/open-data/source-monitor-latest.json"),
     request.get("/.well-known/security.txt"),
@@ -75,6 +77,7 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     privacyRes,
     reviewQueueRes,
     manifestRes,
+    releaseBundleRes,
     schemaRes,
     monRes,
   ]) {
@@ -91,6 +94,7 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     privacyRaw,
     reviewQueueRaw,
     manifestRaw,
+    releaseBundleRaw,
     schemaRaw,
     monRaw,
   ] = await Promise.all([
@@ -101,6 +105,7 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     privacyRes.text(),
     reviewQueueRes.text(),
     manifestRes.text(),
+    releaseBundleRes.text(),
     schemaRes.text(),
     monRes.text(),
   ]);
@@ -112,10 +117,13 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
   const privacy = JSON.parse(privacyRaw);
   const reviewQueue = JSON.parse(reviewQueueRaw);
   const manifest = JSON.parse(manifestRaw);
+  const releaseBundle = JSON.parse(releaseBundleRaw);
   const schema = JSON.parse(schemaRaw);
   const mon = JSON.parse(monRaw);
 
   expect(cat.datasetVersion).toBe("3.15.0");
+  expect(releaseBundle.datasetVersion).toBe("3.15.0");
+  expect(releaseBundle.snapshotId).toBe(cat.snapshotId);
   expect(med.snapshotId).toBe(cat.snapshotId);
   expect(ix.snapshotId).toBe(cat.snapshotId);
   expect(q.snapshotId).toBe(cat.snapshotId);
@@ -137,4 +145,42 @@ test("serves atomic CORS-enabled /open-data/* endpoints, SHA-256 manifest, OpenA
     const sha256 = createHash("sha256").update(raw, "utf8").digest("hex");
     expect(manifest.files[path].sha256).toBe(sha256);
   }
+});
+
+test("mounts CSP-safe <herbally-checker> Web Component via /embed.js in real browser with sandbox and accessibility attributes", async ({
+  page,
+}) => {
+  const consoleErrors: string[] = [];
+  page.on("console", (msg) => {
+    if (msg.type() === "error") consoleErrors.push(msg.text());
+  });
+  page.on("pageerror", (err) => consoleErrors.push(err.message));
+
+  await page.goto("/widgets");
+  await page.evaluate(() => {
+    const el = document.createElement("herbally-checker");
+    el.setAttribute("locale", "fr");
+    el.setAttribute("max-width", "640px");
+    el.setAttribute("data-testid", "live-web-component");
+    document.body.appendChild(el);
+  });
+  await page.addScriptTag({ url: "/embed.js" });
+
+  const iframe = page.locator(
+    '[data-testid="live-web-component"] iframe[loading="lazy"]'
+  );
+  await expect(iframe).toBeVisible();
+  await expect(iframe).toHaveAttribute(
+    "src",
+    "https://herbally.app/fr/embed/checker"
+  );
+  await expect(iframe).toHaveAttribute(
+    "sandbox",
+    "allow-scripts allow-same-origin allow-forms allow-popups"
+  );
+  await expect(iframe).toHaveAttribute(
+    "referrerpolicy",
+    "strict-origin-when-cross-origin"
+  );
+  expect(consoleErrors).toEqual([]);
 });
