@@ -994,6 +994,7 @@ export default async function HerbDetailPage({ params }: Props) {
               targetType="herb"
               herbSlug={slug}
               recordTitle={herb.name}
+              compact
             />
           )}
 

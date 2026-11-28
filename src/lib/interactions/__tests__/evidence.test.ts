@@ -25,6 +25,16 @@ describe("interaction evidence classification, publication gate, and clinical ac
     expect(groupB.canUseEstablishedWording).toBe(false);
     expect(groupB.badgeEn).toMatch(/nonclinical|extrapolated|theoretical/i);
     expect(groupB.badgeFr).toMatch(/non clinique|théorique|extrapolé/i);
+
+    const legacyCited = classifyInteractionEvidence({
+      evidenceLevel: "well-documented",
+      evidenceTier: null,
+      extrapolationScope: null,
+    });
+    expect(legacyCited.group).toBe("B");
+    expect(legacyCited.canUseEstablishedWording).toBe(false);
+    expect(legacyCited.badgeEn).not.toMatch(/theoretical/i);
+    expect(legacyCited.badgeEn).toMatch(/cited literature signal/i);
   });
 
   it("blocks synthesized clinical action text until pair-specific clinician-approved text exists", () => {

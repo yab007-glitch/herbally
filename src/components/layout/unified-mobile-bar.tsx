@@ -95,21 +95,22 @@ export function UnifiedMobileBar() {
             <Link
               key={tab.labelKey}
               href={tab.href}
+              aria-current={active ? "page" : undefined}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 flex-1 h-full",
+                "flex min-h-12 flex-col items-center justify-center gap-0.5 flex-1 h-full px-1",
                 "transition-colors duration-200",
-                active ? "text-primary" : "text-muted-foreground"
+                active ? "text-primary font-semibold" : "text-muted-foreground"
               )}
             >
               <div
                 className={cn(
                   "flex items-center justify-center rounded-xl transition-all duration-200",
-                  active ? "bg-primary/10 size-10" : "size-9"
+                  active ? "bg-primary/10 size-9" : "size-8"
                 )}
               >
-                <Icon className="size-5" />
+                <Icon className="size-5" aria-hidden="true" />
               </div>
-              <span className="text-[10px] font-medium leading-none">
+              <span className="truncate max-w-full text-[11px] font-medium leading-tight">
                 {t(tab.labelKey)}
               </span>
               <span

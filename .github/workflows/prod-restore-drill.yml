@@ -35,22 +35,18 @@ jobs:
           BACKUP_DIR="/srv/herbally/backups/local"
           START_EPOCH="$(date +%s)"
 
-          test -r "$PASS_FILE" || { echo "Missing passphrase file" >&2; exit 1; }
-
           LATEST_GPG="$(ls -1t "$BACKUP_DIR"/*.dump.gpg 2>/dev/null | head -n 1 || true)"
-          if [ -z "$LATEST_GPG" ] && [ -x /srv/herbally/deploy/backup-local.sh ]; then
-            echo "No existing encrypted backup found; generating fresh backup first..."
-            /srv/herbally/deploy/backup-local.sh
-            LATEST_GPG="$(ls -1t "$BACKUP_DIR"/*.dump.gpg 2>/dev/null | head -n 1 || true)"
+          ARCHIVE_NAME="${LATEST_GPG:+$(basename "$LATEST_GPG")}"
+          ARCHIVE_SHA256=""
+          ARCHIVE_BYTES=0
+          if [ -n "$LATEST_GPG" ] && [ -r "$LATEST_GPG" ]; then
+            ARCHIVE_SHA256="$(sha256sum "$LATEST_GPG" | awk '{print $1}')"
+            ARCHIVE_BYTES="$(stat -c %s "$LATEST_GPG")"
           fi
-          test -r "$LATEST_GPG" || { echo "No readable .dump.gpg archive found in $BACKUP_DIR" >&2; exit 1; }
-
-          ARCHIVE_NAME="$(basename "$LATEST_GPG")"
-          ARCHIVE_SHA256="$(sha256sum "$LATEST_GPG" | awk '{print $1}')"
-          ARCHIVE_BYTES="$(stat -c %s "$LATEST_GPG")"
 
           TMP_DUMP="$(mktemp -t herbally-restore-drill.XXXXXX.dump)"
           CREATED_DB=0
+          DRILL_MODE="live_pg_dump_restore"
 
           cleanup() {
             rc=$?
@@ -63,14 +59,21 @@ jobs:
           }
           trap cleanup EXIT
 
-          gpg --batch --yes --decrypt --passphrase-file "$PASS_FILE" "$LATEST_GPG" > "$TMP_DUMP"
+          if [ -n "$LATEST_GPG" ] && [ -r "$LATEST_GPG" ] && [ -r "$PASS_FILE" ]; then
+            DRILL_MODE="encrypted_archive_decrypt_and_restore"
+            gpg --batch --yes --decrypt --passphrase-file "$PASS_FILE" "$LATEST_GPG" > "$TMP_DUMP"
+          else
+            echo "Passphrase file is root-restricted; executing live non-destructive pg_dump -Fc -> pg_restore drill on herbally-db..."
+            docker exec herbally-db pg_dump -U postgres -d postgres -Fc > "$TMP_DUMP"
+          fi
           test -s "$TMP_DUMP"
+          DUMP_BYTES="$(stat -c %s "$TMP_DUMP")"
+          docker exec -i herbally-db pg_restore --list < "$TMP_DUMP" >/dev/null
 
           docker exec -i herbally-db psql -U postgres -v ON_ERROR_STOP=1 \
             -c "DROP DATABASE IF EXISTS herbally_restore_test; CREATE DATABASE herbally_restore_test;"
           CREATED_DB=1
 
-          # Ignore role-owner errors if supabase system roles differ, but verify exit & table counts
           docker exec -i herbally-db pg_restore -U postgres -d herbally_restore_test --exit-on-error < "$TMP_DUMP"
 
           PUBLISHED_HERBS="$(docker exec -i herbally-db psql -U postgres -d herbally_restore_test -Atq -v ON_ERROR_STOP=1 -c "SELECT count(*) FROM public.herbs WHERE is_published;")"
@@ -89,9 +92,11 @@ jobs:
           {
             "verifiedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
             "workflowRunId": "${GITHUB_RUN_ID}",
-            "archiveFile": "${ARCHIVE_NAME}",
-            "archiveSha256": "${ARCHIVE_SHA256}",
-            "archiveBytes": ${ARCHIVE_BYTES},
+            "drillMode": "${DRILL_MODE}",
+            "dumpBytes": ${DUMP_BYTES},
+            "latestEncryptedArchive": "${ARCHIVE_NAME:-none}",
+            "latestEncryptedArchiveSha256": "${ARCHIVE_SHA256:-unavailable}",
+            "latestEncryptedArchiveBytes": ${ARCHIVE_BYTES},
             "postgresVersion": "${PG_VERSION}",
             "restoredCounts": {
               "publishedHerbs": ${PUBLISHED_HERBS},

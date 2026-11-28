@@ -59,11 +59,14 @@ export function HerbJumpNav({
       aria-label={copy.aria}
       className="sticky top-12 z-20 -mx-4 flex items-center gap-1.5 overflow-x-auto border-b border-border/80 bg-background/95 px-4 py-2 backdrop-blur sm:-mx-6 sm:px-6 no-print"
     >
+      <span className="hidden shrink-0 pr-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground sm:inline">
+        {copy.aria}:
+      </span>
       {links.map((item) => (
         <a
           key={item.href}
           href={item.href}
-          className="inline-flex min-h-9 shrink-0 items-center rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-muted/60 hover:text-foreground"
+          className="inline-flex min-h-10 shrink-0 items-center rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:bg-muted/60 hover:text-foreground"
         >
           {item.label}
         </a>

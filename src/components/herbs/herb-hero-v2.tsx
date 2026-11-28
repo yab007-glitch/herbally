@@ -179,14 +179,22 @@ export function HerbHeroV2({
                   {t("safetyGlance.toxicPlantBadge")}
                 </Badge>
               ) : (
-                <EvidenceGrade
-                  level={
-                    herb.evidence_level &&
-                    ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
-                      ? (herb.evidence_level as "A" | "B" | "C" | "D" | "trad")
-                      : "trad"
-                  }
-                />
+                <div className="inline-flex flex-wrap items-center justify-center gap-1.5 sm:justify-start">
+                  <EvidenceGrade
+                    level={
+                      herb.evidence_level &&
+                      ["A", "B", "C", "D", "trad"].includes(herb.evidence_level)
+                        ? (herb.evidence_level as
+                            "A" | "B" | "C" | "D" | "trad")
+                        : "trad"
+                    }
+                  />
+                  <span className="text-[11px] font-medium text-muted-foreground">
+                    {fr
+                      ? "(indication la mieux documentée uniquement)"
+                      : "(strongest cited use only)"}
+                  </span>
+                </div>
               )}
             </div>
 

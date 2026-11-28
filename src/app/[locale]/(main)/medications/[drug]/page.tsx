@@ -40,6 +40,7 @@ import type {
 import { pairPath } from "@/lib/interactions/pair-url";
 import { cn } from "@/lib/utils";
 import { ClinicianSignOffBanner } from "@/components/review/clinician-signoff-banner";
+import { PrintPageButton } from "@/components/shared/print-page-button";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -376,6 +377,23 @@ export default async function MedicationDetailPage({ params }: Props) {
             }
           </span>
         </p>
+        <p className="text-xs text-muted-foreground">
+          {fr
+            ? `Ces ${med.totalInteractions} fiches représentent les interactions actuellement répertoriées dans HerbAlly — l'absence d'une plante sur cette page ne prouve jamais son innocuité avec ${med.drugName}.`
+            : `These ${med.totalInteractions} entries represent interactions currently documented in HerbAlly — absence of an herb here never proves it is safe with ${med.drugName}.`}
+        </p>
+        <div className="no-print flex flex-wrap items-center gap-2 pt-1">
+          <Link
+            href="/herb-drug-interactions#stack-checker"
+            className={buttonVariants({ size: "sm" })}
+          >
+            {fr
+              ? `Vérifier ma liste complète avec ${med.drugName}`
+              : `Check full supplement stack with ${med.drugName}`}
+            <ArrowRight className="ml-1 size-3.5" aria-hidden="true" />
+          </Link>
+          <PrintPageButton locale={fr ? "fr" : "en"} />
+        </div>
       </header>
 
       {(() => {
@@ -394,7 +412,7 @@ export default async function MedicationDetailPage({ params }: Props) {
         );
       })()}
 
-      <dl className="grid grid-cols-2 gap-3 rounded-2xl border bg-muted/30 p-4 sm:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-3 rounded-2xl border bg-muted/30 p-4 tabular-nums sm:grid-cols-4">
         {SEVERITY_ORDER.map((sev) => (
           <div key={sev}>
             <dt className="text-xs font-medium text-muted-foreground">
@@ -606,6 +624,7 @@ export default async function MedicationDetailPage({ params }: Props) {
           drugName={med.drugName}
           recordTitle={med.drugName}
           unreviewedCount={unreviewedCount}
+          compact
         />
       )}
 

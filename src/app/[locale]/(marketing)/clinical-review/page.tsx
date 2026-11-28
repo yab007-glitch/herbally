@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import {
   ShieldCheck,
-  FileCheck2,
   Users,
   Stethoscope,
-  ArrowRight,
-  AlertOctagon,
-  AlertTriangle,
+  Lock,
+  ExternalLink,
 } from "lucide-react";
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
 import { getLocale } from "@/lib/i18n/page-locale";
@@ -35,9 +33,8 @@ import {
 } from "@/lib/governance/clinical-edits";
 import { getOpenDataSnapshot } from "@/lib/open-data/snapshot";
 import { buildReviewQueuePayload } from "@/lib/open-data/builders";
-import { pairPath } from "@/lib/interactions/pair-url";
-import { buildSignOffHref } from "@/components/review/clinician-signoff-banner";
 import { ClinicalAdvisoryBoardCallout } from "@/components/review/clinical-advisory-board-callout";
+import { PriorityReviewQueueClient } from "@/components/review/priority-review-queue-client";
 
 export const dynamic = "force-dynamic";
 
@@ -185,28 +182,26 @@ export default async function ClinicalReviewPage({
       .catch(() => null),
   ]);
 
-  // Select up to 8 diverse high-priority unreviewed pairs (contraindicated first)
-  const featuredQueueItems = (() => {
+  // Provide up to 40 diverse high-risk unreviewed pairs to the interactive filterable queue
+  const queueItems = (() => {
     if (!reviewQueue) return [];
-    const picked: typeof reviewQueue.priorityQueue = [];
-    const seenHerbs = new Set<string>();
-    for (const item of reviewQueue.priorityQueue) {
-      if (picked.length >= 8) break;
-      if (!seenHerbs.has(item.herbSlug)) {
-        seenHerbs.add(item.herbSlug);
-        picked.push(item);
-      }
-    }
-    if (picked.length < 8) {
-      for (const item of reviewQueue.priorityQueue) {
-        if (picked.length >= 8) break;
-        if (!picked.some((p) => p.id === item.id)) {
-          picked.push(item);
-        }
-      }
-    }
-    return picked;
+    return reviewQueue.priorityQueue.slice(0, 40).map((item) => ({
+      id: item.id,
+      herbSlug: item.herbSlug,
+      herbName: item.herbName,
+      drugName: item.drugName,
+      severity: item.severity as "contraindicated" | "severe",
+      evidenceLevel: item.evidenceLevel,
+      source: item.source,
+    }));
   })();
+
+  const targetDisplayLabel =
+    herbName && drugName
+      ? `${herbName} + ${drugName}`
+      : herbSlug && drugName
+        ? `${herbSlug} + ${drugName}`
+        : herbName || herbSlug || drugName || "";
 
   let initialRequests: SubmittedEditSummary[] = [];
   if (session) {
@@ -371,6 +366,97 @@ export default async function ClinicalReviewPage({
         </p>
       </header>
 
+      {/* Target record preview BEFORE requesting authentication (D06/D07) */}
+      {targetDisplayLabel && surfaceUrl && (
+        <section
+          aria-labelledby="target-record-preview-heading"
+          className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-primary/5 p-4 text-sm"
+        >
+          <div className="space-y-0.5">
+            <p
+              id="target-record-preview-heading"
+              className="text-xs font-semibold uppercase tracking-wide text-primary"
+            >
+              {fr
+                ? "Fiche ciblée pour cette validation"
+                : "Target record you are reviewing"}
+            </p>
+            <p className="font-semibold text-foreground">
+              {targetDisplayLabel}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {fr
+                ? "Attestation demandée : confirmer l'exactitude clinique des niveaux, mécanismes et sources citées, ou signaler les ajustements nécessaires."
+                : "What you are attesting: accuracy of published severity, mechanism, preparation scope, and cited primary sources — or noting any refinements."}
+            </p>
+          </div>
+          <Link
+            href={surfaceUrl}
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-border bg-background px-3.5 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted"
+          >
+            <span>
+              {fr
+                ? "Inspecter la fiche avant connexion"
+                : "Inspect record before signing in"}
+            </span>
+            <ExternalLink className="size-3.5" aria-hidden="true" />
+          </Link>
+        </section>
+      )}
+
+      {/* Clear 5-Step Onboarding & Licence Privacy Sequence (D34/D35/D38) */}
+      <section
+        aria-labelledby="onboarding-sequence-heading"
+        className="mt-6 rounded-2xl border border-border bg-card p-4 text-xs sm:p-5"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2
+            id="onboarding-sequence-heading"
+            className="text-sm font-semibold text-foreground"
+          >
+            {fr
+              ? "Comment fonctionne la validation clinique (en 5 étapes)"
+              : "How clinical sign-off works (5-step onboarding & privacy)"}
+          </h2>
+          <span className="inline-flex items-center gap-1 font-medium text-muted-foreground">
+            <Lock className="size-3.5 text-primary" aria-hidden="true" />
+            {fr
+              ? "Numéro de permis privé — jamais publié"
+              : "Licence number stays private — never published"}
+          </span>
+        </div>
+        <ol className="mt-3 grid gap-2 sm:grid-cols-5">
+          {(fr
+            ? [
+                "1. Vérifiez la fiche et ses citations",
+                "2. Identifiez-vous via LinkedIn SSO",
+                "3. Indiquez titre, permis privé et COI",
+                "4. Confirmez ou proposez un correctif",
+                "5. Vérification manuelle avant publication",
+              ]
+            : [
+                "1. Inspect the record & citations",
+                "2. Verify identity via LinkedIn SSO",
+                "3. Enter private licence & COI",
+                "4. Confirm accuracy or suggest edits",
+                "5. Manual credential check before publish",
+              ]
+          ).map((step) => (
+            <li
+              key={step}
+              className="rounded-lg border border-border/70 bg-muted/20 p-2.5 font-medium text-foreground"
+            >
+              {step}
+            </li>
+          ))}
+        </ol>
+        <p className="mt-2.5 text-muted-foreground">
+          {fr
+            ? "Après soumission : votre demande entre dans la file de vérification (/admin/edit-requests). Nous vérifions l'inscription active auprès de l'ordre professionnel avant d'activer tout badge « Révisé par un clinicien » ou crédit public optionnel."
+            : "What happens after submission: your sign-off enters our manual triage queue (/admin/edit-requests). We verify active regulatory standing before enabling any 'Clinically reviewed' badge or optional public reviewer credit."}
+        </p>
+      </section>
+
       <div className="mt-8">
         <ClinicalEditRequestClient
           locale={locale}
@@ -395,142 +481,18 @@ export default async function ClinicalReviewPage({
         <ClinicalAdvisoryBoardCallout locale={locale} />
       </div>
 
-      {/* Live High-Priority Clinical Sign-Off Queue */}
-      {reviewQueue && featuredQueueItems.length > 0 && (
-        <section
-          id="priority-queue"
-          aria-labelledby="priority-queue-heading"
-          className="mt-12 rounded-2xl border border-border bg-card p-6 shadow-sm"
-        >
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="space-y-1.5">
-              <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-primary">
-                <FileCheck2 className="size-3.5" aria-hidden="true" />
-                {fr
-                  ? "File prioritaire de validation clinique"
-                  : "Priority Clinical Sign-Off Queue"}
-              </p>
-              <h2
-                id="priority-queue-heading"
-                className="text-xl font-semibold text-foreground"
-              >
-                {fr
-                  ? "Interactions à haut risque en attente de validation"
-                  : "High-risk interaction pairs awaiting clinician sign-off"}
-              </h2>
-              <p className="max-w-2xl text-sm text-muted-foreground">
-                {fr
-                  ? `${reviewQueue.summary.priorityQueueCount} paires contre-indiquées ou graves (sur ${reviewQueue.summary.totalActivePairs} paires actives ; ${reviewQueue.summary.clinicianSignedPairs} signées à ce jour) attendent une première révision par un pharmacien, médecin ou toxicologue.`
-                  : `${reviewQueue.summary.priorityQueueCount} contraindicated or severe pairs (out of ${reviewQueue.summary.totalActivePairs} active pairs; ${reviewQueue.summary.clinicianSignedPairs} clinician-signed so far) are prioritized for first-wave PharmD / MD / toxicologist sign-off.`}
-              </p>
-            </div>
-            <div className="rounded-xl border border-border bg-muted/30 px-3.5 py-2.5 text-xs">
-              <p className="font-semibold text-foreground">
-                {fr
-                  ? `Comité consultatif : ${reviewQueue.advisoryBoard.seatsFilled} / ${reviewQueue.advisoryBoard.seatsTotal} sièges`
-                  : `Advisory Board: ${reviewQueue.advisoryBoard.seatsFilled} / ${reviewQueue.advisoryBoard.seatsTotal} seats`}
-              </p>
-              <p className="mt-0.5 text-muted-foreground">
-                {fr
-                  ? "PharmD/RPh · MD/DO · Toxicologue"
-                  : "PharmD/RPh · MD/DO · Clinical Toxicologist"}
-              </p>
-            </div>
-          </div>
-
-          <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-            {featuredQueueItems.map((item) => {
-              const isContra = item.severity === "contraindicated";
-              const signOffUrl = buildSignOffHref({
-                targetType: "interaction",
-                herbSlug: item.herbSlug,
-                drugName: item.drugName,
-              });
-              return (
-                <li
-                  key={item.id}
-                  className="flex flex-col justify-between gap-3 rounded-xl border border-border/80 bg-background p-4"
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-semibold text-foreground">
-                        {item.herbName} + {item.drugName}
-                      </span>
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${
-                          isContra
-                            ? "border-red-300 bg-red-50 text-red-900 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200"
-                            : "border-amber-300 bg-amber-50 text-amber-900 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200"
-                        }`}
-                      >
-                        {isContra ? (
-                          <AlertOctagon className="size-3" aria-hidden="true" />
-                        ) : (
-                          <AlertTriangle
-                            className="size-3"
-                            aria-hidden="true"
-                          />
-                        )}
-                        {isContra
-                          ? fr
-                            ? "Contre-indiquée"
-                            : "Contraindicated"
-                          : fr
-                            ? "Grave"
-                            : "Severe"}
-                      </span>
-                    </div>
-                    {item.source && (
-                      <p className="line-clamp-1 text-xs text-muted-foreground">
-                        {fr ? "Source primaire : " : "Primary source: "}
-                        {item.source}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-xs">
-                    <Link
-                      href={pairPath(item.herbSlug, item.drugName)}
-                      className="text-muted-foreground underline underline-offset-4 hover:text-foreground"
-                    >
-                      {fr ? "Lire la fiche" : "Inspect record"}
-                    </Link>
-                    <Link
-                      href={signOffUrl}
-                      rel="nofollow"
-                      className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
-                    >
-                      {fr ? "Valider cette paire" : "Sign off this pair"}
-                      <ArrowRight className="size-3" aria-hidden="true" />
-                    </Link>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4 text-xs text-muted-foreground">
-            <span>
-              {fr
-                ? "Intéressé(e) par une révision par lots ou un siège au comité consultatif clinique ? Écrivez à "
-                : "Interested in batch review or one of our 3 Clinical Advisory Board seats? Email "}
-              <a
-                href="mailto:info@herbally.app"
-                className="font-semibold text-primary underline underline-offset-2"
-              >
-                info@herbally.app
-              </a>
-              .
-            </span>
-            <a
-              href="/open-data/review-queue.json"
-              className="font-medium text-primary underline underline-offset-4"
-            >
-              {fr
-                ? `Télécharger les ${reviewQueue.summary.priorityQueueCount} paires prioritaires (JSON) →`
-                : `Download all ${reviewQueue.summary.priorityQueueCount} priority pairs (JSON) →`}
-            </a>
-          </div>
-        </section>
+      {/* Live Filterable High-Priority Clinical Sign-Off Queue */}
+      {reviewQueue && queueItems.length > 0 && (
+        <PriorityReviewQueueClient
+          locale={locale}
+          items={queueItems}
+          totalPriorityCount={reviewQueue.summary.priorityQueueCount}
+          totalActivePairs={reviewQueue.summary.totalActivePairs}
+          clinicianSignedPairs={reviewQueue.summary.clinicianSignedPairs}
+          seatsFilled={reviewQueue.advisoryBoard.seatsFilled}
+          seatsTotal={reviewQueue.advisoryBoard.seatsTotal}
+          generatedAt={reviewQueue.generatedAt}
+        />
       )}
     </div>
   );

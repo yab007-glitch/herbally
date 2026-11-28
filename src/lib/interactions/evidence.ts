@@ -85,25 +85,45 @@ export function classifyInteractionEvidence(params: {
     };
   }
 
+  const isNonclinical =
+    tier === "in_vitro" ||
+    tier === "in_vivo_animal" ||
+    scope === "nonclinical_extrapolated";
+  const isCaseReport = tier === "case_series_or_case_report";
+  const isExplicitlyTheoretical =
+    tier === "theoretical" || scope === "theoretical_only";
+  const hasCitedClinicalLevel =
+    tier === "unknown" &&
+    typeof params.evidenceLevel === "string" &&
+    /well[-_\s]?documented|moderate/i.test(params.evidenceLevel);
+
   return {
     group: "B",
     canUseEstablishedWording: false,
-    badgeEn:
-      tier === "in_vitro" ||
-      tier === "in_vivo_animal" ||
-      scope === "nonclinical_extrapolated"
-        ? "Nonclinical / extrapolated evidence (Group B)"
-        : "Unverified / theoretical evidence (Group B)",
-    badgeFr:
-      tier === "in_vitro" ||
-      tier === "in_vivo_animal" ||
-      scope === "nonclinical_extrapolated"
-        ? "Données non cliniques / extrapolées (Groupe B)"
-        : "Preuves non vérifiées / théoriques (Groupe B)",
-    explanationEn:
-      "Not established by controlled human trials: represents preclinical, mechanistic, case-report, or unreviewed legacy data. Do not infer clinical safety or confirmed risk magnitude without pharmacist review.",
-    explanationFr:
-      "Non établi par des essais cliniques contrôlés chez l'humain : repose sur des données précliniques, mécanistiques, des cas isolés ou une fiche héritée non révisée.",
+    badgeEn: isNonclinical
+      ? "Nonclinical / extrapolated evidence (Group B)"
+      : isCaseReport
+        ? "Case-report / observational signal (Group B)"
+        : isExplicitlyTheoretical
+          ? "Theoretical / mechanistic signal (Group B)"
+          : hasCitedClinicalLevel
+            ? "Cited literature signal — tier unverified (Group B)"
+            : "Preliminary / unverified signal (Group B)",
+    badgeFr: isNonclinical
+      ? "Données non cliniques / extrapolées (Groupe B)"
+      : isCaseReport
+        ? "Rapports de cas / signal observationnel (Groupe B)"
+        : isExplicitlyTheoretical
+          ? "Signal théorique / mécanistique (Groupe B)"
+          : hasCitedClinicalLevel
+            ? "Signal documenté — niveau non vérifié (Groupe B)"
+            : "Signal préliminaire non vérifié (Groupe B)",
+    explanationEn: hasCitedClinicalLevel
+      ? "Cited from published clinical or regulatory literature, but formal evidence-tier classification and independent licensed clinician sign-off are still pending. Confirm personal risk magnitude with a pharmacist."
+      : "Not established by controlled human trials: represents preclinical, mechanistic, case-report, or unreviewed legacy data. Do not infer clinical safety or confirmed risk magnitude without pharmacist review.",
+    explanationFr: hasCitedClinicalLevel
+      ? "Appuyé par la littérature clinique ou réglementaire citée, mais le classement formel du niveau de preuve et la validation par un clinicien licencié restent en attente. Confirmez le risque individuel avec un pharmacien."
+      : "Non établi par des essais cliniques contrôlés chez l'humain : repose sur des données précliniques, mécanistiques, des cas isolés ou une fiche héritée non révisée.",
   };
 }
 
