@@ -166,14 +166,12 @@ test("mounts CSP-safe <herbally-checker> Web Component via /embed.js in real bro
   });
   await page.addScriptTag({ url: "/embed.js" });
 
+  const origin = new URL(page.url()).origin;
   const iframe = page.locator(
     '[data-testid="live-web-component"] iframe[loading="lazy"]'
   );
   await expect(iframe).toBeVisible();
-  await expect(iframe).toHaveAttribute(
-    "src",
-    "https://herbally.app/fr/embed/checker"
-  );
+  await expect(iframe).toHaveAttribute("src", `${origin}/fr/embed/checker`);
   await expect(iframe).toHaveAttribute(
     "sandbox",
     "allow-scripts allow-same-origin allow-forms allow-popups"
