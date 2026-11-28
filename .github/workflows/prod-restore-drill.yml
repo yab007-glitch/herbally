@@ -71,7 +71,9 @@ jobs:
           docker exec -i herbally-db pg_restore --list < "$TMP_DUMP" >/dev/null
 
           docker exec -i herbally-db psql -U postgres -v ON_ERROR_STOP=1 \
-            -c "DROP DATABASE IF EXISTS herbally_restore_test; CREATE DATABASE herbally_restore_test;"
+            -c "DROP DATABASE IF EXISTS herbally_restore_test;"
+          docker exec -i herbally-db psql -U postgres -v ON_ERROR_STOP=1 \
+            -c "CREATE DATABASE herbally_restore_test;"
           CREATED_DB=1
 
           docker exec -i herbally-db pg_restore -U postgres -d herbally_restore_test --exit-on-error < "$TMP_DUMP"
