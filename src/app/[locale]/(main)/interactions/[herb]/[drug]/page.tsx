@@ -640,7 +640,7 @@ export default async function InteractionPairPage({ params }: Props) {
           contradict evidence labels or masquerade as clinician-confirmed directives. */}
       <div
         className={cn(
-          "rounded-2xl border p-5",
+          "print-keep-together rounded-2xl border p-5",
           isClinicianApproved
             ? SEVERITY_STYLE[pair.severity]
             : "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
@@ -721,7 +721,7 @@ export default async function InteractionPairPage({ params }: Props) {
         );
         return (
           <>
-            <dl className="grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 text-xs sm:grid-cols-3 lg:grid-cols-4">
+            <dl className="print-keep-together grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 text-xs sm:grid-cols-3 lg:grid-cols-4">
               <div>
                 <dt className="font-medium text-muted-foreground">
                   {fr ? "Gravité potentielle" : "Potential severity"}

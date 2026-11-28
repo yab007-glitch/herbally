@@ -79,6 +79,12 @@ interface AxeRouteReport {
   compositedContrast: {
     checkedElements: number;
     minRatio: number;
+    skippedCounts: {
+      disabled: number;
+      srOnlyOrAriaHidden: number;
+      gradientText: number;
+      svgOrNonText: number;
+    };
     failures: Array<{
       tag: string;
       text: string;
@@ -94,6 +100,20 @@ interface InteractiveStateReport {
   theme: "light" | "dark";
   ratio: number;
   passed: boolean;
+  details?: Record<string, string | number | boolean>;
+}
+
+interface PrintPdfAuditReport {
+  route: string;
+  engine: string;
+  pdfVerified: boolean;
+  pdfBytes: number;
+  pageCount: number;
+  printableWidthOverflowPx: number;
+  keepTogetherBlockCount: number;
+  maxKeepTogetherHeightPx: number;
+  allKeepTogetherAvoidBreak: boolean;
+  passed: boolean;
 }
 
 const REPORT_PATH = path.join(
@@ -104,8 +124,11 @@ const REPORT_PATH = path.join(
 
 const auditReports: AxeRouteReport[] = [];
 const interactiveStateReports: InteractiveStateReport[] = [];
+const printPdfAudits: PrintPdfAuditReport[] = [];
 
 test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () => {
+  test.describe.configure({ mode: "serial" });
+
   test.afterAll(() => {
     fs.mkdirSync(path.dirname(REPORT_PATH), { recursive: true });
     fs.writeFileSync(
@@ -115,6 +138,15 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           generatedAt: new Date().toISOString(),
           standard:
             "WCAG 2.2 AA (wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa)",
+          contrastScannerScope: {
+            includesOpacityMutedEnabledText: true,
+            intentionallyExcludedCategories: [
+              "disabled (audited separately for perceivable disabled appearance)",
+              "sr-only / aria-hidden",
+              "background-clip:text / gradient-text",
+              "svg / non-text",
+            ],
+          },
           includesClinicalAndQuarantineRoutes: INCLUDE_CLINICAL_ROUTES,
           routesAudited: auditReports.length,
           totalAxeViolations: auditReports.reduce(
@@ -126,8 +158,10 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
             0
           ),
           interactiveStatesAudited: interactiveStateReports.length,
+          printPdfAuditsCount: printPdfAudits.length,
           results: auditReports,
           interactiveStates: interactiveStateReports,
+          printPdfAudits,
         },
         null,
         2
@@ -262,31 +296,62 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
             return false;
           }
 
-          function isHiddenOrDecorative(el: Element): boolean {
+          function getExclusionAndOpacity(el: Element): {
+            skipCategory:
+              | null
+              | "hidden"
+              | "disabled"
+              | "srOnlyOrAriaHidden"
+              | "gradientText";
+            effectiveOpacity: number;
+          } {
             let cur: Element | null = el;
+            let effectiveOpacity = 1;
             while (cur) {
               const s = getComputedStyle(cur);
+              if (s.display === "none" || s.visibility === "hidden") {
+                return { skipCategory: "hidden", effectiveOpacity: 0 };
+              }
+              const op = Number(s.opacity);
+              if (Number.isFinite(op)) {
+                effectiveOpacity *= op;
+              }
+              if (effectiveOpacity <= 0.01) {
+                return { skipCategory: "hidden", effectiveOpacity: 0 };
+              }
               if (
-                s.display === "none" ||
-                s.visibility === "hidden" ||
-                Number(s.opacity) < 0.9 ||
-                cur.classList.contains("sr-only") ||
-                cur.classList.contains("gradient-text") ||
-                cur.getAttribute("aria-hidden") === "true" ||
-                cur.hasAttribute("disabled")
+                cur.hasAttribute("disabled") ||
+                cur.getAttribute("aria-disabled") === "true"
               ) {
-                return true;
+                return { skipCategory: "disabled", effectiveOpacity };
+              }
+              if (
+                cur.classList.contains("sr-only") ||
+                cur.getAttribute("aria-hidden") === "true"
+              ) {
+                return { skipCategory: "srOnlyOrAriaHidden", effectiveOpacity };
+              }
+              if (cur.classList.contains("gradient-text")) {
+                return { skipCategory: "gradientText", effectiveOpacity };
               }
               if (cur.tagName === "DETAILS" && !cur.hasAttribute("open")) {
-                if (!el.closest("summary")) return true;
+                if (!el.closest("summary")) {
+                  return { skipCategory: "hidden", effectiveOpacity: 0 };
+                }
               }
               cur = cur.parentElement;
             }
-            return false;
+            return { skipCategory: null, effectiveOpacity };
           }
 
           let checkedElements = 0;
           let minRatio = 21;
+          const skippedCounts = {
+            disabled: 0,
+            srOnlyOrAriaHidden: 0,
+            gradientText: 0,
+            svgOrNonText: 0,
+          };
           const failures: Array<{
             tag: string;
             text: string;
@@ -304,14 +369,26 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
                 el.tagName === "SCRIPT" ||
                 el.tagName === "STYLE" ||
                 el.tagName === "NOSCRIPT" ||
-                el.tagName === "OPTION" ||
-                el.tagName === "SVG" ||
-                el.closest("svg")
+                el.tagName === "OPTION"
               ) {
                 continue;
               }
+              if (el.tagName === "SVG" || el.closest("svg")) {
+                if (hasDirectText(el)) skippedCounts.svgOrNonText++;
+                continue;
+              }
               if (!hasDirectText(el)) continue;
-              if (isHiddenOrDecorative(el)) continue;
+              const { skipCategory, effectiveOpacity } =
+                getExclusionAndOpacity(el);
+              if (skipCategory) {
+                if (skipCategory === "disabled") skippedCounts.disabled++;
+                else if (skipCategory === "srOnlyOrAriaHidden") {
+                  skippedCounts.srOnlyOrAriaHidden++;
+                } else if (skipCategory === "gradientText") {
+                  skippedCounts.gradientText++;
+                }
+                continue;
+              }
               const rect = el.getBoundingClientRect();
               if (rect.width < 4 || rect.height < 4) continue;
               const text = (el.textContent ?? "").trim();
@@ -322,12 +399,19 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
                 style.webkitTextFillColor === "rgba(0, 0, 0, 0)" ||
                 style.backgroundClip === "text"
               ) {
+                skippedCounts.gradientText++;
                 continue;
               }
               const fgParsed = parseColor(style.color);
               if (!fgParsed || fgParsed[3] === 0) continue;
               const bg = effectiveBg(el);
-              const fg = composite(fgParsed, bg);
+              const fgWithOpacity: RGBA = [
+                fgParsed[0],
+                fgParsed[1],
+                fgParsed[2],
+                fgParsed[3] * effectiveOpacity,
+              ];
+              const fg = composite(fgWithOpacity, bg);
               const ratio = contrastRatio(fg, bg);
               const fontSize = parseFloat(style.fontSize) || 16;
               const fontWeight = parseInt(style.fontWeight, 10) || 400;
@@ -386,6 +470,7 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           return {
             checkedElements,
             minRatio: Number(minRatio.toFixed(2)),
+            skippedCounts,
             failures,
             unnamedInteractiveControls,
           };
@@ -403,6 +488,7 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           compositedContrast: {
             checkedElements: domAudit.checkedElements,
             minRatio: domAudit.minRatio,
+            skippedCounts: domAudit.skippedCounts,
             failures: domAudit.failures,
           },
           unnamedInteractiveControls: domAudit.unnamedInteractiveControls,
@@ -528,22 +614,278 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
         `Validation error alert contrast (${theme})`
       ).toBeGreaterThanOrEqual(4.5);
 
-      // 2. Verify disabled add button is properly marked disabled before input
+      // 2. Verify disabled add button is marked disabled, remains visually
+      // perceivable (non-vanishing size/opacity/contrast delta), and clearly
+      // transitions to full WCAG >= 4.5:1 contrast once enabled.
       const addHerbBtn = page.getByRole("button", { name: /Add herb/i });
       await expect(addHerbBtn).toBeDisabled();
 
-      // 3. Verify keyboard Tab produces a genuinely visible focus-visible indicator
-      await page.keyboard.press("Tab");
-      const focusedHasRing = await page.evaluate(() => {
-        const el = document.activeElement as HTMLElement | null;
-        if (!el) return false;
+      const disabledVisual = await addHerbBtn.evaluate((el) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+        const parse = (c: string): [number, number, number, number] => {
+          ctx.clearRect(0, 0, 1, 1);
+          ctx.fillStyle = "rgba(0,0,0,0)";
+          ctx.fillStyle = c;
+          ctx.fillRect(0, 0, 1, 1);
+          const d = ctx.getImageData(0, 0, 1, 1).data;
+          return [d[0], d[1], d[2], d[3] / 255];
+        };
+        const comp = (
+          fg: [number, number, number, number],
+          bg: [number, number, number]
+        ): [number, number, number] => [
+          fg[0] * fg[3] + bg[0] * (1 - fg[3]),
+          fg[1] * fg[3] + bg[1] * (1 - fg[3]),
+          fg[2] * fg[3] + bg[2] * (1 - fg[3]),
+        ];
+        const lum = ([r, g, b]: [number, number, number]) => {
+          const lin = (v: number) =>
+            v / 255 <= 0.03928
+              ? v / 255 / 12.92
+              : ((v / 255 + 0.055) / 1.055) ** 2.4;
+          return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+        };
+        const ratio = (
+          a: [number, number, number],
+          b: [number, number, number]
+        ) => {
+          const l1 = lum(a);
+          const l2 = lum(b);
+          return Number(
+            ((Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)).toFixed(2)
+          );
+        };
+        const effectiveBg = (
+          node: Element | null
+        ): [number, number, number] => {
+          const layers: Array<[number, number, number, number]> = [];
+          let cur = node;
+          while (cur) {
+            const p = parse(getComputedStyle(cur).backgroundColor);
+            if (p[3] > 0) {
+              layers.push(p);
+              if (p[3] >= 0.99) break;
+            }
+            cur = cur.parentElement;
+          }
+          let base: [number, number, number] =
+            document.documentElement.classList.contains("dark")
+              ? [24, 22, 20]
+              : [248, 246, 241];
+          for (let i = layers.length - 1; i >= 0; i--) {
+            base = comp(layers[i], base);
+          }
+          return base;
+        };
+
         const s = getComputedStyle(el);
-        return (
-          (s.outlineStyle !== "none" && parseFloat(s.outlineWidth) >= 1) ||
-          (s.boxShadow !== "none" && s.boxShadow !== "")
+        const rect = el.getBoundingClientRect();
+        const op = Number(s.opacity);
+        const parentBg = effectiveBg(el.parentElement);
+        const ownBgRaw = parse(s.backgroundColor);
+        const surfaceBg = comp(
+          [ownBgRaw[0], ownBgRaw[1], ownBgRaw[2], ownBgRaw[3] * op],
+          parentBg
         );
+        const fgRaw = parse(s.color);
+        const fgColor = comp(
+          [fgRaw[0], fgRaw[1], fgRaw[2], fgRaw[3] * op],
+          surfaceBg
+        );
+        const borderRaw = parse(s.borderTopColor);
+        const borderColor = comp(
+          [borderRaw[0], borderRaw[1], borderRaw[2], borderRaw[3] * op],
+          parentBg
+        );
+
+        return {
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+          opacity: Number(op.toFixed(2)),
+          textVsSurfaceRatio: ratio(fgColor, surfaceBg),
+          surfaceVsParentRatio: ratio(surfaceBg, parentBg),
+          borderVsParentRatio: ratio(borderColor, parentBg),
+        };
       });
-      expect(focusedHasRing, `Focused control indicator (${theme})`).toBe(true);
+
+      const disabledPerceivableRatio = Math.max(
+        disabledVisual.textVsSurfaceRatio,
+        disabledVisual.surfaceVsParentRatio,
+        disabledVisual.borderVsParentRatio
+      );
+      expect(
+        disabledVisual.width,
+        `Disabled control width (${theme})`
+      ).toBeGreaterThanOrEqual(32);
+      expect(
+        disabledVisual.height,
+        `Disabled control height (${theme})`
+      ).toBeGreaterThanOrEqual(32);
+      expect(
+        disabledVisual.opacity,
+        `Disabled control opacity remains perceivable yet distinct (${theme})`
+      ).toBeGreaterThanOrEqual(0.4);
+      expect(
+        disabledVisual.opacity,
+        `Disabled control visually distinct from full opacity (${theme})`
+      ).toBeLessThan(1);
+      expect(
+        disabledPerceivableRatio,
+        `Disabled control visual perceivability delta (${theme}): ${JSON.stringify(disabledVisual)}`
+      ).toBeGreaterThanOrEqual(2.0);
+
+      interactiveStateReports.push({
+        state: "disabled-control-perceivable",
+        theme,
+        ratio: disabledPerceivableRatio,
+        passed:
+          disabledVisual.opacity >= 0.4 &&
+          disabledVisual.opacity < 1 &&
+          disabledPerceivableRatio >= 2.0,
+        details: {
+          opacity: disabledVisual.opacity,
+          textVsSurfaceRatio: disabledVisual.textVsSurfaceRatio,
+          surfaceVsParentRatio: disabledVisual.surfaceVsParentRatio,
+          borderVsParentRatio: disabledVisual.borderVsParentRatio,
+          widthPx: disabledVisual.width,
+          heightPx: disabledVisual.height,
+        },
+      });
+
+      // 3. Verify keyboard Tab produces a WCAG 2.2 SC 2.4.11 / 2.4.13 focus
+      // indicator with measurable thickness (>= 2px), perimeter area,
+      // contrast (>= 3.0:1 against adjacent background), and non-obscuration.
+      await page.keyboard.press("Tab");
+      await page.keyboard.press("Tab");
+      const focusMetrics = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement | null;
+        if (!el) return null;
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+        const parse = (c: string): [number, number, number, number] => {
+          ctx.clearRect(0, 0, 1, 1);
+          ctx.fillStyle = "rgba(0,0,0,0)";
+          ctx.fillStyle = c;
+          ctx.fillRect(0, 0, 1, 1);
+          const d = ctx.getImageData(0, 0, 1, 1).data;
+          return [d[0], d[1], d[2], d[3] / 255];
+        };
+        const comp = (
+          fg: [number, number, number, number],
+          bg: [number, number, number]
+        ): [number, number, number] => [
+          fg[0] * fg[3] + bg[0] * (1 - fg[3]),
+          fg[1] * fg[3] + bg[1] * (1 - fg[3]),
+          fg[2] * fg[3] + bg[2] * (1 - fg[3]),
+        ];
+        const lum = ([r, g, b]: [number, number, number]) => {
+          const lin = (v: number) =>
+            v / 255 <= 0.03928
+              ? v / 255 / 12.92
+              : ((v / 255 + 0.055) / 1.055) ** 2.4;
+          return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+        };
+        const effectiveBg = (
+          node: Element | null
+        ): [number, number, number] => {
+          const layers: Array<[number, number, number, number]> = [];
+          let cur = node;
+          while (cur) {
+            const p = parse(getComputedStyle(cur).backgroundColor);
+            if (p[3] > 0) {
+              layers.push(p);
+              if (p[3] >= 0.99) break;
+            }
+            cur = cur.parentElement;
+          }
+          let base: [number, number, number] =
+            document.documentElement.classList.contains("dark")
+              ? [24, 22, 20]
+              : [248, 246, 241];
+          for (let i = layers.length - 1; i >= 0; i--) {
+            base = comp(layers[i], base);
+          }
+          return base;
+        };
+
+        const s = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        const outlineWidthPx =
+          s.outlineStyle !== "none" ? parseFloat(s.outlineWidth) || 0 : 0;
+        const perimeterPx = Math.round(2 * (rect.width + rect.height));
+        const indicatorAreaPx2 = Math.round(outlineWidthPx * perimeterPx);
+        const minRequiredAreaPx2 = Math.round(2 * perimeterPx);
+
+        const adjacentBg = effectiveBg(el.parentElement);
+        const outlineRaw = parse(s.outlineColor);
+        const outlineRgb = comp(outlineRaw, adjacentBg);
+        const l1 = lum(outlineRgb);
+        const l2 = lum(adjacentBg);
+        const contrastRatio = Number(
+          ((Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)).toFixed(2)
+        );
+
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const hit = document.elementFromPoint(cx, cy);
+        const obscured = !(
+          hit &&
+          (hit === el || el.contains(hit) || hit.contains(el))
+        );
+
+        return {
+          tag: el.tagName,
+          outlineWidthPx,
+          perimeterPx,
+          indicatorAreaPx2,
+          minRequiredAreaPx2,
+          contrastRatio,
+          obscured,
+          visibleOnScreen: rect.width > 0 && rect.height > 0,
+        };
+      });
+
+      expect(focusMetrics, `Focus indicator metrics (${theme})`).not.toBeNull();
+      expect(
+        focusMetrics!.outlineWidthPx,
+        `Focus outline width >= 2px (${theme}): ${JSON.stringify(focusMetrics)}`
+      ).toBeGreaterThanOrEqual(2);
+      expect(
+        focusMetrics!.indicatorAreaPx2,
+        `Focus indicator area >= 2 * perimeter (${theme})`
+      ).toBeGreaterThanOrEqual(focusMetrics!.minRequiredAreaPx2);
+      expect(
+        focusMetrics!.contrastRatio,
+        `Focus indicator contrast >= 3.0:1 (${theme}): ${JSON.stringify(focusMetrics)}`
+      ).toBeGreaterThanOrEqual(3.0);
+      expect(
+        focusMetrics!.obscured,
+        `Focused control not obscured (${theme})`
+      ).toBe(false);
+
+      interactiveStateReports.push({
+        state: "focus-indicator-appearance",
+        theme,
+        ratio: focusMetrics!.contrastRatio,
+        passed:
+          focusMetrics!.outlineWidthPx >= 2 &&
+          focusMetrics!.indicatorAreaPx2 >= focusMetrics!.minRequiredAreaPx2 &&
+          focusMetrics!.contrastRatio >= 3.0 &&
+          !focusMetrics!.obscured,
+        details: {
+          tag: focusMetrics!.tag,
+          outlineWidthPx: focusMetrics!.outlineWidthPx,
+          perimeterPx: focusMetrics!.perimeterPx,
+          indicatorAreaPx2: focusMetrics!.indicatorAreaPx2,
+          minRequiredAreaPx2: focusMetrics!.minRequiredAreaPx2,
+          obscured: focusMetrics!.obscured,
+        },
+      });
 
       // 4. Expanded disclosure (<details>) state & axe-core check on clinical-review or interaction page
       await page.goto("/clinical-review?intent=signoff", {
@@ -688,10 +1030,12 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
     }
   });
 
-  test("multi-herb clinical consultation brief and long interaction print output preserve warnings, citations, severity badges, and page-break rules (R2-18)", async ({
+  test("multi-herb clinical consultation brief and long interaction print output preserve warnings, citations, severity badges, page-break geometry, and real paginated PDF output (R2-18, R4-03)", async ({
     page,
+    browserName,
   }) => {
-    await page.setViewportSize({ width: 1024, height: 900 });
+    // US Letter printable area at 96dpi with 0.5in margins = 720px × 960px
+    await page.setViewportSize({ width: 720, height: 960 });
 
     // 1. Mock a realistic multi-herb + multi-drug stack consultation brief with
     // Contraindicated + Severe pairwise findings, cumulative pathway alerts, and citations.
@@ -818,24 +1162,32 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
       page.locator("#stack-checker").getByText(/Cumulative bleeding/i)
     ).toBeVisible();
 
-    // Emulate print media and verify comprehensive consultation brief print rules
+    // Emulate print media at US Letter printable column width (720px)
     await page.emulateMedia({ media: "print" });
 
     const briefPrintCheck = await page.evaluate(() => {
       const header = document.querySelector("header");
       const footer = document.querySelector("footer");
       const printHeader = document.querySelector("#stack-checker .print-only");
-      const stackText =
-        document.querySelector("#stack-checker")?.textContent ?? "";
-      const alerts = Array.from(
-        document.querySelectorAll("#stack-checker [role='alert']")
+      const stackEl = document.querySelector("#stack-checker");
+      const stackText = stackEl?.textContent ?? "";
+      const blocks = Array.from(
+        document.querySelectorAll(
+          "#stack-checker .print-keep-together, #stack-checker [role='alert']"
+        )
+      ).filter((el) => getComputedStyle(el).display !== "none");
+      const breakRules = blocks.map((a) => getComputedStyle(a).breakInside);
+      const maxKeepTogetherHeightPx = blocks.reduce(
+        (max, a) => Math.max(max, Math.round(a.getBoundingClientRect().height)),
+        0
       );
-      const alertBreakRules = alerts.map(
-        (a) => getComputedStyle(a).breakInside
+      const printableWidthOverflowPx = Math.max(
+        0,
+        Math.round(
+          document.documentElement.scrollWidth -
+            document.documentElement.clientWidth
+        )
       );
-      const overflowPx =
-        document.documentElement.scrollWidth -
-        document.documentElement.clientWidth;
 
       return {
         headerDisplay: header ? getComputedStyle(header).display : "none",
@@ -847,9 +1199,11 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
         hasSevere: /severe/i.test(stackText),
         hasCumulativeWarning: /cumulative bleeding/i.test(stackText),
         hasCitation: /EMA HMPC|PubMed/i.test(stackText),
-        alertCount: alerts.length,
-        allAlertsAvoidBreak: alertBreakRules.every((r) => /avoid/i.test(r)),
-        overflowPx,
+        keepTogetherBlockCount: blocks.length,
+        allKeepTogetherAvoidBreak:
+          blocks.length > 0 && breakRules.every((r) => /avoid/i.test(r)),
+        maxKeepTogetherHeightPx,
+        printableWidthOverflowPx,
       };
     });
 
@@ -860,10 +1214,68 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
     expect(briefPrintCheck.hasSevere).toBe(true);
     expect(briefPrintCheck.hasCumulativeWarning).toBe(true);
     expect(briefPrintCheck.hasCitation).toBe(true);
-    expect(briefPrintCheck.allAlertsAvoidBreak).toBe(true);
-    expect(briefPrintCheck.overflowPx).toBeLessThanOrEqual(2);
+    expect(briefPrintCheck.keepTogetherBlockCount).toBeGreaterThanOrEqual(3);
+    expect(briefPrintCheck.allKeepTogetherAvoidBreak).toBe(true);
+    expect(briefPrintCheck.printableWidthOverflowPx).toBeLessThanOrEqual(2);
+    expect(briefPrintCheck.maxKeepTogetherHeightPx).toBeGreaterThan(0);
+    expect(
+      briefPrintCheck.maxKeepTogetherHeightPx,
+      "Each indivisible warning/match card must fit within a single US Letter printable page height (<= 920px)"
+    ).toBeLessThanOrEqual(920);
 
-    // 2. When clinical routes are enabled, also verify print mode on a long interaction detail page
+    let briefPdfBytes = 0;
+    let briefPdfPages = 0;
+    if (browserName === "chromium") {
+      const pdfBuf = await page.pdf({
+        format: "Letter",
+        printBackground: true,
+        margin: {
+          top: "0.5in",
+          right: "0.5in",
+          bottom: "0.5in",
+          left: "0.5in",
+        },
+      });
+      expect(pdfBuf.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+      briefPdfBytes = pdfBuf.byteLength;
+      briefPdfPages = (
+        pdfBuf.toString("latin1").match(/\/Type\s*\/Page\b(?!s)/g) ?? []
+      ).length;
+      expect(
+        briefPdfBytes,
+        "StackChecker consultation PDF size"
+      ).toBeGreaterThan(10_000);
+      expect(
+        briefPdfPages,
+        "StackChecker consultation PDF page count"
+      ).toBeGreaterThanOrEqual(1);
+      expect(
+        briefPdfPages,
+        "StackChecker consultation PDF avoids runaway pagination"
+      ).toBeLessThanOrEqual(10);
+    }
+
+    printPdfAudits.push({
+      route: "/herb-drug-interactions#stack-checker-brief",
+      engine: browserName,
+      pdfVerified: browserName === "chromium",
+      pdfBytes: briefPdfBytes,
+      pageCount: briefPdfPages,
+      printableWidthOverflowPx: briefPrintCheck.printableWidthOverflowPx,
+      keepTogetherBlockCount: briefPrintCheck.keepTogetherBlockCount,
+      maxKeepTogetherHeightPx: briefPrintCheck.maxKeepTogetherHeightPx,
+      allKeepTogetherAvoidBreak: briefPrintCheck.allKeepTogetherAvoidBreak,
+      passed:
+        briefPrintCheck.keepTogetherBlockCount >= 3 &&
+        briefPrintCheck.allKeepTogetherAvoidBreak &&
+        briefPrintCheck.printableWidthOverflowPx <= 2 &&
+        briefPrintCheck.maxKeepTogetherHeightPx > 0 &&
+        briefPrintCheck.maxKeepTogetherHeightPx <= 920 &&
+        (browserName !== "chromium" ||
+          (briefPdfBytes > 10_000 && briefPdfPages >= 1)),
+    });
+
+    // 2. When clinical routes are enabled, also verify print + paginated PDF on a long interaction detail page
     if (INCLUDE_CLINICAL_ROUTES) {
       await page.emulateMedia({ media: "screen" });
       await page.goto("/interactions/st-johns-wort/rivaroxaban", {
@@ -874,17 +1286,34 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
       const pairPrintCheck = await page.evaluate(() => {
         const header = document.querySelector("header");
         const mainText = document.querySelector("main")?.textContent ?? "";
-        const alerts = Array.from(
-          document.querySelectorAll("main [role='alert']")
+        const blocks = Array.from(
+          document.querySelectorAll(
+            "main .print-keep-together, main [role='alert']"
+          )
+        ).filter((el) => getComputedStyle(el).display !== "none");
+        const maxKeepTogetherHeightPx = blocks.reduce(
+          (max, a) =>
+            Math.max(max, Math.round(a.getBoundingClientRect().height)),
+          0
+        );
+        const printableWidthOverflowPx = Math.max(
+          0,
+          Math.round(
+            document.documentElement.scrollWidth -
+              document.documentElement.clientWidth
+          )
         );
         return {
           headerDisplay: header ? getComputedStyle(header).display : "none",
           hasSeverity: /severe/i.test(mainText),
           hasEvidenceTaxonomy: /Group A|Group B/i.test(mainText),
           hasCitationLink: !!document.querySelector("main a[href^='https://']"),
-          alertsAvoidBreak: alerts.every((a) =>
-            /avoid/i.test(getComputedStyle(a).breakInside)
-          ),
+          keepTogetherBlockCount: blocks.length,
+          allKeepTogetherAvoidBreak:
+            blocks.length > 0 &&
+            blocks.every((a) => /avoid/i.test(getComputedStyle(a).breakInside)),
+          maxKeepTogetherHeightPx,
+          printableWidthOverflowPx,
         };
       });
 
@@ -892,7 +1321,59 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
       expect(pairPrintCheck.hasSeverity).toBe(true);
       expect(pairPrintCheck.hasEvidenceTaxonomy).toBe(true);
       expect(pairPrintCheck.hasCitationLink).toBe(true);
-      expect(pairPrintCheck.alertsAvoidBreak).toBe(true);
+      expect(pairPrintCheck.keepTogetherBlockCount).toBeGreaterThanOrEqual(2);
+      expect(pairPrintCheck.allKeepTogetherAvoidBreak).toBe(true);
+      expect(pairPrintCheck.printableWidthOverflowPx).toBeLessThanOrEqual(2);
+      expect(pairPrintCheck.maxKeepTogetherHeightPx).toBeGreaterThan(0);
+      expect(pairPrintCheck.maxKeepTogetherHeightPx).toBeLessThanOrEqual(920);
+
+      let pairPdfBytes = 0;
+      let pairPdfPages = 0;
+      if (browserName === "chromium") {
+        const pairPdfBuf = await page.pdf({
+          format: "Letter",
+          printBackground: true,
+          margin: {
+            top: "0.5in",
+            right: "0.5in",
+            bottom: "0.5in",
+            left: "0.5in",
+          },
+        });
+        expect(pairPdfBuf.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+        pairPdfBytes = pairPdfBuf.byteLength;
+        pairPdfPages = (
+          pairPdfBuf.toString("latin1").match(/\/Type\s*\/Page\b(?!s)/g) ?? []
+        ).length;
+        expect(pairPdfBytes, "Interaction detail PDF size").toBeGreaterThan(
+          10_000
+        );
+        expect(
+          pairPdfPages,
+          "Interaction detail PDF page count"
+        ).toBeGreaterThanOrEqual(1);
+        expect(pairPdfPages).toBeLessThanOrEqual(10);
+      }
+
+      printPdfAudits.push({
+        route: "/interactions/st-johns-wort/rivaroxaban",
+        engine: browserName,
+        pdfVerified: browserName === "chromium",
+        pdfBytes: pairPdfBytes,
+        pageCount: pairPdfPages,
+        printableWidthOverflowPx: pairPrintCheck.printableWidthOverflowPx,
+        keepTogetherBlockCount: pairPrintCheck.keepTogetherBlockCount,
+        maxKeepTogetherHeightPx: pairPrintCheck.maxKeepTogetherHeightPx,
+        allKeepTogetherAvoidBreak: pairPrintCheck.allKeepTogetherAvoidBreak,
+        passed:
+          pairPrintCheck.keepTogetherBlockCount >= 2 &&
+          pairPrintCheck.allKeepTogetherAvoidBreak &&
+          pairPrintCheck.printableWidthOverflowPx <= 2 &&
+          pairPrintCheck.maxKeepTogetherHeightPx > 0 &&
+          pairPrintCheck.maxKeepTogetherHeightPx <= 920 &&
+          (browserName !== "chromium" ||
+            (pairPdfBytes > 10_000 && pairPdfPages >= 1)),
+      });
     }
   });
 });

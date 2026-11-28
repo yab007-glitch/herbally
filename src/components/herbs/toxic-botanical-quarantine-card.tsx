@@ -1,5 +1,8 @@
 import { AlertTriangle, ExternalLink, Phone } from "lucide-react";
-import { getDangerousHerb } from "@/lib/data/dangerous-herbs";
+import {
+  getDangerousHerb,
+  getDangerousHerbParts,
+} from "@/lib/data/dangerous-herbs";
 import { cleanQuotedText } from "@/lib/herbs/clean-quote";
 import { stripFieldLabels } from "@/lib/herbs/clean-faq";
 
@@ -213,8 +216,8 @@ export function ToxicBotanicalQuarantineCard({
           </p>
           <p className="mt-1.5 text-xs text-muted-foreground">
             {fr
-              ? `Parties concernées : ${info.parts}.`
-              : `Affected botanical parts: ${info.parts}.`}
+              ? `Parties concernées : ${getDangerousHerbParts(info, "fr")}.`
+              : `Affected botanical parts: ${getDangerousHerbParts(info, "en")}.`}
           </p>
         </div>
       )}

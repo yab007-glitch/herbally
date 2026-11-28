@@ -1,6 +1,7 @@
 import { AlertOctagon } from "lucide-react";
 import {
   getDangerousHerb,
+  getDangerousHerbParts,
   type DangerousHerb,
 } from "@/lib/data/dangerous-herbs";
 
@@ -40,8 +41,8 @@ export function DangerousHerbBanner({
         </p>
         <p className="mt-1 text-xs font-medium text-red-900 dark:text-red-200">
           {locale === "fr"
-            ? `Parties concernées : ${info.parts}. En cas d'exposition : Centre antipoison / 911.`
-            : `Affected parts: ${info.parts}. If exposed: Poison Control / 911.`}
+            ? `Parties concernées : ${getDangerousHerbParts(info, "fr")}. En cas d'exposition : Centre antipoison / 911.`
+            : `Affected parts: ${getDangerousHerbParts(info, "en")}. If exposed: Poison Control / 911.`}
         </p>
       </div>
     </div>

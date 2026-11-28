@@ -901,6 +901,145 @@ export const TOPICAL_ONLY_OR_NO_ORAL_CALC_SLUGS: ReadonlySet<string> = new Set([
 const NON_DOSABLE_PATTERN =
   /\bdrops?\(s\)|\b(no safe|do not use|absolutely no use|lethal|medical use only|medical supervision only|not recommended|contraindicated|homeopathic|poisonous|toxic|no modern standardized|no labelled dose|pellet|globule|granule|\bunit\b|spray|tube|under (?:strict |direct |medical |professional )?supervision|professional use only|controlled substance|pharmaceutical .* only|narrow therapeutic|carcinogen|cyanide|topical(?:ly)? only|external use only|for external use|for cutaneous use|not for (?:home|oral|internal) use|extremely limited|very (?:low|small) doses? only|low dose only|rinsing or gargling|no established|not established|reference only|short-term use only)\b/i;
 
+const DANGEROUS_HERB_PARTS_FR: Readonly<Record<string, string>> = {
+  "aerial herb (distinct from topical spores)":
+    "parties aériennes de la plante (distinctes des spores topiques)",
+  "aerial parts": "parties aériennes",
+  "aerial parts (all parts)": "parties aériennes (toute la plante)",
+  "aerial parts and rhizome": "parties aériennes et rhizome",
+  "aerial parts and root (all parts)":
+    "parties aériennes et racine (toute la plante)",
+  "aerial parts and root latex": "parties aériennes et latex racinaire",
+  "aerial parts and seeds": "parties aériennes et graines",
+  "aerial parts and seeds (all parts)":
+    "parties aériennes et graines (toute la plante)",
+  "all parts": "toutes les parties",
+  "all parts (especially roots and seeds)":
+    "toutes les parties (en particulier les racines et les graines)",
+  "all parts (especially tuberous roots)":
+    "toutes les parties (en particulier les racines tubéreuses)",
+  "all parts (leaves, flowers, red berries, and roots)":
+    "toutes les parties (feuilles, fleurs, baies rouges et racines)",
+  "all parts (leaves, roots, and berries)":
+    "toutes les parties (feuilles, racines et baies)",
+  "all parts (leaves, sap, flowers, seeds, and wood)":
+    "toutes les parties (feuilles, sève, fleurs, graines et bois)",
+  "all parts (roots and leaves)": "toutes les parties (racines et feuilles)",
+  "all parts (seeds, root, stem, and leaves)":
+    "toutes les parties (graines, racine, tige et feuilles)",
+  "all plant parts (root, stem, leaf)":
+    "toutes les parties de la plante (racine, tige, feuille)",
+  "bark and standardized yohimbine alkaloids":
+    "écorce et alcaloïdes de yohimbine standardisés",
+  "bark and total alkaloids": "écorce et alcaloïdes totaux",
+  "bark, berries, and leaves (all parts)":
+    "écorce, baies et feuilles (toute la plante)",
+  "bark, leaves, and seeds": "écorce, feuilles et graines",
+  "bark, needles, and seeds": "écorce, aiguilles et graines",
+  "berries, leaves, and crude stems": "baies, feuilles et tiges brutes",
+  "berries, stems, and leaves": "baies, tiges et feuilles",
+  "bulb (all parts)": "bulbe (toute la plante)",
+  "bulb/corm and seeds": "bulbe/corme et graines",
+  "bulbs and foliage": "bulbes et feuillage",
+  "corm/bulb, seeds, and flowers": "corme/bulbe, graines et fleurs",
+  "essential oil and aerial parts": "huile essentielle et parties aériennes",
+  "essential oil and aerial parts (do not ingest)":
+    "huile essentielle et parties aériennes (ne pas ingérer)",
+  "essential oil and concentrated extracts":
+    "huile essentielle et extraits concentrés",
+  "essential oil and flowering herb": "huile essentielle et sommités fleuries",
+  "essential oil and seeds": "huile essentielle et graines",
+  "female flowers and resin": "fleurs femelles et résine",
+  "flower heads and aerial parts": "capitules floraux et parties aériennes",
+  "flowering tops and seeds (all parts)":
+    "sommités fleuries et graines (toute la plante)",
+  "flowers, seeds, and leaves": "fleurs, graines et feuilles",
+  "foliage, bark, and seeds (except red fleshy aril surrounding the toxic seed)":
+    "feuillage, écorce et graines (hormis l'arille charnu rouge entourant la graine toxique)",
+  "fresh leaves and shoots": "feuilles fraîches et jeunes pousses",
+  "fresh leaves and whole plant": "feuilles fraîches et plante entière",
+  "fresh plant, corms, and juice (all parts)":
+    "plante fraîche, cormes et suc (toute la plante)",
+  "fresh rhizome and root": "rhizome frais et racine",
+  "fresh root and latex": "racine fraîche et latex",
+  "fruit and seeds": "fruit et graines",
+  "fruit pulp and seeds": "pulpe du fruit et graines",
+  "fungal sclerotium": "sclérote fongique",
+  "inner bark, wilted leaves, and seeds":
+    "écorce interne, feuilles flétries et graines",
+  "kernels and unrefined oil": "amandons et huile non raffinée",
+  "latex, seed capsules, and stems": "latex, capsules de graines et tiges",
+  leaves: "feuilles",
+  "leaves (all parts)": "feuilles (toute la plante)",
+  "leaves and concentrated extracts": "feuilles et extraits concentrés",
+  "leaves and seeds": "feuilles et graines",
+  "leaves and twigs": "feuilles et rameaux",
+  "leaves, seeds, and flowers": "feuilles, graines et fleurs",
+  "needles, bark, and seeds": "aiguilles, écorce et graines",
+  "petals and seed capsules": "pétales et capsules de graines",
+  "rhizome and root": "rhizome et racine",
+  "rhizome and root (all parts)": "rhizome et racine (toute la plante)",
+  "rhizome, roots, and all plant parts":
+    "rhizome, racines et toutes les parties de la plante",
+  "rhizomes and roots": "rhizomes et racines",
+  "rhizomes, roots, and aerial parts": "rhizomes, racines et parties aériennes",
+  "rhizomes, roots, and leaves": "rhizomes, racines et feuilles",
+  "rhizomes, roots, and shoots": "rhizomes, racines et jeunes pousses",
+  "root (all forms)": "racine (toutes formes)",
+  "root and aerial parts": "racine et parties aériennes",
+  "root and berries (all parts)": "racine et baies (toute la plante)",
+  "root and rhizome (all parts)": "racine et rhizome (toute la plante)",
+  "root and seeds": "racine et graines",
+  "root and stem": "racine et tige",
+  "root bark": "écorce de racine",
+  "root bark and seeds": "écorce de racine et graines",
+  "root bark and volatile oil": "écorce de racine et huile volatile",
+  "root bark, leaves, and flowers (all parts)":
+    "écorce de racine, feuilles et fleurs (toute la plante)",
+  "root bark, stem bark, and seeds":
+    "écorce de racine, écorce de tige et graines",
+  "root resin and all plant parts":
+    "résine racinaire et toutes les parties de la plante",
+  "root, fruit, and aerial parts": "racine, fruit et parties aériennes",
+  "root, latex, stems, and mature pods":
+    "racine, latex, tiges et gousses mûres",
+  "root, mature berries, stems, leaves":
+    "racine, baies mûres, tiges et feuilles",
+  "root/rhizome, stems, and nectar": "racine/rhizome, tiges et nectar",
+  "roots and foliage": "racines et feuillage",
+  "roots, rhizomes, and unripe fruit (toxic internally)":
+    "racines, rhizomes et fruit non mûr (toxiques par voie interne)",
+  "roots, seeds, and leaves": "racines, graines et feuilles",
+  "seed (nut)": "graine (noix)",
+  seeds: "graines",
+  "seeds (all parts)": "graines (toute la plante)",
+  "seeds (whole plant is hazardous)": "graines (toute la plante est toxique)",
+  "seeds and bark": "graines et écorce",
+  "seeds and flowering herb (all parts)":
+    "graines et sommités fleuries (toute la plante)",
+  "seeds and seed mash (raw plant — refined USP castor oil removes ricin)":
+    "graines et tourteau de graines (plante brute — l'huile de ricin raffinée USP élimine la ricine)",
+  "seeds, leaves, and roots": "graines, feuilles et racines",
+  "seeds, leaves, flowers, and roots": "graines, feuilles, fleurs et racines",
+  "seeds, roots, bark, and chronic leaf tea":
+    "graines, racines, écorce et tisane de feuilles en usage chronique",
+  "stems and concentrated alkaloids": "tiges et alcaloïdes concentrés",
+  "tuber/root (all forms)": "tubercule/racine (toutes formes)",
+  "vine, stem, and root": "liane, tige et racine",
+  "volatile camphor oil and crystalline camphor":
+    "huile volatile de camphre et camphre cristallisé",
+};
+
+export function getDangerousHerbParts(
+  info: Pick<DangerousHerb, "parts">,
+  locale: "en" | "fr"
+): string {
+  if (locale === "fr") {
+    return DANGEROUS_HERB_PARTS_FR[info.parts] ?? info.parts;
+  }
+  return info.parts;
+}
+
 export function getDangerousHerb(slug: string): DangerousHerb | undefined {
   return DANGEROUS_HERBS[slug];
 }

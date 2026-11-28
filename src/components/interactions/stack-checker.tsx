@@ -1058,7 +1058,7 @@ export function StackChecker() {
               {result.stackAlerts.map((alert) => (
                 <div
                   key={alert.code}
-                  className="rounded-xl border border-amber-300 bg-amber-50/70 p-4 text-sm dark:border-amber-800 dark:bg-amber-950/30"
+                  className="print-keep-together rounded-xl border border-amber-300 bg-amber-50/70 p-4 text-sm dark:border-amber-800 dark:bg-amber-950/30"
                 >
                   <div className="flex items-start gap-2.5">
                     <AlertOctagon
@@ -1320,7 +1320,7 @@ export function StackChecker() {
                       return (
                         <div
                           key={`${m.herbSlug}-${m.drugSlug}-${m.drugInput}`}
-                          className="rounded-xl border border-border bg-background/60 p-4"
+                          className="print-keep-together rounded-xl border border-border bg-background/60 p-4"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <p className="font-semibold text-foreground">

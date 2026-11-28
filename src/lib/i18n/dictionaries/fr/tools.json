@@ -410,7 +410,7 @@
     "browseHerbs": "Parcourir le catalogue",
     "learnInteractions": "En savoir plus sur les interactions plante-médicament",
     "greeting": {
-      "intro": "Bonjour — je suis l'assistant HerbAlly. Je vérifie les plantes contre les médicaments que vous prenez, et je vous montre les preuves derrière chaque réponse.",
+      "intro": "Bonjour — je suis l'Herboriste Virtuel d'HerbAlly. Je fournis des explications éducatives assistées par IA à partir de notre base de données et des sources citées lorsqu'elles existent — jamais une validation clinique.",
       "question": "Que voulez-vous vérifier — une plante, ou quelque chose que vous prenez ?",
       "quickCheckHerb": "Une plante que je prends",
       "quickInteractions": "Interactions avec mes médicaments ?",
