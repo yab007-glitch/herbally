@@ -51,6 +51,7 @@ jobs:
           cleanup() {
             rc=$?
             rm -f "$TMP_DUMP"
+            docker exec -i herbally-db rm -f /tmp/herbally-restore.dump /tmp/herbally-restore.list >/dev/null 2>&1 || true
             if [ "$CREATED_DB" -eq 1 ]; then
               docker exec -i herbally-db psql -U postgres -v ON_ERROR_STOP=1 \
                 -c "DROP DATABASE IF EXISTS herbally_restore_test;" >/dev/null 2>&1 || true
@@ -68,7 +69,13 @@ jobs:
           fi
           test -s "$TMP_DUMP"
           DUMP_BYTES="$(stat -c %s "$TMP_DUMP")"
-          docker exec -i herbally-db pg_restore --list < "$TMP_DUMP" >/dev/null
+
+          docker exec -i herbally-db sh -c 'cat > /tmp/herbally-restore.dump' < "$TMP_DUMP"
+          # Filter out pg_cron extension/schema objects because Postgres only allows
+          # creating pg_cron inside the database configured in cron.database_name (postgres).
+          docker exec -i herbally-db sh -c \
+            'pg_restore --list /tmp/herbally-restore.dump | grep -vE "pg_cron|SCHEMA - cron|[[:space:]]cron[[:space:]]" > /tmp/herbally-restore.list'
+          test -s "$TMP_DUMP"
 
           docker exec -i herbally-db psql -U postgres -v ON_ERROR_STOP=1 \
             -c "DROP DATABASE IF EXISTS herbally_restore_test;"
@@ -76,7 +83,7 @@ jobs:
             -c "CREATE DATABASE herbally_restore_test;"
           CREATED_DB=1
 
-          docker exec -i herbally-db pg_restore -U postgres -d herbally_restore_test --exit-on-error < "$TMP_DUMP"
+          docker exec -i herbally-db pg_restore -L /tmp/herbally-restore.list -U postgres -d herbally_restore_test --exit-on-error /tmp/herbally-restore.dump
 
           PUBLISHED_HERBS="$(docker exec -i herbally-db psql -U postgres -d herbally_restore_test -Atq -v ON_ERROR_STOP=1 -c "SELECT count(*) FROM public.herbs WHERE is_published;")"
           DRUG_INTERACTIONS="$(docker exec -i herbally-db psql -U postgres -d herbally_restore_test -Atq -v ON_ERROR_STOP=1 -c "SELECT count(*) FROM public.drug_interactions;")"

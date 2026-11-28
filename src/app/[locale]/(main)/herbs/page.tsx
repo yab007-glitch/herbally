@@ -487,7 +487,7 @@ export default async function HerbsPage({
                 {herbs.map((herb) => {
                   const { description: _schemaDesc, ...cardHerb } = herb;
                   return (
-                    <li key={herb.id}>
+                    <li key={herb.id} className="min-w-0">
                       <HerbCard herb={cardHerb} />
                     </li>
                   );
