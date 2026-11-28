@@ -275,7 +275,7 @@ export default async function TrustCenterPage() {
     : "Public GitHub source, CI/CD & Source Monitor runs, A1–A8 automated safety matrices, atomic Open Data snapshots, HTTP security headers, fail-closed PostgreSQL 16 triggers, encrypted backups, and transparent audit boundaries.";
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+    <div className="mx-auto max-w-4xl overflow-x-clip px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
       <WebPageSchema title={title} description={description} url={pageUrl} />
       <BreadcrumbListSchema
         items={[
@@ -321,11 +321,11 @@ export default async function TrustCenterPage() {
               ? "Tous les points d'accès Open Data partagent un snapshotId et un horodatage unifiés calculés depuis une seule lecture cohérente."
               : "All Open Data JSON endpoints share a single atomic snapshotId and unified timestamp synchronized from one consistent snapshot."}
           </p>
-          <p className="mt-1 font-mono text-xs text-muted-foreground">
+          <p className="mt-1 break-all font-mono text-xs text-muted-foreground">
             snapshotId:{" "}
             <strong className="text-foreground">{snapshot.snapshotId}</strong>
           </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="mt-4 grid gap-3 tabular-nums sm:grid-cols-3">
             <div className="rounded-lg border border-border/80 bg-background p-3">
               <p className="text-xs text-muted-foreground">
                 {fr ? "Fiches de plantes publiées" : "Published Herb Profiles"}
@@ -377,7 +377,7 @@ export default async function TrustCenterPage() {
               </p>
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-3 text-xs font-medium">
+          <div className="mt-4 flex flex-wrap gap-3 break-all text-xs font-medium">
             <a
               href="/open-data/catalog.json"
               className="text-primary underline underline-offset-4"
@@ -502,7 +502,7 @@ export default async function TrustCenterPage() {
                 rel="noopener noreferrer"
                 className="flex flex-col gap-1 rounded-lg border border-border bg-card p-3 hover:border-primary/50"
               >
-                <span className="font-mono text-xs font-semibold text-primary underline underline-offset-4">
+                <span className="break-all font-mono text-xs font-semibold text-primary underline underline-offset-4">
                   actions/workflows/{wf.workflow}
                 </span>
                 <span className="text-xs text-muted-foreground">
@@ -511,13 +511,13 @@ export default async function TrustCenterPage() {
               </a>
             ))}
           </div>
-          <p className="mt-3 text-xs">
+          <p className="mt-3 break-words text-xs">
             {fr ? "Dépôt complet :" : "Full source repository:"}{" "}
             <a
               href={GITHUB_REPO}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono font-medium text-primary underline underline-offset-4"
+              className="break-all font-mono font-medium text-primary underline underline-offset-4"
             >
               {GITHUB_REPO}
             </a>{" "}
@@ -526,24 +526,24 @@ export default async function TrustCenterPage() {
               href={`${GITHUB_REPO}/blob/main/scripts/test-migrations-postgres.sh`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono font-medium text-primary underline underline-offset-4"
+              className="break-all font-mono font-medium text-primary underline underline-offset-4"
             >
               scripts/test-migrations-postgres.sh
             </a>
           </p>
         </section>
 
-        {/* 3. Automated Safety & Parity Test Matrix (A1-A8) */}
+        {/* 3. Automated Safety & Parity Test Matrix (A1-A9) */}
         <section id="automated-tests" aria-labelledby="automated-tests-heading">
           <h2
             id="automated-tests-heading"
             className="text-xl font-semibold text-foreground"
           >
             {fr
-              ? "3. Matrice complète A1–A8 des tests automatisés et de surveillance"
-              : "3. Complete A1–A8 Automated Safety, E2E & Source-Monitor Matrix"}
+              ? "3. Matrice complète A1–A9 des tests automatisés et de surveillance"
+              : "3. Complete A1–A9 Automated Safety, E2E & Security-Pentest Matrix"}
           </h2>
-          <div className="mt-4 overflow-x-auto rounded-lg border border-border">
+          <div className="mt-4 max-w-full overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-left text-xs">
               <thead className="bg-muted/50 text-foreground">
                 <tr>
@@ -575,7 +575,7 @@ export default async function TrustCenterPage() {
                         href={`${GITHUB_REPO}/blob/main/${suite.file}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-mono text-primary underline underline-offset-4"
+                        className="break-all font-mono text-primary underline underline-offset-4"
                       >
                         {suite.file}
                       </a>
@@ -679,7 +679,7 @@ export default async function TrustCenterPage() {
                   href={`${GITHUB_REPO}/blob/main/supabase/migrations/${m.file}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-mono text-xs font-semibold text-primary underline underline-offset-4"
+                  className="break-all font-mono text-xs font-semibold text-primary underline underline-offset-4"
                 >
                   supabase/migrations/{m.file}
                 </a>
@@ -711,7 +711,7 @@ export default async function TrustCenterPage() {
               href={`${GITHUB_REPO}/blob/main/docs/database-backup-strategy.md`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-xs font-medium text-primary underline underline-offset-4"
+              className="break-all font-mono text-xs font-medium text-primary underline underline-offset-4"
             >
               docs/database-backup-strategy.md
             </a>
@@ -719,7 +719,7 @@ export default async function TrustCenterPage() {
               href={`${GITHUB_REPO}/blob/main/scripts/test-backup-restore-drill.sh`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-xs font-medium text-primary underline underline-offset-4"
+              className="break-all font-mono text-xs font-medium text-primary underline underline-offset-4"
             >
               scripts/test-backup-restore-drill.sh
             </a>
