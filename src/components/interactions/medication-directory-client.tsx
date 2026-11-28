@@ -246,19 +246,19 @@ export function MedicationDirectoryClient({ medications, locale }: Props) {
             const isMixed = highestCount < med.totalInteractions;
             const breakdown = formatSeverityBreakdown(med.countsBySeverity, fr);
             return (
-              <li key={med.drugSlug}>
+              <li key={med.drugSlug} className="min-w-0">
                 <Link
                   href={`/medications/${med.drugSlug}`}
                   className="group flex h-full flex-col justify-between rounded-2xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-muted/30"
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <h2 className="text-base font-semibold text-foreground group-hover:text-primary">
+                  <div className="min-w-0 space-y-2">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <h2 className="min-w-0 text-base font-semibold text-foreground group-hover:text-primary">
                         {med.drugName}
                       </h2>
                       <span
                         className={cn(
-                          "inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
+                          "inline-flex max-w-full flex-wrap items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold",
                           SEVERITY_BADGE[med.highestSeverity]
                         )}
                       >

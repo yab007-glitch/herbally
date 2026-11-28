@@ -475,12 +475,18 @@ export default async function HerbDetailPage({ params }: Props) {
           className="space-y-4 rounded-2xl border border-destructive/40 bg-card p-5 sm:p-6"
         >
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="destructive" className="text-xs">
+            <Badge
+              variant="destructive"
+              className="h-auto max-w-full whitespace-normal text-left text-xs"
+            >
               {copyLocale === "fr"
                 ? "Plante toxique / à haut risque"
                 : "Toxic / High-Risk Plant"}
             </Badge>
-            <Badge variant="destructive" className="text-xs">
+            <Badge
+              variant="destructive"
+              className="h-auto max-w-full whitespace-normal text-left text-xs"
+            >
               {copyLocale === "fr"
                 ? "Quarantaine botanique toxique permanente · Impropre à l'usage humain"
                 : "Permanent Toxic Botanical Quarantine · Not for Human Use"}

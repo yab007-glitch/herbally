@@ -385,12 +385,15 @@ export default async function MedicationDetailPage({ params }: Props) {
         <div className="no-print flex flex-wrap items-center gap-2 pt-1">
           <Link
             href="/herb-drug-interactions#stack-checker"
-            className={buttonVariants({ size: "sm" })}
+            className={cn(
+              buttonVariants({ size: "sm" }),
+              "h-auto max-w-full whitespace-normal py-2 text-left"
+            )}
           >
             {fr
               ? `Vérifier ma liste complète avec ${med.drugName}`
               : `Check full supplement stack with ${med.drugName}`}
-            <ArrowRight className="ml-1 size-3.5" aria-hidden="true" />
+            <ArrowRight className="ml-1 size-3.5 shrink-0" aria-hidden="true" />
           </Link>
           <PrintPageButton locale={fr ? "fr" : "en"} />
         </div>
