@@ -31,9 +31,9 @@ describe("Badge Component", () => {
   });
 
   it("applies size variants", () => {
-    // Badge has fixed size by default (h-5)
+    // Badge uses a minimum height (min-h-5) so long clinical labels wrap cleanly on 320px viewports
     const { container } = render(<Badge>Default</Badge>);
-    expect(container.firstChild).toHaveClass("h-5");
+    expect(container.firstChild).toHaveClass("min-h-5");
   });
 
   it("forwards ref correctly", () => {
