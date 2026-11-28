@@ -68,6 +68,7 @@ import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
 import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
 import { ToxicQuarantineShell } from "@/components/herbs/toxic-quarantine-shell";
 import { MainPageShell } from "@/components/layout/main-page-shell";
+import { ClinicianSignOffBanner } from "@/components/review/clinician-signoff-banner";
 import { Badge } from "@/components/ui/badge";
 import { HerbNarrative } from "@/components/herbs/herb-narrative";
 import { InteractionsTable } from "@/components/herbs/interactions-table";
@@ -986,6 +987,15 @@ export default async function HerbDetailPage({ params }: Props) {
           )}
 
           {!isDangerous && <HerbFaqSection faqs={resolvedFaqs} />}
+
+          {!isDangerous && !isClinicallyReviewed && (
+            <ClinicianSignOffBanner
+              locale={copyLocale}
+              targetType="herb"
+              herbSlug={slug}
+              recordTitle={herb.name}
+            />
+          )}
 
           <HerbRegulatorExcerpts
             herbName={herb.name}

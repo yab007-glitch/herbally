@@ -6,6 +6,7 @@ import { addLocalePrefix } from "@/lib/i18n/routing";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
 import { getOpenDataSnapshot } from "@/lib/open-data/snapshot";
+import { ClinicalAdvisoryBoardCallout } from "@/components/review/clinical-advisory-board-callout";
 
 export const revalidate = 3600;
 
@@ -31,6 +32,16 @@ const WORKFLOW_BADGES = [
     name: "Source & OpenAPI Monitor",
     workflow: "source-monitor.yml",
     label: "Source & OpenAPI Monitor (PubMed retraction & Open Data audit)",
+  },
+  {
+    name: "OWASP Pentest Suite",
+    workflow: "security-pentest.yml",
+    label: "OWASP Pentest Suite (22-probe zero-cost live security audit)",
+  },
+  {
+    name: "Prod Restore Drill (A10)",
+    workflow: "prod-restore-drill.yml",
+    label: "Prod Restore Drill (Non-destructive encrypted host backup restore)",
   },
 ] as const;
 
@@ -117,6 +128,16 @@ const TEST_SUITES = [
     assertionFr:
       "Interroge NCBI E-utilities pour détecter les PMID rétractés, teste les URL sources réglementaires et valide la cohérence OpenAPI.",
     file: "scripts/verify-open-data-and-sources.ts",
+  },
+  {
+    id: "A9-Auto",
+    scopeEn: "Automated 22-probe OWASP Top 10 / ASVS black-box pentest suite",
+    scopeFr: "Suite automatisée OWASP Top 10 / ASVS (22 sondes de sécurité)",
+    assertionEn:
+      "Probes authz, XSS, SQLi, path traversal, 16 KB payload limits, toxic quarantine isolation, CSP clickjacking, OAuth open redirects, CSRF callback forgery, and dotfile exposure on CI and live production.",
+    assertionFr:
+      "Teste les contrôles d'accès, XSS, SQLi, traversée de chemin, plafonds 16 Ko, quarantaine toxique, CSP, redirections OAuth, CSRF et fichiers sensibles en CI et en production.",
+    file: "scripts/pentest-suite.ts",
   },
 ] as const;
 
@@ -733,12 +754,12 @@ export default async function TrustCenterPage() {
             <li>
               <strong className="text-foreground">
                 {fr
-                  ? "Tests d'intrusion tiers / SOC 2 (A9) :"
-                  : "Third-Party Pentest & Formal Compliance Attestations (A9):"}
+                  ? "Tests d'intrusion tiers & programme ouvert sans frais (A9) :"
+                  : "Third-Party Human Penetration Testing & Zero-Cost VDP (A9):"}
               </strong>{" "}
               {fr
-                ? "HerbAlly publie ses contrôles techniques en code ouvert sans prétendre à un test d'intrusion humain indépendant, ni à une certification SOC 2 ou ISO 27001 externe."
-                : "HerbAlly publishes verifiable engineering controls in open source and does not claim an external human penetration test, SOC 2, or ISO 27001 certification."}
+                ? "HerbAlly exécute en continu une suite automatisée OWASP Top 10 / ASVS (scripts/pentest-suite.ts) et autorise les chercheurs en sécurité indépendants à auditer herbally.app de bonne foi sans frais sous notre clause Safe Harbor (SECURITY.md). Aucun rapport d'intrusion humain indépendant tiers, ni certification SOC 2 ou ISO 27001, n'a encore été complété (0 rapport tiers enregistré)."
+                : "HerbAlly continuously runs our open-source 22-probe OWASP Top 10 / ASVS suite (scripts/pentest-suite.ts) and authorizes good-faith independent researchers under our zero-cost Safe Harbor VDP (SECURITY.md). Zero independent third-party human penetration test reports, SOC 2, or ISO 27001 certifications have been completed to date."}
             </li>
             <li id="security-disclosure">
               <strong className="text-foreground">
@@ -747,10 +768,40 @@ export default async function TrustCenterPage() {
                   : "Vulnerability & Safety Reporting:"}
               </strong>{" "}
               {fr
-                ? "Écrivez à info@herbally.app (contenu scientifique) ou privacy@herbally.app (sécurité / confidentialité). Les SLA complets figurent dans la charte éditoriale."
-                : "Contact info@herbally.app (safety/content corrections) or privacy@herbally.app (security/privacy reports). Triage SLAs (24h Critical / 72h High) are published in our Clinical Governance Charter."}
+                ? "Écrivez à info@herbally.app (contenu scientifique) ou privacy@herbally.app (sécurité / confidentialité). Les SLA complets figurent dans la charte éditoriale et SECURITY.md."
+                : "Contact info@herbally.app (safety/content corrections) or privacy@herbally.app (security/privacy reports). Triage SLAs (24h Critical / 72h High) are published in SECURITY.md and our Clinical Governance Charter."}
             </li>
           </ul>
+          <div
+            id="security-hall-of-fame"
+            className="mt-5 rounded-xl border border-border bg-background/90 p-4 text-xs"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-foreground">
+                {fr
+                  ? "Programme ouvert de test d'intrusion (0 $) & Tableau d'honneur sécurité"
+                  : "Zero-Cost Community Penetration Testing Program & Security Hall of Fame"}
+              </h3>
+              <a
+                href={`${GITHUB_REPO}/blob/main/SECURITY.md`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono font-medium text-primary underline underline-offset-4"
+              >
+                SECURITY.md (Safe Harbor) →
+              </a>
+            </div>
+            <p className="mt-1.5 leading-relaxed text-muted-foreground">
+              {fr
+                ? "Chercheurs en sécurité indépendants, chapitres OWASP et équipes universitaires en cybersécurité : testez herbally.app de bonne foi sous notre politique Safe Harbor (budget prime 0 $). Les contributions vérifiées reçoivent un crédit public permanent ici, la co-signature CVE et une lettre d'attestation signée."
+                : "Independent security researchers, OWASP chapters, and university cybersecurity teams are authorized to test herbally.app in good faith under our Safe Harbor policy ($0 bounty budget). Verified contributors receive permanent Hall of Fame credit here, CVE co-authorship, and a signed academic/professional verification letter."}
+            </p>
+            <p className="mt-2 font-medium text-foreground">
+              {fr
+                ? "Rapports d'intrusion humains indépendants vérifiés à ce jour : 0 (première place ouverte — signalez à privacy@herbally.app)."
+                : "Verified independent human penetration test reports logged to date: 0 (first researcher credit slot open — report to privacy@herbally.app)."}
+            </p>
+          </div>
           <div className="mt-4 flex flex-wrap gap-4 text-xs font-medium">
             <Link
               href="/editorial-policy#clinical-governance-protocol"
@@ -782,6 +833,8 @@ export default async function TrustCenterPage() {
             </Link>
           </div>
         </section>
+
+        <ClinicalAdvisoryBoardCallout locale={locale} compact />
       </div>
     </div>
   );

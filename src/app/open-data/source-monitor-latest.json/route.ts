@@ -4,7 +4,7 @@ import {
 } from "@/lib/open-data/builders";
 import reportPayload from "@/lib/open-data/source-monitor-latest.json";
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 const GITHUB_API_BASE =
   "https://api.github.com/repos/yab007-glitch/herbally/actions/workflows";
@@ -66,11 +66,14 @@ async function fetchLatestWorkflowRun(
 }
 
 export async function GET() {
-  const [sourceMonitor, deploy, ci] = await Promise.all([
-    fetchLatestWorkflowRun("source-monitor.yml"),
-    fetchLatestWorkflowRun("deploy.yml"),
-    fetchLatestWorkflowRun("ci.yml"),
-  ]);
+  const [sourceMonitor, deploy, ci, securityPentest, prodRestoreDrill] =
+    await Promise.all([
+      fetchLatestWorkflowRun("source-monitor.yml"),
+      fetchLatestWorkflowRun("deploy.yml"),
+      fetchLatestWorkflowRun("ci.yml"),
+      fetchLatestWorkflowRun("security-pentest.yml"),
+      fetchLatestWorkflowRun("prod-restore-drill.yml"),
+    ]);
 
   const enriched = {
     ...reportPayload,
@@ -79,6 +82,8 @@ export async function GET() {
       sourceMonitor,
       deploy,
       ci,
+      securityPentest,
+      prodRestoreDrill,
     },
   };
 

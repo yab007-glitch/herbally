@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { ClinicalEditRequestClient } from "../clinical-edit-request-client";
 
 vi.mock("next/navigation", () => ({
@@ -104,5 +104,106 @@ describe("ClinicalEditRequestClient", () => {
     expect(
       screen.getByText("Scope OA evidence to curcumin extract")
     ).toBeInTheDocument();
+  });
+
+  it("preserves intent=signoff in LinkedIn SSO redirect when launched in sign-off mode", () => {
+    render(
+      <ClinicalEditRequestClient
+        locale="en"
+        linkedinConfigured
+        session={null}
+        authError={null}
+        initialIntent="signoff"
+        initialTarget={{
+          targetType: "interaction",
+          herbSlug: "st-johns-wort",
+          herbName: "St. John's Wort",
+          drugName: "Rivaroxaban",
+          fieldScope: "drug_interaction",
+          surfaceUrl: "/interactions/st-johns-wort/rivaroxaban",
+        }}
+        initialRequests={[]}
+      />
+    );
+    const link = screen.getByRole("link", {
+      name: /Continue with LinkedIn SSO/i,
+    });
+    expect(link.getAttribute("href")).toContain(
+      encodeURIComponent("intent=signoff")
+    );
+    expect(
+      screen.getByText(/pre-filled clinician sign-off form/i)
+    ).toBeInTheDocument();
+  });
+
+  it("prefills clinician sign-off defaults, expands credentials, and toggles cleanly with edit mode", () => {
+    render(
+      <ClinicalEditRequestClient
+        locale="en"
+        linkedinConfigured
+        session={{
+          name: "Dr. Ada Lovelace",
+          email: "ada@clinic.org",
+          emailVerified: true,
+        }}
+        authError={null}
+        initialIntent="signoff"
+        initialTarget={{
+          targetType: "interaction",
+          herbSlug: "st-johns-wort",
+          herbName: "St. John's Wort",
+          drugName: "Rivaroxaban",
+          fieldScope: "drug_interaction",
+          surfaceUrl: "/interactions/st-johns-wort/rivaroxaban",
+        }}
+        initialRequests={[]}
+      />
+    );
+
+    expect(
+      screen.getByRole("button", { name: /Submit clinical sign-off/i })
+    ).toBeInTheDocument();
+    expect(
+      (screen.getByLabelText(/Role or background/i) as HTMLSelectElement).value
+    ).toBe("pharmacist");
+    expect(
+      (screen.getByLabelText(/Concise change summary/i) as HTMLInputElement)
+        .value
+    ).toContain("Clinical sign-off: St. John's Wort + Rivaroxaban");
+    expect(
+      (screen.getByLabelText(/Proposed edit/i) as HTMLTextAreaElement).value
+    ).toContain("St. John's Wort + Rivaroxaban");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /Suggest an Edit or Correction/i })
+    );
+    expect(
+      screen.getByRole("button", { name: /Submit edit request/i })
+    ).toBeInTheDocument();
+  });
+
+  it("supports Clinical Advisory Board application mode (intent=advisory)", () => {
+    render(
+      <ClinicalEditRequestClient
+        locale="en"
+        linkedinConfigured
+        session={{
+          name: "Dr. Ada Lovelace",
+          email: "ada@clinic.org",
+          emailVerified: true,
+        }}
+        authError={null}
+        initialIntent="advisory"
+        initialTarget={DEFAULT_TARGET}
+        initialRequests={[]}
+      />
+    );
+    expect(
+      screen.getByRole("button", { name: /Submit Advisory Board application/i })
+    ).toBeInTheDocument();
+    expect(
+      (screen.getByLabelText(/Concise change summary/i) as HTMLInputElement)
+        .value
+    ).toContain("Founding Clinical Advisory Board Application");
   });
 });

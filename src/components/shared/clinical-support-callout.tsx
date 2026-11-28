@@ -1,5 +1,5 @@
 import { LocalizedLink as Link } from "@/components/i18n/localized-link";
-import { Handshake, Heart } from "lucide-react";
+import { Handshake, Heart, Stethoscope } from "lucide-react";
 
 interface ClinicalSupportCalloutProps {
   locale: string;
@@ -31,6 +31,14 @@ export function ClinicalSupportCallout({
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <Link
+            href="/clinical-review?intent=signoff"
+            rel="nofollow"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3.5 py-2 text-xs font-semibold text-primary transition-colors hover:bg-primary/15"
+          >
+            <Stethoscope className="size-3.5" aria-hidden="true" />
+            <span>{fr ? "Clinicien ? Valider" : "Clinician? Sign off"}</span>
+          </Link>
           <Link
             href="/donate"
             className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"

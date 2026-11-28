@@ -135,7 +135,13 @@ export function sanitizeClinicalReviewNext(
       return "/clinical-review";
     }
     const cleanParams = new URLSearchParams();
-    for (const key of ["targetType", "slug", "drug", "field"] as const) {
+    for (const key of [
+      "targetType",
+      "slug",
+      "drug",
+      "field",
+      "intent",
+    ] as const) {
       const val = parsed.searchParams.get(key);
       if (val && val.trim().length > 0 && val.trim().length <= 120) {
         cleanParams.set(key, val.trim());

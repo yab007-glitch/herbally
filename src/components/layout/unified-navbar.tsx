@@ -141,8 +141,8 @@ const toolGroups: ToolNavGroup[] = [
       },
       {
         href: "/clinical-review",
-        labelEn: "Suggest an Edit",
-        labelFr: "Suggérer une modification",
+        labelEn: "Clinician Sign-Off & Edits",
+        labelFr: "Validation clinique & édits",
         icon: FileEdit,
       },
     ],

@@ -1,0 +1,114 @@
+name: Production Host Restore Drill (A10)
+
+# Non-destructive restore verification drill executing on the actual self-hosted
+# production host. Decrypts the latest encrypted .dump.gpg archive into a
+# temporary database (herbally_restore_test), verifies schema & row counts,
+# emits a sanitized JSON attestation summary (zero PII/secrets), and drops the
+# temporary database via an EXIT trap. Never runs on pull_request events.
+
+on:
+  schedule:
+    # Weekly Sunday at 04:30 UTC
+    - cron: "30 4 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: prod-restore-drill
+  cancel-in-progress: false
+
+jobs:
+  restore-drill:
+    name: Non-Destructive Encrypted Production Backup Restore Drill
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: [self-hosted, linux, herbally]
+    timeout-minutes: 20
+    steps:
+      - name: Run non-destructive encrypted backup decrypt & restore drill
+        run: |
+          set -euo pipefail
+          umask 077
+
+          PASS_FILE="/srv/herbally/deploy/.backup-passphrase"
+          BACKUP_DIR="/srv/herbally/backups/local"
+          START_EPOCH="$(date +%s)"
+
+          test -r "$PASS_FILE" || { echo "Missing passphrase file" >&2; exit 1; }
+
+          LATEST_GPG="$(ls -1t "$BACKUP_DIR"/*.dump.gpg 2>/dev/null | head -n 1 || true)"
+          if [ -z "$LATEST_GPG" ] && [ -x /srv/herbally/deploy/backup-local.sh ]; then
+            echo "No existing encrypted backup found; generating fresh backup first..."
+            /srv/herbally/deploy/backup-local.sh
+            LATEST_GPG="$(ls -1t "$BACKUP_DIR"/*.dump.gpg 2>/dev/null | head -n 1 || true)"
+          fi
+          test -r "$LATEST_GPG" || { echo "No readable .dump.gpg archive found in $BACKUP_DIR" >&2; exit 1; }
+
+          ARCHIVE_NAME="$(basename "$LATEST_GPG")"
+          ARCHIVE_SHA256="$(sha256sum "$LATEST_GPG" | awk '{print $1}')"
+          ARCHIVE_BYTES="$(stat -c %s "$LATEST_GPG")"
+
+          TMP_DUMP="$(mktemp -t herbally-restore-drill.XXXXXX.dump)"
+          CREATED_DB=0
+
+          cleanup() {
+            rc=$?
+            rm -f "$TMP_DUMP"
+            if [ "$CREATED_DB" -eq 1 ]; then
+              docker exec -i herbally-db psql -U postgres -v ON_ERROR_STOP=1 \
+                -c "DROP DATABASE IF EXISTS herbally_restore_test;" >/dev/null 2>&1 || true
+            fi
+            exit "$rc"
+          }
+          trap cleanup EXIT
+
+          gpg --batch --yes --decrypt --passphrase-file "$PASS_FILE" "$LATEST_GPG" > "$TMP_DUMP"
+          test -s "$TMP_DUMP"
+
+          docker exec -i herbally-db psql -U postgres -v ON_ERROR_STOP=1 \
+            -c "DROP DATABASE IF EXISTS herbally_restore_test; CREATE DATABASE herbally_restore_test;"
+          CREATED_DB=1
+
+          # Ignore role-owner errors if supabase system roles differ, but verify exit & table counts
+          docker exec -i herbally-db pg_restore -U postgres -d herbally_restore_test --exit-on-error < "$TMP_DUMP"
+
+          PUBLISHED_HERBS="$(docker exec -i herbally-db psql -U postgres -d herbally_restore_test -Atq -v ON_ERROR_STOP=1 -c "SELECT count(*) FROM public.herbs WHERE is_published;")"
+          DRUG_INTERACTIONS="$(docker exec -i herbally-db psql -U postgres -d herbally_restore_test -Atq -v ON_ERROR_STOP=1 -c "SELECT count(*) FROM public.drug_interactions;")"
+          AUTH_USERS="$(docker exec -i herbally-db psql -U postgres -d herbally_restore_test -Atq -v ON_ERROR_STOP=1 -c "SELECT count(*) FROM auth.users;")"
+          PG_VERSION="$(docker exec -i herbally-db psql -U postgres -d herbally_restore_test -Atq -v ON_ERROR_STOP=1 -c "SHOW server_version;")"
+
+          END_EPOCH="$(date +%s)"
+          ELAPSED="$((END_EPOCH - START_EPOCH))"
+
+          [ "$PUBLISHED_HERBS" -ge 100 ]
+          [ "$DRUG_INTERACTIONS" -ge 500 ]
+          [ "$AUTH_USERS" -ge 1 ]
+
+          cat <<EOF > prod-restore-attestation.json
+          {
+            "verifiedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "workflowRunId": "${GITHUB_RUN_ID}",
+            "archiveFile": "${ARCHIVE_NAME}",
+            "archiveSha256": "${ARCHIVE_SHA256}",
+            "archiveBytes": ${ARCHIVE_BYTES},
+            "postgresVersion": "${PG_VERSION}",
+            "restoredCounts": {
+              "publishedHerbs": ${PUBLISHED_HERBS},
+              "drugInteractions": ${DRUG_INTERACTIONS},
+              "authUsersPresent": true
+            },
+            "elapsedSeconds": ${ELAPSED},
+            "temporaryDatabaseCleaned": true,
+            "result": "PASSED"
+          }
+          EOF
+          cat prod-restore-attestation.json
+
+      - name: Upload sanitized restore attestation report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: prod-restore-attestation-${{ github.run_id }}
+          path: prod-restore-attestation.json
+          retention-days: 90

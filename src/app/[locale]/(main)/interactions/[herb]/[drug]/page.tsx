@@ -44,6 +44,7 @@ import {
   sanitizeContradictoryEvidenceNote,
 } from "@/lib/interactions/preparation-context";
 import { classifyMedicationScope } from "@/lib/interactions/medication-scope";
+import { ClinicianSignOffBanner } from "@/components/review/clinician-signoff-banner";
 
 // ISR, same reasoning as herbs/[slug]: the locale is a root param now, so
 // on-demand static generation no longer throws. Pairs outside the prerendered
@@ -927,6 +928,16 @@ export default async function InteractionPairPage({ params }: Props) {
         </dl>
       </section>
 
+      {!isClinicianApproved && (
+        <ClinicianSignOffBanner
+          locale={fr ? "fr" : "en"}
+          targetType="interaction"
+          herbSlug={pair.herbSlug}
+          drugName={pair.drugName}
+          recordTitle={`${pair.herbName} + ${fr ? pair.localizedDrugName || pair.drugName : pair.drugName}`}
+        />
+      )}
+
       {/* CTAs */}
       <div className="flex flex-wrap gap-3">
         <Link
@@ -953,13 +964,13 @@ export default async function InteractionPairPage({ params }: Props) {
           {pair.herbName}
         </Link>
         <Link
-          href={`/clinical-review?targetType=interaction&slug=${pair.herbSlug}&drug=${encodeURIComponent(pair.drugName)}`}
+          href={`/clinical-review?intent=signoff&targetType=interaction&slug=${pair.herbSlug}&drug=${encodeURIComponent(pair.drugName)}`}
           rel="nofollow"
           className={buttonVariants({ variant: "outline" })}
         >
           {fr
-            ? "Proposer une modification clinique"
-            : "Suggest a clinical edit"}
+            ? "Validation clinique / suggérer une correction"
+            : "Clinician sign-off / suggest edit"}
         </Link>
       </div>
 

@@ -73,6 +73,13 @@ describe("linkedin-oidc", () => {
     ).toBe(
       "/fr/clinical-review?targetType=interaction&slug=ginger&drug=Warfarin"
     );
+    expect(
+      sanitizeClinicalReviewNext(
+        "/clinical-review?intent=signoff&targetType=interaction&slug=st-johns-wort&drug=Rivaroxaban&injected=bad"
+      )
+    ).toBe(
+      "/clinical-review?targetType=interaction&slug=st-johns-wort&drug=Rivaroxaban&intent=signoff"
+    );
 
     expect(
       buildLinkedInErrorRedirect(

@@ -28,6 +28,10 @@ interface MonitorReport {
     clinicianSignedInteractions: number;
   };
   manifestVerified: boolean;
+  manifestFiles: Record<
+    string,
+    { sha256: string; bytes: number; verified: boolean }
+  >;
   apiContractChecks: {
     badInputStatus: number;
     unknownHerbStatus: number;
@@ -313,6 +317,10 @@ async function main() {
     "/open-data/review-queue.json": reviewQueueR.rawText,
     "/open-data/schema.json": schemaR.rawText,
   };
+  const manifestFiles: Record<
+    string,
+    { sha256: string; bytes: number; verified: boolean }
+  > = {};
   for (const [filePath, rawText] of Object.entries(rawByPath)) {
     const entry = manifestR.data.files[filePath];
     if (!entry) {
@@ -321,11 +329,17 @@ async function main() {
     const actualHash = createHash("sha256")
       .update(rawText, "utf8")
       .digest("hex");
+    const actualBytes = Buffer.byteLength(rawText, "utf8");
     if (actualHash !== entry.sha256) {
       throw new Error(
         `SHA-256 mismatch for ${filePath}: manifest=${entry.sha256}, live=${actualHash}`
       );
     }
+    manifestFiles[filePath] = {
+      sha256: actualHash,
+      bytes: actualBytes,
+      verified: true,
+    };
   }
 
   if (
@@ -396,6 +410,7 @@ async function main() {
       clinicianSignedInteractions: ixR.data.clinicianSignedPairs,
     },
     manifestVerified: true,
+    manifestFiles,
     apiContractChecks: {
       badInputStatus: badApi.status,
       unknownHerbStatus: unknownApi.status,

@@ -5,6 +5,7 @@ import { siteUrl } from "@/lib/seo/site-url";
 import { addLocalePrefix } from "@/lib/i18n/routing";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { ClinicalAdvisoryBoardCallout } from "@/components/review/clinical-advisory-board-callout";
 
 export const revalidate = 86400;
 
@@ -317,6 +318,8 @@ export default async function EditorialPolicyPage() {
             </ul>
           </div>
         </div>
+
+        <ClinicalAdvisoryBoardCallout locale={locale} compact />
 
         <div className="overflow-x-auto rounded-xl border border-border bg-background">
           <table className="w-full border-collapse text-left text-xs">

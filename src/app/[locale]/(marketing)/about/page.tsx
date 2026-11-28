@@ -12,6 +12,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { WebPageSchema } from "@/components/seo/webpage-schema";
 import { BreadcrumbListSchema } from "@/components/seo/breadcrumb-list-schema";
+import { ClinicalAdvisoryBoardCallout } from "@/components/review/clinical-advisory-board-callout";
 import { siteUrl } from "@/lib/seo/site-url";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/lib/i18n/page-locale";
@@ -305,6 +306,10 @@ export default async function AboutPage() {
           </Link>
         </div>
       </section>
+
+      <div className="mt-10">
+        <ClinicalAdvisoryBoardCallout locale={locale === "fr" ? "fr" : "en"} />
+      </div>
 
       {/* Contact Section */}
       <section className="mt-16">

@@ -17,6 +17,7 @@ import { HerbsMessagesProvider } from "@/components/i18n/herbs-messages-provider
 import { siteUrl } from "@/lib/seo/site-url";
 import { getReviewer } from "@/lib/data/reviewers";
 import { getGovernanceCoverageStats } from "@/lib/governance/coverage-stats";
+import { ClinicalAdvisoryBoardCallout } from "@/components/review/clinical-advisory-board-callout";
 
 export const generateMetadata = () =>
   buildPageMetadata({
@@ -621,6 +622,11 @@ export default async function MethodologyPage() {
               </div>
             </CardContent>
           </Card>
+
+          <ClinicalAdvisoryBoardCallout
+            locale={locale === "fr" ? "fr" : "en"}
+            compact
+          />
         </section>
 
         {/* CTA */}

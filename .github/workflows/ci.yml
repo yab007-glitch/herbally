@@ -338,6 +338,7 @@ jobs:
           npx playwright install --with-deps chromium
           PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 E2E_MIGRATED_DB=1 E2E_NO_AI_KEY=1 \
             npx playwright test e2e/migrated-db.spec.ts e2e/calculator.spec.ts --project=chromium
+          npx tsx scripts/pentest-suite.ts --base-url http://127.0.0.1:3100
 
   build:
     runs-on: ubuntu-latest
