@@ -64,13 +64,13 @@ export default async function HomePage() {
         <WelcomeToast />
       </Suspense>
       <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 pt-6 pb-4 sm:gap-10 sm:pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-16 lg:pt-20">
-        <div className="text-center lg:text-left">
+        <div className="min-w-0 text-center lg:text-left">
           {/* Server-rendered hero — this is the LCP element.
               No logo mark here: the header already carries it, and a second
               leaf on the same screen pushed the form below the fold on a
               phone. */}
           <p className="eyebrow mb-3 hidden sm:block">{t("home.eyebrow")}</p>
-          <h1 className="text-balance text-4xl font-medium tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem] lg:leading-[1.04]">
+          <h1 className="break-words text-balance text-3xl font-medium tracking-tight text-foreground sm:text-5xl lg:text-[3.4rem] lg:leading-[1.04]">
             {t("home.heroTitle")}
           </h1>
           <p className="mx-auto mt-4 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base lg:mx-0">
