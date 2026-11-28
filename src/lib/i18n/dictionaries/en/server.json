@@ -707,7 +707,7 @@
   "homeAI": {
     "badge": "AI-Powered Herbal Assistant",
     "title": "Ask anything about herbs and natural health",
-    "subtitle": "Type your question below or tap a suggestion. Get evidence-based educational explanations citing Health Canada, EMA, NCCIH, and PubMed — instantly and for free."
+    "subtitle": "Type your question below or tap a suggestion for AI-assisted educational explanations citing Health Canada, EMA, NCCIH, and PubMed where available — not clinical clearance."
   },
   "home": {
     "heroTitle": "Check herb‑drug interactions",
@@ -732,7 +732,7 @@
     "featureInteractionsTitle": "Interaction checker",
     "featureInteractionsDescription": "Check for herb-drug interactions before combining supplements with medications.",
     "featureAiTitle": "Virtual herbalist",
-    "featureAiDescription": "Ask questions about herbs, remedies, and safety. Evidence-based answers with citations.",
+    "featureAiDescription": "Ask questions about herbs and safety. AI-assisted educational explanations with citations where available — not clinical clearance.",
     "checkerChecking": "Checking the database…",
     "checkerFoundTitle": "Database result",
     "checkerAskHerbalist": "Ask the Virtual Herbalist",

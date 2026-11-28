@@ -4,26 +4,68 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 /**
- * Comprehensive WCAG 2.2 AA, Axe-Core, Multi-Component Composited Contrast,
+ * Comprehensive WCAG 2.2 AA, Axe-Core, Uncapped All-Element Composited Contrast,
+ * Interactive-State Contrast (errors, expanded disclosures, focus, disabled),
  * Visible Focus Appearance, Accessible Name, Keyboard Workflow, Live Region,
- * Target Size, 320px Reflow, and Print Emulation Suite (R2-08, R2-18).
+ * Target Size, 320px Reflow, and Multi-Page Clinical Print Verification Suite
+ * (R2-08, R2-18, Round 2.2).
  *
- * Runs on both Chromium and Firefox in CI and emits a machine-readable JSON
- * report at `test-results/accessibility-audit-report.json` uploaded as a CI
- * artifact on every run.
+ * When `E2E_INCLUDE_CLINICAL_ROUTES=1` (enabled in `postgrest-and-migrated-e2e`
+ * on every CI run AND in `live-accessibility-audit.yml` against production
+ * `https://herbally.app`), the matrix expands from 6 core routes (12 checks)
+ * to all 11 routes (22 checks), explicitly including the toxic-botanical
+ * quarantine pages (`/herbs/abrus-precatorius`, `/fr/herbs/abrus-precatorius`)
+ * and dynamic clinical routes (`/herbs/turmeric`,
+ * `/interactions/st-johns-wort/rivaroxaban`, `/medications/rivaroxaban`).
  */
 
-const CORE_ROUTES = [
+const INCLUDE_CLINICAL_ROUTES = process.env.E2E_INCLUDE_CLINICAL_ROUTES === "1";
+
+const CORE_MATRIX_ROUTES = [
   "/",
   "/fr",
   "/herb-drug-interactions",
   "/fr/herb-drug-interactions",
-  "/medications",
-  "/herbs",
   "/clinical-review?intent=signoff&targetType=interaction&slug=st-johns-wort&drug=Rivaroxaban",
-  "/clinical-review?intent=advisory",
   "/trust",
 ] as const;
+
+const CLINICAL_AND_QUARANTINE_ROUTES = [
+  "/herbs/abrus-precatorius",
+  "/fr/herbs/abrus-precatorius",
+  "/herbs/turmeric",
+  "/interactions/st-johns-wort/rivaroxaban",
+  "/medications/rivaroxaban",
+] as const;
+
+const MATRIX_ROUTES: readonly string[] = INCLUDE_CLINICAL_ROUTES
+  ? [...CORE_MATRIX_ROUTES, ...CLINICAL_AND_QUARANTINE_ROUTES]
+  : [...CORE_MATRIX_ROUTES];
+
+const REFLOW_ROUTES: readonly string[] = INCLUDE_CLINICAL_ROUTES
+  ? [
+      "/",
+      "/fr",
+      "/herb-drug-interactions",
+      "/fr/herb-drug-interactions",
+      "/medications",
+      "/herbs",
+      "/clinical-review?intent=signoff&targetType=interaction&slug=st-johns-wort&drug=Rivaroxaban",
+      "/clinical-review?intent=advisory",
+      "/trust",
+      ...CLINICAL_AND_QUARANTINE_ROUTES,
+    ]
+  : [
+      "/",
+      "/fr",
+      "/herb-drug-interactions",
+      "/fr/herb-drug-interactions",
+      "/medications",
+      "/herbs",
+      "/clinical-review?intent=signoff&targetType=interaction&slug=st-johns-wort&drug=Rivaroxaban",
+      "/clinical-review?intent=advisory",
+      "/trust",
+    ];
 
 interface AxeRouteReport {
   route: string;
@@ -37,9 +79,21 @@ interface AxeRouteReport {
   compositedContrast: {
     checkedElements: number;
     minRatio: number;
-    failures: Array<{ selector: string; text: string; ratio: number }>;
+    failures: Array<{
+      tag: string;
+      text: string;
+      ratio: number;
+      required: number;
+    }>;
   };
   unnamedInteractiveControls: number;
+}
+
+interface InteractiveStateReport {
+  state: string;
+  theme: "light" | "dark";
+  ratio: number;
+  passed: boolean;
 }
 
 const REPORT_PATH = path.join(
@@ -49,6 +103,7 @@ const REPORT_PATH = path.join(
 );
 
 const auditReports: AxeRouteReport[] = [];
+const interactiveStateReports: InteractiveStateReport[] = [];
 
 test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () => {
   test.afterAll(() => {
@@ -60,6 +115,7 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           generatedAt: new Date().toISOString(),
           standard:
             "WCAG 2.2 AA (wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa)",
+          includesClinicalAndQuarantineRoutes: INCLUDE_CLINICAL_ROUTES,
           routesAudited: auditReports.length,
           totalAxeViolations: auditReports.reduce(
             (sum, r) => sum + r.violations.length,
@@ -69,7 +125,9 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
             (sum, r) => sum + r.compositedContrast.failures.length,
             0
           ),
+          interactiveStatesAudited: interactiveStateReports.length,
           results: auditReports,
+          interactiveStates: interactiveStateReports,
         },
         null,
         2
@@ -78,24 +136,18 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
     );
   });
 
-  test("axe-core WCAG 2.2 AA, composited component contrast, and accessible names pass across EN/FR routes in light and dark modes", async ({
+  test("axe-core WCAG 2.2 AA, uncapped all-element composited contrast, and accessible names pass across all audited routes in light and dark modes", async ({
     page,
   }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(240_000);
     await page.setViewportSize({ width: 1280, height: 800 });
 
-    const matrixRoutes = [
-      "/",
-      "/fr",
-      "/herb-drug-interactions",
-      "/fr/herb-drug-interactions",
-      "/clinical-review?intent=signoff&targetType=interaction&slug=st-johns-wort&drug=Rivaroxaban",
-      "/trust",
-    ] as const;
-
-    for (const route of matrixRoutes) {
+    for (const route of MATRIX_ROUTES) {
       for (const theme of ["light", "dark"] as const) {
-        await page.emulateMedia({ colorScheme: theme });
+        await page.emulateMedia({
+          colorScheme: theme,
+          reducedMotion: "reduce",
+        });
         const res = await page.goto(route, { waitUntil: "domcontentloaded" });
         expect(res?.status(), `HTTP status for ${route}`).toBeLessThan(400);
 
@@ -108,7 +160,7 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           document.documentElement.classList.toggle("dark", mode === "dark");
           document.documentElement.style.colorScheme = mode;
         }, theme);
-        await page.waitForTimeout(100);
+        await page.waitForTimeout(200);
         const appliedDark = await page.evaluate(() =>
           document.documentElement.classList.contains("dark")
         );
@@ -121,12 +173,11 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
           .analyze();
 
-        // 2. Measure actual rendered foreground vs alpha-composited ancestor background
-        // across headings, buttons, badges/alerts, nav links, form labels, and body copy.
+        // 2. Uncapped all-element composited contrast scan across EVERY visible
+        // leaf text-bearing element inside main, header, and footer (headings,
+        // nested warning text, secondary labels, badges, buttons, links, alerts).
         const domAudit = await page.evaluate(() => {
           type RGBA = [number, number, number, number];
-          // Use a 1x1 canvas so Chromium & Firefox resolve CSS Color 4 formats
-          // (oklch(), lab(), color(srgb ...), rgb(), hsl()) to exact sRGB RGBA.
           const canvas = document.createElement("canvas");
           canvas.width = 1;
           canvas.height = 1;
@@ -199,43 +250,80 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
             return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
           }
 
-          const sampleSelectors = [
-            "main h1",
-            "main h2",
-            "main p",
-            "main label",
-            "main button:not(:disabled)",
-            "main a",
-            "main [role='alert']",
-            "main [data-slot='badge']",
-            "header nav a",
-          ];
+          function hasDirectText(el: Element): boolean {
+            for (const node of Array.from(el.childNodes)) {
+              if (
+                node.nodeType === Node.TEXT_NODE &&
+                (node.textContent ?? "").trim().length > 0
+              ) {
+                return true;
+              }
+            }
+            return false;
+          }
+
+          function isHiddenOrDecorative(el: Element): boolean {
+            let cur: Element | null = el;
+            while (cur) {
+              const s = getComputedStyle(cur);
+              if (
+                s.display === "none" ||
+                s.visibility === "hidden" ||
+                Number(s.opacity) < 0.9 ||
+                cur.classList.contains("sr-only") ||
+                cur.classList.contains("gradient-text") ||
+                cur.getAttribute("aria-hidden") === "true" ||
+                cur.hasAttribute("disabled")
+              ) {
+                return true;
+              }
+              if (cur.tagName === "DETAILS" && !cur.hasAttribute("open")) {
+                if (!el.closest("summary")) return true;
+              }
+              cur = cur.parentElement;
+            }
+            return false;
+          }
 
           let checkedElements = 0;
           let minRatio = 21;
           const failures: Array<{
-            selector: string;
+            tag: string;
             text: string;
             ratio: number;
+            required: number;
           }> = [];
 
-          for (const sel of sampleSelectors) {
-            const els = Array.from(document.querySelectorAll(sel)).slice(0, 12);
-            for (const el of els) {
-              const style = getComputedStyle(el);
+          const containers = Array.from(
+            document.querySelectorAll("main, header, footer")
+          );
+          for (const root of containers) {
+            const allEls = Array.from(root.querySelectorAll("*"));
+            for (const el of allEls) {
               if (
-                style.display === "none" ||
-                style.visibility === "hidden" ||
-                Number(style.opacity) < 0.9 ||
-                el.classList.contains("sr-only") ||
-                el.classList.contains("gradient-text")
+                el.tagName === "SCRIPT" ||
+                el.tagName === "STYLE" ||
+                el.tagName === "NOSCRIPT" ||
+                el.tagName === "OPTION" ||
+                el.tagName === "SVG" ||
+                el.closest("svg")
               ) {
                 continue;
               }
+              if (!hasDirectText(el)) continue;
+              if (isHiddenOrDecorative(el)) continue;
               const rect = el.getBoundingClientRect();
               if (rect.width < 4 || rect.height < 4) continue;
               const text = (el.textContent ?? "").trim();
               if (!text) continue;
+
+              const style = getComputedStyle(el);
+              if (
+                style.webkitTextFillColor === "rgba(0, 0, 0, 0)" ||
+                style.backgroundClip === "text"
+              ) {
+                continue;
+              }
               const fgParsed = parseColor(style.color);
               if (!fgParsed || fgParsed[3] === 0) continue;
               const bg = effectiveBg(el);
@@ -250,9 +338,10 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
               if (ratio < minRatio) minRatio = ratio;
               if (ratio < required) {
                 failures.push({
-                  selector: sel,
-                  text: text.slice(0, 50),
+                  tag: el.tagName,
+                  text: text.slice(0, 60),
                   ratio: Number(ratio.toFixed(2)),
+                  required,
                 });
               }
             }
@@ -332,12 +421,12 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
 
         expect(
           domAudit.checkedElements,
-          `Measured rendered elements on ${route} (${theme})`
-        ).toBeGreaterThanOrEqual(8);
+          `Uncapped rendered text elements checked on ${route} (${theme})`
+        ).toBeGreaterThanOrEqual(20);
 
         expect(
           domAudit.failures,
-          `Composited WCAG 2.2 AA contrast failures on ${route} (${theme})`
+          `Uncapped composited WCAG 2.2 AA contrast failures on ${route} (${theme})`
         ).toEqual([]);
 
         expect(
@@ -348,12 +437,153 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
     }
   });
 
-  test("narrow mobile 320px reflow produces zero horizontal overflow across core EN and FR routes", async ({
+  test("interactive states (validation errors, expanded disclosures, focus indicators, and disabled controls) pass WCAG 2.2 AA in light and dark modes", async ({
     page,
   }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+
+    for (const theme of ["light", "dark"] as const) {
+      await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
+      await page.goto("/herb-drug-interactions", {
+        waitUntil: "domcontentloaded",
+      });
+      await page.evaluate((mode) => {
+        try {
+          window.localStorage.setItem("theme", mode);
+        } catch {
+          // Ignore
+        }
+        document.documentElement.classList.toggle("dark", mode === "dark");
+        document.documentElement.style.colorScheme = mode;
+      }, theme);
+      await page.waitForTimeout(200);
+
+      // 1. Trigger StackChecker empty validation error and measure alert contrast
+      const checkStackBtn = page
+        .locator("#stack-checker")
+        .getByRole("button", { name: /check/i })
+        .first();
+      await checkStackBtn.click();
+      const alertEl = page.locator("#stack-checker [role='alert']").first();
+      await expect(alertEl).toBeVisible();
+
+      const errorContrast = await alertEl.evaluate((el) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+        const parse = (c: string): [number, number, number, number] => {
+          ctx.clearRect(0, 0, 1, 1);
+          ctx.fillStyle = "rgba(0,0,0,0)";
+          ctx.fillStyle = c;
+          ctx.fillRect(0, 0, 1, 1);
+          const d = ctx.getImageData(0, 0, 1, 1).data;
+          return [d[0], d[1], d[2], d[3] / 255];
+        };
+        const comp = (
+          fg: [number, number, number, number],
+          bg: [number, number, number]
+        ): [number, number, number] => [
+          fg[0] * fg[3] + bg[0] * (1 - fg[3]),
+          fg[1] * fg[3] + bg[1] * (1 - fg[3]),
+          fg[2] * fg[3] + bg[2] * (1 - fg[3]),
+        ];
+        const layers: Array<[number, number, number, number]> = [];
+        let cur: Element | null = el;
+        while (cur) {
+          const p = parse(getComputedStyle(cur).backgroundColor);
+          if (p[3] > 0) {
+            layers.push(p);
+            if (p[3] >= 0.99) break;
+          }
+          cur = cur.parentElement;
+        }
+        let bg: [number, number, number] =
+          document.documentElement.classList.contains("dark")
+            ? [24, 22, 20]
+            : [248, 246, 241];
+        for (let i = layers.length - 1; i >= 0; i--) bg = comp(layers[i], bg);
+        const fg = comp(parse(getComputedStyle(el).color), bg);
+        const lum = ([r, g, b]: [number, number, number]) => {
+          const lin = (v: number) =>
+            v / 255 <= 0.03928
+              ? v / 255 / 12.92
+              : ((v / 255 + 0.055) / 1.055) ** 2.4;
+          return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+        };
+        const l1 = lum(fg);
+        const l2 = lum(bg);
+        return Number(
+          ((Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)).toFixed(2)
+        );
+      });
+      interactiveStateReports.push({
+        state: "stack-checker-validation-alert",
+        theme,
+        ratio: errorContrast,
+        passed: errorContrast >= 4.5,
+      });
+      expect(
+        errorContrast,
+        `Validation error alert contrast (${theme})`
+      ).toBeGreaterThanOrEqual(4.5);
+
+      // 2. Verify disabled add button is properly marked disabled before input
+      const addHerbBtn = page.getByRole("button", { name: /Add herb/i });
+      await expect(addHerbBtn).toBeDisabled();
+
+      // 3. Verify keyboard Tab produces a genuinely visible focus-visible indicator
+      await page.keyboard.press("Tab");
+      const focusedHasRing = await page.evaluate(() => {
+        const el = document.activeElement as HTMLElement | null;
+        if (!el) return false;
+        const s = getComputedStyle(el);
+        return (
+          (s.outlineStyle !== "none" && parseFloat(s.outlineWidth) >= 1) ||
+          (s.boxShadow !== "none" && s.boxShadow !== "")
+        );
+      });
+      expect(focusedHasRing, `Focused control indicator (${theme})`).toBe(true);
+
+      // 4. Expanded disclosure (<details>) state & axe-core check on clinical-review or interaction page
+      await page.goto("/clinical-review?intent=signoff", {
+        waitUntil: "domcontentloaded",
+      });
+      await page.evaluate((mode) => {
+        document.documentElement.classList.toggle("dark", mode === "dark");
+        document.documentElement.style.colorScheme = mode;
+      }, theme);
+      const detailsCount = await page.locator("details").count();
+      if (detailsCount > 0) {
+        await page.locator("details summary").first().click();
+        await expect(page.locator("details").first()).toHaveAttribute(
+          "open",
+          ""
+        );
+        const expandedAxe = await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+          .analyze();
+        expect(
+          expandedAxe.violations,
+          `Axe violations in expanded <details> (${theme})`
+        ).toEqual([]);
+        interactiveStateReports.push({
+          state: "expanded-disclosure-axe",
+          theme,
+          ratio: 21,
+          passed: expandedAxe.violations.length === 0,
+        });
+      }
+    }
+  });
+
+  test("narrow mobile 320px reflow produces zero horizontal overflow across all audited EN, FR, and clinical routes", async ({
+    page,
+  }) => {
+    test.setTimeout(180_000);
     await page.setViewportSize({ width: 320, height: 640 });
 
-    for (const route of CORE_ROUTES) {
+    for (const route of REFLOW_ROUTES) {
       const res = await page.goto(route, { waitUntil: "domcontentloaded" });
       expect(res?.status(), `HTTP status for ${route}`).toBeLessThan(400);
 
@@ -458,30 +688,211 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
     }
   });
 
-  test("print stylesheet hides screen chrome (.no-print, header, footer, nav) while preserving primary clinical content (R2-18)", async ({
+  test("multi-herb clinical consultation brief and long interaction print output preserve warnings, citations, severity badges, and page-break rules (R2-18)", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1024, height: 900 });
+
+    // 1. Mock a realistic multi-herb + multi-drug stack consultation brief with
+    // Contraindicated + Severe pairwise findings, cumulative pathway alerts, and citations.
+    await page.route("**/api/interactions/check-stack", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          checkedAt: "2026-11-28T06:00:00.000Z",
+          locale: "en",
+          herbs: [
+            {
+              input: "St. John's Wort",
+              found: true,
+              slug: "st-johns-wort",
+              name: "St. John's Wort",
+              scientificName: "Hypericum perforatum",
+              pairCount: 12,
+            },
+            {
+              input: "Garlic",
+              found: true,
+              slug: "garlic",
+              name: "Garlic",
+              scientificName: "Allium sativum",
+              pairCount: 6,
+            },
+            {
+              input: "Ginkgo",
+              found: true,
+              slug: "ginkgo-biloba",
+              name: "Ginkgo",
+              scientificName: "Ginkgo biloba",
+              pairCount: 8,
+            },
+          ],
+          drugs: ["Warfarin", "Rivaroxaban"],
+          summary: {
+            totalCombinations: 6,
+            matchedCount: 2,
+            unrecordedCount: 4,
+            withheldCount: 0,
+            conflictCount: 0,
+            hasConflicts: false,
+            highestSeverity: "contraindicated",
+            unresolvedHerbs: [],
+          },
+          matches: [
+            {
+              herbInput: "St. John's Wort",
+              herbSlug: "st-johns-wort",
+              herbName: "St. John's Wort",
+              drugInput: "Warfarin",
+              drugName: "Warfarin",
+              drugSlug: "warfarin",
+              severity: "contraindicated",
+              description:
+                "Potent CYP2C9/CYP3A4 induction substantially reduces warfarin plasma concentrations and INR.",
+              mechanism: "Induction of hepatic CYP2C9, CYP3A4, and P-gp.",
+              evidenceLevel: "well-documented",
+              source: "EMA HMPC Monograph",
+              sourceUrl: "https://www.ema.europa.eu/en/medicines/herbal",
+              publicationStatus: "legacy_unreviewed",
+              pairUrl: "/interactions/st-johns-wort/warfarin",
+            },
+            {
+              herbInput: "St. John's Wort",
+              herbSlug: "st-johns-wort",
+              herbName: "St. John's Wort",
+              drugInput: "Rivaroxaban",
+              drugName: "Rivaroxaban",
+              drugSlug: "rivaroxaban",
+              severity: "severe",
+              description:
+                "Combined CYP3A4 and P-gp induction reduces rivaroxaban exposure in human pharmacokinetic studies.",
+              mechanism: "Dual CYP3A4 and P-glycoprotein induction.",
+              evidenceLevel: "well-documented",
+              source: "PubMed PMID:32478963",
+              sourceUrl: "https://pubmed.ncbi.nlm.nih.gov/32478963/",
+              publicationStatus: "legacy_unreviewed",
+              pairUrl: "/interactions/st-johns-wort/rivaroxaban",
+            },
+          ],
+          conflicts: [],
+          withheld: [],
+          unrecorded: [
+            {
+              herbInput: "Garlic",
+              herbSlug: "garlic",
+              herbName: "Garlic",
+              drugInput: "Rivaroxaban",
+            },
+          ],
+          stackAlerts: [
+            {
+              code: "bleeding_overlap",
+              severity: "severe",
+              title: "Cumulative bleeding / antiplatelet load",
+              herbs: ["Garlic", "Ginkgo"],
+              message:
+                "Additive inhibition of platelet aggregation alongside oral anticoagulants. Discuss your full supplement list with a pharmacist.",
+            },
+          ],
+        }),
+      });
+    });
+
     await page.goto("/herb-drug-interactions", {
       waitUntil: "domcontentloaded",
     });
+
+    // Load sample stack and run check
+    await page
+      .locator("#stack-checker")
+      .getByRole("button", { name: /sample/i })
+      .click();
+    await page
+      .locator("#stack-checker")
+      .getByRole("button", { name: /check/i })
+      .first()
+      .click();
+
+    await expect(
+      page.locator("#stack-checker").getByText(/Cumulative bleeding/i)
+    ).toBeVisible();
+
+    // Emulate print media and verify comprehensive consultation brief print rules
     await page.emulateMedia({ media: "print" });
 
-    const printCheck = await page.evaluate(() => {
+    const briefPrintCheck = await page.evaluate(() => {
       const header = document.querySelector("header");
       const footer = document.querySelector("footer");
-      const mainH1 = document.querySelector("main h1");
+      const printHeader = document.querySelector("#stack-checker .print-only");
+      const stackText =
+        document.querySelector("#stack-checker")?.textContent ?? "";
+      const alerts = Array.from(
+        document.querySelectorAll("#stack-checker [role='alert']")
+      );
+      const alertBreakRules = alerts.map(
+        (a) => getComputedStyle(a).breakInside
+      );
+      const overflowPx =
+        document.documentElement.scrollWidth -
+        document.documentElement.clientWidth;
+
       return {
         headerDisplay: header ? getComputedStyle(header).display : "none",
         footerDisplay: footer ? getComputedStyle(footer).display : "none",
-        mainH1Display: mainH1 ? getComputedStyle(mainH1).display : "none",
-        mainH1Text: mainH1?.textContent?.trim() ?? "",
+        printHeaderDisplay: printHeader
+          ? getComputedStyle(printHeader).display
+          : "none",
+        hasContraindicated: /contraindicated/i.test(stackText),
+        hasSevere: /severe/i.test(stackText),
+        hasCumulativeWarning: /cumulative bleeding/i.test(stackText),
+        hasCitation: /EMA HMPC|PubMed/i.test(stackText),
+        alertCount: alerts.length,
+        allAlertsAvoidBreak: alertBreakRules.every((r) => /avoid/i.test(r)),
+        overflowPx,
       };
     });
 
-    expect(printCheck.headerDisplay).toBe("none");
-    expect(printCheck.footerDisplay).toBe("none");
-    expect(printCheck.mainH1Display).not.toBe("none");
-    expect(printCheck.mainH1Text.length).toBeGreaterThan(5);
+    expect(briefPrintCheck.headerDisplay).toBe("none");
+    expect(briefPrintCheck.footerDisplay).toBe("none");
+    expect(briefPrintCheck.printHeaderDisplay).toBe("block");
+    expect(briefPrintCheck.hasContraindicated).toBe(true);
+    expect(briefPrintCheck.hasSevere).toBe(true);
+    expect(briefPrintCheck.hasCumulativeWarning).toBe(true);
+    expect(briefPrintCheck.hasCitation).toBe(true);
+    expect(briefPrintCheck.allAlertsAvoidBreak).toBe(true);
+    expect(briefPrintCheck.overflowPx).toBeLessThanOrEqual(2);
+
+    // 2. When clinical routes are enabled, also verify print mode on a long interaction detail page
+    if (INCLUDE_CLINICAL_ROUTES) {
+      await page.emulateMedia({ media: "screen" });
+      await page.goto("/interactions/st-johns-wort/rivaroxaban", {
+        waitUntil: "domcontentloaded",
+      });
+      await page.emulateMedia({ media: "print" });
+
+      const pairPrintCheck = await page.evaluate(() => {
+        const header = document.querySelector("header");
+        const mainText = document.querySelector("main")?.textContent ?? "";
+        const alerts = Array.from(
+          document.querySelectorAll("main [role='alert']")
+        );
+        return {
+          headerDisplay: header ? getComputedStyle(header).display : "none",
+          hasSeverity: /severe/i.test(mainText),
+          hasEvidenceTaxonomy: /Group A|Group B/i.test(mainText),
+          hasCitationLink: !!document.querySelector("main a[href^='https://']"),
+          alertsAvoidBreak: alerts.every((a) =>
+            /avoid/i.test(getComputedStyle(a).breakInside)
+          ),
+        };
+      });
+
+      expect(pairPrintCheck.headerDisplay).toBe("none");
+      expect(pairPrintCheck.hasSeverity).toBe(true);
+      expect(pairPrintCheck.hasEvidenceTaxonomy).toBe(true);
+      expect(pairPrintCheck.hasCitationLink).toBe(true);
+      expect(pairPrintCheck.alertsAvoidBreak).toBe(true);
+    }
   });
 });

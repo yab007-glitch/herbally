@@ -344,9 +344,81 @@ jobs:
             sleep 1
           done
           npx playwright install --with-deps chromium
+          # Seed clinical & toxic-botanical fixture rows so the full 22-check
+          # WCAG 2.2 AA matrix (including quarantine & dynamic clinical routes)
+          # runs on every PR and main CI build.
+          psql "postgresql://postgres:postgres@127.0.0.1:5432/herbally_test" -v ON_ERROR_STOP=1 <<'SQL'
+          INSERT INTO public.herbs (
+            id, name, slug, scientific_name, description, dosage_adult,
+            category_id, is_published, contraindications, translations
+          ) VALUES
+          (
+            '33333333-3333-3333-3333-333333333341',
+            'Rosary Pea',
+            'abrus-precatorius',
+            'Abrus precatorius',
+            'Permanently quarantined poisonous botanical containing abrin.',
+            NULL,
+            'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
+            true,
+            ARRAY['Lethal abrin toxin — strictly prohibited for human use'],
+            '{"fr":{"name":"Pois rouge","description":"Plante toxique en quarantaine permanente contenant de l''abrine."}}'::jsonb
+          ),
+          (
+            '33333333-3333-3333-3333-333333333342',
+            'Turmeric',
+            'turmeric',
+            'Curcuma longa',
+            'Curcuminoid-containing rhizome widely studied for inflammation.',
+            '500 mg standardized curcuminoids twice daily',
+            'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
+            true,
+            ARRAY['Gallstones or bile duct obstruction', 'Pre-surgery (stop 2 weeks before)'],
+            '{"fr":{"name":"Curcuma","description":"Rhizome riche en curcuminoïdes."}}'::jsonb
+          ),
+          (
+            '33333333-3333-3333-3333-333333333343',
+            'St. John''s Wort',
+            'st-johns-wort',
+            'Hypericum perforatum',
+            'Botanical antidepressant and potent CYP3A4 / P-gp inducer.',
+            '300 mg standardized extract three times daily',
+            'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',
+            true,
+            ARRAY['Extensive CYP3A4 and P-gp drug interactions'],
+            '{"fr":{"name":"Millepertuis","description":"Inducteur puissant du CYP3A4 et de la P-gp."}}'::jsonb
+          )
+          ON CONFLICT (slug) DO NOTHING;
+
+          INSERT INTO public.drug_interactions (
+            id, herb_id, drug_name, severity, description, mechanism,
+            evidence_level, source, source_url
+          ) VALUES (
+            '44444444-4444-4444-4444-444444444445',
+            '33333333-3333-3333-3333-333333333343',
+            'Rivaroxaban',
+            'severe',
+            'Reduces rivaroxaban plasma exposure via CYP3A4 and P-gp induction.',
+            'Potent induction of CYP3A4 and P-glycoprotein.',
+            'well-documented',
+            'PubMed PMID:32478963',
+            'https://pubmed.ncbi.nlm.nih.gov/32478963/'
+          )
+          ON CONFLICT (id) DO NOTHING;
+          SQL
           PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 E2E_MIGRATED_DB=1 E2E_NO_AI_KEY=1 \
             npx playwright test e2e/migrated-db.spec.ts e2e/calculator.spec.ts --project=chromium
+          PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 E2E_INCLUDE_CLINICAL_ROUTES=1 \
+            npx playwright test e2e/ux-accessibility-audit.spec.ts --project=chromium
           npx tsx scripts/pentest-suite.ts --base-url http://127.0.0.1:3100
+      - name: Upload clinical + toxic-quarantine WCAG 2.2 AA report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: accessibility-audit-report-clinical-chromium
+          path: test-results/accessibility-audit-report.json
+          if-no-files-found: ignore
+          retention-days: 30
 
   build:
     runs-on: ubuntu-latest

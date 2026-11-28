@@ -1,0 +1,63 @@
+name: Live Production Accessibility Audit (WCAG 2.2 AA)
+
+# Runs the full 22-check (11 routes x light/dark) axe-core + uncapped composited
+# contrast + interactive states + 320px reflow + clinical brief print suite
+# directly against live production https://herbally.app (including toxic
+# botanical quarantine pages and dynamic clinical routes) and uploads a
+# machine-readable JSON audit report artifact.
+
+on:
+  workflow_run:
+    workflows: [Deploy]
+    types: [completed]
+    branches: [main]
+  schedule:
+    # Weekly Monday at 05:00 UTC
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-accessibility-audit
+  cancel-in-progress: false
+
+jobs:
+  live-wcag-audit:
+    name: Live Production WCAG 2.2 AA Audit (11 routes x 2 themes)
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Cache Playwright browsers
+        uses: actions/cache@v6
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('**/package-lock.json') }}
+      - name: Install Playwright Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Run 22-check WCAG 2.2 AA audit against https://herbally.app
+        env:
+          PLAYWRIGHT_BASE_URL: https://herbally.app
+          E2E_INCLUDE_CLINICAL_ROUTES: "1"
+        run: npx playwright test e2e/ux-accessibility-audit.spec.ts --project=chromium --reporter=list
+      - name: Upload live production WCAG 2.2 AA report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: live-accessibility-audit-report-${{ github.run_id }}
+          path: test-results/accessibility-audit-report.json
+          retention-days: 90
