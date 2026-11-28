@@ -60,13 +60,21 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
     <>
       {/* Search bar */}
       <div className="relative mx-auto mb-8 max-w-md">
-        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <label htmlFor="faq-search-input" className="sr-only">
+          {t("faqContent.searchPlaceholder")}
+        </label>
+        <Search
+          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
         <input
-          type="text"
+          id="faq-search-input"
+          type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          aria-label={t("faqContent.searchPlaceholder")}
           placeholder={t("faqContent.searchPlaceholder")}
-          className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-10 text-sm shadow-sm transition-colors focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-10 text-sm shadow-sm transition-colors focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         />
         {query && (
           <button
@@ -75,7 +83,7 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
             aria-label={t("faqContent.clearSearch")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
-            <X className="size-4" />
+            <X className="size-4" aria-hidden="true" />
           </button>
         )}
       </div>
@@ -101,7 +109,10 @@ export function FaqSearch({ categories }: { categories: FAQCategory[] }) {
             return (
               <section key={category.catKey}>
                 <div className="mb-4 flex items-center gap-3">
-                  <CategoryIcon className="size-6 text-primary" />
+                  <CategoryIcon
+                    className="size-6 text-primary"
+                    aria-hidden="true"
+                  />
                   <h2 className="text-2xl font-bold text-foreground">
                     {category.title}
                   </h2>
