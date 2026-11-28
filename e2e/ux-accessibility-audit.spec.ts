@@ -24,6 +24,8 @@ const INCLUDE_CLINICAL_ROUTES = process.env.E2E_INCLUDE_CLINICAL_ROUTES === "1";
 const CORE_MATRIX_ROUTES = [
   "/",
   "/fr",
+  "/faq",
+  "/fr/faq",
   "/herb-drug-interactions",
   "/fr/herb-drug-interactions",
   "/clinical-review?intent=signoff&targetType=interaction&slug=st-johns-wort&drug=Rivaroxaban",
@@ -46,6 +48,8 @@ const REFLOW_ROUTES: readonly string[] = INCLUDE_CLINICAL_ROUTES
   ? [
       "/",
       "/fr",
+      "/faq",
+      "/fr/faq",
       "/herb-drug-interactions",
       "/fr/herb-drug-interactions",
       "/medications",
@@ -58,6 +62,8 @@ const REFLOW_ROUTES: readonly string[] = INCLUDE_CLINICAL_ROUTES
   : [
       "/",
       "/fr",
+      "/faq",
+      "/fr/faq",
       "/herb-drug-interactions",
       "/fr/herb-drug-interactions",
       "/medications",
@@ -116,6 +122,17 @@ interface PrintPdfAuditReport {
   passed: boolean;
 }
 
+interface LiveContentVerificationReport {
+  route: string;
+  status: number;
+  cfCacheStatus: string | null;
+  cacheControl: string | null;
+  responseDate: string | null;
+  verifiedExcerpts: string[];
+  forbiddenMatchesFound: number;
+  passed: boolean;
+}
+
 const REPORT_PATH = path.join(
   process.cwd(),
   "test-results",
@@ -125,6 +142,7 @@ const REPORT_PATH = path.join(
 const auditReports: AxeRouteReport[] = [];
 const interactiveStateReports: InteractiveStateReport[] = [];
 const printPdfAudits: PrintPdfAuditReport[] = [];
+const liveContentVerifications: LiveContentVerificationReport[] = [];
 
 test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () => {
   test.describe.configure({ mode: "serial" });
@@ -159,9 +177,11 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           ),
           interactiveStatesAudited: interactiveStateReports.length,
           printPdfAuditsCount: printPdfAudits.length,
+          liveContentVerificationsCount: liveContentVerifications.length,
           results: auditReports,
           interactiveStates: interactiveStateReports,
           printPdfAudits,
+          liveContentVerifications,
         },
         null,
         2
@@ -1373,6 +1393,209 @@ test.describe("UX & Comprehensive WCAG 2.2 AA Accessibility Verification", () =>
           pairPrintCheck.maxKeepTogetherHeightPx <= 920 &&
           (browserName !== "chromium" ||
             (pairPdfBytes > 10_000 && pairPdfPages >= 1)),
+      });
+    }
+  });
+
+  test("rendered EN/FR homepage, FAQ, and French toxic quarantine banner/card copy match qualified safety and localization contracts (R4-01, R4-02, R5-01, R5-02)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+
+    const contentChecks: Array<{
+      route: string;
+      requiredPatterns: RegExp[];
+      forbiddenPatterns: RegExp[];
+      extractExcerpts: () => Promise<string[]>;
+    }> = [
+      {
+        route: "/",
+        requiredPatterns: [
+          /AI-assisted educational explanations with citations where available/i,
+          /not clinical clearance/i,
+        ],
+        forbiddenPatterns: [/Evidence-based answers with citations/i],
+        extractExcerpts: async () =>
+          page.evaluate(() => {
+            const p = Array.from(document.querySelectorAll("main p")).find(
+              (el) => /AI-assisted educational/i.test(el.textContent ?? "")
+            );
+            return p ? [(p.textContent ?? "").trim()] : [];
+          }),
+      },
+      {
+        route: "/fr",
+        requiredPatterns: [
+          /Explications éducatives assistées par IA avec citations/i,
+          /jamais une validation clinique/i,
+        ],
+        forbiddenPatterns: [/Réponses basées sur des preuves avec citations/i],
+        extractExcerpts: async () =>
+          page.evaluate(() => {
+            const p = Array.from(document.querySelectorAll("main p")).find(
+              (el) =>
+                /Explications éducatives assistées/i.test(el.textContent ?? "")
+            );
+            return p ? [(p.textContent ?? "").trim()] : [];
+          }),
+      },
+      {
+        route: "/faq",
+        requiredPatterns: [
+          /Source-referenced answers about medicinal herbs/i,
+          /not clinical clearance/i,
+        ],
+        forbiddenPatterns: [/Evidence-based answers about medicinal herbs/i],
+        extractExcerpts: async () =>
+          page.evaluate(() => {
+            const h1 = document.querySelector("main h1");
+            const sub = h1?.nextElementSibling;
+            return [
+              h1 ? (h1.textContent ?? "").trim() : "",
+              sub ? (sub.textContent ?? "").trim() : "",
+            ].filter(Boolean);
+          }),
+      },
+      {
+        route: "/fr/faq",
+        requiredPatterns: [
+          /Réponses sourcées sur les plantes médicinales/i,
+          /jamais une validation clinique/i,
+        ],
+        forbiddenPatterns: [/Des réponses fondées sur les preuves/i],
+        extractExcerpts: async () =>
+          page.evaluate(() => {
+            const h1 = document.querySelector("main h1");
+            const sub = h1?.nextElementSibling;
+            return [
+              h1 ? (h1.textContent ?? "").trim() : "",
+              sub ? (sub.textContent ?? "").trim() : "",
+            ].filter(Boolean);
+          }),
+      },
+    ];
+
+    for (const check of contentChecks) {
+      const res = await page.goto(check.route, {
+        waitUntil: "domcontentloaded",
+      });
+      const status = res?.status() ?? 0;
+      expect(status, `HTTP status for ${check.route}`).toBeLessThan(400);
+
+      const mainText = (await page.locator("main").innerText()).trim();
+      for (const req of check.requiredPatterns) {
+        expect(
+          mainText,
+          `Missing required copy ${req} on ${check.route}`
+        ).toMatch(req);
+      }
+      let forbiddenMatchesFound = 0;
+      for (const forb of check.forbiddenPatterns) {
+        if (forb.test(mainText)) forbiddenMatchesFound++;
+        expect(
+          mainText,
+          `Found forbidden legacy copy ${forb} on ${check.route}`
+        ).not.toMatch(forb);
+      }
+
+      const excerpts = await check.extractExcerpts();
+      expect(
+        excerpts.length,
+        `Extracted verified copy excerpts on ${check.route}`
+      ).toBeGreaterThanOrEqual(1);
+
+      const headers = res?.headers() ?? {};
+      liveContentVerifications.push({
+        route: check.route,
+        status,
+        cfCacheStatus: headers["cf-cache-status"] ?? null,
+        cacheControl: headers["cache-control"] ?? null,
+        responseDate: headers["date"] ?? null,
+        verifiedExcerpts: excerpts,
+        forbiddenMatchesFound,
+        passed: forbiddenMatchesFound === 0 && excerpts.length > 0,
+      });
+    }
+
+    if (INCLUDE_CLINICAL_ROUTES) {
+      const route = "/fr/herbs/abrus-precatorius";
+      const res = await page.goto(route, { waitUntil: "domcontentloaded" });
+      const status = res?.status() ?? 0;
+      expect(status, `HTTP status for ${route}`).toBeLessThan(400);
+
+      const abrusCheck = await page.evaluate(() => {
+        const mainText = (
+          document.querySelector("main")?.textContent ?? ""
+        ).trim();
+        const topBanner = Array.from(
+          document.querySelectorAll("main [role='alert']")
+        ).find((el) => /Danger — plante toxique/i.test(el.textContent ?? ""));
+        const lowerCard = document
+          .querySelector("#toxic-quarantine-heading")
+          ?.closest("section");
+
+        const topPartsLine =
+          Array.from(topBanner?.querySelectorAll("p") ?? [])
+            .map((p) => (p.textContent ?? "").trim())
+            .find((t) => /Parties concernées/i.test(t)) ?? "";
+        const lowerPartsLine =
+          Array.from(lowerCard?.querySelectorAll("p") ?? [])
+            .map((p) => (p.textContent ?? "").trim())
+            .find((t) => /Parties concernées/i.test(t)) ?? "";
+
+        const localizedMatches = (
+          mainText.match(
+            /Parties concernées : graines \(toute la plante est toxique\)/gi
+          ) ?? []
+        ).length;
+        const englishResidueMatches = (
+          mainText.match(/seeds \(whole plant is hazardous\)/gi) ?? []
+        ).length;
+
+        return {
+          topPartsLine,
+          lowerPartsLine,
+          localizedMatches,
+          englishResidueMatches,
+        };
+      });
+
+      expect(
+        abrusCheck.topPartsLine,
+        "Upper DangerousHerbBanner French affected parts"
+      ).toContain(
+        "Parties concernées : graines (toute la plante est toxique)."
+      );
+      expect(
+        abrusCheck.lowerPartsLine,
+        "Lower ToxicBotanicalQuarantineCard French affected parts"
+      ).toContain(
+        "Parties concernées : graines (toute la plante est toxique)."
+      );
+      expect(
+        abrusCheck.localizedMatches,
+        "Both upper banner and lower card display localized French parts"
+      ).toBeGreaterThanOrEqual(2);
+      expect(
+        abrusCheck.englishResidueMatches,
+        "Zero English affected-parts residue on /fr/herbs/abrus-precatorius"
+      ).toBe(0);
+
+      const headers = res?.headers() ?? {};
+      liveContentVerifications.push({
+        route,
+        status,
+        cfCacheStatus: headers["cf-cache-status"] ?? null,
+        cacheControl: headers["cache-control"] ?? null,
+        responseDate: headers["date"] ?? null,
+        verifiedExcerpts: [
+          `Upper banner: ${abrusCheck.topPartsLine}`,
+          `Lower quarantine card: ${abrusCheck.lowerPartsLine}`,
+        ],
+        forbiddenMatchesFound: abrusCheck.englishResidueMatches,
+        passed:
+          abrusCheck.localizedMatches >= 2 &&
+          abrusCheck.englishResidueMatches === 0,
       });
     }
   });
