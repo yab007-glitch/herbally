@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
+  Award,
   CheckCircle2,
   AlertTriangle,
   ShieldCheck,
+  Stethoscope,
   LogOut,
   ExternalLink,
   Search,
@@ -219,6 +221,88 @@ function authErrorMessage(code: string | null, fr: boolean): string | null {
   }
 }
 
+export type ReviewIntentMode = "edit" | "signoff" | "advisory";
+
+function buildAdvisoryDraft(fr: boolean): {
+  summary: string;
+  proposedChange: string;
+} {
+  return fr
+    ? {
+        summary:
+          "Candidature au comité consultatif clinique fondateur d'HerbAlly",
+        proposedChange:
+          "Siège souhaité (Siège A Pharmacien / Siège B Médecin-Toxicologue / Siège C Périnatalité-Pédiatrie-Français natif) : \nSpécialité clinique et expérience pertinente : \nDisponibilité pour la révision clinique en français natif (Oui/Non) : \nDisponibilité estimée (~2 à 4 h/mois, bénévole fondateur) : ",
+      }
+    : {
+        summary: "Founding Clinical Advisory Board Application",
+        proposedChange:
+          "Preferred seat (Seat A Pharmacist / Seat B Physician-Toxicologist / Seat C Perinatal-Pediatric & Native-French): \nRelevant clinical specialty & practice background: \nAvailable for native-French clinical review (Yes/No): \nEstimated availability (~2–4 hrs/month, pro bono founding seat): ",
+      };
+}
+
+function buildSignOffDraft(
+  target: {
+    targetType: EditTargetType;
+    herbSlug: string;
+    herbName: string;
+    drugName: string;
+  },
+  fr: boolean
+): { summary: string; proposedChange: string } {
+  const herbLabel = target.herbName.trim() || target.herbSlug.trim();
+  const drugLabel = target.drugName.trim();
+
+  if (target.targetType === "interaction" && herbLabel && drugLabel) {
+    const pair = `${herbLabel} + ${drugLabel}`;
+    return fr
+      ? {
+          summary: `Validation clinique : ${pair}`,
+          proposedChange: `J'ai examiné la gravité publiée, le mécanisme, le contexte de préparation et les sources primaires citées pour ${pair}, et je confirme l'exactitude clinique de cette fiche pour validation (ou je précise ci-dessous les ajustements recommandés).`,
+        }
+      : {
+          summary: `Clinical sign-off: ${pair}`,
+          proposedChange: `I have reviewed the published severity tier, mechanism, preparation scope, and cited primary sources for ${pair} and confirm clinical accuracy for publication sign-off (or note any wording/grade adjustments below).`,
+        };
+  }
+
+  if (target.targetType === "herb" && herbLabel) {
+    return fr
+      ? {
+          summary: `Validation clinique : monographie ${herbLabel}`,
+          proposedChange: `J'ai examiné les notes de sécurité adulte, les contre-indications, les interactions et les sources citées pour ${herbLabel}, et je confirme l'exactitude clinique de cette monographie pour validation (ou je précise ci-dessous les ajustements recommandés).`,
+        }
+      : {
+          summary: `Clinical sign-off: ${herbLabel} monograph`,
+          proposedChange: `I have reviewed the published adult safety notes, contraindications, interactions, and primary sources for ${herbLabel} and confirm clinical accuracy for publication sign-off (or note any adjustments below).`,
+        };
+  }
+
+  if (target.targetType === "medication" && drugLabel) {
+    return fr
+      ? {
+          summary: `Validation clinique : interactions de ${drugLabel}`,
+          proposedChange: `J'ai examiné les interactions plante–médicament répertoriées, les niveaux de gravité et les sources primaires pour ${drugLabel}, et je confirme l'exactitude clinique de cette fiche pour validation (ou je précise ci-dessous les ajustements recommandés).`,
+        }
+      : {
+          summary: `Clinical sign-off: ${drugLabel} herb–drug interactions`,
+          proposedChange: `I have reviewed the listed botanical interactions, severity tiers, and primary sources for ${drugLabel} and confirm clinical accuracy for publication sign-off (or note any adjustments below).`,
+        };
+  }
+
+  return fr
+    ? {
+        summary: "Validation clinique par un clinicien licencié",
+        proposedChange:
+          "J'ai examiné la fiche HerbAlly ciblée ainsi que les sources primaires citées et je confirme son exactitude clinique pour validation (ou je précise ci-dessous les révisions recommandées).",
+      }
+    : {
+        summary: "Licensed clinician peer-review sign-off",
+        proposedChange:
+          "I have reviewed the target HerbAlly record and cited primary sources and confirm clinical accuracy for publication sign-off (or note any recommended revisions below).",
+      };
+}
+
 export function ClinicalEditRequestClient({
   locale,
   linkedinConfigured,
@@ -226,6 +310,7 @@ export function ClinicalEditRequestClient({
   authError,
   initialTarget,
   initialRequests,
+  initialIntent = "edit",
 }: {
   locale: "en" | "fr";
   linkedinConfigured: boolean;
@@ -233,25 +318,43 @@ export function ClinicalEditRequestClient({
   authError: string | null;
   initialTarget: ClinicalEditInitialTarget;
   initialRequests: SubmittedEditSummary[];
+  initialIntent?: ReviewIntentMode;
 }) {
   const fr = locale === "fr";
   const router = useRouter();
 
+  const initialDraft =
+    initialIntent === "advisory"
+      ? buildAdvisoryDraft(fr)
+      : initialIntent === "signoff"
+        ? buildSignOffDraft(initialTarget, fr)
+        : null;
+
+  const isClinicianMode = (m: ReviewIntentMode) =>
+    m === "signoff" || m === "advisory";
+
+  const [mode, setMode] = useState<ReviewIntentMode>(initialIntent);
+  const [credentialsOpen, setCredentialsOpen] = useState(
+    isClinicianMode(initialIntent)
+  );
   const [requests, setRequests] =
     useState<SubmittedEditSummary[]>(initialRequests);
   const [linkedinProfileUrl, setLinkedinProfileUrl] = useState("");
-  const [professionalRole, setProfessionalRole] =
-    useState<ProfessionalRole>("community_user");
+  const [professionalRole, setProfessionalRole] = useState<ProfessionalRole>(
+    isClinicianMode(initialIntent) ? "pharmacist" : "community_user"
+  );
   const [credentials, setCredentials] = useState("");
   const [affiliation, setAffiliation] = useState("");
   const [licenceNumber, setLicenceNumber] = useState("");
   const [licenceJurisdiction, setLicenceJurisdiction] = useState("");
   const [conflictOfInterest, setConflictOfInterest] = useState("");
-  const [attributionConsent, setAttributionConsent] = useState(false);
+  const [attributionConsent, setAttributionConsent] = useState(
+    isClinicianMode(initialIntent)
+  );
   const [noPhiAttested, setNoPhiAttested] = useState(false);
 
   const [targetType, setTargetType] = useState<EditTargetType>(
-    initialTarget.targetType
+    initialIntent === "advisory" ? "general" : initialTarget.targetType
   );
   const [herbSlug, setHerbSlug] = useState(initialTarget.herbSlug);
   const [herbLookup, setHerbLookup] = useState(initialTarget.herbName || "");
@@ -259,13 +362,52 @@ export function ClinicalEditRequestClient({
   const [drugName, setDrugName] = useState(initialTarget.drugName);
   const [surfaceUrl, setSurfaceUrl] = useState(initialTarget.surfaceUrl);
   const [fieldScope, setFieldScope] = useState<EditFieldScope>(
-    initialTarget.fieldScope
+    initialIntent === "advisory" ? "other" : initialTarget.fieldScope
   );
-  const [summary, setSummary] = useState("");
+  const [summary, setSummary] = useState(initialDraft?.summary ?? "");
   const [currentText, setCurrentText] = useState("");
-  const [proposedChange, setProposedChange] = useState("");
+  const [proposedChange, setProposedChange] = useState(
+    initialDraft?.proposedChange ?? ""
+  );
   const [clinicalRationale, setClinicalRationale] = useState("");
   const [citationsText, setCitationsText] = useState("");
+
+  function handleModeChange(nextMode: ReviewIntentMode) {
+    setMode(nextMode);
+    if (nextMode === "signoff") {
+      setCredentialsOpen(true);
+      if (professionalRole === "community_user") {
+        setProfessionalRole("pharmacist");
+      }
+      setAttributionConsent(true);
+      const draft = buildSignOffDraft(
+        {
+          targetType,
+          herbSlug,
+          herbName: herbLookup,
+          drugName,
+        },
+        fr
+      );
+      if (!summary.trim()) {
+        setSummary(draft.summary);
+      }
+      if (!proposedChange.trim()) {
+        setProposedChange(draft.proposedChange);
+      }
+    } else if (nextMode === "advisory") {
+      setCredentialsOpen(true);
+      if (professionalRole === "community_user") {
+        setProfessionalRole("pharmacist");
+      }
+      setAttributionConsent(true);
+      setTargetType("general");
+      setFieldScope("other");
+      const draft = buildAdvisoryDraft(fr);
+      setSummary(draft.summary);
+      setProposedChange(draft.proposedChange);
+    }
+  }
 
   const [submitting, setSubmitting] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -301,6 +443,7 @@ export function ClinicalEditRequestClient({
 
   const reviewBase = fr ? "/fr/clinical-review" : "/clinical-review";
   const nextParams = new URLSearchParams();
+  if (mode === "signoff" || mode === "advisory") nextParams.set("intent", mode);
   if (targetType !== "general") nextParams.set("targetType", targetType);
   if (herbSlug.trim()) nextParams.set("slug", herbSlug.trim());
   if (drugName.trim()) nextParams.set("drug", drugName.trim());
@@ -530,37 +673,121 @@ export function ClinicalEditRequestClient({
         )}
       </section>
 
-      {/* Step 2: Structured Clinical Edit Submission Form */}
+      {/* Step 2: Structured Clinical Sign-Off & Edit Submission Form */}
       <section
         aria-labelledby="edit-request-form-heading"
         className="rounded-2xl border border-border bg-card p-6 shadow-sm"
       >
-        <div className="space-y-1.5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-            {fr
-              ? "Étape 2 · Proposition de modification"
-              : "Step 2 · Edit Suggestion Form"}
-          </p>
-          <h2
-            id="edit-request-form-heading"
-            className="text-xl font-semibold text-foreground"
+        <div className="space-y-3">
+          {/* Mode selector: Clinician Sign-Off vs Suggest an Edit */}
+          <div
+            role="group"
+            aria-label={fr ? "Type de contribution" : "Submission mode"}
+            className="inline-flex flex-wrap gap-1.5 rounded-xl border border-border bg-muted/40 p-1"
           >
-            {fr
-              ? "Proposer une modification sur une plante ou une interaction"
-              : "Suggest an edit to a herb or interaction page"}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {fr
-              ? "Chaque suggestion est associée à votre profil LinkedIn et relue par notre équipe éditoriale (/admin/edit-requests) avant toute mise en ligne."
-              : "Every suggestion enters our verification queue with your LinkedIn identity for editorial and clinical review before publication."}
-          </p>
+            <button
+              type="button"
+              onClick={() => handleModeChange("signoff")}
+              aria-pressed={mode === "signoff"}
+              className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                mode === "signoff"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-background hover:text-foreground"
+              }`}
+            >
+              <Stethoscope className="size-3.5" aria-hidden="true" />
+              {fr
+                ? "Validation clinique (PharmD / MD / IP)"
+                : "Clinician Sign-Off (PharmD / MD / NP)"}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange("advisory")}
+              aria-pressed={mode === "advisory"}
+              className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                mode === "advisory"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-background hover:text-foreground"
+              }`}
+            >
+              <Award className="size-3.5" aria-hidden="true" />
+              {fr ? "Comité consultatif (0/3)" : "Advisory Board Seat (0/3)"}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange("edit")}
+              aria-pressed={mode === "edit"}
+              className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                mode === "edit"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-background hover:text-foreground"
+              }`}
+            >
+              {fr
+                ? "Suggérer une modification"
+                : "Suggest an Edit or Correction"}
+            </button>
+          </div>
+
+          <div className="space-y-1.5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+              {mode === "advisory"
+                ? fr
+                  ? "Étape 2 · Candidature au comité consultatif clinique (0 / 3 sièges)"
+                  : "Step 2 · Founding Clinical Advisory Board Application (0 / 3 seats)"
+                : mode === "signoff"
+                  ? fr
+                    ? "Étape 2 · Validation clinique par les pairs (~2 min)"
+                    : "Step 2 · Licensed Clinician Peer-Review Sign-Off (~2 min)"
+                  : fr
+                    ? "Étape 2 · Proposition de modification"
+                    : "Step 2 · Edit Suggestion Form"}
+            </p>
+            <h2
+              id="edit-request-form-heading"
+              className="text-xl font-semibold text-foreground"
+            >
+              {mode === "advisory"
+                ? fr
+                  ? "Poser votre candidature pour un siège fondateur (Siège A, B ou C)"
+                  : "Apply for a Founding Clinical Advisory Board Seat (A, B, or C)"
+                : mode === "signoff"
+                  ? fr
+                    ? "Valider l'exactitude clinique d'une fiche ou proposer un ajustement"
+                    : "Sign off clinical accuracy or recommend refinements"
+                  : fr
+                    ? "Proposer une modification sur une plante ou une interaction"
+                    : "Suggest an edit to a herb or interaction page"}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {mode === "advisory"
+                ? fr
+                  ? "Nous recrutons 3 cliniciens licenciés bénévoles (~2 à 4 h/mois) : Siège A Pharmacien(ne) (PharmD/RPh), Siège B Médecin/Toxicologue (MD/DO/DABAT), Siège C Périnatalité, Pédiatrie & Validation clinique francophone. Permis vérifié et déclaration COI requis."
+                  : "We are recruiting 3 pro bono licensed clinicians (~2–4 hrs/month): Seat A Pharmacist (PharmD/RPh), Seat B Physician/Toxicologist (MD/DO/DABAT), Seat C Perinatal/Pediatric & Native-French Clinical Advisor. Active licence verification and COI disclosure required."
+                : mode === "signoff"
+                  ? fr
+                    ? "Les pharmaciens, médecins, infirmiers praticiens, naturopathes agréés et toxicologues peuvent attester l'exactitude clinique de cette fiche (ou proposer des corrections). Votre permis est vérifié manuellement avant toute publication ou attribution publique."
+                    : "Licensed pharmacists (PharmD/RPh), physicians (MD/DO), NPs, NDs, and toxicologists can attest clinical accuracy for this record (or note refinements). Licence credentials are manually verified before publication or optional public credit."
+                  : fr
+                    ? "Chaque suggestion est associée à votre profil LinkedIn et relue par notre équipe éditoriale (/admin/edit-requests) avant toute mise en ligne."
+                    : "Every suggestion enters our verification queue with your LinkedIn identity for editorial and clinical review before publication."}
+            </p>
+          </div>
         </div>
 
         {!session ? (
           <div className="mt-5 rounded-xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
-            {fr
-              ? "Connectez-vous avec LinkedIn SSO ci-dessus pour déverrouiller le formulaire de demande de modification clinique."
-              : "Sign in with LinkedIn SSO above to unlock the structured clinical edit request form."}
+            {mode === "advisory"
+              ? fr
+                ? "Connectez-vous avec LinkedIn SSO ci-dessus pour déverrouiller le formulaire de candidature au comité consultatif clinique."
+                : "Sign in with LinkedIn SSO above to unlock the Clinical Advisory Board application form."
+              : mode === "signoff"
+                ? fr
+                  ? "Connectez-vous avec LinkedIn SSO ci-dessus pour déverrouiller le formulaire de validation clinique (pré-rempli pour la fiche ciblée)."
+                  : "Sign in with LinkedIn SSO above to unlock the pre-filled clinician sign-off form for this record."
+                : fr
+                  ? "Connectez-vous avec LinkedIn SSO ci-dessus pour déverrouiller le formulaire de demande de modification clinique."
+                  : "Sign in with LinkedIn SSO above to unlock the structured clinical edit request form."}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="mt-6 space-y-6">
@@ -572,9 +799,13 @@ export function ClinicalEditRequestClient({
                 <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
                 <div>
                   <p className="font-semibold">
-                    {fr
-                      ? "Demande enregistrée dans la file d'examen"
-                      : "Edit request recorded in the triage queue"}
+                    {mode === "signoff"
+                      ? fr
+                        ? "Validation clinique enregistrée pour vérification du permis"
+                        : "Clinical sign-off recorded for credential verification"
+                      : fr
+                        ? "Demande enregistrée dans la file d'examen"
+                        : "Edit request recorded in the triage queue"}
                   </p>
                   <p className="mt-0.5 text-xs">
                     {fr ? "Référence : " : "Reference ID: "}
@@ -594,12 +825,20 @@ export function ClinicalEditRequestClient({
               </div>
             )}
 
-            {/* Optional background & clinical credentials */}
-            <details className="rounded-xl border border-border/80 bg-muted/20 p-4">
+            {/* Background & clinical credentials (expanded automatically in Sign-Off mode) */}
+            <details
+              open={credentialsOpen}
+              onToggle={(e) => setCredentialsOpen(e.currentTarget.open)}
+              className="rounded-xl border border-border/80 bg-muted/20 p-4"
+            >
               <summary className="cursor-pointer text-sm font-semibold text-foreground">
-                {fr
-                  ? "Optionnel : profil, titres cliniques et déclaration d'intérêts"
-                  : "Optional: background, clinical credentials & COI disclosure"}
+                {mode === "signoff"
+                  ? fr
+                    ? "Titres cliniques, numéro de permis (privé) et déclaration de conflits d'intérêts (recommandé pour la validation)"
+                    : "Clinical credentials, licence (private) & COI disclosure (recommended for sign-off)"
+                  : fr
+                    ? "Optionnel : profil, titres cliniques et déclaration d'intérêts"
+                    : "Optional: background, clinical credentials & COI disclosure"}
               </summary>
 
               <div className="mt-4 space-y-4">
@@ -1004,18 +1243,26 @@ export function ClinicalEditRequestClient({
                   className="mt-0.5 size-4 rounded border-border"
                 />
                 <span className="text-muted-foreground">
-                  {fr
-                    ? "Optionnel : j'autorise HerbAlly à mentionner mon nom et mes titres dans le journal public des corrections si cette modification est approuvée et publiée."
-                    : "Optional: I consent to public credit (name and credentials) in the corrections log if this edit is approved and applied."}
+                  {mode === "signoff"
+                    ? fr
+                      ? "Optionnel : j'autorise HerbAlly à afficher mon nom et mes titres (ex. « Révisé par [Nom], PharmD ») sur la fiche validée et dans le journal public des révisions après vérification de mon permis."
+                      : "Optional: I consent to public reviewer credit (e.g. 'Clinically reviewed by [Name], PharmD/MD') on the signed page and corrections log once credentials are verified."
+                    : fr
+                      ? "Optionnel : j'autorise HerbAlly à mentionner mon nom et mes titres dans le journal public des corrections si cette modification est approuvée et publiée."
+                      : "Optional: I consent to public credit (name and credentials) in the corrections log if this edit is approved and applied."}
                 </span>
               </label>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-muted-foreground">
-                {fr
-                  ? "Les demandes sont relues manuellement avant toute publication."
-                  : "Requests are manually verified before any live page changes."}
+                {mode === "signoff"
+                  ? fr
+                    ? "Aucune fiche n'est marquée « révisée » avant vérification manuelle de votre permis professionnel."
+                    : "Records are never marked clinically reviewed until credentials are manually verified."
+                  : fr
+                    ? "Les demandes sont relues manuellement avant toute publication."
+                    : "Requests are manually verified before any live page changes."}
               </p>
               <Button type="submit" disabled={submitting} className="gap-2">
                 <Send className="size-4" aria-hidden="true" />
@@ -1023,9 +1270,17 @@ export function ClinicalEditRequestClient({
                   ? fr
                     ? "Envoi en cours..."
                     : "Submitting..."
-                  : fr
-                    ? "Soumettre la demande"
-                    : "Submit edit request"}
+                  : mode === "advisory"
+                    ? fr
+                      ? "Soumettre ma candidature au comité"
+                      : "Submit Advisory Board application"
+                    : mode === "signoff"
+                      ? fr
+                        ? "Soumettre la validation clinique"
+                        : "Submit clinical sign-off"
+                      : fr
+                        ? "Soumettre la demande"
+                        : "Submit edit request"}
               </Button>
             </div>
           </form>

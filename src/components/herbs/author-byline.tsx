@@ -155,6 +155,20 @@ export function AuthorByline({
           >
             {locale === "fr" ? "Suggérer une modification" : "Suggest an edit"}
           </Link>
+          {!isReviewed && (
+            <>
+              <span aria-hidden="true">·</span>
+              <Link
+                href={`/clinical-review?intent=signoff&targetType=herb&slug=${herbSlug}`}
+                rel="nofollow"
+                className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+              >
+                {locale === "fr"
+                  ? "Clinicien ? Valider cette fiche"
+                  : "Clinician? Sign off"}
+              </Link>
+            </>
+          )}
         </>
       )}
     </div>

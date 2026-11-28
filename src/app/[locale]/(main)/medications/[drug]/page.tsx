@@ -39,6 +39,7 @@ import type {
 } from "@/lib/interactions/pairs";
 import { pairPath } from "@/lib/interactions/pair-url";
 import { cn } from "@/lib/utils";
+import { ClinicianSignOffBanner } from "@/components/review/clinician-signoff-banner";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -286,6 +287,9 @@ export default async function MedicationDetailPage({ params }: Props) {
   ];
 
   const visiblePairs = Array.from(grouped.values()).flat();
+  const unreviewedCount = visiblePairs.filter(
+    (p) => p.clinicalActionStatus !== "clinician_approved"
+  ).length;
   const evidenceBuckets = countEvidenceBuckets(visiblePairs);
   const pageTitle = fr
     ? `${med.drugName} : interactions avec les plantes médicinales`
@@ -595,6 +599,16 @@ export default async function MedicationDetailPage({ params }: Props) {
         </div>
       </section>
 
+      {unreviewedCount > 0 && (
+        <ClinicianSignOffBanner
+          locale={fr ? "fr" : "en"}
+          targetType="medication"
+          drugName={med.drugName}
+          recordTitle={med.drugName}
+          unreviewedCount={unreviewedCount}
+        />
+      )}
+
       <section className="space-y-4">
         <h2 className="text-xl font-semibold text-foreground">
           {fr ? "Questions fréquentes" : "Frequently asked questions"}
@@ -621,13 +635,13 @@ export default async function MedicationDetailPage({ params }: Props) {
             : "Educational information only — not medical advice. Always verify with a healthcare professional or pharmacist before combining or stopping any medication."}
         </p>
         <Link
-          href={`/clinical-review?targetType=medication&drug=${encodeURIComponent(med.drugName)}`}
+          href={`/clinical-review?intent=signoff&targetType=medication&drug=${encodeURIComponent(med.drugName)}`}
           rel="nofollow"
           className="font-medium text-primary underline underline-offset-4 hover:text-primary/80"
         >
           {fr
-            ? "Clinicien ou pharmacien ? Proposer une modification"
-            : "Clinician or pharmacist? Suggest a clinical edit"}
+            ? "Clinicien ou pharmacien ? Valider ou proposer une correction"
+            : "Clinician or pharmacist? Sign off or suggest an edit"}
         </Link>
       </div>
     </div>

@@ -34,7 +34,7 @@ function normalizeTerms(raw: unknown): string[] | null {
   const out: string[] = [];
   for (const item of raw) {
     if (typeof item !== "string") continue;
-    const trimmed = item.trim().slice(0, 120);
+    const trimmed = item.replace(/[<>]/g, "").trim().slice(0, 120);
     if (trimmed.length < 2) continue;
     const key = trimmed.toLowerCase();
     if (seen.has(key)) continue;
