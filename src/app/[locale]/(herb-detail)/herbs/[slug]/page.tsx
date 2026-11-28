@@ -64,7 +64,10 @@ import {
   type CitationData,
 } from "@/lib/herbs/herb-page-data";
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
-import { sanitizeContraindicationList } from "@/lib/herbs/clean-faq";
+import {
+  sanitizeContraindicationList,
+  sanitizePreSurgeryProse,
+} from "@/lib/herbs/clean-faq";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
 import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
 import { ToxicQuarantineShell } from "@/components/herbs/toxic-quarantine-shell";
@@ -731,9 +734,13 @@ export default async function HerbDetailPage({ params }: Props) {
     publication_status:
       (i as { publication_status?: string | null }).publication_status ?? null,
   }));
+  const sanitizedPreGeneratedFaqs = preGeneratedFaqs.map((f) => ({
+    ...f,
+    answer: sanitizePreSurgeryProse(f.answer, copyLocale),
+  }));
   const resolvedFaqs =
-    !isDangerous && preGeneratedFaqs.length > 0
-      ? preGeneratedFaqs.map((f) => ({
+    !isDangerous && sanitizedPreGeneratedFaqs.length > 0
+      ? sanitizedPreGeneratedFaqs.map((f) => ({
           question: f.question,
           answer: f.answer,
         }))
@@ -798,7 +805,9 @@ export default async function HerbDetailPage({ params }: Props) {
               isDangerous={isDangerous}
               showCalculator={showCalculator}
               preGeneratedFaqs={
-                preGeneratedFaqs.length > 0 ? preGeneratedFaqs : undefined
+                sanitizedPreGeneratedFaqs.length > 0
+                  ? sanitizedPreGeneratedFaqs
+                  : undefined
               }
               fallbackFaqs={fallbackFaqs}
             />

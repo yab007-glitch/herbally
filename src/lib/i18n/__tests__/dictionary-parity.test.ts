@@ -4,7 +4,10 @@ import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
 import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
-import { sanitizePreSurgeryContraindication } from "@/lib/herbs/clean-faq";
+import {
+  cleanFaqText,
+  sanitizePreSurgeryContraindication,
+} from "@/lib/herbs/clean-faq";
 
 const ROOT = process.cwd();
 const EN_DIR = path.join(ROOT, "src/lib/i18n/dictionaries/en");
@@ -107,5 +110,12 @@ describe("A2: Complete EN/FR i18n dictionary key parity", () => {
     );
     expect(fr).toMatch(/équipe chirurgicale|anesthésiste/i);
     expect(fr).toMatch(/n'interrompez jamais seul un médicament prescrit/i);
+
+    const faqClean = cleanFaqText(
+      "Gallstones or bile duct obstruction. Bleeding disorders. Pre-surgery (stop 2 weeks before). These cautions come from monographs.",
+      "en"
+    );
+    expect(faqClean).not.toMatch(/stop 2 weeks before/i);
+    expect(faqClean).toMatch(/surgical team|anesthesiologist/i);
   });
 });

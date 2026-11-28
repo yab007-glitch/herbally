@@ -168,11 +168,26 @@ function formatFaqProse(raw: string): string {
   return text;
 }
 
-export function cleanFaqText(raw: string): string {
+const INLINE_DIRECTIVE_PRESURGERY_PATTERN =
+  /pre[-\s]?surgery\s*\((?:stop|discontinue)\b[^)]*\)/gi;
+
+export function sanitizePreSurgeryProse(
+  raw: string,
+  locale: "en" | "fr" = "en"
+): string {
+  if (!raw) return raw;
+  const replacement =
+    locale === "fr"
+      ? "Chirurgie prévue : discutez de vos plantes et suppléments avec votre équipe chirurgicale ou votre anesthésiste à l'avance ; n'interrompez jamais seul un médicament prescrit"
+      : "Scheduled surgery: discuss herbal supplements with your surgical team or anesthesiologist well in advance (peri-operative guidance depends on preparation and dose); do not independently stop prescribed medications";
+  return raw.replace(INLINE_DIRECTIVE_PRESURGERY_PATTERN, replacement);
+}
+
+export function cleanFaqText(raw: string, locale: "en" | "fr" = "en"): string {
   if (!raw) return raw;
   const text = formatFaqProse(raw);
   if (!text) return text;
-  return stripPediatricDosageSentences(text);
+  return sanitizePreSurgeryProse(stripPediatricDosageSentences(text), locale);
 }
 
 export function cleanFaqQuestion(raw: string): string {
