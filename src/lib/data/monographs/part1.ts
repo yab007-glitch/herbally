@@ -513,7 +513,7 @@ export const monographsPart1: Record<string, Monograph> = {
     ],
     safetyNotes: [
       "Do NOT ingest raw or roasted ginkgo seeds — they contain neurotoxic ginkgotoxin causing seizures and fatal poisoning",
-      "Avoid with anticoagulants/antiplatelets due to hemorrhage risk; discontinue at least 7–14 days before surgery",
+      "Avoid with anticoagulants/antiplatelets due to hemorrhage risk; discuss with your surgeon or anesthesiologist well before scheduled surgery (peri-operative guidance often reviews bleeding-risk supplements 1–2 weeks prior) and do not independently stop prescribed medications",
       "May lower seizure threshold",
       "Standardized leaf extract (EGb761): 120-240mg daily under clinician guidance",
     ],
@@ -575,7 +575,7 @@ export const monographsPart1: Record<string, Monograph> = {
     ],
     safetyNotes: [
       "Extensive life-threatening drug interactions via CYP3A4, CYP2C9, CYP2C19, and P-gp induction",
-      "Discontinue at least 2 weeks before scheduled surgery (anesthesia/drug-clearance risk)",
+      "Discuss St. John's Wort with your surgeon or anesthesiologist well before scheduled surgery (anesthesia/drug-clearance risk; peri-operative teams often review supplements at least 2 weeks prior) and do not independently stop prescribed medications",
       "Photosensitivity with high doses",
       "May trigger mania in bipolar disorder; allow 4-6 weeks for antidepressant onset",
     ],
@@ -671,7 +671,7 @@ export const monographsPart1: Record<string, Monograph> = {
       },
     ],
     safetyNotes: [
-      "Discontinue 7-14 days before surgery due to bleeding risk",
+      "Discuss garlic supplements with your surgeon or anesthesiologist before scheduled surgery due to bleeding risk (peri-operative guidance often reviews supplements 1–2 weeks prior); do not independently stop prescribed medications",
       "Aged garlic extract (AGE) preferred for cardiovascular studies",
       "Raw garlic may cause GI upset, body odor",
       "Typical dose: 600-1200mg AGE daily (Kyolic)",

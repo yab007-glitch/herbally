@@ -242,6 +242,14 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps ${{ matrix.project }}
       - run: npx playwright test --project=${{ matrix.project }}
+      - name: Upload WCAG 2.2 AA accessibility audit report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: accessibility-audit-report-${{ matrix.project }}
+          path: test-results/accessibility-audit-report.json
+          if-no-files-found: ignore
+          retention-days: 30
       - uses: actions/upload-artifact@v7
         if: failure()
         with:

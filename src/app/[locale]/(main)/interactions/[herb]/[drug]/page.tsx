@@ -38,6 +38,7 @@ import { isCalculatorBlockedSlug } from "@/lib/data/dangerous-herbs";
 import {
   classifyInteractionEvidence,
   getClinicalActionDisplay,
+  getEvidenceTaxonomyExplainer,
 } from "@/lib/interactions/evidence";
 import {
   getInteractionPreparationContext,
@@ -271,9 +272,7 @@ function severityExplainer(fr: boolean, unreviewed: boolean): string {
 }
 
 function evidenceExplainer(fr: boolean): string {
-  return fr
-    ? "Les preuves solides viennent d'études cliniques ou de cas publiés chez l'humain ; les preuves modérées, d'études limitées ou de cas isolés ; les preuves limitées, de mécanismes connus ou de travaux chez l'animal. Un niveau de preuve faible ne veut pas dire que l'interaction est imaginaire, mais que peu de personnes ont été étudiées."
-    : "Strong evidence comes from clinical studies or published human case reports; moderate evidence from limited studies or isolated cases; limited evidence from known mechanisms or animal work. A weak evidence grade does not mean the interaction is imaginary — it means few people have been studied.";
+  return getEvidenceTaxonomyExplainer(fr ? "fr" : "en");
 }
 
 function severityLabel(

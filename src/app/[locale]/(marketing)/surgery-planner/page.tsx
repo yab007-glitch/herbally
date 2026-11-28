@@ -82,14 +82,19 @@ export default async function SurgeryPlannerPage() {
           {heading}
         </h1>
         <p className="text-base text-muted-foreground sm:text-lg">{intro}</p>
-        <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-          <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
-          <span>
-            {fr
-              ? "Révision éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS"
-              : "Editorially reviewed by Yasser Bheekun — MLT, OPTMQ · CSMLS"}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 font-medium text-slate-800 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200">
+            <ShieldCheck
+              className="size-3.5 text-slate-600 dark:text-slate-400"
+              aria-hidden="true"
+            />
+            <span>
+              {fr
+                ? "Compilation éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS (non une validation clinique)"
+                : "Editorial compilation: Yasser Bheekun — MLT, OPTMQ · CSMLS (not clinical sign-off)"}
+            </span>
           </span>
-        </p>
+        </div>
       </header>
 
       <div className="mt-8">

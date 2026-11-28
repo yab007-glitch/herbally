@@ -65,7 +65,7 @@ export function MarketingFooter() {
           </div>
 
           {/* Column 2: Explore */}
-          <div className="space-y-3">
+          <div className="space-y-3 border-t border-border/50 pt-5 sm:border-t-0 sm:pt-0">
             <h2 className="font-sans text-xs font-semibold uppercase tracking-wider text-foreground">
               {fr ? "Explorer" : "Explore"}
             </h2>
@@ -122,7 +122,7 @@ export function MarketingFooter() {
           </div>
 
           {/* Column 3: Clinical Review & Governance */}
-          <div className="space-y-3">
+          <div className="space-y-3 border-t border-border/50 pt-5 sm:border-t-0 sm:pt-0">
             <h2 className="font-sans text-xs font-semibold uppercase tracking-wider text-foreground">
               {fr ? "Révision & Gouvernance" : "Clinical Review"}
             </h2>
@@ -179,7 +179,7 @@ export function MarketingFooter() {
           </div>
 
           {/* Column 4: About & Support */}
-          <div className="space-y-3">
+          <div className="space-y-3 border-t border-border/50 pt-5 sm:border-t-0 sm:pt-0">
             <h2 className="font-sans text-xs font-semibold uppercase tracking-wider text-foreground">
               {fr ? "À propos & Soutien" : "About & Support"}
             </h2>

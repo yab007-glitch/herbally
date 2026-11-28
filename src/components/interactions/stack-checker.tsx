@@ -95,6 +95,7 @@ export function StackChecker() {
   const [statusFilter, setStatusFilter] = useState<
     "all" | "published" | "quarantined" | "unreviewed"
   >("all");
+  const [liveAnnouncement, setLiveAnnouncement] = useState("");
   const hasHydratedRef = useRef(false);
   const requestGenRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -180,7 +181,8 @@ export function StackChecker() {
     draft: string,
     list: string[],
     setList: (next: string[]) => void,
-    clearDraft: () => void
+    clearDraft: () => void,
+    category?: "herb" | "drug"
   ) {
     const clean = draft.trim();
     if (clean.length < 2 || list.length >= MAX_ITEMS) return;
@@ -188,9 +190,17 @@ export function StackChecker() {
       clearDraft();
       return;
     }
-    setList([...list, clean]);
+    const nextList = [...list, clean];
+    setList(nextList);
     clearDraft();
     invalidateResult();
+    if (category) {
+      setLiveAnnouncement(
+        locale === "fr"
+          ? `${clean} ajouté (${nextList.length} sur ${MAX_ITEMS}).`
+          : `Added ${clean} (${nextList.length} of ${MAX_ITEMS}).`
+      );
+    }
   }
 
   function loadSample() {
@@ -212,6 +222,11 @@ export function StackChecker() {
     setHerbDraft("");
     setDrugDraft("");
     invalidateResult();
+    setLiveAnnouncement(
+      locale === "fr"
+        ? "Toutes les plantes et tous les médicaments ont été retirés."
+        : "All selected herbs and medications cleared."
+    );
     try {
       window.sessionStorage.removeItem(STORAGE_KEY);
       window.localStorage.removeItem(STORAGE_KEY);
@@ -383,8 +398,21 @@ export function StackChecker() {
         </p>
       </div>
 
+      {/* Keyboard help & explicit selection limits (R2-09, R2-10) */}
+      <p
+        id="stack-keyboard-help"
+        className="no-print mt-4 text-xs text-muted-foreground"
+      >
+        {locale === "fr"
+          ? `Jusqu'à ${MAX_ITEMS} plantes et ${MAX_ITEMS} médicaments par bilan. Appuyez sur Entrée pour ajouter un élément, puis sur Tab et Entrée sur × pour le retirer.`
+          : `Up to ${MAX_ITEMS} herbs and ${MAX_ITEMS} medications per screening. Press Enter to add an item, or Tab and Enter on × to remove a chip.`}
+      </p>
+      <span role="status" aria-live="polite" className="sr-only">
+        {liveAnnouncement}
+      </span>
+
       {/* Inputs */}
-      <div className="no-print mt-5 grid gap-5 md:grid-cols-2">
+      <div className="no-print mt-3 grid gap-5 md:grid-cols-2">
         {/* Herbs column */}
         <div className="rounded-xl border border-border/80 bg-background/60 p-4">
           <label
@@ -396,6 +424,7 @@ export function StackChecker() {
           <div className="mt-2 flex gap-2">
             <Input
               id="stack-herb-input"
+              aria-describedby="stack-keyboard-help"
               value={herbDraft}
               onChange={(e) => {
                 setHerbDraft(e.target.value);
@@ -405,7 +434,13 @@ export function StackChecker() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  addTerm(herbDraft, herbs, setHerbs, () => setHerbDraft(""));
+                  addTerm(
+                    herbDraft,
+                    herbs,
+                    setHerbs,
+                    () => setHerbDraft(""),
+                    "herb"
+                  );
                 }
               }}
             />
@@ -413,7 +448,13 @@ export function StackChecker() {
               type="button"
               variant="secondary"
               onClick={() =>
-                addTerm(herbDraft, herbs, setHerbs, () => setHerbDraft(""))
+                addTerm(
+                  herbDraft,
+                  herbs,
+                  setHerbs,
+                  () => setHerbDraft(""),
+                  "herb"
+                )
               }
               disabled={
                 herbDraft.trim().length < 2 || herbs.length >= MAX_ITEMS
@@ -467,6 +508,9 @@ export function StackChecker() {
                     onClick={() => {
                       setHerbs(herbs.filter((x) => x !== h));
                       invalidateResult();
+                      setLiveAnnouncement(
+                        locale === "fr" ? `${h} retiré.` : `Removed ${h}.`
+                      );
                     }}
                     className="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground"
                     aria-label={`${t("remove")} ${h}`}
@@ -490,6 +534,7 @@ export function StackChecker() {
           <div className="mt-2 flex gap-2">
             <Input
               id="stack-drug-input"
+              aria-describedby="stack-keyboard-help"
               value={drugDraft}
               onChange={(e) => {
                 setDrugDraft(e.target.value);
@@ -499,7 +544,13 @@ export function StackChecker() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
-                  addTerm(drugDraft, drugs, setDrugs, () => setDrugDraft(""));
+                  addTerm(
+                    drugDraft,
+                    drugs,
+                    setDrugs,
+                    () => setDrugDraft(""),
+                    "drug"
+                  );
                 }
               }}
             />
@@ -507,7 +558,13 @@ export function StackChecker() {
               type="button"
               variant="secondary"
               onClick={() =>
-                addTerm(drugDraft, drugs, setDrugs, () => setDrugDraft(""))
+                addTerm(
+                  drugDraft,
+                  drugs,
+                  setDrugs,
+                  () => setDrugDraft(""),
+                  "drug"
+                )
               }
               disabled={
                 drugDraft.trim().length < 2 || drugs.length >= MAX_ITEMS
@@ -561,6 +618,9 @@ export function StackChecker() {
                     onClick={() => {
                       setDrugs(drugs.filter((x) => x !== d));
                       invalidateResult();
+                      setLiveAnnouncement(
+                        locale === "fr" ? `${d} retiré.` : `Removed ${d}.`
+                      );
                     }}
                     className="inline-flex size-6 items-center justify-center rounded-full text-muted-foreground hover:bg-background hover:text-foreground"
                     aria-label={`${t("remove")} ${d}`}
@@ -724,6 +784,25 @@ export function StackChecker() {
           </div>
         )}
       </div>
+
+      {loading && !result && (
+        <div
+          role="status"
+          aria-busy="true"
+          aria-label={t("checkingButton")}
+          className="no-print mt-5 space-y-3 rounded-xl border border-border/70 bg-muted/20 p-4"
+        >
+          <p className="text-xs font-medium text-muted-foreground">
+            {t("checkingButton")}
+          </p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="h-14 animate-pulse rounded-lg bg-muted" />
+            <div className="h-14 animate-pulse rounded-lg bg-muted" />
+            <div className="h-14 animate-pulse rounded-lg bg-muted" />
+          </div>
+          <div className="h-20 animate-pulse rounded-lg bg-muted" />
+        </div>
+      )}
 
       {result && showBriefPreview && (
         <div

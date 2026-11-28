@@ -112,12 +112,21 @@ export function AuthorByline({
         };
 
   return (
-    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 border-y border-border py-4 text-[13px] text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2 border-y border-border py-4 text-[13px] text-muted-foreground">
       <span>{copy.sourceCheck}</span>
       <span aria-hidden="true">·</span>
-      <span>{copy.editorialStatus}</span>
-      <span aria-hidden="true">·</span>
-      <span className="font-medium text-foreground">{copy.clinicalStatus}</span>
+      <span className="inline-flex items-center rounded-full border border-slate-300 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-800 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200">
+        {copy.editorialStatus}
+      </span>
+      <span
+        className={
+          isReviewed
+            ? "inline-flex items-center rounded-full border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200"
+            : "inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-950 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-200"
+        }
+      >
+        {copy.clinicalStatus}
+      </span>
       {!isDangerous && (
         <>
           <span aria-hidden="true">·</span>
