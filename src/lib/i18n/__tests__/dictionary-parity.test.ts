@@ -3,7 +3,12 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
+import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
 import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
+import {
+  getAllDangerousHerbs,
+  getDangerousHerbParts,
+} from "@/lib/data/dangerous-herbs";
 import {
   cleanFaqText,
   sanitizePreSurgeryContraindication,
@@ -79,20 +84,92 @@ describe("A2: Complete EN/FR i18n dictionary key parity", () => {
     }
   });
 
-  it("localizes French toxic quarantine emergency labels without hardcoded English US Poison Control copy (R2-04, R2-16)", () => {
-    const frHtml = renderToStaticMarkup(
+  it("localizes French toxic quarantine emergency labels and affected botanical parts without English residue (R2-04, R2-16, R4-02)", () => {
+    const frCardHtml = renderToStaticMarkup(
       createElement(ToxicBotanicalQuarantineCard, {
         slug: "abrus-precatorius",
         scientificName: "Abrus precatorius",
         locale: "fr",
       })
     );
-    expect(frHtml).toContain("Centre antipoison (É.-U.)");
-    expect(frHtml).toContain("Centre antipoison (Canada)");
-    expect(frHtml).toContain("tel:+18002221222");
-    expect(frHtml).toContain("tel:+18447647669");
-    expect(frHtml).not.toContain("US Poison Control");
-    expect(frHtml).not.toContain("Poison Control (US)");
+    expect(frCardHtml).toContain("Centre antipoison (É.-U.)");
+    expect(frCardHtml).toContain("Centre antipoison (Canada)");
+    expect(frCardHtml).toContain("tel:+18002221222");
+    expect(frCardHtml).toContain("tel:+18447647669");
+    expect(frCardHtml).toContain(
+      "Parties concernées : graines (toute la plante est toxique)."
+    );
+    expect(frCardHtml).not.toContain("US Poison Control");
+    expect(frCardHtml).not.toContain("Poison Control (US)");
+    expect(frCardHtml).not.toMatch(/seeds|whole plant is hazardous/i);
+
+    const frBannerHtml = renderToStaticMarkup(
+      createElement(DangerousHerbBanner, {
+        slug: "abrus-precatorius",
+        locale: "fr",
+      })
+    );
+    expect(frBannerHtml).toContain(
+      "Parties concernées : graines (toute la plante est toxique)."
+    );
+    expect(frBannerHtml).not.toMatch(/seeds|whole plant is hazardous/i);
+
+    const englishPartTerms =
+      /\b(seeds?|leaves|roots?|whole plant|all parts|bark|berries|stems?|flowers?|essential oil|foliage|needles|shoots|twigs|kernels)\b/i;
+    const allDangerous = getAllDangerousHerbs();
+    expect(allDangerous.length).toBeGreaterThanOrEqual(100);
+    for (const entry of allDangerous) {
+      const frParts = getDangerousHerbParts(entry, "fr");
+      expect(
+        frParts,
+        `Missing French parts translation for ${entry.slug} (${entry.parts})`
+      ).not.toBe(entry.parts);
+      expect(
+        frParts,
+        `English residue in French parts for ${entry.slug}: ${frParts}`
+      ).not.toMatch(englishPartTerms);
+    }
+  });
+
+  it("keeps AI and FAQ evidence copy honestly qualified across EN and FR dictionaries (R4-01)", () => {
+    const enMarketing = JSON.parse(
+      fs.readFileSync(path.join(EN_DIR, "marketing.json"), "utf8")
+    ) as {
+      faqContent: { subtitle: string; general: { trustAI: { a: string } } };
+    };
+    const frMarketing = JSON.parse(
+      fs.readFileSync(path.join(FR_DIR, "marketing.json"), "utf8")
+    ) as {
+      faqContent: { subtitle: string; general: { trustAI: { a: string } } };
+    };
+    const enServer = JSON.parse(
+      fs.readFileSync(path.join(EN_DIR, "server.json"), "utf8")
+    ) as { home: { featureAiDescription: string } };
+    const frServer = JSON.parse(
+      fs.readFileSync(path.join(FR_DIR, "server.json"), "utf8")
+    ) as { home: { featureAiDescription: string } };
+
+    expect(enMarketing.faqContent.subtitle).not.toMatch(
+      /Evidence-based answers/i
+    );
+    expect(enMarketing.faqContent.subtitle).toMatch(/not clinical clearance/i);
+    expect(frMarketing.faqContent.subtitle).not.toMatch(
+      /fondées sur les preuves/i
+    );
+    expect(frMarketing.faqContent.subtitle).toMatch(/validation clinique/i);
+
+    expect(enServer.home.featureAiDescription).toMatch(
+      /AI-assisted educational explanations with citations where available/i
+    );
+    expect(enServer.home.featureAiDescription).not.toMatch(
+      /Evidence-based answers with citations/i
+    );
+    expect(frServer.home.featureAiDescription).toMatch(
+      /Explications éducatives assistées par IA avec citations/i
+    );
+    expect(frServer.home.featureAiDescription).not.toMatch(
+      /Réponses basées sur des preuves avec citations/i
+    );
   });
 
   it("rewrites unilateral directive pre-surgery stop-date strings into prescriber-directed guidance (R2-02)", () => {

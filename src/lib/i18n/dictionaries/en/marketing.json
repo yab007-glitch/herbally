@@ -15,7 +15,7 @@
   },
   "faqContent": {
     "title": "Frequently Asked Questions",
-    "subtitle": "Evidence-based answers about medicinal herbs, safety, drug interactions, and how HerbAlly works.",
+    "subtitle": "Source-referenced answers about medicinal herbs, safety, drug interactions, and how HerbAlly works — educational reference, not clinical clearance.",
     "stillHaveQuestions": "Still have questions?",
     "askVirtualHerbalist": "Ask our AI-powered Virtual Herbalist to explain database records and safety notes.",
     "askHerbalistBtn": "Ask the Virtual Herbalist",
@@ -41,7 +41,7 @@
       },
       "trustAI": {
         "q": "Can I trust the AI Virtual Herbalist?",
-        "a": "The AI herbalist provides educational information based on our herb database and authoritative sources. However, it is NOT a substitute for professional medical advice. Always verify with your healthcare provider, especially for serious conditions or drug interactions."
+        "a": "The Virtual Herbalist provides AI-assisted educational explanations with citations where available — not clinical clearance or professional medical advice. Always verify with your healthcare provider or pharmacist, especially for serious conditions or drug interactions."
       }
     },
     "safety": {

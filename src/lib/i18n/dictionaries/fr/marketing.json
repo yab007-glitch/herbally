@@ -15,7 +15,7 @@
   },
   "faqContent": {
     "title": "Questions Fréquemment Posées",
-    "subtitle": "Des réponses fondées sur les preuves concernant les herbes médicinales, la sécurité, les interactions médicamenteuses et le fonctionnement d'HerbAlly.",
+    "subtitle": "Réponses sourcées sur les plantes médicinales, la sécurité, les interactions médicamenteuses et le fonctionnement d'HerbAlly — référence éducative, jamais une validation clinique.",
     "stillHaveQuestions": "D'autres questions ?",
     "askVirtualHerbalist": "Interrogez notre Herboriste Virtuel alimenté par l'IA pour expliquer nos fiches et notes de sécurité.",
     "askHerbalistBtn": "Demander à l'Herboriste Virtuel",
@@ -41,7 +41,7 @@
       },
       "trustAI": {
         "q": "Puis-je faire confiance à l'Herboriste Virtuel IA ?",
-        "a": "L'herboriste IA fournit des informations éducatives basées sur notre base de données et des sources faisant autorité. Cependant, il ne remplace PAS un avis médical professionnel. Vérifiez toujours auprès de votre professionnel de santé, surtout pour des conditions graves ou des interactions médicamenteuses."
+        "a": "L'Herboriste Virtuel fournit des explications éducatives assistées par IA avec citations lorsqu'elles existent — jamais une validation clinique ni un avis médical. Vérifiez toujours auprès de votre professionnel de santé ou pharmacien, surtout pour des conditions graves ou des interactions médicamenteuses."
       }
     },
     "safety": {

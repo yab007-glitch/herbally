@@ -410,7 +410,7 @@
     "browseHerbs": "Browse herb catalog",
     "learnInteractions": "Learn about herb–drug interactions",
     "greeting": {
-      "intro": "Hi — I'm the HerbAlly assistant. I check herbs against the medications you're taking, and show you the evidence behind each answer.",
+      "intro": "Hi — I'm the HerbAlly Virtual Herbalist. I provide AI-assisted educational explanations using our herb database and cited sources where available — not clinical clearance.",
       "question": "What would you like to check — an herb, or something you're taking?",
       "quickCheckHerb": "An herb I'm taking",
       "quickInteractions": "Safe with my medication?",
