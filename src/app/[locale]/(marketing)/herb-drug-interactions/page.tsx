@@ -149,7 +149,7 @@ export default async function HerbDrugInteractionsPage() {
         />
 
         <header className="mt-4 space-y-3">
-          <div className="flex items-center gap-2 text-amber-600">
+          <div className="flex items-center gap-2 text-amber-800 dark:text-amber-400">
             <AlertTriangle className="size-6" aria-hidden="true" />
             <span className="text-sm font-medium uppercase tracking-wide">
               {t("heading")}

@@ -85,7 +85,7 @@
     "herbalistCat": {
       "how": {
         "q": "Comment fonctionne l'Herboriste Virtuel IA ?",
-        "a": "L'Herboriste Virtuel utilise l'IA pour fournir des renseignements fondés sur les preuves sur les plantes, incluant la sécurité, les interactions potentielles et les usages traditionnels. Il s'appuie sur notre base de données de plantes médicinales ainsi que les monographies de l'OMS, de l'EMA HMPC, de Santé Canada, de PubMed et du NCCIH. Chaque réponse inclut des niveaux de preuve et des citations."
+        "a": "L'Herboriste Virtuel utilise l'IA pour produire des explications éducatives sur les plantes, la sécurité, les interactions potentielles et les usages traditionnels, en citant notre base de plantes ainsi que l'OMS, l'EMA HMPC, Santé Canada, PubMed et le NCCIH lorsqu'ils existent. Ses réponses sont des résumés éducatifs assistés par IA — jamais une validation clinique."
       },
       "notAsk": {
         "q": "Que ne dois-je PAS demander à l'Herboriste Virtuel ?",

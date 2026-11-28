@@ -707,7 +707,7 @@
   "homeAI": {
     "badge": "Assistant Herbaliste IA",
     "title": "Posez vos questions sur les plantes et la santé naturelle",
-    "subtitle": "Tapez votre question ou appuyez sur une suggestion. Obtenez des explications éducatives fondées sur Santé Canada, l'EMA, le NCCIH et PubMed — gratuitement."
+    "subtitle": "Tapez votre question ou appuyez sur une suggestion pour des explications éducatives assistées par IA citant Santé Canada, l'EMA, le NCCIH et PubMed lorsqu'ils existent — jamais une validation clinique."
   },
   "home": {
     "heroTitle": "Vérifiez les interactions plante‑médicament",
@@ -732,7 +732,7 @@
     "featureInteractionsTitle": "Vérificateur d'interactions",
     "featureInteractionsDescription": "Vérifiez les interactions avant de combiner suppléments et médicaments.",
     "featureAiTitle": "Herboriste virtuel",
-    "featureAiDescription": "Posez des questions. Réponses basées sur des preuves avec citations.",
+    "featureAiDescription": "Posez vos questions. Explications éducatives assistées par IA avec citations lorsqu'elles existent — jamais une validation clinique.",
     "checkerChecking": "Vérification dans la base de données…",
     "checkerFoundTitle": "Résultat de la base de données",
     "checkerAskHerbalist": "Demander à l'Herboriste Virtuel",

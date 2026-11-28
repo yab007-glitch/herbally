@@ -85,7 +85,7 @@
     "herbalistCat": {
       "how": {
         "q": "How does the AI Virtual Herbalist work?",
-        "a": "The Virtual Herbalist uses AI to provide evidence-based guidance about herbs, including safety information, potential interactions, and traditional uses. It draws from our medicinal-herb database alongside WHO monographs, EMA HMPC, Health Canada, PubMed, and NCCIH sources. Each response includes evidence levels and source citations."
+        "a": "The Virtual Herbalist uses AI to generate educational explanations about herbs, safety considerations, potential interactions, and traditional uses, drawing on our medicinal-herb database alongside WHO monographs, EMA HMPC, Health Canada, PubMed, and NCCIH sources where available. Its responses are AI-assisted educational summaries with citations where available — not clinical clearance."
       },
       "notAsk": {
         "q": "What should I NOT ask the Virtual Herbalist?",
