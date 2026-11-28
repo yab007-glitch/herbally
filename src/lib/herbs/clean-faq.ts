@@ -111,6 +111,35 @@ export function stripFieldLabels(raw: string): string {
   return text;
 }
 
+const DIRECTIVE_PRESURGERY_PATTERN =
+  /^(?:pre[-\s]?surgery\s*\((?:stop|discontinue)\b[^)]*\)|(?:stop|discontinue)\s+(?:at least\s+)?\d+(?:\s*[-–]\s*\d+)?\s*(?:days?|weeks?)\s+before\s+(?:scheduled\s+)?surgery[^.]*\.?)$/i;
+
+/**
+ * Rewrites unilateral directive pre-surgery stop-date strings from legacy
+ * monograph rows (e.g., "Pre-surgery (stop 2 weeks before)") into
+ * prescriber-directed peri-operative guidance that explicitly warns readers
+ * not to independently discontinue prescribed medications.
+ */
+export function sanitizePreSurgeryContraindication(
+  raw: string,
+  locale: "en" | "fr" = "en"
+): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return raw;
+  if (!DIRECTIVE_PRESURGERY_PATTERN.test(trimmed)) return raw;
+  return locale === "fr"
+    ? "Chirurgie prévue : discutez de vos plantes et suppléments avec votre équipe chirurgicale ou votre anesthésiste à l'avance ; n'interrompez jamais seul un médicament prescrit"
+    : "Scheduled surgery: discuss herbal supplements with your surgical team or anesthesiologist well in advance (peri-operative guidance depends on preparation and dose); do not independently stop prescribed medications";
+}
+
+export function sanitizeContraindicationList(
+  items: string[] | null | undefined,
+  locale: "en" | "fr" = "en"
+): string[] | null {
+  if (!Array.isArray(items)) return items ?? null;
+  return items.map((item) => sanitizePreSurgeryContraindication(item, locale));
+}
+
 function formatFaqProse(raw: string): string {
   if (!raw) return raw;
   let text = raw.replace(/\s+/g, " ").trim();

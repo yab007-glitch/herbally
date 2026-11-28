@@ -78,17 +78,22 @@ export default async function NpnCheckerPage() {
           <p className="text-base text-muted-foreground sm:text-lg">
             {t("intro")}
           </p>
-          <p className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-            <ShieldCheck className="size-3.5 text-primary" aria-hidden="true" />
+          <div className="flex flex-wrap items-center gap-2 text-xs">
             <Link
               href="/methodology"
-              className="hover:text-foreground hover:underline"
+              className="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 font-medium text-slate-800 hover:underline dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-200"
             >
-              {fr
-                ? "Révision éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS"
-                : "Editorially reviewed by Yasser Bheekun — MLT, OPTMQ · CSMLS"}
+              <ShieldCheck
+                className="size-3.5 text-slate-600 dark:text-slate-400"
+                aria-hidden="true"
+              />
+              <span>
+                {fr
+                  ? "Compilation éditoriale : Yasser Bheekun — MLT, OPTMQ · CSMLS (non une validation clinique)"
+                  : "Editorial compilation: Yasser Bheekun — MLT, OPTMQ · CSMLS (not clinical sign-off)"}
+              </span>
             </Link>
-          </p>
+          </div>
         </header>
 
         <div className="mt-6 rounded-xl border border-amber-300/70 bg-amber-50/70 p-4 text-xs leading-relaxed text-amber-950 dark:border-amber-800/70 dark:bg-amber-950/30 dark:text-amber-100">

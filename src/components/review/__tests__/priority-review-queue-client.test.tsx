@@ -73,5 +73,17 @@ describe("PriorityReviewQueueClient", () => {
       screen.getByText(/St\. John's Wort \+ Rivaroxaban/)
     ).toBeInTheDocument();
     expect(screen.queryByText(/St\. John's Wort \+ Cyclosporine/)).toBeNull();
+
+    // R2-11: accessible live result count status announcement
+    const statusRegion = screen.getByRole("status");
+    expect(statusRegion).toHaveTextContent(/Showing 1 of 1 matching pair/i);
+
+    // R2-07: expandable advanced filters (evidence tier, drug scope, source availability)
+    fireEvent.click(screen.getByRole("button", { name: /Reset filters/i }));
+    expect(statusRegion).toHaveTextContent(/Showing 2 of 2 matching pairs/i);
+    fireEvent.change(screen.getByLabelText(/Source availability/i), {
+      target: { value: "needs_source" },
+    });
+    expect(statusRegion).toHaveTextContent(/Showing 0 of 0 matching pairs/i);
   });
 });

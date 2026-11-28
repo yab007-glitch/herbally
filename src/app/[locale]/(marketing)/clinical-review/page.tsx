@@ -35,6 +35,7 @@ import { getOpenDataSnapshot } from "@/lib/open-data/snapshot";
 import { buildReviewQueuePayload } from "@/lib/open-data/builders";
 import { ClinicalAdvisoryBoardCallout } from "@/components/review/clinical-advisory-board-callout";
 import { PriorityReviewQueueClient } from "@/components/review/priority-review-queue-client";
+import { classifyMedicationScope } from "@/lib/interactions/medication-scope";
 
 export const dynamic = "force-dynamic";
 
@@ -193,6 +194,9 @@ export default async function ClinicalReviewPage({
       severity: item.severity as "contraindicated" | "severe",
       evidenceLevel: item.evidenceLevel,
       source: item.source,
+      sourceUrl: item.sourceUrl ?? null,
+      publicationStatus: item.publicationStatus ?? "legacy_unreviewed",
+      drugScope: classifyMedicationScope(item.drugName),
     }));
   })();
 

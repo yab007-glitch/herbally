@@ -43,6 +43,8 @@ const COPY = {
     retrieved: "retrieved",
     verbatimNote: null as string | null,
     expandLabel: "Show source text",
+    verbatimBadge:
+      "Verbatim Health Canada LNHPD Excerpt · Not HerbAlly Editorial Synthesis",
   },
   fr: {
     heading: "Ce que déclarent les produits homologués",
@@ -65,6 +67,8 @@ const COPY = {
     verbatimNote:
       "Ces mentions sont reproduites dans leur langue d'origine (anglais), sans traduction : il s'agit de citations de produits homologués.",
     expandLabel: "Afficher les mentions originales en anglais",
+    verbatimBadge:
+      "Extrait verbatim Santé Canada BDPSNH · Hors synthèse éditoriale HerbAlly",
   },
 } as const;
 
@@ -139,10 +143,13 @@ export function RegulatoryEvidenceSection({
     <section
       aria-labelledby="regulatory-evidence-heading"
       className={cn(
-        "rounded-2xl border border-border/70 bg-muted/30 p-5",
+        "rounded-2xl border border-border/70 border-l-4 border-l-primary/50 bg-muted/30 p-5",
         className
       )}
     >
+      <p className="mb-2 inline-flex max-w-full rounded-full border border-border bg-background px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+        {c.verbatimBadge}
+      </p>
       <h2
         id="regulatory-evidence-heading"
         className="text-xl font-semibold text-foreground"

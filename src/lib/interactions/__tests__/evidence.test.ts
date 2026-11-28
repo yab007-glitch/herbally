@@ -4,6 +4,7 @@ import {
   evaluatePublicationGate,
   getAbsenceOfEvidenceNotice,
   getClinicalActionDisplay,
+  getEvidenceTaxonomyExplainer,
 } from "../evidence";
 
 describe("interaction evidence classification, publication gate, and clinical actions", () => {
@@ -35,6 +36,31 @@ describe("interaction evidence classification, publication gate, and clinical ac
     expect(legacyCited.canUseEstablishedWording).toBe(false);
     expect(legacyCited.badgeEn).not.toMatch(/theoretical/i);
     expect(legacyCited.badgeEn).toMatch(/cited literature signal/i);
+
+    // R2-01: case_series_or_case_report is Group B, and taxonomy explainer in
+    // EN/FR must strictly agree with classifyInteractionEvidence() (never grouping
+    // case reports as Group A controlled clinical trials, and stating independence).
+    const caseReport = classifyInteractionEvidence({
+      evidenceLevel: "moderate-evidence",
+      evidenceTier: "case_series_or_case_report",
+      extrapolationScope: "human_clinical",
+    });
+    expect(caseReport.group).toBe("B");
+    expect(caseReport.canUseEstablishedWording).toBe(false);
+
+    const explainerEn = getEvidenceTaxonomyExplainer("en");
+    const explainerFr = getEvidenceTaxonomyExplainer("fr");
+    expect(explainerEn).toMatch(/independent/i);
+    expect(explainerEn).toMatch(
+      /Group A[\s\S]*controlled human clinical trials/i
+    );
+    expect(explainerEn).toMatch(/Group B[\s\S]*case reports/i);
+    expect(explainerEn).not.toMatch(
+      /Strong evidence comes from clinical studies or published human case reports/i
+    );
+    expect(explainerFr).toMatch(/indépendants/i);
+    expect(explainerFr).toMatch(/Groupe A[\s\S]*essais cliniques contrôlés/i);
+    expect(explainerFr).toMatch(/Groupe B[\s\S]*rapports de cas/i);
   });
 
   it("blocks synthesized clinical action text until pair-specific clinician-approved text exists", () => {

@@ -64,6 +64,7 @@ import {
   type CitationData,
 } from "@/lib/herbs/herb-page-data";
 import { HerbHeroV2 } from "@/components/herbs/herb-hero-v2";
+import { sanitizeContraindicationList } from "@/lib/herbs/clean-faq";
 import { DangerousHerbBanner } from "@/components/herbs/dangerous-herb-banner";
 import { ToxicBotanicalQuarantineCard } from "@/components/herbs/toxic-botanical-quarantine-card";
 import { ToxicQuarantineShell } from "@/components/herbs/toxic-quarantine-shell";
@@ -318,6 +319,22 @@ export default async function HerbDetailPage({ params }: Props) {
       { revalidate: HERB_PAGE_TTL, tags: ["herb-" + slug] }
     );
     herb = resolveHerbOr404(await getHerbCached(slug, pageLocale as Locale));
+  }
+
+  // Normalize legacy unilateral directive pre-surgery contraindications
+  // (e.g., "Pre-surgery (stop 2 weeks before)") into prescriber-directed
+  // peri-operative guidance across schema, FAQ, narrative, and safety panels.
+  if (
+    Array.isArray(herb.contraindications) &&
+    herb.contraindications.length > 0
+  ) {
+    herb = {
+      ...herb,
+      contraindications: sanitizeContraindicationList(
+        herb.contraindications,
+        pageLocale === "fr" ? "fr" : "en"
+      ),
+    };
   }
 
   const [

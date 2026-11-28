@@ -60,7 +60,7 @@ export function ToxicBotanicalQuarantineCard({
                 : "Toxicology & Emergency Quarantine"}
             </h2>
           </div>
-          <span className="rounded-full border border-destructive/50 bg-destructive/15 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-destructive">
+          <span className="rounded-full border border-red-300 bg-red-100 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-red-900 dark:border-red-800 dark:bg-red-950/70 dark:text-red-200">
             {fr ? "Quarantaine permanente" : "Permanent Quarantine"}
           </span>
         </div>
@@ -92,7 +92,7 @@ export function ToxicBotanicalQuarantineCard({
         <div className="grid gap-2.5 sm:grid-cols-3">
           <a
             href="tel:911"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-destructive px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-red-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-800 dark:bg-red-600 dark:text-white dark:hover:bg-red-500"
           >
             <Phone className="size-4 shrink-0" aria-hidden="true" />
             <span>{fr ? "Appeler le 911" : "Call 911 (Emergency)"}</span>
@@ -102,7 +102,11 @@ export function ToxicBotanicalQuarantineCard({
             className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border-2 border-destructive/60 bg-background px-3 py-2 text-xs font-bold text-destructive transition-colors hover:bg-destructive/10 sm:text-sm"
           >
             <Phone className="size-3.5 shrink-0" aria-hidden="true" />
-            <span>US Poison Control: 1-800-222-1222</span>
+            <span>
+              {fr
+                ? "Centre antipoison (É.-U.) : 1-800-222-1222"
+                : "US Poison Control: 1-800-222-1222"}
+            </span>
           </a>
           <a
             href="tel:+18447647669"
@@ -111,32 +115,58 @@ export function ToxicBotanicalQuarantineCard({
             <Phone className="size-3.5 shrink-0" aria-hidden="true" />
             <span>
               {fr
-                ? "Canada Antipoison : 1-844-764-7669"
+                ? "Centre antipoison (Canada) : 1-844-764-7669"
                 : "Canada Poison Control: 1-844-764-7669"}
             </span>
           </a>
         </div>
 
         <p className="text-xs font-medium text-foreground">
-          Poison Control (US): 1-800-222-1222 (
-          <a
-            href="https://www.poison.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2"
-          >
-            poison.org
-          </a>
-          ) · Poison Control (Canada): 1-844-764-7669 (
-          <a
-            href="https://infopoison.ca"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-2"
-          >
-            infopoison.ca
-          </a>
-          ) · {fr ? "Urgence : 911" : "Emergency: 911"}
+          {fr ? (
+            <>
+              Centre antipoison (Canada) : 1-844-764-7669 (
+              <a
+                href="https://infopoison.ca"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+              >
+                infopoison.ca
+              </a>
+              ) · Centre antipoison (É.-U.) : 1-800-222-1222 (
+              <a
+                href="https://www.poison.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+              >
+                poison.org
+              </a>
+              ) · Urgence : 911
+            </>
+          ) : (
+            <>
+              Poison Control (US): 1-800-222-1222 (
+              <a
+                href="https://www.poison.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+              >
+                poison.org
+              </a>
+              ) · Poison Control (Canada): 1-844-764-7669 (
+              <a
+                href="https://infopoison.ca"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2"
+              >
+                infopoison.ca
+              </a>
+              ) · Emergency: 911
+            </>
+          )}
         </p>
 
         <dl className="grid gap-2 border-t border-destructive/25 pt-3 text-xs sm:grid-cols-3">

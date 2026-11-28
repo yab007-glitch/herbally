@@ -38,7 +38,7 @@ export function DangerousHerbBanner({
         <p className="mt-1 text-sm text-red-800 dark:text-red-300">
           {locale === "fr" ? info.reasonFr : info.reason}
         </p>
-        <p className="mt-1 text-xs text-red-700/80 dark:text-red-400/80">
+        <p className="mt-1 text-xs font-medium text-red-900 dark:text-red-200">
           {locale === "fr"
             ? `Parties concernées : ${info.parts}. En cas d'exposition : Centre antipoison / 911.`
             : `Affected parts: ${info.parts}. If exposed: Poison Control / 911.`}

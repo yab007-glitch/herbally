@@ -128,6 +128,16 @@ export function classifyInteractionEvidence(params: {
 }
 
 /**
+ * Single source of truth explaining HerbAlly's Group A vs Group B evidence
+ * taxonomy in strict agreement with `classifyInteractionEvidence()`.
+ */
+export function getEvidenceTaxonomyExplainer(locale: "en" | "fr"): string {
+  return locale === "fr"
+    ? "Les groupes de preuves et la gravité potentielle sont indépendants. Le Groupe A (données cliniques humaines) exige des essais cliniques contrôlés, des revues systématiques, des études de cohorte ou cas-témoins, ou des études pharmacocinétiques humaines formelles. Le Groupe B regroupe les rapports de cas et séries observationnelles humaines (distincts des essais contrôlés), les travaux animaux ou in vitro, les mécanismes pharmacologiques (p. ex. CYP450 ou P-gp) ainsi que les fiches héritées sourcées dont le niveau formel attend une validation par un clinicien indépendant. Un signal potentiellement grave peut provenir d'un mécanisme ou d'un rapport de cas, tandis qu'une paire bien étudiée peut n'entraîner qu'un risque léger."
+    : "Evidence strength and potential severity are independent. Group A (Clinical human evidence) requires controlled human clinical trials, systematic reviews, cohort/case-control studies, or formal human pharmacokinetic studies. Group B covers observational human case reports or case series (distinct from controlled clinical trials), animal or laboratory (in vitro) findings, pharmacological pathway mechanisms (such as CYP450 or P-gp), and cited legacy records whose formal study tier awaits independent clinician verification. A severe potential flag may come from a mechanism or case report, while a well-studied pair may carry only mild risk.";
+}
+
+/**
  * Resolve clinician-approved pair-specific action text, or fail closed with a
  * blocked/unreviewed status. Never synthesizes severity-templated clinical instructions.
  */

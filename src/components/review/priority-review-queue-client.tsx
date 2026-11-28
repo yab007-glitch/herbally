@@ -22,6 +22,9 @@ export interface PriorityQueueItem {
   severity: "contraindicated" | "severe";
   evidenceLevel: string | null;
   source: string | null;
+  sourceUrl?: string | null;
+  publicationStatus?: string | null;
+  drugScope?: "molecule" | "class";
 }
 
 export interface PriorityReviewQueueClientProps {
@@ -50,13 +53,55 @@ export function PriorityReviewQueueClient({
     "all" | "contraindicated" | "severe"
   >("all");
   const [query, setQuery] = useState("");
+  const [evidenceFilter, setEvidenceFilter] = useState<
+    "all" | "well-documented" | "moderate" | "limited" | "unspecified"
+  >("all");
+  const [scopeFilter, setScopeFilter] = useState<"all" | "molecule" | "class">(
+    "all"
+  );
+  const [sourceFilter, setSourceFilter] = useState<
+    "all" | "with_source" | "with_url" | "needs_source"
+  >("all");
   const [showAll, setShowAll] = useState(false);
+
+  const hasAdvancedFilter =
+    evidenceFilter !== "all" || scopeFilter !== "all" || sourceFilter !== "all";
+  const hasAnyFilter =
+    severityFilter !== "all" || query.trim().length > 0 || hasAdvancedFilter;
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return items.filter((item) => {
       if (severityFilter !== "all" && item.severity !== severityFilter) {
         return false;
+      }
+      if (evidenceFilter !== "all") {
+        const level = (item.evidenceLevel ?? "").toLowerCase();
+        if (evidenceFilter === "well-documented" && !level.includes("well")) {
+          return false;
+        }
+        if (evidenceFilter === "moderate" && !level.includes("moderate")) {
+          return false;
+        }
+        if (evidenceFilter === "limited" && !level.includes("limited")) {
+          return false;
+        }
+        if (evidenceFilter === "unspecified" && level.length > 0) {
+          return false;
+        }
+      }
+      if (scopeFilter !== "all") {
+        const itemScope = item.drugScope ?? "molecule";
+        if (itemScope !== scopeFilter) return false;
+      }
+      if (sourceFilter !== "all") {
+        const hasTextSource = Boolean(item.source?.trim());
+        const hasUrl = Boolean(item.sourceUrl?.trim());
+        if (sourceFilter === "with_source" && !hasTextSource) return false;
+        if (sourceFilter === "with_url" && !hasUrl) return false;
+        if (sourceFilter === "needs_source" && (hasTextSource || hasUrl)) {
+          return false;
+        }
       }
       if (!q) return true;
       return (
@@ -65,7 +110,15 @@ export function PriorityReviewQueueClient({
         (item.source ?? "").toLowerCase().includes(q)
       );
     });
-  }, [items, severityFilter, query]);
+  }, [items, severityFilter, query, evidenceFilter, scopeFilter, sourceFilter]);
+
+  function resetFilters() {
+    setSeverityFilter("all");
+    setQuery("");
+    setEvidenceFilter("all");
+    setScopeFilter("all");
+    setSourceFilter("all");
+  }
 
   const visible = showAll ? filtered.slice(0, 24) : filtered.slice(0, 8);
   const formattedDate = generatedAt.slice(0, 10);
@@ -175,6 +228,138 @@ export function PriorityReviewQueueClient({
             className="min-h-10 pl-9 text-xs"
           />
         </div>
+      </div>
+
+      {/* Expandable advanced reviewer filters (R2-07) */}
+      <details className="mt-3 rounded-xl border border-border/70 bg-muted/20 px-3.5 py-2.5 text-xs">
+        <summary className="cursor-pointer font-medium text-foreground">
+          {fr
+            ? `Filtres cliniques avancés${hasAdvancedFilter ? " (actifs)" : ""}`
+            : `Advanced clinical filters${hasAdvancedFilter ? " (active)" : ""}`}
+        </summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div className="space-y-1">
+            <label
+              htmlFor="queue-evidence-filter"
+              className="block font-medium text-foreground"
+            >
+              {fr ? "Niveau de preuve indiqué" : "Recorded evidence tier"}
+            </label>
+            <select
+              id="queue-evidence-filter"
+              value={evidenceFilter}
+              onChange={(e) =>
+                setEvidenceFilter(
+                  e.target.value as
+                    | "all"
+                    | "well-documented"
+                    | "moderate"
+                    | "limited"
+                    | "unspecified"
+                )
+              }
+              className="min-h-9 w-full rounded-md border border-input bg-background px-2.5 py-1 text-xs text-foreground"
+            >
+              <option value="all">
+                {fr ? "Tous les niveaux" : "All evidence tiers"}
+              </option>
+              <option value="well-documented">
+                {fr ? "Bien documenté (cité)" : "Well-documented (cited)"}
+              </option>
+              <option value="moderate">
+                {fr ? "Preuves modérées" : "Moderate evidence"}
+              </option>
+              <option value="limited">
+                {fr ? "Preuves limitées" : "Limited / mechanistic"}
+              </option>
+              <option value="unspecified">
+                {fr ? "Non classé" : "Unclassified"}
+              </option>
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <label
+              htmlFor="queue-scope-filter"
+              className="block font-medium text-foreground"
+            >
+              {fr ? "Portée médicamenteuse" : "Medication applicability"}
+            </label>
+            <select
+              id="queue-scope-filter"
+              value={scopeFilter}
+              onChange={(e) =>
+                setScopeFilter(e.target.value as "all" | "molecule" | "class")
+              }
+              className="min-h-9 w-full rounded-md border border-input bg-background px-2.5 py-1 text-xs text-foreground"
+            >
+              <option value="all">
+                {fr ? "Toutes les portées" : "All drug scopes"}
+              </option>
+              <option value="molecule">
+                {fr ? "Molécule précise" : "Single molecule"}
+              </option>
+              <option value="class">
+                {fr ? "Classe thérapeutique" : "Drug class"}
+              </option>
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <label
+              htmlFor="queue-source-filter"
+              className="block font-medium text-foreground"
+            >
+              {fr ? "Disponibilité des sources" : "Source availability"}
+            </label>
+            <select
+              id="queue-source-filter"
+              value={sourceFilter}
+              onChange={(e) =>
+                setSourceFilter(
+                  e.target.value as
+                    "all" | "with_source" | "with_url" | "needs_source"
+                )
+              }
+              className="min-h-9 w-full rounded-md border border-input bg-background px-2.5 py-1 text-xs text-foreground"
+            >
+              <option value="all">
+                {fr ? "Toutes les sources" : "All source states"}
+              </option>
+              <option value="with_source">
+                {fr ? "Source primaire citée" : "Primary citation listed"}
+              </option>
+              <option value="with_url">
+                {fr
+                  ? "Lien direct (URL) au dossier"
+                  : "Direct source URL on file"}
+              </option>
+              <option value="needs_source">
+                {fr
+                  ? "Recherche de citation requise"
+                  : "Needs primary citation lookup"}
+              </option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      {/* Accessible filtered result count announcement (R2-11) */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <p role="status" aria-live="polite" className="tabular-nums">
+          {fr
+            ? `Affichage de ${visible.length} fiche${visible.length > 1 ? "s" : ""} sur ${filtered.length} correspondance${filtered.length > 1 ? "s" : ""} (échantillon de ${items.length} paires prioritaires).`
+            : `Showing ${visible.length} of ${filtered.length} matching pair${filtered.length === 1 ? "" : "s"} (from ${items.length} loaded priority records).`}
+        </p>
+        {hasAnyFilter && (
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="min-h-8 font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+          >
+            {fr ? "Réinitialiser les filtres" : "Reset filters"}
+          </button>
+        )}
       </div>
 
       {visible.length === 0 ? (

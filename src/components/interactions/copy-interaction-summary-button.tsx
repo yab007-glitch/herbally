@@ -27,27 +27,38 @@ export function CopyInteractionSummaryButton({
   }
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      onClick={handleCopy}
-      className="no-print min-h-10 gap-1.5"
-      aria-live="polite"
-    >
-      {copied ? (
-        <Check className="size-4 text-emerald-700 dark:text-emerald-400" />
-      ) : (
-        <Copy className="size-4" aria-hidden="true" />
-      )}
-      <span>
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleCopy}
+        className="no-print min-h-10 gap-1.5"
+      >
+        {copied ? (
+          <Check
+            className="size-4 text-emerald-700 dark:text-emerald-400"
+            aria-hidden="true"
+          />
+        ) : (
+          <Copy className="size-4" aria-hidden="true" />
+        )}
+        <span>
+          {copied
+            ? fr
+              ? "Résumé copié"
+              : "Summary copied"
+            : fr
+              ? "Copier le résumé clinique"
+              : "Copy consultation summary"}
+        </span>
+      </Button>
+      <span role="status" aria-live="polite" className="sr-only">
         {copied
           ? fr
-            ? "Résumé copié"
-            : "Summary copied"
-          : fr
-            ? "Copier le résumé clinique"
-            : "Copy consultation summary"}
+            ? "Résumé clinique copié dans le presse-papiers."
+            : "Consultation summary copied to clipboard."
+          : ""}
       </span>
-    </Button>
+    </>
   );
 }

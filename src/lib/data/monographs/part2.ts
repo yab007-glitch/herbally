@@ -824,7 +824,7 @@ export const monographsPart2: Record<string, Monograph> = {
     ],
     safetyNotes: [
       "Do NOT consume raw or roasted ginkgo seeds — ginkgotoxin causes seizures and coma",
-      "Avoid with anticoagulants/antiplatelets due to hemorrhage risk; stop 7-14 days before surgery",
+      "Avoid with anticoagulants/antiplatelets due to hemorrhage risk; discuss with your surgeon or anesthesiologist well before scheduled surgery and do not independently stop prescribed medications",
       "May lower seizure threshold in susceptible individuals",
       "Standardized leaf extract: 120-240mg daily under clinician guidance",
     ],

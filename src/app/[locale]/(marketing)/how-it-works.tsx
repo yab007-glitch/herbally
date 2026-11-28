@@ -59,7 +59,7 @@ const COPY: Record<"en" | "fr", Copy> = {
       },
       {
         title: "How to use it without getting hurt",
-        body: "Treat a result as a reason to ask a question, not a verdict. Write down every herb, supplement, vitamin and medicine you take, with dose and timing, and take that list to a pharmacist. A pharmacist can check it against your actual prescriptions and your history, which this site cannot see. If you have already combined something and feel unwell, stop and seek care rather than waiting to see how it goes.",
+        body: "Treat a result as a reason to ask a question, not a verdict. Write down every herb, supplement, vitamin and medicine you take, with dose and timing, and take that list to a pharmacist. A pharmacist can check it against your actual prescriptions and your history, which this site cannot see. If you have already combined a supplement with a prescription and feel unwell, do not independently stop prescribed medications — pause non-prescribed supplements if uncertain, contact your pharmacist or prescriber promptly, and seek urgent medical care for severe or rapidly worsening symptoms.",
         link: { href: "/calculator", label: "Adult dosage calculator" },
       },
     ],
@@ -102,7 +102,7 @@ const COPY: Record<"en" | "fr", Copy> = {
       },
       {
         title: "Comment l’utiliser sans se mettre en danger",
-        body: "Prenez un résultat comme une raison de poser une question, pas comme un verdict. Écrivez tout ce que vous prenez — plantes, suppléments, vitamines, médicaments — avec la dose et l’heure, et apportez cette liste à un pharmacien. Le pharmacien peut la vérifier contre vos ordonnances et votre dossier, ce que ce site ne peut pas voir. Si vous avez déjà combiné quelque chose et que vous vous sentez mal, arrêtez et consultez plutôt que d’attendre de voir comment ça évolue.",
+        body: "Prenez un résultat comme une raison de poser une question, pas comme un verdict. Écrivez tout ce que vous prenez — plantes, suppléments, vitamines, médicaments — avec la dose et l’heure, et apportez cette liste à un pharmacien. Le pharmacien peut la vérifier contre vos ordonnances et votre dossier, ce que ce site ne peut pas voir. Si vous avez déjà combiné un supplément avec une ordonnance et que vous vous sentez mal, n’interrompez jamais seul un médicament prescrit — suspendez les suppléments non prescrits en cas de doute, contactez rapidement votre pharmacien ou votre médecin, et consultez en urgence en cas de symptômes graves ou qui s’aggravent.",
         link: { href: "/calculator", label: "Calculateur de posologie adulte" },
       },
     ],
